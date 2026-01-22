@@ -22,6 +22,7 @@ export default function SignUpPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -48,6 +49,12 @@ export default function SignUpPage() {
 
     if (password.length < 6) {
       setError('Password must be at least 6 characters');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!agreedToTerms) {
+      setError('You must agree to the Terms of Service and Privacy Policy');
       setIsLoading(false);
       return;
     }
@@ -176,27 +183,37 @@ export default function SignUpPage() {
               required
             />
 
+            {/* Terms and Privacy Agreement Checkbox */}
+            <div className="flex items-start gap-3 pt-2">
+              <input
+                type="checkbox"
+                id="terms-agreement"
+                checked={agreedToTerms}
+                onChange={(e) => setAgreedToTerms(e.target.checked)}
+                className="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-800 text-white focus:ring-2 focus:ring-white focus:ring-offset-0 focus:ring-offset-gray-900 cursor-pointer"
+              />
+              <label htmlFor="terms-agreement" className="text-sm text-gray-300 cursor-pointer">
+                I agree to the{' '}
+                <Link href="/terms" target="_blank" className="text-white hover:text-gray-200 underline transition-colors">
+                  Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link href="/privacy" target="_blank" className="text-white hover:text-gray-200 underline transition-colors">
+                  Privacy Policy
+                </Link>
+              </label>
+            </div>
+
             {/* Submit button */}
             <Button
               type="submit"
               fullWidth
               isLoading={isLoading}
+              disabled={!agreedToTerms || isLoading}
             >
               Create Account
             </Button>
           </form>
-
-          {/* Terms and privacy */}
-          <p className="mt-4 text-xs text-center text-gray-500">
-            By signing up, you agree to our{' '}
-            <Link href="/terms" className="text-white hover:text-gray-300 underline transition-colors">
-              Terms of Service
-            </Link>{' '}
-            and{' '}
-            <Link href="/privacy" className="text-white hover:text-gray-300 underline transition-colors">
-              Privacy Policy
-            </Link>
-          </p>
 
           {/* Sign in link */}
           <div className="mt-6 text-center text-sm">
