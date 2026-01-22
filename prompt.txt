@@ -1,0 +1,24 @@
+“I want to build a SaaS web app like S.mple (Serhant) for real estate agents.
+Please create a full Next.js + TypeScript + Tailwind CSS project structure with these features:
+
+User authentication (Supabase email + Google login)
+
+Dashboard with sidebar (Dashboard, Projects, Brand Kit, Account)
+
+Projects page: list projects, view project details, create new project
+
+Project detail page: upload photos, enter property info, generate AI content, save project
+
+Brand Kit page: upload logo, set colors, set font style
+
+API routes for: authentication, project creation, AI content generation, image analysis (OpenAI)
+
+Use clean Tailwind UI for layout
+
+Add placeholder content to all pages
+
+Include lib folder for Supabase and OpenAI helpers
+
+Include types folder for user, project, brandKit types
+
+Please generate the folder structure, layout.tsx, basic pages, and main components (Sidebar, Header, ProjectCard, Button, Input). Add comments in the code for a beginner.”

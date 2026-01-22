@@ -1,0 +1,49 @@
+# OneDrive Ignore File
+# While .gitignore tells Git what to ignore, this serves as a reference
+# for what folders you should exclude from OneDrive sync
+
+# Build outputs (changes constantly during development)
+.next/
+out/
+build/
+dist/
+
+# Dependencies (large, can be reinstalled)
+node_modules/
+
+# Cache directories
+.cache/
+.turbo/
+.vercel/
+
+# Logs
+*.log
+logs/
+
+# Environment files (contain secrets)
+.env
+.env.local
+.env*.local
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Testing
+coverage/
+
+# NOTE: To actually exclude these from OneDrive:
+# 1. Right-click the folder in File Explorer
+# 2. Select "Always keep on this device" (to keep local but sync)
+#    OR "Free up space" (to keep in cloud only)
+# 3. For .next and node_modules, consider using OneDrive's folder exclusion settings
+
+
+
+
+
+
+
+
+
+
+
