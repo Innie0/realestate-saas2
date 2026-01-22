@@ -1,6 +1,7 @@
 // Dashboard layout - Layout for all dashboard pages
 // Includes sidebar navigation and consistent structure with dark theme
 
+import Link from 'next/link';
 import Sidebar from '@/components/layout/Sidebar';
 
 /**
@@ -23,6 +24,18 @@ export default function DashboardLayout({
         <main className="flex-1 overflow-y-auto bg-transparent">
           {children}
         </main>
+        
+        {/* Footer */}
+        <footer className="border-t border-gray-800 bg-gray-900/50 px-6 py-4">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-gray-500">
+            <p>© 2026 Realestic. All rights reserved.</p>
+            <div className="flex gap-4">
+              <Link href="/privacy" className="hover:text-gray-300 transition-colors">Privacy</Link>
+              <Link href="/terms" className="hover:text-gray-300 transition-colors">Terms</Link>
+              <Link href="/" className="hover:text-gray-300 transition-colors">Home</Link>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   );

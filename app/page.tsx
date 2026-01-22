@@ -123,7 +123,7 @@ export default function HomePage() {
               whileHover={{ scale: 1.02 }}
             >
               <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-                RealEstate SaaS
+                Realestic
               </h1>
             </motion.div>
             
@@ -361,11 +361,11 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-500 text-sm">
-              © 2024 RealEstate SaaS. All rights reserved.
+              © 2026 Realestic. All rights reserved.
             </p>
             <div className="flex items-center gap-6 text-sm text-gray-500">
-              <a href="#" className="hover:text-white transition-colors">Privacy</a>
-              <a href="#" className="hover:text-white transition-colors">Terms</a>
+              <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+              <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
               <a href="#" className="hover:text-white transition-colors">Contact</a>
             </div>
           </div>

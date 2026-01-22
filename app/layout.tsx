@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ['latin'] });
  * This appears in browser tabs and search results
  */
 export const metadata: Metadata = {
-  title: 'RealEstate SaaS - AI-Powered Marketing for Real Estate Agents',
+  title: 'Realestic - AI-Powered Marketing for Real Estate Agents',
   description: 'Create stunning property listings with AI-powered content generation and professional brand kits.',
 };
 

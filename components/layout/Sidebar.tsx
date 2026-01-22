@@ -109,7 +109,7 @@ export default function Sidebar() {
     <div className="flex h-screen w-64 flex-col bg-gradient-to-b from-gray-900 via-black to-gray-900 text-white">
       {/* Logo / Brand section at the top */}
       <div className="flex h-16 items-center justify-center border-b border-gray-800 bg-gradient-to-r from-gray-900 to-black">
-        <h1 className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">RealEstate SaaS</h1>
+        <h1 className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">Realestic</h1>
       </div>
 
       {/* Navigation links */}
