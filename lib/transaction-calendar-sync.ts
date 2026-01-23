@@ -210,7 +210,7 @@ export async function syncTransactionToCalendar(
               .from('calendar_connections')
               .update({
                 access_token: googleAccessToken,
-                token_expiry: new Date(refreshResult.expiry_date).toISOString(),
+                token_expiry: refreshResult.expiry_date ? new Date(refreshResult.expiry_date).toISOString() : new Date().toISOString(),
               })
               .eq('id', googleConnection.id);
           } else {
