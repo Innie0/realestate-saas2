@@ -201,7 +201,7 @@ export default function CalendarPage() {
               <Button
                 size="sm"
                 variant="outline"
-                onClick={handleRefresh}
+                onClick={() => handleRefresh()}
                 disabled={refreshing}
               >
                 <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
