@@ -21,8 +21,9 @@ interface ProjectCardProps {
  */
 export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
   // Get the first image as thumbnail, or use placeholder
-  const thumbnailUrl = project.images && project.images.length > 0 
-    ? project.images[0] 
+  const firstImage = project.images && project.images.length > 0 ? project.images[0] : null;
+  const thumbnailUrl = firstImage 
+    ? (typeof firstImage === 'string' ? firstImage : firstImage.url)
     : '/placeholder-property.jpg';
 
   // Format the date

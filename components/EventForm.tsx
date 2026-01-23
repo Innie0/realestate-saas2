@@ -81,7 +81,7 @@ export default function EventForm({
         <select
           id="event_type"
           value={formData.event_type}
-          onChange={(e) => setFormData({ ...formData, event_type: e.target.value })}
+          onChange={(e) => setFormData({ ...formData, event_type: e.target.value as 'showing' | 'open_house' | 'meeting' | 'other' })}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
         >
           <option value="showing">Property Showing</option>
