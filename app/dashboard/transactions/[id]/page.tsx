@@ -245,10 +245,10 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
             <Calendar className="w-6 h-6 text-blue-400" />
           </div>
           <p className="text-2xl font-bold text-white">
-            {transaction.days_to_closing !== null 
-              ? transaction.days_to_closing < 0 
+            {transaction.days_to_closing != null 
+              ? (transaction.days_to_closing < 0 
                 ? 'Closed' 
-                : `${transaction.days_to_closing} days`
+                : `${transaction.days_to_closing} days`)
               : '-'}
           </p>
           <p className="text-sm text-gray-400 font-medium">To Closing</p>
