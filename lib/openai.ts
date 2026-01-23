@@ -12,12 +12,24 @@ if (!apiKey) {
 }
 
 /**
- * Create an OpenAI client instance
- * This client is used to interact with OpenAI's API
+ * Get or create OpenAI client instance (lazy initialization to avoid build errors)
  */
-export const openai = new OpenAI({
-  apiKey: apiKey || '',
-});
+let openaiInstance: OpenAI | null = null;
+
+function getOpenAIClient(): OpenAI {
+  if (!openaiInstance) {
+    openaiInstance = new OpenAI({
+      apiKey: apiKey || 'dummy-key-for-build', // Provide dummy key to prevent build errors
+    });
+  }
+  return openaiInstance;
+}
+
+/**
+ * Create an OpenAI client instance (exported for backward compatibility)
+ * Note: Prefer using getOpenAIClient() in new code
+ */
+export const openai = getOpenAIClient();
 
 /**
  * Generate marketing content for a real estate property using AI
@@ -34,6 +46,8 @@ export async function generatePropertyContent(propertyInfo: {
   features?: string[];
 }) {
   try {
+    const client = getOpenAIClient();
+    
     // Create a detailed prompt for the AI
     const prompt = `Generate compelling marketing content for a real estate property with the following details:
     
@@ -55,7 +69,7 @@ Please generate:
 Format the response as JSON with keys: headline, description, keyFeatures (array), instagram, facebook`;
 
     // Call OpenAI's chat completion API
-    const completion = await openai.chat.completions.create({
+    const completion = await client.chat.completions.create({
       model: 'gpt-4o', // Using latest GPT-4o model
       messages: [
         {
@@ -99,8 +113,10 @@ Format the response as JSON with keys: headline, description, keyFeatures (array
  */
 export async function analyzePropertyImage(imageUrl: string) {
   try {
+    const client = getOpenAIClient();
+    
     // Call OpenAI's vision API with enhanced prompt
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: 'gpt-4o', // Using GPT-4o which has vision capabilities
       messages: [
         {
