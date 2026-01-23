@@ -28,7 +28,7 @@ const itemVariants = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: [0.25, 0.46, 0.45, 0.94],
+      ease: 'easeOut' as const,
     },
   },
 };
@@ -64,7 +64,7 @@ function FeatureTile({
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.6, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+      transition={{ duration: 0.6, delay, ease: 'easeOut' as const }}
       whileHover={{ 
         y: -8, 
         scale: 1.02,
