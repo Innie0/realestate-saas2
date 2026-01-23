@@ -49,6 +49,15 @@ export async function GET(request: NextRequest) {
     }
 
     console.log('✅ User authenticated:', user.id);
+    
+    // Check if tokens exist
+    if (!result.tokens) {
+      console.error('❌ No tokens received from Google');
+      return NextResponse.redirect(
+        new URL('/dashboard/calendar?error=no_tokens', request.url)
+      );
+    }
+    
     console.log('✅ Got Google tokens:', {
       hasAccessToken: !!result.tokens.access_token,
       hasRefreshToken: !!result.tokens.refresh_token,
@@ -77,7 +86,7 @@ export async function GET(request: NextRequest) {
         email: googleEmail,
         access_token: result.tokens.access_token,
         refresh_token: result.tokens.refresh_token,
-        token_expiry: new Date(result.tokens.expiry_date).toISOString(),
+        token_expiry: result.tokens.expiry_date ? new Date(result.tokens.expiry_date).toISOString() : new Date().toISOString(),
         is_active: true,
         updated_at: new Date().toISOString(),
       }, {
