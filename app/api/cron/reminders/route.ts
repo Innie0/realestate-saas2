@@ -109,11 +109,13 @@ export async function GET(request: NextRequest) {
         if (updateError) {
           errors.push({ id: reminder.id, error: updateError.message });
         } else {
+          // Handle transaction as array (Supabase returns nested relations as arrays)
+          const transaction = Array.isArray(reminder.transaction) ? reminder.transaction[0] : reminder.transaction;
           processedReminders.push({
             id: reminder.id,
             title: reminder.title,
             user_id: reminder.user_id,
-            transaction_address: reminder.transaction?.property_address,
+            transaction_address: transaction?.property_address,
           });
         }
       } catch (err: any) {
