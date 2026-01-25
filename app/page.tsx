@@ -3,9 +3,12 @@
 
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Home, TrendingUp, Shield, Sparkles, Users, Calendar, ArrowRight } from 'lucide-react';
+import { getCurrentUser } from '@/lib/supabase';
 
 /**
  * Animation variants for staggered fade-in effects
@@ -100,6 +103,21 @@ function FeatureTile({
  * Landing page with fade-in animations and interactive tiles
  */
 export default function HomePage() {
+  const router = useRouter();
+  
+  // Check if user is already logged in and redirect to dashboard
+  useEffect(() => {
+    const checkAuthAndRedirect = async () => {
+      const { user } = await getCurrentUser();
+      if (user) {
+        // User is logged in, redirect to dashboard
+        router.push('/dashboard');
+      }
+    };
+    
+    checkAuthAndRedirect();
+  }, [router]);
+  
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
       {/* Animated background gradient */}
