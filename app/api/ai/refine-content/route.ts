@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
   try {
     // Initialize OpenAI client (lazy initialization to avoid build-time errors)
     const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY || '',
+      apiKey: process.env.OPENAI_API_KEY || 'dummy-key-for-build',
     });
 
     const supabase = createClient();
