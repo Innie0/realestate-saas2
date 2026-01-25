@@ -253,17 +253,6 @@ export default function DashboardPage() {
                 </p>
               </div>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-white/5 border border-white/10">
-              <TrendingUp className="w-5 h-5 text-green-400 mt-0.5" />
-              <div>
-                <h3 className="font-medium text-white">
-                  Maintain consistent branding
-                </h3>
-                <p className="text-gray-400 text-sm">
-                  Set up your brand kit with your logo and colors for professional listings.
-                </p>
-              </div>
-            </div>
           </div>
         </Card>
       </div>

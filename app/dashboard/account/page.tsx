@@ -204,21 +204,6 @@ export default function AccountPage() {
             </div>
 
             <form onSubmit={handleUpdateProfile} className="space-y-4">
-              {/* Profile picture */}
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">
-                  Profile Picture
-                </label>
-                <div className="flex items-center gap-4">
-                  <div className="h-20 w-20 rounded-full bg-black flex items-center justify-center text-white text-2xl font-medium">
-                    {fullName ? fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
-                  </div>
-                  <Button variant="outline" size="sm">
-                    Change Photo
-                  </Button>
-                </div>
-              </div>
-
               {/* Full name input */}
               <Input
                 label="Full Name"

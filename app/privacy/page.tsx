@@ -59,14 +59,13 @@ export default function PrivacyPage() {
                 <li>Full name</li>
                 <li>Email address</li>
                 <li>Password (encrypted)</li>
-                <li>Profile picture (optional)</li>
               </ul>
 
               <h3 className="text-xl font-semibold text-white mb-3 mt-6">2. Google Account Information</h3>
               <p className="text-gray-300 leading-relaxed mb-4">When you sign in with Google or connect Google Calendar:</p>
               <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
                 <li>Google account email address</li>
-                <li>Profile information (name, profile picture)</li>
+                <li>Profile information (name)</li>
                 <li>Calendar events (titles, dates, times, descriptions, locations)</li>
                 <li>OAuth access and refresh tokens</li>
               </ul>
