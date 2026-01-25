@@ -202,7 +202,7 @@ export default function HomePage() {
               variants={itemVariants}
               className="mt-8 text-lg text-gray-400 leading-relaxed max-w-xl"
             >
-              Transform your real estate business with intelligent tools designed for modern agents. 
+              Transform your workflow as a real estate agent with intelligent tools designed for you. 
               Manage leads, schedule showings, and close more deals with our AI-powered platform.
             </motion.p>
 
