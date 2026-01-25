@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ['latin'] });
  * This appears in browser tabs and search results
  */
 export const metadata: Metadata = {
-  title: 'Realestic - Save Time Managing Your Real Estate Business',
+  title: 'Realestic - Time-Saving Tools for Real Estate Agents',
   description: 'Streamline your workflow with smart tools for property listings, client management, and scheduling.',
 };
 
