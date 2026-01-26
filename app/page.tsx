@@ -134,11 +134,11 @@ export default function HomePage() {
         transition={{ duration: 0.6, delay: 0.1 }}
         className="relative z-50 border-b border-white/10 backdrop-blur-md bg-black/50"
       >
-        <div className="mx-auto max-w-7xl pl-8 pr-6 lg:pr-8">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
-            {/* Logo */}
+            {/* Logo - positioned at left edge */}
             <motion.div 
-              className="flex items-center"
+              className="flex items-center absolute left-6 lg:left-8"
               whileHover={{ scale: 1.02 }}
             >
               <Image
@@ -150,6 +150,9 @@ export default function HomePage() {
                 className="h-80 w-auto"
               />
             </motion.div>
+            
+            {/* Spacer to push nav links to the right */}
+            <div className="flex-1"></div>
             
             {/* Navigation links */}
             <div className="flex items-center gap-4">
