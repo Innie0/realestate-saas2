@@ -142,7 +142,7 @@ export default function HomePage() {
               whileHover={{ scale: 1.02 }}
             >
               <Image
-                src="/logo.png"
+                src="/logo-landing.png"
                 alt="Realestic"
                 width={1400}
                 height={420}
