@@ -144,10 +144,10 @@ export default function HomePage() {
               <Image
                 src="/logo.png"
                 alt="Realestic"
-                width={280}
-                height={84}
+                width={1400}
+                height={420}
                 priority
-                className="h-16 w-auto"
+                className="h-80 w-auto"
               />
             </motion.div>
             

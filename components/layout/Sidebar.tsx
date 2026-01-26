@@ -109,14 +109,14 @@ export default function Sidebar() {
   return (
     <div className="flex h-screen w-64 flex-col bg-gradient-to-b from-gray-900 via-black to-gray-900 text-white">
       {/* Logo / Brand section at the top */}
-      <div className="flex h-16 items-center justify-center border-b border-gray-800 bg-gradient-to-r from-gray-900 to-black">
+      <div className="flex h-64 items-center justify-center border-b border-gray-800 bg-gradient-to-r from-gray-900 to-black">
         <Image
           src="/logo.png"
           alt="Realestic"
-          width={200}
-          height={60}
+          width={1000}
+          height={300}
           priority
-          className="h-12 w-auto"
+          className="h-60 w-auto"
         />
       </div>
 
