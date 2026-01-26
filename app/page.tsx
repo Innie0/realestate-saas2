@@ -1,6 +1,8 @@
 // Home page - Landing page with animations
 // Beautiful fade-in effects and interactive hover animations
 
+'use client';
+
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
