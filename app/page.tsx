@@ -1,11 +1,10 @@
 // Home page - Landing page with animations
 // Beautiful fade-in effects and interactive hover animations
 
-'use client';
-
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Home, TrendingUp, Shield, Sparkles, Users, Calendar, ArrowRight } from 'lucide-react';
 import { getCurrentUser } from '@/lib/supabase';
@@ -140,9 +139,14 @@ export default function HomePage() {
               className="flex items-center"
               whileHover={{ scale: 1.02 }}
             >
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-                Realestic
-              </h1>
+              <Image
+                src="/logo.png"
+                alt="Realestic"
+                width={140}
+                height={40}
+                priority
+                className="h-8 w-auto"
+              />
             </motion.div>
             
             {/* Navigation links */}

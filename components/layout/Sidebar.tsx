@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, FolderKanban, Calendar, User, LogOut, Users, FileText, Sparkles } from 'lucide-react';
 import clsx from 'clsx';
@@ -109,7 +110,14 @@ export default function Sidebar() {
     <div className="flex h-screen w-64 flex-col bg-gradient-to-b from-gray-900 via-black to-gray-900 text-white">
       {/* Logo / Brand section at the top */}
       <div className="flex h-16 items-center justify-center border-b border-gray-800 bg-gradient-to-r from-gray-900 to-black">
-        <h1 className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">Realestic</h1>
+        <Image
+          src="/logo.png"
+          alt="Realestic"
+          width={120}
+          height={32}
+          priority
+          className="h-7 w-auto"
+        />
       </div>
 
       {/* Navigation links */}
