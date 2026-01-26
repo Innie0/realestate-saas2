@@ -113,10 +113,10 @@ export default function Sidebar() {
         <Image
           src="/logo.png"
           alt="Realestic"
-          width={120}
-          height={32}
+          width={160}
+          height={48}
           priority
-          className="h-7 w-auto"
+          className="h-10 w-auto"
         />
       </div>
 
