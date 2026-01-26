@@ -138,7 +138,7 @@ export default function HomePage() {
           <div className="flex h-20 items-center justify-between">
             {/* Logo */}
             <motion.div 
-              className="flex items-center"
+              className="flex items-center -ml-2"
               whileHover={{ scale: 1.02 }}
             >
               <Image
