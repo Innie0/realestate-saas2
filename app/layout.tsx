@@ -15,6 +15,9 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Realestic - Time-Saving Tools for Real Estate Agents',
   description: 'Streamline your workflow with smart tools for property listings, client management, and scheduling.',
+  icons: {
+    icon: '/logo-landing.png',
+  },
 };
 
 /**
