@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
     const userId = user.id;
 
     // Get user's calendar connections
+    // @ts-ignore - Supabase types issue with Next.js 16 strict mode
     const { data: connections, error: connectionsError } = await supabase
       .from('calendar_connections')
       .select('*')
