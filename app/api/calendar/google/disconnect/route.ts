@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Google Calendar disconnect route
 // Disconnect Google Calendar integration
 

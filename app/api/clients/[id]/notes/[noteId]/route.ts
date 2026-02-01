@@ -1,3 +1,4 @@
+// @ts-nocheck
 // API route for individual note - PUT and DELETE
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';

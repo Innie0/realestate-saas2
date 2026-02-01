@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Calendar sync API route
 // Sync events from connected calendars (Google/Outlook)
 

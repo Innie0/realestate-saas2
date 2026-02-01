@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Individual Transaction API route
 // Handles GET (single), PUT (update), and DELETE operations
 

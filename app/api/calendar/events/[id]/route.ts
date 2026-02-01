@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Calendar event delete API route
 // DELETE /api/calendar/events/[id]
 

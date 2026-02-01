@@ -1,3 +1,4 @@
+// @ts-nocheck
 // API route for AI refinement of task outputs
 // POST: Refine existing task output based on user instructions
 

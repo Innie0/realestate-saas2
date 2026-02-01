@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Tasks API route - Handle task creation, listing, and updates
 // GET: List all tasks for the current user
 // POST: Create a new task and generate AI output

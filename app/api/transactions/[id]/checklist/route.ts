@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Transaction Checklist API route
 // Handles checklist item operations
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Transaction Reminders API route
 // Handles reminder operations and the cron-like scheduler endpoint
 

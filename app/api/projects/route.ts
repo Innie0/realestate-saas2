@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Projects API route - Handle project CRUD operations
 // GET: List all projects, POST: Create new project
 

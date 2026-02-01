@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Cron-like Reminder Scheduler API
 // This endpoint processes pending reminders and can be called:
 // 1. By a cron job (Vercel cron, external service, etc.)

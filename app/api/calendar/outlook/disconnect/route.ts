@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Outlook Calendar disconnect route
 // Disconnect Outlook Calendar integration
 

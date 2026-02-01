@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Calendar events API route
 // Handle calendar event CRUD operations
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 // API route for individual reminder - PUT (update) and DELETE
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';

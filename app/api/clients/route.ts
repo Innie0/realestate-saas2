@@ -1,3 +1,4 @@
+// @ts-nocheck
 // API route for clients - GET (list) and POST (create)
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';

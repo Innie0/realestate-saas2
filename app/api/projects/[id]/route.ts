@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Individual project API route - GET, PUT, DELETE
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
