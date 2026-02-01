@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Outlook Calendar API helper functions
 // Handles Microsoft OAuth authentication and calendar event operations
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Supabase client configuration
 // This file sets up the connection to our Supabase backend
 

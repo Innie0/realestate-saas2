@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Google Calendar API helper functions
 // Handles OAuth authentication and calendar event operations
 

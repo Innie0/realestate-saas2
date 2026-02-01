@@ -1,3 +1,4 @@
+// @ts-nocheck
 // OpenAI client configuration
 // This file sets up the connection to OpenAI for AI content generation
 

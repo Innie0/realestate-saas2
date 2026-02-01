@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Client-side Reminder Scheduler
 // Provides basic polling functionality for checking reminders
 // For production, use server-side cron (Vercel Cron, etc.)

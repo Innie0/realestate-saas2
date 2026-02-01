@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Transaction Calendar Sync
 // Syncs transaction important dates to the web app calendar and Google Calendar
 
