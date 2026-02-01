@@ -1935,7 +1935,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               <li>"Make it sound more luxurious"</li>
             </ul>
             <textarea
-              className="block w-full rounded-lg border border-white/20 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="block w-full rounded-lg border border-white/20 bg-gray-800/50 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-gray-800"
               rows={4}
               placeholder="Tell the AI what changes you want..."
               value={refineInstructions}
