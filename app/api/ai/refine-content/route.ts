@@ -65,19 +65,20 @@ TONE: ${tone || 'professional'}
 ${toneGuide[tone as keyof typeof toneGuide] || toneGuide.professional}
 
 REQUIREMENTS:
-1. Apply the user's instructions EXACTLY as requested
-2. Maintain the ${tone || 'professional'} tone throughout
-3. Keep the description length similar (300-350 words, 2-3 paragraphs)
-4. Use single line breaks between paragraphs (no extra spacing)
-5. DO NOT include:
+1. Apply the user's instructions EXACTLY as requested - THIS IS THE HIGHEST PRIORITY
+2. If the user specifies a word count, character count, or length requirement, follow it PRECISELY
+3. Maintain the ${tone || 'professional'} tone throughout
+4. If no specific length is requested, keep the description around 300-350 words, 2-3 paragraphs
+5. Use single line breaks between paragraphs (no extra spacing)
+6. DO NOT include:
    - Specific street address
    - City or neighborhood names
    - Price or dollar amounts
    - Square footage numbers
    - Furniture or staging items
-6. Focus on permanent features: architecture, materials, finishes, appliances, fixtures
-7. Group features logically by area (entry, living spaces, kitchen, bedrooms, outdoor)
-8. Use luxury descriptors: magnificent, stunning, spectacular, remarkable, splendid
+7. Focus on permanent features: architecture, materials, finishes, appliances, fixtures
+8. Group features logically by area (entry, living spaces, kitchen, bedrooms, outdoor)
+9. Use luxury descriptors: magnificent, stunning, spectacular, remarkable, splendid
 
 Return ONLY the refined description text with no additional commentary or explanations.`;
 
@@ -87,7 +88,7 @@ Return ONLY the refined description text with no additional commentary or explan
       messages: [
         {
           role: 'system',
-          content: 'You are an expert real estate copywriter specializing in luxury property descriptions. You follow instructions precisely while maintaining professional quality.',
+          content: 'You are an expert real estate copywriter specializing in luxury property descriptions. You follow user instructions precisely and EXACTLY, including any specific word count, character count, or length requirements. User instructions are your highest priority.',
         },
         {
           role: 'user',
