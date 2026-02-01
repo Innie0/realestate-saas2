@@ -23,13 +23,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Get user's calendar connections
-    const { data: connections, error } = await supabase
+    const { data: connections, error: connectionsError } = await supabase
       .from('calendar_connections')
-      .select('id, provider, email, is_active, created_at')
-      .eq('user_id', user.id as string);
+      .select('*')
+      .eq('user_id', user.id);
 
-    if (error) {
-      throw error;
+    if (connectionsError) {
+      throw connectionsError;
     }
 
     const response: APIResponse = {
