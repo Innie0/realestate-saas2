@@ -22,11 +22,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(response, { status: 401 });
     }
 
+    // Extract user ID to help TypeScript type checking
+    const userId = user.id;
+
     // Get user's calendar connections
     const { data: connections, error: connectionsError } = await supabase
       .from('calendar_connections')
       .select('*')
-      .eq('user_id', user.id);
+      .eq('user_id', userId);
 
     if (connectionsError) {
       throw connectionsError;
