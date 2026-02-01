@@ -9,7 +9,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Home, TrendingUp, Shield, Sparkles, Users, Calendar, ArrowRight } from 'lucide-react';
-import { getCurrentUser } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 /**
  * Animation variants for staggered fade-in effects
@@ -110,14 +110,14 @@ export default function HomePage() {
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
       try {
-        const { user } = await getCurrentUser();
-        if (user) {
+        // Use getSession instead of getUser to avoid error logs
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
           // User is logged in, redirect to dashboard
           router.push('/dashboard');
         }
       } catch (error) {
         // Silently handle errors - user is not logged in
-        console.log('No active session');
       }
     };
     
