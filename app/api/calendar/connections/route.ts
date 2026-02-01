@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     const { data: connections, error } = await supabase
       .from('calendar_connections')
       .select('id, provider, email, is_active, created_at')
-      .eq('user_id', user.id);
+      .eq('user_id', user.id as string);
 
     if (error) {
       throw error;
