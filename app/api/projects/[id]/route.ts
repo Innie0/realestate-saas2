@@ -8,9 +8,10 @@ import { createClient } from '@/lib/supabase-server';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
     // Check authentication
@@ -22,7 +23,7 @@ export async function GET(
       );
     }
 
-    const projectId = params.id;
+    const projectId = id;
 
     // Fetch project
     const { data: project, error } = await supabase
@@ -58,9 +59,10 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
     // Check authentication
@@ -72,7 +74,7 @@ export async function PUT(
       );
     }
 
-    const projectId = params.id;
+    const projectId = id;
     const body = await request.json();
 
     // Verify ownership
@@ -142,9 +144,10 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
     // Check authentication
@@ -156,7 +159,7 @@ export async function DELETE(
       );
     }
 
-    const projectId = params.id;
+    const projectId = id;
 
     // Delete project
     const { error } = await supabase

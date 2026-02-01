@@ -8,9 +8,10 @@ import { createClient } from '@/lib/supabase-server';
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
     // Check authentication
@@ -22,7 +23,7 @@ export async function PUT(
       );
     }
 
-    const reminderId = params.id;
+    const reminderId = id;
 
     // Parse request body
     const body = await request.json();
@@ -79,9 +80,10 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
     // Check authentication
@@ -93,7 +95,7 @@ export async function DELETE(
       );
     }
 
-    const reminderId = params.id;
+    const reminderId = id;
 
     // Get reminder details first (to find associated calendar events)
     const { data: reminder } = await supabase

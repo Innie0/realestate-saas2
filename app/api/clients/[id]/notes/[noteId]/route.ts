@@ -8,9 +8,10 @@ import { createClient } from '@/lib/supabase-server';
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string; noteId: string } }
+  { params }: { params: Promise<{ id: string; noteId: string }> }
 ) {
   try {
+    const { id, noteId } = await params;
     const supabase = await createClient();
 
     // Check authentication
@@ -21,8 +22,6 @@ export async function PUT(
         { status: 401 }
       );
     }
-
-    const noteId = params.noteId;
     const body = await request.json();
     const { note } = body;
 
@@ -70,9 +69,10 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; noteId: string } }
+  { params }: { params: Promise<{ id: string; noteId: string }> }
 ) {
   try {
+    const { id, noteId } = await params;
     const supabase = await createClient();
 
     // Check authentication
@@ -83,8 +83,6 @@ export async function DELETE(
         { status: 401 }
       );
     }
-
-    const noteId = params.noteId;
 
     // Delete note (verify it belongs to the user)
     const { error } = await supabase

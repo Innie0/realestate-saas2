@@ -8,9 +8,10 @@ import { createClient } from '@/lib/supabase-server';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
     // Check authentication
@@ -22,7 +23,7 @@ export async function GET(
       );
     }
 
-    const clientId = params.id;
+    const clientId = id;
 
     // Verify client belongs to user
     const { data: client } = await supabase
@@ -73,9 +74,10 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
     // Check authentication
@@ -87,7 +89,7 @@ export async function POST(
       );
     }
 
-    const clientId = params.id;
+    const clientId = id;
 
     // Verify client belongs to user
     const { data: client } = await supabase

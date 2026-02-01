@@ -11,9 +11,10 @@ import { updateTransactionCalendarEvents, deleteTransactionCalendarEvents } from
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     
     // Get current user
@@ -25,8 +26,6 @@ export async function GET(
         { status: 401 }
       );
     }
-
-    const { id } = params;
 
     // Fetch transaction with related data
     const { data: transaction, error } = await supabase
@@ -107,9 +106,10 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     
     // Get current user
@@ -121,8 +121,6 @@ export async function PUT(
         { status: 401 }
       );
     }
-
-    const { id } = params;
     const body = await request.json();
 
     // Verify ownership
@@ -216,9 +214,10 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     
     // Get current user
@@ -230,8 +229,6 @@ export async function DELETE(
         { status: 401 }
       );
     }
-
-    const { id } = params;
 
     // Delete calendar events first (before transaction is deleted)
     try {

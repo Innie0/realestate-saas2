@@ -8,9 +8,10 @@ import { createClient } from '@/lib/supabase-server';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
     // Check authentication
@@ -22,7 +23,7 @@ export async function GET(
       );
     }
 
-    const clientId = params.id;
+    const clientId = id;
 
     // Fetch client
     const { data: client, error: clientError } = await supabase
@@ -82,9 +83,10 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
     // Check authentication
@@ -96,7 +98,7 @@ export async function PUT(
       );
     }
 
-    const clientId = params.id;
+    const clientId = id;
 
     // Parse request body
     const body = await request.json();
@@ -152,9 +154,10 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
     // Check authentication
@@ -166,7 +169,7 @@ export async function DELETE(
       );
     }
 
-    const clientId = params.id;
+    const clientId = id;
 
     // Delete client (notes and reminders will cascade delete)
     const { error } = await supabase

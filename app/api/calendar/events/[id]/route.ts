@@ -11,7 +11,7 @@ import { APIResponse } from '@/types';
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Get authenticated user
@@ -26,7 +26,7 @@ export async function DELETE(
       return NextResponse.json(response, { status: 401 });
     }
 
-    const eventId = params.id;
+    const { id: eventId } = await params;
 
     // Get event details first
     const { data: event, error: fetchError } = await supabase

@@ -10,9 +10,10 @@ import { createClient } from '@/lib/supabase-server';
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: transactionId } = await params;
     const supabase = await createClient();
     
     // Get current user
@@ -24,8 +25,6 @@ export async function POST(
         { status: 401 }
       );
     }
-
-    const { id: transactionId } = params;
     const body = await request.json();
 
     // Verify transaction ownership
@@ -105,9 +104,10 @@ export async function POST(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     
     // Get current user
@@ -181,9 +181,10 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     
     // Get current user
