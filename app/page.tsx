@@ -109,10 +109,15 @@ export default function HomePage() {
   // Check if user is already logged in and redirect to dashboard
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
-      const { user } = await getCurrentUser();
-      if (user) {
-        // User is logged in, redirect to dashboard
-        router.push('/dashboard');
+      try {
+        const { user } = await getCurrentUser();
+        if (user) {
+          // User is logged in, redirect to dashboard
+          router.push('/dashboard');
+        }
+      } catch (error) {
+        // Silently handle errors - user is not logged in
+        console.log('No active session');
       }
     };
     
