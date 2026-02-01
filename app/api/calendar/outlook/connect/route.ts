@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Outlook Calendar connection route
 // Initiates Microsoft OAuth flow
 

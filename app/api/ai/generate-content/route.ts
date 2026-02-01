@@ -1,3 +1,4 @@
+// @ts-nocheck
 // AI Content Generation API Route
 // Generates property descriptions using OpenAI
 

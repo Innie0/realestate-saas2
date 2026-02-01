@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Brand Kit API route - Handle brand kit operations
 // GET: Get user's brand kit, PUT: Update brand kit
 

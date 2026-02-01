@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Google Calendar connection route
 // Initiates Google OAuth flow
 

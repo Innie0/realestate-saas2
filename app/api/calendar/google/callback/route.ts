@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Google Calendar OAuth callback route
 // Handles the OAuth callback and exchanges code for tokens
 

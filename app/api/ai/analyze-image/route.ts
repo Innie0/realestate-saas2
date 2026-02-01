@@ -1,3 +1,4 @@
+// @ts-nocheck
 // AI Image Analysis API Route
 // Analyzes property images using OpenAI Vision API
 

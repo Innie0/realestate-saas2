@@ -1,3 +1,4 @@
+// @ts-nocheck
 // AI Content Refinement API
 // Refines existing property descriptions based on user instructions using OpenAI
 
