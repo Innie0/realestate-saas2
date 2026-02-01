@@ -4,7 +4,7 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
@@ -34,7 +34,9 @@ interface ToneVersion {
  * Project detail page component
  * View and edit project details, upload images, generate AI content
  */
-export default function ProjectDetailPage({ params }: { params: { id: string } }) {
+export default function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  // Unwrap the params Promise (Next.js 16 requirement)
+  const { id: projectId } = use(params);
   const router = useRouter();
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -81,7 +83,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
         setIsLoading(true);
         
         // Fetch from the actual API
-        const response = await fetch(`/api/projects/${params.id}`);
+        const response = await fetch(`/api/projects/${projectId}`);
         const result = await response.json();
         
         if (result.success && result.data) {
@@ -165,7 +167,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
     };
 
     loadProject();
-  }, [params.id]);
+  }, [projectId]);
 
   // Fetch related tasks and transactions
   useEffect(() => {
@@ -173,7 +175,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
       if (!project) return;
       
       try {
-        const tasksRes = await fetch(`/api/calendar/events?project_id=${params.id}`);
+        const tasksRes = await fetch(`/api/calendar/events?project_id=${projectId}`);
         if (tasksRes.ok) {
           const tasksData = await tasksRes.json();
           setRelatedTasks(tasksData.events || []);
@@ -183,7 +185,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
       }
 
       try {
-        const transactionsRes = await fetch(`/api/transactions?project_id=${params.id}`);
+        const transactionsRes = await fetch(`/api/transactions?project_id=${projectId}`);
         if (transactionsRes.ok) {
           const transData = await transactionsRes.json();
           setRelatedTransactions(transData.data || []);
@@ -194,7 +196,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
     };
 
     fetchRelatedData();
-  }, [params.id, project]);
+  }, [projectId, project]);
 
   /**
    * Auto-save functionality - debounced save after changes

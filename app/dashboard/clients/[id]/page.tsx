@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { ClientWithDetails, ClientNote, Reminder } from '@/types';
 import ClientForm from '@/components/ClientForm';
@@ -14,7 +14,9 @@ import { ArrowLeft, Edit, Trash2, Plus, Clock, CheckCircle, StickyNote, Calendar
  * View and manage a single client with notes and reminders
  * Supports editing notes inline
  */
-export default function ClientDetailPage({ params }: { params: { id: string } }) {
+export default function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  // Unwrap the params Promise (Next.js 16 requirement)
+  const { id: clientId } = use(params);
   const router = useRouter();
   const [client, setClient] = useState<ClientWithDetails | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,11 +30,11 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
 
   useEffect(() => {
     fetchClient();
-  }, [params.id]);
+  }, [clientId]);
 
   const fetchClient = async () => {
     try {
-      const response = await fetch(`/api/clients/${params.id}`);
+      const response = await fetch(`/api/clients/${clientId}`);
       const result = await response.json();
 
       if (result.success) {
@@ -51,7 +53,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
   const handleUpdateClient = async (data: any) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch(`/api/clients/${params.id}`, {
+      const response = await fetch(`/api/clients/${clientId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -79,7 +81,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
     }
 
     try {
-      const response = await fetch(`/api/clients/${params.id}`, {
+      const response = await fetch(`/api/clients/${clientId}`, {
         method: 'DELETE',
       });
 
@@ -99,7 +101,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(`/api/clients/${params.id}/notes`, {
+      const response = await fetch(`/api/clients/${clientId}/notes`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ note: newNote }),
@@ -126,7 +128,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
     if (!confirm('Are you sure you want to delete this note?')) return;
 
     try {
-      const response = await fetch(`/api/clients/${params.id}/notes/${noteId}`, {
+      const response = await fetch(`/api/clients/${clientId}/notes/${noteId}`, {
         method: 'DELETE',
       });
 
@@ -148,7 +150,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(`/api/clients/${params.id}/notes/${noteId}`, {
+      const response = await fetch(`/api/clients/${clientId}/notes/${noteId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ note: editingNoteContent }),
@@ -437,7 +439,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
           {showReminderForm && (
             <div className="mb-4 p-4 bg-white/5 rounded-lg">
               <ReminderForm
-                clientId={params.id}
+                clientId={clientId}
                 onSubmit={handleCreateReminder}
                 onCancel={() => setShowReminderForm(false)}
                 isLoading={isSubmitting}

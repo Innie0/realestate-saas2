@@ -3,7 +3,7 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { format } from 'date-fns';
@@ -21,12 +21,13 @@ import TransactionChecklist from '@/components/TransactionChecklist';
 import { TransactionWithDetails, TransactionReminder } from '@/types';
 
 interface TransactionDetailPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default function TransactionDetailPage({ params }: TransactionDetailPageProps) {
+  // Unwrap the params Promise (Next.js 16 requirement)
+  const { id } = use(params);
   const router = useRouter();
-  const { id } = params;
 
   const [transaction, setTransaction] = useState<TransactionWithDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
