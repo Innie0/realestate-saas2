@@ -8,13 +8,13 @@ import type { Database } from '@/types/supabase';
 /**
  * Create a Supabase client for server-side use (API routes)
  * This client properly handles authentication via cookies
+ * Note: In Next.js 16+, cookies() returns a promise
  */
-export function createClient() {
-  const cookieStore = cookies();
+export async function createClient() {
+  const cookieStore = await cookies();
   
   return createRouteHandlerClient<Database>({ 
     cookies: () => cookieStore 
   });
 }
-
 

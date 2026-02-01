@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       apiKey: process.env.OPENAI_API_KEY || 'dummy-key-for-build',
     });
 
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
