@@ -35,6 +35,7 @@ export async function signUpWithEmail(email: string, password: string, fullName?
     email,
     password,
     options: {
+      emailRedirectTo: `${window.location.origin}/pricing`,
       data: {
         full_name: fullName,
       },
@@ -52,20 +53,33 @@ export async function signUpWithEmail(email: string, password: string, fullName?
     hasAccessToken: !!data.session?.access_token,
   });
 
-  // Check session immediately and after a delay
-  const checkSession = async () => {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const lsKeys = Object.keys(localStorage);
-    console.log('[Auth] Post-signup check:', {
-      hasSessionNow: !!sessionData.session,
-      localStorageKeys: lsKeys.filter(k => k.includes('supabase') || k.includes('sb-')),
-      allLSKeys: lsKeys,
-    });
-  };
-  
-  setTimeout(checkSession, 200);
+  // If session exists, we're good to go (auto-confirm is enabled)
+  if (data.session) {
+    console.log('[Auth] Session established immediately');
+    return { user: data.user, session: data.session, error: null };
+  }
 
-  return { user: data.user, error: null };
+  // If no session, email confirmation might be required
+  console.warn('[Auth] No session after signup - email confirmation may be required');
+  
+  // Try to sign in immediately (works if auto-confirm is enabled)
+  console.log('[Auth] Attempting automatic sign in...');
+  const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (signInError) {
+    console.error('[Auth] Auto sign-in failed:', signInError.message);
+    return { user: data.user, session: null, error: signInError };
+  }
+
+  console.log('[Auth] Auto sign-in successful!', {
+    hasSession: !!signInData.session,
+    hasAccessToken: !!signInData.session?.access_token,
+  });
+
+  return { user: signInData.user, session: signInData.session, error: null };
 }
 
 /**

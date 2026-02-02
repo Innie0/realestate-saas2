@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import { signUpWithEmail, signInWithGoogle } from '@/lib/supabase';
+import { signUpWithEmail, signInWithGoogle, supabase } from '@/lib/supabase';
 
 /**
  * Sign up page component
@@ -60,7 +60,7 @@ export default function SignUpPage() {
     }
 
     // Call Supabase sign up function
-    const { user, error: signUpError } = await signUpWithEmail(email, password, fullName);
+    const { user, session, error: signUpError } = await signUpWithEmail(email, password, fullName);
 
     if (signUpError) {
       setError(signUpError.message);
@@ -70,10 +70,28 @@ export default function SignUpPage() {
 
     // Show success message
     if (user) {
-      // Wait a moment to ensure session is fully established
-      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log('[Signup Page] Signup complete, verifying session...');
+      
+      // Verify session is actually established
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      
+      console.log('[Signup Page] Session verification:', {
+        hasSession: !!currentSession,
+        hasAccessToken: !!currentSession?.access_token,
+        userId: currentSession?.user?.id,
+      });
+      
+      if (!currentSession) {
+        setError('Session not established. Please try signing in manually.');
+        setIsLoading(false);
+        return;
+      }
+      
+      // Wait a bit more to ensure cookies are set
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Redirect to pricing page to choose a plan
+      console.log('[Signup Page] Redirecting to pricing...');
       router.push('/pricing');
     }
   };
