@@ -70,12 +70,12 @@ export default function PricingPage() {
         <div className="flex justify-center items-center">
           <Link href="/" className="block">
             <Image
-              src="/logo-landing.png"
+              src="/logo.png"
               alt="Realestic"
-              width={300}
-              height={90}
+              width={240}
+              height={72}
               priority
-              className="h-20 w-auto"
+              className="h-14 w-auto"
             />
           </Link>
         </div>
