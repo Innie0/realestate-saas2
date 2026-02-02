@@ -1,12 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Check, Sparkles, Zap, X } from 'lucide-react';
+import { Check, Sparkles, Zap, X, Loader2 } from 'lucide-react';
 import SubscribeButton from '@/components/SubscribeButton';
 import Button from '@/components/ui/Button';
+import { supabase } from '@/lib/supabase';
 
 /**
  * Pricing Page
@@ -14,6 +15,36 @@ import Button from '@/components/ui/Button';
  */
 export default function PricingPage() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+
+  // Check authentication status on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      console.log('[Pricing] Checking auth...');
+      
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      console.log('[Pricing] Session check:', {
+        hasSession: !!session,
+        hasUser: !!session?.user,
+        userEmail: session?.user?.email,
+        error: error?.message,
+      });
+
+      if (session?.user) {
+        setIsAuthenticated(true);
+        setUserEmail(session.user.email || '');
+      } else {
+        setIsAuthenticated(false);
+      }
+      
+      setIsLoading(false);
+    };
+
+    checkAuth();
+  }, []);
 
   const plans = [
     {
@@ -67,7 +98,7 @@ export default function PricingPage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-950">
       {/* Header */}
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-center items-center">
+        <div className="flex justify-between items-center">
           <Link href="/" className="block">
             <Image
               src="/logo.png"
@@ -78,11 +109,33 @@ export default function PricingPage() {
               className="h-14 w-auto"
             />
           </Link>
+          
+          {/* User status indicator */}
+          {!isLoading && (
+            <div className="text-sm">
+              {isAuthenticated ? (
+                <span className="text-green-400">✓ Logged in as {userEmail}</span>
+              ) : (
+                <Link href="/auth/signup" className="text-blue-400 hover:text-blue-300">
+                  Sign in to subscribe
+                </Link>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
+      {/* Loading State */}
+      {isLoading && (
+        <div className="container mx-auto px-4 py-32 text-center">
+          <Loader2 className="w-12 h-12 text-purple-500 animate-spin mx-auto mb-4" />
+          <p className="text-gray-400">Loading plans...</p>
+        </div>
+      )}
+
       {/* Pricing Section */}
-      <div className="container mx-auto px-4 py-16">
+      {!isLoading && (
+        <div className="container mx-auto px-4 py-16">
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-5xl font-bold text-white mb-4">
@@ -175,7 +228,23 @@ export default function PricingPage() {
             </div>
           ))}
         </div>
+        
+        {/* Not Authenticated Warning */}
+        {!isAuthenticated && (
+          <div className="max-w-2xl mx-auto mt-8 p-6 bg-yellow-500/10 border border-yellow-500/30 rounded-xl text-center">
+            <p className="text-yellow-400 mb-3">
+              ⚠️ You need to be logged in to subscribe
+            </p>
+            <Button
+              onClick={() => router.push('/auth/signup')}
+              variant="outline"
+            >
+              Sign up to get started
+            </Button>
+          </div>
+        )}
       </div>
+      )}
     </div>
   );
 }

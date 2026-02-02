@@ -38,10 +38,18 @@ export default function SubscribeButton({
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Ensure cookies are sent
         body: JSON.stringify({ priceId, mode }),
       });
 
       const data = await response.json();
+
+      console.log('[Subscribe] Checkout response:', {
+        ok: response.ok,
+        status: response.status,
+        hasSessionId: !!data.sessionId,
+        error: data.error,
+      });
 
       if (!response.ok) {
         throw new Error(data.error || 'Failed to create checkout session');
