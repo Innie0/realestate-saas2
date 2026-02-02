@@ -70,8 +70,8 @@ export default function SignUpPage() {
 
     // Show success message
     if (user) {
-      // Redirect to dashboard or show email confirmation message
-      router.push('/dashboard');
+      // Redirect to pricing page to choose a plan
+      router.push('/pricing');
     }
   };
 
