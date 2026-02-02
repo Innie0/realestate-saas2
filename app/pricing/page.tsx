@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Check, Sparkles, Zap, X } from 'lucide-react';
 import SubscribeButton from '@/components/SubscribeButton';
@@ -67,8 +68,15 @@ export default function PricingPage() {
       {/* Header */}
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-center items-center">
-          <Link href="/" className="text-2xl font-bold text-white">
-            Realestic
+          <Link href="/" className="block">
+            <Image
+              src="/logo-landing.png"
+              alt="Realestic"
+              width={300}
+              height={90}
+              priority
+              className="h-20 w-auto"
+            />
           </Link>
         </div>
       </div>
