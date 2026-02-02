@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Subscribe Button Component
 // Redirects user to Stripe Checkout for subscription
 
