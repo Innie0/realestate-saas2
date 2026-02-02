@@ -69,7 +69,7 @@ export default function SignUpPage() {
     }
 
     // Show success message
-    if (user) {
+    if (user && session) {
       console.log('[Signup Page] Signup complete, verifying session...');
       
       // Verify session is actually established
@@ -87,12 +87,13 @@ export default function SignUpPage() {
         return;
       }
       
-      // Wait a bit more to ensure cookies are set
+      // Wait for session to fully sync
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Redirect to pricing page to choose a plan
-      console.log('[Signup Page] Redirecting to pricing...');
-      router.push('/pricing');
+      // Use window.location instead of router.push to ensure full page reload
+      // This forces the middleware to sync cookies properly
+      console.log('[Signup Page] Redirecting to pricing with full reload...');
+      window.location.href = '/pricing';
     }
   };
 
