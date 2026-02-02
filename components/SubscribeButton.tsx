@@ -5,7 +5,6 @@
 'use client';
 
 import { useState } from 'react';
-import { getStripe } from '@/lib/stripe-client';
 import Button from '@/components/ui/Button';
 import { CreditCard } from 'lucide-react';
 
@@ -47,7 +46,7 @@ export default function SubscribeButton({
       console.log('[Subscribe] Checkout response:', {
         ok: response.ok,
         status: response.status,
-        hasSessionId: !!data.sessionId,
+        hasUrl: !!data.url,
         error: data.error,
       });
 
@@ -55,20 +54,13 @@ export default function SubscribeButton({
         throw new Error(data.error || 'Failed to create checkout session');
       }
 
-      // Redirect to Stripe Checkout
-      const stripe = await getStripe();
-      
-      if (!stripe) {
-        throw new Error('Failed to load Stripe');
+      // Redirect to Stripe Checkout using the URL returned from the API
+      if (!data.url) {
+        throw new Error('No checkout URL returned');
       }
 
-      const { error: stripeError } = await stripe.redirectToCheckout({
-        sessionId: data.sessionId,
-      });
-
-      if (stripeError) {
-        throw new Error(stripeError.message);
-      }
+      console.log('[Subscribe] Redirecting to Stripe Checkout...');
+      window.location.href = data.url;
     } catch (err: any) {
       console.error('Subscription error:', err);
       setError(err.message || 'Something went wrong');
