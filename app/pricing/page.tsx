@@ -52,7 +52,7 @@ export default function PricingPage() {
       price: '$14.99',
       period: 'per month',
       description: 'Perfect for getting started with your real estate business',
-      priceId: 'price_starter_id_here', // Replace with your actual Stripe Price ID
+      priceId: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || 'price_1Sw9B7Enz9g2d62xiHw3wYn5',
       features: [
         'Up to 10 property listings per month',
         'AI-powered descriptions',
@@ -75,7 +75,7 @@ export default function PricingPage() {
       price: '$39.99',
       period: 'per month',
       description: 'Everything you need to scale your real estate business',
-      priceId: 'price_pro_id_here', // Replace with your actual Stripe Price ID
+      priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || 'price_1Sw9MdEnz9g2d62xlyjilIoq',
       features: [
         'Unlimited property listings',
         'AI-powered descriptions with multiple tones',
