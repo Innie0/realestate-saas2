@@ -88,8 +88,11 @@ export default function PricingPage() {
           <h1 className="text-5xl font-bold text-white mb-4">
             Choose Your Plan
           </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-3">
             Select the perfect plan to streamline your real estate workflow and save time on every listing
+          </p>
+          <p className="text-lg text-green-400 font-semibold">
+            ✨ Start with a 7-day free trial on any plan
           </p>
         </div>
 
@@ -120,12 +123,15 @@ export default function PricingPage() {
                   {plan.name}
                 </h3>
                 <p className="text-gray-400 text-sm mb-4">{plan.description}</p>
-                <div className="flex items-baseline justify-center gap-2">
+                <div className="flex items-baseline justify-center gap-2 mb-2">
                   <span className="text-5xl font-bold text-white">
                     {plan.price}
                   </span>
                   <span className="text-gray-400">{plan.period}</span>
                 </div>
+                <p className="text-sm text-green-400 font-medium">
+                  7-day free trial included
+                </p>
               </div>
 
               {/* Subscribe Button */}
@@ -168,13 +174,6 @@ export default function PricingPage() {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Bottom CTA */}
-        <div className="text-center mt-16">
-          <p className="text-gray-400">
-            All plans include a 14-day money-back guarantee
-          </p>
         </div>
       </div>
     </div>
