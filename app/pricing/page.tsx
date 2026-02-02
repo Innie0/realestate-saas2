@@ -66,13 +66,10 @@ export default function PricingPage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-950">
       {/* Header */}
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-center items-center">
           <Link href="/" className="text-2xl font-bold text-white">
             Realestic
           </Link>
-          <Button variant="outline" onClick={() => router.push('/dashboard')}>
-            Skip for Now
-          </Button>
         </div>
       </div>
 
@@ -167,14 +164,8 @@ export default function PricingPage() {
 
         {/* Bottom CTA */}
         <div className="text-center mt-16">
-          <p className="text-gray-400 mb-4">
+          <p className="text-gray-400">
             All plans include a 14-day money-back guarantee
-          </p>
-          <p className="text-sm text-gray-500">
-            Need help choosing?{' '}
-            <Link href="/dashboard" className="text-blue-400 hover:text-blue-300 underline">
-              Start with a free trial
-            </Link>
           </p>
         </div>
       </div>
