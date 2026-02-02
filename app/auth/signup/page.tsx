@@ -70,6 +70,9 @@ export default function SignUpPage() {
 
     // Show success message
     if (user) {
+      // Wait a moment to ensure session is fully established
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       // Redirect to pricing page to choose a plan
       router.push('/pricing');
     }

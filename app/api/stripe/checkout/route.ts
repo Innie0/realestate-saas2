@@ -17,9 +17,16 @@ export async function POST(req: NextRequest) {
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
+    console.log('[Stripe Checkout] Auth check:', { 
+      hasUser: !!user, 
+      userId: user?.id, 
+      authError: authError?.message 
+    });
+    
     if (authError || !user) {
+      console.error('[Stripe Checkout] Unauthorized:', authError?.message);
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'You must be logged in to subscribe. Please sign in and try again.' },
         { status: 401 }
       );
     }
