@@ -17,7 +17,7 @@ export default function PricingPage() {
   const plans = [
     {
       name: 'Starter',
-      price: '$29',
+      price: '$14.99',
       period: 'per month',
       description: 'Perfect for getting started with your real estate business',
       priceId: 'price_starter_id_here', // Replace with your actual Stripe Price ID
@@ -40,7 +40,7 @@ export default function PricingPage() {
     },
     {
       name: 'Pro',
-      price: '$79',
+      price: '$39.99',
       period: 'per month',
       description: 'Everything you need to scale your real estate business',
       priceId: 'price_pro_id_here', // Replace with your actual Stripe Price ID
