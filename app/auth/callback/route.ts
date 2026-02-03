@@ -24,28 +24,31 @@ export async function GET(request: Request) {
       return NextResponse.redirect(new URL('/auth/login?error=auth_failed', requestUrl.origin));
     }
 
-    // Check if this is a new user by checking when they were created
-    // If created in last 10 seconds, treat as new signup
-    const userCreatedAt = new Date(user.created_at);
-    const now = new Date();
-    const secondsSinceCreation = (now.getTime() - userCreatedAt.getTime()) / 1000;
-    const isNewUser = secondsSinceCreation < 10;
+    // Check subscription status to determine where to redirect
+    const { data: userData } = await supabase
+      .from('users')
+      .select('subscription_status')
+      .eq('id', user.id)
+      .single();
+    
+    const hasActiveSubscription = 
+      userData?.subscription_status === 'active' || 
+      userData?.subscription_status === 'trialing';
 
     console.log('[OAuth Callback] User authenticated:', {
       userId: user.id,
       email: user.email,
-      createdAt: userCreatedAt,
-      secondsSinceCreation,
-      isNewUser,
+      subscriptionStatus: userData?.subscription_status,
+      hasActiveSubscription,
     });
 
-    // Redirect based on whether this is a new signup or existing login
-    if (isNewUser) {
-      // New signup - redirect to pricing page
-      return NextResponse.redirect(new URL('/pricing', requestUrl.origin));
-    } else {
-      // Existing user login - redirect to dashboard
+    // Redirect based on subscription status
+    if (hasActiveSubscription) {
+      // Has active subscription - redirect to dashboard
       return NextResponse.redirect(new URL('/dashboard', requestUrl.origin));
+    } else {
+      // No subscription - redirect to pricing page
+      return NextResponse.redirect(new URL('/pricing', requestUrl.origin));
     }
   }
 

@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import { signInWithEmail, signInWithGoogle } from '@/lib/supabase';
+import { signInWithEmail, signInWithGoogle, supabase } from '@/lib/supabase';
 
 /**
  * Login page component
@@ -47,9 +47,40 @@ export default function LoginPage() {
       return;
     }
 
-    // Redirect to dashboard on success
+    // Check subscription status before redirecting
     if (user) {
-      router.push('/dashboard');
+      try {
+        const { data: userData } = await supabase
+          .from('users')
+          .select('subscription_status')
+          .eq('id', user.id)
+          .single();
+        
+        const hasActiveSubscription = 
+          userData?.subscription_status === 'active' || 
+          userData?.subscription_status === 'trialing';
+        
+        console.log('[Login] Subscription check:', {
+          userId: user.id,
+          status: userData?.subscription_status,
+          hasActive: hasActiveSubscription,
+        });
+        
+        // Wait a moment for session to fully sync
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        if (hasActiveSubscription) {
+          // Has subscription - go to dashboard
+          window.location.href = '/dashboard';
+        } else {
+          // No subscription - go to pricing
+          window.location.href = '/pricing';
+        }
+      } catch (error) {
+        console.error('[Login] Error checking subscription:', error);
+        // On error, redirect to pricing to be safe
+        window.location.href = '/pricing';
+      }
     }
   };
 
