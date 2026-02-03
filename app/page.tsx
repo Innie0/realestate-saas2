@@ -106,7 +106,8 @@ function FeatureTile({
 export default function HomePage() {
   const router = useRouter();
   
-  // Check if user is logged in AND has active subscription to redirect to dashboard
+  // Check if user has active subscription to redirect to dashboard
+  // DO NOT redirect users without subscription - let them see the landing page
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
       try {
@@ -127,10 +128,8 @@ export default function HomePage() {
           if (hasActiveSubscription) {
             // User has active subscription - redirect to dashboard
             router.push('/dashboard');
-          } else {
-            // User is logged in but no subscription - redirect to pricing
-            router.push('/pricing');
           }
+          // If no subscription, do nothing - let them stay on landing page
         }
       } catch (error) {
         // Silently handle errors - user is not logged in
