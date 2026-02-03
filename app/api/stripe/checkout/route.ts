@@ -71,8 +71,8 @@ export async function POST(req: NextRequest) {
         .eq('id', user.id);
     }
 
-    // Create checkout session
-    const session = await stripe.checkout.sessions.create({
+    // Create checkout session configuration
+    const sessionConfig: any = {
       customer: customerId,
       line_items: [
         {
@@ -88,7 +88,24 @@ export async function POST(req: NextRequest) {
       },
       allow_promotion_codes: true,
       billing_address_collection: 'auto',
-    });
+    };
+
+    // Add 7-day trial for subscriptions
+    if (mode === 'subscription') {
+      sessionConfig.subscription_data = {
+        trial_period_days: 7,
+        trial_settings: {
+          end_behavior: {
+            missing_payment_method: 'cancel',
+          },
+        },
+      };
+      // Collect payment method upfront but don't charge until trial ends
+      sessionConfig.payment_method_collection = 'always';
+    }
+
+    // Create checkout session
+    const session = await stripe.checkout.sessions.create(sessionConfig);
 
     return NextResponse.json({ 
       success: true,
