@@ -19,7 +19,7 @@ export default function PricingPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState('');
 
-  // Check authentication status on mount
+  // Check authentication and subscription status on mount
   useEffect(() => {
     const checkAuth = async () => {
       console.log('[Pricing] Checking auth...');
@@ -36,6 +36,23 @@ export default function PricingPage() {
       if (session?.user) {
         setIsAuthenticated(true);
         setUserEmail(session.user.email || '');
+        
+        // Check if user already has an active subscription
+        const { data: userData } = await supabase
+          .from('users')
+          .select('subscription_status')
+          .eq('id', session.user.id)
+          .single();
+        
+        const hasActiveSubscription = 
+          userData?.subscription_status === 'active' || 
+          userData?.subscription_status === 'trialing';
+        
+        if (hasActiveSubscription) {
+          console.log('[Pricing] User already has active subscription - redirecting to dashboard');
+          router.push('/dashboard');
+          return;
+        }
       } else {
         setIsAuthenticated(false);
       }
@@ -44,7 +61,7 @@ export default function PricingPage() {
     };
 
     checkAuth();
-  }, []);
+  }, [router]);
 
   const plans = [
     {

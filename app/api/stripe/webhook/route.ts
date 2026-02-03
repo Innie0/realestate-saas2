@@ -60,7 +60,6 @@ export async function POST(req: NextRequest) {
         // Update user's subscription info
         const updateData: any = {
           stripe_customer_id: session.customer,
-          subscription_status: 'active',
         };
 
         // If it's a subscription, get the subscription details
@@ -74,6 +73,19 @@ export async function POST(req: NextRequest) {
           updateData.subscription_current_period_end = new Date(
             subscription.current_period_end * 1000
           ).toISOString();
+          
+          // Set status based on whether it's a trial or active subscription
+          updateData.subscription_status = subscription.status; // 'trialing' or 'active'
+          
+          console.log('Subscription details:', {
+            id: subscription.id,
+            status: subscription.status,
+            trial_end: subscription.trial_end,
+            isTrialing: subscription.status === 'trialing',
+          });
+        } else {
+          // One-time payment
+          updateData.subscription_status = 'active';
         }
 
         await supabase
@@ -81,7 +93,7 @@ export async function POST(req: NextRequest) {
           .update(updateData)
           .eq('id', userId);
 
-        console.log('User subscription updated:', userId);
+        console.log('User subscription updated:', userId, 'Status:', updateData.subscription_status);
         break;
       }
 

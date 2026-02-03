@@ -106,15 +106,31 @@ function FeatureTile({
 export default function HomePage() {
   const router = useRouter();
   
-  // Check if user is already logged in and redirect to dashboard
+  // Check if user is logged in AND has active subscription to redirect to dashboard
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
       try {
         // Use getSession instead of getUser to avoid error logs
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
-          // User is logged in, redirect to dashboard
-          router.push('/dashboard');
+          // User is logged in - check if they have an active subscription
+          const { data: userData } = await supabase
+            .from('users')
+            .select('subscription_status')
+            .eq('id', session.user.id)
+            .single();
+          
+          const hasActiveSubscription = 
+            userData?.subscription_status === 'active' || 
+            userData?.subscription_status === 'trialing';
+          
+          if (hasActiveSubscription) {
+            // User has active subscription - redirect to dashboard
+            router.push('/dashboard');
+          } else {
+            // User is logged in but no subscription - redirect to pricing
+            router.push('/pricing');
+          }
         }
       } catch (error) {
         // Silently handle errors - user is not logged in
