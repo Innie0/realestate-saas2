@@ -164,10 +164,10 @@ export default function HomePage() {
         className="relative z-50 border-b border-white/10 backdrop-blur-md bg-black/50"
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="flex h-20 items-center justify-between">
-            {/* Logo - positioned at left edge */}
+          <div className="flex h-20 items-center justify-center sm:justify-between">
+            {/* Logo - centered on mobile, left-aligned on desktop */}
             <motion.div 
-              className="flex items-center absolute left-6 lg:left-8"
+              className="flex items-center absolute left-1/2 -translate-x-1/2 sm:left-6 sm:translate-x-0 lg:left-8"
               whileHover={{ scale: 1.02 }}
             >
               <Image
