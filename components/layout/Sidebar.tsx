@@ -147,11 +147,10 @@ export default function Sidebar() {
 
       {/* Sidebar - Desktop: fixed left, Mobile: slide-in overlay */}
       <div className={clsx(
-        'fixed top-0 h-screen w-64 flex-col bg-gradient-to-b from-gray-900 via-black to-gray-900 text-white z-50 transition-transform duration-300',
-        // Desktop: always visible
-        'lg:translate-x-0 lg:flex',
+        'fixed top-0 h-screen w-64 flex flex-col bg-gradient-to-b from-gray-900 via-black to-gray-900 text-white z-50 transition-transform duration-300',
+        // Desktop: always visible and relative positioning
+        'lg:translate-x-0 lg:relative',
         // Mobile: hidden by default, slide in when menu open
-        'lg:relative',
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       )}>
         {/* Logo / Brand section at the top - hidden on mobile (shown in header) */}
@@ -195,11 +194,11 @@ export default function Sidebar() {
         </nav>
 
         {/* Sign out button at the bottom */}
-        <div className="border-t border-gray-900 p-3">
+        <div className="border-t border-gray-900 p-3 pb-safe">
           <button
             onClick={handleSignOut}
             disabled={isSigningOut}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-gray-300 transition-colors hover:bg-gray-900 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-gray-300 transition-colors hover:bg-gray-900 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] touch-manipulation active:bg-gray-800"
           >
             {isSigningOut ? (
               <>
