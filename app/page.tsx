@@ -170,13 +170,23 @@ export default function HomePage() {
               className="flex items-center absolute left-1/2 -translate-x-1/2 sm:left-6 sm:translate-x-0 lg:left-8"
               whileHover={{ scale: 1.02 }}
             >
+              {/* Mobile logo - uses logo.png for cleaner look at small sizes */}
+              <Image
+                src="/logo.png"
+                alt="Realestic"
+                width={240}
+                height={72}
+                priority
+                className="sm:hidden h-12 w-auto object-contain"
+              />
+              {/* Desktop logo - uses the larger landing logo */}
               <Image
                 src="/logo-landing.png"
                 alt="Realestic"
                 width={1400}
                 height={420}
                 priority
-                className="h-80 w-auto"
+                className="hidden sm:block h-80 w-auto"
               />
             </motion.div>
             
