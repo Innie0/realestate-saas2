@@ -204,16 +204,6 @@ export default function HomePage() {
                 </motion.button>
               </Link>
             </div>
-            
-            {/* Mobile Menu Button */}
-            <Link href="/auth/signup" className="sm:hidden">
-              <motion.button 
-                whileTap={{ scale: 0.95 }}
-                className="px-4 py-2 text-sm font-medium bg-white text-black rounded-lg"
-              >
-                Get Started
-              </motion.button>
-            </Link>
           </div>
         </div>
       </motion.nav>
