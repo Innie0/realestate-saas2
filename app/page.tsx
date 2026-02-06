@@ -114,6 +114,15 @@ export default function HomePage() {
         // Use getSession instead of getUser to avoid error logs
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
+          // Check if user is admin
+          const isAdmin = session.user.email === 'callon786@outlook.com';
+          
+          if (isAdmin) {
+            // Admin user - always redirect to dashboard
+            router.push('/dashboard');
+            return;
+          }
+          
           // User is logged in - check if they have an active subscription
           const { data: userData } = await supabase
             .from('users')

@@ -24,6 +24,20 @@ export async function GET(request: Request) {
       return NextResponse.redirect(new URL('/auth/login?error=auth_failed', requestUrl.origin));
     }
 
+    // Check if user is admin
+    const isAdmin = user.email === 'callon786@outlook.com';
+    
+    console.log('[OAuth Callback] User authenticated:', {
+      userId: user.id,
+      email: user.email,
+      isAdmin,
+    });
+    
+    if (isAdmin) {
+      // Admin user - redirect directly to dashboard
+      return NextResponse.redirect(new URL('/dashboard', requestUrl.origin));
+    }
+    
     // Check subscription status to determine where to redirect
     const { data: userData } = await supabase
       .from('users')
@@ -35,9 +49,7 @@ export async function GET(request: Request) {
       userData?.subscription_status === 'active' || 
       userData?.subscription_status === 'trialing';
 
-    console.log('[OAuth Callback] User authenticated:', {
-      userId: user.id,
-      email: user.email,
+    console.log('[OAuth Callback] Subscription check:', {
       subscriptionStatus: userData?.subscription_status,
       hasActiveSubscription,
     });

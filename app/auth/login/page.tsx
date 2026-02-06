@@ -49,6 +49,22 @@ export default function LoginPage() {
 
     // Check subscription status before redirecting
     if (user) {
+      // Check if user is admin
+      const isAdmin = user.email === 'callon786@outlook.com';
+      
+      console.log('[Login] User logged in:', {
+        userId: user.id,
+        email: user.email,
+        isAdmin,
+      });
+      
+      if (isAdmin) {
+        // Admin user - go directly to dashboard
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        window.location.href = '/dashboard';
+        return;
+      }
+      
       try {
         const { data: userData } = await supabase
           .from('users')
