@@ -484,3 +484,108 @@ function UploadContractModal({
     </Modal>
   );
 }
+
+// Contract Card Component
+function ContractCard({
+  contract,
+  onDownload,
+  onDelete,
+  getStatusColor,
+  getTypeLabel,
+  formatFileSize,
+}: {
+  contract: any;
+  onDownload: (id: string) => void;
+  onDelete: (id: string) => void;
+  getStatusColor: (status: string) => string;
+  getTypeLabel: (type: string) => string;
+  formatFileSize: (bytes: number) => string;
+}) {
+  const statusColor = getStatusColor(contract.status);
+  const statusLabel = CONTRACT_STATUSES.find((s: any) => s.value === contract.status)?.label || contract.status;
+
+  return (
+    <Card className="hover:border-blue-500/50 transition-colors">
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <div className="flex items-center gap-3 mb-2">
+            <FileText className="w-5 h-5 text-blue-400" />
+            <h3 className="text-lg font-semibold text-white">{contract.title}</h3>
+            <span className={`px-2 py-1 rounded text-xs font-medium ${
+              statusColor === 'green' ? 'bg-green-500/20 text-green-400' :
+              statusColor === 'blue' ? 'bg-blue-500/20 text-blue-400' :
+              statusColor === 'yellow' ? 'bg-yellow-500/20 text-yellow-400' :
+              statusColor === 'red' ? 'bg-red-500/20 text-red-400' :
+              'bg-gray-500/20 text-gray-400'
+            }`}>
+              {statusLabel}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-3">
+            <span className="flex items-center gap-1">
+              <Tag className="w-4 h-4" />
+              {getTypeLabel(contract.contract_type)}
+            </span>
+            <span>{formatFileSize(contract.file_size)}</span>
+            {contract.contract_date && (
+              <span className="flex items-center gap-1">
+                <Calendar className="w-4 h-4" />
+                {new Date(contract.contract_date).toLocaleDateString()}
+              </span>
+            )}
+            {contract.expiration_date && (
+              <span className="text-yellow-400">
+                Expires: {new Date(contract.expiration_date).toLocaleDateString()}
+              </span>
+            )}
+          </div>
+
+          {contract.property_address && (
+            <div className="flex flex-wrap gap-2 mb-2">
+              <span className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-xs">
+                📍 {contract.property_address}
+              </span>
+            </div>
+          )}
+
+          {(contract.transaction || contract.client) && (
+            <div className="flex flex-wrap gap-2 mb-2">
+              {contract.transaction && (
+                <span className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-xs">
+                  📍 {contract.transaction.property_address}
+                </span>
+              )}
+              {contract.client && (
+                <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs">
+                  👤 {contract.client.name}
+                </span>
+              )}
+            </div>
+          )}
+
+          {contract.notes && (
+            <p className="text-sm text-gray-400 line-clamp-2">{contract.notes}</p>
+          )}
+        </div>
+
+        <div className="flex gap-2 ml-4">
+          <button
+            onClick={() => onDownload(contract.id)}
+            className="p-2 hover:bg-gray-700 rounded-lg transition-colors text-blue-400"
+            title="Download"
+          >
+            <Download className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => onDelete(contract.id)}
+            className="p-2 hover:bg-gray-700 rounded-lg transition-colors text-red-400"
+            title="Delete"
+          >
+            <Trash2 className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+    </Card>
+  );
+}
