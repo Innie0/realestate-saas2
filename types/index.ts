@@ -370,3 +370,44 @@ export interface TransactionTimelineEvent {
   description?: string;
 }
 
+/**
+ * Contract type - represents a contract document
+ */
+export interface Contract {
+  id: string; // Unique identifier
+  user_id: string; // ID of the user who owns this contract
+  transaction_id?: string; // Optional link to a transaction
+  client_id?: string; // Optional link to a client
+  
+  // File information
+  title: string; // Contract title
+  file_name: string; // Original filename
+  file_path: string; // Storage path
+  file_size: number; // File size in bytes
+  file_type: string; // MIME type
+  
+  // Contract details
+  contract_type: 'purchase_agreement' | 'listing_agreement' | 'lease_agreement' | 'offer' | 'counter_offer' | 'addendum' | 'disclosure' | 'inspection' | 'other';
+  status: 'draft' | 'pending_signature' | 'signed' | 'executed' | 'expired' | 'cancelled';
+  
+  // Important dates
+  contract_date?: string; // Contract date
+  expiration_date?: string; // Expiration date
+  signed_date?: string; // Date signed
+  
+  // Metadata
+  notes?: string; // Additional notes
+  tags?: string[]; // Tags for organization
+  
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * ContractWithRelations type - contract with related transaction/client data
+ */
+export interface ContractWithRelations extends Contract {
+  transaction?: Transaction;
+  client?: Client;
+}
+
