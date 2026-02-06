@@ -114,24 +114,24 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-950">
       {/* Header */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center">
+      <div className="container mx-auto px-4 py-4 sm:py-8">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <Link href="/" className="block">
             <Image
               src="/logo.png"
               alt="Realestic"
-              width={240}
-              height={72}
+              width={200}
+              height={60}
               priority
-              className="h-14 w-auto"
+              className="h-10 sm:h-14 w-auto"
             />
           </Link>
           
           {/* User status indicator */}
           {!isLoading && (
-            <div className="text-sm">
+            <div className="text-xs sm:text-sm">
               {isAuthenticated ? (
-                <span className="text-green-400">✓ Logged in as {userEmail}</span>
+                <span className="text-green-400 truncate max-w-[200px] block">✓ Logged in as {userEmail}</span>
               ) : (
                 <Link href="/auth/signup" className="text-blue-400 hover:text-blue-300">
                   Sign in to subscribe
@@ -152,26 +152,26 @@ export default function PricingPage() {
 
       {/* Pricing Section */}
       {!isLoading && (
-        <div className="container mx-auto px-4 py-16">
+        <div className="container mx-auto px-4 py-8 sm:py-16">
         {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-white mb-4">
+        <div className="text-center mb-12 sm:mb-16">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">
             Choose Your Plan
           </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-3">
+          <p className="text-base sm:text-xl text-gray-400 max-w-2xl mx-auto mb-2 sm:mb-3 px-4">
             Select the perfect plan to streamline your real estate workflow and save time on every listing
           </p>
-          <p className="text-lg text-green-400 font-semibold">
+          <p className="text-base sm:text-lg text-green-400 font-semibold">
             ✨ Start with a 7-day free trial on any plan
           </p>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`relative rounded-2xl p-8 border-2 transition-all duration-300 hover:scale-105 ${
+              className={`relative rounded-2xl p-6 sm:p-8 border-2 transition-all duration-300 md:hover:scale-105 ${
                 plan.popular
                   ? 'border-purple-500 bg-gradient-to-br from-purple-900/20 to-gray-900/50 shadow-2xl shadow-purple-500/20'
                   : 'border-gray-700 bg-gray-900/50'
@@ -189,17 +189,17 @@ export default function PricingPage() {
 
               {/* Plan Header */}
               <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold text-white mb-2">
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">
                   {plan.name}
                 </h3>
                 <p className="text-gray-400 text-sm mb-4">{plan.description}</p>
                 <div className="flex items-baseline justify-center gap-2 mb-2">
-                  <span className="text-5xl font-bold text-white">
+                  <span className="text-4xl sm:text-5xl font-bold text-white">
                     {plan.price}
                   </span>
-                  <span className="text-gray-400">{plan.period}</span>
+                  <span className="text-gray-400 text-sm sm:text-base">{plan.period}</span>
                 </div>
-                <p className="text-sm text-green-400 font-medium">
+                <p className="text-xs sm:text-sm text-green-400 font-medium">
                   7-day free trial included
                 </p>
               </div>
@@ -214,14 +214,14 @@ export default function PricingPage() {
               </div>
 
               {/* Features */}
-              <div className="space-y-3">
-                <p className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
+              <div className="space-y-2 sm:space-y-3">
+                <p className="text-xs sm:text-sm font-semibold text-gray-400 uppercase tracking-wide">
                   What's Included:
                 </p>
                 {plan.features.map((feature, idx) => (
-                  <div key={idx} className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-300">{feature}</span>
+                  <div key={idx} className="flex items-start gap-2 sm:gap-3">
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">{feature}</span>
                   </div>
                 ))}
                 

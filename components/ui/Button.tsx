@@ -30,7 +30,7 @@ export default function Button({
   ...props
 }: ButtonProps) {
   // Base styles applied to all buttons
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg';
+  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg min-h-[44px] touch-manipulation';
 
   // Variant styles - different colors for different button types with gradients
   const variants = {
@@ -44,9 +44,9 @@ export default function Button({
 
   // Size styles - different padding for different sizes
   const sizes = {
-    sm: 'px-4 py-2 text-sm',
-    md: 'px-6 py-3 text-base',
-    lg: 'px-8 py-4 text-base font-semibold',
+    sm: 'px-3 sm:px-4 py-2 text-sm',
+    md: 'px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base',
+    lg: 'px-6 sm:px-8 py-3 sm:py-4 text-base font-semibold',
   };
 
   // Combine all styles using clsx utility

@@ -145,18 +145,18 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <div className="space-y-6">
+    <div className="max-w-7xl mx-auto py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header with gradient */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-gray-700/50">
+        <div className="flex flex-col gap-3 sm:gap-4 pb-4 sm:pb-6 border-b border-gray-700/50">
         <div>
-          <h1 className="text-3xl font-bold text-white">Transactions</h1>
-          <p className="text-gray-400 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Transactions</h1>
+          <p className="text-gray-400 mt-1 text-sm sm:text-base">
             Manage your real estate transactions and track progress
           </p>
         </div>
-        <Link href="/dashboard/transactions/new">
-          <Button>
+        <Link href="/dashboard/transactions/new" className="w-full sm:w-auto">
+          <Button className="w-full sm:w-auto">
             <Plus className="w-4 h-4 mr-2" />
             New Transaction
           </Button>
@@ -164,7 +164,7 @@ export default function TransactionsPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col gap-3 sm:gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
@@ -172,13 +172,13 @@ export default function TransactionsPage() {
             placeholder="Search by address, buyer, or seller..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-800/50 text-white placeholder-gray-500"
+            className="w-full pl-10 pr-4 py-2 text-sm border border-gray-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-800/50 text-white placeholder-gray-500"
           />
         </div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-800/50 text-white"
+          className="px-3 sm:px-4 py-2 text-sm border border-gray-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-800/50 text-white"
         >
           <option value="all">All Status</option>
           <option value="active">Active</option>

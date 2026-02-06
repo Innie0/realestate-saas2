@@ -167,15 +167,15 @@ export default function ContractsPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Contracts</h1>
-        <p className="text-gray-400">Manage your contract documents</p>
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Contracts</h1>
+        <p className="text-sm sm:text-base text-gray-400">Manage your contract documents</p>
       </div>
 
       {/* Actions Bar */}
-      <div className="mb-6 flex flex-col sm:flex-row gap-4">
+      <div className="mb-6 flex flex-col gap-3 sm:gap-4">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <Input
@@ -183,37 +183,39 @@ export default function ContractsPage() {
             placeholder="Search contracts..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="pl-10 w-full"
           />
         </div>
 
-        <select
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-          className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
-        >
-          <option value="">All Types</option>
-          {CONTRACT_TYPES.map(type => (
-            <option key={type.value} value={type.value}>{type.label}</option>
-          ))}
-        </select>
+        <div className="grid grid-cols-2 sm:flex gap-2 sm:gap-4">
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+          >
+            <option value="">All Types</option>
+            {CONTRACT_TYPES.map(type => (
+              <option key={type.value} value={type.value}>{type.label}</option>
+            ))}
+          </select>
 
-        <select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
-          className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
-        >
-          <option value="">All Statuses</option>
-          {CONTRACT_STATUSES.map(status => (
-            <option key={status.value} value={status.value}>{status.label}</option>
-          ))}
-        </select>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+          >
+            <option value="">All Statuses</option>
+            {CONTRACT_STATUSES.map(status => (
+              <option key={status.value} value={status.value}>{status.label}</option>
+            ))}
+          </select>
+        </div>
 
         {/* View Mode Toggle */}
         <div className="flex bg-gray-800 border border-gray-700 rounded-lg">
           <button
             onClick={() => setViewMode('list')}
-            className={`px-4 py-2 rounded-l-lg transition-colors ${
+            className={`flex-1 px-3 sm:px-4 py-2 text-sm rounded-l-lg transition-colors ${
               viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -221,7 +223,7 @@ export default function ContractsPage() {
           </button>
           <button
             onClick={() => setViewMode('grouped')}
-            className={`px-4 py-2 rounded-r-lg transition-colors ${
+            className={`flex-1 px-3 sm:px-4 py-2 text-sm rounded-r-lg transition-colors ${
               viewMode === 'grouped' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -229,7 +231,7 @@ export default function ContractsPage() {
           </button>
         </div>
 
-        <Button onClick={() => setShowUploadModal(true)}>
+        <Button onClick={() => setShowUploadModal(true)} className="w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-2" />
           Upload Contract
         </Button>

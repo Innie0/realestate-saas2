@@ -117,13 +117,13 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-950 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         {/* Logo and header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white">Welcome Back</h1>
-          <p className="mt-2 text-gray-400">Sign in to your account</p>
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white">Welcome Back</h1>
+          <p className="mt-2 text-sm sm:text-base text-gray-400">Sign in to your account</p>
         </div>
 
         {/* Login card */}
-        <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-2xl border border-white/10 p-8">
+        <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-2xl border border-white/10 p-6 sm:p-8">
           {/* Error message */}
           {error && (
             <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">

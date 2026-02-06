@@ -29,7 +29,7 @@ export default function Input({
   const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
 
   // Base input styles with gradient background
-  const baseStyles = 'block w-full rounded-lg border px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all duration-200 bg-white/10 backdrop-blur-sm border-white/20';
+  const baseStyles = 'block w-full rounded-lg border px-3 sm:px-4 py-2 text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all duration-200 bg-white/10 backdrop-blur-sm border-white/20';
 
   // Conditional styles based on error state
   const inputClasses = clsx(

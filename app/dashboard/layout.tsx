@@ -19,7 +19,10 @@ export default function DashboardLayout({
       <Sidebar />
       
       {/* Main content area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
+        {/* Add top padding on mobile for fixed header */}
+        <div className="lg:hidden h-16" />
+        
         {/* Scrollable content with dark background */}
         <main className="flex-1 overflow-y-auto bg-transparent">
           {children}

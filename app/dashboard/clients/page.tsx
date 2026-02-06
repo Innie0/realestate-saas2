@@ -146,56 +146,59 @@ export default function ClientsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white">Clients</h1>
-        <p className="text-gray-600 mt-2">Manage your client relationships and follow-ups</p>
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white">Clients</h1>
+        <p className="text-gray-400 mt-1 sm:mt-2 text-sm sm:text-base">Manage your client relationships and follow-ups</p>
       </div>
 
       {/* Filters and search */}
-      <div className="mb-6 flex flex-col sm:flex-row gap-4">
+      <div className="mb-6 flex flex-col gap-3 sm:gap-4">
         {/* Search bar */}
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
           <Input
             type="text"
-            placeholder="Search clients by name, email, or phone..."
+            placeholder="Search clients..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
           />
         </div>
 
-        {/* Status filter */}
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2 border border-white/20 rounded-lg bg-white/10 backdrop-blur-sm text-white focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 focus:outline-none"
-        >
-          <option value="all" className="bg-gray-800 text-white">All Clients</option>
-          <option value="active" className="bg-gray-800 text-white">Active</option>
-          <option value="inactive" className="bg-gray-800 text-white">Inactive</option>
-          <option value="archived" className="bg-gray-800 text-white">Archived</option>
-        </select>
+        {/* Status filter and Create button */}
+        <div className="flex flex-col sm:flex-row gap-2">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-3 sm:px-4 py-2 text-sm border border-white/20 rounded-lg bg-white/10 backdrop-blur-sm text-white focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 focus:outline-none"
+          >
+            <option value="all" className="bg-gray-800 text-white">All Clients</option>
+            <option value="active" className="bg-gray-800 text-white">Active</option>
+            <option value="inactive" className="bg-gray-800 text-white">Inactive</option>
+            <option value="archived" className="bg-gray-800 text-white">Archived</option>
+          </select>
 
-        {/* Create button */}
-        <Button
-          variant="primary"
-          size="md"
-          onClick={() => setShowCreateForm(true)}
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          New Client
-        </Button>
+          {/* Create button */}
+          <Button
+            variant="primary"
+            size="md"
+            onClick={() => setShowCreateForm(true)}
+            className="w-full sm:w-auto"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            New Client
+          </Button>
+        </div>
       </div>
 
       {/* Create form modal */}
       {showCreateForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg border border-white/10 p-6 max-w-md w-full">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg border border-white/10 p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white">New Client</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-white">New Client</h2>
               <button
                 onClick={() => setShowCreateForm(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -214,7 +217,7 @@ export default function ClientsPage() {
 
       {/* Clients grid */}
       {loading ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="animate-pulse bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg border border-white/10 p-6 shadow">
               <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
@@ -236,7 +239,7 @@ export default function ClientsPage() {
           </Button>
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {clients.map((client) => (
             <ClientCard
               key={client.id}
@@ -251,16 +254,16 @@ export default function ClientsPage() {
       {/* Quick Add Note Modal */}
       {showNoteModal && selectedClient && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg border border-white/10 p-6 max-w-md w-full">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg border border-white/10 p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white">
+              <h2 className="text-lg sm:text-xl font-bold text-white">
                 Add Note for {selectedClient.name}
               </h2>
               <button
                 onClick={() => setShowNoteModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-gray-600 flex-shrink-0 ml-2"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </div>
             <textarea

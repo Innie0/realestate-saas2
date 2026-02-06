@@ -87,9 +87,9 @@ export default function ProjectsPage() {
       />
 
       {/* Page content */}
-      <div className="p-6 text-white">
+      <div className="p-4 sm:p-6 text-white">
         {/* Toolbar - search, filter, and create button */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="flex flex-col gap-3 sm:gap-4 mb-6">
           {/* Search input */}
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -102,10 +102,10 @@ export default function ProjectsPage() {
             />
           </div>
 
-          {/* Status filter */}
-          <div className="flex gap-2">
+          {/* Status filter and Create button */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">
             <select
-              className="px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-white"
+              className="px-3 sm:px-4 py-2 text-sm bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-white"
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
             >
@@ -116,8 +116,8 @@ export default function ProjectsPage() {
             </select>
 
             {/* Create new project button */}
-            <Link href="/dashboard/projects/new">
-              <Button>
+            <Link href="/dashboard/projects/new" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto">
                 <Plus className="w-4 h-4 mr-2" />
                 New Project
               </Button>
@@ -127,14 +127,14 @@ export default function ProjectsPage() {
 
         {/* Projects count */}
         <div className="mb-4">
-          <p className="text-sm text-gray-400">
+          <p className="text-xs sm:text-sm text-gray-400">
             Showing {filteredProjects.length} of {projects.length} projects
           </p>
         </div>
 
         {/* Projects grid */}
         {loading ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
               <div key={i} className="animate-pulse bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-white/10">
                 <div className="h-48 bg-gray-700 rounded mb-4"></div>
@@ -144,7 +144,7 @@ export default function ProjectsPage() {
             ))}
           </div>
         ) : filteredProjects.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {filteredProjects.map((project) => (
               <ProjectCard 
                 key={project.id} 

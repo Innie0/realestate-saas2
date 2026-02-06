@@ -42,8 +42,8 @@ export default function Modal({
   if (!isOpen) return null;
 
   const sizeClasses = {
-    sm: 'max-w-md',
-    md: 'max-w-lg',
+    sm: 'max-w-sm',
+    md: 'max-w-md',
     lg: 'max-w-2xl',
     xl: 'max-w-4xl',
   };
@@ -59,22 +59,22 @@ export default function Modal({
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
         <div
-          className={`relative w-full ${sizeClasses[size]} bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg shadow-xl`}
+          className={`relative w-full ${sizeClasses[size]} bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg shadow-xl max-h-[90vh] overflow-y-auto`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h3 className="text-xl font-semibold text-white">{title}</h3>
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-700 sticky top-0 bg-gray-800/95 backdrop-blur-sm z-10">
+            <h3 className="text-lg sm:text-xl font-semibold text-white pr-2">{title}</h3>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-500 transition-colors"
+              className="text-gray-400 hover:text-gray-300 transition-colors flex-shrink-0"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </div>
 
           {/* Content */}
-          <div className="p-6">{children}</div>
+          <div className="p-4 sm:p-6">{children}</div>
         </div>
       </div>
     </div>

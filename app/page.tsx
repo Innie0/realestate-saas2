@@ -184,7 +184,7 @@ export default function HomePage() {
             <div className="flex-1"></div>
             
             {/* Navigation links */}
-            <div className="flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-4">
               <Link href="/auth/login">
                 <motion.button 
                   whileHover={{ scale: 1.05 }}
@@ -204,6 +204,16 @@ export default function HomePage() {
                 </motion.button>
               </Link>
             </div>
+            
+            {/* Mobile Menu Button */}
+            <Link href="/auth/signup" className="sm:hidden">
+              <motion.button 
+                whileTap={{ scale: 0.95 }}
+                className="px-4 py-2 text-sm font-medium bg-white text-black rounded-lg"
+              >
+                Get Started
+              </motion.button>
+            </Link>
           </div>
         </div>
       </motion.nav>
@@ -227,7 +237,7 @@ export default function HomePage() {
             
             <motion.h1 
               variants={itemVariants}
-              className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1]"
+              className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight leading-[1.1]"
             >
               <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
                 Work Smarter
@@ -238,29 +248,29 @@ export default function HomePage() {
             
             <motion.p 
               variants={itemVariants}
-              className="mt-8 text-lg text-gray-400 leading-relaxed max-w-xl"
+              className="mt-6 sm:mt-8 text-base sm:text-lg text-gray-400 leading-relaxed max-w-xl"
             >
               Transform your workflow as a real estate agent with intelligent tools designed for you. 
               Manage leads, schedule showings, and close more deals with our AI-powered platform.
             </motion.p>
 
             {/* Call-to-action buttons */}
-            <motion.div variants={itemVariants} className="mt-10 flex flex-wrap items-center gap-4">
-              <Link href="/auth/signup">
+            <motion.div variants={itemVariants} className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+              <Link href="/auth/signup" className="w-full sm:w-auto">
                 <motion.button 
                   whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255,255,255,0.3)' }}
                   whileTap={{ scale: 0.98 }}
-                  className="group px-8 py-4 text-base font-semibold bg-white text-black rounded-xl hover:bg-gray-100 transition-all flex items-center gap-2"
+                  className="w-full sm:w-auto group px-8 py-4 text-base font-semibold bg-white text-black rounded-xl hover:bg-gray-100 transition-all flex items-center justify-center gap-2"
                 >
                   Get Started
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </motion.button>
               </Link>
-              <Link href="/auth/login">
+              <Link href="/auth/login" className="w-full sm:w-auto">
                 <motion.button 
                   whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
                   whileTap={{ scale: 0.98 }}
-                  className="px-8 py-4 text-base font-semibold text-white border border-white/30 rounded-xl backdrop-blur-sm transition-all"
+                  className="w-full sm:w-auto px-8 py-4 text-base font-semibold text-white border border-white/30 rounded-xl backdrop-blur-sm transition-all"
                 >
                   Sign In
                 </motion.button>
