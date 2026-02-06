@@ -8,6 +8,7 @@ export interface ContractUploadOptions {
   userId: string;
   title: string;
   contractType?: string;
+  propertyAddress?: string;
   transactionId?: string;
   clientId?: string;
   contractDate?: string;
@@ -29,7 +30,7 @@ export async function uploadContract(
   options: ContractUploadOptions
 ): Promise<ContractUploadResult> {
   try {
-    const { file, userId, title, contractType, transactionId, clientId, contractDate, expirationDate, notes, tags } = options;
+    const { file, userId, title, contractType, propertyAddress, transactionId, clientId, contractDate, expirationDate, notes, tags } = options;
 
     // Validate file
     if (!file) {
@@ -91,6 +92,7 @@ export async function uploadContract(
         file_type: file.type,
         contract_type: contractType || 'other',
         status: 'draft',
+        property_address: propertyAddress,
         transaction_id: transactionId,
         client_id: clientId,
         contract_date: contractDate,

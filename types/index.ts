@@ -389,6 +389,7 @@ export interface Contract {
   // Contract details
   contract_type: 'purchase_agreement' | 'listing_agreement' | 'lease_agreement' | 'offer' | 'counter_offer' | 'addendum' | 'disclosure' | 'inspection' | 'other';
   status: 'draft' | 'pending_signature' | 'signed' | 'executed' | 'expired' | 'cancelled';
+  property_address?: string; // Property address for grouping
   
   // Important dates
   contract_date?: string; // Contract date

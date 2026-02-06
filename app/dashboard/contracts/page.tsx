@@ -40,6 +40,7 @@ export default function ContractsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
+  const [viewMode, setViewMode] = useState<'list' | 'grouped'>('list'); // New: view mode
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [userId, setUserId] = useState<string>('');
 
@@ -134,6 +135,27 @@ export default function ContractsPage() {
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   }
 
+  // Group contracts by property address
+  function groupContractsByProperty() {
+    const grouped: Record<string, ContractWithRelations[]> = {};
+    
+    filteredContracts.forEach(contract => {
+      // Get property address from contract, transaction, or use 'Ungrouped'
+      const address = contract.property_address || 
+                     contract.transaction?.property_address || 
+                     'Ungrouped Contracts';
+      
+      if (!grouped[address]) {
+        grouped[address] = [];
+      }
+      grouped[address].push(contract);
+    });
+
+    return grouped;
+  }
+
+  const groupedContracts = groupContractsByProperty();
+
   if (loading) {
     return (
       <div className="p-6">
@@ -187,6 +209,26 @@ export default function ContractsPage() {
           ))}
         </select>
 
+        {/* View Mode Toggle */}
+        <div className="flex bg-gray-800 border border-gray-700 rounded-lg">
+          <button
+            onClick={() => setViewMode('list')}
+            className={`px-4 py-2 rounded-l-lg transition-colors ${
+              viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            List View
+          </button>
+          <button
+            onClick={() => setViewMode('grouped')}
+            className={`px-4 py-2 rounded-r-lg transition-colors ${
+              viewMode === 'grouped' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            By Property
+          </button>
+        </div>
+
         <Button onClick={() => setShowUploadModal(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Upload Contract
@@ -212,79 +254,50 @@ export default function ContractsPage() {
             )}
           </div>
         </Card>
-      ) : (
+      ) : viewMode === 'list' ? (
+        /* List View */
         <div className="grid gap-4">
           {filteredContracts.map(contract => (
-            <Card key={contract.id} className="hover:border-blue-500/50 transition-colors">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <FileText className="w-5 h-5 text-blue-400" />
-                    <h3 className="text-lg font-semibold text-white">{contract.title}</h3>
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-medium bg-${getStatusColor(contract.status)}-500/20 text-${getStatusColor(contract.status)}-400`}
-                    >
-                      {CONTRACT_STATUSES.find(s => s.value === contract.status)?.label || contract.status}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-3">
-                    <span className="flex items-center gap-1">
-                      <Tag className="w-4 h-4" />
-                      {getTypeLabel(contract.contract_type)}
-                    </span>
-                    <span>{formatFileSize(contract.file_size)}</span>
-                    {contract.contract_date && (
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        {new Date(contract.contract_date).toLocaleDateString()}
-                      </span>
-                    )}
-                    {contract.expiration_date && (
-                      <span className="text-yellow-400">
-                        Expires: {new Date(contract.expiration_date).toLocaleDateString()}
-                      </span>
-                    )}
-                  </div>
-
-                  {(contract.transaction || contract.client) && (
-                    <div className="flex flex-wrap gap-2 mb-2">
-                      {contract.transaction && (
-                        <span className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-xs">
-                          📍 {contract.transaction.property_address}
-                        </span>
-                      )}
-                      {contract.client && (
-                        <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs">
-                          👤 {contract.client.name}
-                        </span>
-                      )}
-                    </div>
-                  )}
-
-                  {contract.notes && (
-                    <p className="text-sm text-gray-400 line-clamp-2">{contract.notes}</p>
-                  )}
-                </div>
-
-                <div className="flex gap-2 ml-4">
-                  <button
-                    onClick={() => handleDownload(contract.id)}
-                    className="p-2 hover:bg-gray-700 rounded-lg transition-colors text-blue-400"
-                    title="Download"
-                  >
-                    <Download className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(contract.id)}
-                    className="p-2 hover:bg-gray-700 rounded-lg transition-colors text-red-400"
-                    title="Delete"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                </div>
+            <ContractCard 
+              key={contract.id} 
+              contract={contract}
+              onDownload={handleDownload}
+              onDelete={handleDelete}
+              getStatusColor={getStatusColor}
+              getTypeLabel={getTypeLabel}
+              formatFileSize={formatFileSize}
+            />
+          ))}
+        </div>
+      ) : (
+        /* Grouped View */
+        <div className="space-y-6">
+          {Object.entries(groupedContracts).map(([address, contracts]) => (
+            <div key={address} className="space-y-3">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex-1 h-px bg-gray-700"></div>
+                <h3 className="text-lg font-semibold text-white px-4 py-2 bg-gray-800 rounded-lg border border-gray-700">
+                  🏠 {address}
+                  <span className="ml-3 text-sm font-normal text-gray-400">
+                    ({contracts.length} {contracts.length === 1 ? 'contract' : 'contracts'})
+                  </span>
+                </h3>
+                <div className="flex-1 h-px bg-gray-700"></div>
               </div>
-            </Card>
+              <div className="grid gap-4">
+                {contracts.map(contract => (
+                  <ContractCard 
+                    key={contract.id} 
+                    contract={contract}
+                    onDownload={handleDownload}
+                    onDelete={handleDelete}
+                    getStatusColor={getStatusColor}
+                    getTypeLabel={getTypeLabel}
+                    formatFileSize={formatFileSize}
+                  />
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       )}
@@ -319,6 +332,7 @@ function UploadContractModal({
   const [contractType, setContractType] = useState('other');
   const [contractDate, setContractDate] = useState('');
   const [expirationDate, setExpirationDate] = useState('');
+  const [propertyAddress, setPropertyAddress] = useState('');
   const [notes, setNotes] = useState('');
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
@@ -344,6 +358,7 @@ function UploadContractModal({
       userId,
       title,
       contractType,
+      propertyAddress: propertyAddress || undefined,
       contractDate: contractDate || undefined,
       expirationDate: expirationDate || undefined,
       notes: notes || undefined,
@@ -424,6 +439,14 @@ function UploadContractModal({
             onChange={(e) => setExpirationDate(e.target.value)}
           />
         </div>
+
+        <Input
+          label="Property Address (for grouping)"
+          type="text"
+          value={propertyAddress}
+          onChange={(e) => setPropertyAddress(e.target.value)}
+          placeholder="e.g., 123 Main St, City, State"
+        />
 
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
