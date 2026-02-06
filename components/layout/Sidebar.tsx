@@ -117,17 +117,19 @@ export default function Sidebar() {
     <>
       {/* Mobile Header with Hamburger Menu */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-gray-900 border-b border-gray-800 px-4 py-3 flex items-center justify-between">
-        <Image
-          src="/logo.png"
-          alt="Realestic"
-          width={160}
-          height={48}
-          priority
-          className="h-10 w-auto"
-        />
+        <div className="flex items-center flex-1">
+          <Image
+            src="/logo.png"
+            alt="Realestic"
+            width={160}
+            height={48}
+            priority
+            className="h-10 w-auto"
+          />
+        </div>
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-800 rounded-lg transition-colors flex-shrink-0"
         >
           {isMobileMenuOpen ? (
             <X className="w-6 h-6 text-white" />
