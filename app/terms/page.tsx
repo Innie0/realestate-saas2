@@ -64,10 +64,12 @@ export default function TermsPage() {
               <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
                 <li>Property and transaction management</li>
                 <li>Client relationship management (CRM)</li>
-                <li>Calendar integration and scheduling</li>
-                <li>AI-powered content generation</li>
-                <li>Document storage and organization</li>
+                <li>Contract storage and document management</li>
+                <li>Calendar integration and scheduling (Google Calendar, Outlook)</li>
+                <li>AI-powered content generation and document analysis</li>
+                <li>Image analysis for property listings</li>
                 <li>Task and reminder management</li>
+                <li>Automated reminders and notifications</li>
               </ul>
             </section>
 
@@ -150,14 +152,19 @@ export default function TermsPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-white mb-4">Third-Party Integrations</h2>
               
-              <h3 className="text-xl font-semibold text-white mb-3 mt-6">Google Calendar</h3>
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">Google Calendar & Microsoft Outlook</h3>
               <p className="text-gray-300 leading-relaxed mb-4">
-                When you connect your Google Calendar, you authorize us to access and modify your calendar events as described in our Privacy Policy. You can revoke this access at any time.
+                When you connect your Google Calendar or Microsoft Outlook calendar, you authorize us to access and modify your calendar events as described in our Privacy Policy. You can disconnect these integrations and revoke access at any time from your account settings.
+              </p>
+
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">Payment Processing</h3>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                Payment processing is handled by Stripe, a third-party payment processor. Your use of Stripe's services is subject to Stripe's Terms of Service and Privacy Policy. We do not store your full credit card information.
               </p>
 
               <h3 className="text-xl font-semibold text-white mb-3 mt-6">Third-Party Services</h3>
               <p className="text-gray-300 leading-relaxed mb-4">
-                Our Service may integrate with third-party services (Supabase, OpenAI, Google, etc.). Your use of these services is subject to their respective terms and conditions. We are not responsible for third-party services.
+                Our Service integrates with third-party services including Supabase (database and authentication), OpenAI (AI features), Stripe (payments), Google (calendar and authentication), and Microsoft (calendar). Your use of these services is subject to their respective terms and conditions. We are not responsible for third-party services or their availability.
               </p>
             </section>
 
@@ -166,8 +173,19 @@ export default function TermsPage() {
               
               <h3 className="text-xl font-semibold text-white mb-3 mt-6">AI Tools</h3>
               <p className="text-gray-300 leading-relaxed mb-4">
-                We provide AI-powered tools to help generate property descriptions and analyze images. While we strive for accuracy, AI-generated content may contain errors or inaccuracies.
+                We provide AI-powered tools (powered by OpenAI GPT-4) to help generate property descriptions, analyze images and documents, and assist with various real estate tasks. While we strive for accuracy, AI-generated content may contain errors or inaccuracies.
               </p>
+
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">No Financial or Legal Advice</h3>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                <strong className="text-yellow-400">IMPORTANT:</strong> AI-generated responses are for informational purposes only and do not constitute financial, legal, investment, or professional advice. Our AI is explicitly instructed not to provide financial guidance. You should:
+              </p>
+              <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
+                <li>Consult licensed financial advisors for financial decisions</li>
+                <li>Consult qualified attorneys for legal matters</li>
+                <li>Verify all AI-generated information independently</li>
+                <li>Not rely solely on AI for important business decisions</li>
+              </ul>
 
               <h3 className="text-xl font-semibold text-white mb-3 mt-6">Your Responsibility</h3>
               <p className="text-gray-300 leading-relaxed mb-2">You agree to:</p>
@@ -175,7 +193,8 @@ export default function TermsPage() {
                 <li>Review all AI-generated content before use</li>
                 <li>Verify accuracy of descriptions and information</li>
                 <li>Take full responsibility for content you publish or share</li>
-                <li>Not rely solely on AI-generated content for important decisions</li>
+                <li>Not use AI-generated content as professional advice</li>
+                <li>Ensure AI-generated property descriptions comply with fair housing laws</li>
               </ul>
             </section>
 
@@ -184,20 +203,55 @@ export default function TermsPage() {
               
               <h3 className="text-xl font-semibold text-white mb-3 mt-6">Subscription Plans</h3>
               <p className="text-gray-300 leading-relaxed mb-4">
-                Access to certain features may require a paid subscription. Subscription fees, billing cycles, and payment terms will be clearly communicated before you subscribe.
+                Access to the Service requires a paid subscription (Starter or Pro plan). Subscription fees, features included, billing cycles, and payment terms are clearly displayed on our pricing page before you subscribe. All payments are processed securely through Stripe.
+              </p>
+
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">Free Trial</h3>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                New subscriptions include a 7-day free trial period. You will not be charged during the trial. If you do not cancel before the trial ends, your subscription will automatically begin and you will be charged.
               </p>
 
               <h3 className="text-xl font-semibold text-white mb-3 mt-6">Billing</h3>
               <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
-                <li>Subscriptions automatically renew unless cancelled</li>
-                <li>You authorize us to charge your payment method</li>
-                <li>Fees are non-refundable except as required by law</li>
-                <li>We may change pricing with 30 days notice</li>
+                <li>Subscriptions automatically renew on a monthly basis unless cancelled</li>
+                <li>You authorize us to charge your payment method on file</li>
+                <li>You are responsible for keeping your payment information current</li>
+                <li>Failed payments may result in service suspension</li>
+                <li>All fees are in USD unless otherwise stated</li>
               </ul>
+
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">Refunds</h3>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                Subscription fees are non-refundable except:
+              </p>
+              <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
+                <li>If required by applicable law</li>
+                <li>In cases of billing errors or technical issues preventing service access</li>
+                <li>At our sole discretion on a case-by-case basis</li>
+              </ul>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                To request a refund, contact support@realestic.com with details of your concern.
+              </p>
+
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">Price Changes</h3>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                We reserve the right to change our pricing at any time. Price changes will be communicated to you at least 30 days in advance via email. Continued use of the Service after a price change constitutes acceptance of the new pricing.
+              </p>
 
               <h3 className="text-xl font-semibold text-white mb-3 mt-6">Cancellation</h3>
               <p className="text-gray-300 leading-relaxed mb-4">
-                You may cancel your subscription at any time. Upon cancellation, you'll retain access until the end of your current billing period.
+                You may cancel your subscription at any time from your account settings. Upon cancellation:
+              </p>
+              <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
+                <li>You'll retain access until the end of your current billing period</li>
+                <li>No refunds will be provided for the remaining subscription period</li>
+                <li>Your data will be retained according to our Privacy Policy</li>
+                <li>You can reactivate your subscription at any time</li>
+              </ul>
+
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">Taxes</h3>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                All fees are exclusive of applicable taxes (sales tax, VAT, GST, etc.), which you are responsible for paying. We will add applicable taxes to your invoice where required by law.
               </p>
             </section>
 

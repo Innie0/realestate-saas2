@@ -82,11 +82,23 @@ export default function PrivacyPage() {
                 <li>Client information you add</li>
                 <li>Tasks and transactions you manage</li>
                 <li>Calendar events you create</li>
-                <li>Files and images you upload</li>
+                <li>Files, images, and contracts you upload</li>
                 <li>Notes and communications within the platform</li>
+                <li>AI-generated content and prompts you submit</li>
               </ul>
 
-              <h3 className="text-xl font-semibold text-white mb-3 mt-6">4. Automatically Collected Information</h3>
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">4. Payment Information</h3>
+              <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
+                <li>Payment method details (processed by Stripe)</li>
+                <li>Billing address</li>
+                <li>Transaction history</li>
+                <li>Subscription plan information</li>
+              </ul>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                <strong>Note:</strong> We do not store your full credit card numbers. Payment processing is handled securely by Stripe.
+              </p>
+
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">5. Automatically Collected Information</h3>
               <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
                 <li>IP address</li>
                 <li>Browser type and version</li>
@@ -102,12 +114,15 @@ export default function PrivacyPage() {
               <h3 className="text-xl font-semibold text-white mb-3 mt-6">Service Delivery</h3>
               <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
                 <li>Create and manage your account</li>
+                <li>Process subscription payments</li>
                 <li>Provide access to platform features</li>
                 <li>Sync your Google Calendar events</li>
                 <li>Create calendar events for showings and meetings</li>
                 <li>Store and display your client and property information</li>
                 <li>Generate AI-powered content descriptions</li>
-                <li>Analyze property images using AI</li>
+                <li>Analyze property images and documents using AI</li>
+                <li>Store and manage your contracts and documents</li>
+                <li>Provide task assistance and document analysis</li>
               </ul>
 
               <h3 className="text-xl font-semibold text-white mb-3 mt-6">Communication</h3>
@@ -169,19 +184,38 @@ export default function PrivacyPage() {
               </p>
 
               <h3 className="text-xl font-semibold text-white mb-3 mt-6">OpenAI</h3>
-              <p className="text-gray-300 leading-relaxed mb-2">We use OpenAI's services to:</p>
+              <p className="text-gray-300 leading-relaxed mb-2">We use OpenAI's GPT-4 services to:</p>
               <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
-                <li>Generate property descriptions</li>
-                <li>Analyze property images</li>
-                <li>Refine and enhance marketing content</li>
+                <li>Generate property descriptions and marketing content</li>
+                <li>Analyze property images and documents</li>
+                <li>Refine and enhance content</li>
+                <li>Provide AI-powered task assistance</li>
+                <li>Extract information from uploaded documents</li>
               </ul>
               <p className="text-gray-300 leading-relaxed mb-4">
-                <strong>Data sent to OpenAI:</strong> Property information and images you explicitly request us to process
+                <strong>Data sent to OpenAI:</strong> Property information, images, and documents you explicitly request us to process. AI responses are for informational purposes only and do not constitute financial, legal, or professional advice.
               </p>
               <p className="text-gray-300 leading-relaxed mb-4">
                 <strong>OpenAI Privacy Policy:</strong>{' '}
                 <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
                   https://openai.com/policies/privacy-policy
+                </a>
+              </p>
+
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">Stripe</h3>
+              <p className="text-gray-300 leading-relaxed mb-2">We use Stripe for payment processing:</p>
+              <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
+                <li>Processing subscription payments</li>
+                <li>Managing billing and invoices</li>
+                <li>Handling refunds and payment disputes</li>
+              </ul>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                <strong>Data shared with Stripe:</strong> Your payment method details, billing address, and transaction information. Stripe maintains PCI DSS compliance for secure payment processing.
+              </p>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                <strong>Stripe Privacy Policy:</strong>{' '}
+                <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
+                  https://stripe.com/privacy
                 </a>
               </p>
 
