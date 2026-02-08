@@ -2,6 +2,7 @@
 // Legal document explaining data collection and usage
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Shield, ArrowLeft } from 'lucide-react';
 
 export const metadata = {
@@ -20,9 +21,14 @@ export default function PrivacyPage() {
               <ArrowLeft className="w-4 h-4" />
               Back to Home
             </Link>
-            <h1 className="text-xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-              Realestic
-            </h1>
+            <Image
+              src="/logo.png"
+              alt="Realestic"
+              width={160}
+              height={48}
+              priority
+              className="h-10 w-auto"
+            />
           </div>
         </div>
       </header>
