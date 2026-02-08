@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     // Fetch tasks for the user, ordered by most recent first
     const { data: tasks, error } = await supabase
       .from('tasks')
-      .select('id, prompt, output, created_at')
+      .select('id, prompt, output, image_url, image_name, has_image, created_at')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json();
-    const { prompt } = body;
+    const { prompt, imageData, imageName } = body;
 
     // Validate required fields
     if (!prompt || prompt.trim() === '') {
@@ -88,6 +88,9 @@ export async function POST(request: NextRequest) {
         user_id: user.id,
         prompt: prompt.trim(),
         output: null,
+        image_url: imageData || null,
+        image_name: imageName || null,
+        has_image: !!imageData,
       })
       .select()
       .single();
@@ -103,24 +106,57 @@ export async function POST(request: NextRequest) {
     // Generate AI output using OpenAI
     let aiOutput = '';
     try {
+      // Build messages array - different format for image vs text-only
+      const messages: any[] = [
+        {
+          role: 'system',
+          content: `You are a helpful assistant for a real estate agent. The agent has a task they want to accomplish. 
+
+IMPORTANT GUIDELINES:
+- Provide clear, actionable responses that help them complete their task
+- Keep responses concise but comprehensive
+- If creating content (emails, listings, etc.), provide the actual content
+- If analyzing documents or images, provide detailed insights
+
+CRITICAL RESTRICTIONS:
+- NEVER provide financial advice, investment recommendations, or guidance on financial decisions
+- NEVER suggest specific property values, investment returns, or financial strategies
+- If asked about financial matters, remind them to consult a licensed financial advisor
+- You can provide general information about real estate processes, but not financial counsel
+
+If you see financial information in a document, you may extract and summarize it, but do not interpret it or provide advice based on it.`,
+        },
+      ];
+
+      // If image is provided, use Vision API
+      if (imageData) {
+        messages.push({
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: `${prompt}\n\nNote: Analyze the provided image and respond to the request. If you see any financial figures, you may list them but do not provide advice or recommendations about them.`,
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: imageData,
+              },
+            },
+          ],
+        });
+      } else {
+        messages.push({
+          role: 'user',
+          content: prompt,
+        });
+      }
+
       const completion = await openai.chat.completions.create({
         model: 'gpt-4o',
-        messages: [
-          {
-            role: 'system',
-            content: `You are a helpful assistant for a real estate agent. The agent has a task they want to accomplish. 
-Provide a clear, actionable response that helps them complete their task. 
-Keep your response concise but comprehensive.
-If the task is about creating content (emails, listings, etc.), provide the actual content.
-If it's about a process or action, provide step-by-step guidance.`,
-          },
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ],
+        messages,
         temperature: 0.7,
-        max_tokens: 1000,
+        max_tokens: 1500,
       });
 
       aiOutput = completion.choices[0]?.message?.content || 'Unable to generate response.';

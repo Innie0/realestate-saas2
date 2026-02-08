@@ -3,12 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
-import { Sparkles, Clock, Send, Loader2, CheckCircle2, Edit2, Save, X, Wand2 } from 'lucide-react';
+import { Sparkles, Clock, Send, Loader2, CheckCircle2, Edit2, Save, X, Wand2, Upload, Image as ImageIcon, FileText } from 'lucide-react';
 
 interface Task {
   id: string;
   prompt: string;
   output: string | null;
+  image_url: string | null;
+  image_name: string | null;
+  has_image: boolean;
   created_at: string;
 }
 
@@ -18,6 +21,11 @@ export default function TasksPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingTasks, setIsLoadingTasks] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Image upload state
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [imageName, setImageName] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   
   // Editing state
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
@@ -54,6 +62,42 @@ export default function TasksPage() {
     }
   };
 
+  // Handle image file selection
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setError('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      setError('Image size must be less than 10MB');
+      return;
+    }
+
+    // Read file as base64
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      setSelectedImage(base64String);
+      setImagePreview(base64String);
+      setImageName(file.name);
+      setError(null);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Remove selected image
+  const handleRemoveImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+    setImageName(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -66,7 +110,11 @@ export default function TasksPage() {
       const response = await fetch('/api/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: prompt.trim() }),
+        body: JSON.stringify({ 
+          prompt: prompt.trim(),
+          imageData: selectedImage,
+          imageName: imageName,
+        }),
       });
 
       const result = await response.json();
@@ -75,6 +123,7 @@ export default function TasksPage() {
         // Add new task to the top of the list
         setTasks(prev => [result.data, ...prev]);
         setPrompt(''); // Clear input
+        handleRemoveImage(); // Clear image
       } else {
         setError(result.error || 'Failed to create task');
       }
@@ -203,6 +252,61 @@ export default function TasksPage() {
           <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-xl border border-white/10 p-6">
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
+                {/* Image Upload Area */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Upload an image (optional)
+                  </label>
+                  
+                  {imagePreview ? (
+                    // Image Preview
+                    <div className="relative border-2 border-dashed border-white/20 rounded-lg p-4 bg-white/5">
+                      <div className="flex items-start gap-4">
+                        <img 
+                          src={imagePreview} 
+                          alt="Preview" 
+                          className="w-32 h-32 object-cover rounded-lg border border-white/10"
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-300 mb-1">
+                            <FileText className="w-4 h-4 inline mr-1" />
+                            {imageName}
+                          </p>
+                          <p className="text-xs text-gray-500 mb-3">
+                            The AI will analyze this image along with your prompt
+                          </p>
+                          <button
+                            type="button"
+                            onClick={handleRemoveImage}
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 text-xs rounded-lg transition-colors border border-red-500/30"
+                          >
+                            <X className="w-3 h-3" />
+                            Remove Image
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    // Upload Button
+                    <label className="flex flex-col items-center justify-center border-2 border-dashed border-white/20 rounded-lg p-6 cursor-pointer hover:border-white/30 transition-colors bg-white/5">
+                      <ImageIcon className="w-8 h-8 text-gray-500 mb-2" />
+                      <span className="text-sm text-gray-400 mb-1">Click to upload an image</span>
+                      <span className="text-xs text-gray-600">PNG, JPG up to 10MB</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageSelect}
+                        className="hidden"
+                        disabled={isLoading}
+                      />
+                    </label>
+                  )}
+                  <p className="mt-2 text-xs text-yellow-400/80">
+                    ⚠️ Note: AI responses are for informational purposes only and do not constitute financial advice
+                  </p>
+                </div>
+
+                {/* Text Input */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     What do you want to do?
@@ -210,7 +314,9 @@ export default function TasksPage() {
                   <textarea
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="e.g., Draft an email to a client, create a listing description, write social media posts..."
+                    placeholder={imagePreview 
+                      ? "e.g., Analyze this contract and list important dates, What are the key terms in this document?, Extract contact information..."
+                      : "e.g., Draft an email to a client, create a listing description, write social media posts..."}
                     className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 resize-none"
                     rows={4}
                     disabled={isLoading}
@@ -281,16 +387,39 @@ export default function TasksPage() {
                     <div className="mb-4">
                       <div className="flex items-start gap-3">
                         <div className="p-2 bg-white/10 backdrop-blur-sm rounded-lg mt-0.5 border border-white/10">
-                          <CheckCircle2 className="w-4 h-4 text-purple-400" />
+                          {task.has_image ? (
+                            <ImageIcon className="w-4 h-4 text-purple-400" />
+                          ) : (
+                            <CheckCircle2 className="w-4 h-4 text-purple-400" />
+                          )}
                         </div>
                         <div className="flex-1">
                           <p className="text-white font-medium">{task.prompt}</p>
                           <p className="text-xs text-gray-500 mt-1">
                             {formatDate(task.created_at)}
+                            {task.has_image && (
+                              <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded text-xs border border-purple-500/30">
+                                <ImageIcon className="w-3 h-3" />
+                                With Image
+                              </span>
+                            )}
                           </p>
                         </div>
                       </div>
                     </div>
+
+                    {/* Attached Image Preview */}
+                    {task.has_image && task.image_url && (
+                      <div className="ml-11 mb-4">
+                        <div className="border border-white/10 rounded-lg overflow-hidden bg-white/5 inline-block">
+                          <img 
+                            src={task.image_url} 
+                            alt={task.image_name || 'Uploaded image'} 
+                            className="max-w-xs max-h-48 object-contain"
+                          />
+                        </div>
+                      </div>
+                    )}
 
                     {/* AI Output */}
                     {task.output && (
