@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
-import { Sparkles, Clock, Send, Loader2, CheckCircle2, Edit2, Save, X, Wand2, Upload, Image as ImageIcon, FileText } from 'lucide-react';
+import { Sparkles, Clock, Send, Loader2, CheckCircle2, Edit2, Save, X, Wand2, Paperclip, Image as ImageIcon, FileText } from 'lucide-react';
 
 interface Task {
   id: string;
@@ -252,46 +252,25 @@ export default function TasksPage() {
           <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-xl border border-white/10 p-6">
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
-                {/* Image Upload Area */}
+                {/* Text Input with Paperclip Button */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Upload an image (optional)
+                    What do you want to do?
                   </label>
-                  
-                  {imagePreview ? (
-                    // Image Preview
-                    <div className="relative border-2 border-dashed border-white/20 rounded-lg p-4 bg-white/5">
-                      <div className="flex items-start gap-4">
-                        <img 
-                          src={imagePreview} 
-                          alt="Preview" 
-                          className="w-32 h-32 object-cover rounded-lg border border-white/10"
-                        />
-                        <div className="flex-1">
-                          <p className="text-sm text-gray-300 mb-1">
-                            <FileText className="w-4 h-4 inline mr-1" />
-                            {imageName}
-                          </p>
-                          <p className="text-xs text-gray-500 mb-3">
-                            The AI will analyze this image along with your prompt
-                          </p>
-                          <button
-                            type="button"
-                            onClick={handleRemoveImage}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 text-xs rounded-lg transition-colors border border-red-500/30"
-                          >
-                            <X className="w-3 h-3" />
-                            Remove Image
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    // Upload Button
-                    <label className="flex flex-col items-center justify-center border-2 border-dashed border-white/20 rounded-lg p-6 cursor-pointer hover:border-white/30 transition-colors bg-white/5">
-                      <ImageIcon className="w-8 h-8 text-gray-500 mb-2" />
-                      <span className="text-sm text-gray-400 mb-1">Click to upload an image</span>
-                      <span className="text-xs text-gray-600">PNG, JPG up to 10MB</span>
+                  <div className="relative">
+                    <textarea
+                      value={prompt}
+                      onChange={(e) => setPrompt(e.target.value)}
+                      placeholder={imagePreview 
+                        ? "e.g., Analyze this document and list important dates, What are the key terms?, Extract contact information..."
+                        : "e.g., Draft an email to a client, create a listing description, write social media posts..."}
+                      className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg pl-4 pr-12 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 resize-none"
+                      rows={4}
+                      disabled={isLoading}
+                    />
+                    {/* Paperclip Button */}
+                    <label className="absolute bottom-3 right-3 cursor-pointer p-2 hover:bg-white/10 rounded-lg transition-colors group">
+                      <Paperclip className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
                       <input
                         type="file"
                         accept="image/*"
@@ -300,28 +279,41 @@ export default function TasksPage() {
                         disabled={isLoading}
                       />
                     </label>
-                  )}
+                  </div>
                   <p className="mt-2 text-xs text-yellow-400/80">
                     ⚠️ Note: AI responses are for informational purposes only and do not constitute financial advice
                   </p>
                 </div>
 
-                {/* Text Input */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    What do you want to do?
-                  </label>
-                  <textarea
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    placeholder={imagePreview 
-                      ? "e.g., Analyze this contract and list important dates, What are the key terms in this document?, Extract contact information..."
-                      : "e.g., Draft an email to a client, create a listing description, write social media posts..."}
-                    className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 resize-none"
-                    rows={4}
-                    disabled={isLoading}
-                  />
-                </div>
+                {/* Image Preview (if selected) */}
+                {imagePreview && (
+                  <div className="border border-white/20 rounded-lg p-3 bg-white/5">
+                    <div className="flex items-start gap-3">
+                      <img 
+                        src={imagePreview} 
+                        alt="Preview" 
+                        className="w-16 h-16 object-cover rounded border border-white/10 flex-shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-gray-300 truncate">
+                          <FileText className="w-3.5 h-3.5 inline mr-1" />
+                          {imageName}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-0.5">
+                          The AI will analyze this file along with your prompt
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRemoveImage}
+                        className="p-1.5 hover:bg-red-500/20 rounded transition-colors flex-shrink-0"
+                      >
+                        <X className="w-4 h-4 text-gray-400 hover:text-red-300" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex justify-end">
                   <Button
                     type="submit"
