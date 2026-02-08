@@ -122,11 +122,6 @@ export default function DashboardPage() {
               Manage Clients
             </Button>
           </Link>
-          <Link href="/dashboard/brand-kit">
-            <Button variant="outline">
-              Setup Brand Kit
-            </Button>
-          </Link>
         </div>
 
         {/* Notifications Panel */}
