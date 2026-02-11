@@ -43,7 +43,7 @@ export default function TermsPage() {
             </div>
             <div>
               <h1 className="text-4xl font-bold text-white">Terms of Service</h1>
-              <p className="text-gray-400 mt-2">Last Updated: January 22, 2026</p>
+              <p className="text-gray-400 mt-2">Last Updated: February 11, 2026</p>
             </div>
           </div>
 
@@ -66,9 +66,9 @@ export default function TermsPage() {
                 <li>Client relationship management (CRM)</li>
                 <li>Contract storage and document management</li>
                 <li>Calendar integration and scheduling (Google Calendar, Outlook)</li>
+                <li>AI-powered conversational assistant with conversation memory</li>
                 <li>AI-powered content generation and document analysis</li>
-                <li>Image analysis for property listings</li>
-                <li>Task and reminder management</li>
+                <li>Image analysis for property listings and documents</li>
                 <li>Automated reminders and notifications</li>
               </ul>
             </section>
@@ -126,7 +126,7 @@ export default function TermsPage() {
               
               <h3 className="text-xl font-semibold text-white mb-3 mt-6">Your Content</h3>
               <p className="text-gray-300 leading-relaxed mb-4">
-                You retain all rights to content you upload, create, or store on the Service ("User Content"), including property listings, client information, documents, and images.
+                You retain all rights to content you upload, create, or store on the Service ("User Content"), including property listings, client information, documents, images, and all messages sent to our AI Assistant.
               </p>
 
               <h3 className="text-xl font-semibold text-white mb-3 mt-6">License to Us</h3>
@@ -171,10 +171,23 @@ export default function TermsPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-white mb-4">AI-Generated Content</h2>
               
-              <h3 className="text-xl font-semibold text-white mb-3 mt-6">AI Tools</h3>
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">AI Tools and Conversation Memory</h3>
               <p className="text-gray-300 leading-relaxed mb-4">
-                We provide AI-powered tools (powered by OpenAI GPT-4) to help generate property descriptions, analyze images and documents, and assist with various real estate tasks. While we strive for accuracy, AI-generated content may contain errors or inaccuracies.
+                We provide AI-powered tools (powered by OpenAI GPT-4) to help generate property descriptions, analyze images and documents, and assist with various real estate tasks through our conversational AI Assistant. Our AI Assistant maintains conversation history, meaning all messages you send and all responses generated are stored in our database and sent to OpenAI to provide contextually relevant assistance across multiple conversations. The AI automatically generates descriptive titles for your conversations based on your first message. While we strive for accuracy, AI-generated content may contain errors or inaccuracies.
               </p>
+              
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">Conversation Data</h3>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                When you use the AI Assistant feature:
+              </p>
+              <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
+                <li>All conversations and messages are stored indefinitely in our database</li>
+                <li>Images you attach to conversations are stored and analyzed</li>
+                <li>Your full conversation history is sent to OpenAI to maintain context</li>
+                <li>You can view, manage, pin, rename, and delete conversations at any time</li>
+                <li>Deleting a conversation permanently removes it from our database</li>
+                <li>Deleted conversations are removed from your account but may remain in backups for a limited time</li>
+              </ul>
 
               <h3 className="text-xl font-semibold text-white mb-3 mt-6">No Financial or Legal Advice</h3>
               <p className="text-gray-300 leading-relaxed mb-4">

@@ -43,7 +43,7 @@ export default function PrivacyPage() {
             </div>
             <div>
               <h1 className="text-4xl font-bold text-white">Privacy Policy</h1>
-              <p className="text-gray-400 mt-2">Last Updated: January 22, 2026</p>
+              <p className="text-gray-400 mt-2">Last Updated: February 11, 2026</p>
             </div>
           </div>
 
@@ -76,18 +76,39 @@ export default function PrivacyPage() {
                 <li>OAuth access and refresh tokens</li>
               </ul>
 
-              <h3 className="text-xl font-semibold text-white mb-3 mt-6">3. Usage Information</h3>
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">2b. Microsoft/Outlook Account Information</h3>
+              <p className="text-gray-300 leading-relaxed mb-4">When you connect Outlook Calendar:</p>
+              <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
+                <li>Outlook account email address</li>
+                <li>Calendar events (titles, dates, times, descriptions, locations)</li>
+                <li>OAuth access and refresh tokens</li>
+              </ul>
+
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">3. AI Assistant Conversation Data</h3>
+              <p className="text-gray-300 leading-relaxed mb-4">When you use our AI Assistant feature, we collect and store:</p>
+              <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
+                <li>Your messages and prompts sent to the AI</li>
+                <li>AI-generated responses and content</li>
+                <li>Complete conversation history to maintain context across multiple exchanges</li>
+                <li>Images you attach to conversations for analysis</li>
+                <li>Auto-generated conversation titles based on your first message</li>
+                <li>Conversation metadata (creation date, last updated, pinned status)</li>
+              </ul>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                <strong>Note:</strong> Conversations are stored in your account and you can delete them at any time from the AI Assistant page.
+              </p>
+
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">4. Other Usage Information</h3>
               <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
                 <li>Property listings and project information you create</li>
                 <li>Client information you add</li>
-                <li>Tasks and transactions you manage</li>
+                <li>Transactions you manage</li>
                 <li>Calendar events you create</li>
                 <li>Files, images, and contracts you upload</li>
                 <li>Notes and communications within the platform</li>
-                <li>AI-generated content and prompts you submit</li>
               </ul>
 
-              <h3 className="text-xl font-semibold text-white mb-3 mt-6">4. Payment Information</h3>
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">5. Payment Information</h3>
               <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
                 <li>Payment method details (processed by Stripe)</li>
                 <li>Billing address</li>
@@ -98,7 +119,7 @@ export default function PrivacyPage() {
                 <strong>Note:</strong> We do not store your full credit card numbers. Payment processing is handled securely by Stripe.
               </p>
 
-              <h3 className="text-xl font-semibold text-white mb-3 mt-6">5. Automatically Collected Information</h3>
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">6. Automatically Collected Information</h3>
               <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
                 <li>IP address</li>
                 <li>Browser type and version</li>
@@ -189,11 +210,16 @@ export default function PrivacyPage() {
                 <li>Generate property descriptions and marketing content</li>
                 <li>Analyze property images and documents</li>
                 <li>Refine and enhance content</li>
-                <li>Provide AI-powered task assistance</li>
-                <li>Extract information from uploaded documents</li>
+                <li>Provide AI-powered conversational assistance with conversation memory</li>
+                <li>Generate descriptive titles for your conversations</li>
+                <li>Maintain conversation context across multiple messages</li>
+                <li>Extract information from uploaded documents and images</li>
               </ul>
               <p className="text-gray-300 leading-relaxed mb-4">
-                <strong>Data sent to OpenAI:</strong> Property information, images, and documents you explicitly request us to process. AI responses are for informational purposes only and do not constitute financial, legal, or professional advice.
+                <strong>Data sent to OpenAI:</strong> Your conversation messages, property information, images, and documents you explicitly request us to process. Your full conversation history is sent to OpenAI to maintain context and provide relevant responses. We store conversation history in our database to enable you to resume conversations later. AI responses are for informational purposes only and do not constitute financial, legal, or professional advice.
+              </p>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                <strong>Data Retention:</strong> Conversation history is stored indefinitely until you manually delete conversations from the AI Assistant page. You have full control to delete any or all conversations at any time.
               </p>
               <p className="text-gray-300 leading-relaxed mb-4">
                 <strong>OpenAI Privacy Policy:</strong>{' '}
