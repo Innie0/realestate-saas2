@@ -282,6 +282,18 @@ If you see financial information in a document, you may extract and summarize it
       });
 
       aiOutput = completion.choices[0]?.message?.content || 'Unable to generate response.';
+      
+      // Strip markdown formatting that OpenAI loves to add
+      // Remove **bold** → bold
+      aiOutput = aiOutput.replace(/\*\*(.*?)\*\*/g, '$1');
+      // Remove *italic* → italic
+      aiOutput = aiOutput.replace(/\*(.*?)\*/g, '$1');
+      // Remove __bold__ → bold
+      aiOutput = aiOutput.replace(/__(.*?)__/g, '$1');
+      // Remove _italic_ → italic  
+      aiOutput = aiOutput.replace(/_(.*?)_/g, '$1');
+      // Remove ### headings → just the text
+      aiOutput = aiOutput.replace(/^#{1,6}\s+/gm, '');
     } catch (aiError: any) {
       console.error('OpenAI error:', aiError);
       aiOutput = 'Error: Unable to generate AI response. Please try again.';
