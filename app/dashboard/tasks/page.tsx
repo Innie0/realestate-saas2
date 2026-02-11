@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
-import { Sparkles, Send, Loader2, Paperclip, X, Plus, MessageSquare, Trash2, FileText, Pin } from 'lucide-react';
+import { Sparkles, Send, Loader2, Paperclip, X, Plus, MessageSquare, Trash2, FileText, Pin, Edit3, Check } from 'lucide-react';
 import { Conversation, ConversationMessage } from '@/types';
 
 export default function TasksPage() {
@@ -23,6 +23,10 @@ export default function TasksPage() {
   
   // Sidebar state
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
+  // Rename state
+  const [editingConversationId, setEditingConversationId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState('');
   
   // Ref for auto-scrolling
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -212,6 +216,50 @@ export default function TasksPage() {
     }
   };
 
+  const handleStartRename = (conversationId: string, currentTitle: string) => {
+    setEditingConversationId(conversationId);
+    setEditingTitle(currentTitle || 'New conversation');
+  };
+
+  const handleCancelRename = () => {
+    setEditingConversationId(null);
+    setEditingTitle('');
+  };
+
+  const handleSaveRename = async (conversationId: string) => {
+    if (!editingTitle.trim()) return;
+
+    try {
+      const response = await fetch('/api/conversations', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          conversation_id: conversationId,
+          title: editingTitle.trim()
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setConversations(prev =>
+          prev.map(c =>
+            c.id === conversationId
+              ? { ...c, title: editingTitle.trim() }
+              : c
+          )
+        );
+        setEditingConversationId(null);
+        setEditingTitle('');
+      } else {
+        setError(result.error || 'Failed to rename conversation');
+      }
+    } catch (err) {
+      console.error('Error renaming conversation:', err);
+      setError('Failed to rename conversation');
+    }
+  };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -342,37 +390,85 @@ export default function TasksPage() {
                         <MessageSquare className="w-4 h-4 text-gray-400" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p 
-                          className="text-xs text-white leading-snug line-clamp-2" 
-                          title={conv.title || 'New conversation'}
-                        >
-                          {conv.title || 'New conversation'}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {formatDate(conv.updated_at)}
-                        </p>
+                        {editingConversationId === conv.id ? (
+                          // Edit Mode
+                          <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
+                            <input
+                              type="text"
+                              value={editingTitle}
+                              onChange={(e) => setEditingTitle(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') handleSaveRename(conv.id);
+                                if (e.key === 'Escape') handleCancelRename();
+                              }}
+                              className="w-full text-xs bg-white/10 border border-white/20 rounded px-2 py-1 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+                              autoFocus
+                            />
+                            <div className="flex items-center gap-1">
+                              <button
+                                onClick={() => handleSaveRename(conv.id)}
+                                className="p-1 hover:bg-green-500/20 rounded transition-all"
+                                title="Save"
+                              >
+                                <Check className="w-3 h-3 text-green-400" />
+                              </button>
+                              <button
+                                onClick={handleCancelRename}
+                                className="p-1 hover:bg-red-500/20 rounded transition-all"
+                                title="Cancel"
+                              >
+                                <X className="w-3 h-3 text-red-400" />
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          // View Mode
+                          <>
+                            <p 
+                              className="text-xs text-white leading-snug line-clamp-2" 
+                              title={conv.title || 'New conversation'}
+                            >
+                              {conv.title || 'New conversation'}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {formatDate(conv.updated_at)}
+                            </p>
+                          </>
+                        )}
                       </div>
-                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleTogglePin(conv.id, conv.pinned);
-                          }}
-                          className="p-1 hover:bg-purple-500/20 rounded transition-all"
-                          title={conv.pinned ? 'Unpin conversation' : 'Pin conversation'}
-                        >
-                          <Pin className={`w-3.5 h-3.5 ${conv.pinned ? 'text-purple-400 fill-purple-400' : 'text-gray-400'}`} />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteConversation(conv.id);
-                          }}
-                          className="p-1 hover:bg-red-500/20 rounded transition-all"
-                        >
-                          <Trash2 className="w-3.5 h-3.5 text-gray-400 hover:text-red-300" />
-                        </button>
-                      </div>
+                      {editingConversationId !== conv.id && (
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleStartRename(conv.id, conv.title || '');
+                            }}
+                            className="p-1 hover:bg-blue-500/20 rounded transition-all"
+                            title="Rename"
+                          >
+                            <Edit3 className="w-3.5 h-3.5 text-gray-400" />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleTogglePin(conv.id, conv.pinned);
+                            }}
+                            className="p-1 hover:bg-purple-500/20 rounded transition-all"
+                            title={conv.pinned ? 'Unpin conversation' : 'Pin conversation'}
+                          >
+                            <Pin className={`w-3.5 h-3.5 ${conv.pinned ? 'text-purple-400 fill-purple-400' : 'text-gray-400'}`} />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteConversation(conv.id);
+                            }}
+                            className="p-1 hover:bg-red-500/20 rounded transition-all"
+                          >
+                            <Trash2 className="w-3.5 h-3.5 text-gray-400 hover:text-red-300" />
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

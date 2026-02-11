@@ -432,8 +432,8 @@ export async function DELETE(request: NextRequest) {
 }
 
 /**
- * PATCH handler - Update conversation (e.g., toggle pinned status)
- * Body should contain: conversation_id, pinned
+ * PATCH handler - Update conversation (e.g., toggle pinned status, rename title)
+ * Body should contain: conversation_id, and one or more of: pinned, title
  */
 export async function PATCH(request: NextRequest) {
   try {
@@ -450,11 +450,23 @@ export async function PATCH(request: NextRequest) {
 
     // Parse request body
     const body = await request.json();
-    const { conversation_id, pinned } = body;
+    const { conversation_id, pinned, title } = body;
 
-    if (!conversation_id || pinned === undefined) {
+    if (!conversation_id) {
       return NextResponse.json(
-        { success: false, error: 'Conversation ID and pinned status are required' },
+        { success: false, error: 'Conversation ID is required' },
+        { status: 400 }
+      );
+    }
+
+    // Build update object with only provided fields
+    const updates: any = {};
+    if (pinned !== undefined) updates.pinned = pinned;
+    if (title !== undefined) updates.title = title;
+
+    if (Object.keys(updates).length === 0) {
+      return NextResponse.json(
+        { success: false, error: 'No update fields provided' },
         { status: 400 }
       );
     }
@@ -462,7 +474,7 @@ export async function PATCH(request: NextRequest) {
     // Update conversation
     const { data: updatedConversation, error: updateError } = await supabase
       .from('conversations')
-      .update({ pinned })
+      .update(updates)
       .eq('id', conversation_id)
       .eq('user_id', user.id)
       .select()
