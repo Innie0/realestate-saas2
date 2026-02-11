@@ -342,10 +342,13 @@ export default function TasksPage() {
                         <MessageSquare className="w-4 h-4 text-gray-400" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-white truncate">
+                        <p 
+                          className="text-xs text-white leading-snug line-clamp-2" 
+                          title={conv.title || 'New conversation'}
+                        >
                           {conv.title || 'New conversation'}
                         </p>
-                        <p className="text-xs text-gray-500 mt-0.5">
+                        <p className="text-xs text-gray-500 mt-1">
                           {formatDate(conv.updated_at)}
                         </p>
                       </div>
