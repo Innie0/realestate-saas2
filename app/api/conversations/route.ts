@@ -315,13 +315,40 @@ If you see financial information in a document, you may extract and summarize it
       console.error('Error saving assistant message:', assistantMsgError);
     }
 
-    // Generate title for new conversations
+    // Generate title for new conversations using AI (like ChatGPT does)
     if (!conversation_id) {
-      const title = message.slice(0, 60) + (message.length > 60 ? '...' : '');
-      await supabase
-        .from('conversations')
-        .update({ title })
-        .eq('id', conversationId);
+      try {
+        const titleCompletion = await openai.chat.completions.create({
+          model: 'gpt-4o',
+          messages: [
+            {
+              role: 'system',
+              content: 'Generate a short, concise title (3-5 words max) for this conversation based on the user\'s first message. The title should be descriptive and capture the main topic. Do not use quotes or punctuation at the end. Examples: "Listing Description Help", "Commercial Property Offer", "Client Follow-up Strategy"'
+            },
+            {
+              role: 'user',
+              content: message
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 50,
+        });
+
+        const generatedTitle = titleCompletion.choices[0]?.message?.content?.trim() || message.slice(0, 60);
+        
+        await supabase
+          .from('conversations')
+          .update({ title: generatedTitle })
+          .eq('id', conversationId);
+      } catch (titleError) {
+        // Fallback to simple truncation if AI title generation fails
+        console.error('Error generating title:', titleError);
+        const fallbackTitle = message.slice(0, 60) + (message.length > 60 ? '...' : '');
+        await supabase
+          .from('conversations')
+          .update({ title: fallbackTitle })
+          .eq('id', conversationId);
+      }
     }
 
     // Get updated conversation with all messages
