@@ -164,38 +164,54 @@ export default function Sidebar() {
       )}
 
       {/* Sidebar - Desktop: fixed left, Mobile: slide-in overlay */}
-      <div className={clsx(
-        'fixed top-0 h-screen flex flex-col bg-gradient-to-b from-gray-900 via-black to-gray-900 text-white z-50 transition-all duration-300 ease-in-out',
-        // Desktop: always visible and relative positioning
-        'lg:translate-x-0 lg:relative',
-        // Width based on collapsed state
-        isCollapsed ? 'lg:w-[72px]' : 'lg:w-64',
-        // Mobile always full width sidebar
-        'w-64',
-        // Mobile: hidden by default, slide in when menu open
-        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-      )}>
+      <div 
+        className={clsx(
+          'fixed top-0 h-screen flex flex-col bg-gradient-to-b from-gray-900 via-black to-gray-900 text-white z-50',
+          // Desktop: always visible and relative positioning
+          'lg:translate-x-0 lg:relative',
+          // Width based on collapsed state
+          isCollapsed ? 'lg:w-[72px]' : 'lg:w-64',
+          // Mobile always full width sidebar
+          'w-64',
+          // Mobile: hidden by default, slide in when menu open
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        )}
+        style={{
+          transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease-in-out'
+        }}
+      >
         {/* Logo / Brand section at the top - hidden on mobile (shown in header) */}
-        <div className="hidden lg:flex h-20 items-center justify-center border-b border-gray-800 bg-gradient-to-r from-gray-900 to-black">
-          {isCollapsed ? (
-            <Image
-              src="/favicon.png"
-              alt="Realestic"
-              width={32}
-              height={32}
-              priority
-              className="h-8 w-8"
-            />
-          ) : (
-            <Image
-              src="/logo.png"
-              alt="Realestic"
-              width={240}
-              height={72}
-              priority
-              className="h-14 w-auto"
-            />
-          )}
+        <div className="hidden lg:flex h-20 items-center justify-center border-b border-gray-800 bg-gradient-to-r from-gray-900 to-black overflow-hidden">
+          <div className={clsx(
+            'transition-all duration-400',
+            isCollapsed ? 'opacity-100 scale-100' : 'opacity-0 scale-50 absolute'
+          )}>
+            {isCollapsed && (
+              <Image
+                src="/favicon.png"
+                alt="Realestic"
+                width={32}
+                height={32}
+                priority
+                className="h-8 w-8"
+              />
+            )}
+          </div>
+          <div className={clsx(
+            'transition-all duration-400',
+            !isCollapsed ? 'opacity-100 scale-100' : 'opacity-0 scale-50 absolute'
+          )}>
+            {!isCollapsed && (
+              <Image
+                src="/logo.png"
+                alt="Realestic"
+                width={240}
+                height={72}
+                priority
+                className="h-14 w-auto"
+              />
+            )}
+          </div>
         </div>
 
         {/* Mobile: Add top padding to account for fixed header */}
@@ -238,9 +254,12 @@ export default function Sidebar() {
                   active ? 'text-purple-400' : 'text-gray-400 group-hover:text-white group-hover:scale-110'
                 )} />
                 
-                {!isCollapsed && (
-                  <span className="transition-opacity duration-200">{item.name}</span>
-                )}
+                <span className={clsx(
+                  'transition-all duration-400 whitespace-nowrap',
+                  isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'
+                )}>
+                  {item.name}
+                </span>
 
                 {/* Tooltip bubble for collapsed mode */}
                 {isCollapsed && (
@@ -270,7 +289,7 @@ export default function Sidebar() {
             ) : (
               <>
                 <ChevronsLeft className="h-5 w-5 transition-transform duration-200" />
-                <span>Collapse</span>
+                <span className="transition-all duration-400">Collapse</span>
               </>
             )}
           </button>
