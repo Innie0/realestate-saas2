@@ -212,7 +212,7 @@ export default function TasksPage() {
     }
   };
 
-  const handleSendMessage = async (e: React.FormEvent) {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!inputMessage.trim() && !selectedImage) return;
