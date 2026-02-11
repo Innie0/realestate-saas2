@@ -242,10 +242,12 @@ export default function Sidebar() {
                   <span className="transition-opacity duration-200">{item.name}</span>
                 )}
 
-                {/* Tooltip for collapsed mode */}
+                {/* Tooltip bubble for collapsed mode */}
                 {isCollapsed && (
-                  <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 border border-white/10 rounded-md text-xs text-white whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-50">
+                  <div className="absolute left-full ml-3 px-3 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg shadow-xl whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none transition-all duration-200 z-50 border border-gray-700">
                     {item.name}
+                    {/* Arrow pointing to icon */}
+                    <div className="absolute right-full top-1/2 -translate-y-1/2 border-[6px] border-transparent border-r-gray-800" />
                   </div>
                 )}
               </Link>
