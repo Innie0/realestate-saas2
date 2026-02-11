@@ -14,6 +14,7 @@ export default function TasksPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingConversations, setIsLoadingConversations] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userInitials, setUserInitials] = useState<string>('U');
   
   // Image upload state
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -26,8 +27,9 @@ export default function TasksPage() {
   // Ref for auto-scrolling
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Fetch conversations on page load
+  // Fetch user info and conversations on page load
   useEffect(() => {
+    fetchUserInfo();
     fetchConversations();
   }, []);
 
@@ -47,6 +49,33 @@ export default function TasksPage() {
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const fetchUserInfo = async () => {
+    try {
+      const { createClient } = await import('@/lib/supabase');
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        // Try to get full name from user metadata
+        const fullName = user.user_metadata?.full_name || user.email || '';
+        
+        // Generate initials
+        if (fullName) {
+          const names = fullName.split(' ').filter(Boolean);
+          if (names.length >= 2) {
+            // Take first letter of first two names
+            setUserInitials((names[0][0] + names[1][0]).toUpperCase());
+          } else if (names.length === 1) {
+            // Take first two letters of single name
+            setUserInitials(names[0].slice(0, 2).toUpperCase());
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching user info:', err);
+    }
   };
 
   const fetchConversations = async () => {
@@ -370,7 +399,7 @@ export default function TasksPage() {
                       
                       {msg.role === 'user' && (
                         <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 flex items-center justify-center text-white text-sm font-medium">
-                          U
+                          {userInitials}
                         </div>
                       )}
                     </div>
