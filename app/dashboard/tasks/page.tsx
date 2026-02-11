@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
-import { Sparkles, Send, Loader2, Paperclip, X, Plus, MessageSquare, Trash2, FileText, Pin, Edit3, Check } from 'lucide-react';
+import { Sparkles, Send, Loader2, Paperclip, X, Plus, MessageSquare, Trash2, FileText, Pin, Edit3, Check, MoreVertical } from 'lucide-react';
 import { Conversation, ConversationMessage } from '@/types';
 
 export default function TasksPage() {
@@ -28,6 +28,9 @@ export default function TasksPage() {
   const [editingConversationId, setEditingConversationId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
   
+  // Menu state
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  
   // Ref for auto-scrolling
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -50,6 +53,15 @@ export default function TasksPage() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => setOpenMenuId(null);
+    if (openMenuId) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [openMenuId]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -437,36 +449,55 @@ export default function TasksPage() {
                         )}
                       </div>
                       {editingConversationId !== conv.id && (
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="relative flex-shrink-0">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleStartRename(conv.id, conv.title || '');
+                              setOpenMenuId(openMenuId === conv.id ? null : conv.id);
                             }}
-                            className="p-1 hover:bg-blue-500/20 rounded transition-all"
-                            title="Rename"
+                            className="p-1 hover:bg-white/10 rounded transition-all opacity-0 group-hover:opacity-100"
                           >
-                            <Edit3 className="w-3.5 h-3.5 text-gray-400" />
+                            <MoreVertical className="w-4 h-4 text-gray-400" />
                           </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleTogglePin(conv.id, conv.pinned);
-                            }}
-                            className="p-1 hover:bg-purple-500/20 rounded transition-all"
-                            title={conv.pinned ? 'Unpin conversation' : 'Pin conversation'}
-                          >
-                            <Pin className={`w-3.5 h-3.5 ${conv.pinned ? 'text-purple-400 fill-purple-400' : 'text-gray-400'}`} />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteConversation(conv.id);
-                            }}
-                            className="p-1 hover:bg-red-500/20 rounded transition-all"
-                          >
-                            <Trash2 className="w-3.5 h-3.5 text-gray-400 hover:text-red-300" />
-                          </button>
+                          
+                          {/* Dropdown Menu */}
+                          {openMenuId === conv.id && (
+                            <div 
+                              className="absolute right-0 top-8 z-50 w-40 bg-gray-800 border border-white/20 rounded-lg shadow-xl overflow-hidden"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <button
+                                onClick={() => {
+                                  handleStartRename(conv.id, conv.title || '');
+                                  setOpenMenuId(null);
+                                }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-white hover:bg-white/10 transition-colors"
+                              >
+                                <Edit3 className="w-3.5 h-3.5" />
+                                Rename
+                              </button>
+                              <button
+                                onClick={() => {
+                                  handleTogglePin(conv.id, conv.pinned);
+                                  setOpenMenuId(null);
+                                }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-white hover:bg-white/10 transition-colors"
+                              >
+                                <Pin className="w-3.5 h-3.5" />
+                                {conv.pinned ? 'Unpin' : 'Pin'}
+                              </button>
+                              <button
+                                onClick={() => {
+                                  handleDeleteConversation(conv.id);
+                                  setOpenMenuId(null);
+                                }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:bg-red-500/20 transition-colors"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                Delete
+                              </button>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
