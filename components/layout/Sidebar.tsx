@@ -203,7 +203,7 @@ export default function Sidebar() {
 
         {/* Navigation links */}
         <nav className={clsx(
-          'flex-1 space-y-1 py-4 overflow-y-auto',
+          'flex-1 space-y-1 py-4 overflow-y-auto overflow-x-hidden',
           isCollapsed ? 'px-2' : 'px-3'
         )}>
           {navigationItems.map((item) => {
