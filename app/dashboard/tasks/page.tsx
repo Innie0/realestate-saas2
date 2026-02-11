@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
-import { Sparkles, Send, Loader2, Paperclip, X, Plus, MessageSquare, Trash2, FileText } from 'lucide-react';
+import { Sparkles, Send, Loader2, Paperclip, X, Plus, MessageSquare, Trash2, FileText, Pin } from 'lucide-react';
 import { Conversation, ConversationMessage } from '@/types';
 
 export default function TasksPage() {
@@ -176,7 +176,43 @@ export default function TasksPage() {
     }
   };
 
-  const handleSendMessage = async (e: React.FormEvent) => {
+  const handleTogglePin = async (conversationId: string, currentPinned: boolean) => {
+    try {
+      const response = await fetch('/api/conversations', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          conversation_id: conversationId,
+          pinned: !currentPinned 
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Update local state
+        setConversations(prev => 
+          prev.map(c => 
+            c.id === conversationId 
+              ? { ...c, pinned: !currentPinned }
+              : c
+          ).sort((a, b) => {
+            // Sort: pinned first, then by updated_at
+            if (a.pinned && !b.pinned) return -1;
+            if (!a.pinned && b.pinned) return 1;
+            return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+          })
+        );
+      } else {
+        setError(result.error || 'Failed to pin conversation');
+      }
+    } catch (err) {
+      console.error('Error pinning conversation:', err);
+      setError('Failed to pin conversation');
+    }
+  };
+
+  const handleSendMessage = async (e: React.FormEvent) {
     e.preventDefault();
     
     if (!inputMessage.trim() && !selectedImage) return;
@@ -297,11 +333,14 @@ export default function TasksPage() {
                       currentConversationId === conv.id
                         ? 'bg-white/10 border border-white/20'
                         : 'hover:bg-white/5 border border-transparent'
-                    }`}
+                    } ${conv.pinned ? 'border-l-2 border-l-purple-500' : ''}`}
                     onClick={() => setCurrentConversationId(conv.id)}
                   >
                     <div className="flex items-start gap-2">
-                      <MessageSquare className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+                      <div className="flex items-center gap-1 flex-shrink-0 mt-0.5">
+                        {conv.pinned && <Pin className="w-3 h-3 text-purple-400 fill-purple-400" />}
+                        <MessageSquare className="w-4 h-4 text-gray-400" />
+                      </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-white truncate">
                           {conv.title || 'New conversation'}
@@ -310,15 +349,27 @@ export default function TasksPage() {
                           {formatDate(conv.updated_at)}
                         </p>
                       </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteConversation(conv.id);
-                        }}
-                        className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 rounded transition-all"
-                      >
-                        <Trash2 className="w-3.5 h-3.5 text-gray-400 hover:text-red-300" />
-                      </button>
+                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleTogglePin(conv.id, conv.pinned);
+                          }}
+                          className="p-1 hover:bg-purple-500/20 rounded transition-all"
+                          title={conv.pinned ? 'Unpin conversation' : 'Pin conversation'}
+                        >
+                          <Pin className={`w-3.5 h-3.5 ${conv.pinned ? 'text-purple-400 fill-purple-400' : 'text-gray-400'}`} />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteConversation(conv.id);
+                          }}
+                          className="p-1 hover:bg-red-500/20 rounded transition-all"
+                        >
+                          <Trash2 className="w-3.5 h-3.5 text-gray-400 hover:text-red-300" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}

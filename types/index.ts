@@ -419,6 +419,7 @@ export interface Conversation {
   id: string; // Unique identifier
   user_id: string; // ID of the user who owns this conversation
   title: string | null; // Auto-generated title from first message
+  pinned: boolean; // Whether conversation is pinned to top
   created_at: string; // When the conversation was created
   updated_at: string; // When the conversation was last updated
 }

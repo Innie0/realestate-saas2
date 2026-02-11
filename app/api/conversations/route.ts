@@ -65,11 +65,12 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Otherwise, fetch all conversations for the user
+    // Otherwise, fetch all conversations for the user (pinned first, then by updated_at)
     const { data: conversations, error } = await supabase
       .from('conversations')
       .select('*')
       .eq('user_id', user.id)
+      .order('pinned', { ascending: false })
       .order('updated_at', { ascending: false });
 
     if (error) {
@@ -373,3 +374,63 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+
+/**
+ * PATCH handler - Update conversation (e.g., toggle pinned status)
+ * Body should contain: conversation_id, pinned
+ */
+export async function PATCH(request: NextRequest) {
+  try {
+    const supabase = await createClient();
+
+    // Check authentication
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    // Parse request body
+    const body = await request.json();
+    const { conversation_id, pinned } = body;
+
+    if (!conversation_id || pinned === undefined) {
+      return NextResponse.json(
+        { success: false, error: 'Conversation ID and pinned status are required' },
+        { status: 400 }
+      );
+    }
+
+    // Update conversation
+    const { data: updatedConversation, error: updateError } = await supabase
+      .from('conversations')
+      .update({ pinned })
+      .eq('id', conversation_id)
+      .eq('user_id', user.id)
+      .select()
+      .single();
+
+    if (updateError) {
+      console.error('Error updating conversation:', updateError);
+      return NextResponse.json(
+        { success: false, error: 'Failed to update conversation' },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: updatedConversation,
+      message: 'Conversation updated successfully',
+    });
+  } catch (error: any) {
+    console.error('Update conversation error:', error);
+    return NextResponse.json(
+      { success: false, error: error.message || 'Failed to update conversation' },
+      { status: 500 }
+    );
+  }
+}
+
