@@ -23,6 +23,11 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Set page title
+  React.useEffect(() => {
+    document.title = 'Sign In - Realestic';
+  }, []);
+
   /**
    * Handle email/password login
    */

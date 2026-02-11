@@ -19,6 +19,11 @@ export default function PricingPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState('');
 
+  // Set page title
+  useEffect(() => {
+    document.title = 'Pricing - Realestic';
+  }, []);
+
   // Check authentication and subscription status on mount
   useEffect(() => {
     const checkAuth = async () => {

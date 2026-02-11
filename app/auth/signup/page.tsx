@@ -26,6 +26,11 @@ export default function SignUpPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Set page title
+  React.useEffect(() => {
+    document.title = 'Sign Up - Realestic';
+  }, []);
+
   /**
    * Handle email/password registration
    */

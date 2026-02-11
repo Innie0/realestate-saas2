@@ -21,6 +21,11 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Set page title
+  React.useEffect(() => {
+    document.title = 'Projects - Realestic';
+  }, []);
+
   // Load projects from API on mount
   React.useEffect(() => {
     fetchProjects();

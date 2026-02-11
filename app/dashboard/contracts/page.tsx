@@ -38,6 +38,11 @@ export default function ContractsPage() {
   const [filteredContracts, setFilteredContracts] = useState<ContractWithRelations[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Set page title
+  useEffect(() => {
+    document.title = 'Contracts - Realestic';
+  }, []);
   const [filterType, setFilterType] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [viewMode, setViewMode] = useState<'list' | 'grouped'>('list'); // New: view mode

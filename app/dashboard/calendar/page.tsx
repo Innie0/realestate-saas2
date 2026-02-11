@@ -29,6 +29,11 @@ export default function CalendarPage() {
     },
   });
 
+  // Set page title
+  React.useEffect(() => {
+    document.title = 'Calendar - Realestic';
+  }, []);
+
   // Load connection status on mount
   React.useEffect(() => {
     loadConnections();

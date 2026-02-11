@@ -32,6 +32,11 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [projectsLoading, setProjectsLoading] = useState(true);
 
+  // Set page title
+  useEffect(() => {
+    document.title = 'Dashboard - Realestic';
+  }, []);
+
   // Fetch real statistics and recent projects from API
   useEffect(() => {
     fetchStats();

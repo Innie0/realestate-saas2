@@ -28,6 +28,11 @@ export default function ClientsPage() {
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [noteText, setNoteText] = useState('');
 
+  // Set page title
+  useEffect(() => {
+    document.title = 'Clients - Realestic';
+  }, []);
+
   // Fetch clients
   useEffect(() => {
     fetchClients();

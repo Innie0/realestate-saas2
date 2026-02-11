@@ -34,6 +34,11 @@ export default function TasksPage() {
   // Ref for auto-scrolling
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Set page title
+  useEffect(() => {
+    document.title = 'AI Assistant - Realestic';
+  }, []);
+
   // Fetch user info and conversations on page load
   useEffect(() => {
     fetchUserInfo();

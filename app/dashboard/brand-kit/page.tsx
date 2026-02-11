@@ -16,6 +16,11 @@ import { Upload, Palette, Type, Save, X } from 'lucide-react';
 export default function BrandKitPage() {
   const [isSaving, setIsSaving] = useState(false);
 
+  // Set page title
+  React.useEffect(() => {
+    document.title = 'Brand Kit - Realestic';
+  }, []);
+
   // Brand kit state (in a real app, this would be fetched from an API)
   const [brandKit, setBrandKit] = useState({
     logo_url: '',

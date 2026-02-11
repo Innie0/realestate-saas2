@@ -24,6 +24,11 @@ export default function TransactionsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
+  // Set page title
+  useEffect(() => {
+    document.title = 'Transactions - Realestic';
+  }, []);
+
   // Fetch transactions
   const fetchTransactions = async () => {
     setIsLoading(true);

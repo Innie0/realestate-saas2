@@ -19,6 +19,11 @@ export default function NewProjectPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
+  // Set page title
+  React.useEffect(() => {
+    document.title = 'New Project - Realestic';
+  }, []);
+
   // Form state
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');

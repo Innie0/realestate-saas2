@@ -33,6 +33,11 @@ export default function AccountPage() {
   const [isPasswordLoading, setIsPasswordLoading] = useState(false);
   const [generatedCode, setGeneratedCode] = useState('');
 
+  // Set page title
+  React.useEffect(() => {
+    document.title = 'Account - Realestic';
+  }, []);
+
   // Load user data on mount
   React.useEffect(() => {
     loadUserData();
