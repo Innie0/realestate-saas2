@@ -293,7 +293,7 @@ export default function TasksPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="h-screen flex flex-col">
       <Header 
         title="AI Assistant" 
         subtitle="Chat with AI about your real estate tasks"
@@ -301,8 +301,8 @@ export default function TasksPage() {
 
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar - Conversation History */}
-        <div className={`${isSidebarOpen ? 'w-64' : 'w-0'} bg-gray-900/50 backdrop-blur-sm border-r border-white/10 transition-all duration-300 overflow-hidden flex flex-col`}>
-          <div className="p-4 border-b border-white/10">
+        <div className={`${isSidebarOpen ? 'w-64' : 'w-0'} bg-gray-900/50 backdrop-blur-sm border-r border-white/10 transition-all duration-300 flex flex-col flex-shrink-0`}>
+          <div className="p-4 border-b border-white/10 flex-shrink-0">
             <Button
               onClick={handleNewConversation}
               className="w-full justify-center"
@@ -312,7 +312,7 @@ export default function TasksPage() {
             </Button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-2">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden p-2 min-h-0">
             {isLoadingConversations ? (
               <div className="space-y-2">
                 {[1, 2, 3].map((i) => (
@@ -379,7 +379,7 @@ export default function TasksPage() {
         </div>
 
         {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col bg-gradient-to-b from-gray-900/30 to-gray-900/50">
+        <div className="flex-1 flex flex-col bg-gradient-to-b from-gray-900/30 to-gray-900/50 min-w-0">
           {/* Toggle Sidebar Button */}
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -389,7 +389,7 @@ export default function TasksPage() {
           </button>
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 min-h-0">
             <div className="max-w-3xl mx-auto">
               {messages.length === 0 ? (
                 <div className="flex items-center justify-center h-full">
@@ -479,7 +479,7 @@ export default function TasksPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="px-6 pb-2">
+            <div className="px-6 pb-2 flex-shrink-0">
               <div className="max-w-3xl mx-auto">
                 <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 backdrop-blur-sm">
                   <p className="text-sm text-red-400">{error}</p>
@@ -489,7 +489,7 @@ export default function TasksPage() {
           )}
 
           {/* Input Area */}
-          <div className="border-t border-white/10 p-6 bg-gray-900/50 backdrop-blur-sm">
+          <div className="border-t border-white/10 p-6 bg-gray-900/50 backdrop-blur-sm flex-shrink-0">
             <div className="max-w-3xl mx-auto">
               <form onSubmit={handleSendMessage} className="space-y-3">
                 {/* Image Preview */}
