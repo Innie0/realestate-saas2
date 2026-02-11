@@ -1,25 +1,18 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
-import { Sparkles, Clock, Send, Loader2, CheckCircle2, Edit2, Save, X, Wand2, Paperclip, Image as ImageIcon, FileText } from 'lucide-react';
-
-interface Task {
-  id: string;
-  prompt: string;
-  output: string | null;
-  image_url: string | null;
-  image_name: string | null;
-  has_image: boolean;
-  created_at: string;
-}
+import { Sparkles, Send, Loader2, Paperclip, X, Plus, MessageSquare, Trash2, FileText } from 'lucide-react';
+import { Conversation, ConversationMessage } from '@/types';
 
 export default function TasksPage() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [prompt, setPrompt] = useState('');
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<ConversationMessage[]>([]);
+  const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingTasks, setIsLoadingTasks] = useState(true);
+  const [isLoadingConversations, setIsLoadingConversations] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
   // Image upload state
@@ -27,59 +20,84 @@ export default function TasksPage() {
   const [imageName, setImageName] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   
-  // Editing state
-  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
-  const [editedOutput, setEditedOutput] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
+  // Sidebar state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
-  // AI refinement state
-  const [refiningTaskId, setRefiningTaskId] = useState<string | null>(null);
-  const [refineInstruction, setRefineInstruction] = useState('');
-  const [showRefineModal, setShowRefineModal] = useState(false);
-  const [selectedTaskForRefine, setSelectedTaskForRefine] = useState<Task | null>(null);
+  // Ref for auto-scrolling
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Fetch existing tasks on page load
+  // Fetch conversations on page load
   useEffect(() => {
-    fetchTasks();
+    fetchConversations();
   }, []);
 
-  const fetchTasks = async () => {
+  // Fetch messages when conversation changes
+  useEffect(() => {
+    if (currentConversationId) {
+      fetchMessages(currentConversationId);
+    } else {
+      setMessages([]);
+    }
+  }, [currentConversationId]);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const fetchConversations = async () => {
     try {
-      setIsLoadingTasks(true);
-      const response = await fetch('/api/tasks');
+      setIsLoadingConversations(true);
+      const response = await fetch('/api/conversations');
       const result = await response.json();
 
       if (result.success) {
-        setTasks(result.data);
+        setConversations(result.data);
       } else {
-        setError(result.error || 'Failed to load tasks');
+        setError(result.error || 'Failed to load conversations');
       }
     } catch (err) {
-      console.error('Error fetching tasks:', err);
-      setError('Failed to load tasks');
+      console.error('Error fetching conversations:', err);
+      setError('Failed to load conversations');
     } finally {
-      setIsLoadingTasks(false);
+      setIsLoadingConversations(false);
     }
   };
 
-  // Handle image file selection
+  const fetchMessages = async (conversationId: string) => {
+    try {
+      const response = await fetch(`/api/conversations?conversation_id=${conversationId}`);
+      const result = await response.json();
+
+      if (result.success) {
+        setMessages(result.data.messages || []);
+      } else {
+        setError(result.error || 'Failed to load messages');
+      }
+    } catch (err) {
+      console.error('Error fetching messages:', err);
+      setError('Failed to load messages');
+    }
+  };
+
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       setError('Please select an image file');
       return;
     }
 
-    // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
       setError('Image size must be less than 10MB');
       return;
     }
 
-    // Read file as base64
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64String = reader.result as string;
@@ -91,27 +109,77 @@ export default function TasksPage() {
     reader.readAsDataURL(file);
   };
 
-  // Remove selected image
   const handleRemoveImage = () => {
     setSelectedImage(null);
     setImagePreview(null);
     setImageName(null);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleNewConversation = () => {
+    setCurrentConversationId(null);
+    setMessages([]);
+    setInputMessage('');
+    handleRemoveImage();
+  };
+
+  const handleDeleteConversation = async (conversationId: string) => {
+    if (!confirm('Are you sure you want to delete this conversation?')) return;
+
+    try {
+      const response = await fetch('/api/conversations', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversation_id: conversationId }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setConversations(prev => prev.filter(c => c.id !== conversationId));
+        if (currentConversationId === conversationId) {
+          handleNewConversation();
+        }
+      } else {
+        setError(result.error || 'Failed to delete conversation');
+      }
+    } catch (err) {
+      console.error('Error deleting conversation:', err);
+      setError('Failed to delete conversation');
+    }
+  };
+
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!prompt.trim()) return;
+    if (!inputMessage.trim() && !selectedImage) return;
 
     setIsLoading(true);
     setError(null);
 
+    // Optimistically add user message to UI
+    const tempUserMessage: ConversationMessage = {
+      id: 'temp-' + Date.now(),
+      conversation_id: currentConversationId || 'temp',
+      user_id: 'current',
+      role: 'user',
+      content: inputMessage.trim(),
+      image_url: selectedImage,
+      image_name: imageName,
+      created_at: new Date().toISOString(),
+    };
+    setMessages(prev => [...prev, tempUserMessage]);
+    
+    const messageText = inputMessage.trim();
+    setInputMessage('');
+    handleRemoveImage();
+
     try {
-      const response = await fetch('/api/tasks', {
+      const response = await fetch('/api/conversations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          prompt: prompt.trim(),
+        body: JSON.stringify({
+          message: messageText,
+          conversation_id: currentConversationId,
           imageData: selectedImage,
           imageName: imageName,
         }),
@@ -120,16 +188,25 @@ export default function TasksPage() {
       const result = await response.json();
 
       if (result.success) {
-        // Add new task to the top of the list
-        setTasks(prev => [result.data, ...prev]);
-        setPrompt(''); // Clear input
-        handleRemoveImage(); // Clear image
+        const { conversation_id, messages: updatedMessages } = result.data;
+        
+        // Update conversation ID if it's a new conversation
+        if (!currentConversationId) {
+          setCurrentConversationId(conversation_id);
+          fetchConversations(); // Refresh conversation list
+        }
+        
+        // Update messages with actual data from server
+        setMessages(updatedMessages);
       } else {
-        setError(result.error || 'Failed to create task');
+        setError(result.error || 'Failed to send message');
+        // Remove optimistic message on error
+        setMessages(prev => prev.filter(m => m.id !== tempUserMessage.id));
       }
     } catch (err) {
-      console.error('Error creating task:', err);
-      setError('Failed to create task. Please try again.');
+      console.error('Error sending message:', err);
+      setError('Failed to send message. Please try again.');
+      setMessages(prev => prev.filter(m => m.id !== tempUserMessage.id));
     } finally {
       setIsLoading(false);
     }
@@ -137,155 +214,206 @@ export default function TasksPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-    });
-  };
+    const now = new Date();
+    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
 
-  const handleStartEdit = (task: Task) => {
-    setEditingTaskId(task.id);
-    setEditedOutput(task.output || '');
-  };
-
-  const handleCancelEdit = () => {
-    setEditingTaskId(null);
-    setEditedOutput('');
-  };
-
-  const handleSaveEdit = async (taskId: string) => {
-    if (!editedOutput.trim()) return;
-
-    setIsSaving(true);
-    setError(null);
-
-    try {
-      const response = await fetch('/api/tasks', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: taskId, output: editedOutput }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        // Update the task in the list
-        setTasks(prev =>
-          prev.map(task =>
-            task.id === taskId ? { ...task, output: editedOutput } : task
-          )
-        );
-        setEditingTaskId(null);
-        setEditedOutput('');
-      } else {
-        setError(result.error || 'Failed to save changes');
-      }
-    } catch (err) {
-      console.error('Error saving task:', err);
-      setError('Failed to save changes. Please try again.');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleOpenRefineModal = (task: Task) => {
-    setSelectedTaskForRefine(task);
-    setShowRefineModal(true);
-    setRefineInstruction('');
-  };
-
-  const handleRefineWithAI = async () => {
-    if (!selectedTaskForRefine || !refineInstruction.trim()) return;
-
-    setRefiningTaskId(selectedTaskForRefine.id);
-    setError(null);
-
-    try {
-      const response = await fetch('/api/tasks/refine', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          taskId: selectedTaskForRefine.id,
-          currentOutput: selectedTaskForRefine.output,
-          instruction: refineInstruction,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        // Update the task in the list
-        setTasks(prev =>
-          prev.map(task =>
-            task.id === selectedTaskForRefine.id ? result.data : task
-          )
-        );
-        setShowRefineModal(false);
-        setRefineInstruction('');
-        setSelectedTaskForRefine(null);
-      } else {
-        setError(result.error || 'Failed to refine with AI');
-      }
-    } catch (err) {
-      console.error('Error refining task:', err);
-      setError('Failed to refine with AI. Please try again.');
-    } finally {
-      setRefiningTaskId(null);
+    if (diffInHours < 1) {
+      return 'Just now';
+    } else if (diffInHours < 24) {
+      return `${Math.floor(diffInHours)}h ago`;
+    } else if (diffInHours < 168) { // 7 days
+      return `${Math.floor(diffInHours / 24)}d ago`;
+    } else {
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Page header */}
+    <div className="min-h-screen flex flex-col">
       <Header 
-        title="AI Tasks" 
-        subtitle="Let AI help you complete your real estate tasks"
+        title="AI Assistant" 
+        subtitle="Chat with AI about your real estate tasks"
       />
 
-      {/* Page content */}
-      <div className="p-6 text-white">
-        <div className="max-w-4xl mx-auto space-y-6">
-          {/* Input Form */}
-          <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-xl border border-white/10 p-6">
-            <form onSubmit={handleSubmit}>
-              <div className="space-y-4">
-                {/* Text Input with Paperclip Button */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    What do you want to do?
-                  </label>
-                  <div className="relative">
-                    <textarea
-                      value={prompt}
-                      onChange={(e) => setPrompt(e.target.value)}
-                      placeholder={imagePreview 
-                        ? "e.g., Analyze this document and list important dates, What are the key terms?, Extract contact information..."
-                        : "e.g., Draft an email to a client, create a listing description, write social media posts..."}
-                      className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg pl-4 pr-12 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 resize-none"
-                      rows={4}
-                      disabled={isLoading}
-                    />
-                    {/* Paperclip Button */}
-                    <label className="absolute bottom-3 right-3 cursor-pointer p-2 hover:bg-white/10 rounded-lg transition-colors group">
-                      <Paperclip className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageSelect}
-                        className="hidden"
-                        disabled={isLoading}
-                      />
-                    </label>
-                  </div>
-                  <p className="mt-2 text-xs text-yellow-400/80">
-                    ⚠️ Note: AI responses are for informational purposes only and do not constitute financial advice
-                  </p>
-                </div>
+      <div className="flex-1 flex overflow-hidden">
+        {/* Sidebar - Conversation History */}
+        <div className={`${isSidebarOpen ? 'w-64' : 'w-0'} bg-gray-900/50 backdrop-blur-sm border-r border-white/10 transition-all duration-300 overflow-hidden flex flex-col`}>
+          <div className="p-4 border-b border-white/10">
+            <Button
+              onClick={handleNewConversation}
+              className="w-full justify-center"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              New Chat
+            </Button>
+          </div>
 
-                {/* Image Preview (if selected) */}
+          <div className="flex-1 overflow-y-auto p-2">
+            {isLoadingConversations ? (
+              <div className="space-y-2">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-12 bg-gray-800/50 rounded-lg animate-pulse" />
+                ))}
+              </div>
+            ) : conversations.length === 0 ? (
+              <div className="text-center py-8 px-4">
+                <MessageSquare className="w-8 h-8 mx-auto text-gray-600 mb-2" />
+                <p className="text-sm text-gray-500">No conversations yet</p>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                {conversations.map((conv) => (
+                  <div
+                    key={conv.id}
+                    className={`group relative p-3 rounded-lg cursor-pointer transition-all ${
+                      currentConversationId === conv.id
+                        ? 'bg-white/10 border border-white/20'
+                        : 'hover:bg-white/5 border border-transparent'
+                    }`}
+                    onClick={() => setCurrentConversationId(conv.id)}
+                  >
+                    <div className="flex items-start gap-2">
+                      <MessageSquare className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-white truncate">
+                          {conv.title || 'New conversation'}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-0.5">
+                          {formatDate(conv.updated_at)}
+                        </p>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteConversation(conv.id);
+                        }}
+                        className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 rounded transition-all"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 text-gray-400 hover:text-red-300" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Main Chat Area */}
+        <div className="flex-1 flex flex-col bg-gradient-to-b from-gray-900/30 to-gray-900/50">
+          {/* Toggle Sidebar Button */}
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="absolute top-20 left-2 z-10 p-2 bg-gray-800/80 hover:bg-gray-700/80 rounded-lg border border-white/10 transition-colors"
+          >
+            <MessageSquare className="w-4 h-4 text-gray-300" />
+          </button>
+
+          {/* Messages Area */}
+          <div className="flex-1 overflow-y-auto p-6">
+            <div className="max-w-3xl mx-auto">
+              {messages.length === 0 ? (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 mb-4">
+                      <Sparkles className="w-8 h-8 text-purple-400" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-white mb-2">
+                      How can I help you today?
+                    </h2>
+                    <p className="text-gray-400">
+                      Ask me anything about your real estate tasks
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6 pb-4">
+                  {messages.map((msg, index) => (
+                    <div
+                      key={msg.id}
+                      className={`flex gap-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      {msg.role === 'assistant' && (
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+                          <Sparkles className="w-4 h-4 text-white" />
+                        </div>
+                      )}
+                      
+                      <div className={`flex-1 max-w-2xl ${msg.role === 'user' ? 'flex justify-end' : ''}`}>
+                        <div
+                          className={`rounded-2xl px-4 py-3 ${
+                            msg.role === 'user'
+                              ? 'bg-gradient-to-br from-purple-600 to-blue-600 text-white'
+                              : 'bg-gray-800/50 backdrop-blur-sm border border-white/10 text-gray-100'
+                          }`}
+                        >
+                          {msg.image_url && (
+                            <div className="mb-3">
+                              <img 
+                                src={msg.image_url} 
+                                alt={msg.image_name || 'Uploaded image'} 
+                                className="max-w-xs rounded-lg border border-white/10"
+                              />
+                              {msg.image_name && (
+                                <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                                  <FileText className="w-3 h-3" />
+                                  {msg.image_name}
+                                </p>
+                              )}
+                            </div>
+                          )}
+                          <p className="text-sm whitespace-pre-wrap leading-relaxed">
+                            {msg.content}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {msg.role === 'user' && (
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 flex items-center justify-center text-white text-sm font-medium">
+                          U
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  
+                  {isLoading && (
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+                        <Sparkles className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="flex-1 max-w-2xl">
+                        <div className="bg-gray-800/50 backdrop-blur-sm border border-white/10 rounded-2xl px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
+                            <span className="text-sm text-gray-400">Thinking...</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div ref={messagesEndRef} />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="px-6 pb-2">
+              <div className="max-w-3xl mx-auto">
+                <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 backdrop-blur-sm">
+                  <p className="text-sm text-red-400">{error}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Input Area */}
+          <div className="border-t border-white/10 p-6 bg-gray-900/50 backdrop-blur-sm">
+            <div className="max-w-3xl mx-auto">
+              <form onSubmit={handleSendMessage} className="space-y-3">
+                {/* Image Preview */}
                 {imagePreview && (
                   <div className="border border-white/20 rounded-lg p-3 bg-white/5">
                     <div className="flex items-start gap-3">
@@ -300,7 +428,7 @@ export default function TasksPage() {
                           {imageName}
                         </p>
                         <p className="text-xs text-gray-500 mt-0.5">
-                          The AI will analyze this file along with your prompt
+                          Ready to analyze
                         </p>
                       </div>
                       <button
@@ -314,266 +442,57 @@ export default function TasksPage() {
                   </div>
                 )}
 
-                <div className="flex justify-end">
-                  <Button
-                    type="submit"
-                    disabled={isLoading || !prompt.trim()}
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        Generate with AI
-                      </>
-                    )}
-                  </Button>
+                {/* Input Box */}
+                <div className="relative">
+                  <textarea
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSendMessage(e);
+                      }
+                    }}
+                    placeholder="Type your message... (Shift+Enter for new line)"
+                    className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl pl-4 pr-24 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 resize-none"
+                    rows={1}
+                    disabled={isLoading}
+                  />
+                  
+                  {/* Action Buttons */}
+                  <div className="absolute bottom-3 right-3 flex items-center gap-2">
+                    <label className="cursor-pointer p-2 hover:bg-white/10 rounded-lg transition-colors group">
+                      <Paperclip className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageSelect}
+                        className="hidden"
+                        disabled={isLoading}
+                      />
+                    </label>
+                    <button
+                      type="submit"
+                      disabled={isLoading || (!inputMessage.trim() && !selectedImage)}
+                      className="p-2 bg-gradient-to-br from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-purple-600 disabled:hover:to-blue-600"
+                    >
+                      {isLoading ? (
+                        <Loader2 className="w-5 h-5 text-white animate-spin" />
+                      ) : (
+                        <Send className="w-5 h-5 text-white" />
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </form>
-          </div>
 
-          {/* Error Message */}
-          {error && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 backdrop-blur-sm">
-              <p className="text-sm text-red-400">{error}</p>
-            </div>
-          )}
-
-          {/* Tasks List */}
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Clock className="w-5 h-5 text-gray-500" />
-              <h2 className="text-lg font-semibold text-white">Recent Tasks</h2>
-            </div>
-
-            {isLoadingTasks ? (
-              <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-white/10 p-6 animate-pulse">
-                    <div className="h-4 bg-gray-700 rounded w-3/4 mb-3"></div>
-                    <div className="h-3 bg-gray-700 rounded w-1/4 mb-4"></div>
-                    <div className="h-24 bg-gray-700 rounded"></div>
-                  </div>
-                ))}
-              </div>
-            ) : tasks.length === 0 ? (
-              <div className="text-center py-12 bg-gray-800/30 backdrop-blur-sm rounded-xl border border-white/10">
-                <Sparkles className="w-12 h-12 mx-auto text-gray-500 mb-4" />
-                <h3 className="text-lg font-medium text-white mb-2">No tasks yet</h3>
-                <p className="text-gray-400">
-                  Create your first task above and let AI help you get it done!
+                <p className="text-xs text-yellow-400/80 text-center">
+                  ⚠️ AI responses are for informational purposes only and do not constitute financial advice
                 </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {tasks.map((task) => (
-                  <div
-                    key={task.id}
-                    className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-xl border border-white/10 p-6 hover:border-white/20 transition-all"
-                  >
-                    {/* Task Prompt */}
-                    <div className="mb-4">
-                      <div className="flex items-start gap-3">
-                        <div className="p-2 bg-white/10 backdrop-blur-sm rounded-lg mt-0.5 border border-white/10">
-                          {task.has_image ? (
-                            <ImageIcon className="w-4 h-4 text-purple-400" />
-                          ) : (
-                            <CheckCircle2 className="w-4 h-4 text-purple-400" />
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-white font-medium">{task.prompt}</p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {formatDate(task.created_at)}
-                            {task.has_image && (
-                              <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded text-xs border border-purple-500/30">
-                                <ImageIcon className="w-3 h-3" />
-                                With Image
-                              </span>
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Attached Image Preview */}
-                    {task.has_image && task.image_url && (
-                      <div className="ml-11 mb-4">
-                        <div className="border border-white/10 rounded-lg overflow-hidden bg-white/5 inline-block">
-                          <img 
-                            src={task.image_url} 
-                            alt={task.image_name || 'Uploaded image'} 
-                            className="max-w-xs max-h-48 object-contain"
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* AI Output */}
-                    {task.output && (
-                      <div className="ml-11">
-                        <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-                          {editingTaskId === task.id ? (
-                            // Edit Mode
-                            <div className="space-y-3">
-                              <textarea
-                                value={editedOutput}
-                                onChange={(e) => setEditedOutput(e.target.value)}
-                                className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 resize-none min-h-[150px]"
-                                disabled={isSaving}
-                              />
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={() => handleSaveEdit(task.id)}
-                                  disabled={isSaving || !editedOutput.trim()}
-                                  className="flex items-center gap-1.5 px-4 py-2 bg-white/10 text-white hover:bg-white/20 text-sm rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-white/10"
-                                >
-                                  {isSaving ? (
-                                    <>
-                                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                      Saving...
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Save className="w-3.5 h-3.5" />
-                                      Save
-                                    </>
-                                  )}
-                                </button>
-                                <button
-                                  onClick={handleCancelEdit}
-                                  disabled={isSaving}
-                                  className="flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors disabled:opacity-50 border border-white/10"
-                                >
-                                  <X className="w-3.5 h-3.5" />
-                                  Cancel
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            // View Mode
-                            <div className="space-y-3">
-                              <p className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed">
-                                {task.output}
-                              </p>
-                              <div className="flex gap-2 pt-3 border-t border-white/10">
-                                <button
-                                  onClick={() => handleStartEdit(task)}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs rounded-lg transition-colors border border-white/10"
-                                >
-                                  <Edit2 className="w-3 h-3" />
-                                  Edit
-                                </button>
-                                <button
-                                  onClick={() => handleOpenRefineModal(task)}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 text-white hover:bg-white/20 text-xs rounded-lg transition-colors border border-white/10"
-                                >
-                                  <Wand2 className="w-3 h-3" />
-                                  Refine with AI
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
+              </form>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* AI Refine Modal */}
-      {showRefineModal && selectedTaskForRefine && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl max-w-2xl w-full p-6 shadow-2xl border border-white/10">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                <Wand2 className="w-5 h-5 text-purple-400" />
-                Refine with AI
-              </h3>
-              <button
-                onClick={() => {
-                  setShowRefineModal(false);
-                  setRefineInstruction('');
-                  setSelectedTaskForRefine(null);
-                }}
-                disabled={refiningTaskId !== null}
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              {/* Current Output */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Current Output:
-                </label>
-                <div className="bg-white/5 border border-white/10 rounded-lg p-3 max-h-[200px] overflow-y-auto">
-                  <p className="text-sm text-gray-300 whitespace-pre-wrap">
-                    {selectedTaskForRefine.output}
-                  </p>
-                </div>
-              </div>
-
-              {/* Refinement Instruction */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  What would you like to change?
-                </label>
-                <textarea
-                  value={refineInstruction}
-                  onChange={(e) => setRefineInstruction(e.target.value)}
-                  placeholder="e.g., Make it more professional, add more details, make it shorter, change the tone..."
-                  className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 resize-none"
-                  rows={3}
-                  disabled={refiningTaskId !== null}
-                />
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-3 justify-end pt-2">
-                <button
-                  onClick={() => {
-                    setShowRefineModal(false);
-                    setRefineInstruction('');
-                    setSelectedTaskForRefine(null);
-                  }}
-                  disabled={refiningTaskId !== null}
-                  className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors disabled:opacity-50 border border-white/10"
-                >
-                  Cancel
-                </button>
-                <Button
-                  onClick={handleRefineWithAI}
-                  disabled={refiningTaskId !== null || !refineInstruction.trim()}
-                >
-                  {refiningTaskId ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Refining...
-                    </>
-                  ) : (
-                    <>
-                      <Wand2 className="w-4 h-4 mr-2" />
-                      Refine with AI
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
-

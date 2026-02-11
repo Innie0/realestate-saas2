@@ -412,3 +412,35 @@ export interface ContractWithRelations extends Contract {
   client?: Client;
 }
 
+/**
+ * Conversation type - represents a chat conversation with AI
+ */
+export interface Conversation {
+  id: string; // Unique identifier
+  user_id: string; // ID of the user who owns this conversation
+  title: string | null; // Auto-generated title from first message
+  created_at: string; // When the conversation was created
+  updated_at: string; // When the conversation was last updated
+}
+
+/**
+ * ConversationMessage type - represents a single message in a conversation
+ */
+export interface ConversationMessage {
+  id: string; // Unique identifier
+  conversation_id: string; // Parent conversation ID
+  user_id: string; // Owner user ID
+  role: 'user' | 'assistant' | 'system'; // Message role
+  content: string; // Message content
+  image_url?: string | null; // Optional image attachment (for user messages)
+  image_name?: string | null; // Original filename of uploaded image
+  created_at: string; // When the message was created
+}
+
+/**
+ * ConversationWithMessages type - conversation with all messages
+ */
+export interface ConversationWithMessages extends Conversation {
+  messages: ConversationMessage[];
+}
+
