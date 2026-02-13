@@ -81,7 +81,7 @@ export default function BrandKitPage() {
   ];
 
   return (
-    <div>
+    <div className="min-h-screen">
       {/* Page header */}
       <Header 
         title="Brand Kit" 
@@ -89,7 +89,7 @@ export default function BrandKitPage() {
       />
 
       {/* Page content */}
-      <div className="p-6 max-w-4xl">
+      <div className="p-4 sm:p-6 max-w-4xl text-white">
         <div className="space-y-6">
           {/* Save button at the top */}
           <div className="flex gap-3">

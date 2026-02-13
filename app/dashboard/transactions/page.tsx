@@ -14,6 +14,7 @@ import {
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
+import Header from '@/components/layout/Header';
 import TransactionTimeline from '@/components/TransactionTimeline';
 import { TransactionWithDetails } from '@/types';
 
@@ -150,16 +151,12 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen">
+      <Header title="Transactions" subtitle="Manage your real estate transactions and track progress" />
+      <div className="p-4 sm:p-6 text-white">
       <div className="space-y-4 sm:space-y-6">
-        {/* Header with gradient */}
-        <div className="flex flex-col gap-3 sm:gap-4 pb-4 sm:pb-6 border-b border-gray-700/50">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">Transactions</h1>
-          <p className="text-gray-400 mt-1 text-sm sm:text-base">
-            Manage your real estate transactions and track progress
-          </p>
-        </div>
+        {/* Action buttons */}
+        <div className="flex">
         <Link href="/dashboard/transactions/new" className="w-full sm:w-auto">
           <Button className="w-full sm:w-auto">
             <Plus className="w-4 h-4 mr-2" />
@@ -348,6 +345,7 @@ export default function TransactionsPage() {
           </Card>
         </div>
       )}
+      </div>
       </div>
     </div>
   );

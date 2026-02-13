@@ -8,6 +8,7 @@ import ClientForm from '@/components/ClientForm';
 import ReminderForm from '@/components/ReminderForm';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import Header from '@/components/layout/Header';
 import { Search, Plus, X } from 'lucide-react';
 
 /**
@@ -151,12 +152,9 @@ export default function ClientsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-white">Clients</h1>
-        <p className="text-gray-400 mt-1 sm:mt-2 text-sm sm:text-base">Manage your client relationships and follow-ups</p>
-      </div>
+    <div className="min-h-screen">
+      <Header title="Clients" subtitle="Manage your client relationships and follow-ups" />
+      <div className="p-4 sm:p-6 text-white">
 
       {/* Filters and search */}
       <div className="mb-6 flex flex-col gap-3 sm:gap-4">
@@ -325,6 +323,7 @@ export default function ClientsPage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

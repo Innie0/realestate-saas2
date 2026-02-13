@@ -192,7 +192,7 @@ export default function CalendarPage() {
       />
 
       {/* Page content */}
-      <div className="p-6 text-white">
+      <div className="p-4 sm:p-6 text-white">
         <div className="space-y-6">
           {/* Calendar connections */}
           <Card>

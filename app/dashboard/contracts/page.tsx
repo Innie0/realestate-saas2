@@ -7,6 +7,7 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
 import Modal from '@/components/ui/Modal';
+import Header from '@/components/layout/Header';
 import { supabase } from '@/lib/supabase';
 import { uploadContract, downloadContract, deleteContract } from '@/lib/contract-upload';
 import type { Contract, ContractWithRelations } from '@/types';
@@ -172,12 +173,9 @@ export default function ContractsPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      {/* Header */}
-      <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Contracts</h1>
-        <p className="text-sm sm:text-base text-gray-400">Manage your contract documents</p>
-      </div>
+    <div className="min-h-screen">
+      <Header title="Contracts" subtitle="Manage your contract documents" />
+      <div className="p-4 sm:p-6 text-white">
 
       {/* Actions Bar */}
       <div className="mb-6 flex flex-col gap-3 sm:gap-4">
@@ -320,6 +318,7 @@ export default function ContractsPage() {
           }}
         />
       )}
+      </div>
     </div>
   );
 }

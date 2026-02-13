@@ -113,7 +113,7 @@ export default function DashboardPage() {
       />
 
       {/* Page content */}
-      <div className="p-6 space-y-6 text-white">
+      <div className="p-4 sm:p-6 space-y-6 text-white">
         {/* Quick actions */}
         <div className="flex gap-4">
           <Link href="/dashboard/projects/new">
