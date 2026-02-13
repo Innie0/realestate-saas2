@@ -202,10 +202,15 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
             )}
 
             {/* Icon circle */}
-            <div 
-              className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full border-2 ${colors.bg} ${colors.border}`}
-            >
-              <Icon className={`w-5 h-5 ${colors.icon}`} />
+            <div className="relative z-10">
+              {/* Solid background to hide line */}
+              <div className="absolute inset-0 bg-black rounded-full" style={{ margin: '-2px' }} />
+              {/* Icon circle */}
+              <div 
+                className={`relative flex items-center justify-center w-10 h-10 rounded-full border-2 ${colors.bg} ${colors.border}`}
+              >
+                <Icon className={`w-5 h-5 ${colors.icon}`} />
+              </div>
             </div>
 
             {/* Content */}
