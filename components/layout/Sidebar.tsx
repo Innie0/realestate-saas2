@@ -9,7 +9,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, FolderKanban, Calendar, User, LogOut, Users, FileText, Sparkles, FileSignature, Menu, X, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { LayoutDashboard, FolderKanban, Calendar, User, LogOut, Users, FileText, Sparkles, FileSignature, Menu, X, ChevronsLeft, ChevronsRight, Search } from 'lucide-react';
 import clsx from 'clsx';
 import { signOut } from '@/lib/supabase';
 
@@ -47,6 +47,11 @@ const navigationItems = [
     name: 'Tasks',
     href: '/dashboard/tasks',
     icon: Sparkles,
+  },
+  {
+    name: 'Property Lookup',
+    href: '/dashboard/property-lookup',
+    icon: Search,
   },
   {
     name: 'Calendar',
