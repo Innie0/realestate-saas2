@@ -196,7 +196,7 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
             {/* Vertical line */}
             {!isLast && (
               <div 
-                className={`absolute left-5 top-10 w-0.5 h-full ${colors.line}`}
+                className={`absolute left-5 top-10 w-0.5 h-full ${colors.line} z-0`}
                 style={{ transform: 'translateX(-50%)' }}
               />
             )}
