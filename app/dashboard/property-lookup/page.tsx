@@ -215,7 +215,7 @@ export default function PropertyLookupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
+    <div className="min-h-screen">
       <Header title="Property Lookup" subtitle="Search any address to find owner and contact information" />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

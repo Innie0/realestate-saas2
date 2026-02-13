@@ -14,7 +14,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-950">
+    <div className="flex h-screen overflow-hidden bg-black">
       {/* Sidebar - fixed on the left side */}
       <Sidebar />
       
@@ -29,7 +29,7 @@ export default function DashboardLayout({
         </main>
         
         {/* Footer */}
-        <footer className="border-t border-gray-800 bg-gray-900/50 px-6 py-4">
+        <footer className="border-t border-gray-800 bg-black px-6 py-4">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-gray-500">
             <p>© 2026 Realestic. All rights reserved.</p>
             <div className="flex gap-4">
