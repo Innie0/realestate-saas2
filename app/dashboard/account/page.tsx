@@ -199,7 +199,7 @@ export default function AccountPage() {
       />
 
       {/* Page content */}
-      <div className="p-4 sm:p-6 max-w-4xl text-white">
+      <div className="p-4 sm:p-6 max-w-4xl mx-auto text-white">
         <div className="space-y-6">
           {/* Profile information */}
           <Card>
