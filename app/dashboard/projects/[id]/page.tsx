@@ -1665,7 +1665,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           <Card>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-white flex items-center">
-                  <Calendar className="w-5 h-5 mr-2 text-blue-600" />
+                  <Calendar className="w-5 h-5 mr-2 text-purple-400" />
                   Project Tasks & Events
                 </h2>
                 <Button 
@@ -1725,7 +1725,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           <Card>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-white flex items-center">
-                  <FileText className="w-5 h-5 mr-2 text-blue-600" />
+                  <FileText className="w-5 h-5 mr-2 text-purple-400" />
                   Project Transactions
                 </h2>
                 <Button 
