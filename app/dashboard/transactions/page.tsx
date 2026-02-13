@@ -230,7 +230,7 @@ export default function TransactionsPage() {
         <div className="space-y-4">
           {filteredTransactions.map((transaction) => (
             <Link key={transaction.id} href={`/dashboard/transactions/${transaction.id}`}>
-              <Card className="hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 cursor-pointer border-l-4 border-l-blue-500">
+              <Card className="hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-300 cursor-pointer border-l-4 border-l-purple-500">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     {/* Property info */}
