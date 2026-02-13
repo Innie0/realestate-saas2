@@ -17,12 +17,14 @@ interface TransactionChecklistProps {
   transactionId: string;
   items: TransactionChecklistItem[];
   onUpdate: () => void; // Callback to refresh data
+  onItemToggle?: (itemId: string, isCompleted: boolean) => void; // Optimistic update callback
 }
 
 export default function TransactionChecklist({ 
   transactionId, 
   items, 
-  onUpdate 
+  onUpdate,
+  onItemToggle
 }: TransactionChecklistProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [newItemTitle, setNewItemTitle] = useState('');
@@ -55,7 +57,11 @@ export default function TransactionChecklist({
 
   // Toggle item completion
   const toggleItem = async (item: TransactionChecklistItem) => {
-    setIsLoading(true);
+    // Optimistic update first
+    if (onItemToggle) {
+      onItemToggle(item.id, !item.is_completed);
+    }
+    
     try {
       const response = await fetch(`/api/transactions/${transactionId}/checklist`, {
         method: 'PUT',
@@ -66,13 +72,14 @@ export default function TransactionChecklist({
         }),
       });
 
-      if (response.ok) {
+      if (!response.ok) {
+        // If API call fails, revert by calling onUpdate
         onUpdate();
       }
     } catch (error) {
       console.error('Error toggling item:', error);
-    } finally {
-      setIsLoading(false);
+      // Revert on error
+      onUpdate();
     }
   };
 

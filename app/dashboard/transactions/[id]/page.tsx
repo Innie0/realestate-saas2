@@ -36,6 +36,20 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
   const [isDeleting, setIsDeleting] = useState(false);
   const [activeTab, setActiveTab] = useState<'timeline' | 'checklist' | 'reminders' | 'details'>('timeline');
 
+  // Optimistic update for checklist items
+  const handleChecklistItemToggle = (itemId: string, isCompleted: boolean) => {
+    if (!transaction) return;
+    
+    setTransaction({
+      ...transaction,
+      checklist_items: transaction.checklist_items?.map(item => 
+        item.id === itemId 
+          ? { ...item, is_completed: isCompleted, completed_at: isCompleted ? new Date().toISOString() : null }
+          : item
+      ) || []
+    });
+  };
+
   // Fetch transaction details
   const fetchTransaction = async () => {
     setIsLoading(true);
@@ -320,6 +334,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
               transactionId={transaction.id}
               items={transaction.checklist_items || []}
               onUpdate={fetchTransaction}
+              onItemToggle={handleChecklistItemToggle}
             />
           </Card>
         )}
