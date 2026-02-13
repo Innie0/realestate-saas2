@@ -303,7 +303,7 @@ export default function PropertyLookupPage() {
             </div>
 
             <p className="text-xs text-gray-500">
-              <span className="text-red-400">*</span> Required: Street address, city, and state. ZIP code is optional but helps improve accuracy.
+              <span className="text-red-400">*</span> Required: Street address and state. City and ZIP code are optional but help improve accuracy.
             </p>
 
             {/* Action Buttons */}
