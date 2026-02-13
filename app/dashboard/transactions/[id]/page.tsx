@@ -44,7 +44,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
       ...transaction,
       checklist_items: transaction.checklist_items?.map(item => 
         item.id === itemId 
-          ? { ...item, is_completed: isCompleted, completed_at: isCompleted ? new Date().toISOString() : null }
+          ? { ...item, is_completed: isCompleted, completed_at: isCompleted ? new Date().toISOString() : undefined }
           : item
       ) || []
     });
