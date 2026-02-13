@@ -1654,13 +1654,9 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   <div className="text-center py-12 border-2 border-dashed border-white/20 rounded-lg">
                     <Sparkles className="w-12 h-12 mx-auto text-gray-400 mb-4" />
                     <p className="text-gray-600 mb-4">No AI content generated yet</p>
-                    <p className="text-sm text-gray-500 mb-4">
+                    <p className="text-sm text-gray-500">
                       Click the button above to generate compelling marketing content with multiple tone variations
                     </p>
-                    <Button onClick={handleGenerateAI} isLoading={isGenerating}>
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Generate Content
-                    </Button>
                   </div>
                 )}
               </Card>
