@@ -171,7 +171,7 @@ export default function Sidebar() {
       {/* Sidebar - Desktop: fixed left, Mobile: slide-in overlay */}
       <div 
         className={clsx(
-          'fixed top-0 h-screen flex flex-col bg-black text-white z-50',
+          'fixed top-0 h-screen flex flex-col bg-black text-white z-50 border-r border-gray-800',
           // Desktop: always visible and relative positioning
           'lg:translate-x-0 lg:relative',
           // Width based on collapsed state
