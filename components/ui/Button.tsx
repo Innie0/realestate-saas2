@@ -34,7 +34,7 @@ export default function Button({
 
   // Variant styles - different colors for different button types with gradients
   const variants = {
-    primary: 'bg-gradient-to-r from-black via-gray-900 to-black text-white hover:from-gray-900 hover:via-gray-800 hover:to-gray-900 focus:ring-gray-400',
+    primary: 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-500 hover:to-blue-500 focus:ring-purple-500 shadow-lg shadow-purple-500/20',
     secondary: 'bg-gradient-to-r from-gray-600 to-gray-700 text-white hover:from-gray-700 hover:to-gray-800 focus:ring-gray-500',
     outline: 'border-2 border-white text-white hover:bg-white/10 focus:ring-gray-400',
     'outline-light': 'border-2 border-white text-white hover:bg-white hover:text-black focus:ring-gray-400',
