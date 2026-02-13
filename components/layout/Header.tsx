@@ -182,7 +182,7 @@ export default function Header({ title, subtitle }: HeaderProps) {
     }
   };
   return (
-    <header className="sticky top-0 z-20 backdrop-blur-md bg-gray-900/50 border-b border-white/10">
+    <header className="sticky top-0 z-20 bg-black border-b border-white/10">
       <div className="flex h-16 items-center justify-between px-6">
         {/* Left side - Page title and subtitle */}
         <div>

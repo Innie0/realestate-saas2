@@ -137,7 +137,7 @@ export default function Sidebar() {
   return (
     <>
       {/* Mobile Header with Hamburger Menu */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-gray-900 border-b border-gray-800 px-4 py-3 flex items-center justify-between">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-black border-b border-gray-800 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center flex-1">
           <Image
             src="/logo.png"
@@ -171,7 +171,7 @@ export default function Sidebar() {
       {/* Sidebar - Desktop: fixed left, Mobile: slide-in overlay */}
       <div 
         className={clsx(
-          'fixed top-0 h-screen flex flex-col bg-gradient-to-b from-gray-900 via-black to-gray-900 text-white z-50',
+          'fixed top-0 h-screen flex flex-col bg-black text-white z-50',
           // Desktop: always visible and relative positioning
           'lg:translate-x-0 lg:relative',
           // Width based on collapsed state
@@ -186,7 +186,7 @@ export default function Sidebar() {
         }}
       >
         {/* Logo / Brand section at the top - hidden on mobile (shown in header) */}
-        <div className="hidden lg:flex h-20 items-center justify-center border-b border-gray-800 bg-gradient-to-r from-gray-900 to-black overflow-hidden">
+        <div className="hidden lg:flex h-20 items-center justify-center border-b border-gray-800 bg-black overflow-hidden">
           <div className={clsx(
             'transition-all duration-400',
             isCollapsed ? 'opacity-100 scale-100' : 'opacity-0 scale-50 absolute'
