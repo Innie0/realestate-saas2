@@ -241,17 +241,11 @@ export default function ContractsPage() {
           <div className="text-center py-12">
             <FileText className="w-16 h-16 text-gray-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-white mb-2">No contracts found</h3>
-            <p className="text-gray-400 mb-6">
+            <p className="text-gray-400">
               {searchTerm || filterType || filterStatus
                 ? 'Try adjusting your filters'
                 : 'Upload your first contract to get started'}
             </p>
-            {!searchTerm && !filterType && !filterStatus && (
-              <Button onClick={() => setShowUploadModal(true)}>
-                <Upload className="w-4 h-4 mr-2" />
-                Upload Contract
-              </Button>
-            )}
           </div>
         </Card>
       ) : viewMode === 'list' ? (
