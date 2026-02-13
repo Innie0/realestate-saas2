@@ -303,7 +303,7 @@ export default function PropertyLookupPage() {
             </div>
 
             <p className="text-xs text-gray-500">
-              <span className="text-red-400">*</span> Required fields. You must provide either a city or ZIP code along with state.
+              <span className="text-red-400">*</span> Required: Street address, city, and state. ZIP code is optional but helps improve accuracy.
             </p>
 
             {/* Action Buttons */}
@@ -605,20 +605,6 @@ export default function PropertyLookupPage() {
           </div>
         )}
 
-        {/* Empty State */}
-        {!results && !isLoading && !error && (
-          <div className="text-center py-16">
-            <div className="w-20 h-20 rounded-full bg-gray-800/50 flex items-center justify-center mx-auto mb-4">
-              <Search className="w-10 h-10 text-gray-600" />
-            </div>
-            <h3 className="text-gray-400 font-medium text-lg mb-2">
-              Search for a Property
-            </h3>
-            <p className="text-gray-500 text-sm max-w-md mx-auto">
-              Enter an address above to find property owner information, contact details, and occupancy status.
-            </p>
-          </div>
-        )}
 
         {/* Search History */}
         {searchHistory.length > 0 && !results && (
