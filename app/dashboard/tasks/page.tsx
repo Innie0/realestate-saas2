@@ -398,12 +398,12 @@ export default function TasksPage() {
                       currentConversationId === conv.id
                         ? 'bg-white/10 border border-white/20'
                         : 'hover:bg-white/5 border border-transparent'
-                    } ${conv.pinned ? 'border-l-2 border-l-purple-500' : ''}`}
+                    } ${conv.pinned ? 'border-l-2 border-l-white' : ''}`}
                     onClick={() => setCurrentConversationId(conv.id)}
                   >
                     <div className="flex items-start gap-2">
                       <div className="flex items-center gap-1 flex-shrink-0 mt-0.5">
-                        {conv.pinned && <Pin className="w-3 h-3 text-purple-400 fill-purple-400" />}
+                        {conv.pinned && <Pin className="w-3 h-3 text-white fill-white" />}
                         <MessageSquare className="w-4 h-4 text-gray-400" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -418,7 +418,7 @@ export default function TasksPage() {
                                 if (e.key === 'Enter') handleSaveRename(conv.id);
                                 if (e.key === 'Escape') handleCancelRename();
                               }}
-                              className="w-full text-xs bg-white/10 border border-white/20 rounded px-2 py-1 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+                              className="w-full text-xs bg-white/10 border border-white/20 rounded px-2 py-1 text-white focus:outline-none focus:ring-1 focus:ring-white/50"
                               autoFocus
                             />
                             <div className="flex items-center gap-1">
@@ -529,8 +529,8 @@ export default function TasksPage() {
               {messages.length === 0 ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 mb-4">
-                      <Sparkles className="w-8 h-8 text-purple-400" />
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-white/10 to-gray-800/50 border border-white/20 mb-4">
+                      <Sparkles className="w-8 h-8 text-white" />
                     </div>
                     <h2 className="text-2xl font-bold text-white mb-2">
                       How can I help you today?
@@ -548,7 +548,7 @@ export default function TasksPage() {
                       className={`flex gap-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                       {msg.role === 'assistant' && (
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-black border border-white/20 flex items-center justify-center">
                           <Sparkles className="w-4 h-4 text-white" />
                         </div>
                       )}
@@ -557,7 +557,7 @@ export default function TasksPage() {
                         <div
                           className={`rounded-2xl px-4 py-3 ${
                             msg.role === 'user'
-                              ? 'bg-gradient-to-br from-purple-600 to-blue-600 text-white'
+                              ? 'bg-white text-black'
                               : 'bg-gray-800/50 backdrop-blur-sm border border-white/10 text-gray-100'
                           }`}
                         >
@@ -583,7 +583,7 @@ export default function TasksPage() {
                       </div>
                       
                       {msg.role === 'user' && (
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 flex items-center justify-center text-white text-sm font-medium">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white flex items-center justify-center text-black text-sm font-medium">
                           {userInitials}
                         </div>
                       )}
@@ -592,13 +592,13 @@ export default function TasksPage() {
                   
                   {isLoading && (
                     <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-black border border-white/20 flex items-center justify-center">
                         <Sparkles className="w-4 h-4 text-white" />
                       </div>
                       <div className="flex-1 max-w-2xl">
                         <div className="bg-gray-800/50 backdrop-blur-sm border border-white/10 rounded-2xl px-4 py-3">
                           <div className="flex items-center gap-2">
-                            <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
+                            <Loader2 className="w-4 h-4 animate-spin text-white" />
                             <span className="text-sm text-gray-400">Thinking...</span>
                           </div>
                         </div>
@@ -668,7 +668,7 @@ export default function TasksPage() {
                       }
                     }}
                     placeholder="Type your message... (Shift+Enter for new line)"
-                    className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl pl-4 pr-24 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 resize-none"
+                    className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl pl-4 pr-24 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 resize-none"
                     rows={1}
                     disabled={isLoading}
                   />
@@ -688,19 +688,19 @@ export default function TasksPage() {
                     <button
                       type="submit"
                       disabled={isLoading || (!inputMessage.trim() && !selectedImage)}
-                      className="p-2 bg-gradient-to-br from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-purple-600 disabled:hover:to-blue-600"
+                      className="p-2 bg-white hover:bg-gray-200 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isLoading ? (
-                        <Loader2 className="w-5 h-5 text-white animate-spin" />
+                        <Loader2 className="w-5 h-5 text-black animate-spin" />
                       ) : (
-                        <Send className="w-5 h-5 text-white" />
+                        <Send className="w-5 h-5 text-black" />
                       )}
                     </button>
                   </div>
                 </div>
 
-                <p className="text-xs text-yellow-400/80 text-center">
-                  ⚠️ AI responses are for informational purposes only and do not constitute financial advice
+                <p className="text-xs text-gray-500 text-center">
+                  AI responses are for informational purposes only and do not constitute financial advice
                 </p>
               </form>
             </div>
