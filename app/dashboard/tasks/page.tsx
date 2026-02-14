@@ -529,8 +529,8 @@ export default function TasksPage() {
               {messages.length === 0 ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-white/10 to-gray-800/50 border border-white/20 mb-4">
-                      <Sparkles className="w-8 h-8 text-white" />
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 mb-4">
+                      <Sparkles className="w-8 h-8 text-purple-400" />
                     </div>
                     <h2 className="text-2xl font-bold text-white mb-2">
                       How can I help you today?
