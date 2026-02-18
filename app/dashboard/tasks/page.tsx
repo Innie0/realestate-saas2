@@ -20,6 +20,10 @@ export default function TasksPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [imageName, setImageName] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  // PDF upload state
+  const [selectedPdf, setSelectedPdf] = useState<string | null>(null);
+  const [pdfName, setPdfName] = useState<string | null>(null);
   
   // Sidebar state
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -133,35 +137,57 @@ export default function TasksPage() {
     }
   };
 
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      setError('Please select an image file');
+    // Clear previous attachments
+    setSelectedImage(null);
+    setImagePreview(null);
+    setImageName(null);
+    setSelectedPdf(null);
+    setPdfName(null);
+    setError(null);
+
+    if (file.type === 'application/pdf') {
+      if (file.size > 20 * 1024 * 1024) {
+        setError('PDF size must be less than 20MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedPdf(reader.result as string);
+        setPdfName(file.name);
+      };
+      reader.readAsDataURL(file);
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      setError('Image size must be less than 10MB');
+    if (file.type.startsWith('image/')) {
+      if (file.size > 10 * 1024 * 1024) {
+        setError('Image size must be less than 10MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setSelectedImage(base64String);
+        setImagePreview(base64String);
+        setImageName(file.name);
+      };
+      reader.readAsDataURL(file);
       return;
     }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64String = reader.result as string;
-      setSelectedImage(base64String);
-      setImagePreview(base64String);
-      setImageName(file.name);
-      setError(null);
-    };
-    reader.readAsDataURL(file);
+    setError('Please select an image or PDF file');
   };
 
   const handleRemoveImage = () => {
     setSelectedImage(null);
     setImagePreview(null);
     setImageName(null);
+    setSelectedPdf(null);
+    setPdfName(null);
   };
 
   const handleNewConversation = () => {
@@ -280,7 +306,7 @@ export default function TasksPage() {
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!inputMessage.trim() && !selectedImage) return;
+    if (!inputMessage.trim() && !selectedImage && !selectedPdf) return;
 
     setIsLoading(true);
     setError(null);
@@ -293,12 +319,14 @@ export default function TasksPage() {
       role: 'user',
       content: inputMessage.trim(),
       image_url: selectedImage,
-      image_name: imageName,
+      image_name: imageName || pdfName,
       created_at: new Date().toISOString(),
     };
     setMessages(prev => [...prev, tempUserMessage]);
-    
+
     const messageText = inputMessage.trim();
+    const capturedPdf = selectedPdf;
+    const capturedPdfName = pdfName;
     setInputMessage('');
     handleRemoveImage();
 
@@ -311,6 +339,8 @@ export default function TasksPage() {
           conversation_id: currentConversationId,
           imageData: selectedImage,
           imageName: imageName,
+          pdfData: capturedPdf,
+          pdfName: capturedPdfName,
         }),
       });
 
@@ -561,11 +591,12 @@ export default function TasksPage() {
                               : 'bg-gray-800/50 backdrop-blur-sm border border-white/10 text-gray-100'
                           }`}
                         >
-                          {msg.image_url && (
+                          {/* Image attachment */}
+                          {msg.image_url && !msg.image_name?.toLowerCase().endsWith('.pdf') && (
                             <div className="mb-3">
-                              <img 
-                                src={msg.image_url} 
-                                alt={msg.image_name || 'Uploaded image'} 
+                              <img
+                                src={msg.image_url}
+                                alt={msg.image_name || 'Uploaded image'}
                                 className="max-w-xs rounded-lg border border-white/10"
                               />
                               {msg.image_name && (
@@ -574,6 +605,13 @@ export default function TasksPage() {
                                   {msg.image_name}
                                 </p>
                               )}
+                            </div>
+                          )}
+                          {/* PDF attachment badge */}
+                          {msg.image_name?.toLowerCase().endsWith('.pdf') && (
+                            <div className="mb-3 flex items-center gap-2 px-3 py-2 bg-red-500/10 border border-red-500/20 rounded-lg w-fit">
+                              <FileText className="w-4 h-4 text-red-400 flex-shrink-0" />
+                              <span className="text-xs text-gray-300 truncate max-w-[200px]">{msg.image_name}</span>
                             </div>
                           )}
                           <p className="text-sm whitespace-pre-wrap leading-relaxed">
@@ -631,9 +669,9 @@ export default function TasksPage() {
                 {imagePreview && (
                   <div className="border border-white/20 rounded-lg p-3 bg-white/5">
                     <div className="flex items-start gap-3">
-                      <img 
-                        src={imagePreview} 
-                        alt="Preview" 
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
                         className="w-16 h-16 object-cover rounded border border-white/10 flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">
@@ -641,15 +679,27 @@ export default function TasksPage() {
                           <FileText className="w-3.5 h-3.5 inline mr-1" />
                           {imageName}
                         </p>
-                        <p className="text-xs text-gray-500 mt-0.5">
-                          Ready to analyze
-                        </p>
+                        <p className="text-xs text-gray-500 mt-0.5">Image ready to analyze</p>
                       </div>
-                      <button
-                        type="button"
-                        onClick={handleRemoveImage}
-                        className="p-1.5 hover:bg-red-500/20 rounded transition-colors flex-shrink-0"
-                      >
+                      <button type="button" onClick={handleRemoveImage} className="p-1.5 hover:bg-red-500/20 rounded transition-colors flex-shrink-0">
+                        <X className="w-4 h-4 text-gray-400 hover:text-red-300" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* PDF Preview */}
+                {selectedPdf && (
+                  <div className="border border-purple-500/30 rounded-lg p-3 bg-purple-500/5">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                        <FileText className="w-5 h-5 text-red-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-gray-300 truncate font-medium">{pdfName}</p>
+                        <p className="text-xs text-purple-400 mt-0.5">PDF ready — AI will read and analyze this</p>
+                      </div>
+                      <button type="button" onClick={handleRemoveImage} className="p-1.5 hover:bg-red-500/20 rounded transition-colors flex-shrink-0">
                         <X className="w-4 h-4 text-gray-400 hover:text-red-300" />
                       </button>
                     </div>
@@ -675,19 +725,19 @@ export default function TasksPage() {
                   
                   {/* Action Buttons */}
                   <div className="absolute bottom-3 right-3 flex items-center gap-2">
-                    <label className="cursor-pointer p-2 hover:bg-white/10 rounded-lg transition-colors group">
+                    <label className="cursor-pointer p-2 hover:bg-white/10 rounded-lg transition-colors group" title="Attach image or PDF">
                       <Paperclip className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
                       <input
                         type="file"
-                        accept="image/*"
-                        onChange={handleImageSelect}
+                        accept="image/*,application/pdf"
+                        onChange={handleFileSelect}
                         className="hidden"
                         disabled={isLoading}
                       />
                     </label>
                     <button
                       type="submit"
-                      disabled={isLoading || (!inputMessage.trim() && !selectedImage)}
+                      disabled={isLoading || (!inputMessage.trim() && !selectedImage && !selectedPdf)}
                       className="p-2 bg-white hover:bg-gray-200 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isLoading ? (

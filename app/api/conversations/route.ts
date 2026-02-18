@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { openai } from '@/lib/openai';
+import pdfParse from 'pdf-parse';
 
 /**
  * GET handler - Retrieve all conversations for the current user
@@ -117,7 +118,7 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json();
-    const { message, conversation_id, imageData, imageName } = body;
+    const { message, conversation_id, imageData, imageName, pdfData, pdfName } = body;
 
     // Validate required fields
     if (!message || message.trim() === '') {
@@ -125,6 +126,22 @@ export async function POST(request: NextRequest) {
         { success: false, error: 'Message is required' },
         { status: 400 }
       );
+    }
+
+    // Extract text from PDF if provided
+    let extractedPdfText: string | null = null;
+    if (pdfData) {
+      try {
+        // pdfData is a base64 data URL: "data:application/pdf;base64,..."
+        const base64 = pdfData.includes(',') ? pdfData.split(',')[1] : pdfData;
+        const buffer = Buffer.from(base64, 'base64');
+        const parsed = await pdfParse(buffer);
+        extractedPdfText = parsed.text?.trim() || null;
+        console.log(`PDF extracted: ${pdfName} | ${parsed.numpages} pages | ${extractedPdfText?.length} chars`);
+      } catch (pdfErr) {
+        console.error('PDF parsing error:', pdfErr);
+        extractedPdfText = null;
+      }
     }
 
     let conversationId = conversation_id;
@@ -172,7 +189,7 @@ export async function POST(request: NextRequest) {
         role: 'user',
         content: message.trim(),
         image_url: imageData || null,
-        image_name: imageName || null,
+        image_name: imageName || pdfName || null,
       })
       .select()
       .single();
@@ -250,7 +267,7 @@ If you see financial information in a document, you may extract and summarize it
         });
       });
 
-      // Add current user message
+      // Add current user message — with image, PDF text, or plain text
       if (imageData) {
         messages.push({
           role: 'user',
@@ -261,11 +278,25 @@ If you see financial information in a document, you may extract and summarize it
             },
             {
               type: 'image_url',
-              image_url: {
-                url: imageData,
-              },
+              image_url: { url: imageData },
             },
           ],
+        });
+      } else if (extractedPdfText) {
+        // Truncate very large PDFs to avoid token limits (~100k chars ≈ ~25k tokens)
+        const truncated = extractedPdfText.length > 80000
+          ? extractedPdfText.slice(0, 80000) + '\n\n[... PDF truncated due to length ...]'
+          : extractedPdfText;
+
+        messages.push({
+          role: 'user',
+          content: `${message}\n\n--- Attached PDF: ${pdfName || 'document.pdf'} ---\n${truncated}\n--- End of PDF ---\n\nNote: Analyze the PDF content above and respond to the request. If you see any financial figures, you may list them but do not provide advice or recommendations about them.`,
+        });
+      } else if (pdfData && !extractedPdfText) {
+        // PDF was attached but text extraction failed
+        messages.push({
+          role: 'user',
+          content: `${message}\n\n(Note: A PDF named "${pdfName || 'document.pdf'}" was attached but its text could not be extracted. It may be a scanned image-based PDF.)`,
         });
       } else {
         messages.push({

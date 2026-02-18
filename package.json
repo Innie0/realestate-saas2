@@ -20,12 +20,14 @@
     "lucide-react": "^0.294.0",
     "next": "^16.1.6",
     "openai": "^4.20.1",
+    "pdf-parse": "^2.4.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "stripe": "^20.3.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.5",
+    "@types/pdf-parse": "^1.1.5",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "autoprefixer": "^10.4.16",
