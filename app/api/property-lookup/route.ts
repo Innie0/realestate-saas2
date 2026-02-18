@@ -94,6 +94,43 @@ async function fetchRentcastListing(street: string, city: string, state: string,
 }
 
 /**
+ * Check Rentcast inactive listings to see if the property recently sold on MLS.
+ * Non-fatal — returns null if not found or API unavailable.
+ */
+async function fetchRentcastRecentlySold(street: string, city: string, state: string, zip: string) {
+  const rentcastKey = process.env.RENTCAST_API_KEY;
+  if (!rentcastKey) return null;
+
+  const addressParts = [street];
+  if (city) addressParts.push(city);
+  addressParts.push(state);
+  if (zip) addressParts.push(zip);
+  const fullAddress = addressParts.join(', ');
+
+  try {
+    const params = new URLSearchParams({ address: fullAddress, status: 'Inactive', limit: '1' });
+    const url = `https://api.rentcast.io/v1/listings/sale?${params.toString()}`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: { 'X-Api-Key': rentcastKey, 'Accept': 'application/json' },
+    });
+
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    const listing = Array.isArray(data) && data.length > 0 ? data[0] : null;
+    if (listing) {
+      console.log('Rentcast recently sold listing found:', listing.formattedAddress, '| Price:', listing.price);
+    }
+    return listing;
+  } catch (err) {
+    console.warn('Rentcast recently sold check failed (non-fatal):', err);
+    return null;
+  }
+}
+
+/**
  * Step 2: Call BatchData skip trace with a verified owner name + address.
  * Providing the name dramatically improves contact match accuracy.
  */
@@ -171,10 +208,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'State is required' }, { status: 400 });
     }
 
-    // ── STEP 1: Rentcast — property record + active listing check (in parallel) ─
-    const [rentcastProperty, activeListing] = await Promise.all([
+    // ── STEP 1: Rentcast — property record + active listing + recently sold (in parallel) ─
+    const [rentcastProperty, activeListing, recentlySoldListing] = await Promise.all([
       fetchRentcastProperty(street, city, state, zip),
       fetchRentcastListing(street, city, state, zip),
+      fetchRentcastRecentlySold(street, city, state, zip),
     ]);
 
     // Extract owner name from Rentcast county records
@@ -294,6 +332,7 @@ export async function POST(request: NextRequest) {
               matched: true,
               propertyDetails: buildPropertyDetails(rentcastProperty, latestAssessment),
               activeListing: buildListingInfo(activeListing),
+              recentlySold: buildListingInfo(recentlySoldListing),
               dataSource: 'county_records_only',
             }],
             searchedAddress: { street, city, state, zip },
@@ -417,6 +456,7 @@ export async function POST(request: NextRequest) {
         matched: person.meta?.matched || false,
         propertyDetails,
         activeListing: buildListingInfo(activeListing),
+        recentlySold: buildListingInfo(recentlySoldListing),
         dataSource: 'county_records_and_skip_trace',
       };
     });

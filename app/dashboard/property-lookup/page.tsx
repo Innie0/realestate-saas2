@@ -103,6 +103,7 @@ interface PropertyResult {
   matched: boolean;
   propertyDetails: PropertyDetails | null;
   activeListing: ListingInfo | null;
+  recentlySold: ListingInfo | null;
 }
 
 interface LookupResponse {
@@ -479,6 +480,34 @@ export default function PropertyLookupPage() {
                     <ChevronDown className="w-5 h-5 text-gray-400" />
                   )}
                 </button>
+
+                {/* Recently Sold Banner — always visible when inactive MLS listing exists */}
+                {!person.activeListing && person.recentlySold && (
+                  <div className="mx-4 mb-3 flex items-center justify-between gap-3 p-3 bg-blue-500/10 border border-blue-500/25 rounded-xl">
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                      <div>
+                        <span className="text-blue-300 font-semibold text-sm">Recently Sold</span>
+                        {person.recentlySold.price && (
+                          <span className="text-blue-400 font-bold text-sm ml-2">
+                            Listed at ${person.recentlySold.price.toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs text-gray-400 flex-shrink-0">
+                      {person.recentlySold.daysOnMarket !== null && (
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {person.recentlySold.daysOnMarket}d on market
+                        </span>
+                      )}
+                      {person.recentlySold.listedDate && (
+                        <span>Listed {person.recentlySold.listedDate}</span>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 {/* For Sale Banner — always visible when active listing exists */}
                 {person.activeListing && (
@@ -863,6 +892,81 @@ export default function PropertyLookupPage() {
                               )}
                             </div>
                           )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Recently Sold MLS Details */}
+                    {!person.activeListing && person.recentlySold && (
+                      <div>
+                        <div className="flex items-center gap-2 mb-3">
+                          <TrendingUp className="w-4 h-4 text-blue-400" />
+                          <h4 className="text-sm font-medium text-gray-300">Recently Sold (MLS)</h4>
+                        </div>
+                        <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-4 space-y-3">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            {person.recentlySold.price && (
+                              <div>
+                                <p className="text-xs text-gray-500">Listed Price</p>
+                                <p className="text-white font-bold">${person.recentlySold.price.toLocaleString()}</p>
+                              </div>
+                            )}
+                            {person.recentlySold.daysOnMarket !== null && (
+                              <div>
+                                <p className="text-xs text-gray-500">Days on Market</p>
+                                <p className="text-white font-semibold">{person.recentlySold.daysOnMarket} days</p>
+                              </div>
+                            )}
+                            {person.recentlySold.listedDate && (
+                              <div>
+                                <p className="text-xs text-gray-500">Listed Date</p>
+                                <p className="text-white font-semibold">{person.recentlySold.listedDate}</p>
+                              </div>
+                            )}
+                            {person.recentlySold.mlsNumber && (
+                              <div>
+                                <p className="text-xs text-gray-500">MLS #</p>
+                                <p className="text-white font-semibold">{person.recentlySold.mlsNumber}</p>
+                              </div>
+                            )}
+                          </div>
+                          {person.recentlySold.listingAgent && (
+                            <div className="pt-3 border-t border-blue-500/10">
+                              <p className="text-xs text-gray-500 mb-1">Listing Agent</p>
+                              <p className="text-white text-sm font-medium">{person.recentlySold.listingAgent.name}</p>
+                              <div className="flex flex-wrap gap-3 mt-1">
+                                {person.recentlySold.listingAgent.phone && (
+                                  <span className="text-xs text-green-400 flex items-center gap-1">
+                                    <Phone className="w-3 h-3" />
+                                    {person.recentlySold.listingAgent.phone}
+                                  </span>
+                                )}
+                                {person.recentlySold.listingAgent.email && (
+                                  <span className="text-xs text-blue-400 flex items-center gap-1">
+                                    <Mail className="w-3 h-3" />
+                                    {person.recentlySold.listingAgent.email}
+                                  </span>
+                                )}
+                                {person.recentlySold.listingAgent.website && (
+                                  <a
+                                    href={person.recentlySold.listingAgent.website}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-purple-400 flex items-center gap-1 hover:underline"
+                                  >
+                                    <ExternalLink className="w-3 h-3" />
+                                    Website
+                                  </a>
+                                )}
+                              </div>
+                              {person.recentlySold.listingOffice?.name && (
+                                <p className="text-xs text-gray-500 mt-1">{person.recentlySold.listingOffice.name}</p>
+                              )}
+                            </div>
+                          )}
+                          <p className="text-xs text-gray-600 italic pt-1">
+                            Listed price may differ from the final recorded sale price shown in Sale History below.
+                          </p>
                         </div>
                       </div>
                     )}
