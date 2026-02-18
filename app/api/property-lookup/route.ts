@@ -280,12 +280,12 @@ export async function POST(request: NextRequest) {
     const formattedResults = persons.map((person: any) => {
       const batchAddr = person.propertyAddress || person.property?.address || {};
       const batchMailAddr = person.mailingAddress || person.property?.owner?.mailingAddress || {};
-      const batchName = person.name || person.property?.owner?.name || {};
 
-      // Prefer Rentcast owner name (county records) over BatchData name (guessed)
-      const ownerFullName = rentcastOwnerName || `${batchName.first || ''} ${batchName.last || ''}`.trim() || 'Unknown';
-      const ownerFirst = parsedFirst || batchName.first || '';
-      const ownerLast = parsedLast || batchName.last || '';
+      // Owner name comes exclusively from Rentcast (county records).
+      // BatchData's guessed name is intentionally ignored.
+      const ownerFullName = rentcastOwnerName || 'Not found in county records';
+      const ownerFirst = parsedFirst;
+      const ownerLast = parsedLast;
 
       // Prefer Rentcast occupancy (authoritative) over our address-comparison heuristic
       let occupancyStatus: string;
