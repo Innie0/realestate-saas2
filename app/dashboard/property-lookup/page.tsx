@@ -349,6 +349,9 @@ export default function PropertyLookupPage() {
             <p className="text-xs text-gray-500">
               <span className="text-red-400">*</span> Required: Street address and state. City and ZIP code are optional but help improve accuracy.
             </p>
+            <p className="text-xs text-gray-600 italic">
+              Disclaimer: Some information displayed may be inaccurate or outdated. Owner data is sourced from county public records and may not reflect recent ownership changes. Phone numbers and emails are sourced from third-party databases and are not guaranteed to be current or correct. Always verify information before making contact.
+            </p>
 
             {/* Action Buttons */}
             <div className="flex items-center gap-3 pt-2">
