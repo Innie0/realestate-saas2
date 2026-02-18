@@ -786,16 +786,12 @@ export default function PropertyLookupPage() {
                     </div>
 
                     {/* Warnings/Flags */}
-                    {(person.isLitigator || person.dnc) && (
+                    {person.isLitigator && (
                       <div className="flex items-start gap-3 p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-xl">
                         <Shield className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-                        <div className="space-y-1">
-                          {person.isLitigator && (
-                            <p className="text-yellow-300 text-sm font-medium">
-                              This person is flagged as a TCPA litigator. Exercise caution when making contact.
-                            </p>
-                          )}
-                        </div>
+                        <p className="text-yellow-300 text-sm font-medium">
+                          This person is flagged as a TCPA litigator. Exercise caution when making contact.
+                        </p>
                       </div>
                     )}
 
