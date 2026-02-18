@@ -899,7 +899,7 @@ export default function PropertyLookupPage() {
 
                     {/* Disclaimer */}
                     <p className="text-xs text-gray-600 italic">
-                      Owner information comes from county public records. Recently sold properties may show the previous owner. Contact information may not be current — verify before reaching out.
+                      Disclaimer: Some information displayed may be inaccurate or outdated. Owner data is sourced from county public records and may not reflect recent ownership changes. Phone numbers and emails are sourced from third-party databases and are not guaranteed to be current or correct. Always verify information before making contact.
                     </p>
                   </div>
                 )}
