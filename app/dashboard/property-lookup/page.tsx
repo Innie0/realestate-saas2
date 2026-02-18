@@ -36,6 +36,10 @@ interface PropertyDetails {
   ownerName: string | null;
   ownerAddress: string | null;
   propertyType: string | null;
+  subdivision: string | null;
+  zoning: string | null;
+  hoaFee: number | null;
+  features: Record<string, unknown> | null;
 }
 
 interface PropertyResult {
@@ -43,7 +47,9 @@ interface PropertyResult {
     firstName: string;
     lastName: string;
     fullName: string;
+    type?: string;
   };
+  dataSource?: string;
   propertyAddress: {
     street: string;
     city: string;
@@ -412,10 +418,18 @@ export default function PropertyLookupPage() {
                       {person.owner.firstName?.[0]?.toUpperCase() || person.owner.lastName?.[0]?.toUpperCase() || '?'}
                     </div>
                     <div className="text-left">
-                      <h3 className="text-white font-semibold text-lg capitalize">
-                        {person.owner.fullName.toLowerCase()}
-                      </h3>
-                      <div className="flex items-center gap-3 mt-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="text-white font-semibold text-lg capitalize">
+                          {person.owner.fullName.toLowerCase()}
+                        </h3>
+                        {person.dataSource === 'county_records_and_skip_trace' || person.dataSource === 'county_records_only' ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/15 text-green-400 border border-green-500/25">
+                            <Shield className="w-3 h-3" />
+                            County Verified
+                          </span>
+                        ) : null}
+                      </div>
+                      <div className="flex items-center gap-3 mt-1 flex-wrap">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getOccupancyColor(person.occupancyStatus)}`}>
                           {person.occupancyStatus === 'Owner-Occupied' ? (
                             <Home className="w-3 h-3 mr-1" />
@@ -424,6 +438,9 @@ export default function PropertyLookupPage() {
                           )}
                           {person.occupancyStatus}
                         </span>
+                        {person.owner.type && person.owner.type !== 'Unknown' && (
+                          <span className="text-xs text-gray-500">{person.owner.type}</span>
+                        )}
                         {person.phoneNumbers.length > 0 && (
                           <span className="text-xs text-gray-500">
                             {person.phoneNumbers.length} phone(s)
@@ -568,6 +585,33 @@ export default function PropertyLookupPage() {
                               <div>
                                 <p className="text-xs text-gray-500">Property Type</p>
                                 <p className="text-white text-sm font-medium">{person.propertyDetails.propertyType}</p>
+                              </div>
+                            </div>
+                          )}
+                          {person.propertyDetails.subdivision && (
+                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                              <MapPin className="w-4 h-4 text-pink-400 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-gray-500">Subdivision</p>
+                                <p className="text-white text-sm font-medium">{person.propertyDetails.subdivision}</p>
+                              </div>
+                            </div>
+                          )}
+                          {person.propertyDetails.hoaFee && (
+                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                              <DollarSign className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-gray-500">HOA Fee</p>
+                                <p className="text-white text-sm font-medium">${person.propertyDetails.hoaFee}/mo</p>
+                              </div>
+                            </div>
+                          )}
+                          {person.propertyDetails.zoning && (
+                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                              <FileText className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-gray-500">Zoning</p>
+                                <p className="text-white text-sm font-medium">{person.propertyDetails.zoning}</p>
                               </div>
                             </div>
                           )}
