@@ -43,7 +43,7 @@ export default function PrivacyPage() {
             </div>
             <div>
               <h1 className="text-4xl font-bold text-white">Privacy Policy</h1>
-              <p className="text-gray-400 mt-2">Last Updated: February 11, 2026</p>
+              <p className="text-gray-400 mt-2">Last Updated: February 18, 2026</p>
             </div>
           </div>
 
@@ -98,17 +98,27 @@ export default function PrivacyPage() {
                 <strong>Note:</strong> Conversations are stored in your account and you can delete them at any time from the AI Assistant page.
               </p>
 
-              <h3 className="text-xl font-semibold text-white mb-3 mt-6">4. Other Usage Information</h3>
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">4. Property Lookup Search Data</h3>
+              <p className="text-gray-300 leading-relaxed mb-4">When you use the Property Lookup feature, we process:</p>
+              <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
+                <li>Property addresses you search for</li>
+                <li>Search history stored locally in your browser session</li>
+              </ul>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                <strong>Important:</strong> Property lookup results — including owner names, contact information, and property details — are retrieved in real time from third-party data providers (Rentcast, BatchData) and are <strong>not stored</strong> in your account. This data originates from county public records and third-party databases and may be inaccurate or outdated. We do not guarantee its accuracy.
+              </p>
+
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">5. Other Usage Information</h3>
               <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
                 <li>Property listings and project information you create</li>
                 <li>Client information you add</li>
                 <li>Transactions you manage</li>
                 <li>Calendar events you create</li>
-                <li>Files, images, and contracts you upload</li>
+                <li>Files and images you upload</li>
                 <li>Notes and communications within the platform</li>
               </ul>
 
-              <h3 className="text-xl font-semibold text-white mb-3 mt-6">5. Payment Information</h3>
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">6. Payment Information</h3>
               <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
                 <li>Payment method details (processed by Stripe)</li>
                 <li>Billing address</li>
@@ -119,7 +129,7 @@ export default function PrivacyPage() {
                 <strong>Note:</strong> We do not store your full credit card numbers. Payment processing is handled securely by Stripe.
               </p>
 
-              <h3 className="text-xl font-semibold text-white mb-3 mt-6">6. Automatically Collected Information</h3>
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">7. Automatically Collected Information</h3>
               <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
                 <li>IP address</li>
                 <li>Browser type and version</li>
@@ -142,8 +152,8 @@ export default function PrivacyPage() {
                 <li>Store and display your client and property information</li>
                 <li>Generate AI-powered content descriptions</li>
                 <li>Analyze property images and documents using AI</li>
-                <li>Store and manage your contracts and documents</li>
                 <li>Provide task assistance and document analysis</li>
+                <li>Query third-party property data APIs to return property owner, contact, and listing information</li>
               </ul>
 
               <h3 className="text-xl font-semibold text-white mb-3 mt-6">Communication</h3>
@@ -242,6 +252,38 @@ export default function PrivacyPage() {
                 <strong>Stripe Privacy Policy:</strong>{' '}
                 <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
                   https://stripe.com/privacy
+                </a>
+              </p>
+
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">Rentcast</h3>
+              <p className="text-gray-300 leading-relaxed mb-2">We use Rentcast's property data API to:</p>
+              <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
+                <li>Retrieve verified property owner names from county assessor/recorder records</li>
+                <li>Retrieve property details (beds, baths, sq ft, year built, assessed value, sale history)</li>
+                <li>Check active and recent MLS listings for a searched property</li>
+              </ul>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                <strong>Data sent to Rentcast:</strong> The property address you search. Results are returned in real time and are not stored in your account.
+              </p>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                <strong>Rentcast Privacy Policy:</strong>{' '}
+                <a href="https://rentcast.io/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
+                  https://rentcast.io/privacy
+                </a>
+              </p>
+
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">BatchData (Skip Tracing)</h3>
+              <p className="text-gray-300 leading-relaxed mb-2">We use BatchData's skip tracing API to:</p>
+              <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
+                <li>Retrieve phone numbers and email addresses associated with a property owner</li>
+              </ul>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                <strong>Data sent to BatchData:</strong> The property address and verified owner name (obtained from county records via Rentcast). Results are returned in real time and are not stored in your account. Contact information returned may be inaccurate, outdated, or belong to a previous owner. Always verify before use.
+              </p>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                <strong>BatchData Privacy Policy:</strong>{' '}
+                <a href="https://batchdata.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
+                  https://batchdata.com/privacy
                 </a>
               </p>
 

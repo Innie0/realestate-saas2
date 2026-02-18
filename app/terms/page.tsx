@@ -43,7 +43,7 @@ export default function TermsPage() {
             </div>
             <div>
               <h1 className="text-4xl font-bold text-white">Terms of Service</h1>
-              <p className="text-gray-400 mt-2">Last Updated: February 11, 2026</p>
+              <p className="text-gray-400 mt-2">Last Updated: February 18, 2026</p>
             </div>
           </div>
 
@@ -64,11 +64,11 @@ export default function TermsPage() {
               <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
                 <li>Property and transaction management</li>
                 <li>Client relationship management (CRM)</li>
-                <li>Contract storage and document management</li>
                 <li>Calendar integration and scheduling (Google Calendar, Outlook)</li>
                 <li>AI-powered conversational assistant with conversation memory</li>
                 <li>AI-powered content generation and document analysis</li>
                 <li>Image analysis for property listings and documents</li>
+                <li>Property Lookup — search any address to retrieve publicly available owner information, contact details, and listing data from third-party data providers</li>
                 <li>Automated reminders and notifications</li>
               </ul>
             </section>
@@ -162,9 +162,14 @@ export default function TermsPage() {
                 Payment processing is handled by Stripe, a third-party payment processor. Your use of Stripe's services is subject to Stripe's Terms of Service and Privacy Policy. We do not store your full credit card information.
               </p>
 
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">Property Data Services</h3>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                The Property Lookup feature uses Rentcast (county property records and MLS listings) and BatchData (skip tracing for contact information). When you perform a property lookup, the address you enter is sent to these third-party services to retrieve results. These results are not stored in your account. Your use of the Property Lookup feature is subject to the terms and availability of these third-party providers.
+              </p>
+
               <h3 className="text-xl font-semibold text-white mb-3 mt-6">Third-Party Services</h3>
               <p className="text-gray-300 leading-relaxed mb-4">
-                Our Service integrates with third-party services including Supabase (database and authentication), OpenAI (AI features), Stripe (payments), Google (calendar and authentication), and Microsoft (calendar). Your use of these services is subject to their respective terms and conditions. We are not responsible for third-party services or their availability.
+                Our Service integrates with third-party services including Supabase (database and authentication), OpenAI (AI features), Stripe (payments), Google (calendar and authentication), Microsoft (calendar), Rentcast (property records and listings), and BatchData (skip tracing). Your use of these services is subject to their respective terms and conditions. We are not responsible for third-party services or their availability.
               </p>
             </section>
 
@@ -301,6 +306,18 @@ export default function TermsPage() {
                 <li>All data will be preserved or backed up</li>
                 <li>The Service will meet your specific requirements</li>
                 <li>AI-generated content will be accurate or complete</li>
+              </ul>
+
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">Property Lookup Data Accuracy</h3>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                <strong className="text-yellow-400">IMPORTANT:</strong> Property lookup results — including owner names, phone numbers, email addresses, occupancy status, listing data, and property details — are sourced from county public records and third-party databases. This information may be inaccurate, incomplete, or outdated. Realestic does not guarantee the accuracy of any property lookup result. You agree to:
+              </p>
+              <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
+                <li>Independently verify all property lookup information before use</li>
+                <li>Use property lookup data only for lawful purposes</li>
+                <li>Comply with all applicable laws when contacting individuals found through the feature, including the TCPA, CAN-SPAM Act, and Do Not Call regulations</li>
+                <li>Not use the feature to harass, stalk, or harm any individual</li>
+                <li>Not hold Realestic liable for decisions made based on inaccurate lookup data</li>
               </ul>
 
               <h3 className="text-xl font-semibold text-white mb-3 mt-6">Professional Advice</h3>
