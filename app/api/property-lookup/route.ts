@@ -56,6 +56,44 @@ async function fetchRentcastProperty(street: string, city: string, state: string
 }
 
 /**
+ * Check Rentcast sale listings for an active or recent listing at this address.
+ * Non-fatal — returns null if not found or API unavailable.
+ */
+async function fetchRentcastListing(street: string, city: string, state: string, zip: string) {
+  const rentcastKey = process.env.RENTCAST_API_KEY;
+  if (!rentcastKey) return null;
+
+  const addressParts = [street];
+  if (city) addressParts.push(city);
+  addressParts.push(state);
+  if (zip) addressParts.push(zip);
+  const fullAddress = addressParts.join(', ');
+
+  try {
+    // Check for active listing first
+    const params = new URLSearchParams({ address: fullAddress, status: 'Active', limit: '1' });
+    const url = `https://api.rentcast.io/v1/listings/sale?${params.toString()}`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: { 'X-Api-Key': rentcastKey, 'Accept': 'application/json' },
+    });
+
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    const listing = Array.isArray(data) && data.length > 0 ? data[0] : null;
+    if (listing) {
+      console.log('Rentcast active listing found:', listing.formattedAddress, '| Price:', listing.price);
+    }
+    return listing;
+  } catch (err) {
+    console.warn('Rentcast listing check failed (non-fatal):', err);
+    return null;
+  }
+}
+
+/**
  * Step 2: Call BatchData skip trace with a verified owner name + address.
  * Providing the name dramatically improves contact match accuracy.
  */
@@ -133,10 +171,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'State is required' }, { status: 400 });
     }
 
-    // ── STEP 1: Rentcast — get verified owner name + property details ──────────
-    const rentcastProperty = await fetchRentcastProperty(street, city, state, zip);
+    // ── STEP 1: Rentcast — property record + active listing check (in parallel) ─
+    const [rentcastProperty, activeListing] = await Promise.all([
+      fetchRentcastProperty(street, city, state, zip),
+      fetchRentcastListing(street, city, state, zip),
+    ]);
 
-    // Extract owner name from Rentcast
+    // Extract owner name from Rentcast county records
     const rentcastOwnerName = rentcastProperty?.owner?.names?.[0] || null;
     const { firstName: parsedFirst, lastName: parsedLast } = rentcastOwnerName
       ? parseOwnerName(rentcastOwnerName)
@@ -252,6 +293,7 @@ export async function POST(request: NextRequest) {
               involuntaryLien: {},
               matched: true,
               propertyDetails: buildPropertyDetails(rentcastProperty, latestAssessment),
+              activeListing: buildListingInfo(activeListing),
               dataSource: 'county_records_only',
             }],
             searchedAddress: { street, city, state, zip },
@@ -374,6 +416,7 @@ export async function POST(request: NextRequest) {
         involuntaryLien: person.involuntaryLien || {},
         matched: person.meta?.matched || false,
         propertyDetails,
+        activeListing: buildListingInfo(activeListing),
         dataSource: 'county_records_and_skip_trace',
       };
     });
@@ -404,6 +447,19 @@ export async function POST(request: NextRequest) {
  * Build a clean propertyDetails object from a Rentcast property record.
  */
 function buildPropertyDetails(property: any, latestAssessment: any) {
+  // Build sale history from the property's history object
+  const saleHistory = property.history
+    ? Object.values(property.history)
+        .filter((entry: any) => entry.event === 'Sale')
+        .map((entry: any) => ({
+          date: entry.date
+            ? new Date(entry.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+            : null,
+          price: entry.price || null,
+        }))
+        .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    : [];
+
   return {
     yearBuilt: property.yearBuilt || null,
     squareFootage: property.squareFootage || null,
@@ -425,5 +481,43 @@ function buildPropertyDetails(property: any, latestAssessment: any) {
     zoning: property.zoning || null,
     hoaFee: property.hoa?.fee || null,
     features: property.features || null,
+    saleHistory,
+  };
+}
+
+/**
+ * Build a clean listing info object from a Rentcast active listing record.
+ */
+function buildListingInfo(listing: any) {
+  if (!listing) return null;
+
+  return {
+    status: listing.status || 'Active',
+    price: listing.price || null,
+    listedDate: listing.listedDate
+      ? new Date(listing.listedDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+      : null,
+    daysOnMarket: listing.daysOnMarket || null,
+    listingType: listing.listingType || null,
+    mlsNumber: listing.mlsNumber || null,
+    listingAgent: listing.listingAgent
+      ? {
+          name: listing.listingAgent.name || null,
+          phone: listing.listingAgent.phone
+            ? listing.listingAgent.phone.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
+            : null,
+          email: listing.listingAgent.email || null,
+          website: listing.listingAgent.website || null,
+        }
+      : null,
+    listingOffice: listing.listingOffice
+      ? {
+          name: listing.listingOffice.name || null,
+          phone: listing.listingOffice.phone
+            ? listing.listingOffice.phone.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
+            : null,
+          email: listing.listingOffice.email || null,
+        }
+      : null,
   };
 }

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
-import { Search, MapPin, Phone, Mail, User, Home, Building, Loader2, AlertCircle, ChevronDown, ChevronUp, Shield, Copy, Check, X, Calendar, DollarSign, Ruler, Bed, Bath, FileText } from 'lucide-react';
+import { Search, MapPin, Phone, Mail, Home, Building, Loader2, AlertCircle, ChevronDown, ChevronUp, Shield, Copy, Check, X, Calendar, DollarSign, Ruler, Bed, Bath, FileText, TrendingUp, Tag, Clock, ExternalLink } from 'lucide-react';
 
 // Types for property lookup results
 interface PhoneNumber {
@@ -19,6 +19,11 @@ interface PhoneNumber {
 
 interface EmailAddress {
   email: string;
+}
+
+interface SaleHistoryEntry {
+  date: string | null;
+  price: number | null;
 }
 
 interface PropertyDetails {
@@ -40,6 +45,27 @@ interface PropertyDetails {
   zoning: string | null;
   hoaFee: number | null;
   features: Record<string, unknown> | null;
+  saleHistory: SaleHistoryEntry[];
+}
+
+interface ListingInfo {
+  status: string;
+  price: number | null;
+  listedDate: string | null;
+  daysOnMarket: number | null;
+  listingType: string | null;
+  mlsNumber: string | null;
+  listingAgent: {
+    name: string | null;
+    phone: string | null;
+    email: string | null;
+    website: string | null;
+  } | null;
+  listingOffice: {
+    name: string | null;
+    phone: string | null;
+    email: string | null;
+  } | null;
 }
 
 interface PropertyResult {
@@ -76,6 +102,7 @@ interface PropertyResult {
   involuntaryLien: Record<string, unknown>;
   matched: boolean;
   propertyDetails: PropertyDetails | null;
+  activeListing: ListingInfo | null;
 }
 
 interface LookupResponse {
@@ -461,6 +488,34 @@ export default function PropertyLookupPage() {
                   )}
                 </button>
 
+                {/* For Sale Banner — always visible when active listing exists */}
+                {person.activeListing && (
+                  <div className="mx-4 mb-3 flex items-center justify-between gap-3 p-3 bg-green-500/10 border border-green-500/25 rounded-xl">
+                    <div className="flex items-center gap-2">
+                      <Tag className="w-4 h-4 text-green-400 flex-shrink-0" />
+                      <div>
+                        <span className="text-green-300 font-semibold text-sm">Currently For Sale</span>
+                        {person.activeListing.price && (
+                          <span className="text-green-400 font-bold text-sm ml-2">
+                            ${person.activeListing.price.toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs text-gray-400 flex-shrink-0">
+                      {person.activeListing.daysOnMarket !== null && (
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {person.activeListing.daysOnMarket}d on market
+                        </span>
+                      )}
+                      {person.activeListing.listedDate && (
+                        <span>Listed {person.activeListing.listedDate}</span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* Expanded Details */}
                 {expandedPersonIndex === index && (
                   <div className="border-t border-gray-800 p-5 space-y-6">
@@ -758,9 +813,107 @@ export default function PropertyLookupPage() {
                       </div>
                     )}
 
+                    {/* Active Listing Details */}
+                    {person.activeListing && (
+                      <div>
+                        <div className="flex items-center gap-2 mb-3">
+                          <Tag className="w-4 h-4 text-green-400" />
+                          <h4 className="text-sm font-medium text-gray-300">Listing Details</h4>
+                        </div>
+                        <div className="bg-green-500/5 border border-green-500/20 rounded-xl p-4 space-y-3">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            {person.activeListing.price && (
+                              <div>
+                                <p className="text-xs text-gray-500">Asking Price</p>
+                                <p className="text-white font-bold">${person.activeListing.price.toLocaleString()}</p>
+                              </div>
+                            )}
+                            {person.activeListing.daysOnMarket !== null && (
+                              <div>
+                                <p className="text-xs text-gray-500">Days on Market</p>
+                                <p className="text-white font-semibold">{person.activeListing.daysOnMarket} days</p>
+                              </div>
+                            )}
+                            {person.activeListing.listedDate && (
+                              <div>
+                                <p className="text-xs text-gray-500">Listed Date</p>
+                                <p className="text-white font-semibold">{person.activeListing.listedDate}</p>
+                              </div>
+                            )}
+                            {person.activeListing.mlsNumber && (
+                              <div>
+                                <p className="text-xs text-gray-500">MLS #</p>
+                                <p className="text-white font-semibold">{person.activeListing.mlsNumber}</p>
+                              </div>
+                            )}
+                          </div>
+                          {person.activeListing.listingAgent && (
+                            <div className="pt-3 border-t border-green-500/10">
+                              <p className="text-xs text-gray-500 mb-1">Listing Agent</p>
+                              <p className="text-white text-sm font-medium">{person.activeListing.listingAgent.name}</p>
+                              <div className="flex flex-wrap gap-3 mt-1">
+                                {person.activeListing.listingAgent.phone && (
+                                  <span className="text-xs text-green-400 flex items-center gap-1">
+                                    <Phone className="w-3 h-3" />
+                                    {person.activeListing.listingAgent.phone}
+                                  </span>
+                                )}
+                                {person.activeListing.listingAgent.email && (
+                                  <span className="text-xs text-blue-400 flex items-center gap-1">
+                                    <Mail className="w-3 h-3" />
+                                    {person.activeListing.listingAgent.email}
+                                  </span>
+                                )}
+                                {person.activeListing.listingAgent.website && (
+                                  <a
+                                    href={person.activeListing.listingAgent.website}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-purple-400 flex items-center gap-1 hover:underline"
+                                  >
+                                    <ExternalLink className="w-3 h-3" />
+                                    Website
+                                  </a>
+                                )}
+                              </div>
+                              {person.activeListing.listingOffice?.name && (
+                                <p className="text-xs text-gray-500 mt-1">{person.activeListing.listingOffice.name}</p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Sale History */}
+                    {person.propertyDetails?.saleHistory && person.propertyDetails.saleHistory.length > 0 && (
+                      <div>
+                        <div className="flex items-center gap-2 mb-3">
+                          <TrendingUp className="w-4 h-4 text-yellow-400" />
+                          <h4 className="text-sm font-medium text-gray-300">Sale History</h4>
+                        </div>
+                        <div className="space-y-2">
+                          {person.propertyDetails.saleHistory.map((sale, saleIndex) => (
+                            <div key={saleIndex} className="flex items-center justify-between bg-gray-800/40 rounded-xl px-4 py-3">
+                              <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-yellow-400 flex-shrink-0" />
+                                <span className="text-gray-300 text-sm">{sale.date || 'Unknown date'}</span>
+                                {saleIndex === 0 && (
+                                  <span className="text-xs px-1.5 py-0.5 rounded bg-yellow-500/15 text-yellow-400 border border-yellow-500/20">Most Recent</span>
+                                )}
+                              </div>
+                              <span className="text-white font-semibold text-sm">
+                                {sale.price ? `$${sale.price.toLocaleString()}` : 'Price unknown'}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Disclaimer */}
                     <p className="text-xs text-gray-600 italic">
-                      Contact information may not be current or accurate. Please verify before reaching out. This data is sourced from public records and third-party databases.
+                      Owner information comes from county public records. Recently sold properties may show the previous owner. Contact information may not be current — verify before reaching out.
                     </p>
                   </div>
                 )}
