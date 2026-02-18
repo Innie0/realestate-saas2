@@ -257,14 +257,6 @@ export default function PropertyLookupPage() {
     return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
   };
 
-  // Get phone score color
-  const getScoreColor = (score: string) => {
-    const num = parseInt(score);
-    if (num >= 80) return 'text-green-400';
-    if (num >= 50) return 'text-yellow-400';
-    return 'text-red-400';
-  };
-
   return (
     <div className="min-h-screen">
       <Header title="Property Lookup" subtitle="Search any address to find owner and contact information" />
@@ -720,22 +712,16 @@ export default function PropertyLookupPage() {
                                 </div>
                               </div>
                               <div className="flex items-center gap-3">
-                                {/* Score */}
-                                <div className="text-right">
-                                  <span className={`text-xs font-medium ${getScoreColor(phone.score)}`}>
-                                    Score: {phone.score}
-                                  </span>
-                                  <div className="flex items-center gap-1 mt-0.5">
-                                    {phone.tested && phone.reachable && (
-                                      <span className="text-xs text-green-500">Reachable</span>
-                                    )}
-                                    {phone.tested && !phone.reachable && (
-                                      <span className="text-xs text-red-400">Not Reachable</span>
-                                    )}
-                                    {phone.dnc && (
-                                      <span className="text-xs text-yellow-400 ml-1">DNC</span>
-                                    )}
-                                  </div>
+                                <div className="flex items-center gap-1">
+                                  {phone.tested && phone.reachable && (
+                                    <span className="text-xs text-green-500">Reachable</span>
+                                  )}
+                                  {phone.tested && !phone.reachable && (
+                                    <span className="text-xs text-red-400">Not Reachable</span>
+                                  )}
+                                  {phone.dnc && (
+                                    <span className="text-xs text-yellow-400">DNC</span>
+                                  )}
                                 </div>
                                 {/* Copy button */}
                                 <button
