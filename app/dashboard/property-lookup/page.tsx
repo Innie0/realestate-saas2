@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
-import { Search, MapPin, Phone, Mail, User, Home, Building, Loader2, AlertCircle, ChevronDown, ChevronUp, Shield, Copy, Check, X } from 'lucide-react';
+import { Search, MapPin, Phone, Mail, User, Home, Building, Loader2, AlertCircle, ChevronDown, ChevronUp, Shield, Copy, Check, X, Calendar, DollarSign, Ruler, Bed, Bath, FileText } from 'lucide-react';
 
 // Types for property lookup results
 interface PhoneNumber {
@@ -19,6 +19,23 @@ interface PhoneNumber {
 
 interface EmailAddress {
   email: string;
+}
+
+interface PropertyDetails {
+  yearBuilt: string | number | null;
+  squareFootage: string | number | null;
+  bedrooms: string | number | null;
+  bathrooms: string | number | null;
+  lotSize: string | number | null;
+  assessedValue: string | number | null;
+  landValue: string | number | null;
+  improvementValue: string | number | null;
+  lastSaleDate: string | null;
+  lastSalePrice: string | number | null;
+  legalDescription: string | null;
+  ownerName: string | null;
+  ownerAddress: string | null;
+  propertyType: string | null;
 }
 
 interface PropertyResult {
@@ -52,6 +69,7 @@ interface PropertyResult {
   dnc: Record<string, unknown>;
   involuntaryLien: Record<string, unknown>;
   matched: boolean;
+  propertyDetails: PropertyDetails | null;
 }
 
 interface LookupResponse {
@@ -463,6 +481,108 @@ export default function PropertyLookupPage() {
                         )}
                       </div>
                     </div>
+
+                    {/* Property Details from RapidAPI */}
+                    {person.propertyDetails && Object.values(person.propertyDetails).some(v => v !== null) && (
+                      <div>
+                        <div className="flex items-center gap-2 mb-3">
+                          <Home className="w-4 h-4 text-purple-400" />
+                          <h4 className="text-sm font-medium text-gray-300">Property Details</h4>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          {person.propertyDetails.yearBuilt && (
+                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                              <Calendar className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-gray-500">Year Built</p>
+                                <p className="text-white text-sm font-medium">{person.propertyDetails.yearBuilt}</p>
+                              </div>
+                            </div>
+                          )}
+                          {person.propertyDetails.squareFootage && (
+                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                              <Ruler className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-gray-500">Square Footage</p>
+                                <p className="text-white text-sm font-medium">{Number(person.propertyDetails.squareFootage).toLocaleString()} sq ft</p>
+                              </div>
+                            </div>
+                          )}
+                          {person.propertyDetails.bedrooms && (
+                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                              <Bed className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-gray-500">Bedrooms</p>
+                                <p className="text-white text-sm font-medium">{person.propertyDetails.bedrooms}</p>
+                              </div>
+                            </div>
+                          )}
+                          {person.propertyDetails.bathrooms && (
+                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                              <Bath className="w-4 h-4 text-cyan-400 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-gray-500">Bathrooms</p>
+                                <p className="text-white text-sm font-medium">{person.propertyDetails.bathrooms}</p>
+                              </div>
+                            </div>
+                          )}
+                          {person.propertyDetails.lotSize && (
+                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                              <MapPin className="w-4 h-4 text-orange-400 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-gray-500">Lot Size</p>
+                                <p className="text-white text-sm font-medium">{person.propertyDetails.lotSize}</p>
+                              </div>
+                            </div>
+                          )}
+                          {person.propertyDetails.assessedValue && (
+                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                              <DollarSign className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-gray-500">Assessed Value</p>
+                                <p className="text-white text-sm font-medium">${Number(person.propertyDetails.assessedValue).toLocaleString()}</p>
+                              </div>
+                            </div>
+                          )}
+                          {person.propertyDetails.lastSalePrice && (
+                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                              <DollarSign className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-gray-500">Last Sale Price</p>
+                                <p className="text-white text-sm font-medium">${Number(person.propertyDetails.lastSalePrice).toLocaleString()}</p>
+                              </div>
+                            </div>
+                          )}
+                          {person.propertyDetails.lastSaleDate && (
+                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                              <Calendar className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-gray-500">Last Sale Date</p>
+                                <p className="text-white text-sm font-medium">{person.propertyDetails.lastSaleDate}</p>
+                              </div>
+                            </div>
+                          )}
+                          {person.propertyDetails.propertyType && (
+                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                              <Building className="w-4 h-4 text-indigo-400 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-gray-500">Property Type</p>
+                                <p className="text-white text-sm font-medium">{person.propertyDetails.propertyType}</p>
+                              </div>
+                            </div>
+                          )}
+                          {person.propertyDetails.legalDescription && (
+                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2 col-span-2 sm:col-span-3">
+                              <FileText className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-gray-500">Legal Description</p>
+                                <p className="text-white text-sm">{person.propertyDetails.legalDescription}</p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
 
                     {/* Phone Numbers Section */}
                     <div>
