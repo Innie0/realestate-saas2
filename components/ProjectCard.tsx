@@ -59,10 +59,6 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
             alt={project.title}
             className="h-full w-full object-cover"
           />
-          {/* Status badge - positioned in top right corner */}
-          <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-medium ${statusColors[project.status]}`}>
-            {project.status.replace('_', ' ').toUpperCase()}
-          </div>
         </div>
 
         {/* Project details */}
