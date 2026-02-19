@@ -7,8 +7,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { openai } from '@/lib/openai';
-import * as pdfParseModule from 'pdf-parse';
-const pdfParse = (pdfParseModule as any).default || pdfParseModule;
 
 /**
  * GET handler - Retrieve all conversations for the current user
@@ -136,6 +134,8 @@ export async function POST(request: NextRequest) {
         // pdfData is a base64 data URL: "data:application/pdf;base64,..."
         const base64 = pdfData.includes(',') ? pdfData.split(',')[1] : pdfData;
         const buffer = Buffer.from(base64, 'base64');
+        const pdfParseModule = await import('pdf-parse');
+        const pdfParse = (pdfParseModule as any).default || pdfParseModule;
         const parsed = await pdfParse(buffer);
         extractedPdfText = parsed.text?.trim() || null;
         console.log(`PDF extracted: ${pdfName} | ${parsed.numpages} pages | ${extractedPdfText?.length} chars`);
