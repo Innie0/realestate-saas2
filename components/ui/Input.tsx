@@ -35,8 +35,8 @@ export default function Input({
   const inputClasses = clsx(
     baseStyles,
     error
-      ? 'border-red-300 focus:border-red-500 focus:ring-red-500 bg-gradient-to-r from-red-50 to-white' // Error state styles
-      : 'border-gray-200 focus:border-black focus:ring-gray-400 hover:border-gray-300', // Normal state styles
+      ? 'border-red-700 focus:border-red-500 focus:ring-red-500/30 bg-red-900/20'
+      : 'border-white/20 focus:border-white/40 focus:ring-white/10 hover:border-white/30',
     className
   );
 
