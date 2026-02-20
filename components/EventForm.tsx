@@ -60,7 +60,7 @@ export default function EventForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Event Title */}
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="title" className="block text-sm font-medium text-gray-300 mb-1">
           Event Title *
         </label>
         <Input
@@ -75,14 +75,14 @@ export default function EventForm({
 
       {/* Event Type */}
       <div>
-        <label htmlFor="event_type" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="event_type" className="block text-sm font-medium text-gray-300 mb-1">
           Event Type
         </label>
         <select
           id="event_type"
           value={formData.event_type}
           onChange={(e) => setFormData({ ...formData, event_type: e.target.value as 'showing' | 'open_house' | 'meeting' | 'other' })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          className="w-full px-3 py-2 bg-gray-800 border border-white/20 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20"
         >
           <option value="showing">Property Showing</option>
           <option value="open_house">Open House</option>
@@ -93,7 +93,7 @@ export default function EventForm({
 
       {/* Start Time */}
       <div>
-        <label htmlFor="start_time" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="start_time" className="block text-sm font-medium text-gray-300 mb-1">
           Start Time *
         </label>
         <Input
@@ -107,7 +107,7 @@ export default function EventForm({
 
       {/* End Time */}
       <div>
-        <label htmlFor="end_time" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="end_time" className="block text-sm font-medium text-gray-300 mb-1">
           End Time *
         </label>
         <Input
@@ -120,13 +120,13 @@ export default function EventForm({
         />
         {formData.start_time && formData.end_time && 
          new Date(formData.end_time) <= new Date(formData.start_time) && (
-          <p className="text-xs text-red-600 mt-1">End time must be after start time</p>
+          <p className="text-xs text-red-400 mt-1">End time must be after start time</p>
         )}
       </div>
 
       {/* Location */}
       <div>
-        <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="location" className="block text-sm font-medium text-gray-300 mb-1">
           Location
         </label>
         <Input
@@ -140,7 +140,7 @@ export default function EventForm({
 
       {/* Description */}
       <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-1">
           Description
         </label>
         <textarea
@@ -149,7 +149,7 @@ export default function EventForm({
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           placeholder="Add event details..."
           rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          className="w-full px-3 py-2 bg-white/10 border border-white/20 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20 resize-none"
         />
       </div>
 
