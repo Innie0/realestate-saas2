@@ -112,7 +112,7 @@ export default function NewProjectPage() {
       />
 
       {/* Page content */}
-      <div className="p-6 max-w-4xl">
+      <div className="p-6 max-w-3xl mx-auto">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic information */}
           <Card>
