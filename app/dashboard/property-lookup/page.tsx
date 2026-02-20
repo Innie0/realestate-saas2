@@ -428,7 +428,8 @@ export default function PropertyLookupPage() {
             {results.results.map((person, index) => (
               <div
                 key={index}
-                className="bg-gray-900/60 backdrop-blur-sm border border-gray-800 rounded-2xl overflow-hidden transition-all duration-200 hover:border-gray-700"
+                className="rounded-2xl overflow-hidden border border-white/10 transition-all duration-200 hover:border-white/20"
+                style={{ backgroundColor: '#0d1117' }}
               >
                 {/* Card Header - Always Visible */}
                 <button

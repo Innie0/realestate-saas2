@@ -287,7 +287,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       {/* Edit form modal */}
       {isEditing && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg border border-white/10 p-6 max-w-md w-full">
+          <div className="rounded-xl border border-white/10 p-6 max-w-md w-full" style={{ backgroundColor: '#0d1117' }}>
             <h2 className="text-xl font-bold text-white mb-4">Edit Client</h2>
             <ClientForm
               client={client}

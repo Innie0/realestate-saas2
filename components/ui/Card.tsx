@@ -25,7 +25,8 @@ export default function Card({
   hover = false,
 }: CardProps) {
   // Base card styles with dark theme and glassmorphism effect
-  const baseStyles = 'bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-xl border border-white/10 relative';
+  const baseStyles = 'rounded-xl border border-white/10 relative';
+  const cardStyle = { backgroundColor: '#0d1117' };
 
   // Padding options
   const paddingStyles = {
@@ -47,7 +48,7 @@ export default function Card({
   );
 
   return (
-    <div className={cardClasses}>
+    <div className={cardClasses} style={cardStyle}>
       {children}
     </div>
   );

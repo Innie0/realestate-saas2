@@ -125,7 +125,7 @@ export default function SignUpPage() {
         </div>
 
         {/* Sign up card */}
-        <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-2xl border border-white/10 p-6 sm:p-8">
+        <div className="rounded-2xl border border-white/10 p-6 sm:p-8" style={{ backgroundColor: '#0d1117' }}>
           {/* Error message */}
           {error && (
             <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">

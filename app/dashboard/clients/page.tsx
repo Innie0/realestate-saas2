@@ -222,7 +222,7 @@ export default function ClientsPage() {
       {loading ? (
         <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="animate-pulse bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg border border-white/10 p-6 shadow">
+            <div key={i} className="animate-pulse rounded-lg border border-white/10 p-6 shadow" style={{ backgroundColor: '#0d1117' }}>
               <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
               <div className="h-3 bg-gray-200 rounded mb-2"></div>
               <div className="h-3 bg-gray-200 rounded w-1/2"></div>
@@ -257,7 +257,7 @@ export default function ClientsPage() {
       {/* Quick Add Note Modal */}
       {showNoteModal && selectedClient && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg border border-white/10 p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="rounded-xl border border-white/10 p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto" style={{ backgroundColor: '#0d1117' }}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg sm:text-xl font-bold text-white">
                 Add Note for {selectedClient.name}
@@ -302,7 +302,7 @@ export default function ClientsPage() {
       {/* Quick Add Reminder Modal */}
       {showReminderModal && selectedClient && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg border border-white/10 p-6 max-w-md w-full">
+          <div className="rounded-xl border border-white/10 p-6 max-w-md w-full" style={{ backgroundColor: '#0d1117' }}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-white">
                 Add Reminder for {selectedClient.name}

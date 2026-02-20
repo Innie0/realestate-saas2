@@ -295,7 +295,8 @@ export default function HomePage() {
                   scale: 1.02,
                   transition: { duration: 0.15, ease: 'easeOut' }
                 }}
-                className="absolute top-0 right-0 w-72 bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 shadow-2xl border border-white/10"
+                className="absolute top-0 right-0 w-72 rounded-2xl p-6 shadow-2xl border border-white/10"
+                style={{ backgroundColor: '#0d1117' }}
               >
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 bg-green-500/20 rounded-lg">
@@ -318,7 +319,8 @@ export default function HomePage() {
                   scale: 1.02,
                   transition: { duration: 0.15, ease: 'easeOut' }
                 }}
-                className="absolute top-32 left-0 w-64 bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 shadow-2xl border border-white/10"
+                className="absolute top-32 left-0 w-64 rounded-2xl p-6 shadow-2xl border border-white/10"
+                style={{ backgroundColor: '#0d1117' }}
               >
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 bg-blue-500/20 rounded-lg">
@@ -341,7 +343,8 @@ export default function HomePage() {
                   scale: 1.02,
                   transition: { duration: 0.15, ease: 'easeOut' }
                 }}
-                className="absolute bottom-10 right-10 w-80 bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 shadow-2xl border border-white/10"
+                className="absolute bottom-10 right-10 w-80 rounded-2xl p-6 shadow-2xl border border-white/10"
+                style={{ backgroundColor: '#0d1117' }}
               >
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 bg-purple-500/20 rounded-lg">
