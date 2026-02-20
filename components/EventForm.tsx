@@ -56,6 +56,8 @@ export default function EventForm({
     await onSubmit(eventData);
   };
 
+  const fieldClass = "w-full px-3 py-2 bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20 [color-scheme:dark]";
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Event Title */}
@@ -63,13 +65,14 @@ export default function EventForm({
         <label htmlFor="title" className="block text-sm font-medium text-gray-300 mb-1">
           Event Title *
         </label>
-        <Input
+        <input
           id="title"
           type="text"
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           placeholder="e.g., Property Showing - 123 Main St"
           required
+          className={fieldClass}
         />
       </div>
 
@@ -82,7 +85,7 @@ export default function EventForm({
           id="event_type"
           value={formData.event_type}
           onChange={(e) => setFormData({ ...formData, event_type: e.target.value as 'showing' | 'open_house' | 'meeting' | 'other' })}
-          className="w-full px-3 py-2 bg-gray-800 border border-white/20 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20"
+          className={fieldClass}
         >
           <option value="showing">Property Showing</option>
           <option value="open_house">Open House</option>
@@ -96,12 +99,13 @@ export default function EventForm({
         <label htmlFor="start_time" className="block text-sm font-medium text-gray-300 mb-1">
           Start Time *
         </label>
-        <Input
+        <input
           id="start_time"
           type="datetime-local"
           value={formData.start_time}
           onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
           required
+          className={fieldClass}
         />
       </div>
 
@@ -110,13 +114,14 @@ export default function EventForm({
         <label htmlFor="end_time" className="block text-sm font-medium text-gray-300 mb-1">
           End Time *
         </label>
-        <Input
+        <input
           id="end_time"
           type="datetime-local"
           value={formData.end_time}
           onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
           min={formData.start_time}
           required
+          className={fieldClass}
         />
         {formData.start_time && formData.end_time && 
          new Date(formData.end_time) <= new Date(formData.start_time) && (
@@ -129,12 +134,13 @@ export default function EventForm({
         <label htmlFor="location" className="block text-sm font-medium text-gray-300 mb-1">
           Location
         </label>
-        <Input
+        <input
           id="location"
           type="text"
           value={formData.location}
           onChange={(e) => setFormData({ ...formData, location: e.target.value })}
           placeholder="e.g., 123 Main St, City, State"
+          className={fieldClass}
         />
       </div>
 
@@ -149,12 +155,12 @@ export default function EventForm({
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           placeholder="Add event details..."
           rows={3}
-          className="w-full px-3 py-2 bg-white/10 border border-white/20 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20 resize-none"
+          className={`${fieldClass} resize-none`}
         />
       </div>
 
       {/* Form Actions */}
-      <div className="flex gap-3 pt-4">
+      <div className="flex gap-3 pt-4 border-t border-gray-700">
         <Button
           type="button"
           variant="outline"
