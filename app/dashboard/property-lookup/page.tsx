@@ -277,7 +277,7 @@ export default function PropertyLookupPage() {
         </div>
 
         {/* Search Form */}
-        <div className="bg-gray-900/60 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 mb-8">
+        <div className="rounded-2xl border border-white/10 p-6 mb-8" style={{ backgroundColor: '#0d1117' }}>
           <form onSubmit={handleSearch} className="space-y-4">
             {/* Street Address */}
             <div>
