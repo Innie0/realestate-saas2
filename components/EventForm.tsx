@@ -5,7 +5,6 @@
 
 import React, { useState } from 'react';
 import Button from './ui/Button';
-import Input from './ui/Input';
 import { CalendarEvent } from '@/types';
 
 interface EventFormProps {
@@ -56,8 +55,6 @@ export default function EventForm({
     await onSubmit(eventData);
   };
 
-  const fieldClass = "w-full px-3 py-2 bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20 [color-scheme:dark]";
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Event Title */}
@@ -72,7 +69,8 @@ export default function EventForm({
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           placeholder="e.g., Property Showing - 123 Main St"
           required
-          className={fieldClass}
+          style={{ colorScheme: 'dark', backgroundColor: '#1f2937', borderColor: '#374151' }}
+          className="w-full px-3 py-2 text-white placeholder-gray-500 rounded-lg border focus:outline-none focus:ring-2 focus:ring-white/20"
         />
       </div>
 
@@ -85,7 +83,8 @@ export default function EventForm({
           id="event_type"
           value={formData.event_type}
           onChange={(e) => setFormData({ ...formData, event_type: e.target.value as 'showing' | 'open_house' | 'meeting' | 'other' })}
-          className={fieldClass}
+          style={{ colorScheme: 'dark', backgroundColor: '#1f2937', borderColor: '#374151' }}
+          className="w-full px-3 py-2 text-white rounded-lg border focus:outline-none focus:ring-2 focus:ring-white/20"
         >
           <option value="showing">Property Showing</option>
           <option value="open_house">Open House</option>
@@ -105,7 +104,8 @@ export default function EventForm({
           value={formData.start_time}
           onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
           required
-          className={fieldClass}
+          style={{ colorScheme: 'dark', backgroundColor: '#1f2937', borderColor: '#374151' }}
+          className="w-full px-3 py-2 text-white rounded-lg border focus:outline-none focus:ring-2 focus:ring-white/20"
         />
       </div>
 
@@ -121,7 +121,8 @@ export default function EventForm({
           onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
           min={formData.start_time}
           required
-          className={fieldClass}
+          style={{ colorScheme: 'dark', backgroundColor: '#1f2937', borderColor: '#374151' }}
+          className="w-full px-3 py-2 text-white rounded-lg border focus:outline-none focus:ring-2 focus:ring-white/20"
         />
         {formData.start_time && formData.end_time && 
          new Date(formData.end_time) <= new Date(formData.start_time) && (
@@ -140,7 +141,8 @@ export default function EventForm({
           value={formData.location}
           onChange={(e) => setFormData({ ...formData, location: e.target.value })}
           placeholder="e.g., 123 Main St, City, State"
-          className={fieldClass}
+          style={{ colorScheme: 'dark', backgroundColor: '#1f2937', borderColor: '#374151' }}
+          className="w-full px-3 py-2 text-white placeholder-gray-500 rounded-lg border focus:outline-none focus:ring-2 focus:ring-white/20"
         />
       </div>
 
@@ -155,7 +157,8 @@ export default function EventForm({
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           placeholder="Add event details..."
           rows={3}
-          className={`${fieldClass} resize-none`}
+          style={{ colorScheme: 'dark', backgroundColor: '#1f2937', borderColor: '#374151' }}
+          className="w-full px-3 py-2 text-white placeholder-gray-500 rounded-lg border focus:outline-none focus:ring-2 focus:ring-white/20 resize-none"
         />
       </div>
 
