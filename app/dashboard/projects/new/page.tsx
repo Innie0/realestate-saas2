@@ -130,27 +130,27 @@ export default function NewProjectPage() {
               />
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Description
                 </label>
                 <textarea
-                  className="block w-full rounded-lg border border-white/20 px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="block w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none"
                   rows={6}
                   placeholder="Detailed description of the property... (This will be used by AI to generate marketing content)"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-gray-400">
                   💡 Tip: The more detailed your description, the better the AI-generated content will be!
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Property Type
                 </label>
                 <select
-                  className="block w-full rounded-lg border border-white/20 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="block w-full rounded-lg border border-white/20 bg-gray-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white/20"
                   value={propertyType}
                   onChange={(e) => setPropertyType(e.target.value)}
                   required
@@ -262,11 +262,11 @@ export default function NewProjectPage() {
             </div>
 
             <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-300 mb-1">
                 Special Features
               </label>
               <textarea
-                className="block w-full rounded-lg border border-white/20 px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="block w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none"
                 rows={7}
                 placeholder="Enter each feature on a new line:
 • Infinity pool with lake views
@@ -277,7 +277,7 @@ export default function NewProjectPage() {
                 value={features}
                 onChange={(e) => setFeatures(e.target.value)}
               />
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-gray-400">
                 💡 Enter each feature on a new line. Be specific and descriptive!
               </p>
             </div>
