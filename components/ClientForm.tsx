@@ -132,7 +132,7 @@ export default function ClientForm({ client, onSubmit, onCancel, isLoading }: Cl
       )}
 
       {/* Form actions */}
-      <div className="flex gap-3 pt-4 border-t border-gray-700">
+      <div className="flex gap-3 pt-4 border-t border-gray-800">
         <Button
           type="submit"
           variant="primary"
