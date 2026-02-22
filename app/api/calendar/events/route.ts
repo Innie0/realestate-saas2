@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CalendarEvent, APIResponse } from '@/types';
 import { createClient } from '@/lib/supabase-server';
+import { checkUsageLimit, incrementUsage, usageLimitError } from '@/lib/usage';
 
 /**
  * GET handler - Retrieve calendar events
@@ -109,6 +110,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(response, { status: 400 });
     }
 
+    // Check usage limit
+    const usage = await checkUsageLimit(supabase, user.id, 'calendar_events');
+    if (!usage.allowed) {
+      return NextResponse.json(
+        { success: false, error: usageLimitError('calendar_events', usage.current, usage.limit) },
+        { status: 403 }
+      );
+    }
+
     // Create event in database
     const { data: newEvent, error: insertError } = await supabase
       .from('calendar_events')
@@ -130,6 +140,7 @@ export async function POST(request: NextRequest) {
       throw insertError;
     }
 
+    await incrementUsage(supabase, user.id, 'calendar_events');
     console.log('✅ Event created in database:', newEvent.title);
 
     // Sync to connected calendars (Google Calendar)

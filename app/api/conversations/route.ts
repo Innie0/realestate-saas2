@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { openai } from '@/lib/openai';
+import { checkUsageLimit, incrementUsage, usageLimitError } from '@/lib/usage';
 
 /**
  * GET handler - Retrieve all conversations for the current user
@@ -126,6 +127,17 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Check usage limit
+    const usage = await checkUsageLimit(supabase, user.id, 'ai_messages');
+    if (!usage.allowed) {
+      return NextResponse.json(
+        { success: false, error: usageLimitError('ai_messages', usage.current, usage.limit) },
+        { status: 403 }
+      );
+    }
+
+    await incrementUsage(supabase, user.id, 'ai_messages');
 
     // Extract text from PDF if provided
     let extractedPdfText: string | null = null;

@@ -10,8 +10,12 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import NotificationsPanel from '@/components/NotificationsPanel';
 import ProjectCard from '@/components/ProjectCard';
-import { Plus, FolderKanban, Image, FileText, TrendingUp } from 'lucide-react';
+import { Plus, FolderKanban, Image, FileText, TrendingUp, Zap } from 'lucide-react';
 import { Project } from '@/types';
+
+interface UsageData {
+  [key: string]: { current: number; limit: number };
+}
 
 interface DashboardStats {
   totalProjects: number;
@@ -31,17 +35,27 @@ export default function DashboardPage() {
   const [recentProjects, setRecentProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [projectsLoading, setProjectsLoading] = useState(true);
+  const [usage, setUsage] = useState<UsageData | null>(null);
 
-  // Set page title
   useEffect(() => {
     document.title = 'Dashboard - Realestic';
   }, []);
 
-  // Fetch real statistics and recent projects from API
   useEffect(() => {
     fetchStats();
     fetchRecentProjects();
+    fetchUsage();
   }, []);
+
+  const fetchUsage = async () => {
+    try {
+      const response = await fetch('/api/usage');
+      const result = await response.json();
+      if (result.success) setUsage(result.data);
+    } catch (error) {
+      console.error('Error fetching usage:', error);
+    }
+  };
 
   const fetchStats = async () => {
     try {
@@ -175,6 +189,56 @@ export default function DashboardPage() {
             })
           )}
         </div>
+
+        {/* Plan Usage */}
+        {usage && (
+          <Card>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Zap className="w-5 h-5 text-purple-400" />
+                <h2 className="text-lg font-bold text-white">Plan Usage</h2>
+              </div>
+              <Link href="/pricing">
+                <Button variant="outline" size="sm">Upgrade</Button>
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              {[
+                { key: 'projects', label: 'Projects', period: '/mo' },
+                { key: 'property_lookups', label: 'Lookups', period: '/mo' },
+                { key: 'ai_messages', label: 'AI Messages', period: '/mo' },
+                { key: 'clients', label: 'Clients', period: '' },
+                { key: 'transactions', label: 'Transactions', period: '' },
+                { key: 'calendar_events', label: 'Events', period: '' },
+              ].map(({ key, label, period }) => {
+                const item = usage[key];
+                if (!item) return null;
+                const isUnlimited = item.limit === -1;
+                const pct = isUnlimited ? 0 : Math.min((item.current / item.limit) * 100, 100);
+                const isNearLimit = !isUnlimited && pct >= 80;
+                const isAtLimit = !isUnlimited && pct >= 100;
+                return (
+                  <div key={key} className="text-center">
+                    <p className="text-xs text-gray-400 mb-1">{label}</p>
+                    <p className={`text-lg font-bold ${isAtLimit ? 'text-red-400' : isNearLimit ? 'text-yellow-400' : 'text-white'}`}>
+                      {item.current}{!isUnlimited && <span className="text-gray-500 text-sm font-normal">/{item.limit}</span>}
+                      {isUnlimited && <span className="text-gray-500 text-xs font-normal ml-1">∞</span>}
+                    </p>
+                    {!isUnlimited && (
+                      <div className="w-full h-1.5 bg-gray-800 rounded-full mt-1.5">
+                        <div
+                          className={`h-full rounded-full transition-all ${isAtLimit ? 'bg-red-500' : isNearLimit ? 'bg-yellow-500' : 'bg-purple-500'}`}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    )}
+                    <p className="text-[10px] text-gray-500 mt-1">{period}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
+        )}
 
         {/* Recent projects section */}
         <Card>

@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { Transaction } from '@/types';
 import { syncTransactionToCalendar } from '@/lib/transaction-calendar-sync';
+import { checkUsageLimit, incrementUsage, usageLimitError } from '@/lib/usage';
 
 /**
  * GET /api/transactions
@@ -141,6 +142,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check usage limit
+    const usage = await checkUsageLimit(supabase, user.id, 'transactions');
+    if (!usage.allowed) {
+      return NextResponse.json(
+        { success: false, error: usageLimitError('transactions', usage.current, usage.limit) },
+        { status: 403 }
+      );
+    }
+
     // Create transaction data
     const transactionData = {
       user_id: user.id,
@@ -232,6 +242,8 @@ export async function POST(request: NextRequest) {
       // Don't fail the transaction creation if calendar sync fails
       console.error('⚠️ Calendar sync error (non-fatal):', syncError);
     }
+
+    await incrementUsage(supabase, user.id, 'transactions');
 
     return NextResponse.json({
       success: true,

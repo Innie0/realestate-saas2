@@ -2,6 +2,7 @@
 // API route for clients - GET (list) and POST (create)
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
+import { checkUsageLimit, incrementUsage, usageLimitError } from '@/lib/usage';
 
 /**
  * GET /api/clients
@@ -125,6 +126,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check usage limit
+    const usage = await checkUsageLimit(supabase, user.id, 'clients');
+    if (!usage.allowed) {
+      return NextResponse.json(
+        { success: false, error: usageLimitError('clients', usage.current, usage.limit) },
+        { status: 403 }
+      );
+    }
+
     // Create client
     const { data: client, error } = await supabase
       .from('clients')
@@ -145,6 +155,8 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    await incrementUsage(supabase, user.id, 'clients');
 
     return NextResponse.json({
       success: true,

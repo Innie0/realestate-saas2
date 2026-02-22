@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { APIResponse } from '@/types';
+import { checkUsageLimit, incrementUsage, usageLimitError } from '@/lib/usage';
 
 /**
  * GET handler - Retrieve all projects for the current user
@@ -93,6 +94,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check usage limit
+    const usage = await checkUsageLimit(supabase, user.id, 'projects');
+    if (!usage.allowed) {
+      return NextResponse.json(
+        { success: false, error: usageLimitError('projects', usage.current, usage.limit) },
+        { status: 403 }
+      );
+    }
+
     // Create project in database
     const { data: newProject, error } = await supabase
       .from('projects')
@@ -115,6 +125,8 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    await incrementUsage(supabase, user.id, 'projects');
 
     return NextResponse.json({
       success: true,
