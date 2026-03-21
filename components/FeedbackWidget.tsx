@@ -20,6 +20,13 @@ export default function FeedbackWidget() {
     setMounted(true);
     const wasDismissed = sessionStorage.getItem(DISMISSED_KEY) === 'true';
     setDismissed(wasDismissed);
+
+    const handleOpenEvent = () => {
+      setDismissed(false);
+      setOpen(true);
+    };
+    window.addEventListener('open-feedback', handleOpenEvent);
+    return () => window.removeEventListener('open-feedback', handleOpenEvent);
   }, []);
 
   const handleDismiss = (e: React.MouseEvent) => {
