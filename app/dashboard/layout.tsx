@@ -3,6 +3,7 @@
 
 import Link from 'next/link';
 import Sidebar from '@/components/layout/Sidebar';
+import FeedbackWidget from '@/components/FeedbackWidget';
 
 /**
  * DashboardLayout component
@@ -28,6 +29,8 @@ export default function DashboardLayout({
           {children}
         </main>
         
+        <FeedbackWidget />
+
         {/* Footer */}
         <footer className="border-t border-gray-800 bg-black px-6 py-4">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-gray-500">
