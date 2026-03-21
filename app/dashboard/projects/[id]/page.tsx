@@ -41,6 +41,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [showAllImages, setShowAllImages] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
@@ -1258,8 +1259,9 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 </div>
 
                 {project.images && project.images.length > 0 ? (
+                  <>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {project.images.map((image, index) => {
+                    {(showAllImages ? project.images : project.images.slice(0, 8)).map((image, index) => {
                       // Handle both old format (object with url) and new format (direct URL string)
                       const imageUrl = typeof image === 'string' ? image : image.url;
                       const imageId = typeof image === 'string' ? image : image.id;
@@ -1283,7 +1285,32 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                         </div>
                       );
                     })}
+                    {!showAllImages && project.images.length > 8 && (
+                      <div
+                        className="relative group cursor-pointer"
+                        onClick={() => setShowAllImages(true)}
+                      >
+                        <img
+                          src={typeof project.images[8] === 'string' ? project.images[8] : (project.images[8] as any).url}
+                          alt="More images"
+                          className="w-full h-40 object-cover rounded-lg brightness-50"
+                        />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center rounded-lg">
+                          <span className="text-white text-2xl font-bold">+{project.images.length - 8}</span>
+                          <span className="text-white text-sm font-medium mt-1">View All</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
+                  {showAllImages && (
+                    <button
+                      className="mt-3 text-sm text-gray-400 hover:text-white transition-colors"
+                      onClick={() => setShowAllImages(false)}
+                    >
+                      Show less
+                    </button>
+                  )}
+                  </>)
                 ) : (
                   <div className="text-center py-12 border-2 border-dashed border-white/20 rounded-lg">
                     <ImageIcon className="w-12 h-12 mx-auto text-gray-400 mb-4" />
