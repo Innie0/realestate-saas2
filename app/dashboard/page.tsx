@@ -198,7 +198,7 @@ export default function DashboardPage() {
                 <Zap className="w-5 h-5 text-purple-400" />
                 <h2 className="text-lg font-bold text-white">Plan Usage</h2>
               </div>
-              <Link href="/pricing">
+              <Link href="/dashboard/upgrade">
                 <Button variant="outline" size="sm">Upgrade</Button>
               </Link>
             </div>
