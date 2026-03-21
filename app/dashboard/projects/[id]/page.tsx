@@ -1310,7 +1310,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                       Show less
                     </button>
                   )}
-                  </>)
+                  </>
                 ) : (
                   <div className="text-center py-12 border-2 border-dashed border-white/20 rounded-lg">
                     <ImageIcon className="w-12 h-12 mx-auto text-gray-400 mb-4" />
