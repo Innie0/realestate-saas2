@@ -22,7 +22,6 @@ export default function FeedbackWidget() {
     setDismissed(wasDismissed);
 
     const handleOpenEvent = () => {
-      setDismissed(false);
       setOpen(true);
     };
     window.addEventListener('open-feedback', handleOpenEvent);
@@ -60,11 +59,11 @@ export default function FeedbackWidget() {
     }
   };
 
-  if (!mounted || dismissed) return null;
+  if (!mounted) return null;
 
   return (
     <>
-      {/* Feedback panel */}
+      {/* Feedback panel — shows regardless of dismissed state */}
       {open && (
         <div className="fixed bottom-28 right-6 z-50 w-80 rounded-2xl border border-white/10 bg-[#111] shadow-2xl overflow-hidden">
           {/* Header */}
@@ -140,8 +139,8 @@ export default function FeedbackWidget() {
         </div>
       )}
 
-      {/* Floating button */}
-      <div className="fixed bottom-14 right-6 z-50 flex items-center gap-2">
+      {/* Floating button — hidden when dismissed */}
+      {!dismissed && <div className="fixed bottom-14 right-6 z-50 flex items-center gap-2">
         {/* X dismiss button */}
         {!open && (
           <button
@@ -160,7 +159,7 @@ export default function FeedbackWidget() {
           <MessageSquare className="w-4 h-4" />
           Feedback
         </button>
-      </div>
+      </div>}
     </>
   );
 }
