@@ -322,8 +322,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             ...prev,
             images: updatedImages,
           } : null);
-
-          alert(`${uploadedImageUrls.length} image(s) uploaded successfully!`);
         } else {
           throw new Error(result.error || 'Failed to save images');
         }
