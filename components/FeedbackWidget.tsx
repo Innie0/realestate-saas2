@@ -59,7 +59,7 @@ export default function FeedbackWidget() {
     <>
       {/* Feedback panel */}
       {open && (
-        <div className="fixed bottom-20 right-6 z-50 w-80 rounded-2xl border border-white/10 bg-[#111] shadow-2xl overflow-hidden">
+        <div className="fixed bottom-28 right-6 z-50 w-80 rounded-2xl border border-white/10 bg-[#111] shadow-2xl overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
             <span className="text-sm font-semibold text-white">Share Feedback</span>
@@ -134,7 +134,7 @@ export default function FeedbackWidget() {
       )}
 
       {/* Floating button */}
-      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2">
+      <div className="fixed bottom-14 right-6 z-50 flex items-center gap-2">
         {/* X dismiss button */}
         {!open && (
           <button

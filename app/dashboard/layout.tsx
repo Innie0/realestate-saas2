@@ -39,6 +39,7 @@ export default function DashboardLayout({
               <Link href="/privacy" className="hover:text-gray-300 transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-gray-300 transition-colors">Terms</Link>
               <Link href="/" className="hover:text-gray-300 transition-colors">Home</Link>
+              <Link href="/dashboard/account#feedback" className="hover:text-gray-300 transition-colors">Feedback</Link>
             </div>
           </div>
         </footer>
