@@ -8,7 +8,7 @@ import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
-import { User, Mail, Lock, X } from 'lucide-react';
+import { User, Mail, Lock, X, MessageSquare, Send } from 'lucide-react';
 import { getCurrentUser, updateUserProfile, supabase } from '@/lib/supabase';
 
 /**
@@ -23,6 +23,12 @@ export default function AccountPage() {
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [userId, setUserId] = useState<string>('');
   
+  // Feedback state
+  const [feedbackType, setFeedbackType] = useState<'general' | 'bug' | 'feature'>('general');
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
+  const [feedbackSent, setFeedbackSent] = useState(false);
+
   // Password change modal state
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordStep, setPasswordStep] = useState<'request' | 'verify'>('request');
@@ -178,6 +184,26 @@ export default function AccountPage() {
     setShowPasswordModal(true);
   };
 
+  const handleFeedbackSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!feedbackMessage.trim()) return;
+    setIsFeedbackLoading(true);
+    try {
+      await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: feedbackType, message: feedbackMessage }),
+      });
+      setFeedbackSent(true);
+      setFeedbackMessage('');
+      setTimeout(() => setFeedbackSent(false), 3000);
+    } catch {
+      // fail silently
+    } finally {
+      setIsFeedbackLoading(false);
+    }
+  };
+
   // Show loading state while fetching user data
   if (isLoadingData) {
     return (
@@ -294,6 +320,66 @@ export default function AccountPage() {
             <div className="mt-6">
               <Button>Save Preferences</Button>
             </div>
+          </Card>
+
+          {/* Feedback & Support */}
+          <Card>
+            <div className="flex items-center gap-3 mb-6">
+              <MessageSquare className="w-5 h-5 text-white" />
+              <h2 className="text-xl font-bold text-white">Feedback & Support</h2>
+            </div>
+
+            <p className="text-gray-600 mb-4">
+              Have a suggestion, found a bug, or need help? Let us know — we read everything.
+            </p>
+
+            {feedbackSent ? (
+              <div className="flex items-center gap-3 p-4 rounded-xl bg-green-500/10 border border-green-500/20">
+                <Send className="w-4 h-4 text-green-400 shrink-0" />
+                <p className="text-green-400 text-sm font-medium">Thanks! Your feedback has been sent.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleFeedbackSubmit} className="space-y-4">
+                <div className="flex gap-2">
+                  {(['general', 'bug', 'feature'] as const).map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setFeedbackType(t)}
+                      className={`flex-1 py-2 rounded-lg text-sm font-medium capitalize transition-colors border ${
+                        feedbackType === t
+                          ? 'bg-white/10 border-white/20 text-white'
+                          : 'bg-transparent border-white/5 text-gray-500 hover:text-gray-300'
+                      }`}
+                    >
+                      {t === 'bug' ? 'Bug Report' : t === 'feature' ? 'Feature Request' : 'General'}
+                    </button>
+                  ))}
+                </div>
+
+                <textarea
+                  value={feedbackMessage}
+                  onChange={(e) => setFeedbackMessage(e.target.value)}
+                  placeholder={
+                    feedbackType === 'bug'
+                      ? 'Describe what went wrong...'
+                      : feedbackType === 'feature'
+                      ? 'What would you like to see added?'
+                      : 'Tell us what you think...'
+                  }
+                  rows={5}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 resize-none focus:outline-none focus:border-white/25 transition-colors"
+                />
+
+                <Button
+                  type="submit"
+                  isLoading={isFeedbackLoading}
+                  disabled={!feedbackMessage.trim()}
+                >
+                  Send Feedback
+                </Button>
+              </form>
+            )}
           </Card>
 
           {/* Danger zone */}
