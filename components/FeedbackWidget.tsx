@@ -22,7 +22,7 @@ export default function FeedbackWidget() {
     setDismissed(wasDismissed);
 
     const handleOpenEvent = () => {
-      setOpen(true);
+      setOpen((prev) => !prev);
     };
     window.addEventListener('open-feedback', handleOpenEvent);
     return () => window.removeEventListener('open-feedback', handleOpenEvent);
@@ -65,7 +65,7 @@ export default function FeedbackWidget() {
     <>
       {/* Feedback panel — shows regardless of dismissed state */}
       {open && (
-        <div className="fixed bottom-28 right-6 z-50 w-80 rounded-2xl border border-white/10 bg-[#111] shadow-2xl overflow-hidden">
+        <div className={`fixed ${dismissed ? 'bottom-16' : 'bottom-28'} right-6 z-50 w-80 rounded-2xl border border-white/10 bg-[#111] shadow-2xl overflow-hidden`}>
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
             <span className="text-sm font-semibold text-white">Share Feedback</span>
