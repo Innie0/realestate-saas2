@@ -37,9 +37,9 @@ export default function DashboardLayout({
           <div className="flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-gray-500">
             <p>© 2026 Realestic. All rights reserved.</p>
             <div className="flex gap-4">
+              <Link href="/" className="hover:text-gray-300 transition-colors">Home</Link>
               <Link href="/privacy" className="hover:text-gray-300 transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-gray-300 transition-colors">Terms</Link>
-              <Link href="/" className="hover:text-gray-300 transition-colors">Home</Link>
               <FeedbackFooterButton />
             </div>
           </div>
