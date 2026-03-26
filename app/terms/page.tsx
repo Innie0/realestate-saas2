@@ -43,7 +43,7 @@ export default function TermsPage() {
             </div>
             <div>
               <h1 className="text-4xl font-bold text-white">Terms of Service</h1>
-              <p className="text-gray-400 mt-2">Last Updated: February 18, 2026</p>
+              <p className="text-gray-400 mt-2">Last Updated: March 25, 2026</p>
             </div>
           </div>
 
@@ -70,6 +70,7 @@ export default function TermsPage() {
                 <li>Image analysis for property listings and documents</li>
                 <li>Property Lookup — search any address to retrieve publicly available owner information, contact details, and listing data from third-party data providers</li>
                 <li>Automated reminders and notifications</li>
+                <li>In-app feedback submission to help us improve the Service</li>
               </ul>
             </section>
 
@@ -118,6 +119,19 @@ export default function TermsPage() {
                 <li>Harass, abuse, or harm other users</li>
                 <li>Share your account with others</li>
                 <li>Use the Service to spam or send unsolicited messages</li>
+              </ul>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-white mb-4">Feedback Submissions</h2>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                You may submit feedback, bug reports, or feature requests through the in-app feedback widget or feedback forms. By submitting feedback:
+              </p>
+              <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
+                <li>You grant us a perpetual, royalty-free license to use your feedback to improve the Service</li>
+                <li>You acknowledge that submitted feedback is not confidential and we are under no obligation to act on it</li>
+                <li>Feedback is stored in our database as described in our Privacy Policy</li>
+                <li>You agree not to submit feedback containing personal data of third parties, defamatory content, or anything that violates these Terms</li>
               </ul>
             </section>
 

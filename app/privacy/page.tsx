@@ -43,7 +43,7 @@ export default function PrivacyPage() {
             </div>
             <div>
               <h1 className="text-4xl font-bold text-white">Privacy Policy</h1>
-              <p className="text-gray-400 mt-2">Last Updated: February 18, 2026</p>
+              <p className="text-gray-400 mt-2">Last Updated: March 25, 2026</p>
             </div>
           </div>
 
@@ -118,7 +118,19 @@ export default function PrivacyPage() {
                 <li>Notes and communications within the platform</li>
               </ul>
 
-              <h3 className="text-xl font-semibold text-white mb-3 mt-6">6. Payment Information</h3>
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">6. Feedback Data</h3>
+              <p className="text-gray-300 leading-relaxed mb-4">When you submit feedback through the feedback widget or any feedback form, we collect:</p>
+              <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
+                <li>The feedback message you write</li>
+                <li>The feedback type you select (General, Bug Report, or Feature Request)</li>
+                <li>Your user ID and email address (if you are logged in)</li>
+                <li>Timestamp of submission</li>
+              </ul>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                Feedback is stored in our database and used solely to improve the Service. We do not share feedback with third parties.
+              </p>
+
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">7. Payment Information</h3>
               <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
                 <li>Payment method details (processed by Stripe)</li>
                 <li>Billing address</li>
@@ -129,7 +141,7 @@ export default function PrivacyPage() {
                 <strong>Note:</strong> We do not store your full credit card numbers. Payment processing is handled securely by Stripe.
               </p>
 
-              <h3 className="text-xl font-semibold text-white mb-3 mt-6">7. Automatically Collected Information</h3>
+              <h3 className="text-xl font-semibold text-white mb-3 mt-6">8. Automatically Collected Information</h3>
               <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
                 <li>IP address</li>
                 <li>Browser type and version</li>
@@ -169,6 +181,7 @@ export default function PrivacyPage() {
                 <li>Analyze usage patterns to improve our service</li>
                 <li>Debug technical issues</li>
                 <li>Develop new features</li>
+                <li>Review submitted feedback to identify bugs, prioritize feature requests, and enhance the overall user experience</li>
               </ul>
             </section>
 
