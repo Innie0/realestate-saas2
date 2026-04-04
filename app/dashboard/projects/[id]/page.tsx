@@ -2114,14 +2114,6 @@ function ZillowStylePreview({
             <span className="px-4 py-2 bg-green-500/20 text-green-400 rounded-full text-sm font-medium border border-green-400/30">
               For Sale
             </span>
-            <span className={`px-4 py-2 rounded-full text-sm font-medium ${
-              project.status === 'completed' ? 'bg-blue-500/20 text-blue-400 border border-blue-400/30' :
-              project.status === 'in_progress' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-400/30' :
-              'bg-white/10 text-gray-300 border border-white/10'
-            }`}>
-              {project.status === 'completed' ? 'Active' : 
-               project.status === 'in_progress' ? 'Coming Soon' : 'Draft'}
-            </span>
           </div>
         </div>
 
