@@ -580,7 +580,7 @@ function PropertyLookupDemoMockup() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: false, margin: '-100px' });
 
-  const address = '5721 West Prospect Drive, Visalia, CA';
+  const address = '123 W Main Street, Austin, TX';
 
   useEffect(() => {
     if (!inView) return;
@@ -659,7 +659,7 @@ function PropertyLookupDemoMockup() {
             {/* Address banner */}
             <div className="flex items-center gap-2 mb-3">
               <div className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
-              <p className="text-xs text-white font-medium truncate">5721 West Prospect Drive, Visalia, CA 93291</p>
+              <p className="text-xs text-white font-medium truncate">123 W Main Street, Austin, TX 78701</p>
             </div>
 
             {/* Stats grid */}
