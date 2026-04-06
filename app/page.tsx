@@ -413,6 +413,162 @@ function CRMDemoMockup() {
   );
 }
 
+// ─── Calendar Demo Mockup ─────────────────────────────────────────────────────
+
+const calendarEvents = [
+  { day: 8, time: '9:00 AM', label: 'Client Call — Johnson', color: 'bg-blue-500/30 border-blue-500/50 text-blue-300' },
+  { day: 11, time: '2:00 PM', label: 'Showing — Oak Street', color: 'bg-purple-500/30 border-purple-500/50 text-purple-300' },
+  { day: 15, time: '11:00 AM', label: 'Closing — Chen Deal', color: 'bg-green-500/30 border-green-500/50 text-green-300' },
+];
+
+const calendarDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+const calendarNums = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+
+function CalendarDemoMockup() {
+  const [phase, setPhase] = useState(0);
+  const [visibleEvents, setVisibleEvents] = useState(0);
+  const [showNotification, setShowNotification] = useState(false);
+  const [showNewEvent, setShowNewEvent] = useState(false);
+  const [showSynced, setShowSynced] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: false, margin: '-100px' });
+
+  useEffect(() => {
+    if (!inView) return;
+    setPhase(0);
+    setVisibleEvents(0);
+    setShowNotification(false);
+    setShowNewEvent(false);
+    setShowSynced(false);
+
+    const t1 = setTimeout(() => setVisibleEvents(1), 600);
+    const t2 = setTimeout(() => setVisibleEvents(2), 1200);
+    const t3 = setTimeout(() => setVisibleEvents(3), 1800);
+    const t4 = setTimeout(() => setShowNewEvent(true), 3000);
+    const t5 = setTimeout(() => setShowNotification(true), 4500);
+    const t6 = setTimeout(() => setShowNotification(false), 7000);
+    const t7 = setTimeout(() => setShowSynced(true), 7200);
+    const t8 = setTimeout(() => {
+      setPhase(0);
+      setVisibleEvents(0);
+      setShowNotification(false);
+      setShowNewEvent(false);
+      setShowSynced(false);
+    }, 10500);
+
+    return () => [t1,t2,t3,t4,t5,t6,t7,t8].forEach(clearTimeout);
+  }, [inView]);
+
+  const eventDays = calendarEvents.map(e => e.day);
+
+  return (
+    <div ref={ref} className="rounded-2xl bg-[#111111] border border-white/10 p-5 aspect-video flex flex-col overflow-hidden relative">
+      {/* Notification pop-up */}
+      <AnimatePresence>
+        {showNotification && (
+          <motion.div
+            initial={{ opacity: 0, y: -12, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -12, scale: 0.95 }}
+            transition={{ duration: 0.35 }}
+            className="absolute top-3 right-3 z-20 bg-[#1a1a1a] border border-white/10 rounded-xl p-3 shadow-2xl flex items-start gap-2 w-56"
+          >
+            <Bell className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-xs text-white font-semibold">Reminder</p>
+              <p className="text-[10px] text-gray-400 mt-0.5">Showing — Oak Street in 1 hour</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3 flex-shrink-0">
+        <div className="flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-gray-400" />
+          <span className="text-xs text-gray-400 font-medium">April 2026</span>
+        </div>
+        <AnimatePresence>
+          {showSynced && (
+            <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4, type: 'spring' }} className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/10 border border-green-500/30">
+              <CheckCircle className="w-3 h-3 text-green-400" />
+              <span className="text-[10px] text-green-400">Synced with Google</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Day headers */}
+      <div className="grid grid-cols-7 mb-1 flex-shrink-0">
+        {calendarDays.map(d => (
+          <div key={d} className="text-center text-[10px] text-gray-600 font-medium py-1">{d}</div>
+        ))}
+      </div>
+
+      {/* Calendar grid */}
+      <div className="grid grid-cols-7 gap-1 flex-1">
+        {calendarNums.map(n => {
+          const eventIdx = calendarEvents.findIndex(e => e.day === n);
+          const hasEvent = eventIdx !== -1 && visibleEvents > eventIdx;
+          const isNewEvent = n === 19 && showNewEvent;
+          const isToday = n === 5;
+
+          return (
+            <motion.div
+              key={n}
+              className={`relative rounded-lg flex flex-col items-center justify-start pt-1 pb-1 text-[10px] font-medium min-h-0 cursor-pointer transition-colors ${
+                isToday ? 'bg-white text-black' :
+                hasEvent || isNewEvent ? 'bg-white/5' : 'hover:bg-white/5 text-gray-500'
+              }`}
+            >
+              <span className={isToday ? 'text-black' : hasEvent || isNewEvent ? 'text-white' : ''}>{n}</span>
+              {hasEvent && (
+                <motion.div
+                  initial={{ opacity: 0, scaleX: 0 }}
+                  animate={{ opacity: 1, scaleX: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className={`mt-0.5 w-full px-0.5`}
+                >
+                  <div className={`h-1 rounded-full ${calendarEvents[eventIdx].color.split(' ')[0]}`} />
+                </motion.div>
+              )}
+              {isNewEvent && (
+                <motion.div initial={{ opacity: 0, scaleX: 0 }} animate={{ opacity: 1, scaleX: 1 }} transition={{ duration: 0.4 }} className="mt-0.5 w-full px-0.5">
+                  <div className="h-1 rounded-full bg-yellow-500/60" />
+                </motion.div>
+              )}
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Event list */}
+      <div className="mt-3 space-y-1.5 flex-shrink-0">
+        {calendarEvents.map((event, i) => visibleEvents > i && (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.35 }}
+            className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg border text-[10px] ${event.color}`}
+          >
+            <Clock className="w-3 h-3 flex-shrink-0" />
+            <span className="font-medium">Apr {event.day} · {event.time}</span>
+            <span className="text-white/60 truncate">— {event.label}</span>
+          </motion.div>
+        ))}
+        {showNewEvent && (
+          <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35 }} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-yellow-500/50 bg-yellow-500/20 text-yellow-300 text-[10px]">
+            <Clock className="w-3 h-3 flex-shrink-0" />
+            <span className="font-medium">Apr 19 · 3:00 PM</span>
+            <span className="text-white/60 truncate">— New Listing Walkthrough</span>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function HomePage() {
@@ -700,6 +856,8 @@ export default function HomePage() {
                   <AIDemoMockup />
                 ) : i === 1 ? (
                   <CRMDemoMockup />
+                ) : i === 2 ? (
+                  <CalendarDemoMockup />
                 ) : (
                   <motion.div
                     whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
