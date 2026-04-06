@@ -76,7 +76,7 @@ function FeatureTile({
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.6, delay, ease: 'easeOut' as const }}
       whileHover={{ y: -8, scale: 1.02, transition: { duration: 0.3 } }}
-      className="group relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 cursor-pointer overflow-hidden border border-gray-700/50"
+      className="group relative bg-gray-900 rounded-2xl p-8 cursor-pointer overflow-hidden border border-gray-700/50"
     >
       <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       <motion.div className="relative z-10 mb-6 inline-block" whileHover={{ y: -4, transition: { duration: 0.2 } }}>
