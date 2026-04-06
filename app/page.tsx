@@ -77,7 +77,7 @@ function FeatureTile({
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.6, delay, ease: 'easeOut' as const }}
       whileHover={{ y: -8, scale: 1.02, transition: { duration: 0.3 } }}
-      className="group relative bg-gray-900 rounded-2xl p-8 cursor-pointer overflow-hidden border border-gray-700/50"
+      className="group relative bg-[#111111] rounded-2xl p-8 cursor-pointer overflow-hidden border border-white/10"
     >
       <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       <motion.div className="relative z-10 mb-6 inline-block" whileHover={{ y: -4, transition: { duration: 0.2 } }}>
@@ -189,7 +189,7 @@ function AIDemoMockup() {
   }, [phase]);
 
   return (
-    <div ref={ref} className="rounded-2xl bg-gray-900 border border-white/10 p-5 aspect-video flex flex-col overflow-hidden">
+    <div ref={ref} className="rounded-2xl bg-[#111111] border border-white/10 p-5 aspect-video flex flex-col overflow-hidden">
       <AnimatePresence mode="wait">
         {phase === 0 && (
           <motion.div key="upload" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="flex-1 flex flex-col">
@@ -546,7 +546,7 @@ export default function HomePage() {
                 ) : (
                   <motion.div
                     whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
-                    className="rounded-2xl bg-gray-900 border border-white/10 p-8 aspect-video flex items-center justify-center"
+                    className="rounded-2xl bg-[#111111] border border-white/10 p-8 aspect-video flex items-center justify-center"
                   >
                     <div className="text-center">
                       <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/10 border border-white/10 mb-4">
