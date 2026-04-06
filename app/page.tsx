@@ -255,6 +255,164 @@ function AIDemoMockup() {
   );
 }
 
+// ─── CRM Demo Mockup ──────────────────────────────────────────────────────────
+
+const clients = [
+  { name: 'Sarah Johnson', status: 'Active', note: 'Interested in 4BR homes in Riverside', initials: 'SJ', color: 'bg-blue-500' },
+  { name: 'Marcus Williams', status: 'Follow-up', note: 'Viewing scheduled for Saturday 2pm', initials: 'MW', color: 'bg-purple-500' },
+  { name: 'Emily Chen', status: 'Closed', note: 'Closed on Oak Street property ✓', initials: 'EC', color: 'bg-green-500' },
+];
+
+const statusColors: Record<string, string> = {
+  Active: 'bg-blue-500/20 text-blue-400',
+  'Follow-up': 'bg-yellow-500/20 text-yellow-400',
+  Closed: 'bg-green-500/20 text-green-400',
+};
+
+function CRMDemoMockup() {
+  const [phase, setPhase] = useState(0);
+  const [visibleClients, setVisibleClients] = useState(0);
+  const [selectedClient, setSelectedClient] = useState<number | null>(null);
+  const [typedNote, setTypedNote] = useState('');
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: false, margin: '-100px' });
+
+  useEffect(() => {
+    if (!inView) return;
+    setPhase(0);
+    setVisibleClients(0);
+    setSelectedClient(null);
+    setTypedNote('');
+
+    // Stagger clients appearing
+    const t1 = setTimeout(() => setVisibleClients(1), 400);
+    const t2 = setTimeout(() => setVisibleClients(2), 900);
+    const t3 = setTimeout(() => setVisibleClients(3), 1400);
+
+    // Select a client
+    const t4 = setTimeout(() => { setPhase(1); setSelectedClient(0); }, 2400);
+
+    // Type a note
+    const t5 = setTimeout(() => setPhase(2), 3200);
+
+    // Done — show full profile
+    const t6 = setTimeout(() => setPhase(3), 6500);
+
+    // Restart
+    const t7 = setTimeout(() => {
+      setPhase(0);
+      setVisibleClients(0);
+      setSelectedClient(null);
+      setTypedNote('');
+    }, 10000);
+
+    return () => [t1, t2, t3, t4, t5, t6, t7].forEach(clearTimeout);
+  }, [inView]);
+
+  useEffect(() => {
+    if (phase !== 2) return;
+    const newNote = 'Budget up to $1.2M. Prefers open floor plan and large backyard.';
+    let i = 0;
+    const timer = setInterval(() => {
+      i++;
+      setTypedNote(newNote.slice(0, i));
+      if (i >= newNote.length) clearInterval(timer);
+    }, 30);
+    return () => clearInterval(timer);
+  }, [phase]);
+
+  return (
+    <div ref={ref} className="rounded-2xl bg-[#111111] border border-white/10 p-5 aspect-video flex flex-col overflow-hidden">
+      <div className="flex items-center gap-2 mb-3 flex-shrink-0">
+        <Users className="w-4 h-4 text-gray-400" />
+        <span className="text-xs text-gray-400 font-medium">Client Manager</span>
+        <span className="ml-auto text-xs text-gray-600">{clients.length} clients</span>
+      </div>
+
+      <div className="flex flex-1 gap-3 min-h-0">
+        {/* Client list */}
+        <div className="flex flex-col gap-2 w-2/5 flex-shrink-0">
+          {clients.map((client, i) => (
+            <AnimatePresence key={i}>
+              {visibleClients > i && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4 }}
+                  className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-all ${
+                    selectedClient === i
+                      ? 'bg-white/10 border-white/20'
+                      : 'bg-[#1a1a1a] border-white/5 hover:border-white/10'
+                  }`}
+                >
+                  <div className={`w-7 h-7 rounded-full ${client.color} flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0`}>
+                    {client.initials}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs text-white font-medium truncate">{client.name}</p>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${statusColors[client.status]}`}>
+                      {client.status}
+                    </span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          ))}
+        </div>
+
+        {/* Detail panel */}
+        <AnimatePresence>
+          {selectedClient !== null && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.4 }}
+              className="flex-1 bg-[#1a1a1a] rounded-xl border border-white/5 p-3 flex flex-col gap-2 min-w-0"
+            >
+              <div className="flex items-center gap-2">
+                <div className={`w-8 h-8 rounded-full ${clients[selectedClient].color} flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}>
+                  {clients[selectedClient].initials}
+                </div>
+                <div>
+                  <p className="text-xs text-white font-semibold">{clients[selectedClient].name}</p>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${statusColors[clients[selectedClient].status]}`}>
+                    {clients[selectedClient].status}
+                  </span>
+                </div>
+              </div>
+
+              <div className="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Last note</div>
+              <p className="text-xs text-gray-400 leading-relaxed">{clients[selectedClient].note}</p>
+
+              {phase >= 2 && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+                  <div className="text-[10px] text-gray-500 uppercase tracking-wider mt-1">New note</div>
+                  <div className="bg-[#111111] rounded-lg p-2 mt-1 border border-white/5">
+                    <p className="text-xs text-gray-300 leading-relaxed">
+                      {typedNote}
+                      {phase === 2 && (
+                        <motion.span className="inline-block w-0.5 h-3 bg-white ml-0.5 align-middle" animate={{ opacity: [1, 0] }} transition={{ duration: 0.5, repeat: Infinity }} />
+                      )}
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+
+              {phase >= 3 && (
+                <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="flex gap-2 mt-auto">
+                  <span className="px-2 py-1 rounded-lg bg-white/10 border border-white/10 text-[10px] text-gray-300">Save note</span>
+                  <span className="px-2 py-1 rounded-lg bg-white/10 border border-white/10 text-[10px] text-gray-300">Schedule follow-up</span>
+                </motion.div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function HomePage() {
@@ -540,6 +698,8 @@ export default function HomePage() {
               <div className={feature.flip ? 'lg:order-1' : ''}>
                 {i === 0 ? (
                   <AIDemoMockup />
+                ) : i === 1 ? (
+                  <CRMDemoMockup />
                 ) : (
                   <motion.div
                     whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
