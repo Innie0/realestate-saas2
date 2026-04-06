@@ -197,12 +197,9 @@ function AIDemoMockup() {
               <Upload className="w-4 h-4 text-gray-400" />
               <span className="text-xs text-gray-400 font-medium">Uploading photo...</span>
             </div>
-            <div className="flex-1 rounded-lg bg-gray-800 border border-white/5 flex items-center justify-center relative overflow-hidden">
-              <div className="text-center">
-                <ImageIcon className="w-10 h-10 text-gray-600 mx-auto mb-2" />
-                <p className="text-xs text-gray-500">mediterranean-villa.jpg</p>
-              </div>
-              <motion.div className="absolute inset-0 bg-white/5" initial={{ scaleX: 0 }} animate={{ scaleX: progress / 100 }} style={{ transformOrigin: 'left' }} />
+            <div className="flex-1 rounded-lg border border-white/5 relative overflow-hidden">
+              <Image src="/demo-house.png" alt="Property" fill className="object-cover opacity-60" />
+              <motion.div className="absolute inset-0 bg-black" initial={{ scaleX: 1 }} animate={{ scaleX: 1 - progress / 100 }} style={{ transformOrigin: 'right' }} />
             </div>
             <div className="mt-3 w-full bg-gray-800 rounded-full h-1.5">
               <motion.div className="h-full bg-white rounded-full" style={{ width: `${progress}%` }} transition={{ duration: 0.1 }} />
