@@ -806,8 +806,8 @@ export default function HomePage() {
               icon: Calendar,
               tag: 'Scheduling',
               title: 'Never miss an appointment or deadline',
-              description: 'Syncs with Google Calendar and Microsoft Outlook. Set automated reminders for showings, closings, and follow-ups. Stay on top of every transaction from offer to close.',
-              highlights: ['Google & Outlook sync', 'Automated reminders', 'Transaction timelines'],
+              description: 'Syncs with Google Calendar. Set automated reminders for showings, closings, and follow-ups. Stay on top of every transaction from offer to close.',
+              highlights: ['Google Calendar sync', 'Automated reminders', 'Transaction timelines'],
               flip: false,
             },
             {
