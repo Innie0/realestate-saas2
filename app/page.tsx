@@ -228,7 +228,7 @@ function AIDemoMockup() {
               <Sparkles className="w-4 h-4 text-purple-400" />
               <span className="text-xs text-purple-400 font-medium">Generating description...</span>
             </div>
-            <div className="flex-1 rounded-lg bg-gray-800 border border-white/5 p-4 overflow-hidden">
+            <div className="flex-1 rounded-lg bg-[#1a1a1a] border border-white/5 p-4 overflow-hidden">
               <p className="text-sm text-gray-300 leading-relaxed">
                 {typedText}
                 <motion.span className="inline-block w-0.5 h-4 bg-white ml-0.5 align-middle" animate={{ opacity: [1, 0] }} transition={{ duration: 0.6, repeat: Infinity }} />
