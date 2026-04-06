@@ -1092,7 +1092,7 @@ export default function HomePage() {
                   whileTap={{ scale: 0.98 }}
                   className="group px-10 py-4 text-lg font-semibold bg-white text-black rounded-xl hover:bg-gray-100 transition-all flex items-center gap-2"
                 >
-                  Get Started Free
+                  Get Started
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </motion.button>
               </Link>
