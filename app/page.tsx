@@ -700,17 +700,17 @@ function PropertyLookupDemoMockup() {
               </motion.div>
             )}
 
-            {/* Save button */}
+            {/* Save confirmation */}
             <AnimatePresence>
               {showSaved && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 18 }}
-                  className="mt-auto flex items-center gap-2 self-start px-3 py-1.5 rounded-lg bg-green-500/15 border border-green-500/30"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35 }}
+                  className="mt-2 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-500/15 border border-green-500/30 w-fit"
                 >
-                  <CheckCircle className="w-3.5 h-3.5 text-green-400" />
-                  <span className="text-xs text-green-400 font-medium">Property saved to project</span>
+                  <CheckCircle className="w-3 h-3 text-green-400 flex-shrink-0" />
+                  <span className="text-[11px] text-green-400 font-medium">Property saved to project</span>
                 </motion.div>
               )}
             </AnimatePresence>
