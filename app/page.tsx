@@ -7,7 +7,8 @@ import Image from 'next/image';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import {
   Home, TrendingUp, Shield, Sparkles, Users, Calendar, ArrowRight,
-  FileText, Search, Bell, CheckCircle, ChevronDown, Clock, Zap, Star
+  FileText, Search, Bell, CheckCircle, ChevronDown, Clock, Zap, Star,
+  Upload, ImageIcon, Loader2
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
@@ -125,6 +126,135 @@ function FAQItem({ question, answer, delay = 0 }: { question: string; answer: st
         )}
       </AnimatePresence>
     </motion.div>
+  );
+}
+
+// ─── AI Demo Mockup ───────────────────────────────────────────────────────────
+
+function AIDemoMockup() {
+  const [phase, setPhase] = useState(0);
+  const [typedText, setTypedText] = useState('');
+  const [progress, setProgress] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: false, margin: '-100px' });
+
+  const fullDescription = 'Stunning 4-bedroom Mediterranean estate featuring soaring ceilings, a chef\'s kitchen with marble countertops, and a resort-style backyard with infinity pool. Natural light floods every room through floor-to-ceiling windows...';
+
+  useEffect(() => {
+    if (!inView) return;
+    setPhase(0);
+    setTypedText('');
+    setProgress(0);
+
+    // Phase 0: Upload (0–2s)
+    const progressInterval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) { clearInterval(progressInterval); return 100; }
+        return prev + 2;
+      });
+    }, 35);
+
+    // Phase 1: Analyzing (2s)
+    const t1 = setTimeout(() => setPhase(1), 2000);
+
+    // Phase 2: Typing (3.5s)
+    const t2 = setTimeout(() => setPhase(2), 3500);
+
+    // Phase 3: Done (7.5s)
+    const t3 = setTimeout(() => setPhase(3), 7500);
+
+    // Restart loop (10s)
+    const t4 = setTimeout(() => {
+      setPhase(0);
+      setTypedText('');
+      setProgress(0);
+    }, 10000);
+
+    return () => {
+      clearInterval(progressInterval);
+      [t1, t2, t3, t4].forEach(clearTimeout);
+    };
+  }, [inView]);
+
+  useEffect(() => {
+    if (phase !== 2) return;
+    setTypedText('');
+    let i = 0;
+    const timer = setInterval(() => {
+      i++;
+      setTypedText(fullDescription.slice(0, i));
+      if (i >= fullDescription.length) clearInterval(timer);
+    }, 18);
+    return () => clearInterval(timer);
+  }, [phase]);
+
+  return (
+    <div ref={ref} className="rounded-2xl bg-gray-900 border border-white/10 p-5 aspect-video flex flex-col overflow-hidden">
+      <AnimatePresence mode="wait">
+        {phase === 0 && (
+          <motion.div key="upload" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="flex-1 flex flex-col">
+            <div className="flex items-center gap-2 mb-3">
+              <Upload className="w-4 h-4 text-gray-400" />
+              <span className="text-xs text-gray-400 font-medium">Uploading photo...</span>
+            </div>
+            <div className="flex-1 rounded-lg bg-gray-800 border border-white/5 flex items-center justify-center relative overflow-hidden">
+              <div className="text-center">
+                <ImageIcon className="w-10 h-10 text-gray-600 mx-auto mb-2" />
+                <p className="text-xs text-gray-500">mediterranean-villa.jpg</p>
+              </div>
+              <motion.div className="absolute inset-0 bg-white/5" initial={{ scaleX: 0 }} animate={{ scaleX: progress / 100 }} style={{ transformOrigin: 'left' }} />
+            </div>
+            <div className="mt-3 w-full bg-gray-800 rounded-full h-1.5">
+              <motion.div className="h-full bg-white rounded-full" style={{ width: `${progress}%` }} transition={{ duration: 0.1 }} />
+            </div>
+          </motion.div>
+        )}
+
+        {phase === 1 && (
+          <motion.div key="analyzing" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4 }} className="flex-1 flex flex-col items-center justify-center">
+            <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} className="mb-3">
+              <Loader2 className="w-8 h-8 text-purple-400" />
+            </motion.div>
+            <p className="text-sm text-white font-medium">Analyzing with AI...</p>
+            <p className="text-xs text-gray-500 mt-1">Identifying features & style</p>
+            <div className="flex gap-1.5 mt-4">
+              {[0, 1, 2].map(i => (
+                <motion.div key={i} className="w-1.5 h-1.5 rounded-full bg-purple-400" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.3 }} />
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {phase === 2 && (
+          <motion.div key="typing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="flex-1 flex flex-col">
+            <div className="flex items-center gap-2 mb-3">
+              <Sparkles className="w-4 h-4 text-purple-400" />
+              <span className="text-xs text-purple-400 font-medium">Generating description...</span>
+            </div>
+            <div className="flex-1 rounded-lg bg-gray-800 border border-white/5 p-4 overflow-hidden">
+              <p className="text-sm text-gray-300 leading-relaxed">
+                {typedText}
+                <motion.span className="inline-block w-0.5 h-4 bg-white ml-0.5 align-middle" animate={{ opacity: [1, 0] }} transition={{ duration: 0.6, repeat: Infinity }} />
+              </p>
+            </div>
+          </motion.div>
+        )}
+
+        {phase === 3 && (
+          <motion.div key="done" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="flex-1 flex flex-col items-center justify-center">
+            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 15 }}>
+              <CheckCircle className="w-12 h-12 text-green-400 mb-3" />
+            </motion.div>
+            <p className="text-base text-white font-semibold">Description ready!</p>
+            <p className="text-xs text-gray-500 mt-1">247 words generated in 4.2 seconds</p>
+            <div className="flex gap-2 mt-4">
+              <span className="px-3 py-1 rounded-full bg-white/10 border border-white/10 text-xs text-gray-300">Copy</span>
+              <span className="px-3 py-1 rounded-full bg-white/10 border border-white/10 text-xs text-gray-300">Refine</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -411,17 +541,21 @@ export default function HomePage() {
               </div>
 
               <div className={feature.flip ? 'lg:order-1' : ''}>
-                <motion.div
-                  whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
-                  className="rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 border border-white/10 p-8 aspect-video flex items-center justify-center"
-                >
-                  <div className="text-center">
-                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/10 border border-white/10 mb-4">
-                      <feature.icon className="w-10 h-10 text-white" strokeWidth={1.5} />
+                {i === 0 ? (
+                  <AIDemoMockup />
+                ) : (
+                  <motion.div
+                    whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
+                    className="rounded-2xl bg-gray-900 border border-white/10 p-8 aspect-video flex items-center justify-center"
+                  >
+                    <div className="text-center">
+                      <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/10 border border-white/10 mb-4">
+                        <feature.icon className="w-10 h-10 text-white" strokeWidth={1.5} />
+                      </div>
+                      <p className="text-gray-500 text-sm">{feature.tag} Preview</p>
                     </div>
-                    <p className="text-gray-500 text-sm">{feature.tag} Preview</p>
-                  </div>
-                </motion.div>
+                  </motion.div>
+                )}
               </div>
             </motion.div>
           ))}
