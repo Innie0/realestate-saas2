@@ -1045,27 +1045,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Features Grid ──────────────────────────────────────────────── */}
-      <section className="relative z-10 py-24 lg:py-32 border-t border-white/10">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-white">
-              Everything you need to{' '}
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">succeed</span>
-            </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">Powerful features designed to streamline your workflow and help you close more deals</p>
-          </motion.div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <FeatureTile icon={Home} title="Property Management" description="Streamline your listings with AI-powered descriptions, professional photo organization, and one-click publishing." delay={0} />
-            <FeatureTile icon={Sparkles} title="AI Content Generation" description="Generate compelling listing descriptions, social media posts, and email templates in seconds with AI." delay={0.1} />
-            <FeatureTile icon={Users} title="Client Management" description="Keep track of all your clients, their preferences, and communication history in one place." delay={0.2} />
-            <FeatureTile icon={Calendar} title="Smart Scheduling" description="Sync with Google Calendar, manage showings, and never miss an important appointment." delay={0.3} />
-            <FeatureTile icon={FileText} title="Transaction Tracking" description="Manage every deal from offer to close with checklists, timelines, and document storage." delay={0.4} />
-            <FeatureTile icon={Shield} title="Secure & Reliable" description="Enterprise-grade security protecting your valuable client data with encrypted storage and backups." delay={0.5} />
-          </div>
-        </div>
-      </section>
-
       {/* ── FAQ ────────────────────────────────────────────────────────── */}
       <section className="relative z-10 py-24 lg:py-32 border-t border-white/10">
         <div className="mx-auto max-w-3xl px-6 lg:px-8">
