@@ -12,9 +12,16 @@ export const metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-950">
+    <div className="min-h-screen bg-black">
+      {/* Dot grid background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.12) 1.5px, transparent 1.5px)',
+          backgroundSize: '28px 28px',
+        }} />
+      </div>
       {/* Header */}
-      <header className="border-b border-white/10 backdrop-blur-md bg-black/50">
+      <header className="relative z-10 border-b border-white/10 backdrop-blur-md bg-black/50">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
             <Link href="/" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
@@ -34,12 +41,12 @@ export default function TermsPage() {
       </header>
 
       {/* Content */}
-      <div className="mx-auto max-w-4xl px-6 py-16 lg:px-8">
-        <div className="bg-gray-900/50 backdrop-blur-sm border border-white/10 rounded-2xl p-8 lg:p-12">
+      <div className="relative z-10 mx-auto max-w-4xl px-6 py-16 lg:px-8">
+        <div className="bg-[#111111] border border-white/10 rounded-2xl p-8 lg:p-12">
           {/* Title */}
           <div className="flex items-center gap-4 mb-8">
-            <div className="p-3 bg-purple-500/20 rounded-xl">
-              <FileText className="w-8 h-8 text-purple-400" />
+            <div className="p-3 bg-white/10 rounded-xl">
+              <FileText className="w-8 h-8 text-white" />
             </div>
             <div>
               <h1 className="text-4xl font-bold text-white">Terms of Service</h1>
@@ -48,7 +55,7 @@ export default function TermsPage() {
           </div>
 
           {/* Content */}
-          <div className="prose prose-invert prose-purple max-w-none">
+          <div className="prose prose-invert max-w-none">
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-white mb-4">Agreement to Terms</h2>
               <p className="text-gray-300 leading-relaxed mb-4">
@@ -463,13 +470,13 @@ export default function TermsPage() {
               <p className="text-gray-300 leading-relaxed mb-4">
                 If you have questions about these Terms, please contact us:
               </p>
-              <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6 space-y-2">
+              <div className="bg-[#1a1a1a] border border-white/10 rounded-lg p-6 space-y-2">
                 <p className="text-gray-300"><strong>Email:</strong> legal@realestic.com</p>
                 <p className="text-gray-300"><strong>Support:</strong> support@realestic.com</p>
               </div>
             </section>
 
-            <div className="border-t border-gray-700 pt-8 mt-12">
+            <div className="border-t border-white/10 pt-8 mt-12">
               <p className="text-gray-400 text-sm italic">
                 By using Realestic, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
               </p>
@@ -479,7 +486,7 @@ export default function TermsPage() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 bg-black/50 backdrop-blur-sm mt-16">
+      <footer className="relative z-10 border-t border-white/10 bg-black/50 backdrop-blur-sm mt-16">
         <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-500 text-sm">

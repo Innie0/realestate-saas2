@@ -12,9 +12,16 @@ export const metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-950">
+    <div className="min-h-screen bg-black">
+      {/* Dot grid background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.12) 1.5px, transparent 1.5px)',
+          backgroundSize: '28px 28px',
+        }} />
+      </div>
       {/* Header */}
-      <header className="border-b border-white/10 backdrop-blur-md bg-black/50">
+      <header className="relative z-10 border-b border-white/10 backdrop-blur-md bg-black/50">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
             <Link href="/" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
@@ -34,12 +41,12 @@ export default function PrivacyPage() {
       </header>
 
       {/* Content */}
-      <div className="mx-auto max-w-4xl px-6 py-16 lg:px-8">
-        <div className="bg-gray-900/50 backdrop-blur-sm border border-white/10 rounded-2xl p-8 lg:p-12">
+      <div className="relative z-10 mx-auto max-w-4xl px-6 py-16 lg:px-8">
+        <div className="bg-[#111111] border border-white/10 rounded-2xl p-8 lg:p-12">
           {/* Title */}
           <div className="flex items-center gap-4 mb-8">
-            <div className="p-3 bg-blue-500/20 rounded-xl">
-              <Shield className="w-8 h-8 text-blue-400" />
+            <div className="p-3 bg-white/10 rounded-xl">
+              <Shield className="w-8 h-8 text-white" />
             </div>
             <div>
               <h1 className="text-4xl font-bold text-white">Privacy Policy</h1>
@@ -48,7 +55,7 @@ export default function PrivacyPage() {
           </div>
 
           {/* Content */}
-          <div className="prose prose-invert prose-blue max-w-none">
+          <div className="prose prose-invert max-w-none">
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-white mb-4">Introduction</h2>
               <p className="text-gray-300 leading-relaxed mb-4">
@@ -200,7 +207,7 @@ export default function PrivacyPage() {
               </p>
               <p className="text-gray-300 leading-relaxed mb-4">
                 <strong>Privacy Policy:</strong>{' '}
-                <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
+                <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white underline">
                   https://supabase.com/privacy
                 </a>
               </p>
@@ -213,16 +220,16 @@ export default function PrivacyPage() {
               </ul>
               <p className="text-gray-300 leading-relaxed mb-2"><strong>Scopes requested:</strong></p>
               <ul className="list-disc list-inside text-gray-300 space-y-2 mb-4">
-                <li><code className="text-blue-400">calendar.readonly</code> - Read your calendar events to display and check for conflicts</li>
-                <li><code className="text-blue-400">calendar.events</code> - Create and modify calendar events for showings and meetings</li>
-                <li><code className="text-blue-400">userinfo.email</code> - Identify you during sign-in</li>
+                <li><code className="text-gray-300">calendar.readonly</code> - Read your calendar events to display and check for conflicts</li>
+                <li><code className="text-gray-300">calendar.events</code> - Create and modify calendar events for showings and meetings</li>
+                <li><code className="text-gray-300">userinfo.email</code> - Identify you during sign-in</li>
               </ul>
               <p className="text-gray-300 leading-relaxed mb-4">
                 <strong>Compliance:</strong> We comply with Google's API Services User Data Policy, including the Limited Use Requirements. We only use your Google data to provide the features you've explicitly requested.
               </p>
               <p className="text-gray-300 leading-relaxed mb-4">
                 <strong>Google's Privacy Policy:</strong>{' '}
-                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white underline">
                   https://policies.google.com/privacy
                 </a>
               </p>
@@ -246,7 +253,7 @@ export default function PrivacyPage() {
               </p>
               <p className="text-gray-300 leading-relaxed mb-4">
                 <strong>OpenAI Privacy Policy:</strong>{' '}
-                <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
+                <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white underline">
                   https://openai.com/policies/privacy-policy
                 </a>
               </p>
@@ -263,7 +270,7 @@ export default function PrivacyPage() {
               </p>
               <p className="text-gray-300 leading-relaxed mb-4">
                 <strong>Stripe Privacy Policy:</strong>{' '}
-                <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
+                <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white underline">
                   https://stripe.com/privacy
                 </a>
               </p>
@@ -280,7 +287,7 @@ export default function PrivacyPage() {
               </p>
               <p className="text-gray-300 leading-relaxed mb-4">
                 <strong>Rentcast Privacy Policy:</strong>{' '}
-                <a href="https://rentcast.io/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
+                <a href="https://rentcast.io/privacy" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white underline">
                   https://rentcast.io/privacy
                 </a>
               </p>
@@ -295,7 +302,7 @@ export default function PrivacyPage() {
               </p>
               <p className="text-gray-300 leading-relaxed mb-4">
                 <strong>BatchData Privacy Policy:</strong>{' '}
-                <a href="https://batchdata.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
+                <a href="https://batchdata.com/privacy" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white underline">
                   https://batchdata.com/privacy
                 </a>
               </p>
@@ -306,7 +313,7 @@ export default function PrivacyPage() {
               </p>
               <p className="text-gray-300 leading-relaxed mb-4">
                 <strong>Vercel Privacy Policy:</strong>{' '}
-                <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
+                <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white underline">
                   https://vercel.com/legal/privacy-policy
                 </a>
               </p>
@@ -447,7 +454,7 @@ export default function PrivacyPage() {
               <p className="text-gray-300 leading-relaxed mb-4">
                 For privacy-related questions or to exercise your rights:
               </p>
-              <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6 space-y-2">
+              <div className="bg-[#1a1a1a] border border-white/10 rounded-lg p-6 space-y-2">
                 <p className="text-gray-300"><strong>Email:</strong> privacy@realestic.com</p>
                 <p className="text-gray-300"><strong>Support:</strong> support@realestic.com</p>
                 <p className="text-gray-300"><strong>Response time:</strong> We aim to respond within 30 days</p>
@@ -465,7 +472,7 @@ export default function PrivacyPage() {
               </ul>
             </section>
 
-            <div className="border-t border-gray-700 pt-8 mt-12">
+            <div className="border-t border-white/10 pt-8 mt-12">
               <p className="text-gray-400 text-sm italic">
                 By using our Service, you acknowledge that you have read and understood this Privacy Policy.
               </p>
@@ -475,7 +482,7 @@ export default function PrivacyPage() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 bg-black/50 backdrop-blur-sm mt-16">
+      <footer className="relative z-10 border-t border-white/10 bg-black/50 backdrop-blur-sm mt-16">
         <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-500 text-sm">
