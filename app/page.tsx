@@ -153,8 +153,8 @@ export default function HomePage() {
       {/* Dot grid background */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)',
-          backgroundSize: '30px 30px',
+          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.12) 1.5px, transparent 1.5px)',
+          backgroundSize: '28px 28px',
         }} />
       </div>
 
