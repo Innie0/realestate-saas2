@@ -569,6 +569,158 @@ function CalendarDemoMockup() {
   );
 }
 
+// ─── Property Lookup Demo ─────────────────────────────────────────────────────
+
+function PropertyLookupDemoMockup() {
+  const [phase, setPhase] = useState(0);
+  const [typedAddress, setTypedAddress] = useState('');
+  const [showResults, setShowResults] = useState(false);
+  const [visibleDetails, setVisibleDetails] = useState(0);
+  const [showSaved, setShowSaved] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: false, margin: '-100px' });
+
+  const address = '5721 West Prospect Drive, Visalia, CA';
+
+  useEffect(() => {
+    if (!inView) return;
+    setPhase(0);
+    setTypedAddress('');
+    setShowResults(false);
+    setVisibleDetails(0);
+    setShowSaved(false);
+
+    const t1 = setTimeout(() => setPhase(1), 500);   // start typing
+    const t2 = setTimeout(() => setPhase(2), 3000);  // searching
+    const t3 = setTimeout(() => { setPhase(3); setShowResults(true); }, 4200); // results
+    const t4 = setTimeout(() => setVisibleDetails(1), 4500);
+    const t5 = setTimeout(() => setVisibleDetails(2), 4900);
+    const t6 = setTimeout(() => setVisibleDetails(3), 5300);
+    const t7 = setTimeout(() => setVisibleDetails(4), 5700);
+    const t8 = setTimeout(() => setShowSaved(true), 7000);
+    const t9 = setTimeout(() => {
+      setPhase(0); setTypedAddress(''); setShowResults(false);
+      setVisibleDetails(0); setShowSaved(false);
+    }, 10500);
+
+    return () => [t1,t2,t3,t4,t5,t6,t7,t8,t9].forEach(clearTimeout);
+  }, [inView]);
+
+  useEffect(() => {
+    if (phase !== 1) return;
+    let i = 0;
+    const timer = setInterval(() => {
+      i++;
+      setTypedAddress(address.slice(0, i));
+      if (i >= address.length) clearInterval(timer);
+    }, 55);
+    return () => clearInterval(timer);
+  }, [phase]);
+
+  const details = [
+    { label: 'Beds', value: '4', icon: '🛏' },
+    { label: 'Baths', value: '3', icon: '🚿' },
+    { label: 'Sq Ft', value: '3,500', icon: '📐' },
+    { label: 'Year Built', value: '2008', icon: '🏗' },
+  ];
+
+  return (
+    <div ref={ref} className="rounded-2xl bg-[#111111] border border-white/10 p-5 aspect-video flex flex-col overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-4 flex-shrink-0">
+        <Search className="w-4 h-4 text-gray-400" />
+        <span className="text-xs text-gray-400 font-medium">Property Lookup</span>
+      </div>
+
+      {/* Search bar */}
+      <div className="relative flex-shrink-0">
+        <div className="flex items-center gap-2 bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2.5">
+          <Search className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
+          <span className="text-sm text-white flex-1 truncate">
+            {typedAddress}
+            {phase === 1 && (
+              <motion.span className="inline-block w-0.5 h-4 bg-white ml-0.5 align-middle" animate={{ opacity: [1, 0] }} transition={{ duration: 0.5, repeat: Infinity }} />
+            )}
+          </span>
+          {phase >= 2 && phase < 3 && (
+            <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}>
+              <Loader2 className="w-3.5 h-3.5 text-gray-400" />
+            </motion.div>
+          )}
+          {phase >= 3 && <CheckCircle className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />}
+        </div>
+      </div>
+
+      {/* Results */}
+      <AnimatePresence>
+        {showResults && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="flex-1 flex flex-col mt-4 min-h-0">
+
+            {/* Address banner */}
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
+              <p className="text-xs text-white font-medium truncate">5721 West Prospect Drive, Visalia, CA 93291</p>
+            </div>
+
+            {/* Stats grid */}
+            <div className="grid grid-cols-4 gap-2 mb-3">
+              {details.map((d, i) => (
+                <AnimatePresence key={i}>
+                  {visibleDetails > i && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35 }}
+                      className="bg-[#1a1a1a] border border-white/5 rounded-xl p-3 text-center"
+                    >
+                      <div className="text-lg mb-1">{d.icon}</div>
+                      <div className="text-sm font-bold text-white">{d.value}</div>
+                      <div className="text-[10px] text-gray-500">{d.label}</div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              ))}
+            </div>
+
+            {/* Extra details */}
+            {visibleDetails >= 3 && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="bg-[#1a1a1a] border border-white/5 rounded-xl p-3 flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] text-gray-500 mb-0.5">Estimated Value</p>
+                  <p className="text-base font-bold text-white">$1,500,000</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] text-gray-500 mb-0.5">Price per sq ft</p>
+                  <p className="text-sm font-semibold text-white">$429</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] text-gray-500 mb-0.5">Lot Size</p>
+                  <p className="text-sm font-semibold text-white">0.42 ac</p>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Save button */}
+            <AnimatePresence>
+              {showSaved && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 18 }}
+                  className="mt-auto flex items-center gap-2 self-start px-3 py-1.5 rounded-lg bg-green-500/15 border border-green-500/30"
+                >
+                  <CheckCircle className="w-3.5 h-3.5 text-green-400" />
+                  <span className="text-xs text-green-400 font-medium">Property saved to project</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function HomePage() {
@@ -858,6 +1010,8 @@ export default function HomePage() {
                   <CRMDemoMockup />
                 ) : i === 2 ? (
                   <CalendarDemoMockup />
+                ) : i === 3 ? (
+                  <PropertyLookupDemoMockup />
                 ) : (
                   <motion.div
                     whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
