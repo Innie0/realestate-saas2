@@ -700,6 +700,20 @@ function PropertyLookupDemoMockup() {
               </motion.div>
             )}
 
+            {/* Owner info */}
+            {visibleDetails >= 4 && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="bg-[#1a1a1a] border border-white/5 rounded-xl p-3 flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] text-gray-500 mb-0.5">Owner</p>
+                  <p className="text-sm font-semibold text-white">James R. Mitchell</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] text-gray-500 mb-0.5">Phone</p>
+                  <p className="text-sm font-semibold text-white">(512) 438-7291</p>
+                </div>
+              </motion.div>
+            )}
+
             {/* Save confirmation */}
             <AnimatePresence>
               {showSaved && (
