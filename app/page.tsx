@@ -625,7 +625,7 @@ function PropertyLookupDemoMockup() {
   ];
 
   return (
-    <div ref={ref} className="rounded-2xl bg-[#111111] border border-white/10 p-5 aspect-video flex flex-col overflow-hidden">
+    <div ref={ref} className="rounded-2xl bg-[#111111] border border-white/10 p-5 flex flex-col overflow-hidden" style={{ minHeight: '320px' }}>
       {/* Header */}
       <div className="flex items-center gap-2 mb-4 flex-shrink-0">
         <Search className="w-4 h-4 text-gray-400" />
