@@ -709,7 +709,7 @@ function PropertyLookupDemoMockup() {
                 </div>
                 <div className="text-right">
                   <p className="text-[10px] text-gray-500 mb-0.5">Phone</p>
-                  <p className="text-sm font-semibold text-white">(512) 438-7291</p>
+                  <p className="text-sm font-semibold text-white">(555) 555-5555</p>
                 </div>
               </motion.div>
             )}
