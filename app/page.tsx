@@ -198,7 +198,7 @@ function AIDemoMockup() {
               <span className="text-xs text-gray-400 font-medium">Uploading photo...</span>
             </div>
             <div className="flex-1 rounded-lg border border-white/5 relative overflow-hidden">
-              <Image src="/demo-house.png" alt="Property" fill className="object-cover opacity-60" />
+              <Image src="/demo-house.png" alt="Property" fill className="object-contain opacity-70" />
               <motion.div className="absolute inset-0 bg-black" initial={{ scaleX: 1 }} animate={{ scaleX: 1 - progress / 100 }} style={{ transformOrigin: 'right' }} />
             </div>
             <div className="mt-3 w-full bg-gray-800 rounded-full h-1.5">
