@@ -189,7 +189,7 @@ function AIDemoMockup() {
   }, [phase]);
 
   return (
-    <div ref={ref} className="rounded-2xl bg-[#111111] border border-white/10 p-5 aspect-video flex flex-col overflow-hidden">
+    <div ref={ref} className="rounded-2xl bg-[#111111] border border-white/10 p-5 min-h-[280px] sm:aspect-video sm:min-h-0 flex flex-col overflow-hidden">
       <AnimatePresence mode="wait">
         {phase === 0 && (
           <motion.div key="upload" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="flex-1 flex flex-col">
@@ -322,7 +322,7 @@ function CRMDemoMockup() {
   }, [phase]);
 
   return (
-    <div ref={ref} className="rounded-2xl bg-[#111111] border border-white/10 p-5 aspect-video flex flex-col overflow-hidden">
+    <div ref={ref} className="rounded-2xl bg-[#111111] border border-white/10 p-5 min-h-[280px] sm:aspect-video sm:min-h-0 flex flex-col overflow-hidden">
       <div className="flex items-center gap-2 mb-3 flex-shrink-0">
         <Users className="w-4 h-4 text-gray-400" />
         <span className="text-xs text-gray-400 font-medium">Client Manager</span>
@@ -462,7 +462,7 @@ function CalendarDemoMockup() {
   const eventDays = calendarEvents.map(e => e.day);
 
   return (
-    <div ref={ref} className="rounded-2xl bg-[#111111] border border-white/10 p-5 aspect-video flex flex-col overflow-hidden relative">
+    <div ref={ref} className="rounded-2xl bg-[#111111] border border-white/10 p-5 min-h-[280px] sm:aspect-video sm:min-h-0 flex flex-col overflow-hidden relative">
       {/* Notification pop-up */}
       <AnimatePresence>
         {showNotification && (
