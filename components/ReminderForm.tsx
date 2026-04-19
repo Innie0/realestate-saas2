@@ -39,7 +39,7 @@ export default function ReminderForm({ clientId, onSubmit, onCancel, isLoading }
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Title field */}
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="title" className="block text-sm font-medium text-gray-300 mb-1">
           Title *
         </label>
         <Input
@@ -54,7 +54,7 @@ export default function ReminderForm({ clientId, onSubmit, onCancel, isLoading }
 
       {/* Description field */}
       <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-1">
           Description
         </label>
         <textarea
@@ -63,13 +63,13 @@ export default function ReminderForm({ clientId, onSubmit, onCancel, isLoading }
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           placeholder="Additional notes..."
           rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+          className="w-full px-3 py-2 bg-[#111111] border border-white/10 text-white placeholder-gray-500 rounded-lg focus:ring-2 focus:ring-white/20 focus:outline-none resize-none"
         />
       </div>
 
       {/* Reminder date field */}
       <div>
-        <label htmlFor="reminder_date" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="reminder_date" className="block text-sm font-medium text-gray-300 mb-1">
           Reminder Date & Time *
         </label>
         <Input

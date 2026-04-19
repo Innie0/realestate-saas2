@@ -255,7 +255,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       {/* Back button */}
       <button
         onClick={() => router.push('/dashboard/clients')}
-        className="flex items-center gap-2 text-gray-600 hover:text-white mb-6"
+        className="flex items-center gap-2 text-gray-400 hover:text-white mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Clients
@@ -267,8 +267,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <div>
             <h1 className="text-3xl font-bold text-white">{client.name}</h1>
             <div className="mt-2 space-y-1">
-              {client.email && <p className="text-gray-600">{client.email}</p>}
-              {client.phone && <p className="text-gray-600">{client.phone}</p>}
+              {client.email && <p className="text-gray-400">{client.email}</p>}
+              {client.phone && <p className="text-gray-400">{client.phone}</p>}
             </div>
           </div>
           <div className="flex gap-2">
@@ -325,7 +325,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 onChange={(e) => setNewNote(e.target.value)}
                 placeholder="Enter your note..."
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                className="w-full px-3 py-2 bg-[#111111] border border-white/10 text-white placeholder-gray-500 rounded-lg focus:ring-2 focus:ring-white/20 focus:outline-none resize-none"
               />
               <div className="flex gap-2 mt-2">
                 <Button
@@ -362,7 +362,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                         value={editingNoteContent}
                         onChange={(e) => setEditingNoteContent(e.target.value)}
                         rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm"
+                        className="w-full px-3 py-2 bg-[#111111] border border-white/10 text-white placeholder-gray-500 rounded-lg focus:ring-2 focus:ring-white/20 focus:outline-none resize-none text-sm"
                       />
                       <div className="flex gap-2 mt-2">
                         <Button
@@ -387,7 +387,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                     // View mode
                     <>
                       <div className="flex items-start justify-between gap-3">
-                        <p className="text-sm text-gray-700 flex-1">{note.note}</p>
+                        <p className="text-sm text-gray-300 flex-1">{note.note}</p>
                         <div className="flex gap-1">
                           <button
                             onClick={() => handleEditNote(note.id, note.note)}
@@ -465,8 +465,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                           <span className="ml-2 text-xs text-green-600">(Completed)</span>
                         )}
                       </h3>
-                      {reminder.description && (
-                        <p className="text-xs text-gray-600 mt-1">{reminder.description}</p>
+                        {reminder.description && (
+                        <p className="text-xs text-gray-400 mt-1">{reminder.description}</p>
                       )}
                       <div className="flex items-center gap-1 text-xs text-gray-500 mt-2">
                         <Clock className="w-3 h-3" />
