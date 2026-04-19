@@ -277,7 +277,7 @@ export default function PropertyLookupPage() {
         </div>
 
         {/* Search Form */}
-        <div className="rounded-2xl border border-white/10 p-6 mb-8" style={{ backgroundColor: '#0d1117' }}>
+        <div className="rounded-2xl border border-white/10 p-6 mb-8 bg-[#111111]">
           <form onSubmit={handleSearch} className="space-y-4">
             {/* Street Address */}
             <div>
@@ -428,8 +428,7 @@ export default function PropertyLookupPage() {
             {results.results.map((person, index) => (
               <div
                 key={index}
-                className="rounded-2xl overflow-hidden border border-white/10 transition-all duration-200 hover:border-white/20"
-                style={{ backgroundColor: '#0d1117' }}
+                className="rounded-2xl overflow-hidden border border-white/10 transition-all duration-200 hover:border-white/20 bg-[#111111]"
               >
                 {/* Card Header - Always Visible */}
                 <button

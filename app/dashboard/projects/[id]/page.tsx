@@ -2026,7 +2026,7 @@ function ZillowStylePreview({
   };
 
   return (
-    <div className="rounded-xl shadow-lg overflow-hidden border border-white/10" style={{ backgroundColor: '#0d1117' }}>
+    <div className="rounded-xl shadow-lg overflow-hidden border border-white/10 bg-[#111111]">
       {/* Hero Image Gallery */}
       <div className="relative bg-gray-900">
         {imageUrls.length > 0 ? (

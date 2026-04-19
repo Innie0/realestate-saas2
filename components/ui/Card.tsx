@@ -25,8 +25,8 @@ export default function Card({
   hover = false,
 }: CardProps) {
   // Base card styles with dark theme and glassmorphism effect
-  const baseStyles = 'rounded-xl border border-white/10 relative';
-  const cardStyle = { backgroundColor: '#0d1117' };
+  const baseStyles = 'rounded-xl border border-white/10 relative bg-[#111111]';
+  const cardStyle = {};
 
   // Padding options
   const paddingStyles = {

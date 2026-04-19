@@ -141,7 +141,7 @@ export default function ProjectsPage() {
         {loading ? (
           <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="animate-pulse bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+              <div key={i} className="animate-pulse bg-[#111111] rounded-xl p-4 border border-white/10">
                 <div className="h-48 bg-gray-700 rounded mb-4"></div>
                 <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
                 <div className="h-3 bg-gray-700 rounded mb-2"></div>
@@ -160,7 +160,7 @@ export default function ProjectsPage() {
           </div>
         ) : (
           /* Empty state */
-          <div className="text-center py-12 bg-gray-800/30 backdrop-blur-sm rounded-xl border border-white/10">
+          <div className="text-center py-12 bg-[#111111] rounded-xl border border-white/10">
             <Filter className="w-12 h-12 mx-auto text-gray-500 mb-4" />
             <h3 className="text-lg font-medium text-white mb-2">
               No projects found

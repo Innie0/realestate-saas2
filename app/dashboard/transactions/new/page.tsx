@@ -34,7 +34,7 @@ export default function NewTransactionPage() {
         </div>
 
         {/* Form */}
-        <div className="rounded-2xl border border-white/10 p-6" style={{ backgroundColor: '#0d1117' }}>
+        <div className="rounded-2xl border border-white/10 p-6 bg-[#111111]">
           <TransactionForm />
         </div>
       </div>
