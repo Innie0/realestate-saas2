@@ -924,7 +924,7 @@ export default function HomePage() {
 
             {[
               { step: '01', icon: CheckCircle, title: 'Create your account', description: 'Sign up in under 60 seconds with your email or Google account. No credit card required for your free trial.' },
-              { step: '02', icon: Home, title: 'Add your properties & clients', description: 'Import or manually add your listings and clients. Organize everything in one clean dashboard.' },
+              { step: '02', icon: Home, title: 'Add your properties & clients', description: 'Add your listings and clients. Organize everything in one clean dashboard.' },
               { step: '03', icon: Sparkles, title: 'Let AI do the heavy lifting', description: 'Generate listing descriptions, get reminders, and manage your entire pipeline — all with AI assistance.' },
             ].map((item, i) => (
               <motion.div
