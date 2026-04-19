@@ -935,7 +935,7 @@ export default function HomePage() {
                 transition={{ duration: 0.6, delay: i * 0.15 }}
                 className="relative text-center"
               >
-                <div className="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-white/10 mb-6 relative">
+                <div className="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-[#111111] border border-white/10 mb-6 relative">
                   <item.icon className="w-10 h-10 text-white" strokeWidth={1.5} />
                   <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white text-black text-xs font-bold flex items-center justify-center">{i + 1}</span>
                 </div>
