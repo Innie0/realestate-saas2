@@ -59,12 +59,11 @@ export default function Modal({
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
         <div
-          className={`relative w-full ${sizeClasses[size]} rounded-xl border border-white/10 shadow-2xl max-h-[90vh] overflow-y-auto`}
-          style={{ backgroundColor: '#0d1117' }}
+          className={`relative w-full ${sizeClasses[size]} rounded-xl border border-white/10 shadow-2xl max-h-[90vh] overflow-y-auto bg-[#111111]`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10 sticky top-0 z-10" style={{ backgroundColor: '#0d1117' }}>
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10 sticky top-0 z-10 bg-[#111111]">
             <h3 className="text-lg sm:text-xl font-semibold text-white pr-2">{title}</h3>
             <button
               onClick={onClose}
