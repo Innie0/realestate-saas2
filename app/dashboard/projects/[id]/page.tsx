@@ -1383,11 +1383,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
                 {/* Generating Loading State */}
                 {isGenerating && (
-                  <div className="mb-6 p-6 bg-gradient-to-r from-gray-800/50 to-gray-900/50 rounded-xl border border-gray-700/50 backdrop-blur-sm">
+                  <div className="mb-6 p-6 bg-[#111111] rounded-xl border border-white/10">
                     <div className="flex items-center gap-4">
                       <div className="relative">
-                        <div className="w-12 h-12 border-4 border-gray-700 border-t-blue-500 rounded-full animate-spin"></div>
-                        <Sparkles className="w-6 h-6 text-blue-400 absolute top-3 left-3" />
+                        <div className="w-12 h-12 border-4 border-white/10 border-t-white rounded-full animate-spin"></div>
+                        <Sparkles className="w-6 h-6 text-white/70 absolute top-3 left-3" />
                       </div>
                       <div className="flex-1">
                         <h3 className="text-lg font-semibold text-white mb-1">Creating Your Content...</h3>
