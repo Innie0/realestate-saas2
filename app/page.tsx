@@ -842,7 +842,7 @@ export default function HomePage() {
           {/* Floating cards */}
           <motion.div variants={itemVariants} className="hidden lg:block relative">
             <div className="relative w-full h-[500px]">
-              <motion.div initial={{ opacity: 0, y: 50, rotate: -5 }} animate={{ opacity: 1, y: 0, rotate: -5 }} transition={{ duration: 0.8, delay: 0.5 }} whileHover={{ y: -10, rotate: 0, scale: 1.02, transition: { duration: 0.15 } }} className="absolute top-0 right-0 w-72 rounded-2xl p-6 shadow-2xl border border-white/10" style={{ backgroundColor: '#0d1117' }}>
+              <motion.div initial={{ opacity: 0, y: 50, rotate: -5 }} animate={{ opacity: 1, y: 0, rotate: -5 }} transition={{ duration: 0.8, delay: 0.5 }} whileHover={{ y: -10, rotate: 0, scale: 1.02, transition: { duration: 0.15 } }} className="absolute top-0 right-0 w-72 rounded-2xl p-6 shadow-2xl border border-white/10 bg-[#111111]">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 bg-green-500/20 rounded-lg"><TrendingUp className="w-5 h-5 text-green-400" /></div>
                   <span className="text-sm font-medium text-gray-300">Monthly Growth</span>
@@ -851,7 +851,7 @@ export default function HomePage() {
                 <div className="text-sm text-gray-500 mt-1">vs last month</div>
               </motion.div>
 
-              <motion.div initial={{ opacity: 0, y: 50, rotate: 3 }} animate={{ opacity: 1, y: 0, rotate: 3 }} transition={{ duration: 0.8, delay: 0.7 }} whileHover={{ y: -10, rotate: 0, scale: 1.02, transition: { duration: 0.15 } }} className="absolute top-32 left-0 w-64 rounded-2xl p-6 shadow-2xl border border-white/10" style={{ backgroundColor: '#0d1117' }}>
+              <motion.div initial={{ opacity: 0, y: 50, rotate: 3 }} animate={{ opacity: 1, y: 0, rotate: 3 }} transition={{ duration: 0.8, delay: 0.7 }} whileHover={{ y: -10, rotate: 0, scale: 1.02, transition: { duration: 0.15 } }} className="absolute top-32 left-0 w-64 rounded-2xl p-6 shadow-2xl border border-white/10 bg-[#111111]">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 bg-blue-500/20 rounded-lg"><Home className="w-5 h-5 text-blue-400" /></div>
                   <span className="text-sm font-medium text-gray-300">Active Listings</span>
@@ -860,7 +860,7 @@ export default function HomePage() {
                 <div className="text-sm text-gray-500 mt-1">Properties</div>
               </motion.div>
 
-              <motion.div initial={{ opacity: 0, y: 50, rotate: -2 }} animate={{ opacity: 1, y: 0, rotate: -2 }} transition={{ duration: 0.8, delay: 0.9 }} whileHover={{ y: -10, rotate: 0, scale: 1.02, transition: { duration: 0.15 } }} className="absolute bottom-10 right-10 w-80 rounded-2xl p-6 shadow-2xl border border-white/10" style={{ backgroundColor: '#0d1117' }}>
+              <motion.div initial={{ opacity: 0, y: 50, rotate: -2 }} animate={{ opacity: 1, y: 0, rotate: -2 }} transition={{ duration: 0.8, delay: 0.9 }} whileHover={{ y: -10, rotate: 0, scale: 1.02, transition: { duration: 0.15 } }} className="absolute bottom-10 right-10 w-80 rounded-2xl p-6 shadow-2xl border border-white/10 bg-[#111111]">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 bg-purple-500/20 rounded-lg"><Sparkles className="w-5 h-5 text-purple-400" /></div>
                   <span className="text-sm font-medium text-gray-300">AI Generated</span>
