@@ -57,8 +57,8 @@ export default function ClientForm({ client, onSubmit, onCancel, isLoading }: Cl
     setFormData({ ...formData, phone: formatted });
   };
 
-  const fieldStyle = { colorScheme: 'dark' as const, backgroundColor: '#1f2937', borderColor: '#374151' };
-  const fieldClass = "w-full px-3 py-2 text-white placeholder-gray-500 rounded-lg border focus:outline-none focus:ring-2 focus:ring-white/20";
+  const fieldStyle = { colorScheme: 'dark' as const, backgroundColor: '#111111' };
+  const fieldClass = "w-full px-3 py-2 text-white placeholder-gray-500 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/20";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -132,7 +132,7 @@ export default function ClientForm({ client, onSubmit, onCancel, isLoading }: Cl
       )}
 
       {/* Form actions */}
-      <div className="flex gap-3 pt-4 border-t border-gray-800">
+      <div className="flex gap-3 pt-4 border-t border-white/10">
         <Button
           type="submit"
           variant="primary"
