@@ -13,13 +13,6 @@ export const metadata = {
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-black">
-      {/* Dot grid background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.12) 1.5px, transparent 1.5px)',
-          backgroundSize: '28px 28px',
-        }} />
-      </div>
       {/* Header */}
       <header className="relative z-10 border-b border-white/10 backdrop-blur-md bg-black/50">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
