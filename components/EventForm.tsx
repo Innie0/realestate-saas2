@@ -69,8 +69,8 @@ export default function EventForm({
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           placeholder="e.g., Property Showing - 123 Main St"
           required
-          style={{ colorScheme: 'dark', backgroundColor: '#1f2937', borderColor: '#374151' }}
-          className="w-full px-3 py-2 text-white placeholder-gray-500 rounded-lg border focus:outline-none focus:ring-2 focus:ring-white/20"
+          style={{ colorScheme: 'dark', backgroundColor: '#111111' }}
+          className="w-full px-3 py-2 text-white placeholder-gray-500 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/20"
         />
       </div>
 
@@ -83,8 +83,8 @@ export default function EventForm({
           id="event_type"
           value={formData.event_type}
           onChange={(e) => setFormData({ ...formData, event_type: e.target.value as 'showing' | 'open_house' | 'meeting' | 'other' })}
-          style={{ colorScheme: 'dark', backgroundColor: '#1f2937', borderColor: '#374151' }}
-          className="w-full px-3 py-2 text-white rounded-lg border focus:outline-none focus:ring-2 focus:ring-white/20"
+          style={{ colorScheme: 'dark', backgroundColor: '#111111' }}
+          className="w-full px-3 py-2 text-white rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/20"
         >
           <option value="showing">Property Showing</option>
           <option value="open_house">Open House</option>
@@ -104,8 +104,8 @@ export default function EventForm({
           value={formData.start_time}
           onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
           required
-          style={{ colorScheme: 'dark', backgroundColor: '#1f2937', borderColor: '#374151' }}
-          className="w-full px-3 py-2 text-white rounded-lg border focus:outline-none focus:ring-2 focus:ring-white/20"
+          style={{ colorScheme: 'dark', backgroundColor: '#111111' }}
+          className="w-full px-3 py-2 text-white rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/20"
         />
       </div>
 
@@ -121,8 +121,8 @@ export default function EventForm({
           onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
           min={formData.start_time}
           required
-          style={{ colorScheme: 'dark', backgroundColor: '#1f2937', borderColor: '#374151' }}
-          className="w-full px-3 py-2 text-white rounded-lg border focus:outline-none focus:ring-2 focus:ring-white/20"
+          style={{ colorScheme: 'dark', backgroundColor: '#111111' }}
+          className="w-full px-3 py-2 text-white rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/20"
         />
         {formData.start_time && formData.end_time && 
          new Date(formData.end_time) <= new Date(formData.start_time) && (
@@ -141,8 +141,8 @@ export default function EventForm({
           value={formData.location}
           onChange={(e) => setFormData({ ...formData, location: e.target.value })}
           placeholder="e.g., 123 Main St, City, State"
-          style={{ colorScheme: 'dark', backgroundColor: '#1f2937', borderColor: '#374151' }}
-          className="w-full px-3 py-2 text-white placeholder-gray-500 rounded-lg border focus:outline-none focus:ring-2 focus:ring-white/20"
+          style={{ colorScheme: 'dark', backgroundColor: '#111111' }}
+          className="w-full px-3 py-2 text-white placeholder-gray-500 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/20"
         />
       </div>
 
@@ -157,13 +157,13 @@ export default function EventForm({
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           placeholder="Add event details..."
           rows={3}
-          style={{ colorScheme: 'dark', backgroundColor: '#1f2937', borderColor: '#374151' }}
-          className="w-full px-3 py-2 text-white placeholder-gray-500 rounded-lg border focus:outline-none focus:ring-2 focus:ring-white/20 resize-none"
+          style={{ colorScheme: 'dark', backgroundColor: '#111111' }}
+          className="w-full px-3 py-2 text-white placeholder-gray-500 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none"
         />
       </div>
 
       {/* Form Actions */}
-      <div className="flex gap-3 pt-4 border-t border-gray-700">
+      <div className="flex gap-3 pt-4 border-t border-white/10">
         <Button
           type="button"
           variant="outline"
