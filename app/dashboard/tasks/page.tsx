@@ -396,7 +396,7 @@ export default function TasksPage() {
 
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar - Conversation History */}
-        <div className={`${isSidebarOpen ? 'w-64' : 'w-0'} bg-gray-900/50 backdrop-blur-sm border-r border-white/10 transition-all duration-300 flex flex-col flex-shrink-0`}>
+        <div className={`${isSidebarOpen ? 'w-64' : 'w-0'} bg-black/60 border-r border-white/10 transition-all duration-300 flex flex-col flex-shrink-0`}>
           <div className="p-4 border-b border-white/10 flex-shrink-0">
             <Button
               onClick={handleNewConversation}
@@ -411,7 +411,7 @@ export default function TasksPage() {
             {isLoadingConversations ? (
               <div className="space-y-2">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-12 bg-gray-800/50 rounded-lg animate-pulse" />
+                  <div key={i} className="h-12 bg-white/5 rounded-lg animate-pulse" />
                 ))}
               </div>
             ) : conversations.length === 0 ? (
@@ -498,7 +498,7 @@ export default function TasksPage() {
                           {/* Dropdown Menu */}
                           {openMenuId === conv.id && (
                             <div 
-                              className="absolute right-0 top-8 z-50 w-40 bg-gray-800 border border-white/20 rounded-lg shadow-xl overflow-hidden"
+                              className="absolute right-0 top-8 z-50 w-40 bg-[#111111] border border-white/10 rounded-lg shadow-xl overflow-hidden"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <button
@@ -544,11 +544,11 @@ export default function TasksPage() {
         </div>
 
         {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col bg-gradient-to-b from-gray-900/30 to-gray-900/50 min-w-0">
+        <div className="flex-1 flex flex-col bg-black min-w-0">
           {/* Toggle Sidebar Button */}
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="absolute top-20 left-2 z-10 p-2 bg-gray-800/80 hover:bg-gray-700/80 rounded-lg border border-white/10 transition-colors"
+            className="absolute top-20 left-2 z-10 p-2 bg-[#111111] hover:bg-white/10 rounded-lg border border-white/10 transition-colors"
           >
             <MessageSquare className="w-4 h-4 text-gray-300" />
           </button>
@@ -559,8 +559,8 @@ export default function TasksPage() {
               {messages.length === 0 ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 mb-4">
-                      <Sparkles className="w-8 h-8 text-purple-400" />
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/5 border border-white/10 mb-4">
+                      <Sparkles className="w-8 h-8 text-white/60" />
                     </div>
                     <h2 className="text-2xl font-bold text-white mb-2">
                       How can I help you today?
@@ -588,7 +588,7 @@ export default function TasksPage() {
                           className={`rounded-2xl px-4 py-3 ${
                             msg.role === 'user'
                               ? 'bg-white text-black'
-                              : 'bg-gray-800/50 backdrop-blur-sm border border-white/10 text-gray-100'
+                              : 'bg-[#111111] border border-white/10 text-gray-100'
                           }`}
                         >
                           {/* Image attachment */}
@@ -634,7 +634,7 @@ export default function TasksPage() {
                         <Sparkles className="w-4 h-4 text-white" />
                       </div>
                       <div className="flex-1 max-w-2xl">
-                        <div className="bg-gray-800/50 backdrop-blur-sm border border-white/10 rounded-2xl px-4 py-3">
+                        <div className="bg-[#111111] border border-white/10 rounded-2xl px-4 py-3">
                           <div className="flex items-center gap-2">
                             <Loader2 className="w-4 h-4 animate-spin text-white" />
                             <span className="text-sm text-gray-400">Thinking...</span>
@@ -662,7 +662,7 @@ export default function TasksPage() {
           )}
 
           {/* Input Area */}
-          <div className="border-t border-white/10 p-6 bg-gray-900/50 backdrop-blur-sm flex-shrink-0">
+          <div className="border-t border-white/10 p-6 bg-black flex-shrink-0">
             <div className="max-w-3xl mx-auto">
               <form onSubmit={handleSendMessage} className="space-y-3">
                 {/* Image Preview */}
@@ -718,7 +718,7 @@ export default function TasksPage() {
                       }
                     }}
                     placeholder="Type your message... (Shift+Enter for new line)"
-                    className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl pl-4 pr-24 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 resize-none"
+                    className="w-full bg-[#111111] border border-white/10 rounded-xl pl-4 pr-24 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/20 resize-none"
                     rows={1}
                     disabled={isLoading}
                   />
