@@ -265,13 +265,10 @@ export default function PropertyLookupPage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-purple-500/20 rounded-lg">
-              <Search className="w-6 h-6 text-purple-400" />
-            </div>
+          <div className="mb-2">
             <h1 className="text-2xl font-bold text-white">Property Lookup</h1>
           </div>
-          <p className="text-gray-400 ml-12">
+          <p className="text-gray-400">
             Search any address to find property owner information and contact details.
           </p>
         </div>
