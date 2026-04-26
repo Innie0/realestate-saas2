@@ -1,7 +1,14 @@
 // Privacy Policy page
 // Legal document explaining data collection and usage
 
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy',
+  description: 'Learn how Realestic collects, uses, and protects your personal information.',
+  robots: { index: true, follow: true },
+};
 import Image from 'next/image';
 import { Shield, ArrowLeft } from 'lucide-react';
 
