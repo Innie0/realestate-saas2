@@ -161,7 +161,7 @@ Return ONLY valid JSON with this exact structure:
               type: 'image_url',
               image_url: {
                 url: imageUrl,
-                detail: 'high',
+                detail: 'low',
               },
             },
           ],
@@ -196,31 +196,24 @@ Return ONLY valid JSON with this exact structure:
  */
 export async function analyzePropertyImages(images: Array<string | { url: string; id?: string; caption?: string }>) {
   try {
-    const analyses = [];
-    
-    // Analyze each image (note: in production, consider rate limiting)
-    for (let i = 0; i < images.length; i++) {
-      const image = images[i];
-      
-      // Handle both string URLs and object format
-      const imageUrl = typeof image === 'string' ? image : image.url;
-      const imageId = typeof image === 'string' ? `image-${i}` : (image.id || `image-${i}`);
-      
-      // Skip empty or invalid URLs
-      if (!imageUrl || imageUrl.trim() === '') {
-        console.warn(`Skipping empty image URL at index ${i}`);
-        continue;
-      }
-      
-      const result = await analyzePropertyImage(imageUrl);
-      if (result.success && result.data) {
-        analyses.push({
-          imageId,
-          imageUrl,
-          ...result.data,
-        });
-      }
-    }
+    // Normalize and filter valid images
+    const validImages = images
+      .map((image, i) => ({
+        imageUrl: typeof image === 'string' ? image : image.url,
+        imageId: typeof image === 'string' ? `image-${i}` : (image.id || `image-${i}`),
+      }))
+      .filter(({ imageUrl }) => imageUrl && imageUrl.trim() !== '');
+
+    // Analyze all images in parallel
+    const results = await Promise.all(
+      validImages.map(({ imageUrl, imageId }) =>
+        analyzePropertyImage(imageUrl).then(result => ({ result, imageUrl, imageId }))
+      )
+    );
+
+    const analyses = results
+      .filter(({ result }) => result.success && result.data)
+      .map(({ result, imageUrl, imageId }) => ({ imageId, imageUrl, ...result.data }));
     
     // Organize by room type
     const byRoomType: Record<string, any[]> = {};
