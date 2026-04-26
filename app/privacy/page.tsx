@@ -3,18 +3,13 @@
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
+import { Shield, ArrowLeft } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description: 'Learn how Realestic collects, uses, and protects your personal information.',
   robots: { index: true, follow: true },
-};
-import Image from 'next/image';
-import { Shield, ArrowLeft } from 'lucide-react';
-
-export const metadata = {
-  title: 'Privacy Policy - Realestic',
-  description: 'Privacy policy for Realestic real estate platform',
 };
 
 export default function PrivacyPage() {

@@ -3,18 +3,13 @@
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
+import { FileText, ArrowLeft } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
   description: 'Read the terms and conditions for using Realestic, the AI-powered real estate tools platform.',
   robots: { index: true, follow: true },
-};
-import Image from 'next/image';
-import { FileText, ArrowLeft } from 'lucide-react';
-
-export const metadata = {
-  title: 'Terms of Service - Realestic',
-  description: 'Terms of service for Realestic real estate platform',
 };
 
 export default function TermsPage() {
