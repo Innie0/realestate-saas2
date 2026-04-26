@@ -163,7 +163,7 @@ export default function DashboardPage() {
             statsCards.map((stat) => {
               const Icon = stat.icon;
               return (
-                <Card key={stat.name} className="border-l-4 border-l-purple-500/50">
+                <Card key={stat.name} className="border border-white/10">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-400">
@@ -227,7 +227,7 @@ export default function DashboardPage() {
                     {!isUnlimited && (
                       <div className="w-full h-1.5 bg-gray-800 rounded-full mt-1.5">
                         <div
-                          className={`h-full rounded-full transition-all ${isAtLimit ? 'bg-red-500' : isNearLimit ? 'bg-yellow-500' : 'bg-purple-500'}`}
+                          className={`h-full rounded-full transition-all ${isAtLimit ? 'bg-red-500' : isNearLimit ? 'bg-yellow-500' : 'bg-white'}`}
                           style={{ width: `${pct}%` }}
                         />
                       </div>
