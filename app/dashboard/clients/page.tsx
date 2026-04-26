@@ -160,7 +160,7 @@ export default function ClientsPage() {
       <div className="mb-6 flex flex-col gap-3 sm:gap-4">
         {/* Search bar */}
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-300" />
           <Input
             type="text"
             placeholder="Search clients..."
