@@ -236,22 +236,14 @@ export default function Sidebar() {
                   'group relative flex items-center rounded-lg text-sm font-medium transition-all duration-200',
                   isCollapsed ? 'justify-center px-2 py-3' : 'gap-3 px-3 py-3',
                   active
-                    ? 'bg-gradient-to-r from-purple-600/20 to-blue-600/20 text-white font-semibold shadow-lg border border-purple-500/20'
-                    : 'text-gray-400 hover:bg-white/5 hover:text-white hover:translate-x-1'
+                    ? 'bg-white/10 text-white font-medium'
+                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
                 )}
               >
-                {/* Active indicator bar */}
-                {active && (
-                  <div className={clsx(
-                    'absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-r-full bg-purple-500 transition-all duration-300',
-                    isCollapsed ? 'h-6' : 'h-8'
-                  )} />
-                )}
-                
                 <Icon className={clsx(
                   'flex-shrink-0 transition-all duration-200',
                   isCollapsed ? 'h-5 w-5' : 'h-5 w-5',
-                  active ? 'text-purple-400' : 'text-gray-400 group-hover:text-white group-hover:scale-110'
+                  active ? 'text-white' : 'text-gray-400 group-hover:text-white'
                 )} />
                 
                 <span className={clsx(
