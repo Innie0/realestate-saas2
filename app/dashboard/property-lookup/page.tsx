@@ -291,7 +291,7 @@ export default function PropertyLookupPage() {
                   value={street}
                   onChange={(e) => setStreet(e.target.value)}
                   placeholder="e.g. 123 Main Street"
-                  className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all"
+                  className="w-full pl-10 pr-4 py-3 bg-[#111111] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
                 />
               </div>
             </div>
@@ -308,7 +308,7 @@ export default function PropertyLookupPage() {
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   placeholder="e.g. Los Angeles"
-                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all"
+                  className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
                 />
               </div>
 
@@ -320,11 +320,11 @@ export default function PropertyLookupPage() {
                 <select
                   value={state}
                   onChange={(e) => setState(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all appearance-none cursor-pointer"
+                  className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-white/20 transition-all appearance-none cursor-pointer"
                 >
-                  <option value="" className="bg-gray-800">Select State</option>
+                  <option value="" className="bg-[#111111]">Select State</option>
                   {US_STATES.map((s) => (
-                    <option key={s.value} value={s.value} className="bg-gray-800">
+                    <option key={s.value} value={s.value} className="bg-[#111111]">
                       {s.label}
                     </option>
                   ))}
@@ -341,7 +341,7 @@ export default function PropertyLookupPage() {
                   value={zip}
                   onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
                   placeholder="e.g. 90001"
-                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all"
+                  className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
                 />
               </div>
             </div>
@@ -377,7 +377,7 @@ export default function PropertyLookupPage() {
                 <button
                   type="button"
                   onClick={clearForm}
-                  className="flex items-center gap-2 px-4 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium rounded-xl transition-all duration-200"
+                  className="flex items-center gap-2 px-4 py-3 bg-[#111111] hover:bg-white/10 text-gray-300 font-medium rounded-xl transition-all duration-200"
                 >
                   <X className="w-4 h-4" />
                   Clear
@@ -433,7 +433,7 @@ export default function PropertyLookupPage() {
                 {/* Card Header - Always Visible */}
                 <button
                   onClick={() => setExpandedPersonIndex(expandedPersonIndex === index ? null : index)}
-                  className="w-full flex items-center justify-between p-5 hover:bg-gray-800/30 transition-colors"
+                  className="w-full flex items-center justify-between p-5 hover:bg-white/5 transition-colors"
                 >
                   <div className="flex items-center gap-4">
                     {/* Avatar */}
@@ -546,7 +546,7 @@ export default function PropertyLookupPage() {
                     {/* Addresses Section */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Property Address */}
-                      <div className="bg-gray-800/40 rounded-xl p-4">
+                      <div className="bg-white/5 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-2">
                           <Home className="w-4 h-4 text-purple-400" />
                           <h4 className="text-sm font-medium text-gray-300">Property Address</h4>
@@ -562,7 +562,7 @@ export default function PropertyLookupPage() {
                       </div>
 
                       {/* Owner Mailing Address */}
-                      <div className="bg-gray-800/40 rounded-xl p-4">
+                      <div className="bg-white/5 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-2">
                           <Mail className="w-4 h-4 text-blue-400" />
                           <h4 className="text-sm font-medium text-gray-300">Owner Mailing Address</h4>
@@ -587,7 +587,7 @@ export default function PropertyLookupPage() {
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                           {person.propertyDetails.yearBuilt && (
-                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
                               <Calendar className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Year Built</p>
@@ -596,7 +596,7 @@ export default function PropertyLookupPage() {
                             </div>
                           )}
                           {person.propertyDetails.squareFootage && (
-                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
                               <Ruler className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Square Footage</p>
@@ -605,7 +605,7 @@ export default function PropertyLookupPage() {
                             </div>
                           )}
                           {person.propertyDetails.bedrooms && (
-                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
                               <Bed className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Bedrooms</p>
@@ -614,7 +614,7 @@ export default function PropertyLookupPage() {
                             </div>
                           )}
                           {person.propertyDetails.bathrooms && (
-                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
                               <Bath className="w-4 h-4 text-cyan-400 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Bathrooms</p>
@@ -623,7 +623,7 @@ export default function PropertyLookupPage() {
                             </div>
                           )}
                           {person.propertyDetails.lotSize && (
-                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
                               <MapPin className="w-4 h-4 text-orange-400 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Lot Size</p>
@@ -632,7 +632,7 @@ export default function PropertyLookupPage() {
                             </div>
                           )}
                           {person.propertyDetails.assessedValue && (
-                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
                               <DollarSign className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Assessed Value</p>
@@ -641,7 +641,7 @@ export default function PropertyLookupPage() {
                             </div>
                           )}
                           {person.propertyDetails.lastSalePrice && (
-                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
                               <DollarSign className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Last Sale Price</p>
@@ -650,7 +650,7 @@ export default function PropertyLookupPage() {
                             </div>
                           )}
                           {person.propertyDetails.lastSaleDate && (
-                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
                               <Calendar className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Last Sale Date</p>
@@ -659,7 +659,7 @@ export default function PropertyLookupPage() {
                             </div>
                           )}
                           {person.propertyDetails.propertyType && (
-                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
                               <Building className="w-4 h-4 text-indigo-400 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Property Type</p>
@@ -668,7 +668,7 @@ export default function PropertyLookupPage() {
                             </div>
                           )}
                           {person.propertyDetails.subdivision && (
-                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
                               <MapPin className="w-4 h-4 text-pink-400 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Subdivision</p>
@@ -677,7 +677,7 @@ export default function PropertyLookupPage() {
                             </div>
                           )}
                           {person.propertyDetails.hoaFee && (
-                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
                               <DollarSign className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">HOA Fee</p>
@@ -686,7 +686,7 @@ export default function PropertyLookupPage() {
                             </div>
                           )}
                           {person.propertyDetails.zoning && (
-                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2">
+                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
                               <FileText className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Zoning</p>
@@ -695,7 +695,7 @@ export default function PropertyLookupPage() {
                             </div>
                           )}
                           {person.propertyDetails.legalDescription && (
-                            <div className="bg-gray-800/40 rounded-xl p-3 flex items-start gap-2 col-span-2 sm:col-span-3">
+                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2 col-span-2 sm:col-span-3">
                               <FileText className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Legal Description</p>
@@ -717,7 +717,7 @@ export default function PropertyLookupPage() {
                       </div>
 
                       {person.phoneNumbers.length === 0 ? (
-                        <p className="text-gray-500 text-sm bg-gray-800/40 rounded-xl p-4">
+                        <p className="text-gray-500 text-sm bg-white/5 rounded-xl p-4">
                           No phone numbers found for this person.
                         </p>
                       ) : (
@@ -725,7 +725,7 @@ export default function PropertyLookupPage() {
                           {person.phoneNumbers.map((phone, phoneIndex) => (
                             <div
                               key={phoneIndex}
-                              className="flex items-center justify-between bg-gray-800/40 rounded-xl p-3 group hover:bg-gray-800/60 transition-colors"
+                              className="flex items-center justify-between bg-white/5 rounded-xl p-3 group hover:bg-white/10 transition-colors"
                             >
                               <div className="flex items-center gap-3">
                                 <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
@@ -784,7 +784,7 @@ export default function PropertyLookupPage() {
                       </div>
 
                       {person.emails.length === 0 ? (
-                        <p className="text-gray-500 text-sm bg-gray-800/40 rounded-xl p-4">
+                        <p className="text-gray-500 text-sm bg-white/5 rounded-xl p-4">
                           No email addresses found for this person.
                         </p>
                       ) : (
@@ -792,7 +792,7 @@ export default function PropertyLookupPage() {
                           {person.emails.map((email, emailIndex) => (
                             <div
                               key={emailIndex}
-                              className="flex items-center justify-between bg-gray-800/40 rounded-xl p-3 group hover:bg-gray-800/60 transition-colors"
+                              className="flex items-center justify-between bg-white/5 rounded-xl p-3 group hover:bg-white/10 transition-colors"
                             >
                               <div className="flex items-center gap-3">
                                 <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
@@ -983,7 +983,7 @@ export default function PropertyLookupPage() {
                         </div>
                         <div className="space-y-2">
                           {person.propertyDetails.saleHistory.map((sale, saleIndex) => (
-                            <div key={saleIndex} className="flex items-center justify-between bg-gray-800/40 rounded-xl px-4 py-3">
+                            <div key={saleIndex} className="flex items-center justify-between bg-white/5 rounded-xl px-4 py-3">
                               <div className="flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-yellow-400 flex-shrink-0" />
                                 <span className="text-gray-300 text-sm">{sale.date || 'Unknown date'}</span>
@@ -1031,7 +1031,7 @@ export default function PropertyLookupPage() {
                       if (stateZip[1]) setZip(stateZip[1]);
                     }
                   }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50 rounded-lg text-sm text-gray-400 hover:text-white transition-all"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[#111111] hover:bg-white/10 border border-white/10 rounded-lg text-sm text-gray-400 hover:text-white transition-all"
                 >
                   <MapPin className="w-3 h-3" />
                   {search}
