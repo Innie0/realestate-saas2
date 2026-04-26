@@ -160,13 +160,13 @@ export default function ClientsPage() {
       <div className="mb-6 flex flex-col gap-3 sm:gap-4">
         {/* Search bar */}
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-300" />
-          <Input
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-300 z-10" />
+          <input
             type="text"
             placeholder="Search clients..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className="w-full pl-10 pr-4 py-2 bg-[#111111] border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20 text-white placeholder-gray-500"
           />
         </div>
 
