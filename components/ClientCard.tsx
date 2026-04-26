@@ -105,9 +105,9 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
 
       {/* Notes carousel */}
       {notes.length > 0 && currentNote && (
-        <div className="mt-4 p-3 bg-blue-500/10 rounded-lg border border-blue-400/30 relative backdrop-blur-sm">
+        <div className="mt-4 p-3 bg-white/5 rounded-lg border border-white/10 relative">
           <div className="flex items-start gap-2 mb-1">
-            <StickyNote className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+            <StickyNote className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
             <div className="flex-1 min-w-0 pr-8">
               <p className="text-sm text-gray-300 line-clamp-2">{currentNote.note}</p>
               <p className="text-xs text-gray-500 mt-1">
@@ -124,17 +124,17 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
             <div className="absolute top-1/2 -translate-y-1/2 right-2 flex gap-1">
               <button
                 onClick={handlePrevNote}
-                className="p-1 hover:bg-blue-400/20 rounded transition-colors"
+                className="p-1 hover:bg-white/10 rounded transition-colors"
                 title="Previous note"
               >
-                <ChevronLeft className="w-4 h-4 text-blue-400" />
+                <ChevronLeft className="w-4 h-4 text-gray-400" />
               </button>
               <button
                 onClick={handleNextNote}
-                className="p-1 hover:bg-blue-400/20 rounded transition-colors"
+                className="p-1 hover:bg-white/10 rounded transition-colors"
                 title="Next note"
               >
-                <ChevronRight className="w-4 h-4 text-blue-400" />
+                <ChevronRight className="w-4 h-4 text-gray-400" />
               </button>
             </div>
           )}
@@ -151,10 +151,10 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
         <div className="flex gap-2">
           <button
             onClick={handleAddNote}
-            className="p-2 hover:bg-blue-500/20 rounded-lg transition-colors group"
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors group"
             title="Add note"
           >
-            <StickyNote className="w-4 h-4 text-gray-400 group-hover:text-blue-400" />
+            <StickyNote className="w-4 h-4 text-gray-400 group-hover:text-white" />
           </button>
           <button
             onClick={handleAddReminder}
