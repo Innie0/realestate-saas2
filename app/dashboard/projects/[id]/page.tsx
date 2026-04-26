@@ -55,7 +55,17 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   // Description tone versions
   const [selectedTone, setSelectedTone] = useState<DescriptionTone>('professional');
   const [toneVersions, setToneVersions] = useState<ToneVersion[]>([]);
-  const [streamingText, setStreamingText] = useState('');
+
+  // Streaming typewriter state — one per tone
+  const [streamingPro, setStreamingPro] = useState('');
+  const [streamingCasual, setStreamingCasual] = useState('');
+  const [streamingLuxury, setStreamingLuxury] = useState('');
+  const [activeStreamTab, setActiveStreamTab] = useState<DescriptionTone>('professional');
+
+  // Character queues for smooth draining
+  const proQueue = React.useRef<string[]>([]);
+  const casualQueue = React.useRef<string[]>([]);
+  const luxuryQueue = React.useRef<string[]>([]);
 
   // Copy to clipboard states
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -442,7 +452,13 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     if (!project) return;
 
     setIsGenerating(true);
-    setStreamingText('');
+    setStreamingPro('');
+    setStreamingCasual('');
+    setStreamingLuxury('');
+    setActiveStreamTab('professional');
+    proQueue.current = [];
+    casualQueue.current = [];
+    luxuryQueue.current = [];
 
     try {
       const propertyInfo = project.property_info || {};
@@ -472,7 +488,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         }
       }
 
-      // Step 2: Stream professional tone (typewriter effect) + generate casual & luxury in parallel
+      // Step 2: Stream all 3 tones in parallel with smooth character-queue typewriter
       const labels: Record<DescriptionTone, string> = {
         professional: 'Professional',
         casual: 'Casual & Friendly',
@@ -490,45 +506,76 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         tone,
       });
 
-      // Stream the professional description so the user sees it typing out
-      let professionalContent = '';
-      try {
-        const streamResponse = await fetch('/api/ai/generate-content-stream', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: requestBody('professional'),
-        });
-        if (streamResponse.ok && streamResponse.body) {
-          const reader = streamResponse.body.getReader();
-          const decoder = new TextDecoder();
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            const chunk = decoder.decode(value, { stream: true });
-            professionalContent += chunk;
-            setStreamingText(prev => prev + chunk);
-          }
+      // Start smooth draining intervals — one character every 12ms per tone
+      const DRAIN_MS = 12;
+      const makeDrainer = (
+        queue: React.MutableRefObject<string[]>,
+        setter: React.Dispatch<React.SetStateAction<string>>,
+      ) => window.setInterval(() => {
+        if (queue.current.length > 0) {
+          const ch = queue.current.shift()!;
+          setter(prev => prev + ch);
         }
-      } catch (err) {
-        console.warn('Streaming failed, falling back:', err);
-      }
+      }, DRAIN_MS);
 
-      // Generate casual + luxury + all social posts in parallel (while streaming was happening)
-      const [casualResult, luxuryResult, proSocial, casualSocial, luxurySocial] = await Promise.all([
-        fetch('/api/ai/generate-content', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: requestBody('casual'),
-        }).then(r => r.ok ? r.json() : null).catch(() => null),
-        fetch('/api/ai/generate-content', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: requestBody('luxury'),
-        }).then(r => r.ok ? r.json() : null).catch(() => null),
-        generateSocialPostsForTone(project, propertyInfo, imageUrls.length, 'professional'),
-        generateSocialPostsForTone(project, propertyInfo, imageUrls.length, 'casual'),
-        generateSocialPostsForTone(project, propertyInfo, imageUrls.length, 'luxury'),
-      ]);
+      const proInterval   = makeDrainer(proQueue,    setStreamingPro);
+      const casInterval   = makeDrainer(casualQueue, setStreamingCasual);
+      const luxInterval   = makeDrainer(luxuryQueue, setStreamingLuxury);
+
+      // Helper: read a stream and push chars into a queue
+      const streamIntoQueue = async (
+        tone: DescriptionTone,
+        queue: React.MutableRefObject<string[]>,
+      ): Promise<string> => {
+        let full = '';
+        try {
+          const res = await fetch('/api/ai/generate-content-stream', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: requestBody(tone),
+          });
+          if (res.ok && res.body) {
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              const chunk = decoder.decode(value, { stream: true });
+              full += chunk;
+              // Push each character individually into the queue
+              for (const ch of chunk) queue.current.push(ch);
+            }
+          }
+        } catch (err) {
+          console.warn(`Stream failed for ${tone}:`, err);
+        }
+        return full;
+      };
+
+      // Run all 3 streams + social posts in parallel
+      const [professionalContent, casualContent, luxuryContent, proSocial, casualSocial, luxurySocial] =
+        await Promise.all([
+          streamIntoQueue('professional', proQueue),
+          streamIntoQueue('casual',       casualQueue),
+          streamIntoQueue('luxury',       luxuryQueue),
+          generateSocialPostsForTone(project, propertyInfo, imageUrls.length, 'professional'),
+          generateSocialPostsForTone(project, propertyInfo, imageUrls.length, 'casual'),
+          generateSocialPostsForTone(project, propertyInfo, imageUrls.length, 'luxury'),
+        ]);
+
+      // Wait for all queues to fully drain before proceeding
+      await new Promise<void>(resolve => {
+        const check = window.setInterval(() => {
+          if (proQueue.current.length === 0 && casualQueue.current.length === 0 && luxuryQueue.current.length === 0) {
+            window.clearInterval(check);
+            resolve();
+          }
+        }, 50);
+      });
+
+      window.clearInterval(proInterval);
+      window.clearInterval(casInterval);
+      window.clearInterval(luxInterval);
 
       const versions: ToneVersion[] = [
         {
@@ -543,7 +590,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           tone: 'casual',
           label: labels.casual,
           description: descriptionLabels.casual,
-          content: casualResult?.success ? casualResult.data.description : generateDescription('casual', project, propertyInfo, imageAnalysis),
+          content: casualContent || generateDescription('casual', project, propertyInfo, imageAnalysis),
           instagram: casualSocial.instagram,
           facebook: casualSocial.facebook,
         },
@@ -551,7 +598,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           tone: 'luxury',
           label: labels.luxury,
           description: descriptionLabels.luxury,
-          content: luxuryResult?.success ? luxuryResult.data.description : generateDescription('luxury', project, propertyInfo, imageAnalysis),
+          content: luxuryContent || generateDescription('luxury', project, propertyInfo, imageAnalysis),
           instagram: luxurySocial.instagram,
           facebook: luxurySocial.facebook,
         },
@@ -611,7 +658,12 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       alert('Failed to generate content. Please try again.');
     } finally {
       setIsGenerating(false);
-      setStreamingText('');
+      setStreamingPro('');
+      setStreamingCasual('');
+      setStreamingLuxury('');
+      proQueue.current = [];
+      casualQueue.current = [];
+      luxuryQueue.current = [];
     }
   };
 
@@ -1408,38 +1460,81 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 </div>
 
                 {/* Generating Loading State */}
-                {isGenerating && (
-                  <div className="mb-6 bg-[#111111] rounded-xl border border-white/10 overflow-hidden">
-                    {/* Header */}
-                    <div className="flex items-center gap-3 px-5 py-4 border-b border-white/10">
-                      <div className="relative flex-shrink-0">
-                        <div className="w-8 h-8 border-2 border-white/10 border-t-white rounded-full animate-spin"></div>
-                        <Sparkles className="w-4 h-4 text-white/70 absolute top-2 left-2" />
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-semibold text-white">
-                          {streamingText ? 'Writing your description...' : 'Analyzing property...'}
-                        </h3>
-                        <p className="text-xs text-gray-500">Generating 3 tone variations</p>
-                      </div>
-                    </div>
-                    {/* Live typewriter preview */}
-                    <div className="px-5 py-4 min-h-[120px]">
-                      {streamingText ? (
-                        <p className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">
-                          {streamingText}
-                          <span className="inline-block w-0.5 h-4 bg-white ml-0.5 animate-pulse align-middle" />
-                        </p>
-                      ) : (
-                        <div className="space-y-2">
-                          <div className="h-3 bg-white/5 rounded animate-pulse w-full" />
-                          <div className="h-3 bg-white/5 rounded animate-pulse w-4/5" />
-                          <div className="h-3 bg-white/5 rounded animate-pulse w-3/4" />
+                {isGenerating && (() => {
+                  const streamMap: Record<DescriptionTone, string> = {
+                    professional: streamingPro,
+                    casual: streamingCasual,
+                    luxury: streamingLuxury,
+                  };
+                  const tabLabels: Record<DescriptionTone, string> = {
+                    professional: 'Professional',
+                    casual: 'Casual',
+                    luxury: 'Luxury',
+                  };
+                  const activeText = streamMap[activeStreamTab];
+                  const anyStarted = streamingPro || streamingCasual || streamingLuxury;
+
+                  return (
+                    <div className="mb-6 bg-[#111111] rounded-xl border border-white/10 overflow-hidden">
+                      {/* Header */}
+                      <div className="flex items-center gap-3 px-5 py-3 border-b border-white/10">
+                        <div className="relative flex-shrink-0">
+                          <div className="w-7 h-7 border-2 border-white/10 border-t-white rounded-full animate-spin" />
+                          <Sparkles className="w-3.5 h-3.5 text-white/60 absolute top-1.5 left-1.5" />
                         </div>
-                      )}
+                        <div>
+                          <h3 className="text-sm font-semibold text-white">
+                            {anyStarted ? 'Writing descriptions...' : 'Analyzing property...'}
+                          </h3>
+                          <p className="text-xs text-gray-500">Generating 3 tone variations simultaneously</p>
+                        </div>
+                      </div>
+
+                      {/* Tabs */}
+                      <div className="flex border-b border-white/10">
+                        {(['professional', 'casual', 'luxury'] as DescriptionTone[]).map(tone => {
+                          const text = streamMap[tone];
+                          const isActive = activeStreamTab === tone;
+                          const isStreaming = text.length > 0 && text.length < 1500;
+                          return (
+                            <button
+                              key={tone}
+                              onClick={() => setActiveStreamTab(tone)}
+                              className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-medium transition-all ${
+                                isActive
+                                  ? 'text-white border-b-2 border-white bg-white/5'
+                                  : 'text-gray-500 hover:text-gray-300'
+                              }`}
+                            >
+                              {tabLabels[tone]}
+                              {isStreaming && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Typewriter content */}
+                      <div className="px-5 py-4 min-h-[160px]">
+                        {activeText ? (
+                          <p className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">
+                            {activeText}
+                            <span className="inline-block w-0.5 h-4 bg-white/70 ml-0.5 animate-pulse align-middle" />
+                          </p>
+                        ) : (
+                          <div className="space-y-2 pt-1">
+                            <div className="h-3 bg-white/5 rounded animate-pulse w-full" />
+                            <div className="h-3 bg-white/5 rounded animate-pulse w-5/6" />
+                            <div className="h-3 bg-white/5 rounded animate-pulse w-4/5" />
+                            <div className="h-3 bg-white/5 rounded animate-pulse w-full" />
+                            <div className="h-3 bg-white/5 rounded animate-pulse w-3/4" />
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
 
                 {project.ai_content && !isGenerating ? (
                   <div className="space-y-6">
