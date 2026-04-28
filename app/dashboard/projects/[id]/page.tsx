@@ -88,6 +88,9 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editedDescription, setEditedDescription] = useState('');
 
+  // Project detail tab
+  const [projectTab, setProjectTab] = useState<'overview' | 'ai_content' | 'linked'>('overview');
+
   // Load project data from API on mount
   useEffect(() => {
     const loadProject = async () => {
@@ -1282,7 +1285,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       {/* Page content */}
       <div className="p-6 max-w-7xl mx-auto text-white">
         {/* Action buttons */}
-        <div className="flex flex-wrap items-center gap-3 mb-6">
+        <div className="flex flex-wrap items-center gap-3 mb-4">
           <Button onClick={handleSave} isLoading={isSaving}>
             <Save className="w-4 h-4 mr-2" />
             Save Project
@@ -1292,27 +1295,27 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             Preview
           </Button>
           <Button variant="outline" onClick={() => router.push('/dashboard/projects')}>
-            Back to Projects
+            Back
           </Button>
           
           {/* Auto-save status indicator */}
           {autoSaveStatus !== 'idle' && (
             <div className={`
               flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all duration-300
-              ${autoSaveStatus === 'saving' ? 'bg-blue-500/20 text-blue-300 border border-blue-400/30' : ''}
+              ${autoSaveStatus === 'saving' ? 'bg-white/10 text-gray-300 border border-white/20' : ''}
               ${autoSaveStatus === 'saved' ? 'bg-green-500/20 text-green-300 border border-green-400/30' : ''}
               ${autoSaveStatus === 'error' ? 'bg-red-500/20 text-red-300 border border-red-400/30' : ''}
             `}>
               {autoSaveStatus === 'saving' && (
                 <>
-                  <div className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                   Saving...
                 </>
               )}
               {autoSaveStatus === 'saved' && (
                 <>
                   <Check className="w-4 h-4" />
-                  All changes saved
+                  Saved
                 </>
               )}
               {autoSaveStatus === 'error' && (
@@ -1325,7 +1328,35 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           )}
         </div>
 
+        {/* Tab navigation */}
+        <div className="border-b border-white/10 mb-6">
+          <nav className="flex space-x-1">
+            {[
+              { id: 'overview', label: 'Overview', icon: Home },
+              { id: 'ai_content', label: 'AI Content', icon: Sparkles },
+              { id: 'linked', label: 'Linked', icon: FileText },
+            ].map(tab => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setProjectTab(tab.id as any)}
+                  className={`flex items-center py-3 px-4 text-sm font-medium rounded-t-lg transition-colors ${
+                    projectTab === tab.id
+                      ? 'bg-white/10 text-white border-b-2 border-white'
+                      : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                  }`}
+                >
+                  <Icon className="w-4 h-4 mr-2" />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
         <div className="space-y-6">
+          {projectTab === 'overview' && (<>
               {/* Images section */}
               <Card>
                 <div className="flex items-center justify-between mb-4">
@@ -1434,9 +1465,9 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                       {project.property_info?.square_feet?.toLocaleString() || 'N/A'} sq ft
                     </p>
                   </div>
-                  <div className="p-3 bg-blue-500/10 rounded-lg col-span-full md:col-span-1 border border-blue-400/30">
-                    <p className="text-sm text-blue-400">Listing Price</p>
-                    <p className="font-bold text-blue-300 text-xl">
+                  <div className="p-3 bg-white/5 rounded-lg col-span-full md:col-span-1 border border-white/10">
+                    <p className="text-sm text-gray-400">Listing Price</p>
+                    <p className="font-bold text-white text-xl">
                       {project.property_info?.price 
                         ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(project.property_info.price)
                         : 'Price not set'}
@@ -1445,6 +1476,9 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 </div>
               </Card>
 
+          </>)}
+
+          {projectTab === 'ai_content' && (<>
               {/* AI-generated content */}
               <Card>
                 <div className="flex items-center justify-between mb-4">
@@ -1578,7 +1612,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                               onClick={() => handleToneChange(version.tone)}
                               className={`p-4 rounded-lg border-2 text-left transition-all ${
                                 selectedTone === version.tone
-                                  ? 'border-blue-500 bg-blue-500/10'
+                                  ? 'border-white bg-white/10'
                                   : 'border-white/10 hover:border-white/20'
                               }`}
                             >
@@ -1822,12 +1856,14 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   </div>
                 )}
               </Card>
+          </>)}
 
+          {projectTab === 'linked' && (<>
           {/* Tasks & Events Section */}
           <Card>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-white flex items-center">
-                  <Calendar className="w-5 h-5 mr-2 text-purple-400" />
+                  <Calendar className="w-5 h-5 mr-2 text-white/60" />
                   Project Tasks & Events
                 </h2>
                 <Button 
@@ -1887,7 +1923,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           <Card>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-white flex items-center">
-                  <FileText className="w-5 h-5 mr-2 text-purple-400" />
+                  <FileText className="w-5 h-5 mr-2 text-white/60" />
                   Project Transactions
                 </h2>
                 <Button 
@@ -1950,6 +1986,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 </div>
               )}
             </Card>
+          </>)}
         </div>
       </div>
 

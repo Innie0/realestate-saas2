@@ -34,7 +34,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [activeTab, setActiveTab] = useState<'timeline' | 'checklist' | 'reminders' | 'details'>('timeline');
+  const [activeTab, setActiveTab] = useState<'overview' | 'tasks' | 'reminders' | 'financials'>('overview');
 
   // Optimistic update for checklist items
   const handleChecklistItemToggle = (itemId: string, isCompleted: boolean) => {
@@ -246,68 +246,24 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
         </div>
       )}
 
-      {/* Quick Stats with gradients */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="text-center py-4 bg-gradient-to-br from-green-500/10 to-green-900/10 border border-green-500/30">
-          <div className="p-2 bg-green-500/20 rounded-full w-12 h-12 mx-auto mb-2 flex items-center justify-center border border-green-500/30">
-            <DollarSign className="w-6 h-6 text-green-400" />
-          </div>
-          <p className="text-2xl font-bold text-white">{formatCurrency(transaction.offer_price)}</p>
-          <p className="text-sm text-gray-400 font-medium">Offer Price</p>
-        </Card>
-        <Card className="text-center py-4 bg-gradient-to-br from-blue-500/10 to-blue-900/10 border border-blue-500/30">
-          <div className="p-2 bg-blue-500/20 rounded-full w-12 h-12 mx-auto mb-2 flex items-center justify-center border border-blue-500/30">
-            <Calendar className="w-6 h-6 text-blue-400" />
-          </div>
-          <p className="text-2xl font-bold text-white">
-            {transaction.days_to_closing != null 
-              ? (transaction.days_to_closing < 0 
-                ? 'Closed' 
-                : `${transaction.days_to_closing} days`)
-              : '-'}
-          </p>
-          <p className="text-sm text-gray-400 font-medium">To Closing</p>
-        </Card>
-        <Card className="text-center py-4 bg-gradient-to-br from-purple-500/10 to-purple-900/10 border border-purple-500/30">
-          <div className="p-2 bg-purple-500/20 rounded-full w-12 h-12 mx-auto mb-2 flex items-center justify-center border border-purple-500/30">
-            <CheckCircle2 className="w-6 h-6 text-purple-400" />
-          </div>
-          <p className="text-2xl font-bold text-white">
-            {transaction.completed_items_count}/{transaction.total_items_count}
-          </p>
-          <p className="text-sm text-gray-400 font-medium">Tasks Complete</p>
-        </Card>
-        <Card className="text-center py-4 bg-gradient-to-br from-gray-500/10 to-gray-900/10 border border-gray-500/30">
-          <div className="p-2 bg-gray-500/20 rounded-full w-12 h-12 mx-auto mb-2 flex items-center justify-center border border-gray-500/30">
-            <Clock className="w-6 h-6 text-gray-400" />
-          </div>
-          <p className="text-2xl font-bold text-white">
-            {transaction.closing_date 
-              ? format(new Date(transaction.closing_date), 'MMM d')
-              : '-'}
-          </p>
-          <p className="text-sm text-gray-400 font-medium">Closing Date</p>
-        </Card>
-      </div>
-
       {/* Tabs */}
-      <div className="border-b border-gray-700/50">
-        <nav className="flex space-x-8">
+      <div className="border-b border-white/10">
+        <nav className="flex space-x-1">
           {[
-            { id: 'timeline', label: 'Timeline', icon: Calendar },
-            { id: 'checklist', label: 'Checklist', icon: CheckCircle2 },
+            { id: 'overview', label: 'Overview', icon: Building2 },
+            { id: 'tasks', label: 'Timeline & Tasks', icon: CheckCircle2 },
             { id: 'reminders', label: 'Reminders', icon: Bell },
-            { id: 'details', label: 'Details', icon: FileText },
+            { id: 'financials', label: 'Financials', icon: DollarSign },
           ].map(tab => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center py-4 px-1 border-b-2 text-sm font-medium transition-colors ${
+                className={`flex items-center py-3 px-4 text-sm font-medium rounded-t-lg transition-colors ${
                   activeTab === tab.id
-                    ? 'border-blue-500 text-white'
-                    : 'border-transparent text-gray-500 hover:text-gray-300 hover:border-gray-600'
+                    ? 'bg-white/10 text-white border-b-2 border-white'
+                    : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
                 }`}
               >
                 <Icon className="w-4 h-4 mr-2" />
@@ -320,29 +276,118 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
 
       {/* Tab Content */}
       <div className="mt-6">
-        {activeTab === 'timeline' && (
-          <Card>
-            <h2 className="text-lg font-semibold text-white mb-4">Transaction Timeline</h2>
-            <TransactionTimeline transaction={transaction} />
-          </Card>
+        {activeTab === 'overview' && (
+          <div className="space-y-6">
+            {/* Key Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { label: 'Offer Price', value: formatCurrency(transaction.offer_price), icon: DollarSign },
+                { label: 'To Closing', value: transaction.days_to_closing != null ? (transaction.days_to_closing < 0 ? 'Closed' : `${transaction.days_to_closing}d`) : '-', icon: Calendar },
+                { label: 'Tasks', value: `${transaction.completed_items_count}/${transaction.total_items_count}`, icon: CheckCircle2 },
+                { label: 'Closing Date', value: transaction.closing_date ? format(new Date(transaction.closing_date), 'MMM d') : '-', icon: Clock },
+              ].map(stat => {
+                const Icon = stat.icon;
+                return (
+                  <Card key={stat.label} className="border border-white/10">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
+                        <Icon className="w-4 h-4 text-white/70" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400">{stat.label}</p>
+                        <p className="text-lg font-bold text-white">{stat.value}</p>
+                      </div>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+
+            {/* Buyer & Seller side by side */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <User className="w-4 h-4" /> Buyer
+                </h3>
+                <div className="space-y-2">
+                  <p className="font-medium text-white">{transaction.buyer_name || '-'}</p>
+                  {transaction.buyer_email && (
+                    <a href={`mailto:${transaction.buyer_email}`} className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+                      <Mail className="w-3.5 h-3.5" /> {transaction.buyer_email}
+                    </a>
+                  )}
+                  {transaction.buyer_phone && (
+                    <a href={`tel:${transaction.buyer_phone}`} className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+                      <Phone className="w-3.5 h-3.5" /> {transaction.buyer_phone}
+                    </a>
+                  )}
+                  {transaction.buyer_agent_name && (
+                    <div className="pt-2 mt-2 border-t border-white/10">
+                      <p className="text-xs text-gray-500">Agent: <span className="text-gray-300">{transaction.buyer_agent_name}</span></p>
+                    </div>
+                  )}
+                </div>
+              </Card>
+
+              <Card>
+                <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <Users className="w-4 h-4" /> Seller
+                </h3>
+                <div className="space-y-2">
+                  <p className="font-medium text-white">{transaction.seller_name || '-'}</p>
+                  {transaction.seller_email && (
+                    <a href={`mailto:${transaction.seller_email}`} className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+                      <Mail className="w-3.5 h-3.5" /> {transaction.seller_email}
+                    </a>
+                  )}
+                  {transaction.seller_phone && (
+                    <a href={`tel:${transaction.seller_phone}`} className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+                      <Phone className="w-3.5 h-3.5" /> {transaction.seller_phone}
+                    </a>
+                  )}
+                  {transaction.seller_agent_name && (
+                    <div className="pt-2 mt-2 border-t border-white/10">
+                      <p className="text-xs text-gray-500">Agent: <span className="text-gray-300">{transaction.seller_agent_name}</span></p>
+                    </div>
+                  )}
+                </div>
+              </Card>
+            </div>
+
+            {/* Notes */}
+            {transaction.notes && (
+              <Card>
+                <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                  <FileText className="w-4 h-4" /> Notes
+                </h3>
+                <p className="text-gray-300 whitespace-pre-wrap text-sm leading-relaxed">{transaction.notes}</p>
+              </Card>
+            )}
+          </div>
         )}
 
-        {activeTab === 'checklist' && (
-          <Card>
-            <h2 className="text-lg font-semibold text-white mb-4">Task Checklist</h2>
-            <TransactionChecklist
-              transactionId={transaction.id}
-              items={transaction.checklist_items || []}
-              onUpdate={fetchTransaction}
-              onItemToggle={handleChecklistItemToggle}
-            />
-          </Card>
+        {activeTab === 'tasks' && (
+          <div className="space-y-6">
+            <Card>
+              <h2 className="text-base font-semibold text-white mb-4">Transaction Timeline</h2>
+              <TransactionTimeline transaction={transaction} />
+            </Card>
+            <Card>
+              <h2 className="text-base font-semibold text-white mb-4">Task Checklist</h2>
+              <TransactionChecklist
+                transactionId={transaction.id}
+                items={transaction.checklist_items || []}
+                onUpdate={fetchTransaction}
+                onItemToggle={handleChecklistItemToggle}
+              />
+            </Card>
+          </div>
         )}
 
         {activeTab === 'reminders' && (
           <Card>
-            <h2 className="text-lg font-semibold text-white mb-4">Reminders</h2>
-            {transaction.reminders && transaction.reminders.length > 0 ? (
+            <h2 className="text-base font-semibold text-white mb-4">Reminders</h2>
+            {transaction.reminders && transaction.reminders.filter(r => !r.is_dismissed).length > 0 ? (
               <div className="space-y-3">
                 {transaction.reminders
                   .filter(r => !r.is_dismissed)
@@ -350,29 +395,18 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                     <div 
                       key={reminder.id}
                       className={`flex items-center justify-between p-3 rounded-lg ${
-                        reminder.is_sent ? 'bg-gray-800/30' : 'bg-yellow-500/10 border border-yellow-500/30'
+                        reminder.is_sent ? 'bg-white/5 border border-white/10' : 'bg-yellow-500/10 border border-yellow-500/30'
                       }`}
                     >
                       <div className="flex items-center">
-                        <Bell className={`w-5 h-5 mr-3 ${
-                          reminder.is_sent ? 'text-gray-500' : 'text-yellow-400'
-                        }`} />
+                        <Bell className={`w-5 h-5 mr-3 ${reminder.is_sent ? 'text-gray-500' : 'text-yellow-400'}`} />
                         <div>
-                          <p className={`font-medium ${
-                            reminder.is_sent ? 'text-gray-400' : 'text-white'
-                          }`}>
-                            {reminder.title}
-                          </p>
-                          <p className="text-sm text-gray-400">
-                            {format(new Date(reminder.reminder_date), 'MMM d, yyyy')}
-                          </p>
+                          <p className={`font-medium ${reminder.is_sent ? 'text-gray-400' : 'text-white'}`}>{reminder.title}</p>
+                          <p className="text-sm text-gray-400">{format(new Date(reminder.reminder_date), 'MMM d, yyyy')}</p>
                         </div>
                       </div>
                       {!reminder.is_sent && (
-                        <button
-                          onClick={() => dismissReminder(reminder.id)}
-                          className="text-sm text-gray-400 hover:text-gray-300"
-                        >
+                        <button onClick={() => dismissReminder(reminder.id)} className="text-sm text-gray-400 hover:text-gray-300">
                           Dismiss
                         </button>
                       )}
@@ -385,125 +419,23 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
           </Card>
         )}
 
-        {activeTab === 'details' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Buyer Info */}
-            <Card>
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-                <User className="w-5 h-5 mr-2" />
-                Buyer Information
-              </h3>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-gray-400">Name</p>
-                  <p className="font-medium text-white">{transaction.buyer_name}</p>
+        {activeTab === 'financials' && (
+          <Card>
+            <h2 className="text-base font-semibold text-white mb-4">Financial Details</h2>
+            <div className="divide-y divide-white/10">
+              {[
+                { label: 'Offer Price', value: formatCurrency(transaction.offer_price) },
+                { label: 'Earnest Money', value: formatCurrency(transaction.earnest_money) },
+                { label: 'Down Payment', value: formatCurrency(transaction.down_payment) },
+                { label: 'Loan Amount', value: formatCurrency(transaction.loan_amount) },
+              ].map(row => (
+                <div key={row.label} className="flex justify-between py-3">
+                  <span className="text-gray-400">{row.label}</span>
+                  <span className="font-medium text-white">{row.value}</span>
                 </div>
-                {transaction.buyer_email && (
-                  <div className="flex items-center">
-                    <Mail className="w-4 h-4 text-gray-500 mr-2" />
-                    <a href={`mailto:${transaction.buyer_email}`} className="text-blue-400 hover:underline">
-                      {transaction.buyer_email}
-                    </a>
-                  </div>
-                )}
-                {transaction.buyer_phone && (
-                  <div className="flex items-center">
-                    <Phone className="w-4 h-4 text-gray-500 mr-2" />
-                    <a href={`tel:${transaction.buyer_phone}`} className="text-blue-400 hover:underline">
-                      {transaction.buyer_phone}
-                    </a>
-                  </div>
-                )}
-                {transaction.buyer_agent_name && (
-                  <div className="pt-3 border-t border-gray-700/50">
-                    <p className="text-sm text-gray-400">Agent</p>
-                    <p className="font-medium text-white">{transaction.buyer_agent_name}</p>
-                    {transaction.buyer_agent_email && (
-                      <p className="text-sm text-gray-400">{transaction.buyer_agent_email}</p>
-                    )}
-                  </div>
-                )}
-              </div>
-            </Card>
-
-            {/* Seller Info */}
-            <Card>
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-                <Users className="w-5 h-5 mr-2" />
-                Seller Information
-              </h3>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-gray-400">Name</p>
-                  <p className="font-medium text-white">{transaction.seller_name}</p>
-                </div>
-                {transaction.seller_email && (
-                  <div className="flex items-center">
-                    <Mail className="w-4 h-4 text-gray-500 mr-2" />
-                    <a href={`mailto:${transaction.seller_email}`} className="text-blue-400 hover:underline">
-                      {transaction.seller_email}
-                    </a>
-                  </div>
-                )}
-                {transaction.seller_phone && (
-                  <div className="flex items-center">
-                    <Phone className="w-4 h-4 text-gray-500 mr-2" />
-                    <a href={`tel:${transaction.seller_phone}`} className="text-blue-400 hover:underline">
-                      {transaction.seller_phone}
-                    </a>
-                  </div>
-                )}
-                {transaction.seller_agent_name && (
-                  <div className="pt-3 border-t border-gray-700/50">
-                    <p className="text-sm text-gray-400">Agent</p>
-                    <p className="font-medium text-white">{transaction.seller_agent_name}</p>
-                    {transaction.seller_agent_email && (
-                      <p className="text-sm text-gray-400">{transaction.seller_agent_email}</p>
-                    )}
-                  </div>
-                )}
-              </div>
-            </Card>
-
-            {/* Financial Info */}
-            <Card>
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-                <DollarSign className="w-5 h-5 mr-2" />
-                Financial Details
-              </h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Offer Price</span>
-                  <span className="font-semibold text-white">{formatCurrency(transaction.offer_price)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Earnest Money</span>
-                  <span className="text-white">{formatCurrency(transaction.earnest_money)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Down Payment</span>
-                  <span className="text-white">{formatCurrency(transaction.down_payment)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Loan Amount</span>
-                  <span className="text-white">{formatCurrency(transaction.loan_amount)}</span>
-                </div>
-              </div>
-            </Card>
-
-            {/* Notes */}
-            <Card>
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-                <FileText className="w-5 h-5 mr-2" />
-                Notes
-              </h3>
-              {transaction.notes ? (
-                <p className="text-gray-300 whitespace-pre-wrap">{transaction.notes}</p>
-              ) : (
-                <p className="text-gray-400 italic">No notes added</p>
-              )}
-            </Card>
-          </div>
+              ))}
+            </div>
+          </Card>
         )}
       </div>
 

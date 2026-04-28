@@ -10,8 +10,11 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import NotificationsPanel from '@/components/NotificationsPanel';
 import ProjectCard from '@/components/ProjectCard';
-import { Plus, FolderKanban, Image, FileText, TrendingUp, Zap } from 'lucide-react';
+import { Plus, FolderKanban, Image, FileText, Zap, Users, ArrowRight, Clock } from 'lucide-react';
 import { Project } from '@/types';
+
+interface RecentClient { id: string; name: string; email?: string; status: string; created_at: string; }
+interface RecentTransaction { id: string; property_address: string; status: string; offer_price?: number; updated_at: string; }
 
 interface UsageData {
   [key: string]: { current: number; limit: number };
@@ -33,6 +36,8 @@ interface DashboardStats {
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [recentProjects, setRecentProjects] = useState<Project[]>([]);
+  const [recentClients, setRecentClients] = useState<RecentClient[]>([]);
+  const [recentTransactions, setRecentTransactions] = useState<RecentTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [projectsLoading, setProjectsLoading] = useState(true);
   const [usage, setUsage] = useState<UsageData | null>(null);
@@ -45,6 +50,7 @@ export default function DashboardPage() {
     fetchStats();
     fetchRecentProjects();
     fetchUsage();
+    fetchRecentActivity();
   }, []);
 
   const fetchUsage = async () => {
@@ -70,6 +76,19 @@ export default function DashboardPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchRecentActivity = async () => {
+    try {
+      const [clientsRes, txRes] = await Promise.all([
+        fetch('/api/clients?limit=4'),
+        fetch('/api/transactions?limit=4'),
+      ]);
+      const clientsData = await clientsRes.json();
+      const txData = await txRes.json();
+      if (clientsData.success) setRecentClients(clientsData.data.slice(0, 4));
+      if (txData.success) setRecentTransactions(txData.data.slice(0, 4));
+    } catch (e) { console.error('Recent activity error:', e); }
   };
 
   const fetchRecentProjects = async () => {
@@ -195,7 +214,7 @@ export default function DashboardPage() {
           <Card>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Zap className="w-5 h-5 text-purple-400" />
+                <Zap className="w-5 h-5 text-white/60" />
                 <h2 className="text-lg font-bold text-white">Plan Usage</h2>
               </div>
               <Link href="/dashboard/upgrade">
@@ -289,36 +308,75 @@ export default function DashboardPage() {
           )}
         </Card>
 
-        {/* Tips and resources section */}
-        <Card>
-          <h2 className="text-xl font-bold text-white mb-4">
-            Tips & Resources
-          </h2>
-          <div className="space-y-3">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-white/5 border border-white/10">
-              <TrendingUp className="w-5 h-5 text-purple-400 mt-0.5" />
-              <div>
-                <h3 className="font-medium text-white">
-                  Use high-quality photos
-                </h3>
-                <p className="text-sm text-gray-400">
-                  Properties with professional photos get 60% more views and sell faster.
-                </p>
+        {/* Recent Activity */}
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Recent Clients */}
+          <Card>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-white/60" />
+                <h2 className="text-base font-semibold text-white">Recent Clients</h2>
               </div>
+              <Link href="/dashboard/clients" className="text-xs text-gray-400 hover:text-white flex items-center gap-1 transition-colors">
+                View all <ArrowRight className="w-3 h-3" />
+              </Link>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-white/5 border border-white/10">
-              <TrendingUp className="w-5 h-5 text-blue-400 mt-0.5" />
-              <div>
-                <h3 className="font-medium text-white">
-                  Leverage AI-generated content
-                </h3>
-                <p className="text-sm text-gray-400">
-                  Let AI create compelling descriptions that highlight your property's best features.
-                </p>
+            {recentClients.length === 0 ? (
+              <p className="text-sm text-gray-500 py-4 text-center">No clients yet</p>
+            ) : (
+              <div className="space-y-2">
+                {recentClients.map(client => (
+                  <Link key={client.id} href={`/dashboard/clients/${client.id}`} className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-medium text-white flex-shrink-0">
+                        {client.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-white group-hover:text-white">{client.name}</p>
+                        {client.email && <p className="text-xs text-gray-500 truncate max-w-[160px]">{client.email}</p>}
+                      </div>
+                    </div>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                      client.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-white/10 text-gray-400'
+                    }`}>{client.status}</span>
+                  </Link>
+                ))}
               </div>
+            )}
+          </Card>
+
+          {/* Recent Transactions */}
+          <Card>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5 text-white/60" />
+                <h2 className="text-base font-semibold text-white">Recent Transactions</h2>
+              </div>
+              <Link href="/dashboard/transactions" className="text-xs text-gray-400 hover:text-white flex items-center gap-1 transition-colors">
+                View all <ArrowRight className="w-3 h-3" />
+              </Link>
             </div>
-          </div>
-        </Card>
+            {recentTransactions.length === 0 ? (
+              <p className="text-sm text-gray-500 py-4 text-center">No transactions yet</p>
+            ) : (
+              <div className="space-y-2">
+                {recentTransactions.map(tx => (
+                  <Link key={tx.id} href={`/dashboard/transactions/${tx.id}`} className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors group">
+                    <div>
+                      <p className="text-sm font-medium text-white truncate max-w-[200px]">{tx.property_address}</p>
+                      {tx.offer_price && <p className="text-xs text-gray-500">${tx.offer_price.toLocaleString()}</p>}
+                    </div>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                      tx.status === 'active' ? 'bg-green-500/20 text-green-400' :
+                      tx.status === 'closed' ? 'bg-white/10 text-gray-400' :
+                      'bg-yellow-500/20 text-yellow-400'
+                    }`}>{tx.status}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </Card>
+        </div>
       </div>
     </div>
   );

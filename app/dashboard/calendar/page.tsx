@@ -10,7 +10,7 @@ import Card from '@/components/ui/Card';
 import Modal from '@/components/ui/Modal';
 import CalendarView from '@/components/CalendarView';
 import EventForm from '@/components/EventForm';
-import { Calendar as CalendarIcon, Plus, RefreshCw } from 'lucide-react';
+import { Calendar as CalendarIcon, Plus, RefreshCw, Settings } from 'lucide-react';
 import { CalendarEvent } from '@/types';
 
 /**
@@ -21,6 +21,7 @@ export default function CalendarPage() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [showEventModal, setShowEventModal] = useState(false);
+  const [showConnectionsModal, setShowConnectionsModal] = useState(false);
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
   const [connections, setConnections] = useState({
     google: {
@@ -193,101 +194,43 @@ export default function CalendarPage() {
 
       {/* Page content */}
       <div className="p-4 sm:p-6 text-white">
-        <div className="space-y-6">
-          {/* Calendar connections */}
-          <Card>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-xl font-bold text-white mb-2">Calendar Connections</h2>
-                <p className="text-sm text-gray-400">
-                  Connect your calendars to sync events automatically
-                </p>
+        {/* Calendar card - full width, connection settings tucked into corner */}
+        <Card>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-white">Your Schedule</h2>
+            <div className="flex items-center gap-2">
+              {/* Connection status indicator */}
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+                <div className={`w-2 h-2 rounded-full ${connections.google.connected ? 'bg-green-500' : 'bg-gray-600'}`} />
+                <span className="text-xs text-gray-400">
+                  {connections.google.connected ? 'Google Calendar' : 'Not connected'}
+                </span>
               </div>
-              <Button
-                size="sm"
-                variant="outline"
+              <button
                 onClick={() => handleRefresh()}
                 disabled={refreshing}
+                className="p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+                title="Sync calendars"
               >
-                <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-                Sync
-              </Button>
-            </div>
-
-            {/* Google Calendar connection */}
-            <div className="border border-white/10 rounded-lg p-4 bg-white/5 backdrop-blur-sm">
-              <div className="flex items-center justify-between">
-                {/* Left side - Calendar info */}
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center flex-shrink-0">
-                    <svg className="w-7 h-7" viewBox="0 0 48 48">
-                      <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
-                      <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
-                      <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
-                      <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-white text-lg">Google Calendar</h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      {connections.google.connected ? (
-                        <>
-                          <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                          <p className="text-sm text-gray-400">{connections.google.email}</p>
-                        </>
-                      ) : (
-                        <p className="text-sm text-gray-500">Not connected</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right side - Action button */}
-                <div className="flex-shrink-0">
-                  {connections.google.connected ? (
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => handleDisconnect('google')}
-                    >
-                      Disconnect
-                    </Button>
-                  ) : (
-                    <Button 
-                      size="sm"
-                      onClick={handleConnectGoogle}
-                      disabled={isConnecting}
-                    >
-                      Connect Calendar
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Info message */}
-            <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg backdrop-blur-sm">
-              <p className="text-sm text-blue-300">
-                <strong>Note:</strong> Events created in this app will automatically sync to your connected calendars,
-                and events from your calendars will appear here.
-              </p>
-            </div>
-          </Card>
-
-          {/* Calendar view */}
-          <Card>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-white">Your Schedule</h2>
+                <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+              </button>
+              <button
+                onClick={() => setShowConnectionsModal(true)}
+                className="p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+                title="Calendar settings"
+              >
+                <Settings className="w-4 h-4" />
+              </button>
               <Button size="sm" onClick={() => setShowEventModal(true)}>
                 <Plus className="w-4 h-4 mr-2" />
                 New Event
               </Button>
             </div>
+          </div>
 
-            {/* Calendar component */}
-            <CalendarView />
-          </Card>
-        </div>
+          {/* Calendar component */}
+          <CalendarView />
+        </Card>
       </div>
 
       {/* Event Creation Modal */}
@@ -304,6 +247,61 @@ export default function CalendarPage() {
           />
         </Modal>
       )}
+
+      {/* Calendar Connections Modal */}
+      <Modal
+        isOpen={showConnectionsModal}
+        onClose={() => setShowConnectionsModal(false)}
+        title="Calendar Connections"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-gray-400">Connect your calendars to sync events automatically.</p>
+
+          {/* Google Calendar */}
+          <div className="border border-white/10 rounded-lg p-4 bg-white/5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-6 h-6" viewBox="0 0 48 48">
+                    <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+                    <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+                    <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+                    <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-medium text-white">Google Calendar</p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    {connections.google.connected ? (
+                      <>
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                        <p className="text-xs text-gray-400">{connections.google.email}</p>
+                      </>
+                    ) : (
+                      <p className="text-xs text-gray-500">Not connected</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+              {connections.google.connected ? (
+                <Button size="sm" variant="outline" onClick={() => handleDisconnect('google')}>
+                  Disconnect
+                </Button>
+              ) : (
+                <Button size="sm" onClick={handleConnectGoogle} disabled={isConnecting}>
+                  Connect
+                </Button>
+              )}
+            </div>
+          </div>
+
+          <div className="p-3 bg-white/5 border border-white/10 rounded-lg">
+            <p className="text-xs text-gray-400">
+              Events created here will sync to your connected calendars, and calendar events will appear in your schedule.
+            </p>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

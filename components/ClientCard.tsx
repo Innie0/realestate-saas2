@@ -54,7 +54,7 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
   return (
     <Link href={`/dashboard/clients/${client.id}`} className="block">
       <Card 
-        className="hover:shadow-lg transition-shadow cursor-pointer relative h-full"
+        className="hover:shadow-lg transition-shadow cursor-pointer relative h-full min-h-[260px]"
       >
         <div className="flex items-start justify-between">
         <div className="flex-1">
