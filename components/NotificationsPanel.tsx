@@ -172,10 +172,10 @@ export default function NotificationsPanel() {
   return (
     <Card>
       <div className="flex items-center gap-2 mb-4">
-        <Bell className="w-5 h-5 text-blue-400" />
+        <Bell className="w-5 h-5 text-white/60" />
         <h2 className="text-lg font-semibold text-white">Upcoming Events & Reminders</h2>
         {items.length > 0 && (
-          <span className="ml-auto bg-blue-500/20 text-blue-300 text-xs font-medium px-2 py-1 rounded-full border border-blue-400/30">
+          <span className="ml-auto bg-white/10 text-gray-300 text-xs font-medium px-2 py-1 rounded-full border border-white/20">
             {items.length}
           </span>
         )}
@@ -194,9 +194,9 @@ export default function NotificationsPanel() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     {item.type === 'reminder' ? (
-                      <Bell className="w-3.5 h-3.5 text-blue-400" />
+                      <Bell className="w-3.5 h-3.5 text-white/50" />
                     ) : (
-                      <Calendar className="w-3.5 h-3.5 text-purple-400" />
+                      <Calendar className="w-3.5 h-3.5 text-white/50" />
                     )}
                     <h3 className="font-medium text-white text-sm">{item.title}</h3>
                     {isToday(item.date) && (
@@ -224,7 +224,7 @@ export default function NotificationsPanel() {
                       </div>
                     )}
                     {item.eventType && (
-                      <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded border border-purple-400/30">
+                      <span className="text-xs bg-white/10 text-gray-300 px-2 py-0.5 rounded border border-white/20">
                         {item.eventType}
                       </span>
                     )}
