@@ -434,20 +434,65 @@ export default function PropertyLookupPage() {
                 >
                   <div className="flex items-center gap-4">
                     {/* Avatar */}
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-                      {person.owner.firstName?.[0]?.toUpperCase() || person.owner.lastName?.[0]?.toUpperCase() || '?'}
-                    </div>
+                    {(() => {
+                      const isUnknown = !person.owner.firstName && !person.owner.lastName;
+                      const initial = person.owner.firstName?.[0]?.toUpperCase() || person.owner.lastName?.[0]?.toUpperCase();
+                      return (
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0 border ${isUnknown ? 'bg-white/5 border-white/10 text-gray-500' : 'bg-white/10 border-white/20 text-white'}`}>
+                          {isUnknown ? '?' : initial}
+                        </div>
+                      );
+                    })()}
                     <div className="text-left">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="text-white font-semibold text-lg capitalize">
-                          {person.owner.fullName.toLowerCase()}
-                        </h3>
-                        {person.dataSource === 'county_records_and_skip_trace' || person.dataSource === 'county_records_only' ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/15 text-green-400 border border-green-500/25">
-                            <Shield className="w-3 h-3" />
-                            County Verified
-                          </span>
-                        ) : null}
+                        {/* Owner name — handle "Not Found" case gracefully */}
+                        {(() => {
+                          const raw = person.owner.fullName || '';
+                          const isNotFound = raw.toLowerCase().includes('not found') || raw.toLowerCase().includes('unknown');
+                          const fallback = person.propertyDetails?.ownerName;
+                          const displayName = isNotFound
+                            ? (fallback ? fallback : 'Unknown Owner')
+                            : raw.toLowerCase();
+                          return (
+                            <h3 className={`font-semibold text-lg capitalize ${isNotFound && !fallback ? 'text-gray-400 italic' : 'text-white'}`}>
+                              {displayName}
+                            </h3>
+                          );
+                        })()}
+
+                        {/* Owner confidence badge */}
+                        {(() => {
+                          const src = person.dataSource;
+                          if (src === 'county_records_and_skip_trace' && person.matched) {
+                            return (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/15 text-green-400 border border-green-500/25">
+                                <Shield className="w-3 h-3" /> Confirmed Owner
+                              </span>
+                            );
+                          }
+                          if (src === 'county_records_only') {
+                            return (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-white/10 text-gray-300 border border-white/20">
+                                <Shield className="w-3 h-3" /> County Record
+                              </span>
+                            );
+                          }
+                          if (src === 'skip_trace_only') {
+                            return (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-500/15 text-yellow-400 border border-yellow-500/25">
+                                <Shield className="w-3 h-3" /> Likely Owner
+                              </span>
+                            );
+                          }
+                          if (src === 'county_records_and_skip_trace') {
+                            return (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-white/10 text-gray-300 border border-white/20">
+                                <Shield className="w-3 h-3" /> County Verified
+                              </span>
+                            );
+                          }
+                          return null;
+                        })()}
                       </div>
                       <div className="flex items-center gap-3 mt-1 flex-wrap">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getOccupancyColor(person.occupancyStatus)}`}>
@@ -539,13 +584,13 @@ export default function PropertyLookupPage() {
 
                 {/* Expanded Details */}
                 {expandedPersonIndex === index && (
-                  <div className="border-t border-gray-800 p-5 space-y-6">
+                  <div className="border-t border-white/10 p-5 space-y-6">
                     {/* Addresses Section */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Property Address */}
                       <div className="bg-white/5 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-2">
-                          <Home className="w-4 h-4 text-purple-400" />
+                          <Home className="w-4 h-4 text-white/40" />
                           <h4 className="text-sm font-medium text-gray-300">Property Address</h4>
                         </div>
                         <p className="text-white text-sm">
@@ -561,7 +606,7 @@ export default function PropertyLookupPage() {
                       {/* Owner Mailing Address */}
                       <div className="bg-white/5 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-2">
-                          <Mail className="w-4 h-4 text-blue-400" />
+                          <Mail className="w-4 h-4 text-white/40" />
                           <h4 className="text-sm font-medium text-gray-300">Owner Mailing Address</h4>
                         </div>
                         <p className="text-white text-sm">
@@ -579,58 +624,77 @@ export default function PropertyLookupPage() {
                     {person.propertyDetails && Object.values(person.propertyDetails).some(v => v !== null) && (
                       <div>
                         <div className="flex items-center gap-2 mb-3">
-                          <Home className="w-4 h-4 text-purple-400" />
+                          <Home className="w-4 h-4 text-white/40" />
                           <h4 className="text-sm font-medium text-gray-300">Property Details</h4>
                         </div>
+                        {/* Key specs row — beds/baths/sqft/year front and center */}
+                        {(person.propertyDetails.bedrooms || person.propertyDetails.bathrooms || person.propertyDetails.squareFootage || person.propertyDetails.yearBuilt) && (
+                          <div className="flex flex-wrap gap-4 mb-4 p-4 bg-white/5 rounded-xl border border-white/10">
+                            {person.propertyDetails.bedrooms && (
+                              <div className="flex items-center gap-2">
+                                <Bed className="w-4 h-4 text-white/40 flex-shrink-0" />
+                                <div>
+                                  <p className="text-lg font-bold text-white leading-none">{person.propertyDetails.bedrooms}</p>
+                                  <p className="text-xs text-gray-500">beds</p>
+                                </div>
+                              </div>
+                            )}
+                            {person.propertyDetails.bedrooms && person.propertyDetails.bathrooms && <div className="w-px bg-white/10" />}
+                            {person.propertyDetails.bathrooms && (
+                              <div className="flex items-center gap-2">
+                                <Bath className="w-4 h-4 text-white/40 flex-shrink-0" />
+                                <div>
+                                  <p className="text-lg font-bold text-white leading-none">{person.propertyDetails.bathrooms}</p>
+                                  <p className="text-xs text-gray-500">baths</p>
+                                </div>
+                              </div>
+                            )}
+                            {person.propertyDetails.squareFootage && <div className="w-px bg-white/10" />}
+                            {person.propertyDetails.squareFootage && (
+                              <div className="flex items-center gap-2">
+                                <Ruler className="w-4 h-4 text-white/40 flex-shrink-0" />
+                                <div>
+                                  <p className="text-lg font-bold text-white leading-none">{Number(person.propertyDetails.squareFootage).toLocaleString()}</p>
+                                  <p className="text-xs text-gray-500">sq ft</p>
+                                </div>
+                              </div>
+                            )}
+                            {person.propertyDetails.yearBuilt && <div className="w-px bg-white/10" />}
+                            {person.propertyDetails.yearBuilt && (
+                              <div className="flex items-center gap-2">
+                                <Calendar className="w-4 h-4 text-white/40 flex-shrink-0" />
+                                <div>
+                                  <p className="text-lg font-bold text-white leading-none">{person.propertyDetails.yearBuilt}</p>
+                                  <p className="text-xs text-gray-500">built</p>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Secondary details grid */}
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                          {person.propertyDetails.yearBuilt && (
-                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
-                              <Calendar className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" />
-                              <div>
-                                <p className="text-xs text-gray-500">Year Built</p>
-                                <p className="text-white text-sm font-medium">{person.propertyDetails.yearBuilt}</p>
-                              </div>
-                            </div>
-                          )}
-                          {person.propertyDetails.squareFootage && (
-                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
-                              <Ruler className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
-                              <div>
-                                <p className="text-xs text-gray-500">Square Footage</p>
-                                <p className="text-white text-sm font-medium">{Number(person.propertyDetails.squareFootage).toLocaleString()} sq ft</p>
-                              </div>
-                            </div>
-                          )}
-                          {person.propertyDetails.bedrooms && (
-                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
-                              <Bed className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                              <div>
-                                <p className="text-xs text-gray-500">Bedrooms</p>
-                                <p className="text-white text-sm font-medium">{person.propertyDetails.bedrooms}</p>
-                              </div>
-                            </div>
-                          )}
-                          {person.propertyDetails.bathrooms && (
-                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
-                              <Bath className="w-4 h-4 text-cyan-400 mt-0.5 flex-shrink-0" />
-                              <div>
-                                <p className="text-xs text-gray-500">Bathrooms</p>
-                                <p className="text-white text-sm font-medium">{person.propertyDetails.bathrooms}</p>
-                              </div>
-                            </div>
-                          )}
                           {person.propertyDetails.lotSize && (
                             <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
-                              <MapPin className="w-4 h-4 text-orange-400 mt-0.5 flex-shrink-0" />
+                              <MapPin className="w-4 h-4 text-white/40 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Lot Size</p>
                                 <p className="text-white text-sm font-medium">{person.propertyDetails.lotSize}</p>
                               </div>
                             </div>
                           )}
+                          {person.propertyDetails.propertyType && (
+                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
+                              <Building className="w-4 h-4 text-white/40 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-gray-500">Property Type</p>
+                                <p className="text-white text-sm font-medium">{person.propertyDetails.propertyType}</p>
+                              </div>
+                            </div>
+                          )}
                           {person.propertyDetails.assessedValue && (
                             <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
-                              <DollarSign className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
+                              <DollarSign className="w-4 h-4 text-white/40 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Assessed Value</p>
                                 <p className="text-white text-sm font-medium">${Number(person.propertyDetails.assessedValue).toLocaleString()}</p>
@@ -639,7 +703,7 @@ export default function PropertyLookupPage() {
                           )}
                           {person.propertyDetails.lastSalePrice && (
                             <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
-                              <DollarSign className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                              <DollarSign className="w-4 h-4 text-white/40 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Last Sale Price</p>
                                 <p className="text-white text-sm font-medium">${Number(person.propertyDetails.lastSalePrice).toLocaleString()}</p>
@@ -648,25 +712,16 @@ export default function PropertyLookupPage() {
                           )}
                           {person.propertyDetails.lastSaleDate && (
                             <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
-                              <Calendar className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                              <Calendar className="w-4 h-4 text-white/40 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Last Sale Date</p>
                                 <p className="text-white text-sm font-medium">{person.propertyDetails.lastSaleDate}</p>
                               </div>
                             </div>
                           )}
-                          {person.propertyDetails.propertyType && (
-                            <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
-                              <Building className="w-4 h-4 text-indigo-400 mt-0.5 flex-shrink-0" />
-                              <div>
-                                <p className="text-xs text-gray-500">Property Type</p>
-                                <p className="text-white text-sm font-medium">{person.propertyDetails.propertyType}</p>
-                              </div>
-                            </div>
-                          )}
                           {person.propertyDetails.subdivision && (
                             <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
-                              <MapPin className="w-4 h-4 text-pink-400 mt-0.5 flex-shrink-0" />
+                              <MapPin className="w-4 h-4 text-white/40 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Subdivision</p>
                                 <p className="text-white text-sm font-medium">{person.propertyDetails.subdivision}</p>
@@ -675,7 +730,7 @@ export default function PropertyLookupPage() {
                           )}
                           {person.propertyDetails.hoaFee && (
                             <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
-                              <DollarSign className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                              <DollarSign className="w-4 h-4 text-white/40 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">HOA Fee</p>
                                 <p className="text-white text-sm font-medium">${person.propertyDetails.hoaFee}/mo</p>
@@ -684,7 +739,7 @@ export default function PropertyLookupPage() {
                           )}
                           {person.propertyDetails.zoning && (
                             <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2">
-                              <FileText className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                              <FileText className="w-4 h-4 text-white/40 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Zoning</p>
                                 <p className="text-white text-sm font-medium">{person.propertyDetails.zoning}</p>
@@ -693,7 +748,7 @@ export default function PropertyLookupPage() {
                           )}
                           {person.propertyDetails.legalDescription && (
                             <div className="bg-white/5 rounded-xl p-3 flex items-start gap-2 col-span-2 sm:col-span-3">
-                              <FileText className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                              <FileText className="w-4 h-4 text-white/40 mt-0.5 flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-gray-500">Legal Description</p>
                                 <p className="text-white text-sm">{person.propertyDetails.legalDescription}</p>
@@ -707,7 +762,7 @@ export default function PropertyLookupPage() {
                     {/* Phone Numbers Section */}
                     <div>
                       <div className="flex items-center gap-2 mb-3">
-                        <Phone className="w-4 h-4 text-green-400" />
+                        <Phone className="w-4 h-4 text-white/40" />
                         <h4 className="text-sm font-medium text-gray-300">
                           Phone Numbers ({person.phoneNumbers.length})
                         </h4>
@@ -725,8 +780,8 @@ export default function PropertyLookupPage() {
                               className="flex items-center justify-between bg-white/5 rounded-xl p-3 group hover:bg-white/10 transition-colors"
                             >
                               <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
-                                  <Phone className="w-4 h-4 text-green-400" />
+                                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                                  <Phone className="w-4 h-4 text-white/40" />
                                 </div>
                                 <div>
                                   <p className="text-white font-medium text-sm">
@@ -774,7 +829,7 @@ export default function PropertyLookupPage() {
                     {/* Emails Section */}
                     <div>
                       <div className="flex items-center gap-2 mb-3">
-                        <Mail className="w-4 h-4 text-blue-400" />
+                        <Mail className="w-4 h-4 text-white/40" />
                         <h4 className="text-sm font-medium text-gray-300">
                           Email Addresses ({person.emails.length})
                         </h4>
@@ -792,8 +847,8 @@ export default function PropertyLookupPage() {
                               className="flex items-center justify-between bg-white/5 rounded-xl p-3 group hover:bg-white/10 transition-colors"
                             >
                               <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                                  <Mail className="w-4 h-4 text-blue-400" />
+                                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                                  <Mail className="w-4 h-4 text-white/40" />
                                 </div>
                                 <p className="text-white text-sm">{email.email}</p>
                               </div>
@@ -828,10 +883,10 @@ export default function PropertyLookupPage() {
                     {person.activeListing && (
                       <div>
                         <div className="flex items-center gap-2 mb-3">
-                          <Tag className="w-4 h-4 text-green-400" />
+                          <Tag className="w-4 h-4 text-white/40" />
                           <h4 className="text-sm font-medium text-gray-300">Listing Details</h4>
                         </div>
-                        <div className="bg-green-500/5 border border-green-500/20 rounded-xl p-4 space-y-3">
+                        <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
                           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             {person.activeListing.price && (
                               <div>
@@ -859,18 +914,18 @@ export default function PropertyLookupPage() {
                             )}
                           </div>
                           {person.activeListing.listingAgent && (
-                            <div className="pt-3 border-t border-green-500/10">
+                            <div className="pt-3 border-t border-white/10">
                               <p className="text-xs text-gray-500 mb-1">Listing Agent</p>
                               <p className="text-white text-sm font-medium">{person.activeListing.listingAgent.name}</p>
                               <div className="flex flex-wrap gap-3 mt-1">
                                 {person.activeListing.listingAgent.phone && (
-                                  <span className="text-xs text-green-400 flex items-center gap-1">
+                                  <span className="text-xs text-gray-400 flex items-center gap-1">
                                     <Phone className="w-3 h-3" />
                                     {person.activeListing.listingAgent.phone}
                                   </span>
                                 )}
                                 {person.activeListing.listingAgent.email && (
-                                  <span className="text-xs text-blue-400 flex items-center gap-1">
+                                  <span className="text-xs text-gray-400 flex items-center gap-1">
                                     <Mail className="w-3 h-3" />
                                     {person.activeListing.listingAgent.email}
                                   </span>
@@ -880,7 +935,7 @@ export default function PropertyLookupPage() {
                                     href={person.activeListing.listingAgent.website}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-xs text-purple-400 flex items-center gap-1 hover:underline"
+                                    className="text-xs text-gray-400 hover:text-white flex items-center gap-1 hover:underline transition-colors"
                                   >
                                     <ExternalLink className="w-3 h-3" />
                                     Website
@@ -900,10 +955,10 @@ export default function PropertyLookupPage() {
                     {!person.activeListing && person.recentlySold && (
                       <div>
                         <div className="flex items-center gap-2 mb-3">
-                          <TrendingUp className="w-4 h-4 text-blue-400" />
+                          <TrendingUp className="w-4 h-4 text-white/40" />
                           <h4 className="text-sm font-medium text-gray-300">Recently Sold (MLS)</h4>
                         </div>
-                        <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-4 space-y-3">
+                        <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
                           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             {person.recentlySold.price && (
                               <div>
@@ -931,18 +986,18 @@ export default function PropertyLookupPage() {
                             )}
                           </div>
                           {person.recentlySold.listingAgent && (
-                            <div className="pt-3 border-t border-blue-500/10">
+                            <div className="pt-3 border-t border-white/10">
                               <p className="text-xs text-gray-500 mb-1">Listing Agent</p>
                               <p className="text-white text-sm font-medium">{person.recentlySold.listingAgent.name}</p>
                               <div className="flex flex-wrap gap-3 mt-1">
                                 {person.recentlySold.listingAgent.phone && (
-                                  <span className="text-xs text-green-400 flex items-center gap-1">
+                                  <span className="text-xs text-gray-400 flex items-center gap-1">
                                     <Phone className="w-3 h-3" />
                                     {person.recentlySold.listingAgent.phone}
                                   </span>
                                 )}
                                 {person.recentlySold.listingAgent.email && (
-                                  <span className="text-xs text-blue-400 flex items-center gap-1">
+                                  <span className="text-xs text-gray-400 flex items-center gap-1">
                                     <Mail className="w-3 h-3" />
                                     {person.recentlySold.listingAgent.email}
                                   </span>
@@ -952,7 +1007,7 @@ export default function PropertyLookupPage() {
                                     href={person.recentlySold.listingAgent.website}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-xs text-purple-400 flex items-center gap-1 hover:underline"
+                                    className="text-xs text-gray-400 hover:text-white flex items-center gap-1 hover:underline transition-colors"
                                   >
                                     <ExternalLink className="w-3 h-3" />
                                     Website
