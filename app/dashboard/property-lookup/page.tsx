@@ -971,31 +971,130 @@ export default function PropertyLookupPage() {
                       </div>
                     )}
 
-                    {/* Sale History */}
-                    {person.propertyDetails?.saleHistory && person.propertyDetails.saleHistory.length > 0 && (
-                      <div>
-                        <div className="flex items-center gap-2 mb-3">
-                          <TrendingUp className="w-4 h-4 text-yellow-400" />
-                          <h4 className="text-sm font-medium text-gray-300">Sale History</h4>
-                        </div>
-                        <div className="space-y-2">
-                          {person.propertyDetails.saleHistory.map((sale, saleIndex) => (
-                            <div key={saleIndex} className="flex items-center justify-between bg-white/5 rounded-xl px-4 py-3">
-                              <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-yellow-400 flex-shrink-0" />
-                                <span className="text-gray-300 text-sm">{sale.date || 'Unknown date'}</span>
-                                {saleIndex === 0 && (
-                                  <span className="text-xs px-1.5 py-0.5 rounded bg-yellow-500/15 text-yellow-400 border border-yellow-500/20">Most Recent</span>
-                                )}
-                              </div>
-                              <span className="text-white font-semibold text-sm">
-                                {sale.price ? `$${sale.price.toLocaleString()}` : 'Price unknown'}
-                              </span>
+                    {/* Sale History — Zillow-style */}
+                    {person.propertyDetails?.saleHistory && person.propertyDetails.saleHistory.length > 0 && (() => {
+                      const history = person.propertyDetails!.saleHistory;
+                      const prices = history.map(s => s.price).filter((p): p is number => p !== null && p > 0);
+                      const maxPrice = prices.length > 0 ? Math.max(...prices) : 1;
+
+                      return (
+                        <div>
+                          {/* Header */}
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-2">
+                              <TrendingUp className="w-4 h-4 text-white/60" />
+                              <h4 className="text-sm font-semibold text-white">Price History</h4>
                             </div>
-                          ))}
+                            <span className="text-xs text-gray-500">{history.length} recorded sale{history.length !== 1 ? 's' : ''}</span>
+                          </div>
+
+                          {/* Chart + timeline */}
+                          <div className="rounded-xl border border-white/10 overflow-hidden">
+                            {/* Mini bar chart */}
+                            {prices.length > 1 && (
+                              <div className="px-4 pt-4 pb-2 border-b border-white/10">
+                                <p className="text-xs text-gray-500 mb-3">Sale price over time (oldest → newest)</p>
+                                <div className="flex items-end gap-1.5 h-16">
+                                  {[...history].reverse().map((sale, i) => {
+                                    const pct = sale.price && maxPrice > 0 ? (sale.price / maxPrice) * 100 : 0;
+                                    const isLatest = i === history.length - 1;
+                                    return (
+                                      <div key={i} className="flex-1 flex flex-col items-center gap-1 group relative">
+                                        {/* Tooltip */}
+                                        <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                                          <div className="bg-[#1a1a1a] border border-white/20 rounded-lg px-2 py-1.5 text-xs text-white whitespace-nowrap shadow-xl">
+                                            {sale.date && <p className="text-gray-400">{sale.date}</p>}
+                                            <p className="font-semibold">{sale.price ? `$${sale.price.toLocaleString()}` : 'Unknown'}</p>
+                                          </div>
+                                        </div>
+                                        <div
+                                          className={`w-full rounded-t transition-all ${isLatest ? 'bg-white' : 'bg-white/30'}`}
+                                          style={{ height: `${Math.max(pct, 8)}%` }}
+                                        />
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Timeline rows */}
+                            <div className="divide-y divide-white/5">
+                              {history.map((sale, saleIndex) => {
+                                const nextSale = history[saleIndex + 1]; // older sale
+                                let changeStr = '';
+                                let changePos = false;
+                                if (sale.price && nextSale?.price) {
+                                  const diff = sale.price - nextSale.price;
+                                  const pct = ((diff / nextSale.price) * 100).toFixed(1);
+                                  changePos = diff >= 0;
+                                  changeStr = `${diff >= 0 ? '+' : ''}${pct}%`;
+                                }
+
+                                return (
+                                  <div key={saleIndex} className={`flex items-center justify-between px-4 py-3 ${saleIndex === 0 ? 'bg-white/5' : 'hover:bg-white/3'} transition-colors`}>
+                                    {/* Left: dot + date */}
+                                    <div className="flex items-center gap-3 min-w-0">
+                                      <div className="flex flex-col items-center flex-shrink-0">
+                                        <div className={`w-2.5 h-2.5 rounded-full ${saleIndex === 0 ? 'bg-white' : 'bg-white/30'}`} />
+                                        {saleIndex < history.length - 1 && (
+                                          <div className="w-px h-6 bg-white/10 mt-0.5" />
+                                        )}
+                                      </div>
+                                      <div>
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                          <span className="text-sm text-white font-medium">
+                                            {sale.date || 'Unknown date'}
+                                          </span>
+                                          {saleIndex === 0 && (
+                                            <span className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-gray-300 border border-white/15">
+                                              Most Recent
+                                            </span>
+                                          )}
+                                        </div>
+                                        <span className="text-xs text-gray-500">Recorded sale</span>
+                                      </div>
+                                    </div>
+
+                                    {/* Right: price + change */}
+                                    <div className="text-right flex-shrink-0 ml-4">
+                                      <p className="text-white font-bold text-sm">
+                                        {sale.price ? `$${sale.price.toLocaleString()}` : '—'}
+                                      </p>
+                                      {changeStr && (
+                                        <p className={`text-xs font-medium ${changePos ? 'text-green-400' : 'text-red-400'}`}>
+                                          {changeStr} from prev
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+
+                          {/* Appreciation summary */}
+                          {prices.length >= 2 && (() => {
+                            const newest = prices[0];
+                            const oldest = prices[prices.length - 1];
+                            const totalPct = (((newest - oldest) / oldest) * 100).toFixed(1);
+                            const isUp = newest >= oldest;
+                            return (
+                              <div className={`mt-3 flex items-center gap-3 p-3 rounded-xl border ${isUp ? 'bg-green-500/5 border-green-500/20' : 'bg-red-500/5 border-red-500/20'}`}>
+                                <TrendingUp className={`w-4 h-4 flex-shrink-0 ${isUp ? 'text-green-400' : 'text-red-400'}`} />
+                                <p className="text-sm text-gray-300">
+                                  Total appreciation:{' '}
+                                  <span className={`font-semibold ${isUp ? 'text-green-400' : 'text-red-400'}`}>
+                                    {isUp ? '+' : ''}{totalPct}%
+                                  </span>
+                                  {' '}from ${oldest.toLocaleString()} → ${newest.toLocaleString()}
+                                </p>
+                              </div>
+                            );
+                          })()}
                         </div>
-                      </div>
-                    )}
+                      );
+                    })()}
 
                     {/* Disclaimer */}
                     <p className="text-xs text-gray-600 italic">
