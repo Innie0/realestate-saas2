@@ -2,7 +2,22 @@
 
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
-import { Search, MapPin, Phone, Mail, Home, Building, Loader2, AlertCircle, ChevronDown, ChevronUp, Shield, Copy, Check, X, Calendar, DollarSign, Ruler, Bed, Bath, FileText, TrendingUp, Tag, Clock, ExternalLink } from 'lucide-react';
+import { Search, MapPin, Phone, Mail, Home, Building, Loader2, AlertCircle, ChevronDown, ChevronUp, Shield, Copy, Check, X, Calendar, DollarSign, Ruler, Bed, Bath, FileText, TrendingUp, Tag, Clock, ExternalLink, History, Trash2 } from 'lucide-react';
+
+const HISTORY_KEY = 'realestic_property_lookup_history';
+const MAX_HISTORY = 10;
+
+interface HistoryEntry {
+  id: string;
+  label: string;
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  ownerName: string;
+  lookedUpAt: string;
+  results: LookupResponse;
+}
 
 // Types for property lookup results
 interface PhoneNumber {
@@ -167,12 +182,73 @@ export default function PropertyLookupPage() {
   // UI state
   const [expandedPersonIndex, setExpandedPersonIndex] = useState<number | null>(0);
   const [copiedText, setCopiedText] = useState<string | null>(null);
-  const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
 
   // Set page title
   useEffect(() => {
     document.title = 'Property Lookup - Realestic';
   }, []);
+
+  // Load history from localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(HISTORY_KEY);
+      if (stored) setHistory(JSON.parse(stored));
+    } catch {}
+  }, []);
+
+  const saveHistory = (entries: HistoryEntry[]) => {
+    setHistory(entries);
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(entries)); } catch {}
+  };
+
+  const addToHistory = (data: LookupResponse, formStreet: string, formCity: string, formState: string, formZip: string) => {
+    const firstResult = data.results?.[0];
+    const ownerName = firstResult
+      ? (firstResult.owner.fullName !== 'Not Found In County Records' ? firstResult.owner.fullName : firstResult.propertyDetails?.ownerName || 'Unknown Owner')
+      : 'No match found';
+    const label = [formStreet, formCity, formState, formZip].filter(Boolean).join(', ');
+    const entry: HistoryEntry = {
+      id: Date.now().toString(),
+      label,
+      street: formStreet,
+      city: formCity,
+      state: formState,
+      zip: formZip,
+      ownerName,
+      lookedUpAt: new Date().toISOString(),
+      results: data,
+    };
+    setHistory(prev => {
+      const deduped = prev.filter(h => h.label.toLowerCase() !== label.toLowerCase());
+      const updated = [entry, ...deduped].slice(0, MAX_HISTORY);
+      try { localStorage.setItem(HISTORY_KEY, JSON.stringify(updated)); } catch {}
+      return updated;
+    });
+  };
+
+  const loadFromHistory = (entry: HistoryEntry) => {
+    setStreet(entry.street);
+    setCity(entry.city);
+    setState(entry.state);
+    setZip(entry.zip);
+    setResults(entry.results);
+    setError(null);
+    setExpandedPersonIndex(0);
+    setShowHistory(false);
+  };
+
+  const removeFromHistory = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updated = history.filter(h => h.id !== id);
+    saveHistory(updated);
+  };
+
+  const clearHistory = () => {
+    saveHistory([]);
+    setShowHistory(false);
+  };
 
   // Copy to clipboard helper
   const copyToClipboard = (text: string) => {
@@ -225,13 +301,7 @@ export default function PropertyLookupPage() {
       }
 
       setResults(data.data);
-
-      // Add to search history
-      const searchStr = `${street.trim()}, ${city.trim()}, ${state} ${zip.trim()}`.trim();
-      setSearchHistory(prev => {
-        const updated = [searchStr, ...prev.filter(s => s !== searchStr)].slice(0, 10);
-        return updated;
-      });
+      addToHistory(data.data, street.trim(), city.trim(), state, zip.trim());
 
     } catch (err) {
       console.error('Property lookup error:', err);
@@ -263,6 +333,59 @@ export default function PropertyLookupPage() {
       <Header title="Property Lookup" subtitle="Search any address to find owner and contact information" />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        {/* Recent Lookups */}
+        {history.length > 0 && (
+          <div className="mb-6">
+            <button
+              onClick={() => setShowHistory(v => !v)}
+              className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors mb-3"
+            >
+              <History className="w-4 h-4" />
+              Recent Lookups ({history.length})
+              <ChevronDown className={`w-4 h-4 transition-transform ${showHistory ? 'rotate-180' : ''}`} />
+            </button>
+
+            {showHistory && (
+              <div className="rounded-2xl border border-white/10 bg-[#111111] overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Previously looked up</span>
+                  <button
+                    onClick={clearHistory}
+                    className="flex items-center gap-1 text-xs text-gray-500 hover:text-red-400 transition-colors"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    Clear all
+                  </button>
+                </div>
+                <div className="divide-y divide-white/5">
+                  {history.map(entry => (
+                    <div
+                      key={entry.id}
+                      onClick={() => loadFromHistory(entry)}
+                      className="flex items-center justify-between px-4 py-3 hover:bg-white/5 cursor-pointer group transition-colors"
+                    >
+                      <div className="flex items-start gap-3 min-w-0">
+                        <MapPin className="w-4 h-4 text-white/40 flex-shrink-0 mt-0.5" />
+                        <div className="min-w-0">
+                          <p className="text-sm text-white truncate">{entry.label}</p>
+                          <p className="text-xs text-gray-500 mt-0.5">{entry.ownerName} · {new Date(entry.lookedUpAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={(e) => removeFromHistory(entry.id, e)}
+                        className="p-1 rounded-lg text-gray-600 hover:text-red-400 hover:bg-white/5 opacity-0 group-hover:opacity-100 transition-all flex-shrink-0 ml-2"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Search Form */}
         <div className="rounded-2xl border border-white/10 p-6 mb-8 bg-[#111111]">
           <form onSubmit={handleSearch} className="space-y-4">
