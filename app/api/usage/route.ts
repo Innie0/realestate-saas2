@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
-import { getAllUsage } from '@/lib/usage';
+import { getAllUsage, getPlanName } from '@/lib/usage';
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,9 +12,16 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { data: userData } = await supabase
+      .from('users')
+      .select('subscription_plan')
+      .eq('id', user.id)
+      .single();
+
+    const plan = getPlanName(userData?.subscription_plan);
     const usage = await getAllUsage(supabase, user.id);
 
-    return NextResponse.json({ success: true, data: usage });
+    return NextResponse.json({ success: true, data: usage, plan });
   } catch (error: any) {
     console.error('Usage API error:', error);
     return NextResponse.json(

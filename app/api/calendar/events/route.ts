@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
     const usage = await checkUsageLimit(supabase, user.id, 'calendar_events');
     if (!usage.allowed) {
       return NextResponse.json(
-        { success: false, error: usageLimitError('calendar_events', usage.current, usage.limit) },
+        { success: false, error: usageLimitError('calendar_events', usage.current, usage.limit, usage.plan) },
         { status: 403 }
       );
     }

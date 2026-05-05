@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
     const usage = await checkUsageLimit(supabase, user.id, 'transactions');
     if (!usage.allowed) {
       return NextResponse.json(
-        { success: false, error: usageLimitError('transactions', usage.current, usage.limit) },
+        { success: false, error: usageLimitError('transactions', usage.current, usage.limit, usage.plan) },
         { status: 403 }
       );
     }

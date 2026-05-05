@@ -69,13 +69,33 @@ export default function PricingPage() {
 
   const plans = [
     {
+      name: 'Free',
+      price: '$0',
+      period: 'forever',
+      description: 'Try Realestic at your own pace — no credit card required',
+      priceId: null,
+      features: [
+        '3 AI Listing Projects per Month',
+        '5 Property Lookups (lifetime)',
+        '20 AI Assistant Messages per Month',
+        'Up to 5 Clients',
+        'Up to 3 Transactions',
+        'Unlimited Calendar Events',
+        'AI-Powered Descriptions',
+        'Image Analysis',
+      ],
+      popular: false,
+      cta: 'Get Started Free',
+      ctaHref: '/auth/signup',
+    },
+    {
       name: 'Starter',
       price: '$14.99',
       period: 'per month',
-      description: 'Perfect for getting started with your real estate business',
+      description: 'Perfect for active agents growing their business',
       priceId: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || 'price_1Sw9B7Enz9g2d62xiHw3wYn5',
       features: [
-        'Up to 10 Property Listings per Month',
+        '10 AI Listing Projects per Month',
         '10 Property Lookups per Month',
         '50 AI Assistant Messages per Month',
         'Up to 25 Clients',
@@ -85,14 +105,9 @@ export default function PricingPage() {
         'Image Analysis',
         'Email Support',
       ],
-      notIncluded: [
-        'Unlimited Listings & Lookups',
-        'Unlimited AI Messages',
-        'Priority Support',
-        'Custom Branding',
-      ],
       popular: false,
-      color: 'blue',
+      cta: null,
+      ctaHref: null,
     },
     {
       name: 'Pro',
@@ -106,17 +121,15 @@ export default function PricingPage() {
         'Unlimited AI Assistant Messages',
         'Unlimited Clients & Transactions',
         'Unlimited Calendar Events',
-        'AI-Powered Descriptions with Multiple Tones',
+        'AI-Powered Descriptions (3 Tones)',
         'Advanced Image Analysis',
-        'Calendar Integration (Google + Outlook)',
+        'Google Calendar Integration',
         'Transaction Checklists & Reminders',
         'Priority Support',
-        'Custom Branding',
-        'Advanced Analytics',
       ],
-      notIncluded: [],
       popular: true,
-      color: 'purple',
+      cta: null,
+      ctaHref: null,
     },
   ];
 
@@ -156,7 +169,7 @@ export default function PricingPage() {
           <div className="text-center pt-12 pb-16">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/10 text-xs text-gray-300 mb-6">
               <Sparkles className="w-3.5 h-3.5" />
-              7-day free trial on any plan
+              Free plan available — no credit card needed
             </span>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight">
               Simple, transparent pricing
@@ -167,11 +180,11 @@ export default function PricingPage() {
           </div>
 
           {/* Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {plans.map((plan) => (
               <div
                 key={plan.name}
-                className={`relative rounded-2xl p-8 flex flex-col ${
+                className={`relative rounded-2xl p-7 flex flex-col ${
                   plan.popular
                     ? 'bg-[#111111] border-2 border-white/30'
                     : 'bg-[#111111] border border-white/10'
@@ -188,7 +201,7 @@ export default function PricingPage() {
                 )}
 
                 {/* Plan name & description */}
-                <div className="mb-6">
+                <div className="mb-5">
                   <h3 className="text-xl font-bold text-white mb-1">{plan.name}</h3>
                   <p className="text-gray-500 text-sm">{plan.description}</p>
                 </div>
@@ -196,19 +209,27 @@ export default function PricingPage() {
                 {/* Price */}
                 <div className="mb-6">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-bold text-white">{plan.price}</span>
+                    <span className="text-4xl font-bold text-white">{plan.price}</span>
                     <span className="text-gray-500 text-sm">{plan.period}</span>
                   </div>
-                  <p className="text-xs text-green-400 mt-1.5">7-day free trial included</p>
                 </div>
 
                 {/* CTA */}
-                <div className="mb-8">
-                  <SubscribeButton priceId={plan.priceId} planName={plan.name} className="w-full" />
+                <div className="mb-7">
+                  {plan.ctaHref ? (
+                    <Link
+                      href={plan.ctaHref}
+                      className="block w-full text-center py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-gray-100 transition-colors"
+                    >
+                      {plan.cta}
+                    </Link>
+                  ) : (
+                    <SubscribeButton priceId={plan.priceId!} planName={plan.name} className="w-full" />
+                  )}
                 </div>
 
                 {/* Divider */}
-                <div className="border-t border-white/10 mb-6" />
+                <div className="border-t border-white/10 mb-5" />
 
                 {/* Features */}
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">What's included</p>
@@ -239,7 +260,7 @@ export default function PricingPage() {
 
           {/* Footer note */}
           <p className="text-center text-gray-600 text-sm mt-10">
-            Cancel anytime · No hidden fees · Billed monthly
+            Free plan available forever · Paid plans cancel anytime · No hidden fees
           </p>
         </div>
       )}
