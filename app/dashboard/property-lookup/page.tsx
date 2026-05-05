@@ -1276,34 +1276,6 @@ export default function PropertyLookupPage() {
         )}
 
 
-        {/* Search History */}
-        {searchHistory.length > 0 && !results && (
-          <div className="mt-8">
-            <h3 className="text-sm font-medium text-gray-400 mb-3">Recent Searches</h3>
-            <div className="flex flex-wrap gap-2">
-              {searchHistory.map((search, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    // Parse the search string back into fields
-                    const parts = search.split(',').map(p => p.trim());
-                    if (parts.length >= 1) setStreet(parts[0]);
-                    if (parts.length >= 2) setCity(parts[1]);
-                    if (parts.length >= 3) {
-                      const stateZip = parts[2].split(' ');
-                      if (stateZip[0]) setState(stateZip[0]);
-                      if (stateZip[1]) setZip(stateZip[1]);
-                    }
-                  }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[#111111] hover:bg-white/10 border border-white/10 rounded-lg text-sm text-gray-400 hover:text-white transition-all"
-                >
-                  <MapPin className="w-3 h-3" />
-                  {search}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
