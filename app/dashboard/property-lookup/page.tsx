@@ -263,16 +263,6 @@ export default function PropertyLookupPage() {
       <Header title="Property Lookup" subtitle="Search any address to find owner and contact information" />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Header */}
-        <div className="mb-8">
-          <div className="mb-2">
-            <h1 className="text-2xl font-bold text-white">Property Lookup</h1>
-          </div>
-          <p className="text-gray-400">
-            Search any address to find property owner information and contact details.
-          </p>
-        </div>
-
         {/* Search Form */}
         <div className="rounded-2xl border border-white/10 p-6 mb-8 bg-[#111111]">
           <form onSubmit={handleSearch} className="space-y-4">
