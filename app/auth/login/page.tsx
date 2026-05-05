@@ -29,6 +29,15 @@ export default function LoginPage() {
     document.title = 'Sign In - Realestic';
   }, []);
 
+  // Redirect already-authenticated users to dashboard
+  React.useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        router.replace('/dashboard');
+      }
+    });
+  }, [router]);
+
   /**
    * Handle email/password login
    */

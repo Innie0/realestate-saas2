@@ -218,10 +218,10 @@ export default function PricingPage() {
                 <div className="mb-7">
                   {plan.ctaHref ? (
                     <Link
-                      href={plan.ctaHref}
+                      href={isAuthenticated ? '/dashboard' : plan.ctaHref}
                       className="block w-full text-center py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-gray-100 transition-colors"
                     >
-                      {plan.cta}
+                      {isAuthenticated ? 'Go to Dashboard' : plan.cta}
                     </Link>
                   ) : (
                     <SubscribeButton priceId={plan.priceId!} planName={plan.name} className="w-full" />

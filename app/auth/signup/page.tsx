@@ -32,6 +32,15 @@ export default function SignUpPage() {
     document.title = 'Sign Up - Realestic';
   }, []);
 
+  // Redirect already-authenticated users to dashboard
+  React.useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        router.replace('/dashboard');
+      }
+    });
+  }, [router]);
+
   /**
    * Handle email/password registration
    */
@@ -132,7 +141,7 @@ export default function SignUpPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-white">Create your account</h1>
-          <p className="mt-2 text-sm sm:text-base text-gray-500">Start your 7-day free trial today</p>
+          <p className="mt-2 text-sm sm:text-base text-gray-500">Get started free — no credit card required</p>
         </div>
 
         {/* Card */}

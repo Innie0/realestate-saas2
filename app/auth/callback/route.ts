@@ -38,30 +38,8 @@ export async function GET(request: Request) {
       return NextResponse.redirect(new URL('/dashboard', requestUrl.origin));
     }
     
-    // Check subscription status to determine where to redirect
-    const { data: userData } = await supabase
-      .from('users')
-      .select('subscription_status')
-      .eq('id', user.id)
-      .single();
-    
-    const hasActiveSubscription = 
-      userData?.subscription_status === 'active' || 
-      userData?.subscription_status === 'trialing';
-
-    console.log('[OAuth Callback] Subscription check:', {
-      subscriptionStatus: userData?.subscription_status,
-      hasActiveSubscription,
-    });
-
-    // Redirect based on subscription status
-    if (hasActiveSubscription) {
-      // Has active subscription - redirect to dashboard
-      return NextResponse.redirect(new URL('/dashboard', requestUrl.origin));
-    } else {
-      // No subscription - redirect to pricing page
-      return NextResponse.redirect(new URL('/pricing', requestUrl.origin));
-    }
+    // All authenticated users go to dashboard (free plan is available for everyone)
+    return NextResponse.redirect(new URL('/dashboard', requestUrl.origin));
   }
 
   // If no code, redirect to login with error
