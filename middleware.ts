@@ -3,9 +3,6 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import type { Database } from '@/types/supabase';
 
-// Admin emails that bypass subscription checks
-const ADMIN_EMAILS = ['callon786@outlook.com'];
-
 // Routes that don't require authentication or subscription
 const publicRoutes = ['/', '/auth/login', '/auth/signup', '/auth/callback', '/privacy', '/terms'];
 // Routes that require authentication but NOT subscription
@@ -52,43 +49,7 @@ export async function middleware(req: NextRequest) {
     return res;
   }
   
-  // For dashboard routes, check subscription status
-  if (pathname.startsWith('/dashboard')) {
-    // Check if user is admin first
-    if (ADMIN_EMAILS.includes(session.user.email || '')) {
-      console.log(`[Middleware] Admin user (${session.user.email}) - bypassing subscription check`);
-      return res;
-    }
-    
-    try {
-      // Check if user has an active subscription
-      const { data: userData, error } = await supabase
-        .from('users')
-        .select('subscription_status, subscription_plan')
-        .eq('id', session.user.id)
-        .single();
-      
-      console.log(`[Middleware] Subscription check for ${session.user.email}:`, {
-        status: userData?.subscription_status,
-        plan: userData?.subscription_plan,
-        error: error?.message
-      });
-      
-      // If no subscription data or not active/trialing, redirect to pricing
-      const hasActiveSubscription = 
-        userData?.subscription_status === 'active' || 
-        userData?.subscription_status === 'trialing';
-      
-      if (!hasActiveSubscription) {
-        console.log(`[Middleware] No active subscription - redirecting to pricing`);
-        return NextResponse.redirect(new URL('/pricing', req.url));
-      }
-    } catch (error) {
-      console.error('[Middleware] Error checking subscription:', error);
-      // On error, redirect to pricing to be safe
-      return NextResponse.redirect(new URL('/pricing', req.url));
-    }
-  }
+  // Dashboard routes only require authentication — usage limits are enforced per-API-route
   
   return res;
 }
