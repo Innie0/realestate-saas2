@@ -132,7 +132,7 @@ export default function Sidebar() {
   return (
     <>
       {/* Mobile Header with Hamburger Menu */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-black border-b border-gray-800 px-4 py-3 flex items-center justify-between">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-black border-b border-white/10 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center flex-1">
           <Image
             src="/logo.png"
@@ -166,7 +166,7 @@ export default function Sidebar() {
       {/* Sidebar - Desktop: fixed left, Mobile: slide-in overlay */}
       <div 
         className={clsx(
-          'fixed top-0 h-screen flex flex-col bg-black text-white z-50 border-r border-gray-800',
+          'fixed top-0 h-screen flex flex-col bg-black text-white z-50 border-r border-white/10',
           // Desktop: always visible and relative positioning
           'lg:translate-x-0 lg:relative',
           // Width based on collapsed state
@@ -181,7 +181,7 @@ export default function Sidebar() {
         }}
       >
         {/* Logo / Brand section at the top - hidden on mobile (shown in header) */}
-        <div className="hidden lg:flex h-20 items-center justify-center border-b border-gray-800 bg-black overflow-hidden">
+        <div className="hidden lg:flex h-20 items-center justify-center border-b border-white/10 bg-black overflow-hidden">
           <div className={clsx(
             'transition-all duration-400',
             isCollapsed ? 'opacity-100 scale-100' : 'opacity-0 scale-50 absolute'
@@ -255,10 +255,10 @@ export default function Sidebar() {
 
                 {/* Tooltip bubble for collapsed mode */}
                 {isCollapsed && (
-                  <div className="absolute left-full ml-3 px-3 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg shadow-xl whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none transition-all duration-200 z-50 border border-gray-700">
+                  <div className="absolute left-full ml-3 px-3 py-2 bg-[#111111] text-white text-sm font-medium rounded-lg shadow-xl whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none transition-all duration-200 z-50 border border-white/10">
                     {item.name}
                     {/* Arrow pointing to icon */}
-                    <div className="absolute right-full top-1/2 -translate-y-1/2 border-[6px] border-transparent border-r-gray-800" />
+                    <div className="absolute right-full top-1/2 -translate-y-1/2 border-[6px] border-transparent border-r-white/20" />
                   </div>
                 )}
               </Link>
@@ -267,7 +267,7 @@ export default function Sidebar() {
         </nav>
 
         {/* Collapse toggle button - desktop only */}
-        <div className="hidden lg:block border-t border-gray-800 p-3">
+        <div className="hidden lg:block border-t border-white/10 p-3">
           <button
             onClick={toggleCollapsed}
             className={clsx(
@@ -288,7 +288,7 @@ export default function Sidebar() {
         </div>
 
         {/* Sign out button at the bottom */}
-        <div className="border-t border-gray-800 p-3 pb-safe">
+        <div className="border-t border-white/10 p-3 pb-safe">
           <button
             onClick={handleSignOut}
             disabled={isSigningOut}
