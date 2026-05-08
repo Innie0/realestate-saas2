@@ -24,7 +24,6 @@ const COMPARISON_ROWS = [
   { label: 'Transactions',     free: '3 total',  starter: '10 total', pro: 'Unlimited' },
   { label: 'Calendar Events',  free: 'Unlimited',starter: '50',       pro: 'Unlimited' },
   { label: 'Priority Support', free: false,      starter: false,      pro: true },
-  { label: 'Custom Branding',  free: false,      starter: false,      pro: true },
 ];
 
 const PRO_HIGHLIGHTS = [
@@ -37,7 +36,6 @@ const PRO_HIGHLIGHTS = [
   'Google Calendar Integration',
   'Transaction Checklists & Reminders',
   'Priority Support',
-  'Custom Branding & Analytics',
 ];
 
 type PlanType = 'free' | 'starter' | 'pro';
