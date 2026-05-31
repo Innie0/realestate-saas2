@@ -4,7 +4,7 @@
 'use client'; // This component uses client-side features
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Bell, Clock, Calendar, CheckCircle, X } from 'lucide-react';
+import { Bell, Clock, Calendar, X } from 'lucide-react';
 import { getCurrentUser } from '@/lib/supabase';
 
 /**
@@ -263,10 +263,10 @@ export default function Header({ title, subtitle }: HeaderProps) {
                                 {item.type === 'reminder' && (
                                   <button
                                     onClick={() => handleComplete(item.id)}
-                                    className="p-1 hover:bg-green-500/20 rounded transition-colors flex-shrink-0"
-                                    title="Mark as complete"
+                                    className="p-1 hover:bg-white/10 rounded transition-colors flex-shrink-0"
+                                    title="Dismiss"
                                   >
-                                    <CheckCircle className="w-4 h-4 text-green-400" />
+                                    <X className="w-4 h-4 text-gray-400" />
                                   </button>
                                 )}
                               </div>

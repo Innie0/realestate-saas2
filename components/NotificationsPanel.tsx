@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Reminder } from '@/types';
-import { Bell, Clock, CheckCircle, Trash2, Calendar } from 'lucide-react';
+import { Bell, Clock, Calendar, X } from 'lucide-react';
 import Card from './ui/Card';
 import Button from './ui/Button';
 
@@ -231,21 +231,12 @@ export default function NotificationsPanel() {
                   </div>
                 </div>
                 <div className="flex gap-1">
-                  {item.type === 'reminder' && (
-                    <button
-                      onClick={() => handleComplete(item.id)}
-                      className="p-1 hover:bg-green-500/20 rounded transition-colors"
-                      title="Mark as complete"
-                    >
-                      <CheckCircle className="w-4 h-4 text-green-400" />
-                    </button>
-                  )}
                   <button
-                    onClick={() => handleDelete(item.id)}
-                    className="p-1 hover:bg-red-500/20 rounded transition-colors"
-                    title={item.type === 'reminder' ? 'Delete reminder' : 'Delete event'}
+                    onClick={() => item.type === 'reminder' ? handleComplete(item.id) : handleDelete(item.id)}
+                    className="p-1 hover:bg-white/10 rounded transition-colors"
+                    title="Dismiss"
                   >
-                    <Trash2 className="w-4 h-4 text-red-400" />
+                    <X className="w-4 h-4 text-gray-400" />
                   </button>
                 </div>
               </div>
