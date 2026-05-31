@@ -259,46 +259,61 @@ export default function ClientsPage() {
 
       {/* Share Lead Form modal */}
       {showShareModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg border border-white/10 p-6 max-w-md w-full">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white">Share Your Lead Form</h2>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[#111111] rounded-xl border border-white/10 p-6 max-w-md w-full shadow-2xl">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                  <Link2 className="w-4 h-4 text-purple-400" />
+                </div>
+                <h2 className="text-lg font-bold text-white">Share Lead Form</h2>
+              </div>
               <button
                 onClick={() => setShowShareModal(false)}
-                className="text-gray-400 hover:text-gray-200"
+                className="text-gray-500 hover:text-white transition-colors"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-gray-300 text-sm mb-4">
+            <div className="border-b border-white/10 my-4" />
+
+            <p className="text-gray-400 text-sm mb-5">
               Share this link anywhere — your Instagram bio, email signature, or
               business cards. Anyone who fills it out is added straight to your
               clients list as a new lead.
             </p>
 
             {/* Link + copy */}
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-5">
               <input
                 type="text"
                 readOnly
                 value={leadFormUrl}
                 onClick={(e) => (e.target as HTMLInputElement).select()}
-                className="flex-1 px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/40 cursor-text"
               />
-              <Button variant="primary" size="md" onClick={handleCopyLink}>
+              <button
+                onClick={handleCopyLink}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  copied
+                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                    : 'bg-purple-600 hover:bg-purple-500 text-white border border-purple-500'
+                }`}
+              >
                 {copied ? (
                   <>
-                    <Check className="w-4 h-4 mr-1.5" />
+                    <Check className="w-4 h-4" />
                     Copied
                   </>
                 ) : (
                   <>
-                    <Copy className="w-4 h-4 mr-1.5" />
+                    <Copy className="w-4 h-4" />
                     Copy
                   </>
                 )}
-              </Button>
+              </button>
             </div>
 
             {leadFormUrl && (
@@ -306,8 +321,9 @@ export default function ClientsPage() {
                 href={leadFormUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-purple-300 hover:text-purple-200 underline"
+                className="inline-flex items-center gap-1.5 text-sm text-purple-400 hover:text-purple-300 transition-colors"
               >
+                <Link2 className="w-3.5 h-3.5" />
                 Preview the form
               </a>
             )}
