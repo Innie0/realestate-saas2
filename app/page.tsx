@@ -8,7 +8,7 @@ import { motion, useInView, AnimatePresence } from 'framer-motion';
 import {
   Home, TrendingUp, Shield, Sparkles, Users, Calendar, ArrowRight,
   FileText, Search, Bell, CheckCircle, ChevronDown, Clock, Zap, Star,
-  Upload, ImageIcon, Loader2
+  Upload, ImageIcon, Loader2, Link2
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
@@ -735,6 +735,153 @@ function PropertyLookupDemoMockup() {
   );
 }
 
+// ─── Lead Form Demo Mockup ───────────────────────────────────────────────────
+
+function LeadFormDemoMockup() {
+  const [phase, setPhase] = useState(0);
+  const [typedName, setTypedName] = useState('');
+  const [showBudget, setShowBudget] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: false, margin: '-100px' });
+
+  const name = 'Jane Smith';
+
+  useEffect(() => {
+    if (!inView) return;
+    setPhase(0);
+    setTypedName('');
+    setShowBudget(false);
+    setShowNotification(false);
+
+    const t1 = setTimeout(() => setPhase(1), 600);
+    const t2 = setTimeout(() => setPhase(2), 3000);
+    const t3 = setTimeout(() => setShowBudget(true), 4000);
+    const t4 = setTimeout(() => setPhase(3), 5500);
+    const t5 = setTimeout(() => setShowNotification(true), 6200);
+    const t6 = setTimeout(() => {
+      setPhase(0); setTypedName(''); setShowBudget(false); setShowNotification(false);
+    }, 10500);
+
+    return () => [t1, t2, t3, t4, t5, t6].forEach(clearTimeout);
+  }, [inView]);
+
+  useEffect(() => {
+    if (phase !== 1) return;
+    let i = 0;
+    const timer = setInterval(() => {
+      i++;
+      setTypedName(name.slice(0, i));
+      if (i >= name.length) clearInterval(timer);
+    }, 60);
+    return () => clearInterval(timer);
+  }, [phase]);
+
+  return (
+    <div ref={ref} className="rounded-2xl bg-[#111111] border border-white/10 p-5 flex flex-col overflow-hidden relative" style={{ minHeight: '320px' }}>
+      {/* Notification pop-up */}
+      <AnimatePresence>
+        {showNotification && (
+          <motion.div
+            initial={{ opacity: 0, y: -12, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -12, scale: 0.95 }}
+            transition={{ duration: 0.35 }}
+            className="absolute top-3 right-3 z-20 bg-[#1a1a1a] border border-white/10 rounded-xl p-3 shadow-2xl flex items-start gap-2 w-60"
+          >
+            <Bell className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-xs text-white font-semibold">New Lead!</p>
+              <p className="text-[10px] text-gray-400 mt-0.5">Jane Smith · Buying · ASAP · $300k–$500k</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Header — shareable link */}
+      <div className="flex items-center gap-2 mb-4 flex-shrink-0">
+        <Link2 className="w-4 h-4 text-gray-400" />
+        <span className="text-xs text-gray-400 font-medium">Lead Capture Form</span>
+      </div>
+
+      {/* Branded URL */}
+      <motion.div
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+        className="flex items-center gap-2 bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2.5 mb-4"
+      >
+        <div className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
+        <span className="text-xs text-gray-300 truncate flex-1">realestic.ai/lead/your-name</span>
+        <span className="text-[10px] text-gray-500 bg-white/5 border border-white/10 px-2 py-0.5 rounded">Copy</span>
+      </motion.div>
+
+      {/* Form mockup */}
+      <div className="flex-1 bg-[#1a1a1a] border border-white/5 rounded-xl p-4 flex flex-col gap-3">
+        {/* Name field */}
+        <div>
+          <p className="text-[10px] text-gray-500 mb-1">Full name</p>
+          <div className="bg-[#111111] border border-white/10 rounded-lg px-3 py-2 text-xs text-white min-h-[28px]">
+            {typedName}
+            {phase === 1 && (
+              <motion.span className="inline-block w-0.5 h-3 bg-white ml-0.5 align-middle" animate={{ opacity: [1, 0] }} transition={{ duration: 0.5, repeat: Infinity }} />
+            )}
+          </div>
+        </div>
+
+        {/* Type buttons */}
+        <AnimatePresence>
+          {phase >= 2 && (
+            <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+              <p className="text-[10px] text-gray-500 mb-1">I&apos;m</p>
+              <div className="grid grid-cols-4 gap-1.5">
+                {['Buying', 'Selling', 'Renting', 'Looking'].map((t, idx) => (
+                  <div key={t} className={`text-center text-[10px] py-1.5 rounded-lg border transition-all ${idx === 0 ? 'bg-white text-black border-white font-semibold' : 'border-white/10 text-gray-500'}`}>
+                    {t}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Budget + Timeline */}
+        <AnimatePresence>
+          {showBudget && (
+            <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="flex gap-2">
+              <div className="flex-1">
+                <p className="text-[10px] text-gray-500 mb-1">Timeline</p>
+                <div className="flex gap-1">
+                  <span className="text-[9px] px-2 py-1 rounded-lg bg-white text-black font-semibold border border-white">ASAP</span>
+                  <span className="text-[9px] px-2 py-1 rounded-lg border border-white/10 text-gray-500">1–3mo</span>
+                </div>
+              </div>
+              <div className="flex-1">
+                <p className="text-[10px] text-gray-500 mb-1">Budget</p>
+                <div className="flex gap-1">
+                  <span className="text-[9px] px-2 py-1 rounded-lg border border-white/10 text-gray-500">Under $300k</span>
+                  <span className="text-[9px] px-2 py-1 rounded-lg bg-white text-black font-semibold border border-white">$300–500k</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Submit */}
+        <AnimatePresence>
+          {phase >= 3 && (
+            <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mt-auto">
+              <div className="bg-white text-black text-xs font-semibold text-center py-2 rounded-lg">
+                Contact You →
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function HomePage() {
@@ -962,6 +1109,14 @@ export default function HomePage() {
               flip: true,
             },
             {
+              icon: Link2,
+              tag: 'Lead Capture',
+              title: 'Your personal lead form, ready to share',
+              description: 'Get a custom link with your name in it — share it in your Instagram bio, email signature, or business cards. Every lead lands straight in your CRM with their timeline, budget, and area already captured.',
+              highlights: ['Your name in the link', 'Leads auto-added to your CRM', 'Captures timeline, budget & area'],
+              flip: false,
+            },
+            {
               icon: Calendar,
               tag: 'Scheduling',
               title: 'Never miss an appointment or deadline',
@@ -1016,8 +1171,10 @@ export default function HomePage() {
                 ) : i === 1 ? (
                   <CRMDemoMockup />
                 ) : i === 2 ? (
-                  <CalendarDemoMockup />
+                  <LeadFormDemoMockup />
                 ) : i === 3 ? (
+                  <CalendarDemoMockup />
+                ) : i === 4 ? (
                   <PropertyLookupDemoMockup />
                 ) : (
                   <motion.div
