@@ -264,8 +264,8 @@ export default function ClientsPage() {
             {/* Header */}
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                  <Link2 className="w-4 h-4 text-purple-400" />
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                  <Link2 className="w-4 h-4 text-white/70" />
                 </div>
                 <h2 className="text-lg font-bold text-white">Share Lead Form</h2>
               </div>
@@ -292,14 +292,14 @@ export default function ClientsPage() {
                 readOnly
                 value={leadFormUrl}
                 onClick={(e) => (e.target as HTMLInputElement).select()}
-                className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/40 cursor-text"
+                className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-white/20 cursor-text"
               />
               <button
                 onClick={handleCopyLink}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all border ${
                   copied
-                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                    : 'bg-purple-600 hover:bg-purple-500 text-white border border-purple-500'
+                    ? 'bg-white/10 text-white border-white/20'
+                    : 'bg-white text-gray-900 hover:bg-gray-100 border-gray-200'
                 }`}
               >
                 {copied ? (
@@ -321,7 +321,7 @@ export default function ClientsPage() {
                 href={leadFormUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm text-purple-400 hover:text-purple-300 transition-colors"
+                className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors"
               >
                 <Link2 className="w-3.5 h-3.5" />
                 Preview the form
