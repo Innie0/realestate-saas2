@@ -1162,7 +1162,7 @@ export default function HomePage() {
             <p className="text-gray-400 text-lg">Everything you need to know about Realestic.</p>
           </motion.div>
           <div className="space-y-3">
-            <FAQItem question="Is there a free trial?" answer="Yes! Every new account comes with a 7-day free trial on both the Starter and Pro plans. You'll only be charged after your trial ends if you choose to continue." delay={0} />
+            <FAQItem question="Is there a free trial?" answer="You'll only be charged after your trial ends if you choose to continue." delay={0} />
             <FAQItem question="How does the AI listing description work?" answer="You provide your property details (bedrooms, bathrooms, square footage, features) and optionally upload photos. The AI analyzes everything and writes a professional, compelling listing description in seconds. You can then refine it — adjust the tone, length, or focus — until it's exactly what you want." delay={0.05} />
             <FAQItem question="Does it work for commercial real estate too?" answer="Absolutely. Realestic works for any type of real estate — residential, commercial, rental, and land. The AI adapts to the type of property you're working with." delay={0.1} />
             <FAQItem question="Can I cancel anytime?" answer="Yes, you can cancel your subscription at any time with no cancellation fees. If you cancel, you'll continue to have access until the end of your current billing period." delay={0.15} />
