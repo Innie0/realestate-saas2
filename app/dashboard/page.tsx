@@ -244,8 +244,10 @@ export default function DashboardPage() {
                   <div key={key} className="text-center">
                     <p className="text-xs text-gray-400 mb-1">{label}</p>
                     <p className={`text-lg font-bold ${isAtLimit ? 'text-red-400' : isNearLimit ? 'text-yellow-400' : 'text-white'}`}>
-                      {item.current}{!isUnlimited && <span className="text-gray-500 text-sm font-normal">/{item.limit}</span>}
-                      {isUnlimited && <span className="text-gray-500 text-xs font-normal ml-1">∞</span>}
+                      {isUnlimited
+                        ? <span className="text-gray-500 text-base font-normal">∞</span>
+                        : <>{item.current}<span className="text-gray-500 text-sm font-normal">/{item.limit}</span></>
+                      }
                     </p>
                     {!isUnlimited && (
                       <div className="w-full h-1.5 bg-gray-800 rounded-full mt-1.5">
