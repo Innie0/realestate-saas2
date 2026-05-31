@@ -100,7 +100,7 @@ export default function PricingPage() {
         '50 AI Assistant Messages per Month',
         'Up to 25 Clients',
         'Up to 10 Transactions',
-        'Calendar Integration (50 Events)',
+        'Calendar Integration (Unlimited Events)',
         'AI-Powered Descriptions',
         'Image Analysis',
         'Email Support',

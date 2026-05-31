@@ -31,7 +31,7 @@ const STARTER_LIMITS: PlanLimits = {
   ai_messages: 50,
   clients: 25,
   transactions: 10,
-  calendar_events: 50,
+  calendar_events: Infinity,
 };
 
 const PRO_LIMITS: PlanLimits = {

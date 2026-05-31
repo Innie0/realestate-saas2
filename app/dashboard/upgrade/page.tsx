@@ -13,7 +13,7 @@ const PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || 'price_1Sw9M
 
 const PLAN_LIMITS: Record<string, Record<string, number>> = {
   free:    { projects: 3,  property_lookups: 5,  ai_messages: 20, clients: 5,  transactions: 3,  calendar_events: -1 },
-  starter: { projects: 10, property_lookups: 10, ai_messages: 50, clients: 25, transactions: 10, calendar_events: 50 },
+  starter: { projects: 10, property_lookups: 10, ai_messages: 50, clients: 25, transactions: 10, calendar_events: -1 },
 };
 
 const COMPARISON_ROWS = [
@@ -22,7 +22,7 @@ const COMPARISON_ROWS = [
   { label: 'AI Messages',      free: '20 / mo',  starter: '50 / mo',  pro: 'Unlimited' },
   { label: 'Clients',          free: '5 total',  starter: '25 total', pro: 'Unlimited' },
   { label: 'Transactions',     free: '3 total',  starter: '10 total', pro: 'Unlimited' },
-  { label: 'Calendar Events',  free: 'Unlimited',starter: '50',       pro: 'Unlimited' },
+  { label: 'Calendar Events',  free: 'Unlimited',starter: 'Unlimited', pro: 'Unlimited' },
   { label: 'Priority Support', free: false,      starter: false,      pro: true },
 ];
 
@@ -222,7 +222,7 @@ export default function UpgradePage() {
                   '50 AI Assistant Messages per Month',
                   'Up to 25 Clients',
                   'Up to 10 Transactions',
-                  'Calendar Integration (50 Events)',
+                  'Unlimited Calendar Events',
                   'Email Support',
                 ].map((f, i) => (
                   <li key={i} className="flex items-start gap-2.5">
