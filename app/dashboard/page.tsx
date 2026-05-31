@@ -10,7 +10,7 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import NotificationsPanel from '@/components/NotificationsPanel';
 import ProjectCard from '@/components/ProjectCard';
-import { Plus, FolderKanban, Image, FileText, Zap, Users, ArrowRight, Clock } from 'lucide-react';
+import { Plus, Zap, Users, ArrowRight, Clock } from 'lucide-react';
 import { Project } from '@/types';
 
 interface RecentClient { id: string; name: string; email?: string; status: string; created_at: string; }
@@ -20,21 +20,11 @@ interface UsageData {
   [key: string]: { current: number; limit: number };
 }
 
-interface DashboardStats {
-  totalProjects: number;
-  projectsThisMonth: number;
-  totalImages: number;
-  imagesThisWeek: number;
-  aiContentCount: number;
-  aiContentThisWeek: number;
-}
-
 /**
  * Dashboard home page component
  * Overview of user's projects and statistics
  */
 export default function DashboardPage() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [recentProjects, setRecentProjects] = useState<Project[]>([]);
   const [recentClients, setRecentClients] = useState<RecentClient[]>([]);
   const [recentTransactions, setRecentTransactions] = useState<RecentTransaction[]>([]);
@@ -48,7 +38,6 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    fetchStats();
     fetchRecentProjects();
     fetchUsage();
     fetchRecentActivity();
@@ -64,19 +53,6 @@ export default function DashboardPage() {
       }
     } catch (error) {
       console.error('Error fetching usage:', error);
-    }
-  };
-
-  const fetchStats = async () => {
-    try {
-      const response = await fetch('/api/dashboard/stats');
-      const result = await response.json();
-      
-      if (result.success) {
-        setStats(result.data);
-      }
-    } catch (error) {
-      console.error('Error fetching stats:', error);
     } finally {
       setLoading(false);
     }
@@ -110,37 +86,6 @@ export default function DashboardPage() {
     }
   };
 
-  // Build stats array from real data
-  const statsCards = stats ? [
-    {
-      name: 'Total Projects',
-      value: stats.totalProjects.toString(),
-      icon: FolderKanban,
-      change: stats.projectsThisMonth > 0 
-        ? `+${stats.projectsThisMonth} this month` 
-        : 'No new projects this month',
-      changeType: stats.projectsThisMonth > 0 ? 'positive' : 'neutral',
-    },
-    {
-      name: 'Images Uploaded',
-      value: stats.totalImages.toString(),
-      icon: Image,
-      change: stats.imagesThisWeek > 0 
-        ? `+${stats.imagesThisWeek} this week` 
-        : 'No new images this week',
-      changeType: stats.imagesThisWeek > 0 ? 'positive' : 'neutral',
-    },
-    {
-      name: 'AI Content Generated',
-      value: stats.aiContentCount.toString(),
-      icon: FileText,
-      change: stats.aiContentThisWeek > 0 
-        ? `+${stats.aiContentThisWeek} this week` 
-        : 'No AI content this week',
-      changeType: stats.aiContentThisWeek > 0 ? 'positive' : 'neutral',
-    },
-  ] : [];
-
   return (
     <div className="min-h-screen">
       {/* Page header */}
@@ -168,50 +113,6 @@ export default function DashboardPage() {
 
         {/* Notifications Panel */}
         <NotificationsPanel />
-
-        {/* Statistics cards */}
-        <div className="grid gap-6 md:grid-cols-3">
-          {loading ? (
-            // Loading skeletons
-            [1, 2, 3].map((i) => (
-              <Card key={i}>
-                <div className="animate-pulse">
-                  <div className="h-4 bg-gray-700 rounded w-1/2 mb-3"></div>
-                  <div className="h-8 bg-gray-700 rounded w-1/3 mb-2"></div>
-                  <div className="h-3 bg-gray-700 rounded w-2/3"></div>
-                </div>
-              </Card>
-            ))
-          ) : (
-            statsCards.map((stat) => {
-              const Icon = stat.icon;
-              return (
-                <Card key={stat.name} className="border border-white/10">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-400">
-                        {stat.name}
-                      </p>
-                      <p className="mt-2 text-3xl font-bold text-white">
-                        {stat.value}
-                      </p>
-                      <p className={`mt-2 text-sm ${
-                        stat.changeType === 'positive' 
-                          ? 'text-green-400' 
-                          : 'text-gray-500'
-                      }`}>
-                        {stat.change}
-                      </p>
-                    </div>
-                    <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-white/10 backdrop-blur-sm">
-                      <Icon className="w-6 h-6 text-white" />
-                    </div>
-                  </div>
-                </Card>
-              );
-            })
-          )}
-        </div>
 
         {/* Plan Usage */}
         {usage && (
