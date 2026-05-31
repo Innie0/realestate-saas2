@@ -995,7 +995,7 @@ export default function HomePage() {
                   <span className="text-sm font-medium text-gray-300">New Leads Today</span>
                 </div>
                 <div className="text-3xl font-bold text-white">4</div>
-                <div className="text-sm text-gray-500 mt-1">via your lead form link</div>
+                <div className="text-sm text-gray-500 mt-1">Via your lead form link</div>
               </motion.div>
 
               <motion.div initial={{ opacity: 0, y: 50, rotate: 3 }} animate={{ opacity: 1, y: 0, rotate: 3 }} transition={{ duration: 0.8, delay: 0.7 }} whileHover={{ y: -10, rotate: 0, scale: 1.02, transition: { duration: 0.15 } }} className="absolute top-32 left-0 w-64 rounded-2xl p-6 shadow-2xl border border-white/10 bg-[#111111]">
