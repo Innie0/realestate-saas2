@@ -37,15 +37,17 @@ export default function ClientsPage() {
 
   // Share lead form link
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [leadFormUrl, setLeadFormUrl] = useState('');
   const [copied, setCopied] = useState(false);
+  const [isPaidPlan, setIsPaidPlan] = useState(false);
 
   // Fetch clients
   useEffect(() => {
     fetchClients();
   }, [searchQuery, statusFilter]);
 
-  // Build the agent's public lead form URL using their name + id
+  // Build the agent's public lead form URL using their name + id, and check plan
   useEffect(() => {
     const loadLeadFormUrl = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -59,7 +61,17 @@ export default function ClientsPage() {
         setLeadFormUrl(`${window.location.origin}/lead/${slug}`);
       }
     };
+    const checkPlan = async () => {
+      try {
+        const res = await fetch('/api/usage');
+        const result = await res.json();
+        if (result.success) {
+          setIsPaidPlan(result.plan === 'starter' || result.plan === 'pro');
+        }
+      } catch {}
+    };
     loadLeadFormUrl();
+    checkPlan();
   }, []);
 
   const handleCopyLink = async () => {
@@ -221,7 +233,7 @@ export default function ClientsPage() {
           <Button
             variant="white"
             size="md"
-            onClick={() => setShowShareModal(true)}
+            onClick={() => isPaidPlan ? setShowShareModal(true) : setShowUpgradeModal(true)}
             className="w-full sm:w-auto"
           >
             <Link2 className="w-4 h-4 mr-2" />
@@ -333,6 +345,38 @@ export default function ClientsPage() {
                 Preview the form
               </a>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Upgrade prompt modal — shown to free plan users */}
+      {showUpgradeModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[#111111] rounded-xl border border-white/10 p-6 max-w-md w-full shadow-2xl">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                  <Link2 className="w-4 h-4 text-white/70" />
+                </div>
+                <h2 className="text-lg font-bold text-white">Lead Capture Form</h2>
+              </div>
+              <button
+                onClick={() => setShowUpgradeModal(false)}
+                className="text-gray-500 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="border-b border-white/10 my-4" />
+            <p className="text-gray-400 text-sm mb-5">
+              Get a personal lead form link to share anywhere — Instagram bio, email signature, or business cards. Available on the Starter and Pro plans.
+            </p>
+            <a
+              href="/auth/signup"
+              className="block w-full text-center bg-white text-gray-900 font-semibold py-3 rounded-lg hover:bg-gray-100 transition-colors text-sm"
+            >
+              Upgrade to unlock
+            </a>
           </div>
         </div>
       )}

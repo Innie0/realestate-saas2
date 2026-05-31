@@ -28,6 +28,7 @@ function extractUuid(agentId: string): string | null {
 /**
  * Look up the agent via the Supabase Auth admin API.
  * Returns null if the link is invalid or the user doesn't exist.
+ * Also returns the agent's plan so free users can be blocked.
  */
 async function getAgent(agentId: string) {
   const uuid = extractUuid(agentId);
@@ -37,11 +38,24 @@ async function getAgent(agentId: string) {
   const { data, error } = await supabase.auth.admin.getUserById(uuid);
   if (error || !data?.user) return null;
 
+  // Check subscription plan
+  const { data: userData } = await supabase
+    .from('users')
+    .select('subscription_plan')
+    .eq('id', uuid)
+    .single();
+
+  const STARTER_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID;
+  const PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID;
+  const plan = userData?.subscription_plan;
+  const isPaid = plan === STARTER_PRICE_ID || plan === PRO_PRICE_ID;
+
   const user = data.user;
   return {
     id: user.id,
     full_name: (user.user_metadata?.full_name as string | undefined) ?? null,
     email: user.email ?? '',
+    isPaid,
   };
 }
 
@@ -60,6 +74,23 @@ export default async function LeadCapturePage({ params }: LeadPageProps) {
           </div>
           <h1 className="text-xl font-semibold text-white mb-2">Form not available</h1>
           <p className="text-gray-500 text-sm">This contact link is invalid or has been removed.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Block free plan agents
+  if (!agent.isPaid) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] px-4">
+        <div className="text-center">
+          <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-6">
+            <svg className="w-7 h-7 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <h1 className="text-xl font-semibold text-white mb-2">Form not available</h1>
+          <p className="text-gray-500 text-sm">This contact link is not currently active.</p>
         </div>
       </div>
     );
