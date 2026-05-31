@@ -169,7 +169,7 @@ export default function LeadCaptureForm({ agentId, agentName }: LeadCaptureFormP
 
       {/* What are you looking to do */}
       <div>
-        <label className={labelClasses}>I&apos;m looking to</label>
+        <label className={labelClasses}>I&apos;m</label>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {LEAD_TYPES.map(({ value, label, icon: Icon }) => {
             const selected = formData.leadType === value;
