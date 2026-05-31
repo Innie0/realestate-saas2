@@ -45,12 +45,18 @@ export default function ClientsPage() {
     fetchClients();
   }, [searchQuery, statusFilter]);
 
-  // Build the agent's public lead form URL from their user id
+  // Build the agent's public lead form URL using their name + id
   useEffect(() => {
     const loadLeadFormUrl = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        setLeadFormUrl(`${window.location.origin}/lead/${user.id}`);
+        const fullName: string = user.user_metadata?.full_name || '';
+        const nameSlug = fullName
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '');
+        const slug = nameSlug ? `${nameSlug}--${user.id}` : user.id;
+        setLeadFormUrl(`${window.location.origin}/lead/${slug}`);
       }
     };
     loadLeadFormUrl();

@@ -23,7 +23,7 @@ const VALID_LEAD_TYPES = ['buyer', 'seller', 'renter', 'browsing'];
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { agentId, name, email, phone, leadType, message } = body;
+    const { agentId, name, email, phone, leadType, timeline, budget, area, message } = body;
 
     // --- Validation -------------------------------------------------------
     if (!agentId || !UUID_REGEX.test(agentId)) {
@@ -57,6 +57,9 @@ export async function POST(request: NextRequest) {
       typeof leadType === 'string' && VALID_LEAD_TYPES.includes(leadType)
         ? leadType
         : null;
+    const cleanTimeline = typeof timeline === 'string' ? timeline.trim().slice(0, 50) : '';
+    const cleanBudget = typeof budget === 'string' ? budget.trim().slice(0, 50) : '';
+    const cleanArea = typeof area === 'string' ? area.trim().slice(0, 200) : '';
 
     const supabase = createAdminClient();
 
@@ -100,7 +103,10 @@ export async function POST(request: NextRequest) {
 
     // --- Store the message as a note (shows in the CRM timeline) ----------
     const noteParts = [
-      cleanLeadType ? `Interested as: ${cleanLeadType}` : null,
+      cleanLeadType ? `Interested in: ${cleanLeadType}` : null,
+      cleanTimeline ? `Timeline: ${cleanTimeline}` : null,
+      cleanBudget ? `Budget: ${cleanBudget}` : null,
+      cleanArea ? `Area: ${cleanArea}` : null,
       cleanMessage ? `Message: ${cleanMessage}` : null,
     ].filter(Boolean);
 
@@ -126,6 +132,9 @@ export async function POST(request: NextRequest) {
       description: [
         cleanEmail ? `Email: ${cleanEmail}` : null,
         cleanPhone ? `Phone: ${cleanPhone}` : null,
+        cleanTimeline ? `Timeline: ${cleanTimeline}` : null,
+        cleanBudget ? `Budget: ${cleanBudget}` : null,
+        cleanArea ? `Area: ${cleanArea}` : null,
         cleanMessage ? `Message: "${cleanMessage}"` : null,
       ]
         .filter(Boolean)
