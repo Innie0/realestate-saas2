@@ -10,7 +10,7 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import NotificationsPanel from '@/components/NotificationsPanel';
 import ProjectCard from '@/components/ProjectCard';
-import { Plus, Zap, Users, ArrowRight, Clock } from 'lucide-react';
+import { Plus, Zap, Users, ArrowRight, Clock, FolderKanban } from 'lucide-react';
 import { Project } from '@/types';
 
 interface RecentClient { id: string; name: string; email?: string; status: string; created_at: string; }
