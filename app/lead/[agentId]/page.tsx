@@ -8,7 +8,7 @@ import { createAdminClient } from '@/lib/supabase-admin';
 import LeadCaptureForm from '@/components/LeadCaptureForm';
 
 interface LeadPageProps {
-  params: { agentId: string };
+  params: Promise<{ agentId: string }>;
 }
 
 const UUID_REGEX =
@@ -46,7 +46,8 @@ async function getAgent(agentId: string) {
 }
 
 export default async function LeadCapturePage({ params }: LeadPageProps) {
-  const agent = await getAgent(params.agentId);
+  const { agentId } = await params;
+  const agent = await getAgent(agentId);
 
   if (!agent) {
     return (
