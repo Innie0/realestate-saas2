@@ -161,6 +161,9 @@ export interface Client {
   email?: string; // Client's email address
   phone?: string; // Client's phone number
   status: 'active' | 'inactive' | 'archived'; // Client status
+  source?: 'manual' | 'lead_form'; // How the client was added
+  lead_type?: 'buyer' | 'seller' | 'renter' | 'browsing' | null; // What a lead is interested in
+  message?: string | null; // Message left by a lead via the public form
   created_at: string; // When the client was created
   updated_at: string; // When the client was last updated
 }
@@ -444,4 +447,3 @@ export interface ConversationMessage {
 export interface ConversationWithMessages extends Conversation {
   messages: ConversationMessage[];
 }
-

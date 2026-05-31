@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Client } from '@/types';
+import { supabase } from '@/lib/supabase';
 import ClientCard from '@/components/ClientCard';
 import ClientForm from '@/components/ClientForm';
 import ReminderForm from '@/components/ReminderForm';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Header from '@/components/layout/Header';
-import { Search, Plus, X } from 'lucide-react';
+import { Search, Plus, X, Link2, Copy, Check } from 'lucide-react';
 
 /**
  * Clients page - CRM client management
@@ -34,10 +35,37 @@ export default function ClientsPage() {
     document.title = 'Clients - Realestic';
   }, []);
 
+  // Share lead form link
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [leadFormUrl, setLeadFormUrl] = useState('');
+  const [copied, setCopied] = useState(false);
+
   // Fetch clients
   useEffect(() => {
     fetchClients();
   }, [searchQuery, statusFilter]);
+
+  // Build the agent's public lead form URL from their user id
+  useEffect(() => {
+    const loadLeadFormUrl = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setLeadFormUrl(`${window.location.origin}/lead/${user.id}`);
+      }
+    };
+    loadLeadFormUrl();
+  }, []);
+
+  const handleCopyLink = async () => {
+    if (!leadFormUrl) return;
+    try {
+      await navigator.clipboard.writeText(leadFormUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy link:', error);
+    }
+  };
 
   const fetchClients = async () => {
     try {
@@ -183,6 +211,17 @@ export default function ClientsPage() {
             <option value="archived" className="bg-gray-800 text-white">Archived</option>
           </select>
 
+          {/* Share lead form button */}
+          <Button
+            variant="white"
+            size="md"
+            onClick={() => setShowShareModal(true)}
+            className="w-full sm:w-auto"
+          >
+            <Link2 className="w-4 h-4 mr-2" />
+            Share Lead Form
+          </Button>
+
           {/* Create button */}
           <Button
             variant="primary"
@@ -214,6 +253,64 @@ export default function ClientsPage() {
               onCancel={() => setShowCreateForm(false)}
               isLoading={isSubmitting}
             />
+          </div>
+        </div>
+      )}
+
+      {/* Share Lead Form modal */}
+      {showShareModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg border border-white/10 p-6 max-w-md w-full">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-white">Share Your Lead Form</h2>
+              <button
+                onClick={() => setShowShareModal(false)}
+                className="text-gray-400 hover:text-gray-200"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <p className="text-gray-300 text-sm mb-4">
+              Share this link anywhere — your Instagram bio, email signature, or
+              business cards. Anyone who fills it out is added straight to your
+              clients list as a new lead.
+            </p>
+
+            {/* Link + copy */}
+            <div className="flex items-center gap-2 mb-4">
+              <input
+                type="text"
+                readOnly
+                value={leadFormUrl}
+                onClick={(e) => (e.target as HTMLInputElement).select()}
+                className="flex-1 px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+              />
+              <Button variant="primary" size="md" onClick={handleCopyLink}>
+                {copied ? (
+                  <>
+                    <Check className="w-4 h-4 mr-1.5" />
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4 mr-1.5" />
+                    Copy
+                  </>
+                )}
+              </Button>
+            </div>
+
+            {leadFormUrl && (
+              <a
+                href={leadFormUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-purple-300 hover:text-purple-200 underline"
+              >
+                Preview the form
+              </a>
+            )}
           </div>
         </div>
       )}
