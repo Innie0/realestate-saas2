@@ -10,7 +10,8 @@ import ReminderForm from '@/components/ReminderForm';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Header from '@/components/layout/Header';
-import { Search, Plus, X, Link2, Copy, Check } from 'lucide-react';
+import { Search, Plus, X, Link2, Copy, Check, Download } from 'lucide-react';
+import { QRCodeCanvas } from 'qrcode.react';
 
 /**
  * Clients page - CRM client management
@@ -83,6 +84,16 @@ export default function ClientsPage() {
     } catch (error) {
       console.error('Failed to copy link:', error);
     }
+  };
+
+  const handleDownloadQR = () => {
+    const canvas = document.getElementById('lead-form-qr') as HTMLCanvasElement;
+    if (!canvas) return;
+    const url = canvas.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'lead-form-qr.png';
+    a.click();
   };
 
   const fetchClients = async () => {
@@ -334,16 +345,42 @@ export default function ClientsPage() {
               </button>
             </div>
 
+            {/* QR Code */}
             {leadFormUrl && (
-              <a
-                href={leadFormUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors"
-              >
-                <Link2 className="w-3.5 h-3.5" />
-                Preview the form
-              </a>
+              <div className="mt-5 pt-5 border-t border-white/10">
+                <p className="text-sm font-medium text-gray-300 mb-3">QR Code</p>
+                <p className="text-xs text-gray-500 mb-4">Print this on yard signs, flyers, or business cards. Anyone who scans it goes straight to your lead form.</p>
+                <div className="flex items-center gap-5">
+                  <div className="p-3 bg-white rounded-xl flex-shrink-0">
+                    <QRCodeCanvas
+                      id="lead-form-qr"
+                      value={leadFormUrl}
+                      size={120}
+                      bgColor="#ffffff"
+                      fgColor="#000000"
+                      level="M"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-3 flex-1">
+                    <button
+                      onClick={handleDownloadQR}
+                      className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-white text-gray-900 hover:bg-gray-100 text-sm font-medium transition-colors border border-gray-200 w-full"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download PNG
+                    </button>
+                    <a
+                      href={leadFormUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors"
+                    >
+                      <Link2 className="w-3.5 h-3.5" />
+                      Preview the form
+                    </a>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </div>
