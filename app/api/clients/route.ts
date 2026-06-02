@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const search = searchParams.get('search');
     const status = searchParams.get('status') || 'active';
+    const source = searchParams.get('source');
 
     // Build query - include latest note and reminders count
     let query = supabase
@@ -40,6 +41,11 @@ export async function GET(request: NextRequest) {
     // Apply status filter
     if (status !== 'all') {
       query = query.eq('status', status);
+    }
+
+    // Apply source filter (e.g. 'lead_form' for leads-only view)
+    if (source) {
+      query = query.eq('source', source);
     }
 
     // Apply search filter if provided
