@@ -77,13 +77,14 @@ export default function Header({ title, subtitle }: HeaderProps) {
       const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
       const sevenDaysFromNow = new Date(startOfToday.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-      // Fetch reminders
-      const remindersResponse = await fetch('/api/reminders?include_completed=false');
-      const remindersResult = await remindersResponse.json();
-
-      // Fetch calendar events
-      const eventsResponse = await fetch('/api/calendar/events');
-      const eventsResult = await eventsResponse.json();
+      const [remindersResponse, eventsResponse] = await Promise.all([
+        fetch('/api/reminders?include_completed=false'),
+        fetch('/api/calendar/events'),
+      ]);
+      const [remindersResult, eventsResult] = await Promise.all([
+        remindersResponse.json(),
+        eventsResponse.json(),
+      ]);
 
       const upcomingItems: UpcomingItem[] = [];
 
@@ -137,11 +138,23 @@ export default function Header({ title, subtitle }: HeaderProps) {
     }
   };
 
+  const sortByDate = (list: UpcomingItem[]) =>
+    [...list].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  const restoreNotification = (item: UpcomingItem) => {
+    setNotifications(prev => sortByDate([...prev, item]));
+  };
+
   const handleComplete = async (itemId: string) => {
     if (!itemId.startsWith('reminder-')) return;
-    
+
     const id = itemId.replace('reminder-', '');
-    
+    let previous: UpcomingItem | undefined;
+    setNotifications(prev => {
+      previous = prev.find(i => i.id === itemId);
+      return prev.filter(i => i.id !== itemId);
+    });
+
     try {
       const response = await fetch(`/api/reminders/${id}`, {
         method: 'PUT',
@@ -149,11 +162,12 @@ export default function Header({ title, subtitle }: HeaderProps) {
         body: JSON.stringify({ is_completed: true }),
       });
 
-      if (response.ok) {
-        fetchNotifications();
+      if (!response.ok && previous) {
+        restoreNotification(previous);
       }
     } catch (error) {
       console.error('Error completing reminder:', error);
+      if (previous) restoreNotification(previous);
     }
   };
 
@@ -262,7 +276,11 @@ export default function Header({ title, subtitle }: HeaderProps) {
                                 </h4>
                                 {item.type === 'reminder' && (
                                   <button
-                                    onClick={() => handleComplete(item.id)}
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleComplete(item.id);
+                                    }}
                                     className="p-1 hover:bg-white/10 rounded transition-colors flex-shrink-0"
                                     title="Dismiss"
                                   >

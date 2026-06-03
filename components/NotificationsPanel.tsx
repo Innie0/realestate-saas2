@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Reminder } from '@/types';
 import { Bell, Clock, Calendar, X } from 'lucide-react';
 import Card from './ui/Card';
-import Button from './ui/Button';
 
 interface UpcomingItem {
   id: string;
@@ -37,13 +35,14 @@ export default function NotificationsPanel() {
       const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
       const sevenDaysFromNow = new Date(startOfToday.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-      // Fetch reminders
-      const remindersResponse = await fetch('/api/reminders?include_completed=false');
-      const remindersResult = await remindersResponse.json();
-
-      // Fetch calendar events
-      const eventsResponse = await fetch('/api/calendar/events');
-      const eventsResult = await eventsResponse.json();
+      const [remindersResponse, eventsResponse] = await Promise.all([
+        fetch('/api/reminders?include_completed=false'),
+        fetch('/api/calendar/events'),
+      ]);
+      const [remindersResult, eventsResult] = await Promise.all([
+        remindersResponse.json(),
+        eventsResponse.json(),
+      ]);
 
       const upcomingItems: UpcomingItem[] = [];
 
@@ -97,12 +96,23 @@ export default function NotificationsPanel() {
     }
   };
 
+  const sortByDate = (list: UpcomingItem[]) =>
+    [...list].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  const restoreItem = (item: UpcomingItem) => {
+    setItems(prev => sortByDate([...prev, item]));
+  };
+
   const handleComplete = async (itemId: string) => {
-    // Only reminders can be completed
     if (!itemId.startsWith('reminder-')) return;
-    
+
     const id = itemId.replace('reminder-', '');
-    
+    let previous: UpcomingItem | undefined;
+    setItems(prev => {
+      previous = prev.find(i => i.id === itemId);
+      return prev.filter(i => i.id !== itemId);
+    });
+
     try {
       const response = await fetch(`/api/reminders/${id}`, {
         method: 'PUT',
@@ -110,39 +120,41 @@ export default function NotificationsPanel() {
         body: JSON.stringify({ is_completed: true }),
       });
 
-      if (response.ok) {
-        fetchUpcomingItems();
+      if (!response.ok && previous) {
+        restoreItem(previous);
       }
     } catch (error) {
       console.error('Error completing reminder:', error);
+      if (previous) restoreItem(previous);
     }
   };
 
   const handleDelete = async (itemId: string) => {
     if (!confirm('Are you sure you want to delete this item?')) return;
 
+    let previous: UpcomingItem | undefined;
+    setItems(prev => {
+      previous = prev.find(i => i.id === itemId);
+      return prev.filter(i => i.id !== itemId);
+    });
+
     try {
+      let response: Response | null = null;
+
       if (itemId.startsWith('reminder-')) {
         const id = itemId.replace('reminder-', '');
-        const response = await fetch(`/api/reminders/${id}`, {
-          method: 'DELETE',
-        });
-
-        if (response.ok) {
-          fetchUpcomingItems();
-        }
+        response = await fetch(`/api/reminders/${id}`, { method: 'DELETE' });
       } else if (itemId.startsWith('event-')) {
         const id = itemId.replace('event-', '');
-        const response = await fetch(`/api/calendar/events/${id}`, {
-          method: 'DELETE',
-        });
+        response = await fetch(`/api/calendar/events/${id}`, { method: 'DELETE' });
+      }
 
-        if (response.ok) {
-          fetchUpcomingItems();
-        }
+      if (response && !response.ok && previous) {
+        restoreItem(previous);
       }
     } catch (error) {
       console.error('Error deleting item:', error);
+      if (previous) restoreItem(previous);
     }
   };
 
