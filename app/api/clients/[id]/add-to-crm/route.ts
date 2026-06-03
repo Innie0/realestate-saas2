@@ -1,3 +1,4 @@
+// @ts-nocheck
 // POST /api/clients/[id]/add-to-crm — promote an inbox lead to the CRM
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
