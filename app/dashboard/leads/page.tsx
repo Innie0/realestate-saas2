@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import { supabase } from '@/lib/supabase';
@@ -9,11 +8,11 @@ import { QRCodeCanvas } from 'qrcode.react';
 import {
   Inbox, Link2, Copy, Check, Download, Phone, Mail,
   Home, Building2, KeyRound, Search, Flame, Thermometer,
-  Snowflake, X, ArrowRight, Users, Clock, Lock, MailCheck,
-  Loader2, DoorOpen, Plus,
+  Snowflake, ArrowRight, Users, Clock, Lock, MailCheck,
+  Loader2, DoorOpen, Megaphone, Zap,
 } from 'lucide-react';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+type LeadsTab = 'inbox' | 'capture' | 'automations';
 
 interface Lead {
   id: string;
@@ -22,11 +21,12 @@ interface Lead {
   phone?: string;
   lead_type?: string;
   message?: string;
+  source?: string;
   created_at: string;
   status: string;
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+const LEAD_SOURCES = ['lead_form', 'open_house'];
 
 function getLeadTemp(lead: Lead): 'hot' | 'warm' | 'cold' {
   const hoursAgo = (Date.now() - new Date(lead.created_at).getTime()) / 3_600_000;
@@ -59,7 +59,10 @@ const LEAD_TYPE_LABELS: Record<string, string> = {
   browsing: 'Just looking',
 };
 
-// ─── Badge components ─────────────────────────────────────────────────────────
+const SOURCE_LABELS: Record<string, string> = {
+  lead_form: 'Lead form',
+  open_house: 'Open house',
+};
 
 function TempBadge({ temp }: { temp: 'hot' | 'warm' | 'cold' }) {
   if (temp === 'hot') return (
@@ -79,16 +82,11 @@ function TempBadge({ temp }: { temp: 'hot' | 'warm' | 'cold' }) {
   );
 }
 
-// ─── Lead Card ────────────────────────────────────────────────────────────────
-
 function LeadCard({ lead }: { lead: Lead }) {
   const temp = getLeadTemp(lead);
   const TypeIcon = lead.lead_type ? LEAD_TYPE_ICONS[lead.lead_type] : null;
-
-  // Parse structured info out of message
   const msg = lead.message || '';
-  const lines = msg.split('\n').filter(Boolean);
-  const infoLines = lines.filter(l =>
+  const infoLines = msg.split('\n').filter(l =>
     l.startsWith('Timeline:') || l.startsWith('Budget:') || l.startsWith('Area:')
   );
 
@@ -99,6 +97,11 @@ function LeadCard({ lead }: { lead: Lead }) {
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className="font-semibold text-white text-sm">{lead.name}</h3>
             <TempBadge temp={temp} />
+            {lead.source && SOURCE_LABELS[lead.source] && (
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-500 border border-white/10">
+                {SOURCE_LABELS[lead.source]}
+              </span>
+            )}
             {TypeIcon && lead.lead_type && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-white/5 text-gray-400 border border-white/10">
                 <TypeIcon className="w-3 h-3" />
@@ -113,7 +116,6 @@ function LeadCard({ lead }: { lead: Lead }) {
         </div>
       </div>
 
-      {/* Contact info */}
       <div className="flex flex-wrap gap-3 mb-3">
         {lead.email && (
           <a href={`mailto:${lead.email}`} className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors">
@@ -129,7 +131,6 @@ function LeadCard({ lead }: { lead: Lead }) {
         )}
       </div>
 
-      {/* Structured lead info */}
       {infoLines.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-3">
           {infoLines.map((line, i) => (
@@ -140,7 +141,6 @@ function LeadCard({ lead }: { lead: Lead }) {
         </div>
       )}
 
-      {/* Actions */}
       <div className="flex gap-2 pt-2 border-t border-white/5">
         <Link
           href={`/dashboard/clients/${lead.id}`}
@@ -161,18 +161,22 @@ function LeadCard({ lead }: { lead: Lead }) {
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+const TABS: { id: LeadsTab; label: string; icon: React.ElementType }[] = [
+  { id: 'inbox', label: 'Inbox', icon: Inbox },
+  { id: 'capture', label: 'Capture', icon: Megaphone },
+  { id: 'automations', label: 'Automations', icon: Zap },
+];
 
 export default function LeadsPage() {
-  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<LeadsTab>('inbox');
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPaidPlan, setIsPaidPlan] = useState(false);
   const [leadFormUrl, setLeadFormUrl] = useState('');
+  const [profileUrl, setProfileUrl] = useState('');
   const [copied, setCopied] = useState(false);
   const [filter, setFilter] = useState<'all' | 'hot' | 'warm' | 'cold'>('all');
 
-  // Agent settings state
   const [autoFollowup, setAutoFollowup] = useState(false);
   const [smsEnabled, setSmsEnabled] = useState(false);
   const [smsPhone, setSmsPhone] = useState('');
@@ -187,9 +191,14 @@ export default function LeadsPage() {
 
   const fetchLeads = async () => {
     try {
-      const res = await fetch('/api/clients?source=lead_form&status=all');
+      const res = await fetch('/api/clients?status=all');
       const result = await res.json();
-      if (result.success) setLeads(result.data);
+      if (result.success) {
+        const incoming = (result.data || []).filter(
+          (c: Lead) => c.source && LEAD_SOURCES.includes(c.source)
+        );
+        setLeads(incoming);
+      }
     } catch (e) {
       console.error('Error fetching leads:', e);
     } finally {
@@ -198,9 +207,10 @@ export default function LeadsPage() {
   };
 
   const checkPlanAndUrl = async () => {
-    const [{ data: { user } }, usageRes] = await Promise.all([
+    const [{ data: { user } }, usageRes, profileRes] = await Promise.all([
       supabase.auth.getUser(),
       fetch('/api/usage'),
+      fetch('/api/agent-profile'),
     ]);
     const usageData = await usageRes.json();
     if (usageData.success) {
@@ -211,6 +221,10 @@ export default function LeadsPage() {
       const nameSlug = fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       const slug = nameSlug ? `${nameSlug}--${user.id}` : user.id;
       setLeadFormUrl(`${window.location.origin}/lead/${slug}`);
+    }
+    const profileData = await profileRes.json();
+    if (profileData.success && profileData.profileUrl) {
+      setProfileUrl(profileData.profileUrl);
     }
   };
 
@@ -243,9 +257,8 @@ export default function LeadsPage() {
     }
   };
 
-  const handleCopy = async () => {
-    if (!leadFormUrl) return;
-    await navigator.clipboard.writeText(leadFormUrl);
+  const handleCopy = async (url: string) => {
+    await navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -259,166 +272,180 @@ export default function LeadsPage() {
     a.click();
   };
 
-  // Stats
   const now = Date.now();
   const thisWeek = leads.filter(l => now - new Date(l.created_at).getTime() < 7 * 86_400_000);
   const hotLeads = leads.filter(l => getLeadTemp(l) === 'hot');
-
-  const filteredLeads = leads.filter(l => {
-    if (filter === 'all') return true;
-    return getLeadTemp(l) === filter;
-  });
+  const filteredLeads = leads.filter(l => filter === 'all' || getLeadTemp(l) === filter);
 
   return (
     <div className="min-h-screen">
-      <Header title="Leads" subtitle="Manage your incoming leads and sharing tools" />
+      <Header title="Leads" subtitle="Respond to leads and grow your pipeline" />
 
-      <div className="p-4 sm:p-6 text-white space-y-6">
+      <div className="p-4 sm:p-6 text-white max-w-4xl mx-auto">
 
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            { label: 'Total Leads', value: leads.length, icon: Users },
-            { label: 'New This Week', value: thisWeek.length, icon: Clock },
-            { label: 'Hot Leads', value: hotLeads.length, icon: Flame },
-          ].map(({ label, value, icon: Icon }) => (
-            <div key={label} className="bg-[#111111] border border-white/10 rounded-xl p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Icon className="w-4 h-4 text-gray-500" />
-                <p className="text-xs text-gray-500">{label}</p>
-              </div>
-              <p className="text-2xl font-bold text-white">{value}</p>
-            </div>
+        {/* Tab navigation */}
+        <div className="flex gap-1 p-1 bg-white/5 border border-white/10 rounded-xl mb-6">
+          {TABS.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id)}
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                activeTab === id
+                  ? 'bg-white text-gray-900'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <Icon className="w-4 h-4" />
+              <span className="hidden sm:inline">{label}</span>
+            </button>
           ))}
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6 items-start">
-
-          {/* Lead Inbox */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-white flex items-center gap-2">
-                <Inbox className="w-4 h-4 text-gray-400" />
-                Lead Inbox
-              </h2>
-              {/* Filter tabs */}
-              <div className="flex gap-1 bg-white/5 border border-white/10 rounded-lg p-1">
-                {(['all', 'hot', 'warm', 'cold'] as const).map(f => (
-                  <button
-                    key={f}
-                    onClick={() => setFilter(f)}
-                    className={`px-3 py-1 rounded-md text-xs font-medium transition-all capitalize ${
-                      filter === f
-                        ? 'bg-white text-gray-900'
-                        : 'text-gray-400 hover:text-white'
-                    }`}
-                  >
-                    {f}
-                  </button>
-                ))}
-              </div>
+        {/* ─── INBOX ─────────────────────────────────────────────────────── */}
+        {activeTab === 'inbox' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { label: 'Total Leads', value: leads.length, icon: Users },
+                { label: 'New This Week', value: thisWeek.length, icon: Clock },
+                { label: 'Hot Leads', value: hotLeads.length, icon: Flame },
+              ].map(({ label, value, icon: Icon }) => (
+                <div key={label} className="bg-[#111111] border border-white/10 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Icon className="w-4 h-4 text-gray-500" />
+                    <p className="text-xs text-gray-500">{label}</p>
+                  </div>
+                  <p className="text-2xl font-bold text-white">{value}</p>
+                </div>
+              ))}
             </div>
 
-            {loading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="bg-[#111111] border border-white/10 rounded-xl p-4 animate-pulse">
-                    <div className="h-4 bg-white/5 rounded w-1/3 mb-3" />
-                    <div className="h-3 bg-white/5 rounded w-1/2 mb-2" />
-                    <div className="h-3 bg-white/5 rounded w-2/3" />
-                  </div>
-                ))}
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <h2 className="text-base font-semibold text-white">Your leads</h2>
+                <div className="flex gap-1 bg-white/5 border border-white/10 rounded-lg p-1 w-full sm:w-auto">
+                  {(['all', 'hot', 'warm', 'cold'] as const).map(f => (
+                    <button
+                      key={f}
+                      onClick={() => setFilter(f)}
+                      className={`flex-1 sm:flex-none px-3 py-1.5 rounded-md text-xs font-medium transition-all capitalize ${
+                        filter === f ? 'bg-white text-gray-900' : 'text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      {f}
+                    </button>
+                  ))}
+                </div>
               </div>
-            ) : filteredLeads.length === 0 ? (
-              <div className="bg-[#111111] border border-white/10 rounded-xl p-10 text-center">
-                <Inbox className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-                <p className="text-gray-400 font-medium mb-1">
-                  {filter === 'all' ? 'No leads yet' : `No ${filter} leads`}
-                </p>
-                <p className="text-gray-600 text-sm">
-                  {filter === 'all'
-                    ? 'Share your lead form link to start collecting leads.'
-                    : 'Try switching to a different filter.'}
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {filteredLeads.map(lead => (
-                  <LeadCard key={lead.id} lead={lead} />
-                ))}
-              </div>
-            )}
-          </div>
 
-          {/* Tools sidebar */}
-          <div className="space-y-4">
-            <h2 className="text-base font-semibold text-white">Lead Tools</h2>
+              {loading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="bg-[#111111] border border-white/10 rounded-xl p-4 animate-pulse">
+                      <div className="h-4 bg-white/5 rounded w-1/3 mb-3" />
+                      <div className="h-3 bg-white/5 rounded w-1/2" />
+                    </div>
+                  ))}
+                </div>
+              ) : filteredLeads.length === 0 ? (
+                <div className="bg-[#111111] border border-white/10 rounded-xl p-10 text-center">
+                  <Inbox className="w-10 h-10 text-gray-600 mx-auto mb-3" />
+                  <p className="text-gray-400 font-medium mb-1">
+                    {filter === 'all' ? 'No leads yet' : `No ${filter} leads`}
+                  </p>
+                  <p className="text-gray-600 text-sm mb-4">
+                    {filter === 'all'
+                      ? 'Share your lead form or run an open house to start collecting leads.'
+                      : 'Try a different filter.'}
+                  </p>
+                  {filter === 'all' && (
+                    <button
+                      onClick={() => setActiveTab('capture')}
+                      className="text-sm font-medium text-white bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 rounded-lg transition-colors"
+                    >
+                      Go to Capture
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredLeads.map(lead => (
+                    <LeadCard key={lead.id} lead={lead} />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ─── CAPTURE ───────────────────────────────────────────────────── */}
+        {activeTab === 'capture' && (
+          <div className="space-y-6">
+            <p className="text-sm text-gray-500">
+              Tools to collect leads — share your form, run open houses, and publish your profile.
+            </p>
 
             {/* Share Lead Form */}
-            <div className="bg-[#111111] border border-white/10 rounded-xl p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
-                  <Link2 className="w-3.5 h-3.5 text-white/70" />
-                </div>
-                <h3 className="text-sm font-semibold text-white">Share Lead Form</h3>
+            <div className="bg-[#111111] border border-white/10 rounded-xl p-6">
+              <div className="flex items-center gap-2 mb-2">
+                <Link2 className="w-5 h-5 text-gray-400" />
+                <h3 className="text-base font-semibold text-white">Lead capture form</h3>
               </div>
-              <p className="text-xs text-gray-500 mb-4">
-                Share anywhere — Instagram bio, email signature, or business cards.
+              <p className="text-sm text-gray-500 mb-5">
+                Your personal link — add it to your bio, email signature, or business cards.
               </p>
 
               {isPaidPlan ? (
                 <>
-                  {/* Link + copy */}
-                  <div className="flex items-center gap-2 mb-4">
+                  <div className="flex flex-col sm:flex-row gap-2 mb-6">
                     <input
                       type="text"
                       readOnly
                       value={leadFormUrl}
                       onClick={(e) => (e.target as HTMLInputElement).select()}
-                      className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 text-xs focus:outline-none cursor-text min-w-0"
+                      className="flex-1 px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-gray-300 text-sm focus:outline-none cursor-text min-w-0"
                     />
                     <button
-                      onClick={handleCopy}
-                      className={`flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-medium transition-all border flex-shrink-0 ${
+                      onClick={() => handleCopy(leadFormUrl)}
+                      className={`flex items-center justify-center gap-2 px-5 py-3 rounded-lg text-sm font-medium transition-all border flex-shrink-0 ${
                         copied
                           ? 'bg-white/10 text-white border-white/20'
                           : 'bg-white text-gray-900 hover:bg-gray-100 border-gray-200'
                       }`}
                     >
-                      {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                      {copied ? 'Copied' : 'Copy'}
+                      {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                      {copied ? 'Copied' : 'Copy link'}
                     </button>
                   </div>
 
-                  {/* QR Code */}
-                  <div className="border-t border-white/10 pt-4">
-                    <p className="text-xs text-gray-500 mb-3">QR code for yard signs & flyers</p>
-                    <div className="flex items-center gap-4">
-                      <div className="p-2.5 bg-white rounded-xl flex-shrink-0">
+                  <div className="border-t border-white/10 pt-6">
+                    <p className="text-sm text-gray-500 mb-4">QR code for yard signs and flyers</p>
+                    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+                      <div className="p-4 bg-white rounded-xl">
                         <QRCodeCanvas
                           id="leads-qr"
                           value={leadFormUrl}
-                          size={90}
+                          size={140}
                           bgColor="#ffffff"
                           fgColor="#000000"
                           level="M"
                         />
                       </div>
-                      <div className="flex flex-col gap-2 flex-1">
+                      <div className="flex flex-col gap-3 w-full sm:w-auto sm:min-w-[180px]">
                         <button
                           onClick={handleDownloadQR}
-                          className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-white text-gray-900 hover:bg-gray-100 text-xs font-medium transition-colors border border-gray-200 w-full"
+                          className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-white text-gray-900 hover:bg-gray-100 text-sm font-medium transition-colors border border-gray-200 w-full"
                         >
-                          <Download className="w-3.5 h-3.5" />
+                          <Download className="w-4 h-4" />
                           Download PNG
                         </button>
                         <a
                           href={leadFormUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors"
+                          className="flex items-center justify-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
                         >
-                          <Link2 className="w-3 h-3" />
+                          <Link2 className="w-4 h-4" />
                           Preview form
                         </a>
                       </div>
@@ -426,12 +453,12 @@ export default function LeadsPage() {
                   </div>
                 </>
               ) : (
-                <div className="flex flex-col items-center py-4 text-center">
-                  <Lock className="w-8 h-8 text-gray-600 mb-2" />
-                  <p className="text-xs text-gray-500 mb-3">Available on Starter &amp; Pro plans</p>
+                <div className="flex flex-col items-center py-8 text-center border border-white/5 rounded-lg">
+                  <Lock className="w-10 h-10 text-gray-600 mb-3" />
+                  <p className="text-sm text-gray-500 mb-4">Available on Starter and Pro plans</p>
                   <Link
                     href="/dashboard/upgrade"
-                    className="text-xs font-medium text-white bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 rounded-lg transition-colors"
+                    className="text-sm font-medium text-white bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-2.5 rounded-lg transition-colors"
                   >
                     Upgrade to unlock
                   </Link>
@@ -439,110 +466,124 @@ export default function LeadsPage() {
               )}
             </div>
 
-            {/* Auto Follow-Up Emails */}
-            <div className="bg-[#111111] border border-white/10 rounded-xl p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
-                  <MailCheck className="w-3.5 h-3.5 text-white/70" />
-                </div>
-                <h3 className="text-sm font-semibold text-white">Auto Follow-Up</h3>
-              </div>
-              <p className="text-xs text-gray-500 mb-4">
-                When a lead submits your form, they automatically receive 3 follow-up emails over 5 days.
-              </p>
-              <button
-                onClick={() => {
-                  const next = !autoFollowup;
-                  setAutoFollowup(next);
-                  saveSettings({ auto_followup_enabled: next });
-                }}
-                disabled={savingSettings}
-                className={`w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium transition-all border ${
-                  autoFollowup
-                    ? 'bg-white text-gray-900 border-white'
-                    : 'bg-white/5 text-gray-400 border-white/10 hover:border-white/20 hover:text-white'
-                }`}
+            {/* Open Houses + Agent Profile */}
+            <div className="grid sm:grid-cols-2 gap-4">
+              <Link
+                href="/dashboard/leads/open-houses"
+                className="bg-[#111111] border border-white/10 rounded-xl p-6 hover:border-white/20 transition-colors group"
               >
-                {savingSettings ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : autoFollowup ? <Check className="w-3.5 h-3.5" /> : <MailCheck className="w-3.5 h-3.5" />}
-                {autoFollowup ? 'Auto Follow-Up On' : 'Enable Auto Follow-Up'}
-              </button>
-            </div>
-
-            {/* SMS Notifications */}
-            <div className="bg-[#111111] border border-white/10 rounded-xl p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
-                  <Phone className="w-3.5 h-3.5 text-white/70" />
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                    <DoorOpen className="w-5 h-5 text-white/70" />
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-gray-600 ml-auto group-hover:text-white transition-colors" />
                 </div>
-                <h3 className="text-sm font-semibold text-white">SMS Alerts</h3>
-              </div>
-              <p className="text-xs text-gray-500 mb-4">
-                Get a text the second a lead submits your form.
-              </p>
-              <div className="space-y-3">
-                <input
-                  type="tel"
-                  placeholder="+1 (555) 123-4567"
-                  value={smsPhone}
-                  onChange={(e) => setSmsPhone(e.target.value)}
-                  onBlur={() => { if (smsPhone) saveSettings({ sms_phone: smsPhone }); }}
-                  className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-xs placeholder-gray-600 focus:outline-none focus:border-white/30"
-                />
+                <h3 className="text-base font-semibold text-white mb-1">Open houses</h3>
+                <p className="text-sm text-gray-500">
+                  Create a sign-in page and QR code for each open house. Visitors become leads automatically.
+                </p>
+              </Link>
+
+              <Link
+                href="/dashboard/leads/profile"
+                className="bg-[#111111] border border-white/10 rounded-xl p-6 hover:border-white/20 transition-colors group"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                    <Users className="w-5 h-5 text-white/70" />
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-gray-600 ml-auto group-hover:text-white transition-colors" />
+                </div>
+                <h3 className="text-base font-semibold text-white mb-1">Agent profile</h3>
+                <p className="text-sm text-gray-500">
+                  Your public landing page with bio, specialties, and a built-in lead form.
+                </p>
+                {profileUrl && (
+                  <p className="text-xs text-gray-600 mt-3 truncate">{profileUrl}</p>
+                )}
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* ─── AUTOMATIONS ───────────────────────────────────────────────── */}
+        {activeTab === 'automations' && (
+          <div className="space-y-6">
+            <p className="text-sm text-gray-500">
+              Set up once — these run automatically when someone becomes a lead.
+            </p>
+
+            <div className="grid sm:grid-cols-2 gap-4">
+              {/* Auto Follow-Up */}
+              <div className="bg-[#111111] border border-white/10 rounded-xl p-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                    <MailCheck className="w-5 h-5 text-white/70" />
+                  </div>
+                  <h3 className="text-base font-semibold text-white">Auto follow-up</h3>
+                </div>
+                <p className="text-sm text-gray-500 mb-5">
+                  Leads with an email receive 3 messages over 5 days — welcome, check-in, and a final nudge.
+                </p>
                 <button
                   onClick={() => {
-                    const next = !smsEnabled;
-                    setSmsEnabled(next);
-                    saveSettings({ sms_alerts_enabled: next, sms_phone: smsPhone });
+                    const next = !autoFollowup;
+                    setAutoFollowup(next);
+                    saveSettings({ auto_followup_enabled: next });
                   }}
-                  disabled={savingSettings || !smsPhone.trim()}
-                  className={`w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium transition-all border disabled:opacity-40 disabled:cursor-not-allowed ${
-                    smsEnabled
+                  disabled={savingSettings}
+                  className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all border ${
+                    autoFollowup
                       ? 'bg-white text-gray-900 border-white'
                       : 'bg-white/5 text-gray-400 border-white/10 hover:border-white/20 hover:text-white'
                   }`}
                 >
-                  {savingSettings ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : smsEnabled ? <Check className="w-3.5 h-3.5" /> : <Phone className="w-3.5 h-3.5" />}
-                  {smsEnabled ? 'SMS Alerts On' : 'Enable SMS Alerts'}
+                  {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : autoFollowup ? <Check className="w-4 h-4" /> : <MailCheck className="w-4 h-4" />}
+                  {autoFollowup ? 'Enabled' : 'Enable auto follow-up'}
                 </button>
               </div>
+
+              {/* SMS Alerts */}
+              <div className="bg-[#111111] border border-white/10 rounded-xl p-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                    <Phone className="w-5 h-5 text-white/70" />
+                  </div>
+                  <h3 className="text-base font-semibold text-white">SMS alerts</h3>
+                </div>
+                <p className="text-sm text-gray-500 mb-5">
+                  Get a text the moment a lead submits your form or signs in at an open house.
+                </p>
+                <div className="space-y-3">
+                  <input
+                    type="tel"
+                    placeholder="+1 (555) 123-4567"
+                    value={smsPhone}
+                    onChange={(e) => setSmsPhone(e.target.value)}
+                    onBlur={() => { if (smsPhone) saveSettings({ sms_phone: smsPhone }); }}
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-white/30"
+                  />
+                  <button
+                    onClick={() => {
+                      const next = !smsEnabled;
+                      setSmsEnabled(next);
+                      saveSettings({ sms_alerts_enabled: next, sms_phone: smsPhone });
+                    }}
+                    disabled={savingSettings || !smsPhone.trim()}
+                    className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all border disabled:opacity-40 disabled:cursor-not-allowed ${
+                      smsEnabled
+                        ? 'bg-white text-gray-900 border-white'
+                        : 'bg-white/5 text-gray-400 border-white/10 hover:border-white/20 hover:text-white'
+                    }`}
+                  >
+                    {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : smsEnabled ? <Check className="w-4 h-4" /> : <Phone className="w-4 h-4" />}
+                    {smsEnabled ? 'Enabled' : 'Enable SMS alerts'}
+                  </button>
+                </div>
+              </div>
             </div>
-
-            {/* Open Houses link */}
-            <Link
-              href="/dashboard/leads/open-houses"
-              className="block bg-[#111111] border border-white/10 rounded-xl p-5 hover:border-white/20 transition-colors"
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
-                  <DoorOpen className="w-3.5 h-3.5 text-white/70" />
-                </div>
-                <h3 className="text-sm font-semibold text-white">Open Houses</h3>
-                <ArrowRight className="w-3.5 h-3.5 text-gray-500 ml-auto" />
-              </div>
-              <p className="text-xs text-gray-500">
-                Create sign-in pages for open houses. Visitors scan a QR code and become leads.
-              </p>
-            </Link>
-
-            {/* Agent Profile link */}
-            <Link
-              href="/dashboard/leads/profile"
-              className="block bg-[#111111] border border-white/10 rounded-xl p-5 hover:border-white/20 transition-colors"
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
-                  <Users className="w-3.5 h-3.5 text-white/70" />
-                </div>
-                <h3 className="text-sm font-semibold text-white">Agent Profile</h3>
-                <ArrowRight className="w-3.5 h-3.5 text-gray-500 ml-auto" />
-              </div>
-              <p className="text-xs text-gray-500">
-                Your public landing page — photo, bio, specialties, and a built-in lead form.
-              </p>
-            </Link>
-
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
