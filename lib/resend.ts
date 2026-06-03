@@ -1,8 +1,12 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const FROM_EMAIL = 'Realestic <noreply@realestic.ai>';
+
+function getResendClient(): Resend | null {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return null;
+  return new Resend(apiKey);
+}
 
 interface LeadEmailData {
   leadName: string;
@@ -107,7 +111,8 @@ export function buildFollowUp2Email(data: LeadEmailData) {
 }
 
 export async function sendEmail(emailData: { from: string; to: string; subject: string; html: string }) {
-  if (!process.env.RESEND_API_KEY) {
+  const resend = getResendClient();
+  if (!resend) {
     console.warn('[Resend] RESEND_API_KEY not set — skipping email send');
     return null;
   }
