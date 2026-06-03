@@ -7,7 +7,7 @@ import ClientForm from '@/components/ClientForm';
 import ReminderForm from '@/components/ReminderForm';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
-import { ArrowLeft, Edit, Trash2, Plus, Clock, CheckCircle, StickyNote, Calendar } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Plus, Clock, CheckCircle, StickyNote, Calendar, UserPlus, Loader2 } from 'lucide-react';
 
 /**
  * Client detail page
@@ -27,10 +27,29 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [editingNoteContent, setEditingNoteContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [addingToCrm, setAddingToCrm] = useState(false);
 
   useEffect(() => {
     fetchClient();
   }, [clientId]);
+
+  const handleAddToCrm = async () => {
+    setAddingToCrm(true);
+    try {
+      const response = await fetch(`/api/clients/${clientId}/add-to-crm`, { method: 'POST' });
+      const result = await response.json();
+      if (result.success) {
+        fetchClient();
+      } else {
+        alert(result.error || 'Could not add to CRM');
+      }
+    } catch (error) {
+      console.error('Add to CRM error:', error);
+      alert('Could not add to CRM');
+    } finally {
+      setAddingToCrm(false);
+    }
+  };
 
   const fetchClient = async () => {
     try {
@@ -254,12 +273,27 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
       {/* Back button */}
       <button
-        onClick={() => router.push('/dashboard/clients')}
+        onClick={() => router.push(client.in_crm ? '/dashboard/clients' : '/dashboard/leads')}
         className="flex items-center gap-2 text-gray-400 hover:text-white mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to Clients
+        {client.in_crm ? 'Back to Clients' : 'Back to Leads inbox'}
       </button>
+
+      {!client.in_crm && (
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3">
+          <p className="text-sm text-amber-200/90">
+            This lead is in your inbox only — add them to your CRM to manage them with your full client list.
+          </p>
+          <Button variant="primary" size="sm" onClick={handleAddToCrm} disabled={addingToCrm}>
+            {addingToCrm ? (
+              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Adding…</>
+            ) : (
+              <><UserPlus className="w-4 h-4 mr-2" /> Add to CRM</>
+            )}
+          </Button>
+        </div>
+      )}
 
       {/* Client header */}
       <div className="mb-8">

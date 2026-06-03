@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search');
     const status = searchParams.get('status') || 'active';
     const source = searchParams.get('source');
+    const view = searchParams.get('view'); // 'crm' (default) | 'inbox'
 
     // Build query - include latest note and reminders count
     let query = supabase
@@ -37,6 +38,14 @@ export async function GET(request: NextRequest) {
       `)
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
+
+    // CRM list: only promoted clients + manually added
+    // Inbox: captured leads not yet in CRM
+    if (view === 'inbox') {
+      query = query.eq('in_crm', false).in('source', ['lead_form', 'open_house']);
+    } else {
+      query = query.eq('in_crm', true);
+    }
 
     // Apply status filter
     if (status !== 'all') {
@@ -141,7 +150,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create client
+    // Create client (goes directly to CRM)
     const { data: client, error } = await supabase
       .from('clients')
       .insert({
@@ -150,6 +159,8 @@ export async function POST(request: NextRequest) {
         email: email?.trim() || null,
         phone: phone?.trim() || null,
         status: 'active',
+        source: 'manual',
+        in_crm: true,
       })
       .select()
       .single();

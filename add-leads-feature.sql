@@ -8,6 +8,9 @@
 -- Where the client/lead came from: 'manual' (added by agent) or 'lead_form' (public form)
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'manual';
 
+-- Inbox vs CRM: captured leads default to inbox until promoted (see leads-inbox-crm.sql)
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS in_crm BOOLEAN NOT NULL DEFAULT false;
+
 -- What the lead is interested in: 'buyer', 'seller', 'renter', 'browsing', or NULL
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS lead_type TEXT;
 

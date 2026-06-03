@@ -61,7 +61,7 @@ export default function DashboardPage() {
   const fetchRecentActivity = async () => {
     try {
       const [clientsRes, txRes] = await Promise.all([
-        fetch('/api/clients?limit=4'),
+        fetch('/api/clients?status=all'),
         fetch('/api/transactions?limit=4'),
       ]);
       const clientsData = await clientsRes.json();

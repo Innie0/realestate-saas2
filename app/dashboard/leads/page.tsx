@@ -8,8 +8,8 @@ import { QRCodeCanvas } from 'qrcode.react';
 import {
   Inbox, Link2, Copy, Check, Download, Phone, Mail,
   Home, Building2, KeyRound, Search, Flame, Thermometer,
-  Snowflake, ArrowRight, Users, Clock, Lock, MailCheck,
-  Loader2, DoorOpen, Megaphone, Zap,
+  Snowflake, ArrowRight,   Users, Clock, Lock, MailCheck,
+  Loader2, DoorOpen, Megaphone, Zap, UserPlus,
 } from 'lucide-react';
 
 type LeadsTab = 'inbox' | 'capture' | 'automations';
@@ -25,8 +25,6 @@ interface Lead {
   created_at: string;
   status: string;
 }
-
-const LEAD_SOURCES = ['lead_form', 'open_house'];
 
 function getLeadTemp(lead: Lead): 'hot' | 'warm' | 'cold' {
   const hoursAgo = (Date.now() - new Date(lead.created_at).getTime()) / 3_600_000;
@@ -82,8 +80,17 @@ function TempBadge({ temp }: { temp: 'hot' | 'warm' | 'cold' }) {
   );
 }
 
-function LeadCard({ lead }: { lead: Lead }) {
+function LeadCard({
+  lead,
+  onAddToCrm,
+  addingId,
+}: {
+  lead: Lead;
+  onAddToCrm: (id: string) => void;
+  addingId: string | null;
+}) {
   const temp = getLeadTemp(lead);
+  const isAdding = addingId === lead.id;
   const TypeIcon = lead.lead_type ? LEAD_TYPE_ICONS[lead.lead_type] : null;
   const msg = lead.message || '';
   const infoLines = msg.split('\n').filter(l =>
@@ -142,16 +149,22 @@ function LeadCard({ lead }: { lead: Lead }) {
       )}
 
       <div className="flex gap-2 pt-2 border-t border-white/5">
-        <Link
-          href={`/dashboard/clients/${lead.id}`}
-          className="flex-1 flex items-center justify-center gap-1.5 text-xs font-medium py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition-colors border border-white/10"
+        <button
+          type="button"
+          onClick={() => onAddToCrm(lead.id)}
+          disabled={isAdding}
+          className="flex-1 flex items-center justify-center gap-1.5 text-xs font-medium py-1.5 rounded-lg bg-white text-gray-900 hover:bg-gray-100 transition-colors disabled:opacity-60"
         >
-          View Profile <ArrowRight className="w-3 h-3" />
-        </Link>
+          {isAdding ? (
+            <><Loader2 className="w-3 h-3 animate-spin" /> Adding…</>
+          ) : (
+            <><UserPlus className="w-3 h-3" /> Add to CRM</>
+          )}
+        </button>
         {lead.phone && (
           <a
             href={`tel:${lead.phone}`}
-            className="flex items-center justify-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white text-gray-900 hover:bg-gray-100 transition-colors"
+            className="flex items-center justify-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 transition-colors"
           >
             <Phone className="w-3 h-3" /> Call
           </a>
@@ -176,6 +189,7 @@ export default function LeadsPage() {
   const [profileUrl, setProfileUrl] = useState('');
   const [copied, setCopied] = useState(false);
   const [filter, setFilter] = useState<'all' | 'hot' | 'warm' | 'cold'>('all');
+  const [addingToCrmId, setAddingToCrmId] = useState<string | null>(null);
 
   const [autoFollowup, setAutoFollowup] = useState(false);
   const [smsEnabled, setSmsEnabled] = useState(false);
@@ -191,18 +205,33 @@ export default function LeadsPage() {
 
   const fetchLeads = async () => {
     try {
-      const res = await fetch('/api/clients?status=all');
+      const res = await fetch('/api/clients?status=all&view=inbox');
       const result = await res.json();
       if (result.success) {
-        const incoming = (result.data || []).filter(
-          (c: Lead) => c.source && LEAD_SOURCES.includes(c.source)
-        );
-        setLeads(incoming);
+        setLeads(result.data || []);
       }
     } catch (e) {
       console.error('Error fetching leads:', e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddToCrm = async (leadId: string) => {
+    setAddingToCrmId(leadId);
+    try {
+      const res = await fetch(`/api/clients/${leadId}/add-to-crm`, { method: 'POST' });
+      const result = await res.json();
+      if (result.success) {
+        setLeads(prev => prev.filter(l => l.id !== leadId));
+      } else {
+        alert(result.error || 'Could not add to CRM');
+      }
+    } catch (e) {
+      console.error('Add to CRM error:', e);
+      alert('Could not add to CRM');
+    } finally {
+      setAddingToCrmId(null);
     }
   };
 
@@ -322,7 +351,10 @@ export default function LeadsPage() {
 
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <h2 className="text-base font-semibold text-white">Your leads</h2>
+                <div>
+                  <h2 className="text-base font-semibold text-white">Leads inbox</h2>
+                  <p className="text-xs text-gray-500 mt-0.5">New captures stay here until you add them to your CRM.</p>
+                </div>
                 <div className="flex gap-1 bg-white/5 border border-white/10 rounded-lg p-1 w-full sm:w-auto">
                   {(['all', 'hot', 'warm', 'cold'] as const).map(f => (
                     <button
@@ -370,7 +402,12 @@ export default function LeadsPage() {
               ) : (
                 <div className="space-y-3">
                   {filteredLeads.map(lead => (
-                    <LeadCard key={lead.id} lead={lead} />
+                    <LeadCard
+                      key={lead.id}
+                      lead={lead}
+                      onAddToCrm={handleAddToCrm}
+                      addingId={addingToCrmId}
+                    />
                   ))}
                 </div>
               )}

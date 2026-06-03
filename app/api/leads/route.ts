@@ -90,6 +90,7 @@ export async function POST(request: NextRequest) {
         phone: cleanPhone || null,
         status: 'active',
         source: 'lead_form',
+        in_crm: false,
         lead_type: cleanLeadType,
         message: cleanMessage || null,
       })

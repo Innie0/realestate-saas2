@@ -54,6 +54,7 @@ export async function POST(
         phone: cleanPhone || null,
         status: 'active',
         source: 'open_house',
+        in_crm: false,
         lead_type: interested === true ? 'buyer' : null,
         message: `Open house sign-in at ${openHouse.property_address}`,
       })
