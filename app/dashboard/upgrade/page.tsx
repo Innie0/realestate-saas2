@@ -11,19 +11,23 @@ import Link from 'next/link';
 const STARTER_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || 'price_1Sw9B7Enz9g2d62xiHw3wYn5';
 const PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || 'price_1Sw9MdEnz9g2d62xlyjilIoq';
 
-const PLAN_LIMITS: Record<string, Record<string, number>> = {
-  free:    { projects: 3,  property_lookups: 5,  ai_messages: 20, clients: 5,  transactions: 3,  calendar_events: -1 },
-  starter: { projects: 10, property_lookups: 10, ai_messages: 50, clients: 25, transactions: 10, calendar_events: -1 },
+const STARTER_LIMITS: Record<string, number> = {
+  projects: 10,
+  property_lookups: 10,
+  ai_messages: 50,
+  clients: 25,
+  transactions: 10,
+  calendar_events: -1,
 };
 
 const COMPARISON_ROWS = [
-  { label: 'Projects',         free: '3 / mo',   starter: '10 / mo',  pro: 'Unlimited' },
-  { label: 'Property Lookups', free: '5 total',  starter: '10 / mo',  pro: 'Unlimited' },
-  { label: 'AI Messages',      free: '20 / mo',  starter: '50 / mo',  pro: 'Unlimited' },
-  { label: 'Clients',          free: '5 total',  starter: '25 total', pro: 'Unlimited' },
-  { label: 'Transactions',     free: '3 total',  starter: '10 total', pro: 'Unlimited' },
-  { label: 'Calendar Events',  free: 'Unlimited',starter: 'Unlimited', pro: 'Unlimited' },
-  { label: 'Priority Support', free: false,      starter: false,      pro: true },
+  { label: 'Projects',         starter: '10 / mo',  pro: 'Unlimited' },
+  { label: 'Property Lookups', starter: '10 / mo',  pro: 'Unlimited' },
+  { label: 'AI Messages',      starter: '50 / mo',  pro: 'Unlimited' },
+  { label: 'Clients',          starter: '25 total', pro: 'Unlimited' },
+  { label: 'Transactions',     starter: '10 total', pro: 'Unlimited' },
+  { label: 'Calendar Events',  starter: 'Unlimited', pro: 'Unlimited' },
+  { label: 'Priority Support', starter: false,      pro: true },
 ];
 
 const PRO_HIGHLIGHTS = [
@@ -38,7 +42,7 @@ const PRO_HIGHLIGHTS = [
   'Priority Support',
 ];
 
-type PlanType = 'free' | 'starter' | 'pro';
+type PlanType = 'starter' | 'pro';
 
 function ComparisonCell({ value }: { value: string | boolean }) {
   if (typeof value === 'boolean') {
@@ -57,7 +61,7 @@ function ComparisonCell({ value }: { value: string | boolean }) {
 export default function UpgradePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPlan, setCurrentPlan] = useState<PlanType>('free');
+  const [currentPlan, setCurrentPlan] = useState<PlanType>('starter');
   const [usage, setUsage] = useState<Record<string, { current: number; limit: number }> | null>(null);
 
   useEffect(() => {
@@ -67,7 +71,7 @@ export default function UpgradePage() {
   useEffect(() => {
     const loadData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { router.push('/auth/signin'); return; }
+      if (!user) { router.push('/auth/login'); return; }
 
       const { data: userData } = await supabase
         .from('users')
@@ -75,15 +79,22 @@ export default function UpgradePage() {
         .eq('id', user.id)
         .single();
 
-      let plan: PlanType = 'free';
+      const hasAccess =
+        userData?.subscription_status === 'active' ||
+        userData?.subscription_status === 'trialing';
+
+      if (!hasAccess) {
+        router.push('/pricing');
+        return;
+      }
+
+      let plan: PlanType = 'starter';
       if (userData?.subscription_plan === PRO_PRICE_ID) {
         plan = 'pro';
-      } else if (userData?.subscription_plan === STARTER_PRICE_ID) {
-        plan = 'starter';
       }
       setCurrentPlan(plan);
 
-      if (plan !== 'pro') {
+      if (plan === 'starter') {
         const now = new Date();
         const period = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
         const { data: usageRows } = await supabase
@@ -92,11 +103,9 @@ export default function UpgradePage() {
           .eq('user_id', user.id);
 
         if (usageRows) {
-          const limits = PLAN_LIMITS[plan];
           const map: Record<string, { current: number; limit: number }> = {};
-          for (const [feature, limit] of Object.entries(limits)) {
-            const isTotal = ['clients', 'transactions'].includes(feature) ||
-              (plan === 'free' && feature === 'property_lookups');
+          for (const [feature, limit] of Object.entries(STARTER_LIMITS)) {
+            const isTotal = ['clients', 'transactions'].includes(feature);
             const row = usageRows.find(r =>
               r.feature === feature && r.period === (isTotal ? 'total' : period)
             );
@@ -138,10 +147,8 @@ export default function UpgradePage() {
     );
   }
 
-  const pageTitle = currentPlan === 'free' ? 'Upgrade Your Plan' : 'Upgrade to Pro';
-  const pageSubtitle = currentPlan === 'free'
-    ? 'You\'re on the free plan — upgrade to unlock more'
-    : 'Unlock unlimited access to every feature';
+  const pageTitle = 'Upgrade to Pro';
+  const pageSubtitle = 'Unlock unlimited access to every feature';
 
   return (
     <div className="min-h-screen">
@@ -155,7 +162,7 @@ export default function UpgradePage() {
             <div className="flex items-center gap-2 mb-4">
               <Zap className="w-4 h-4 text-white/60" />
               <span className="text-sm font-semibold text-white capitalize">
-                Your Current Usage ({currentPlan === 'free' ? 'Free Plan' : 'Starter Plan'})
+                Your Current Usage (Starter Plan)
               </span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -196,43 +203,7 @@ export default function UpgradePage() {
         )}
 
         {/* Upgrade cards */}
-        <div className={`grid grid-cols-1 gap-6 ${currentPlan === 'free' ? 'lg:grid-cols-2' : ''}`}>
-
-          {/* Starter card — only show for free users */}
-          {currentPlan === 'free' && (
-            <div className="rounded-2xl border border-white/10 bg-[#111111] p-6 flex flex-col">
-              <div className="mb-5">
-                <h3 className="text-xl font-bold text-white mb-1">Starter</h3>
-                <p className="text-gray-500 text-sm">Perfect for active agents growing their business</p>
-              </div>
-              <div className="mb-5">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-white">$14.99</span>
-                  <span className="text-gray-500 text-sm">/ month</span>
-                </div>
-              </div>
-              <div className="mb-6">
-                <SubscribeButton priceId={STARTER_PRICE_ID} planName="Starter" className="w-full" />
-              </div>
-              <div className="border-t border-white/10 mb-5" />
-              <ul className="space-y-2.5 flex-1">
-                {[
-                  '10 AI Listing Projects per Month',
-                  '10 Property Lookups per Month',
-                  '50 AI Assistant Messages per Month',
-                  'Up to 25 Clients',
-                  'Up to 10 Transactions',
-                  'Unlimited Calendar Events',
-                  'Email Support',
-                ].map((f, i) => (
-                  <li key={i} className="flex items-start gap-2.5">
-                    <Check className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-gray-300">{f}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+        <div className="grid grid-cols-1 gap-6 max-w-xl mx-auto">
 
           {/* Pro card */}
           <div className="rounded-2xl border-2 border-white/30 bg-[#111111] p-6 flex flex-col relative">
@@ -272,19 +243,17 @@ export default function UpgradePage() {
           <h3 className="text-lg font-bold text-white mb-5">Plan Comparison</h3>
           <div className="min-w-[480px]">
             {/* Header */}
-            <div className="grid grid-cols-4 mb-3">
+            <div className="grid grid-cols-3 mb-3">
               <div />
-              <div className="text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Free</div>
               <div className="text-center text-xs font-semibold text-gray-400 uppercase tracking-wider">Starter</div>
               <div className="text-center text-xs font-semibold text-white uppercase tracking-wider">Pro</div>
             </div>
             {COMPARISON_ROWS.map((row, i) => (
               <div
                 key={i}
-                className={`grid grid-cols-4 py-3 ${i < COMPARISON_ROWS.length - 1 ? 'border-b border-white/5' : ''}`}
+                className={`grid grid-cols-3 py-3 ${i < COMPARISON_ROWS.length - 1 ? 'border-b border-white/5' : ''}`}
               >
                 <span className="text-sm text-gray-400">{row.label}</span>
-                <div className="text-center"><ComparisonCell value={row.free} /></div>
                 <div className="text-center"><ComparisonCell value={row.starter} /></div>
                 <div className="text-center"><ComparisonCell value={row.pro} /></div>
               </div>

@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin';
+import { hasLeadCaptureAccess } from '@/lib/subscription';
 import LeadCaptureForm from '@/components/LeadCaptureForm';
 
 interface PageProps {
@@ -23,19 +24,19 @@ async function getAgentProfile(slug: string) {
 
   const user = authData.user;
 
-  // Check paid plan
   const { data: userData } = await supabase
     .from('users')
-    .select('subscription_plan')
+    .select('subscription_plan, subscription_status')
     .eq('id', uuid)
     .single();
 
-  const plan = userData?.subscription_plan || '';
-  const starterPriceId = process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || '';
-  const proPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || '';
-  const isPaid = plan === starterPriceId || plan === proPriceId || plan === 'starter' || plan === 'pro';
-
-  if (!isPaid) return null;
+  if (!hasLeadCaptureAccess(
+    userData?.subscription_status,
+    userData?.subscription_plan,
+    user.email
+  )) {
+    return null;
+  }
 
   // Get profile settings
   const { data: settings } = await supabase

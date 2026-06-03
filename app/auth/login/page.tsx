@@ -29,12 +29,28 @@ export default function LoginPage() {
     document.title = 'Sign In - Realestic';
   }, []);
 
-  // Redirect already-authenticated users to dashboard
+  // Redirect already-authenticated users based on subscription
   React.useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session?.user) return;
+
+      const isAdmin = session.user.email === 'callon786@outlook.com';
+      if (isAdmin) {
         router.replace('/dashboard');
+        return;
       }
+
+      const { data: userData } = await supabase
+        .from('users')
+        .select('subscription_status')
+        .eq('id', session.user.id)
+        .single();
+
+      const hasActive =
+        userData?.subscription_status === 'active' ||
+        userData?.subscription_status === 'trialing';
+
+      router.replace(hasActive ? '/dashboard' : '/pricing');
     });
   }, [router]);
 

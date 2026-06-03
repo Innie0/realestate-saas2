@@ -69,67 +69,44 @@ export default function PricingPage() {
 
   const plans = [
     {
-      name: 'Free',
-      price: '$0',
-      period: 'forever',
-      description: 'Try Realestic at your own pace — no credit card required',
-      priceId: null,
-      features: [
-        '3 AI Listing Projects per Month',
-        '5 Property Lookups (lifetime)',
-        '20 AI Assistant Messages per Month',
-        'Up to 5 Clients',
-        'Up to 3 Transactions',
-        'Unlimited Calendar Events',
-        'AI-Powered Descriptions',
-        'Image Analysis',
-      ],
-      popular: false,
-      cta: 'Get Started Free',
-      ctaHref: '/auth/signup',
-    },
-    {
       name: 'Starter',
       price: '$14.99',
-      period: 'per month',
+      period: 'per month after trial',
       description: 'Perfect for active agents growing their business',
       priceId: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || 'price_1Sw9B7Enz9g2d62xiHw3wYn5',
       features: [
+        '7-day free trial',
         '10 AI Listing Projects per Month',
         '10 Property Lookups per Month',
         '50 AI Assistant Messages per Month',
         'Up to 25 Clients',
         'Up to 10 Transactions',
+        'Lead Capture Form & QR Code',
         'Calendar Integration (Unlimited Events)',
         'AI-Powered Descriptions',
-        'Image Analysis',
         'Email Support',
       ],
       popular: false,
-      cta: null,
-      ctaHref: null,
     },
     {
       name: 'Pro',
       price: '$39.99',
-      period: 'per month',
+      period: 'per month after trial',
       description: 'Everything you need to scale your real estate business',
       priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || 'price_1Sw9MdEnz9g2d62xlyjilIoq',
       features: [
+        '7-day free trial',
         'Unlimited Property Listings',
         'Unlimited Property Lookups',
         'Unlimited AI Assistant Messages',
         'Unlimited Clients & Transactions',
+        'Lead Capture, Open Houses & Agent Profile',
         'Unlimited Calendar Events',
         'AI-Powered Descriptions (3 Tones)',
-        'Advanced Image Analysis',
-        'Google Calendar Integration',
         'Transaction Checklists & Reminders',
         'Priority Support',
       ],
       popular: true,
-      cta: null,
-      ctaHref: null,
     },
   ];
 
@@ -169,18 +146,18 @@ export default function PricingPage() {
           <div className="text-center pt-12 pb-16">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/10 text-xs text-gray-300 mb-6">
               <Sparkles className="w-3.5 h-3.5" />
-              Free plan available — no credit card needed
+              7-day free trial on every plan
             </span>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight">
-              Simple, transparent pricing
+              Choose your plan
             </h1>
             <p className="text-gray-500 text-lg max-w-xl mx-auto">
-              Everything you need to run your real estate business, at a price that makes sense.
+              Start your free trial today. You won&apos;t be charged until the trial ends.
             </p>
           </div>
 
           {/* Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {plans.map((plan) => (
               <div
                 key={plan.name}
@@ -216,16 +193,7 @@ export default function PricingPage() {
 
                 {/* CTA */}
                 <div className="mb-7">
-                  {plan.ctaHref ? (
-                    <Link
-                      href={isAuthenticated ? '/dashboard' : plan.ctaHref}
-                      className="block w-full text-center py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-gray-100 transition-colors"
-                    >
-                      {isAuthenticated ? 'Go to Dashboard' : plan.cta}
-                    </Link>
-                  ) : (
-                    <SubscribeButton priceId={plan.priceId!} planName={plan.name} className="w-full" />
-                  )}
+                  <SubscribeButton priceId={plan.priceId!} planName={plan.name} className="w-full" />
                 </div>
 
                 {/* Divider */}
@@ -260,7 +228,7 @@ export default function PricingPage() {
 
           {/* Footer note */}
           <p className="text-center text-gray-600 text-sm mt-10">
-            Free plan available forever · Paid plans cancel anytime · No hidden fees
+            7-day free trial · Cancel anytime · No hidden fees
           </p>
         </div>
       )}

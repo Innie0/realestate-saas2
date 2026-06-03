@@ -31,7 +31,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [projectsLoading, setProjectsLoading] = useState(true);
   const [usage, setUsage] = useState<UsageData | null>(null);
-  const [plan, setPlan] = useState<'free' | 'starter' | 'pro'>('starter');
+  const [plan, setPlan] = useState<'starter' | 'pro'>('starter');
 
   useEffect(() => {
     document.title = 'Dashboard - Realestic';
@@ -129,7 +129,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               {[
                 { key: 'projects', label: 'Projects', period: '/mo' },
-                { key: 'property_lookups', label: 'Lookups', period: plan === 'free' ? 'total' : '/mo' },
+                { key: 'property_lookups', label: 'Lookups', period: plan === 'pro' ? '' : '/mo' },
                 { key: 'ai_messages', label: 'AI Messages', period: '/mo' },
                 { key: 'clients', label: 'Clients', period: 'total' },
                 { key: 'transactions', label: 'Transactions', period: 'total' },

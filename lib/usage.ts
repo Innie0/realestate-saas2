@@ -1,10 +1,8 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-
-const STARTER_PRICE_ID = 'price_1Sw9B7Enz9g2d62xiHw3wYn5';
-const PRO_PRICE_ID = 'price_1Sw9MdEnz9g2d62xlyjilIoq';
+import { getPaidPlanName, hasAppAccess, PRO_PRICE_ID, STARTER_PRICE_ID } from '@/lib/subscription';
 
 type Feature = 'projects' | 'property_lookups' | 'ai_messages' | 'clients' | 'transactions' | 'calendar_events';
-type PlanName = 'free' | 'starter' | 'pro';
+export type PlanName = 'starter' | 'pro';
 
 interface PlanLimits {
   projects: number;
@@ -14,16 +12,6 @@ interface PlanLimits {
   transactions: number;
   calendar_events: number;
 }
-
-// Free plan — lifetime limits on lookups/clients/transactions, monthly on projects/ai
-const FREE_LIMITS: PlanLimits = {
-  projects: 3,
-  property_lookups: 5,   // tracked as lifetime total
-  ai_messages: 20,
-  clients: 5,
-  transactions: 3,
-  calendar_events: Infinity,
-};
 
 const STARTER_LIMITS: PlanLimits = {
   projects: 10,
@@ -43,26 +31,25 @@ const PRO_LIMITS: PlanLimits = {
   calendar_events: Infinity,
 };
 
-// Monthly features reset each month; total features are lifetime counts
 const MONTHLY_FEATURES: Feature[] = ['projects', 'property_lookups', 'ai_messages'];
 const TOTAL_FEATURES: Feature[] = ['clients', 'transactions', 'calendar_events'];
 
-function getPlanName(subscriptionPlan: string | null): PlanName {
-  if (subscriptionPlan === PRO_PRICE_ID) return 'pro';
-  if (subscriptionPlan === STARTER_PRICE_ID) return 'starter';
-  return 'free';
+export function getPlanName(
+  subscriptionPlan: string | null,
+  subscriptionStatus?: string | null
+): PlanName | null {
+  if (!hasAppAccess(subscriptionStatus)) {
+    return null;
+  }
+  return getPaidPlanName(subscriptionPlan);
 }
 
 function getLimits(plan: PlanName): PlanLimits {
-  if (plan === 'pro') return PRO_LIMITS;
-  if (plan === 'starter') return STARTER_LIMITS;
-  return FREE_LIMITS;
+  return plan === 'pro' ? PRO_LIMITS : STARTER_LIMITS;
 }
 
-// Free users: property_lookups tracked as lifetime total (not monthly)
-function getPeriod(feature: Feature, plan: PlanName = 'starter'): string {
+function getPeriod(feature: Feature): string {
   if (TOTAL_FEATURES.includes(feature)) return 'total';
-  if (plan === 'free' && feature === 'property_lookups') return 'total';
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 }
@@ -71,20 +58,25 @@ export async function checkUsageLimit(
   supabase: SupabaseClient,
   userId: string,
   feature: Feature
-): Promise<{ allowed: boolean; current: number; limit: number; plan: PlanName }> {
+): Promise<{ allowed: boolean; current: number; limit: number; plan: PlanName | null }> {
   const { data: userData } = await supabase
     .from('users')
-    .select('subscription_plan')
+    .select('subscription_plan, subscription_status')
     .eq('id', userId)
     .single();
 
-  const plan = getPlanName(userData?.subscription_plan);
+  const plan = getPlanName(userData?.subscription_plan, userData?.subscription_status);
+
+  if (!plan) {
+    return { allowed: false, current: 0, limit: 0, plan: null };
+  }
+
   const limits = getLimits(plan);
   const limit = limits[feature];
 
   if (limit === Infinity) return { allowed: true, current: 0, limit: -1, plan };
 
-  const period = getPeriod(feature, plan);
+  const period = getPeriod(feature);
 
   const { data: usage } = await supabase
     .from('usage_tracking')
@@ -105,12 +97,14 @@ export async function incrementUsage(
 ): Promise<void> {
   const { data: userData } = await supabase
     .from('users')
-    .select('subscription_plan')
+    .select('subscription_plan, subscription_status')
     .eq('id', userId)
     .single();
 
-  const plan = getPlanName(userData?.subscription_plan);
-  const period = getPeriod(feature, plan);
+  const plan = getPlanName(userData?.subscription_plan, userData?.subscription_status);
+  if (!plan) return;
+
+  const period = getPeriod(feature);
 
   const { data: existing } = await supabase
     .from('usage_tracking')
@@ -126,14 +120,12 @@ export async function incrementUsage(
       .update({ usage_count: existing.usage_count + 1 })
       .eq('id', existing.id);
   } else {
-    await supabase
-      .from('usage_tracking')
-      .insert({
-        user_id: userId,
-        feature,
-        period,
-        usage_count: 1,
-      });
+    await supabase.from('usage_tracking').insert({
+      user_id: userId,
+      feature,
+      period,
+      usage_count: 1,
+    });
   }
 }
 
@@ -143,12 +135,12 @@ export async function getAllUsage(
 ): Promise<Record<Feature, { current: number; limit: number }>> {
   const { data: userData } = await supabase
     .from('users')
-    .select('subscription_plan')
+    .select('subscription_plan, subscription_status')
     .eq('id', userId)
     .single();
 
-  const plan = getPlanName(userData?.subscription_plan);
-  const limits = getLimits(plan);
+  const plan = getPlanName(userData?.subscription_plan, userData?.subscription_status);
+  const limits = plan ? getLimits(plan) : STARTER_LIMITS;
 
   const currentMonth = (() => {
     const now = new Date();
@@ -165,9 +157,9 @@ export async function getAllUsage(
   const result = {} as Record<Feature, { current: number; limit: number }>;
 
   for (const feature of features) {
-    const period = getPeriod(feature, plan);
-    const row = usageRows?.find(r => r.feature === feature && r.period === period);
-    const limit = limits[feature];
+    const period = getPeriod(feature);
+    const row = usageRows?.find((r) => r.feature === feature && r.period === period);
+    const limit = plan ? limits[feature] : 0;
     result[feature] = {
       current: row?.usage_count || 0,
       limit: limit === Infinity ? -1 : limit,
@@ -177,7 +169,12 @@ export async function getAllUsage(
   return result;
 }
 
-export function usageLimitError(feature: string, current: number, limit: number, plan: PlanName = 'starter') {
+export function usageLimitError(
+  feature: string,
+  current: number,
+  limit: number,
+  plan: PlanName | null = 'starter'
+) {
   const featureNames: Record<string, string> = {
     projects: 'projects',
     property_lookups: 'property lookups',
@@ -187,10 +184,14 @@ export function usageLimitError(feature: string, current: number, limit: number,
     calendar_events: 'calendar events',
   };
   const name = featureNames[feature] || feature;
-  if (plan === 'free') {
-    return `You've reached your free plan limit of ${limit} ${name}. Upgrade to Starter or Pro to get more.`;
+
+  if (!plan) {
+    return 'A subscription is required to use this feature. Choose a plan to continue.';
   }
-  return `You've reached your Starter plan limit of ${limit} ${name}. Upgrade to Pro for unlimited access.`;
+  if (plan === 'starter') {
+    return `You've reached your Starter plan limit of ${limit} ${name}. Upgrade to Pro for unlimited access.`;
+  }
+  return `You've reached your limit of ${limit} ${name}.`;
 }
 
-export { getPlanName };
+export { STARTER_PRICE_ID, PRO_PRICE_ID };

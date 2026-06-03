@@ -2,69 +2,105 @@ import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import type { Database } from '@/types/supabase';
+import { hasAppAccess, isAdminEmail } from '@/lib/subscription';
 
-// Routes that don't require authentication or subscription
-const publicRoutes = ['/', '/auth/login', '/auth/signup', '/auth/callback', '/privacy', '/terms'];
-// Routes that require authentication but NOT subscription
-const authOnlyRoutes = ['/pricing'];
-// API routes that don't require subscription check
-const publicApiRoutes = ['/api/stripe/checkout', '/api/stripe/webhook', '/api/debug-auth'];
+const publicRoutes = [
+  '/',
+  '/auth/login',
+  '/auth/signup',
+  '/auth/callback',
+  '/privacy',
+  '/terms',
+  '/pricing',
+];
+
+const publicPathPrefixes = ['/lead/', '/open-house/', '/agent/'];
+
+const publicApiPrefixes = [
+  '/api/stripe/checkout',
+  '/api/stripe/webhook',
+  '/api/debug-auth',
+  '/api/leads',
+  '/api/cron/',
+];
+
+function isPublicPath(pathname: string): boolean {
+  if (publicRoutes.includes(pathname)) return true;
+  return publicPathPrefixes.some((prefix) => pathname.startsWith(prefix));
+}
+
+function isPublicApi(pathname: string): boolean {
+  if (pathname.startsWith('/api/open-houses/') && pathname.endsWith('/sign-in')) {
+    return true;
+  }
+  return publicApiPrefixes.some((prefix) => pathname.startsWith(prefix));
+}
+
+function requiresSubscription(pathname: string): boolean {
+  if (pathname.startsWith('/dashboard')) return true;
+  if (pathname.startsWith('/api/') && !isPublicApi(pathname)) return true;
+  return false;
+}
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
   const pathname = req.nextUrl.pathname;
-  
-  // Create Supabase client with proper typing
+
   const supabase = createMiddlewareClient<Database>({ req, res });
-  
-  // IMPORTANT: This refreshes the session and sets/updates cookies
   const { data: { session } } = await supabase.auth.getSession();
-  
-  // Log for debugging
-  if (pathname.startsWith('/api/')) {
-    console.log(`[Middleware] ${req.method} ${pathname} - Session: ${session ? '✅' : '❌'}`);
-  }
-  
-  // Skip public routes
-  if (publicRoutes.includes(pathname)) {
+
+  if (isPublicPath(pathname)) {
     return res;
   }
-  
-  // Skip public API routes
-  if (publicApiRoutes.some(route => pathname.startsWith(route))) {
+
+  if (pathname.startsWith('/api/') && isPublicApi(pathname)) {
     return res;
   }
-  
-  // Check if user is authenticated for protected routes
+
   if (!session?.user) {
-    // Not logged in - redirect to login for dashboard routes
     if (pathname.startsWith('/dashboard')) {
       return NextResponse.redirect(new URL('/auth/login', req.url));
     }
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
     return res;
   }
-  
-  // User is logged in - check for auth-only routes (like pricing)
-  if (authOnlyRoutes.includes(pathname)) {
+
+  if (!requiresSubscription(pathname)) {
     return res;
   }
-  
-  // Dashboard routes only require authentication — usage limits are enforced per-API-route
-  
+
+  const email = session.user.email;
+  if (isAdminEmail(email)) {
+    return res;
+  }
+
+  const { data: userData } = await supabase
+    .from('users')
+    .select('subscription_status')
+    .eq('id', session.user.id)
+    .single();
+
+  if (!hasAppAccess(userData?.subscription_status, email)) {
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json(
+        { success: false, error: 'An active subscription is required.' },
+        { status: 403 }
+      );
+    }
+    const pricingUrl = new URL('/pricing', req.url);
+    if (pathname !== '/pricing') {
+      pricingUrl.searchParams.set('redirect', pathname);
+    }
+    return NextResponse.redirect(pricingUrl);
+  }
+
   return res;
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
-
-

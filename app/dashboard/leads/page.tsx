@@ -214,7 +214,7 @@ export default function LeadsPage() {
     ]);
     const usageData = await usageRes.json();
     if (usageData.success) {
-      setIsPaidPlan(usageData.plan === 'starter' || usageData.plan === 'pro');
+      setIsPaidPlan(usageData.hasAccess === true);
     }
     if (user) {
       const fullName: string = user.user_metadata?.full_name || '';

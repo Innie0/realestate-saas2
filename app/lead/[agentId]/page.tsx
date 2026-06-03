@@ -5,6 +5,7 @@
 // A prospect fills out the form and the submission lands in the agent's CRM.
 
 import { createAdminClient } from '@/lib/supabase-admin';
+import { hasLeadCaptureAccess } from '@/lib/subscription';
 import LeadCaptureForm from '@/components/LeadCaptureForm';
 
 interface LeadPageProps {
@@ -38,19 +39,19 @@ async function getAgent(agentId: string) {
   const { data, error } = await supabase.auth.admin.getUserById(uuid);
   if (error || !data?.user) return null;
 
-  // Check subscription plan
   const { data: userData } = await supabase
     .from('users')
-    .select('subscription_plan')
+    .select('subscription_plan, subscription_status')
     .eq('id', uuid)
     .single();
 
-  const STARTER_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID;
-  const PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID;
-  const plan = userData?.subscription_plan;
-  const isPaid = plan === STARTER_PRICE_ID || plan === PRO_PRICE_ID;
-
   const user = data.user;
+  const isPaid = hasLeadCaptureAccess(
+    userData?.subscription_status,
+    userData?.subscription_plan,
+    user.email
+  );
+
   return {
     id: user.id,
     full_name: (user.user_metadata?.full_name as string | undefined) ?? null,
@@ -79,7 +80,6 @@ export default async function LeadCapturePage({ params }: LeadPageProps) {
     );
   }
 
-  // Block free plan agents
   if (!agent.isPaid) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] px-4">

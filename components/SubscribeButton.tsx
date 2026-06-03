@@ -78,7 +78,7 @@ export default function SubscribeButton({
         className="w-full"
       >
         <CreditCard className="w-4 h-4 mr-2" />
-        {loading ? 'Processing...' : `Subscribe to ${planName}`}
+        {loading ? 'Processing...' : `Start 7-day free trial — ${planName}`}
       </Button>
       {error && (
         <p className="mt-2 text-sm text-red-500">{error}</p>
