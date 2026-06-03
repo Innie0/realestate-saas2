@@ -1,23 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Client } from '@/types';
-import { supabase } from '@/lib/supabase';
 import ClientCard from '@/components/ClientCard';
 import ClientForm from '@/components/ClientForm';
 import ReminderForm from '@/components/ReminderForm';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Header from '@/components/layout/Header';
-import { Search, Plus, X, Link2, Copy, Check, Download } from 'lucide-react';
-import { QRCodeCanvas } from 'qrcode.react';
+import { Search, Plus, X } from 'lucide-react';
 
 /**
  * Clients page - CRM client management
  */
 export default function ClientsPage() {
-  const router = useRouter();
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -36,65 +32,10 @@ export default function ClientsPage() {
     document.title = 'Clients - Realestic';
   }, []);
 
-  // Share lead form link
-  const [showShareModal, setShowShareModal] = useState(false);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const [leadFormUrl, setLeadFormUrl] = useState('');
-  const [copied, setCopied] = useState(false);
-  const [isPaidPlan, setIsPaidPlan] = useState(false);
-
   // Fetch clients
   useEffect(() => {
     fetchClients();
   }, [searchQuery, statusFilter]);
-
-  // Build the agent's public lead form URL using their name + id, and check plan
-  useEffect(() => {
-    const loadLeadFormUrl = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const fullName: string = user.user_metadata?.full_name || '';
-        const nameSlug = fullName
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/^-|-$/g, '');
-        const slug = nameSlug ? `${nameSlug}--${user.id}` : user.id;
-        setLeadFormUrl(`${window.location.origin}/lead/${slug}`);
-      }
-    };
-    const checkPlan = async () => {
-      try {
-        const res = await fetch('/api/usage');
-        const result = await res.json();
-        if (result.success) {
-          setIsPaidPlan(result.plan === 'starter' || result.plan === 'pro');
-        }
-      } catch {}
-    };
-    loadLeadFormUrl();
-    checkPlan();
-  }, []);
-
-  const handleCopyLink = async () => {
-    if (!leadFormUrl) return;
-    try {
-      await navigator.clipboard.writeText(leadFormUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
-      console.error('Failed to copy link:', error);
-    }
-  };
-
-  const handleDownloadQR = () => {
-    const canvas = document.getElementById('lead-form-qr') as HTMLCanvasElement;
-    if (!canvas) return;
-    const url = canvas.toDataURL('image/png');
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'lead-form-qr.png';
-    a.click();
-  };
 
   const fetchClients = async () => {
     try {
@@ -240,17 +181,6 @@ export default function ClientsPage() {
             <option value="archived" className="bg-gray-800 text-white">Archived</option>
           </select>
 
-          {/* Share lead form button */}
-          <Button
-            variant="white"
-            size="md"
-            onClick={() => isPaidPlan ? setShowShareModal(true) : setShowUpgradeModal(true)}
-            className="w-full sm:w-auto"
-          >
-            <Link2 className="w-4 h-4 mr-2" />
-            Share Lead Form
-          </Button>
-
           {/* Create button */}
           <Button
             variant="primary"
@@ -282,138 +212,6 @@ export default function ClientsPage() {
               onCancel={() => setShowCreateForm(false)}
               isLoading={isSubmitting}
             />
-          </div>
-        </div>
-      )}
-
-      {/* Share Lead Form modal */}
-      {showShareModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[#111111] rounded-xl border border-white/10 p-6 max-w-md w-full shadow-2xl">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                  <Link2 className="w-4 h-4 text-white/70" />
-                </div>
-                <h2 className="text-lg font-bold text-white">Share Lead Form</h2>
-              </div>
-              <button
-                onClick={() => setShowShareModal(false)}
-                className="text-gray-500 hover:text-white transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="border-b border-white/10 my-4" />
-
-            <p className="text-gray-400 text-sm mb-5">
-              Share this link anywhere — your Instagram bio, email signature, or
-              business cards. Anyone who fills it out is added straight to your
-              clients list as a new lead.
-            </p>
-
-            {/* Link + copy */}
-            <div className="flex items-center gap-2 mb-5">
-              <input
-                type="text"
-                readOnly
-                value={leadFormUrl}
-                onClick={(e) => (e.target as HTMLInputElement).select()}
-                className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-white/20 cursor-text"
-              />
-              <button
-                onClick={handleCopyLink}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all border ${
-                  copied
-                    ? 'bg-white/10 text-white border-white/20'
-                    : 'bg-white text-gray-900 hover:bg-gray-100 border-gray-200'
-                }`}
-              >
-                {copied ? (
-                  <>
-                    <Check className="w-4 h-4" />
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4" />
-                    Copy
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* QR Code */}
-            {leadFormUrl && (
-              <div className="mt-5 pt-5 border-t border-white/10">
-                <p className="text-sm font-medium text-gray-300 mb-3">QR Code</p>
-                <p className="text-xs text-gray-500 mb-4">Print this on yard signs, flyers, or business cards. Anyone who scans it goes straight to your lead form.</p>
-                <div className="flex items-center gap-5">
-                  <div className="p-3 bg-white rounded-xl flex-shrink-0">
-                    <QRCodeCanvas
-                      id="lead-form-qr"
-                      value={leadFormUrl}
-                      size={120}
-                      bgColor="#ffffff"
-                      fgColor="#000000"
-                      level="M"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-3 flex-1">
-                    <button
-                      onClick={handleDownloadQR}
-                      className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-white text-gray-900 hover:bg-gray-100 text-sm font-medium transition-colors border border-gray-200 w-full"
-                    >
-                      <Download className="w-4 h-4" />
-                      Download PNG
-                    </button>
-                    <a
-                      href={leadFormUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors"
-                    >
-                      <Link2 className="w-3.5 h-3.5" />
-                      Preview the form
-                    </a>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Upgrade prompt modal — shown to free plan users */}
-      {showUpgradeModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[#111111] rounded-xl border border-white/10 p-6 max-w-md w-full shadow-2xl">
-            <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                  <Link2 className="w-4 h-4 text-white/70" />
-                </div>
-                <h2 className="text-lg font-bold text-white">Lead Capture Form</h2>
-              </div>
-              <button
-                onClick={() => setShowUpgradeModal(false)}
-                className="text-gray-500 hover:text-white transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="border-b border-white/10 my-4" />
-            <p className="text-gray-400 text-sm mb-5">
-              Get a personal lead form link to share anywhere — Instagram bio, email signature, or business cards. Available on the Starter and Pro plans.
-            </p>
-            <a
-              href="/auth/signup"
-              className="block w-full text-center bg-white text-gray-900 font-semibold py-3 rounded-lg hover:bg-gray-100 transition-colors text-sm"
-            >
-              Upgrade to unlock
-            </a>
           </div>
         </div>
       )}
