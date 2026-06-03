@@ -9,7 +9,8 @@ import { QRCodeCanvas } from 'qrcode.react';
 import {
   Inbox, Link2, Copy, Check, Download, Phone, Mail,
   Home, Building2, KeyRound, Search, Flame, Thermometer,
-  Snowflake, X, ArrowRight, Users, Clock, Lock,
+  Snowflake, X, ArrowRight, Users, Clock, Lock, MailCheck,
+  Loader2, DoorOpen, Plus,
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -171,10 +172,17 @@ export default function LeadsPage() {
   const [copied, setCopied] = useState(false);
   const [filter, setFilter] = useState<'all' | 'hot' | 'warm' | 'cold'>('all');
 
+  // Agent settings state
+  const [autoFollowup, setAutoFollowup] = useState(false);
+  const [smsEnabled, setSmsEnabled] = useState(false);
+  const [smsPhone, setSmsPhone] = useState('');
+  const [savingSettings, setSavingSettings] = useState(false);
+
   useEffect(() => {
     document.title = 'Leads - Realestic';
     fetchLeads();
     checkPlanAndUrl();
+    fetchSettings();
   }, []);
 
   const fetchLeads = async () => {
@@ -203,6 +211,35 @@ export default function LeadsPage() {
       const nameSlug = fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       const slug = nameSlug ? `${nameSlug}--${user.id}` : user.id;
       setLeadFormUrl(`${window.location.origin}/lead/${slug}`);
+    }
+  };
+
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch('/api/agent-settings');
+      const result = await res.json();
+      if (result.success && result.data) {
+        setAutoFollowup(result.data.auto_followup_enabled || false);
+        setSmsEnabled(result.data.sms_alerts_enabled || false);
+        setSmsPhone(result.data.sms_phone || '');
+      }
+    } catch (e) {
+      console.error('Error fetching settings:', e);
+    }
+  };
+
+  const saveSettings = async (updates: Record<string, unknown>) => {
+    setSavingSettings(true);
+    try {
+      await fetch('/api/agent-settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      });
+    } catch (e) {
+      console.error('Error saving settings:', e);
+    } finally {
+      setSavingSettings(false);
     }
   };
 
@@ -402,21 +439,107 @@ export default function LeadsPage() {
               )}
             </div>
 
-            {/* SMS Notifications — coming soon */}
+            {/* Auto Follow-Up Emails */}
+            <div className="bg-[#111111] border border-white/10 rounded-xl p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
+                  <MailCheck className="w-3.5 h-3.5 text-white/70" />
+                </div>
+                <h3 className="text-sm font-semibold text-white">Auto Follow-Up</h3>
+              </div>
+              <p className="text-xs text-gray-500 mb-4">
+                When a lead submits your form, they automatically receive 3 follow-up emails over 5 days.
+              </p>
+              <button
+                onClick={() => {
+                  const next = !autoFollowup;
+                  setAutoFollowup(next);
+                  saveSettings({ auto_followup_enabled: next });
+                }}
+                disabled={savingSettings}
+                className={`w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium transition-all border ${
+                  autoFollowup
+                    ? 'bg-white text-gray-900 border-white'
+                    : 'bg-white/5 text-gray-400 border-white/10 hover:border-white/20 hover:text-white'
+                }`}
+              >
+                {savingSettings ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : autoFollowup ? <Check className="w-3.5 h-3.5" /> : <MailCheck className="w-3.5 h-3.5" />}
+                {autoFollowup ? 'Auto Follow-Up On' : 'Enable Auto Follow-Up'}
+              </button>
+            </div>
+
+            {/* SMS Notifications */}
             <div className="bg-[#111111] border border-white/10 rounded-xl p-5">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
                   <Phone className="w-3.5 h-3.5 text-white/70" />
                 </div>
-                <h3 className="text-sm font-semibold text-white">SMS Notifications</h3>
-                <span className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/10 text-gray-400 border border-white/10">
-                  Coming Soon
-                </span>
+                <h3 className="text-sm font-semibold text-white">SMS Alerts</h3>
+              </div>
+              <p className="text-xs text-gray-500 mb-4">
+                Get a text the second a lead submits your form.
+              </p>
+              <div className="space-y-3">
+                <input
+                  type="tel"
+                  placeholder="+1 (555) 123-4567"
+                  value={smsPhone}
+                  onChange={(e) => setSmsPhone(e.target.value)}
+                  onBlur={() => { if (smsPhone) saveSettings({ sms_phone: smsPhone }); }}
+                  className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-xs placeholder-gray-600 focus:outline-none focus:border-white/30"
+                />
+                <button
+                  onClick={() => {
+                    const next = !smsEnabled;
+                    setSmsEnabled(next);
+                    saveSettings({ sms_alerts_enabled: next, sms_phone: smsPhone });
+                  }}
+                  disabled={savingSettings || !smsPhone.trim()}
+                  className={`w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium transition-all border disabled:opacity-40 disabled:cursor-not-allowed ${
+                    smsEnabled
+                      ? 'bg-white text-gray-900 border-white'
+                      : 'bg-white/5 text-gray-400 border-white/10 hover:border-white/20 hover:text-white'
+                  }`}
+                >
+                  {savingSettings ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : smsEnabled ? <Check className="w-3.5 h-3.5" /> : <Phone className="w-3.5 h-3.5" />}
+                  {smsEnabled ? 'SMS Alerts On' : 'Enable SMS Alerts'}
+                </button>
+              </div>
+            </div>
+
+            {/* Open Houses link */}
+            <Link
+              href="/dashboard/leads/open-houses"
+              className="block bg-[#111111] border border-white/10 rounded-xl p-5 hover:border-white/20 transition-colors"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
+                  <DoorOpen className="w-3.5 h-3.5 text-white/70" />
+                </div>
+                <h3 className="text-sm font-semibold text-white">Open Houses</h3>
+                <ArrowRight className="w-3.5 h-3.5 text-gray-500 ml-auto" />
               </div>
               <p className="text-xs text-gray-500">
-                Get a text the second a lead submits your form — before they go cold. Studies show responding within 5 minutes converts 100× better.
+                Create sign-in pages for open houses. Visitors scan a QR code and become leads.
               </p>
-            </div>
+            </Link>
+
+            {/* Agent Profile link */}
+            <Link
+              href="/dashboard/leads/profile"
+              className="block bg-[#111111] border border-white/10 rounded-xl p-5 hover:border-white/20 transition-colors"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
+                  <Users className="w-3.5 h-3.5 text-white/70" />
+                </div>
+                <h3 className="text-sm font-semibold text-white">Agent Profile</h3>
+                <ArrowRight className="w-3.5 h-3.5 text-gray-500 ml-auto" />
+              </div>
+              <p className="text-xs text-gray-500">
+                Your public landing page — photo, bio, specialties, and a built-in lead form.
+              </p>
+            </Link>
 
           </div>
         </div>
