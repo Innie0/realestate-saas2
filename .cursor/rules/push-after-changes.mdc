@@ -1,0 +1,15 @@
+---
+description: Commit and push to origin after completing code changes
+alwaysApply: true
+---
+
+# Push changes after every task
+
+When you finish implementing or fixing something in this repo:
+
+1. Run `git status` — if there are no changes, do not create an empty commit.
+2. Stage only relevant files (never `.env`, `.env.local`, or secrets).
+3. Commit with a clear message describing why the change was made.
+4. Push to `origin` on the current branch (`git push origin HEAD`) unless the user asked not to push.
+
+Do this at the end of the task without waiting for the user to ask, unless they explicitly said not to commit or push in that conversation.
