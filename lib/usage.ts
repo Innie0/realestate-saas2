@@ -1,7 +1,7 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { getPaidPlanName, hasAppAccess, PRO_PRICE_ID, STARTER_PRICE_ID } from '@/lib/subscription';
 
-type Feature = 'projects' | 'property_lookups' | 'ai_messages' | 'clients' | 'transactions' | 'calendar_events';
+type Feature = 'projects' | 'property_lookups' | 'ai_messages' | 'clients' | 'transactions' | 'calendar_events' | 'market_analyses';
 export type PlanName = 'starter' | 'pro';
 
 interface PlanLimits {
@@ -11,6 +11,7 @@ interface PlanLimits {
   clients: number;
   transactions: number;
   calendar_events: number;
+  market_analyses: number;
 }
 
 const STARTER_LIMITS: PlanLimits = {
@@ -20,6 +21,7 @@ const STARTER_LIMITS: PlanLimits = {
   clients: 25,
   transactions: 10,
   calendar_events: Infinity,
+  market_analyses: 5,
 };
 
 const PRO_LIMITS: PlanLimits = {
@@ -29,9 +31,10 @@ const PRO_LIMITS: PlanLimits = {
   clients: Infinity,
   transactions: Infinity,
   calendar_events: Infinity,
+  market_analyses: Infinity,
 };
 
-const MONTHLY_FEATURES: Feature[] = ['projects', 'property_lookups', 'ai_messages'];
+const MONTHLY_FEATURES: Feature[] = ['projects', 'property_lookups', 'ai_messages', 'market_analyses'];
 const TOTAL_FEATURES: Feature[] = ['clients', 'transactions', 'calendar_events'];
 
 export function getPlanName(
@@ -182,6 +185,7 @@ export function usageLimitError(
     clients: 'clients',
     transactions: 'transactions',
     calendar_events: 'calendar events',
+    market_analyses: 'market analyses',
   };
   const name = featureNames[feature] || feature;
 
