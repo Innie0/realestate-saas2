@@ -47,13 +47,20 @@ async function fetchRentEstimate(address: string, key: string) {
   }
 }
 
-async function fetchComps(address: string, key: string, propertyType?: string) {
+async function fetchComps(
+  address: string,
+  key: string,
+  propertyType?: string,
+  radius: number = 0.5,
+  daysOld: number = 730,
+) {
   try {
     const params = new URLSearchParams({
       address,
       status: 'Sold',
-      limit: '10',
-      radius: '1',
+      limit: '20',
+      radius: String(radius),
+      daysOld: String(daysOld),
     });
     if (propertyType) params.set('propertyType', propertyType);
     const res = await fetch(`${RENTCAST_BASE}/listings/sale?${params}`, {
@@ -133,7 +140,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { street, city, state, zip, propertyType } = body;
+    const { street, city, state, zip, propertyType, radius, yearsBack } = body;
 
     if (!street || !state) {
       return NextResponse.json(
@@ -172,7 +179,9 @@ export async function POST(request: NextRequest) {
     ]);
 
     const resolvedPropertyType = propertyType || avm?.propertyType || undefined;
-    const compsRaw = await fetchComps(address, key, resolvedPropertyType);
+    const resolvedRadius = typeof radius === 'number' && radius > 0 && radius <= 5 ? radius : 0.5;
+    const resolvedDaysOld = typeof yearsBack === 'number' ? Math.round(yearsBack * 365) : 730;
+    const compsRaw = await fetchComps(address, key, resolvedPropertyType, resolvedRadius, resolvedDaysOld);
 
     // Normalise comps
     const comps = compsRaw.map((c: any) => ({
@@ -196,6 +205,8 @@ export async function POST(request: NextRequest) {
       data: {
         address,
         propertyType: resolvedPropertyType ?? null,
+        radius: resolvedRadius,
+        yearsBack: resolvedDaysOld / 365,
         avm: avm
           ? {
               estimatedValue: avm.price ?? null,

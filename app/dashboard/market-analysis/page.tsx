@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Header from '@/components/layout/Header';
 import {
   BarChart2, Search, Loader2, AlertCircle, Home, DollarSign,
-  TrendingUp, BedDouble, Bath, Ruler, Clock, MapPin, Sparkles, ChevronDown, ChevronUp,
+  TrendingUp, BedDouble, Bath, Ruler, Clock, MapPin, Sparkles, ChevronDown, ChevronUp, X,
 } from 'lucide-react';
 
 interface AVMResult {
@@ -36,6 +36,8 @@ interface Comp {
 interface AnalysisResult {
   address: string;
   propertyType: string | null;
+  radius: number;
+  yearsBack: number;
   avm: AVMResult | null;
   rentEstimate: RentEstimate | null;
   comps: Comp[];
@@ -77,9 +79,12 @@ export default function MarketAnalysisPage() {
   const [state, setState] = useState('');
   const [zip, setZip] = useState('');
   const [propertyType, setPropertyType] = useState('');
+  const [radius, setRadius] = useState(0.5);
+  const [yearsBack, setYearsBack] = useState(2);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [excludedIds, setExcludedIds] = useState<Set<number>>(new Set());
   const [showAllComps, setShowAllComps] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -90,12 +95,13 @@ export default function MarketAnalysisPage() {
     setError('');
     setResult(null);
     setShowAllComps(false);
+    setExcludedIds(new Set());
 
     try {
       const res = await fetch('/api/market-analysis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ street: street.trim(), city: city.trim(), state, zip: zip.trim(), propertyType: propertyType || undefined }),
+        body: JSON.stringify({ street: street.trim(), city: city.trim(), state, zip: zip.trim(), propertyType: propertyType || undefined, radius, yearsBack }),
       });
       const data = await res.json();
 
@@ -111,7 +117,8 @@ export default function MarketAnalysisPage() {
     }
   };
 
-  const visibleComps = showAllComps ? result?.comps : result?.comps.slice(0, 5);
+  const activeComps = result?.comps.filter((_, i) => !excludedIds.has(i)) ?? [];
+  const visibleComps = showAllComps ? activeComps : activeComps.slice(0, 5);
 
   return (
     <div className="min-h-screen">
@@ -181,6 +188,42 @@ export default function MarketAnalysisPage() {
                   ))}
                 </select>
                 <p className="text-xs text-gray-600 mt-1">Comps will match this type. Auto-detect uses the subject property's type from Rentcast.</p>
+              </div>
+              <div className="sm:col-span-2 grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-2">
+                    Search Radius — <span className="text-white font-medium">{radius} mi</span>
+                  </label>
+                  <input
+                    type="range"
+                    min={0.25}
+                    max={2}
+                    step={0.25}
+                    value={radius}
+                    onChange={e => setRadius(Number(e.target.value))}
+                    className="w-full accent-white"
+                  />
+                  <div className="flex justify-between text-[10px] text-gray-600 mt-1">
+                    <span>0.25 mi</span><span>1 mi</span><span>2 mi</span>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-2">
+                    Sales History — <span className="text-white font-medium">Past {yearsBack} {yearsBack === 1 ? 'year' : 'years'}</span>
+                  </label>
+                  <input
+                    type="range"
+                    min={1}
+                    max={5}
+                    step={1}
+                    value={yearsBack}
+                    onChange={e => setYearsBack(Number(e.target.value))}
+                    className="w-full accent-white"
+                  />
+                  <div className="flex justify-between text-[10px] text-gray-600 mt-1">
+                    <span>1 yr</span><span>3 yr</span><span>5 yr</span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -306,15 +349,20 @@ export default function MarketAnalysisPage() {
                   Recent Comparable Sales
                   {result.propertyType ? ` · ${result.propertyType}` : ''}
                 </p>
-                <span className="ml-auto text-xs text-gray-600">within 1 mile</span>
+                <span className="ml-auto text-xs text-gray-600">
+                  {result.radius} mi · past {result.yearsBack % 1 === 0 ? result.yearsBack : result.yearsBack.toFixed(1)} yr{result.yearsBack !== 1 ? 's' : ''}
+                </span>
               </div>
 
-              {result.comps.length === 0 ? (
-                <p className="text-gray-500 text-sm">No recent comparable sales found nearby.</p>
+              {activeComps.length === 0 ? (
+                <p className="text-gray-500 text-sm">{result.comps.length === 0 ? 'No comparable sales found for these filters.' : 'All comps excluded — run a new search to reset.'}</p>
               ) : (
                 <div className="space-y-3">
-                  {visibleComps?.map((comp, i) => (
-                    <div key={i} className="border border-white/8 rounded-xl p-3.5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
+                  {visibleComps?.map((comp, i) => {
+                    const globalIdx = result!.comps.findIndex((c, ci) => !excludedIds.has(ci) && c === comp);
+                    const realIdx = result!.comps.indexOf(comp);
+                    return (
+                    <div key={realIdx} className="border border-white/8 rounded-xl p-3.5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
                           <p className="text-sm font-medium text-white leading-tight">{comp.address}</p>
@@ -324,7 +372,17 @@ export default function MarketAnalysisPage() {
                             </span>
                           )}
                         </div>
-                        <p className="text-sm font-bold text-emerald-400 whitespace-nowrap">{fmt(comp.price, '$')}</p>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <p className="text-sm font-bold text-emerald-400 whitespace-nowrap">{fmt(comp.price, '$')}</p>
+                          <button
+                            type="button"
+                            onClick={() => setExcludedIds(prev => new Set([...prev, realIdx]))}
+                            className="p-1 rounded hover:bg-white/10 text-gray-600 hover:text-red-400 transition-colors"
+                            title="Exclude this comp"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
                       <div className="flex flex-wrap gap-3 text-xs text-gray-500">
                         {comp.bedrooms !== null && (
@@ -360,9 +418,10 @@ export default function MarketAnalysisPage() {
                         )}
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
 
-                  {result.comps.length > 5 && (
+                  {activeComps.length > 5 && (
                     <button
                       type="button"
                       onClick={() => setShowAllComps(v => !v)}
@@ -371,8 +430,17 @@ export default function MarketAnalysisPage() {
                       {showAllComps ? (
                         <><ChevronUp className="w-3.5 h-3.5" /> Show fewer</>
                       ) : (
-                        <><ChevronDown className="w-3.5 h-3.5" /> Show all {result.comps.length} comps</>
+                        <><ChevronDown className="w-3.5 h-3.5" /> Show all {activeComps.length} comps</>
                       )}
+                    </button>
+                  )}
+                  {excludedIds.size > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setExcludedIds(new Set())}
+                      className="w-full text-xs text-gray-600 hover:text-gray-400 py-1.5 transition-colors"
+                    >
+                      Restore {excludedIds.size} excluded comp{excludedIds.size !== 1 ? 's' : ''}
                     </button>
                   )}
                 </div>
