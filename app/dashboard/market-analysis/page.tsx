@@ -80,7 +80,7 @@ export default function MarketAnalysisPage() {
   const [zip, setZip] = useState('');
   const [propertyType, setPropertyType] = useState('');
   const [radius, setRadius] = useState(0.5);
-  const [yearsBack, setYearsBack] = useState(2);
+  const [yearsBack, setYearsBack] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<AnalysisResult | null>(null);

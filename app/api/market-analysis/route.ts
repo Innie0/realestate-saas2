@@ -180,7 +180,7 @@ export async function POST(request: NextRequest) {
 
     const resolvedPropertyType = propertyType || avm?.propertyType || undefined;
     const resolvedRadius = typeof radius === 'number' && radius > 0 && radius <= 5 ? radius : 0.5;
-    const resolvedDaysOld = typeof yearsBack === 'number' ? Math.round(yearsBack * 365) : 730;
+    const resolvedDaysOld = typeof yearsBack === 'number' ? Math.round(yearsBack * 365) : 365;
     const compsRaw = await fetchComps(address, key, resolvedPropertyType, resolvedRadius, resolvedDaysOld);
 
     // Normalise comps
