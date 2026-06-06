@@ -22,6 +22,7 @@ interface RentEstimate {
 
 interface Comp {
   address: string;
+  propertyType: string | null;
   price: number | null;
   bedrooms: number | null;
   bathrooms: number | null;
@@ -34,6 +35,7 @@ interface Comp {
 
 interface AnalysisResult {
   address: string;
+  propertyType: string | null;
   avm: AVMResult | null;
   rentEstimate: RentEstimate | null;
   comps: Comp[];
@@ -45,6 +47,17 @@ const US_STATES = [
   'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY',
   'LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND',
   'OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY','DC',
+];
+
+const PROPERTY_TYPES = [
+  { value: '', label: 'Auto-detect' },
+  { value: 'Single Family', label: 'Single Family' },
+  { value: 'Condo', label: 'Condo' },
+  { value: 'Townhouse', label: 'Townhouse' },
+  { value: 'Multi-Family', label: 'Multi-Family' },
+  { value: 'Apartment', label: 'Apartment' },
+  { value: 'Manufactured', label: 'Manufactured' },
+  { value: 'Land', label: 'Land' },
 ];
 
 function fmt(n: number | null, prefix = '', suffix = '') {
@@ -63,6 +76,7 @@ export default function MarketAnalysisPage() {
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [zip, setZip] = useState('');
+  const [propertyType, setPropertyType] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -81,7 +95,7 @@ export default function MarketAnalysisPage() {
       const res = await fetch('/api/market-analysis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ street: street.trim(), city: city.trim(), state, zip: zip.trim() }),
+        body: JSON.stringify({ street: street.trim(), city: city.trim(), state, zip: zip.trim(), propertyType: propertyType || undefined }),
       });
       const data = await res.json();
 
@@ -155,6 +169,19 @@ export default function MarketAnalysisPage() {
                   />
                 </div>
               </div>
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Property Type</label>
+                <select
+                  value={propertyType}
+                  onChange={e => setPropertyType(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-white/30"
+                >
+                  {PROPERTY_TYPES.map(pt => (
+                    <option key={pt.value} value={pt.value}>{pt.label}</option>
+                  ))}
+                </select>
+                <p className="text-xs text-gray-600 mt-1">Comps will match this type. Auto-detect uses the subject property's type from Rentcast.</p>
+              </div>
             </div>
 
             {error && (
@@ -196,9 +223,14 @@ export default function MarketAnalysisPage() {
           <div className="space-y-4">
 
             {/* Address banner */}
-            <div className="flex items-center gap-2 text-sm text-gray-400">
+            <div className="flex items-center gap-2 text-sm text-gray-400 flex-wrap">
               <MapPin className="w-4 h-4 flex-shrink-0" />
               <span className="font-medium text-white">{result.address}</span>
+              {result.propertyType && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-gray-300 border border-white/15">
+                  {result.propertyType}
+                </span>
+              )}
               <span className="ml-auto text-xs text-gray-600">
                 {new Date(result.queriedAt).toLocaleTimeString()}
               </span>
@@ -272,6 +304,7 @@ export default function MarketAnalysisPage() {
                 </div>
                 <p className="text-sm text-gray-400 font-medium">
                   Recent Comparable Sales
+                  {result.propertyType ? ` · ${result.propertyType}` : ''}
                 </p>
                 <span className="ml-auto text-xs text-gray-600">within 1 mile</span>
               </div>
@@ -283,7 +316,14 @@ export default function MarketAnalysisPage() {
                   {visibleComps?.map((comp, i) => (
                     <div key={i} className="border border-white/8 rounded-xl p-3.5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
                       <div className="flex items-start justify-between gap-2 mb-2">
-                        <p className="text-sm font-medium text-white leading-tight">{comp.address}</p>
+                        <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
+                          <p className="text-sm font-medium text-white leading-tight">{comp.address}</p>
+                          {comp.propertyType && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/5 text-gray-500 border border-white/10 whitespace-nowrap">
+                              {comp.propertyType}
+                            </span>
+                          )}
+                        </div>
                         <p className="text-sm font-bold text-emerald-400 whitespace-nowrap">{fmt(comp.price, '$')}</p>
                       </div>
                       <div className="flex flex-wrap gap-3 text-xs text-gray-500">

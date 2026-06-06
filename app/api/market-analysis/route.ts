@@ -47,7 +47,7 @@ async function fetchRentEstimate(address: string, key: string) {
   }
 }
 
-async function fetchComps(address: string, key: string) {
+async function fetchComps(address: string, key: string, propertyType?: string) {
   try {
     const params = new URLSearchParams({
       address,
@@ -55,6 +55,7 @@ async function fetchComps(address: string, key: string) {
       limit: '10',
       radius: '1',
     });
+    if (propertyType) params.set('propertyType', propertyType);
     const res = await fetch(`${RENTCAST_BASE}/listings/sale?${params}`, {
       headers: { 'X-Api-Key': key, Accept: 'application/json' },
     });
@@ -132,7 +133,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { street, city, state, zip, bedrooms, bathrooms, squareFootage } = body;
+    const { street, city, state, zip, propertyType } = body;
 
     if (!street || !state) {
       return NextResponse.json(
@@ -164,15 +165,19 @@ export async function POST(request: NextRequest) {
 
     const address = buildAddress(street, city, state, zip);
 
-    const [avm, rentEstimate, compsRaw] = await Promise.all([
+    // Fetch AVM first so we can use its detected propertyType for comps if user didn't specify
+    const [avm, rentEstimate] = await Promise.all([
       fetchAVM(address, key),
       fetchRentEstimate(address, key),
-      fetchComps(address, key),
     ]);
+
+    const resolvedPropertyType = propertyType || avm?.propertyType || undefined;
+    const compsRaw = await fetchComps(address, key, resolvedPropertyType);
 
     // Normalise comps
     const comps = compsRaw.map((c: any) => ({
       address: c.formattedAddress || [c.addressLine1, c.city, c.state].filter(Boolean).join(', '),
+      propertyType: c.propertyType ?? null,
       price: c.price ?? null,
       bedrooms: c.bedrooms ?? null,
       bathrooms: c.bathrooms ?? null,
@@ -190,6 +195,7 @@ export async function POST(request: NextRequest) {
       success: true,
       data: {
         address,
+        propertyType: resolvedPropertyType ?? null,
         avm: avm
           ? {
               estimatedValue: avm.price ?? null,
