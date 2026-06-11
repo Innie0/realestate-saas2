@@ -39,12 +39,15 @@ const TOTAL_FEATURES: Feature[] = ['clients', 'transactions', 'calendar_events']
 
 export function getPlanName(
   subscriptionPlan: string | null,
-  subscriptionStatus?: string | null
+  subscriptionStatus?: string | null,
+  email?: string | null
 ): PlanName | null {
+  // Admin always gets Starter limits for display
+  if (email && isAdminEmail(email)) return 'starter';
   if (!hasAppAccess(subscriptionStatus)) {
     return null;
   }
-  return getPaidPlanName(subscriptionPlan);
+  return getPaidPlanName(subscriptionPlan) ?? 'starter';
 }
 
 function getLimits(plan: PlanName): PlanLimits {
@@ -64,11 +67,11 @@ export async function checkUsageLimit(
 ): Promise<{ allowed: boolean; current: number; limit: number; plan: PlanName | null }> {
   const { data: userData } = await supabase
     .from('users')
-    .select('subscription_plan, subscription_status')
+    .select('subscription_plan, subscription_status, email')
     .eq('id', userId)
     .single();
 
-  const plan = getPlanName(userData?.subscription_plan, userData?.subscription_status);
+  const plan = getPlanName(userData?.subscription_plan, userData?.subscription_status, userData?.email);
 
   if (!plan) {
     return { allowed: false, current: 0, limit: 0, plan: null };
@@ -100,11 +103,11 @@ export async function incrementUsage(
 ): Promise<void> {
   const { data: userData } = await supabase
     .from('users')
-    .select('subscription_plan, subscription_status')
+    .select('subscription_plan, subscription_status, email')
     .eq('id', userId)
     .single();
 
-  const plan = getPlanName(userData?.subscription_plan, userData?.subscription_status);
+  const plan = getPlanName(userData?.subscription_plan, userData?.subscription_status, userData?.email);
   if (!plan) return;
 
   const period = getPeriod(feature);
@@ -138,12 +141,12 @@ export async function getAllUsage(
 ): Promise<Record<Feature, { current: number; limit: number }>> {
   const { data: userData } = await supabase
     .from('users')
-    .select('subscription_plan, subscription_status')
+    .select('subscription_plan, subscription_status, email')
     .eq('id', userId)
     .single();
 
-  const plan = getPlanName(userData?.subscription_plan, userData?.subscription_status);
-  const limits = plan ? getLimits(plan) : STARTER_LIMITS;
+  const plan = getPlanName(userData?.subscription_plan, userData?.subscription_status, userData?.email);
+  const limits = getLimits(plan ?? 'starter');
 
   const currentMonth = (() => {
     const now = new Date();
@@ -162,7 +165,7 @@ export async function getAllUsage(
   for (const feature of features) {
     const period = getPeriod(feature);
     const row = usageRows?.find((r) => r.feature === feature && r.period === period);
-    const limit = plan ? limits[feature] : 0;
+    const limit = limits[feature];
     result[feature] = {
       current: row?.usage_count || 0,
       limit: limit === Infinity ? -1 : limit,
