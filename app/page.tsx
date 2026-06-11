@@ -1172,6 +1172,132 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Pricing ────────────────────────────────────────────────────── */}
+      <section className="relative z-10 py-24 lg:py-32 border-t border-white/10">
+        <div className="mx-auto max-w-5xl px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-sm text-gray-300 mb-6">
+              <Star className="w-4 h-4 text-yellow-400" />
+              7-Day Free Trial on Every Plan
+            </span>
+            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">Simple, transparent pricing</h2>
+            <p className="text-gray-400 text-lg">Start free. No credit card setup fees. Cancel anytime.</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            {[
+              {
+                name: 'Starter',
+                price: '$14.99',
+                description: 'Perfect for active agents growing their business',
+                features: [
+                  '7-day free trial',
+                  '10 AI Listing Projects / month',
+                  '10 Property Lookups / month',
+                  '50 AI Assistant Messages / month',
+                  'Up to 25 Clients',
+                  'Up to 10 Transactions',
+                  'Lead Capture Form & QR Code',
+                  'Calendar Integration',
+                ],
+                popular: false,
+              },
+              {
+                name: 'Pro',
+                price: '$39.99',
+                description: 'Everything you need to scale your real estate business',
+                features: [
+                  '7-day free trial',
+                  'Unlimited Listing Projects',
+                  'Unlimited Property Lookups',
+                  'Unlimited AI Messages',
+                  'Unlimited Clients & Transactions',
+                  'Lead Capture, Open Houses & Profile',
+                  'Market Analysis Tool',
+                  'Priority Support',
+                ],
+                popular: true,
+              },
+            ].map((plan, i) => (
+              <motion.div
+                key={plan.name}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: i * 0.15 }}
+                className={`relative rounded-2xl p-7 flex flex-col ${
+                  plan.popular
+                    ? 'bg-[#111111] border-2 border-white/30'
+                    : 'bg-[#111111] border border-white/10'
+                }`}
+              >
+                {plan.popular && (
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                    <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-white text-black text-xs font-semibold">
+                      <Sparkles className="w-3 h-3" />
+                      Most Popular
+                    </span>
+                  </div>
+                )}
+
+                <div className="mb-5">
+                  <h3 className="text-xl font-bold text-white mb-1">{plan.name}</h3>
+                  <p className="text-gray-500 text-sm">{plan.description}</p>
+                </div>
+
+                <div className="mb-6">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-bold text-white">{plan.price}</span>
+                    <span className="text-gray-500 text-sm">/ mo after trial</span>
+                  </div>
+                </div>
+
+                <Link href="/auth/signup" className="mb-7">
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className={`w-full py-3 rounded-xl text-sm font-semibold transition-colors ${
+                      plan.popular
+                        ? 'bg-white text-black hover:bg-gray-100'
+                        : 'bg-white/10 text-white border border-white/20 hover:bg-white/20'
+                    }`}
+                  >
+                    Start Free Trial
+                  </motion.button>
+                </Link>
+
+                <div className="border-t border-white/10 mb-5" />
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">What&apos;s included</p>
+                <ul className="space-y-3 flex-1">
+                  {plan.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-3">
+                      <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-gray-300">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="text-center text-gray-600 text-sm mt-10"
+          >
+            7-day free trial · Cancel anytime · No hidden fees
+          </motion.p>
+        </div>
+      </section>
+
       {/* ── Final CTA ──────────────────────────────────────────────────── */}
       <section className="relative z-10 py-24 lg:py-32 border-t border-white/10">
         <div className="mx-auto max-w-4xl px-6 lg:px-8 text-center">
