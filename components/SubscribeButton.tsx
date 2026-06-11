@@ -11,6 +11,7 @@ import { CreditCard } from 'lucide-react';
 interface SubscribeButtonProps {
   priceId: string;
   planName?: string;
+  planSlug?: string; // 'starter' | 'pro' — used to redirect unauthenticated users
   mode?: 'subscription' | 'payment';
   className?: string;
 }
@@ -22,6 +23,7 @@ interface SubscribeButtonProps {
 export default function SubscribeButton({ 
   priceId, 
   planName = 'this plan',
+  planSlug,
   mode = 'subscription',
   className = '',
 }: SubscribeButtonProps) {
@@ -49,6 +51,13 @@ export default function SubscribeButton({
         hasUrl: !!data.url,
         error: data.error,
       });
+
+      // If not authenticated, redirect to signup with the plan pre-selected
+      if (response.status === 401) {
+        const slug = planSlug || planName.toLowerCase();
+        window.location.href = `/auth/signup?plan=${slug}`;
+        return;
+      }
 
       if (!response.ok) {
         throw new Error(data.error || 'Failed to create checkout session');

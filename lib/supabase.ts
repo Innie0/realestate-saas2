@@ -127,11 +127,14 @@ export async function signInWithEmail(email: string, password: string) {
  * Sign in with Google OAuth
  * Redirects the user to Google's login page
  */
-export async function signInWithGoogle() {
+export async function signInWithGoogle(plan?: string) {
+  const callbackUrl = new URL(`${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`);
+  if (plan) callbackUrl.searchParams.set('plan', plan);
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+      redirectTo: callbackUrl.toString(),
     },
   });
 

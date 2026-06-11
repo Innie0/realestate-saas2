@@ -6,10 +6,15 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { signUpWithEmail, signInWithGoogle, supabase } from '@/lib/supabase';
+
+const PLAN_PRICE_IDS: Record<string, string> = {
+  starter: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || 'price_1ThC6REnz9g2d62xbnpRKW0h',
+  pro: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || 'price_1Sw9MdEnz9g2d62xlyjilIoq',
+};
 
 /**
  * Sign up page component
@@ -17,6 +22,8 @@ import { signUpWithEmail, signInWithGoogle, supabase } from '@/lib/supabase';
  */
 export default function SignUpPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const planParam = searchParams.get('plan')?.toLowerCase() || '';
   
   // Form state
   const [fullName, setFullName] = useState('');
@@ -104,9 +111,28 @@ export default function SignUpPage() {
       
       // Wait for session to fully sync
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Use window.location instead of router.push to ensure full page reload
-      // This forces the middleware to sync cookies properly
+
+      // If a plan was pre-selected, go straight to Stripe checkout
+      const priceId = PLAN_PRICE_IDS[planParam];
+      if (priceId) {
+        console.log('[Signup Page] Plan selected, creating Stripe checkout for', planParam);
+        try {
+          const res = await fetch('/api/stripe/checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ priceId, mode: 'subscription' }),
+          });
+          const checkoutData = await res.json();
+          if (res.ok && checkoutData.url) {
+            window.location.href = checkoutData.url;
+            return;
+          }
+        } catch {
+          // Fall through to pricing page if checkout creation fails
+        }
+      }
+
       console.log('[Signup Page] Redirecting to pricing with full reload...');
       window.location.href = '/pricing';
     }
@@ -117,7 +143,7 @@ export default function SignUpPage() {
    */
   const handleGoogleSignUp = async () => {
     setError('');
-    const { error: googleError } = await signInWithGoogle();
+    const { error: googleError } = await signInWithGoogle(planParam || undefined);
 
     if (googleError) {
       setError(googleError.message);

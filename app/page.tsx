@@ -1196,6 +1196,7 @@ export default function HomePage() {
                 name: 'Starter',
                 price: '$19.99',
                 description: 'Perfect for active agents growing their business',
+                plan: 'starter',
                 features: [
                   '7-day free trial',
                   '20 AI Listing Projects / month',
@@ -1212,6 +1213,7 @@ export default function HomePage() {
                 name: 'Pro',
                 price: '$39.99',
                 description: 'Everything you need to scale your real estate business',
+                plan: 'pro',
                 features: [
                   '7-day free trial',
                   'Unlimited Listing Projects',
@@ -1258,7 +1260,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <Link href="/auth/signup" className="mb-7">
+                <Link href={`/auth/signup?plan=${plan.plan}`} className="mb-7">
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}

@@ -193,7 +193,12 @@ export default function PricingPage() {
 
                 {/* CTA */}
                 <div className="mb-7">
-                  <SubscribeButton priceId={plan.priceId!} planName={plan.name} className="w-full" />
+                  <SubscribeButton
+                    priceId={plan.priceId!}
+                    planName={plan.name}
+                    planSlug={plan.name.toLowerCase()}
+                    className="w-full"
+                  />
                 </div>
 
                 {/* Divider */}
