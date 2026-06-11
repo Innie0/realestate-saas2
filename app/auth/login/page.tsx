@@ -23,16 +23,20 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
   // Set page title
   React.useEffect(() => {
     document.title = 'Sign In - Realestic';
   }, []);
 
-  // Redirect already-authenticated users based on subscription
+  // Only auto-redirect users who already have an active subscription
   React.useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session?.user) return;
+      if (!session?.user) {
+        setCheckingAuth(false);
+        return;
+      }
 
       const isAdmin = session.user.email === 'callon786@outlook.com';
       if (isAdmin) {
@@ -50,7 +54,12 @@ export default function LoginPage() {
         userData?.subscription_status === 'active' ||
         userData?.subscription_status === 'trialing';
 
-      router.replace(hasActive ? '/dashboard' : '/pricing');
+      if (hasActive) {
+        router.replace('/dashboard');
+      } else {
+        // No active plan — show the login form, make them enter credentials
+        setCheckingAuth(false);
+      }
     });
   }, [router]);
 
@@ -143,6 +152,10 @@ export default function LoginPage() {
     }
     // Google OAuth will redirect automatically
   };
+
+  if (checkingAuth) {
+    return <div className="min-h-screen bg-black" />;
+  }
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4 py-12 relative overflow-hidden">

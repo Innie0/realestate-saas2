@@ -66,7 +66,7 @@ function SignUpForm() {
         return;
       }
 
-      // Already logged in but no subscription — if a plan was selected, go straight to checkout
+      // Logged in, no subscription, plan selected → go straight to Stripe
       const priceId = PLAN_PRICE_IDS[planParam];
       if (priceId) {
         try {
@@ -82,11 +82,12 @@ function SignUpForm() {
             return;
           }
         } catch {
-          // Fall through to pricing page
+          // Fall through — show the form
         }
       }
 
-      router.replace('/pricing');
+      // No active plan and no plan param — show the form, don't auto-redirect
+      setCheckingAuth(false);
     });
   }, [router, planParam]);
 
