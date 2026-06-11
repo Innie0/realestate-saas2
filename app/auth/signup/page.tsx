@@ -3,7 +3,7 @@
 
 'use client'; // This page uses client-side features
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -20,7 +20,7 @@ const PLAN_PRICE_IDS: Record<string, string> = {
  * Sign up page component
  * Provides email/password registration and Google OAuth options
  */
-export default function SignUpPage() {
+function SignUpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const planParam = searchParams.get('plan')?.toLowerCase() || '';
@@ -326,6 +326,14 @@ export default function SignUpPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black" />}>
+      <SignUpForm />
+    </Suspense>
   );
 }
 
