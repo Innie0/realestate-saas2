@@ -39,14 +39,50 @@ export default function SignUpPage() {
     document.title = 'Sign Up - Realestic';
   }, []);
 
-  // Redirect already-authenticated users to dashboard
+  // Redirect already-authenticated users
   React.useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session?.user) return;
+
+      // Check if they already have an active subscription
+      const { data: userData } = await supabase
+        .from('users')
+        .select('subscription_status')
+        .eq('id', session.user.id)
+        .single();
+
+      const hasActive =
+        userData?.subscription_status === 'active' ||
+        userData?.subscription_status === 'trialing';
+
+      if (hasActive) {
         router.replace('/dashboard');
+        return;
       }
+
+      // Already logged in but no subscription — if a plan was selected, go straight to checkout
+      const priceId = PLAN_PRICE_IDS[planParam];
+      if (priceId) {
+        try {
+          const res = await fetch('/api/stripe/checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ priceId, mode: 'subscription' }),
+          });
+          const checkoutData = await res.json();
+          if (res.ok && checkoutData.url) {
+            window.location.href = checkoutData.url;
+            return;
+          }
+        } catch {
+          // Fall through to pricing page
+        }
+      }
+
+      router.replace('/pricing');
     });
-  }, [router]);
+  }, [router, planParam]);
 
   /**
    * Handle email/password registration
