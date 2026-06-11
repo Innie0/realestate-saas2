@@ -15,11 +15,11 @@ interface PlanLimits {
 }
 
 const STARTER_LIMITS: PlanLimits = {
-  projects: 10,
-  property_lookups: 10,
-  ai_messages: 50,
-  clients: 25,
-  transactions: 10,
+  projects: 20,
+  property_lookups: 20,
+  ai_messages: 75,
+  clients: 50,
+  transactions: 20,
   calendar_events: Infinity,
   market_analyses: 5,
 };

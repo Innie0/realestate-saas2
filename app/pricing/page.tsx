@@ -70,17 +70,17 @@ export default function PricingPage() {
   const plans = [
     {
       name: 'Starter',
-      price: '$14.99',
+      price: '$19.99',
       period: 'per month after trial',
       description: 'Perfect for active agents growing their business',
       priceId: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || 'price_1Sw9B7Enz9g2d62xiHw3wYn5',
       features: [
         '7-day free trial',
-        '10 AI Listing Projects per Month',
-        '10 Property Lookups per Month',
-        '50 AI Assistant Messages per Month',
-        'Up to 25 Clients',
-        'Up to 10 Transactions',
+        '20 AI Listing Projects per Month',
+        '20 Property Lookups per Month',
+        '75 AI Assistant Messages per Month',
+        'Up to 50 Clients',
+        'Up to 20 Transactions',
         'Lead Capture Form & QR Code',
         'Calendar Integration (Unlimited Events)',
         'AI-Powered Descriptions',
