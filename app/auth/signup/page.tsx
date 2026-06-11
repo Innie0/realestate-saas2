@@ -33,6 +33,8 @@ function SignUpForm() {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  // Hide form until we confirm the visitor is not already logged in
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
   // Set page title
   React.useEffect(() => {
@@ -42,7 +44,11 @@ function SignUpForm() {
   // Redirect already-authenticated users
   React.useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session?.user) return;
+      if (!session?.user) {
+        // Not logged in — show the form
+        setCheckingAuth(false);
+        return;
+      }
 
       // Check if they already have an active subscription
       const { data: userData } = await supabase
@@ -83,6 +89,10 @@ function SignUpForm() {
       router.replace('/pricing');
     });
   }, [router, planParam]);
+
+  if (checkingAuth) {
+    return <div className="min-h-screen bg-black" />;
+  }
 
   /**
    * Handle email/password registration
