@@ -59,7 +59,7 @@ export async function GET(request: Request) {
           customer: customerId,
           line_items: [{ price: priceId, quantity: 1 }],
           mode: 'subscription',
-          success_url: `${requestUrl.origin}/dashboard?success=true&session_id={CHECKOUT_SESSION_ID}`,
+          success_url: `${requestUrl.origin}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
           cancel_url: `${requestUrl.origin}/pricing?canceled=true`,
           metadata: { user_id: user.id },
           allow_promotion_codes: true,
