@@ -4,6 +4,9 @@
 
 export const ADMIN_EMAIL = 'callon786@outlook.com';
 
+// Free Pro accounts — full Pro access, no subscription required
+const FREE_PRO_EMAILS = ['aliq@theagencyre.com'];
+
 export const STARTER_PRICE_ID =
   process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || 'price_1Sw9B7Enz9g2d62xiHw3wYn5';
 export const PRO_PRICE_ID =
@@ -15,12 +18,17 @@ export function isAdminEmail(email: string | undefined | null): boolean {
   return email === ADMIN_EMAIL;
 }
 
+export function isFreePro(email: string | undefined | null): boolean {
+  if (!email) return false;
+  return FREE_PRO_EMAILS.includes(email.toLowerCase());
+}
+
 /** User can use the dashboard and APIs */
 export function hasAppAccess(
   subscriptionStatus: string | null | undefined,
   email?: string | null
 ): boolean {
-  if (email && isAdminEmail(email)) return true;
+  if (email && (isAdminEmail(email) || isFreePro(email))) return true;
   return subscriptionStatus === 'active' || subscriptionStatus === 'trialing';
 }
 

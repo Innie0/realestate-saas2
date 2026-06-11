@@ -3,7 +3,7 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
-import { hasAppAccess, isAdminEmail } from '@/lib/subscription';
+import { hasAppAccess, isAdminEmail, isFreePro } from '@/lib/subscription';
 import { stripe } from '@/lib/stripe-server';
 
 const PLAN_PRICE_IDS: Record<string, string> = {
@@ -26,7 +26,7 @@ export async function GET(request: Request) {
       return NextResponse.redirect(new URL('/auth/login?error=auth_failed', requestUrl.origin));
     }
 
-    if (isAdminEmail(user.email)) {
+    if (isAdminEmail(user.email) || isFreePro(user.email)) {
       return NextResponse.redirect(new URL('/dashboard', requestUrl.origin));
     }
 
