@@ -1,5 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { getPaidPlanName, hasAppAccess, PRO_PRICE_ID, STARTER_PRICE_ID } from '@/lib/subscription';
+import { getPaidPlanName, hasAppAccess, isAdminEmail, PRO_PRICE_ID, STARTER_PRICE_ID } from '@/lib/subscription';
 
 type Feature = 'projects' | 'property_lookups' | 'ai_messages' | 'clients' | 'transactions' | 'calendar_events' | 'market_analyses';
 export type PlanName = 'starter' | 'pro';
