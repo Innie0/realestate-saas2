@@ -39,7 +39,6 @@ export function useTour({ tourKey, steps, delayMs = 800 }: UseTourOptions) {
         prevBtnText: '← Back',
         doneBtnText: 'Got it ✓',
         overlayColor: 'rgba(0,0,0,0.65)',
-        popoverClass: 'realestic-tour',
         onDestroyed: () => {
           localStorage.setItem(tourKey, '1');
         },
