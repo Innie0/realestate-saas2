@@ -68,6 +68,14 @@ export async function POST(
 
     await incrementUsage(supabase, user.id, 'clients');
 
+    // Cancel any pending follow-up emails — the agent is now handling this lead personally
+    await supabase
+      .from('email_sequences')
+      .update({ status: 'cancelled' })
+      .eq('client_id', id)
+      .eq('agent_user_id', user.id)
+      .eq('status', 'pending');
+
     return NextResponse.json({
       success: true,
       data: updated,

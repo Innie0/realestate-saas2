@@ -8,8 +8,8 @@ import { QRCodeCanvas } from 'qrcode.react';
 import {
   Inbox, Link2, Copy, Check, Download, Phone, Mail,
   Home, Building2, KeyRound, Search, Flame, Thermometer,
-  Snowflake, ArrowRight,   Users, Clock, Lock, MailCheck,
-  Loader2, DoorOpen, Megaphone, Zap, UserPlus,
+  Snowflake, ArrowRight, Users, Clock, Lock, MailCheck,
+  Loader2, DoorOpen, Megaphone, Zap, UserPlus, MailX,
 } from 'lucide-react';
 
 type LeadsTab = 'inbox' | 'capture' | 'automations';
@@ -84,13 +84,21 @@ function LeadCard({
   lead,
   onAddToCrm,
   addingId,
+  onCancelSequence,
+  cancellingId,
+  cancelledIds,
 }: {
   lead: Lead;
   onAddToCrm: (id: string) => void;
   addingId: string | null;
+  onCancelSequence: (id: string) => void;
+  cancellingId: string | null;
+  cancelledIds: Set<string>;
 }) {
   const temp = getLeadTemp(lead);
   const isAdding = addingId === lead.id;
+  const isCancelling = cancellingId === lead.id;
+  const emailsStopped = cancelledIds.has(lead.id);
   const TypeIcon = lead.lead_type ? LEAD_TYPE_ICONS[lead.lead_type] : null;
   const msg = lead.message || '';
   const infoLines = msg.split('\n').filter(l =>
@@ -169,6 +177,25 @@ function LeadCard({
             <Phone className="w-3 h-3" /> Call
           </a>
         )}
+        {lead.email && (
+          <button
+            type="button"
+            onClick={() => onCancelSequence(lead.id)}
+            disabled={isCancelling || emailsStopped}
+            title={emailsStopped ? 'Follow-up emails stopped' : 'Stop automated follow-up emails'}
+            className={`flex items-center justify-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors disabled:cursor-not-allowed ${
+              emailsStopped
+                ? 'bg-white/5 text-gray-600 border-white/5'
+                : 'bg-white/5 hover:bg-red-500/10 text-gray-400 hover:text-red-400 border-white/10 hover:border-red-500/20'
+            }`}
+          >
+            {isCancelling ? (
+              <Loader2 className="w-3 h-3 animate-spin" />
+            ) : (
+              <MailX className="w-3 h-3" />
+            )}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -190,6 +217,8 @@ export default function LeadsPage() {
   const [copied, setCopied] = useState(false);
   const [filter, setFilter] = useState<'all' | 'hot' | 'warm' | 'cold'>('all');
   const [addingToCrmId, setAddingToCrmId] = useState<string | null>(null);
+  const [cancellingSequenceId, setCancellingSequenceId] = useState<string | null>(null);
+  const [cancelledSequenceIds, setCancelledSequenceIds] = useState<Set<string>>(new Set());
 
   const [autoFollowup, setAutoFollowup] = useState(false);
   const [smsEnabled, setSmsEnabled] = useState(false);
@@ -214,6 +243,23 @@ export default function LeadsPage() {
       console.error('Error fetching leads:', e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCancelSequence = async (leadId: string) => {
+    setCancellingSequenceId(leadId);
+    try {
+      const res = await fetch(`/api/clients/${leadId}/cancel-sequence`, { method: 'POST' });
+      const result = await res.json();
+      if (result.success) {
+        setCancelledSequenceIds(prev => new Set([...prev, leadId]));
+      } else {
+        alert(result.error || 'Could not stop emails');
+      }
+    } catch {
+      alert('Could not stop emails');
+    } finally {
+      setCancellingSequenceId(null);
     }
   };
 
@@ -407,6 +453,9 @@ export default function LeadsPage() {
                       lead={lead}
                       onAddToCrm={handleAddToCrm}
                       addingId={addingToCrmId}
+                      onCancelSequence={handleCancelSequence}
+                      cancellingId={cancellingSequenceId}
+                      cancelledIds={cancelledSequenceIds}
                     />
                   ))}
                 </div>
