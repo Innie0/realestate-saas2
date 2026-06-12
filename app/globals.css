@@ -1,3 +1,5 @@
+@import 'driver.js/dist/driver.css';
+
 /* Global styles for the application */
 /* Tailwind CSS base, components, and utilities */
 
@@ -77,8 +79,6 @@
     overflow: hidden;
   }
 }
-
-@import 'driver.js/dist/driver.css';
 
 /* ── Driver.js tour — dark Realestic theme ───────────────────────────── */
 .realestic-tour .driver-popover {
