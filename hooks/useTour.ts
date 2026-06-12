@@ -29,7 +29,6 @@ export function useTour({ tourKey, steps, delayMs = 800 }: UseTourOptions) {
 
     const run = async () => {
       const { driver: driverFn } = await import('driver.js');
-      await import('driver.js/dist/driver.css');
 
       driver = driverFn({
         animate: true,

@@ -78,6 +78,8 @@
   }
 }
 
+@import 'driver.js/dist/driver.css';
+
 /* ── Driver.js tour — dark Realestic theme ───────────────────────────── */
 .realestic-tour .driver-popover {
   background: #111111 !important;
