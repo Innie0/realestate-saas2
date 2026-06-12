@@ -9,11 +9,42 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Header from '@/components/layout/Header';
 import { Search, Plus, X } from 'lucide-react';
+import { useTour } from '@/hooks/useTour';
 
 /**
  * Clients page - CRM client management
  */
 export default function ClientsPage() {
+  useTour({
+    tourKey: 'tour_clients',
+    steps: [
+      {
+        element: '[data-tour="clients-search"]',
+        popover: {
+          title: '🔍 Search Your CRM',
+          description: 'Quickly find any client by name or email. Results update as you type.',
+          side: 'bottom',
+        },
+      },
+      {
+        element: '[data-tour="clients-filter"]',
+        popover: {
+          title: '📂 Filter by Status',
+          description: 'View active clients, archived ones, or your full list. Keep your CRM clean by archiving closed deals.',
+          side: 'bottom',
+        },
+      },
+      {
+        element: '[data-tour="clients-add"]',
+        popover: {
+          title: '➕ Add a Client',
+          description: 'Manually add a client directly to your CRM. Leads from your form or open house sign-in go to the Leads inbox instead.',
+          side: 'bottom',
+        },
+      },
+    ],
+  });
+
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -157,7 +188,7 @@ export default function ClientsPage() {
       {/* Filters and search */}
       <div className="mb-6 flex flex-col gap-3 sm:gap-4">
         {/* Search bar */}
-        <div className="flex-1 relative">
+        <div data-tour="clients-search" className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-300 z-10" />
           <input
             type="text"
@@ -171,6 +202,7 @@ export default function ClientsPage() {
         {/* Status filter and Create button */}
         <div className="flex flex-col sm:flex-row gap-2">
           <select
+            data-tour="clients-filter"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-3 sm:px-4 py-2 text-sm border border-white/20 rounded-lg bg-white/10 backdrop-blur-sm text-white focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 focus:outline-none"
@@ -183,6 +215,7 @@ export default function ClientsPage() {
 
           {/* Create button */}
           <Button
+            data-tour="clients-add"
             variant="primary"
             size="md"
             onClick={() => setShowCreateForm(true)}

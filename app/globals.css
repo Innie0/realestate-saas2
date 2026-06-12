@@ -78,3 +78,60 @@
   }
 }
 
+/* ── Driver.js tour — dark Realestic theme ───────────────────────────── */
+.realestic-tour .driver-popover {
+  background: #111111 !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  border-radius: 14px !important;
+  color: #fff !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6) !important;
+  padding: 20px !important;
+  max-width: 300px !important;
+}
+
+.realestic-tour .driver-popover-title {
+  color: #fff !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  margin-bottom: 6px !important;
+}
+
+.realestic-tour .driver-popover-description {
+  color: #9ca3af !important;
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+}
+
+.realestic-tour .driver-popover-progress-text {
+  color: #6b7280 !important;
+  font-size: 11px !important;
+}
+
+.realestic-tour .driver-popover-footer {
+  margin-top: 14px !important;
+}
+
+.realestic-tour .driver-popover-prev-btn,
+.realestic-tour .driver-popover-next-btn,
+.realestic-tour .driver-popover-close-btn {
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  color: #fff !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  padding: 6px 14px !important;
+  text-shadow: none !important;
+}
+
+.realestic-tour .driver-popover-next-btn {
+  background: #fff !important;
+  color: #111 !important;
+  border-color: #fff !important;
+}
+
+.realestic-tour .driver-popover-arrow-side-left .driver-popover-arrow { border-right-color: #111111 !important; }
+.realestic-tour .driver-popover-arrow-side-right .driver-popover-arrow { border-left-color: #111111 !important; }
+.realestic-tour .driver-popover-arrow-side-top .driver-popover-arrow { border-bottom-color: #111111 !important; }
+.realestic-tour .driver-popover-arrow-side-bottom .driver-popover-arrow { border-top-color: #111111 !important; }
+

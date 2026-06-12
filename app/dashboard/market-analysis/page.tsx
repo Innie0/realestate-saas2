@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Header from '@/components/layout/Header';
+import { useTour } from '@/hooks/useTour';
 import {
   BarChart2, Search, Loader2, AlertCircle, Home, DollarSign,
   TrendingUp, BedDouble, Bath, Ruler, Clock, MapPin, Sparkles, ChevronDown, ChevronUp, X,
@@ -74,6 +75,44 @@ function fmtDate(s: string | null) {
 }
 
 export default function MarketAnalysisPage() {
+  useTour({
+    tourKey: 'tour_market_analysis',
+    steps: [
+      {
+        element: '[data-tour="ma-form"]',
+        popover: {
+          title: '🏠 Enter a Property Address',
+          description: 'Type any property address to instantly pull an estimated value, rent range, and recent comparable sales powered by Rentcast.',
+          side: 'bottom',
+        },
+      },
+      {
+        element: '[data-tour="ma-property-type"]',
+        popover: {
+          title: '🏡 Property Type',
+          description: 'Set this to match the subject property so comps are filtered to the same type — single family, condo, etc. Leave on Auto-detect if unsure.',
+          side: 'bottom',
+        },
+      },
+      {
+        element: '[data-tour="ma-radius"]',
+        popover: {
+          title: '📍 Search Radius',
+          description: 'How far out to look for comparable sales. Tighter radius = more relevant comps. Widen it if you\'re in a rural area with fewer sales.',
+          side: 'bottom',
+        },
+      },
+      {
+        element: '[data-tour="ma-years"]',
+        popover: {
+          title: '📅 Sales History',
+          description: 'How far back to look for comparable sales. 1 year gives the most current market data. Extend to 2-3 years for areas with low volume.',
+          side: 'bottom',
+        },
+      },
+    ],
+  });
+
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
@@ -130,7 +169,7 @@ export default function MarketAnalysisPage() {
       <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
 
         {/* Search form */}
-        <div className="bg-[#111111] border border-white/10 rounded-2xl p-5">
+        <div data-tour="ma-form" className="bg-[#111111] border border-white/10 rounded-2xl p-5">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="sm:col-span-2">
@@ -176,7 +215,7 @@ export default function MarketAnalysisPage() {
                   />
                 </div>
               </div>
-              <div>
+              <div data-tour="ma-property-type">
                 <label className="block text-xs text-gray-500 mb-1">Property Type</label>
                 <select
                   value={propertyType}
@@ -190,7 +229,7 @@ export default function MarketAnalysisPage() {
                 <p className="text-xs text-gray-600 mt-1">Comps will match this type. Auto-detect uses the subject property's type from Rentcast.</p>
               </div>
               <div className="sm:col-span-2 grid grid-cols-2 gap-3">
-                <div>
+                <div data-tour="ma-radius">
                   <label className="block text-xs text-gray-500 mb-2">
                     Search Radius — <span className="text-white font-medium">{radius} mi</span>
                   </label>
@@ -207,7 +246,7 @@ export default function MarketAnalysisPage() {
                     <span>0.25 mi</span><span>1 mi</span><span>2 mi</span>
                   </div>
                 </div>
-                <div>
+                <div data-tour="ma-years">
                   <label className="block text-xs text-gray-500 mb-2">
                     Sales History — <span className="text-white font-medium">Past {yearsBack} {yearsBack === 1 ? 'year' : 'years'}</span>
                   </label>

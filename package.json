@@ -15,6 +15,7 @@
     "@supabase/supabase-js": "^2.39.0",
     "clsx": "^2.0.0",
     "date-fns": "^3.0.6",
+    "driver.js": "^1.4.0",
     "framer-motion": "^12.23.26",
     "googleapis": "^128.0.0",
     "lucide-react": "^0.294.0",

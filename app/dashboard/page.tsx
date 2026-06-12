@@ -12,6 +12,7 @@ import NotificationsPanel from '@/components/NotificationsPanel';
 import ProjectCard from '@/components/ProjectCard';
 import { Plus, Zap, Users, ArrowRight, Clock, FolderKanban } from 'lucide-react';
 import { Project } from '@/types';
+import { useTour } from '@/hooks/useTour';
 
 interface RecentClient { id: string; name: string; email?: string; status: string; created_at: string; }
 interface RecentTransaction { id: string; property_address: string; status: string; offer_price?: number; updated_at: string; }
@@ -25,6 +26,44 @@ interface UsageData {
  * Overview of user's projects and statistics
  */
 export default function DashboardPage() {
+  useTour({
+    tourKey: 'tour_dashboard',
+    steps: [
+      {
+        element: '[data-tour="new-project"]',
+        popover: {
+          title: '✨ Create a Listing Project',
+          description: 'Start here to generate AI-powered property descriptions, social posts, and listing content for any property.',
+          side: 'bottom',
+        },
+      },
+      {
+        element: '[data-tour="manage-clients"]',
+        popover: {
+          title: '👥 Your Clients',
+          description: 'View and manage all your clients and leads in one place. Add notes, track status, and stay organized.',
+          side: 'bottom',
+        },
+      },
+      {
+        element: '[data-tour="notifications"]',
+        popover: {
+          title: '🔔 Reminders & Events',
+          description: 'Upcoming calendar events and reminders show up here so nothing slips through the cracks.',
+          side: 'bottom',
+        },
+      },
+      {
+        element: '[data-tour="plan-usage"]',
+        popover: {
+          title: '📊 Plan Usage',
+          description: 'Track how many projects, lookups, and AI messages you\'ve used this month. Upgrade anytime for unlimited access.',
+          side: 'top',
+        },
+      },
+    ],
+  });
+
   const [recentProjects, setRecentProjects] = useState<Project[]>([]);
   const [recentClients, setRecentClients] = useState<RecentClient[]>([]);
   const [recentTransactions, setRecentTransactions] = useState<RecentTransaction[]>([]);
@@ -98,13 +137,13 @@ export default function DashboardPage() {
       <div className="p-4 sm:p-6 space-y-6 text-white">
         {/* Quick actions */}
         <div className="flex gap-4">
-          <Link href="/dashboard/projects/new">
+          <Link href="/dashboard/projects/new" data-tour="new-project">
             <Button>
               <Plus className="w-4 h-4 mr-2" />
               New Project
             </Button>
           </Link>
-          <Link href="/dashboard/clients">
+          <Link href="/dashboard/clients" data-tour="manage-clients">
             <Button variant="outline">
               Manage Clients
             </Button>
@@ -112,11 +151,13 @@ export default function DashboardPage() {
         </div>
 
         {/* Notifications Panel */}
-        <NotificationsPanel />
+        <div data-tour="notifications">
+          <NotificationsPanel />
+        </div>
 
         {/* Plan Usage */}
         {usage && (
-          <Card>
+          <div data-tour="plan-usage"><Card>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Zap className="w-5 h-5 text-white/60" />
@@ -163,7 +204,7 @@ export default function DashboardPage() {
                 );
               })}
             </div>
-          </Card>
+          </Card></div>
         )}
 
         {/* Recent projects section */}

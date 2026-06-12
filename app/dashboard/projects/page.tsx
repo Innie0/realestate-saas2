@@ -10,12 +10,43 @@ import Button from '@/components/ui/Button';
 import ProjectCard from '@/components/ProjectCard';
 import { Plus, Search, Filter } from 'lucide-react';
 import { Project } from '@/types';
+import { useTour } from '@/hooks/useTour';
 
 /**
  * Projects page component
  * Displays a list of all user projects with search and filter
  */
 export default function ProjectsPage() {
+  useTour({
+    tourKey: 'tour_projects',
+    steps: [
+      {
+        element: '[data-tour="projects-new"]',
+        popover: {
+          title: '🏡 Create a Listing Project',
+          description: 'Each project is for one property. Enter the address and details, then Realestic generates AI-powered descriptions, social captions, and more.',
+          side: 'bottom',
+        },
+      },
+      {
+        element: '[data-tour="projects-search"]',
+        popover: {
+          title: '🔍 Find Your Projects',
+          description: 'Search by address or description to quickly jump to any listing you\'ve worked on.',
+          side: 'bottom',
+        },
+      },
+      {
+        element: '[data-tour="projects-filter"]',
+        popover: {
+          title: '📋 Filter by Status',
+          description: 'Keep track of what\'s a draft, in progress, or completed. Great for staying organized when you have multiple active listings.',
+          side: 'bottom',
+        },
+      },
+    ],
+  });
+
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [projects, setProjects] = useState<Project[]>([]);
@@ -96,7 +127,7 @@ export default function ProjectsPage() {
         {/* Toolbar - search, filter, and create button */}
         <div className="flex flex-col gap-3 sm:gap-4 mb-6">
           {/* Search input */}
-          <div className="flex-1 relative">
+          <div data-tour="projects-search" className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300" />
             <input
               type="text"
@@ -110,6 +141,7 @@ export default function ProjectsPage() {
           {/* Status filter and Create button */}
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">
             <select
+              data-tour="projects-filter"
               className="px-3 sm:px-4 py-2 text-sm bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-white"
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
@@ -121,7 +153,7 @@ export default function ProjectsPage() {
             </select>
 
             {/* Create new project button */}
-            <Link href="/dashboard/projects/new" className="w-full sm:w-auto">
+            <Link data-tour="projects-new" href="/dashboard/projects/new" className="w-full sm:w-auto">
               <Button className="w-full sm:w-auto">
                 <Plus className="w-4 h-4 mr-2" />
                 New Project

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import { supabase } from '@/lib/supabase';
+import { useTour } from '@/hooks/useTour';
 import { QRCodeCanvas } from 'qrcode.react';
 import {
   Inbox, Link2, Copy, Check, Download, Phone, Mail,
@@ -208,6 +209,36 @@ const TABS: { id: LeadsTab; label: string; icon: React.ElementType }[] = [
 ];
 
 export default function LeadsPage() {
+  useTour({
+    tourKey: 'tour_leads',
+    steps: [
+      {
+        element: '[data-tour="leads-tabs"]',
+        popover: {
+          title: '📬 Leads Hub',
+          description: 'Three sections: Inbox (new leads), Capture (your form & QR code), and Automations (email follow-up & SMS alerts).',
+          side: 'bottom',
+        },
+      },
+      {
+        element: '[data-tour="leads-stats"]',
+        popover: {
+          title: '📈 Lead Stats',
+          description: 'A quick snapshot of your total leads, new ones this week, and how many are "hot" (came in under 48 hours).',
+          side: 'bottom',
+        },
+      },
+      {
+        element: '[data-tour="leads-filter"]',
+        popover: {
+          title: '🌡️ Filter by Temperature',
+          description: 'Hot leads are fresh (under 48h). Warm leads are within a week. Cold leads are older. Prioritize your hot ones first.',
+          side: 'bottom',
+        },
+      },
+    ],
+  });
+
   const [activeTab, setActiveTab] = useState<LeadsTab>('inbox');
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
@@ -359,7 +390,7 @@ export default function LeadsPage() {
       <div className="p-4 sm:p-6 text-white max-w-4xl mx-auto">
 
         {/* Tab navigation */}
-        <div className="flex gap-1 p-1 bg-white/5 border border-white/10 rounded-xl mb-6">
+        <div data-tour="leads-tabs" className="flex gap-1 p-1 bg-white/5 border border-white/10 rounded-xl mb-6">
           {TABS.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
@@ -379,7 +410,7 @@ export default function LeadsPage() {
         {/* ─── INBOX ─────────────────────────────────────────────────────── */}
         {activeTab === 'inbox' && (
           <div className="space-y-6">
-            <div className="grid grid-cols-3 gap-3">
+            <div data-tour="leads-stats" className="grid grid-cols-3 gap-3">
               {[
                 { label: 'Total Leads', value: leads.length, icon: Users },
                 { label: 'New This Week', value: thisWeek.length, icon: Clock },
@@ -401,7 +432,7 @@ export default function LeadsPage() {
                   <h2 className="text-base font-semibold text-white">Leads inbox</h2>
                   <p className="text-xs text-gray-500 mt-0.5">New captures stay here until you add them to your CRM.</p>
                 </div>
-                <div className="flex gap-1 bg-white/5 border border-white/10 rounded-lg p-1 w-full sm:w-auto">
+                <div data-tour="leads-filter" className="flex gap-1 bg-white/5 border border-white/10 rounded-lg p-1 w-full sm:w-auto">
                   {(['all', 'hot', 'warm', 'cold'] as const).map(f => (
                     <button
                       key={f}
