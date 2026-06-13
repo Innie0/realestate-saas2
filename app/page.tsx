@@ -929,8 +929,10 @@ export default function HomePage() {
               className="flex items-center absolute left-1/2 -translate-x-1/2 sm:left-6 sm:translate-x-0 lg:left-8"
               whileHover={{ scale: 1.02 }}
             >
-              <Image src="/logo.png" alt="Realestic" width={240} height={72} priority className="sm:hidden h-12 w-auto object-contain" />
-              <Image src="/logo-landing.png" alt="Realestic" width={1400} height={420} priority className="hidden sm:block h-80 w-auto" />
+              <div className="flex items-center gap-2.5">
+                <Image src="/logo-icon.png" alt="Realestic" width={40} height={40} priority className="h-9 w-9 object-contain" />
+                <span className="text-xl font-bold text-gray-900 tracking-tight">Realestic</span>
+              </div>
             </motion.div>
             <div className="flex-1" />
             <div className="hidden sm:flex items-center gap-4">
