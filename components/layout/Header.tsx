@@ -196,13 +196,13 @@ export default function Header({ title, subtitle }: HeaderProps) {
     }
   };
   return (
-    <header className="sticky top-0 z-20 bg-black border-b border-white/10">
+    <header className="sticky top-0 z-20 bg-white border-b border-gray-200">
       <div className="flex h-16 items-center justify-between px-6">
         {/* Left side - Page title and subtitle */}
         <div>
-          <h1 className="text-2xl font-bold text-white">{title}</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
           {subtitle && (
-            <p className="text-sm text-gray-400">{subtitle}</p>
+            <p className="text-sm text-gray-500">{subtitle}</p>
           )}
         </div>
 
@@ -212,7 +212,7 @@ export default function Header({ title, subtitle }: HeaderProps) {
           <div className="relative" ref={notificationRef}>
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative rounded-lg p-2 text-gray-400 hover:bg-white/10 hover:text-white transition-colors"
+              className="relative rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors"
               aria-label="Notifications"
             >
               <Bell className="h-5 w-5" />
@@ -224,20 +224,20 @@ export default function Header({ title, subtitle }: HeaderProps) {
 
             {/* Notifications dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-96 max-h-[32rem] overflow-y-auto bg-[#111111] border border-white/10 rounded-xl shadow-2xl shadow-black/60">
-                <div className="sticky top-0 bg-[#111111] border-b border-white/10 px-4 py-3 flex items-center justify-between rounded-t-xl">
+              <div className="absolute right-0 mt-2 w-96 max-h-[32rem] overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-xl">
+                <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between rounded-t-xl">
                   <div className="flex items-center gap-2">
-                    <Bell className="w-4 h-4 text-white/60" />
-                    <h3 className="font-semibold text-white text-sm">Notifications</h3>
+                    <Bell className="w-4 h-4 text-gray-400" />
+                    <h3 className="font-semibold text-gray-900 text-sm">Notifications</h3>
                     {notifications.length > 0 && (
-                      <span className="bg-white/10 text-gray-300 text-xs font-medium px-2 py-0.5 rounded-full border border-white/20">
+                      <span className="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-0.5 rounded-full border border-gray-200">
                         {notifications.length}
                       </span>
                     )}
                   </div>
                   <button
                     onClick={() => setShowNotifications(false)}
-                    className="text-gray-500 hover:text-white transition-colors"
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -246,32 +246,32 @@ export default function Header({ title, subtitle }: HeaderProps) {
                 <div className="p-2">
                   {loading ? (
                     <div className="animate-pulse space-y-3 p-3">
-                      <div className="h-4 bg-white/5 rounded w-3/4"></div>
-                      <div className="h-3 bg-white/5 rounded"></div>
-                      <div className="h-3 bg-white/5 rounded w-5/6"></div>
+                      <div className="h-4 bg-gray-100 rounded w-3/4"></div>
+                      <div className="h-3 bg-gray-100 rounded"></div>
+                      <div className="h-3 bg-gray-100 rounded w-5/6"></div>
                     </div>
                   ) : notifications.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
+                    <div className="text-center py-8 text-gray-400">
                       <Bell className="w-10 h-10 mx-auto mb-3 opacity-30" />
-                      <p className="text-sm text-gray-400">No upcoming events or reminders</p>
-                      <p className="text-xs mt-1 text-gray-500">You're all caught up!</p>
+                      <p className="text-sm text-gray-500">No upcoming events or reminders</p>
+                      <p className="text-xs mt-1 text-gray-400">You're all caught up!</p>
                     </div>
                   ) : (
                     <div className="space-y-1">
                       {notifications.map((item) => (
                         <div
                           key={item.id}
-                          className="p-3 bg-white/5 rounded-lg border border-white/10 hover:border-white/20 hover:bg-white/8 transition-all"
+                          className="p-3 bg-gray-50 rounded-lg border border-gray-100 hover:border-gray-200 hover:bg-gray-100 transition-all"
                         >
                           <div className="flex items-start gap-2">
                             {item.type === 'reminder' ? (
-                              <Bell className="w-4 h-4 text-white/50 mt-0.5 flex-shrink-0" />
+                              <Bell className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
                             ) : (
-                              <Calendar className="w-4 h-4 text-white/50 mt-0.5 flex-shrink-0" />
+                              <Calendar className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
                             )}
                             <div className="flex-1 min-w-0">
                               <div className="flex items-start justify-between gap-2">
-                                <h4 className="font-medium text-white text-sm leading-tight">
+                                <h4 className="font-medium text-gray-900 text-sm leading-tight">
                                   {item.title}
                                 </h4>
                                 {item.type === 'reminder' && (
@@ -281,7 +281,7 @@ export default function Header({ title, subtitle }: HeaderProps) {
                                       e.stopPropagation();
                                       handleComplete(item.id);
                                     }}
-                                    className="p-1 hover:bg-white/10 rounded transition-colors flex-shrink-0"
+                                    className="p-1 hover:bg-gray-200 rounded transition-colors flex-shrink-0"
                                     title="Dismiss"
                                   >
                                     <X className="w-4 h-4 text-gray-400" />
@@ -297,7 +297,7 @@ export default function Header({ title, subtitle }: HeaderProps) {
                                 <Clock className="w-3 h-3" />
                                 <span>{formatDate(item.date)}</span>
                                 {isToday(item.date) && (
-                                  <span className="bg-white/10 text-gray-300 px-1.5 py-0.5 rounded border border-white/20 font-medium">
+                                  <span className="bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded border border-gray-200 font-medium">
                                     Today
                                   </span>
                                 )}
@@ -321,13 +321,12 @@ export default function Header({ title, subtitle }: HeaderProps) {
 
           {/* User profile section */}
           <div className="flex items-center gap-3 ml-4">
-            {/* User avatar - shows initials */}
-            <div className="h-8 w-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-sm font-medium border border-white/20">
+            <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 text-sm font-medium border border-gray-300">
               {userName ? userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
             </div>
             <div className="hidden md:block">
-              <p className="text-sm font-medium text-white">{userName}</p>
-              <p className="text-xs text-gray-400">{userEmail}</p>
+              <p className="text-sm font-medium text-gray-900">{userName}</p>
+              <p className="text-xs text-gray-500">{userEmail}</p>
             </div>
           </div>
         </div>

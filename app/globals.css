@@ -9,9 +9,8 @@
 
 /* Custom base styles */
 @layer base {
-  /* Set default font and background - dark theme */
   body {
-    @apply bg-black text-white;
+    @apply bg-[#F5F5F5] text-gray-900;
   }
 
   /* Custom scrollbar styles */
@@ -25,39 +24,38 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.15);
     border-radius: 999px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(0, 0, 0, 0.25);
   }
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+    scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
   }
 
   /* Headings */
   h1, h2, h3, h4, h5, h6 {
-    @apply text-white;
+    @apply text-gray-900;
   }
 
-  /* Override browser autofill blue-gray background on all inputs */
+  /* Override browser autofill background on all inputs */
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   textarea:-webkit-autofill,
   select:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0px 1000px #111111 inset !important;
-    -webkit-text-fill-color: white !important;
-    caret-color: white;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #111827 !important;
+    caret-color: #111827;
   }
 }
 
 /* Custom utility classes */
 @layer utilities {
-  /* Truncate text to specified number of lines */
   .line-clamp-1 {
     display: -webkit-box;
     -webkit-line-clamp: 1;
@@ -80,33 +78,32 @@
   }
 }
 
-/* ── Driver.js tour — dark Realestic theme ───────────────────────────── */
-/* Driver.js appends the popover to <body>, so we style it globally       */
+/* ── Driver.js tour — light Realestic theme ───────────────────────────── */
 .driver-popover {
-  background: #1a1a1a !important;
-  border: 1px solid rgba(255,255,255,0.12) !important;
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
   border-radius: 14px !important;
-  color: #fff !important;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.7) !important;
+  color: #111827 !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12) !important;
   padding: 20px !important;
   max-width: 300px !important;
 }
 
 .driver-popover-title {
-  color: #ffffff !important;
+  color: #111827 !important;
   font-size: 15px !important;
   font-weight: 700 !important;
   margin-bottom: 6px !important;
 }
 
 .driver-popover-description {
-  color: #9ca3af !important;
+  color: #6b7280 !important;
   font-size: 13px !important;
   line-height: 1.55 !important;
 }
 
 .driver-popover-progress-text {
-  color: #6b7280 !important;
+  color: #9ca3af !important;
   font-size: 11px !important;
 }
 
@@ -117,9 +114,9 @@
 .driver-popover-prev-btn,
 .driver-popover-next-btn,
 .driver-popover-close-btn {
-  background: rgba(255,255,255,0.08) !important;
-  border: 1px solid rgba(255,255,255,0.15) !important;
-  color: #fff !important;
+  background: #f3f4f6 !important;
+  border: 1px solid #e5e7eb !important;
+  color: #374151 !important;
   border-radius: 8px !important;
   font-size: 12px !important;
   font-weight: 600 !important;
@@ -128,17 +125,16 @@
 }
 
 .driver-popover-next-btn {
-  background: #ffffff !important;
-  color: #111111 !important;
-  border-color: #ffffff !important;
+  background: #111827 !important;
+  color: #ffffff !important;
+  border-color: #111827 !important;
 }
 
 .driver-popover-next-btn:hover {
-  background: #e5e7eb !important;
+  background: #374151 !important;
 }
 
-.driver-popover-arrow-side-left .driver-popover-arrow { border-right-color: #1a1a1a !important; }
-.driver-popover-arrow-side-right .driver-popover-arrow { border-left-color: #1a1a1a !important; }
-.driver-popover-arrow-side-top .driver-popover-arrow { border-bottom-color: #1a1a1a !important; }
-.driver-popover-arrow-side-bottom .driver-popover-arrow { border-top-color: #1a1a1a !important; }
-
+.driver-popover-arrow-side-left .driver-popover-arrow { border-right-color: #ffffff !important; }
+.driver-popover-arrow-side-right .driver-popover-arrow { border-left-color: #ffffff !important; }
+.driver-popover-arrow-side-top .driver-popover-arrow { border-bottom-color: #ffffff !important; }
+.driver-popover-arrow-side-bottom .driver-popover-arrow { border-top-color: #ffffff !important; }

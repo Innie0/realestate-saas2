@@ -29,14 +29,14 @@ export default function Input({
   const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
 
   // Base input styles with gradient background
-  const baseStyles = 'block w-full rounded-lg border px-3 sm:px-4 py-2 text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all duration-200 bg-[#111111] border-white/10 [color-scheme:dark]';
+  const baseStyles = 'block w-full rounded-lg border px-3 sm:px-4 py-2 text-sm sm:text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all duration-200 bg-white border-gray-200';
 
   // Conditional styles based on error state
   const inputClasses = clsx(
     baseStyles,
     error
-      ? 'border-red-700 focus:border-red-500 focus:ring-red-500/30 bg-red-900/20'
-      : 'border-white/20 focus:border-white/40 focus:ring-white/10 hover:border-white/30',
+      ? 'border-red-300 focus:border-red-500 focus:ring-red-200 bg-red-50'
+      : 'border-gray-300 focus:border-gray-400 focus:ring-gray-200 hover:border-gray-400',
     className
   );
 
@@ -46,7 +46,7 @@ export default function Input({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-medium text-white mb-1"
+          className="block text-sm font-medium text-gray-900 mb-1"
         >
           {label}
         </label>
