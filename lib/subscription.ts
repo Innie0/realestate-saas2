@@ -5,7 +5,7 @@
 export const ADMIN_EMAIL = 'callon786@outlook.com';
 
 // Free Pro accounts — full Pro access, no subscription required
-const FREE_PRO_EMAILS = ['aliq@theagencyre.com'];
+const FREE_PRO_EMAILS = ['aliq@theagencyre.com', 'realesticai@gmail.com'];
 
 export const STARTER_PRICE_ID =
   process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || 'price_1Sw9B7Enz9g2d62xiHw3wYn5';
