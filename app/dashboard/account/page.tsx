@@ -199,13 +199,13 @@ export default function AccountPage() {
       />
 
       {/* Page content */}
-      <div className="p-4 sm:p-6 max-w-4xl mx-auto text-white">
+      <div className="p-4 sm:p-6 max-w-4xl mx-auto text-gray-900">
         <div className="space-y-6">
           {/* Profile information */}
           <Card>
             <div className="flex items-center gap-3 mb-6">
-              <User className="w-5 h-5 text-white" />
-              <h2 className="text-xl font-bold text-white">Profile Information</h2>
+              <User className="w-5 h-5 text-gray-900" />
+              <h2 className="text-xl font-bold text-gray-900">Profile Information</h2>
             </div>
 
             <form onSubmit={handleUpdateProfile} className="space-y-4">
@@ -244,8 +244,8 @@ export default function AccountPage() {
           {/* Password section */}
           <Card>
             <div className="flex items-center gap-3 mb-6">
-              <Lock className="w-5 h-5 text-white" />
-              <h2 className="text-xl font-bold text-white">Password</h2>
+              <Lock className="w-5 h-5 text-gray-900" />
+              <h2 className="text-xl font-bold text-gray-900">Password</h2>
             </div>
 
             <p className="text-gray-600 mb-4">
@@ -260,8 +260,8 @@ export default function AccountPage() {
           {/* Email preferences */}
           <Card>
             <div className="flex items-center gap-3 mb-6">
-              <Mail className="w-5 h-5 text-white" />
-              <h2 className="text-xl font-bold text-white">Email Preferences</h2>
+              <Mail className="w-5 h-5 text-gray-900" />
+              <h2 className="text-xl font-bold text-gray-900">Email Preferences</h2>
             </div>
 
             <div className="space-y-4">
@@ -269,7 +269,7 @@ export default function AccountPage() {
               <label className="flex items-center gap-3 cursor-pointer">
                 <input type="checkbox" className="w-4 h-4 text-primary-600 rounded" defaultChecked />
                 <div>
-                  <p className="font-medium text-white">Product Updates</p>
+                  <p className="font-medium text-gray-900">Product Updates</p>
                   <p className="text-sm text-gray-600">Get notified about new features and updates</p>
                 </div>
               </label>
@@ -277,7 +277,7 @@ export default function AccountPage() {
               <label className="flex items-center gap-3 cursor-pointer">
                 <input type="checkbox" className="w-4 h-4 text-primary-600 rounded" defaultChecked />
                 <div>
-                  <p className="font-medium text-white">Tips & Resources</p>
+                  <p className="font-medium text-gray-900">Tips & Resources</p>
                   <p className="text-sm text-gray-600">Receive helpful tips for creating better listings</p>
                 </div>
               </label>
@@ -285,7 +285,7 @@ export default function AccountPage() {
               <label className="flex items-center gap-3 cursor-pointer">
                 <input type="checkbox" className="w-4 h-4 text-primary-600 rounded" />
                 <div>
-                  <p className="font-medium text-white">Marketing Emails</p>
+                  <p className="font-medium text-gray-900">Marketing Emails</p>
                   <p className="text-sm text-gray-600">Promotional emails and special offers</p>
                 </div>
               </label>
@@ -311,14 +311,14 @@ export default function AccountPage() {
 
       {/* Password Change Modal */}
       {showPasswordModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="rounded-xl shadow-xl border border-white/10 max-w-md w-full p-6 bg-[#111111]">
+        <div className="fixed inset-0 bg-black/20 flex items-center justify-center p-4 z-50">
+          <div className="rounded-xl shadow-xl border border-gray-200 max-w-md w-full p-6 bg-white">
             {/* Modal Header */}
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-white">Change Password</h3>
+              <h3 className="text-xl font-bold text-gray-900">Change Password</h3>
               <button
                 onClick={() => setShowPasswordModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-500 hover:text-gray-600"
               >
                 <X className="w-5 h-5" />
               </button>

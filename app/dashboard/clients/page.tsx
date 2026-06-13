@@ -183,19 +183,19 @@ export default function ClientsPage() {
   return (
     <div className="min-h-screen">
       <Header title="Clients" subtitle="Manage your client relationships and follow-ups" />
-      <div className="p-4 sm:p-6 text-white">
+      <div className="p-4 sm:p-6 text-gray-900">
 
       {/* Filters and search */}
       <div className="mb-6 flex flex-col gap-3 sm:gap-4">
         {/* Search bar */}
         <div data-tour="clients-search" className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-300 z-10" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600 z-10" />
           <input
             type="text"
             placeholder="Search clients..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-[#111111] border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20 text-white placeholder-gray-500"
+            className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 text-gray-900 placeholder-gray-400"
           />
         </div>
 
@@ -205,12 +205,12 @@ export default function ClientsPage() {
             data-tour="clients-filter"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 sm:px-4 py-2 text-sm border border-white/20 rounded-lg bg-white/10 backdrop-blur-sm text-white focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 focus:outline-none"
+            className="px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg bg-gray-100 backdrop-blur-sm text-gray-900 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 focus:outline-none"
           >
-            <option value="all" className="bg-gray-800 text-white">All Clients</option>
-            <option value="active" className="bg-gray-800 text-white">Active</option>
-            <option value="inactive" className="bg-gray-800 text-white">Inactive</option>
-            <option value="archived" className="bg-gray-800 text-white">Archived</option>
+            <option value="all" className="bg-gray-100 text-gray-900">All Clients</option>
+            <option value="active" className="bg-gray-100 text-gray-900">Active</option>
+            <option value="inactive" className="bg-gray-100 text-gray-900">Inactive</option>
+            <option value="archived" className="bg-gray-100 text-gray-900">Archived</option>
           </select>
 
           {/* Create button */}
@@ -229,13 +229,13 @@ export default function ClientsPage() {
 
       {/* Create form modal */}
       {showCreateForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="rounded-xl border border-white/10 p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto bg-[#111111]">
+        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50 p-4">
+          <div className="rounded-xl border border-gray-200 p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto bg-white">
             <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-800">
-              <h2 className="text-lg sm:text-xl font-bold text-white">New Client</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">New Client</h2>
               <button
                 onClick={() => setShowCreateForm(false)}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-500 hover:text-gray-900 transition-colors"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -253,7 +253,7 @@ export default function ClientsPage() {
       {loading ? (
         <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="animate-pulse rounded-lg border border-white/10 p-6 shadow bg-[#111111]">
+            <div key={i} className="animate-pulse rounded-lg border border-gray-200 p-6 shadow bg-white">
               <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
               <div className="h-3 bg-gray-200 rounded mb-2"></div>
               <div className="h-3 bg-gray-200 rounded w-1/2"></div>
@@ -287,15 +287,15 @@ export default function ClientsPage() {
 
       {/* Quick Add Note Modal */}
       {showNoteModal && selectedClient && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="rounded-xl border border-white/10 p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto bg-[#111111]">
+        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50 p-4">
+          <div className="rounded-xl border border-gray-200 p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto bg-white">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg sm:text-xl font-bold text-white">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">
                 Add Note for {selectedClient.name}
               </h2>
               <button
                 onClick={() => setShowNoteModal(false)}
-                className="text-gray-400 hover:text-gray-600 flex-shrink-0 ml-2"
+                className="text-gray-500 hover:text-gray-600 flex-shrink-0 ml-2"
               >
                 <X className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
@@ -332,15 +332,15 @@ export default function ClientsPage() {
 
       {/* Quick Add Reminder Modal */}
       {showReminderModal && selectedClient && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="rounded-xl border border-white/10 p-6 max-w-md w-full bg-[#111111]">
+        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50 p-4">
+          <div className="rounded-xl border border-gray-200 p-6 max-w-md w-full bg-white">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white">
+              <h2 className="text-xl font-bold text-gray-900">
                 Add Reminder for {selectedClient.name}
               </h2>
               <button
                 onClick={() => setShowReminderModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-500 hover:text-gray-600"
               >
                 <X className="w-6 h-6" />
               </button>

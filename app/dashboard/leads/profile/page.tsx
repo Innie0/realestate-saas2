@@ -104,7 +104,7 @@ export default function ProfileEditorPage() {
     }
   };
 
-  const inputClass = 'w-full px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-white/30';
+  const inputClass = 'w-full px-3 py-2.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 text-sm placeholder-gray-600 focus:outline-none focus:border-gray-400';
 
   if (loading) {
     return (
@@ -121,10 +121,10 @@ export default function ProfileEditorPage() {
     <div className="min-h-screen">
       <Header title="Agent Profile" subtitle="Edit your public profile page" />
 
-      <div className="p-4 sm:p-6 text-white max-w-2xl">
+      <div className="p-4 sm:p-6 text-gray-900 max-w-2xl">
 
         <div className="flex items-center justify-between mb-6">
-          <Link href="/dashboard/leads" className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors">
+          <Link href="/dashboard/leads" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to Leads
           </Link>
           <div className="flex items-center gap-2">
@@ -133,7 +133,7 @@ export default function ProfileEditorPage() {
                 href={profileUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-white/5 text-gray-400 border border-white/10 hover:text-white transition-colors"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-gray-50 text-gray-500 border border-gray-200 hover:text-gray-900 transition-colors"
               >
                 <Eye className="w-3.5 h-3.5" /> Preview
               </a>
@@ -152,32 +152,32 @@ export default function ProfileEditorPage() {
         <div className="space-y-6">
 
           {/* Enable toggle */}
-          <div className="bg-[#111111] border border-white/10 rounded-xl p-5">
+          <div className="bg-white border border-gray-200 rounded-xl p-5">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-white">Public Profile</h3>
+                <h3 className="text-sm font-semibold text-gray-900">Public Profile</h3>
                 <p className="text-xs text-gray-500 mt-0.5">Make your profile visible at your personal URL</p>
               </div>
               <button
                 onClick={() => setEnabled(!enabled)}
-                className={`relative w-11 h-6 rounded-full transition-colors ${enabled ? 'bg-white' : 'bg-white/10'}`}
+                className={`relative w-11 h-6 rounded-full transition-colors ${enabled ? 'bg-white' : 'bg-gray-100'}`}
               >
-                <div className={`absolute top-0.5 w-5 h-5 rounded-full transition-all ${enabled ? 'left-[22px] bg-gray-900' : 'left-0.5 bg-gray-500'}`} />
+                <div className={`absolute top-0.5 w-5 h-5 rounded-full transition-all ${enabled ? 'left-[22px] bg-gray-100' : 'left-0.5 bg-gray-500'}`} />
               </button>
             </div>
             {enabled && profileUrl && (
-              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-white/10">
+              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-200">
                 <input
                   type="text"
                   readOnly
                   value={profileUrl}
                   onClick={(e) => (e.target as HTMLInputElement).select()}
-                  className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 text-xs focus:outline-none cursor-text min-w-0"
+                  className="flex-1 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-600 text-xs focus:outline-none cursor-text min-w-0"
                 />
                 <button
                   onClick={handleCopy}
                   className={`flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-medium transition-all border flex-shrink-0 ${
-                    copied ? 'bg-white/10 text-white border-white/20' : 'bg-white text-gray-900 border-gray-200 hover:bg-gray-100'
+                    copied ? 'bg-gray-100 text-gray-900 border-gray-300' : 'bg-white text-gray-900 border-gray-200 hover:bg-gray-100'
                   }`}
                 >
                   {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
@@ -188,12 +188,12 @@ export default function ProfileEditorPage() {
           </div>
 
           {/* Basic info */}
-          <div className="bg-[#111111] border border-white/10 rounded-xl p-5 space-y-4">
-            <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+          <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
+            <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
               <User className="w-4 h-4 text-gray-500" /> Basic Info
             </h3>
             <div>
-              <label className="block text-xs text-gray-400 mb-1.5">Headline</label>
+              <label className="block text-xs text-gray-500 mb-1.5">Headline</label>
               <input
                 type="text"
                 value={headline}
@@ -203,7 +203,7 @@ export default function ProfileEditorPage() {
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-400 mb-1.5">Bio</label>
+              <label className="block text-xs text-gray-500 mb-1.5">Bio</label>
               <textarea
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
@@ -213,7 +213,7 @@ export default function ProfileEditorPage() {
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-400 mb-1.5">Photo URL</label>
+              <label className="block text-xs text-gray-500 mb-1.5">Photo URL</label>
               <input
                 type="url"
                 value={photoUrl}
@@ -225,28 +225,28 @@ export default function ProfileEditorPage() {
           </div>
 
           {/* Contact */}
-          <div className="bg-[#111111] border border-white/10 rounded-xl p-5 space-y-4">
-            <h3 className="text-sm font-semibold text-white">Contact Info (shown on profile)</h3>
+          <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
+            <h3 className="text-sm font-semibold text-gray-900">Contact Info (shown on profile)</h3>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-gray-400 mb-1.5">Phone</label>
+                <label className="block text-xs text-gray-500 mb-1.5">Phone</label>
                 <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 (555) 123-4567" className={inputClass} />
               </div>
               <div>
-                <label className="block text-xs text-gray-400 mb-1.5">Email</label>
+                <label className="block text-xs text-gray-500 mb-1.5">Email</label>
                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className={inputClass} />
               </div>
             </div>
           </div>
 
           {/* Specialties */}
-          <div className="bg-[#111111] border border-white/10 rounded-xl p-5">
-            <h3 className="text-sm font-semibold text-white mb-3">Specialties</h3>
+          <div className="bg-white border border-gray-200 rounded-xl p-5">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">Specialties</h3>
             <div className="flex flex-wrap gap-2 mb-3">
               {specialties.map(s => (
-                <span key={s} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-gray-300">
+                <span key={s} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-50 border border-gray-200 text-sm text-gray-600">
                   {s}
-                  <button onClick={() => setSpecialties(specialties.filter(x => x !== s))} className="text-gray-600 hover:text-white">
+                  <button onClick={() => setSpecialties(specialties.filter(x => x !== s))} className="text-gray-600 hover:text-gray-900">
                     <X className="w-3 h-3" />
                   </button>
                 </span>
@@ -261,20 +261,20 @@ export default function ProfileEditorPage() {
                 placeholder="e.g. Luxury Homes, First-Time Buyers"
                 className={inputClass}
               />
-              <button onClick={addSpecialty} className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-400 hover:text-white transition-colors flex-shrink-0">
+              <button onClick={addSpecialty} className="px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-500 hover:text-gray-900 transition-colors flex-shrink-0">
                 <Plus className="w-4 h-4" />
               </button>
             </div>
           </div>
 
           {/* Areas served */}
-          <div className="bg-[#111111] border border-white/10 rounded-xl p-5">
-            <h3 className="text-sm font-semibold text-white mb-3">Areas Served</h3>
+          <div className="bg-white border border-gray-200 rounded-xl p-5">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">Areas Served</h3>
             <div className="flex flex-wrap gap-2 mb-3">
               {areas.map(a => (
-                <span key={a} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-gray-300">
+                <span key={a} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-50 border border-gray-200 text-sm text-gray-600">
                   {a}
-                  <button onClick={() => setAreas(areas.filter(x => x !== a))} className="text-gray-600 hover:text-white">
+                  <button onClick={() => setAreas(areas.filter(x => x !== a))} className="text-gray-600 hover:text-gray-900">
                     <X className="w-3 h-3" />
                   </button>
                 </span>
@@ -289,7 +289,7 @@ export default function ProfileEditorPage() {
                 placeholder="e.g. Miami Beach, Coral Gables"
                 className={inputClass}
               />
-              <button onClick={addArea} className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-400 hover:text-white transition-colors flex-shrink-0">
+              <button onClick={addArea} className="px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-500 hover:text-gray-900 transition-colors flex-shrink-0">
                 <Plus className="w-4 h-4" />
               </button>
             </div>

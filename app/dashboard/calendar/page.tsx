@@ -193,30 +193,30 @@ export default function CalendarPage() {
       />
 
       {/* Page content */}
-      <div className="p-4 sm:p-6 text-white">
+      <div className="p-4 sm:p-6 text-gray-900">
         {/* Calendar card - full width, connection settings tucked into corner */}
         <Card>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white">Your Schedule</h2>
+            <h2 className="text-xl font-bold text-gray-900">Your Schedule</h2>
             <div className="flex items-center gap-2">
               {/* Connection status indicator */}
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200">
                 <div className={`w-2 h-2 rounded-full ${connections.google.connected ? 'bg-green-500' : 'bg-gray-600'}`} />
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-gray-500">
                   {connections.google.connected ? 'Google Calendar' : 'Not connected'}
                 </span>
               </div>
               <button
                 onClick={() => handleRefresh()}
                 disabled={refreshing}
-                className="p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-500 hover:text-gray-900"
                 title="Sync calendars"
               >
                 <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
               </button>
               <button
                 onClick={() => setShowConnectionsModal(true)}
-                className="p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-500 hover:text-gray-900"
                 title="Calendar settings"
               >
                 <Settings className="w-4 h-4" />
@@ -255,13 +255,13 @@ export default function CalendarPage() {
         title="Calendar Connections"
       >
         <div className="space-y-4">
-          <p className="text-sm text-gray-400">Connect your calendars to sync events automatically.</p>
+          <p className="text-sm text-gray-500">Connect your calendars to sync events automatically.</p>
 
           {/* Google Calendar */}
-          <div className="border border-white/10 rounded-lg p-4 bg-white/5">
+          <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-gray-100 border border-gray-300 flex items-center justify-center flex-shrink-0">
                   <svg className="w-6 h-6" viewBox="0 0 48 48">
                     <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
                     <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
@@ -270,12 +270,12 @@ export default function CalendarPage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="font-medium text-white">Google Calendar</p>
+                  <p className="font-medium text-gray-900">Google Calendar</p>
                   <div className="flex items-center gap-2 mt-0.5">
                     {connections.google.connected ? (
                       <>
                         <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                        <p className="text-xs text-gray-400">{connections.google.email}</p>
+                        <p className="text-xs text-gray-500">{connections.google.email}</p>
                       </>
                     ) : (
                       <p className="text-xs text-gray-500">Not connected</p>
@@ -295,8 +295,8 @@ export default function CalendarPage() {
             </div>
           </div>
 
-          <div className="p-3 bg-white/5 border border-white/10 rounded-lg">
-            <p className="text-xs text-gray-400">
+          <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
+            <p className="text-xs text-gray-500">
               Events created here will sync to your connected calendars, and calendar events will appear in your schedule.
             </p>
           </div>

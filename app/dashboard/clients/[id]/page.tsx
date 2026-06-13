@@ -274,7 +274,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       {/* Back button */}
       <button
         onClick={() => router.push(client.in_crm ? '/dashboard/clients' : '/dashboard/leads')}
-        className="flex items-center gap-2 text-gray-400 hover:text-white mb-6"
+        className="flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
         {client.in_crm ? 'Back to Clients' : 'Back to Leads inbox'}
@@ -299,10 +299,10 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       <div className="mb-8">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white">{client.name}</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{client.name}</h1>
             <div className="mt-2 space-y-1">
-              {client.email && <p className="text-gray-400">{client.email}</p>}
-              {client.phone && <p className="text-gray-400">{client.phone}</p>}
+              {client.email && <p className="text-gray-500">{client.email}</p>}
+              {client.phone && <p className="text-gray-500">{client.phone}</p>}
             </div>
           </div>
           <div className="flex gap-2">
@@ -320,9 +320,9 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
       {/* Edit form modal */}
       {isEditing && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="rounded-xl border border-white/10 p-6 max-w-md w-full bg-[#111111]">
-            <h2 className="text-xl font-bold text-white mb-4">Edit Client</h2>
+        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50 p-4">
+          <div className="rounded-xl border border-gray-200 p-6 max-w-md w-full bg-white">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Edit Client</h2>
             <ClientForm
               client={client}
               onSubmit={handleUpdateClient}
@@ -339,7 +339,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <StickyNote className="w-5 h-5 text-sky-600" />
-              <h2 className="text-xl font-bold text-white">Notes</h2>
+              <h2 className="text-xl font-bold text-gray-900">Notes</h2>
             </div>
             <Button
               variant="outline"
@@ -353,13 +353,13 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
           {/* Add note form */}
           {showNoteForm && (
-            <div className="mb-4 p-4 bg-white/5 rounded-lg">
+            <div className="mb-4 p-4 bg-gray-50 rounded-lg">
               <textarea
                 value={newNote}
                 onChange={(e) => setNewNote(e.target.value)}
                 placeholder="Enter your note..."
                 rows={3}
-                className="w-full px-3 py-2 bg-[#111111] border border-white/10 text-white placeholder-gray-500 rounded-lg focus:ring-2 focus:ring-white/20 focus:outline-none resize-none"
+                className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-gray-200 focus:outline-none resize-none"
               />
               <div className="flex gap-2 mt-2">
                 <Button
@@ -388,7 +388,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <div className="space-y-3">
             {client.notes && client.notes.length > 0 ? (
               client.notes.map((note) => (
-                <div key={note.id} className="p-3 bg-white/5 rounded-lg">
+                <div key={note.id} className="p-3 bg-gray-50 rounded-lg">
                   {editingNoteId === note.id ? (
                     // Edit mode
                     <div>
@@ -396,7 +396,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                         value={editingNoteContent}
                         onChange={(e) => setEditingNoteContent(e.target.value)}
                         rows={3}
-                        className="w-full px-3 py-2 bg-[#111111] border border-white/10 text-white placeholder-gray-500 rounded-lg focus:ring-2 focus:ring-white/20 focus:outline-none resize-none text-sm"
+                        className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-gray-200 focus:outline-none resize-none text-sm"
                       />
                       <div className="flex gap-2 mt-2">
                         <Button
@@ -421,18 +421,18 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                     // View mode
                     <>
                       <div className="flex items-start justify-between gap-3">
-                        <p className="text-sm text-gray-300 flex-1 whitespace-pre-wrap">{note.note}</p>
+                        <p className="text-sm text-gray-600 flex-1 whitespace-pre-wrap">{note.note}</p>
                         <div className="flex gap-1">
                           <button
                             onClick={() => handleEditNote(note.id, note.note)}
-                            className="text-gray-400 hover:text-sky-600"
+                            className="text-gray-500 hover:text-sky-600"
                             title="Edit note"
                           >
                             <Edit className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleDeleteNote(note.id)}
-                            className="text-gray-400 hover:text-red-600"
+                            className="text-gray-500 hover:text-red-600"
                             title="Delete note"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -457,7 +457,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <Calendar className="w-5 h-5 text-sky-600" />
-              <h2 className="text-xl font-bold text-white">Reminders</h2>
+              <h2 className="text-xl font-bold text-gray-900">Reminders</h2>
             </div>
             <Button
               variant="outline"
@@ -471,7 +471,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
           {/* Add reminder form */}
           {showReminderForm && (
-            <div className="mb-4 p-4 bg-white/5 rounded-lg">
+            <div className="mb-4 p-4 bg-gray-50 rounded-lg">
               <ReminderForm
                 clientId={clientId}
                 onSubmit={handleCreateReminder}
@@ -488,19 +488,19 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 <div
                   key={reminder.id}
                   className={`p-3 rounded-lg ${
-                    reminder.is_completed ? 'bg-white/5 opacity-60' : 'bg-sky-500/10'
+                    reminder.is_completed ? 'bg-gray-50 opacity-60' : 'bg-sky-500/10'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
-                      <h3 className="font-medium text-white text-sm">
+                      <h3 className="font-medium text-gray-900 text-sm">
                         {reminder.title}
                         {reminder.is_completed && (
                           <span className="ml-2 text-xs text-green-600">(Completed)</span>
                         )}
                       </h3>
                         {reminder.description && (
-                        <p className="text-xs text-gray-400 mt-1 whitespace-pre-wrap">{reminder.description}</p>
+                        <p className="text-xs text-gray-500 mt-1 whitespace-pre-wrap">{reminder.description}</p>
                       )}
                       <div className="flex items-center gap-1 text-xs text-gray-500 mt-2">
                         <Clock className="w-3 h-3" />

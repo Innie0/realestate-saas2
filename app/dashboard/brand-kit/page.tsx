@@ -89,7 +89,7 @@ export default function BrandKitPage() {
       />
 
       {/* Page content */}
-      <div className="p-4 sm:p-6 max-w-4xl mx-auto text-white">
+      <div className="p-4 sm:p-6 max-w-4xl mx-auto text-gray-900">
         <div className="space-y-6">
           {/* Save button at the top */}
           <div className="flex gap-3">
@@ -103,7 +103,7 @@ export default function BrandKitPage() {
           <Card>
             <div className="flex items-center gap-3 mb-4">
               <Upload className="w-5 h-5 text-primary-600" />
-              <h2 className="text-xl font-bold text-white">Logo</h2>
+              <h2 className="text-xl font-bold text-gray-900">Logo</h2>
             </div>
 
             <p className="text-gray-600 mb-4">
@@ -113,7 +113,7 @@ export default function BrandKitPage() {
             {brandKit.logo_url ? (
               /* Show uploaded logo */
               <div className="flex items-center gap-4">
-                <div className="w-32 h-32 border-2 border-gray-200 rounded-lg flex items-center justify-center bg-white/10">
+                <div className="w-32 h-32 border-2 border-gray-200 rounded-lg flex items-center justify-center bg-gray-100">
                   <img
                     src={brandKit.logo_url}
                     alt="Brand logo"
@@ -133,7 +133,7 @@ export default function BrandKitPage() {
             ) : (
               /* Logo upload area */
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                <Upload className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                <Upload className="w-12 h-12 mx-auto text-gray-500 mb-4" />
                 <p className="text-gray-600 mb-4">
                   No logo uploaded yet
                 </p>
@@ -152,7 +152,7 @@ export default function BrandKitPage() {
           <Card>
             <div className="flex items-center gap-3 mb-4">
               <Palette className="w-5 h-5 text-primary-600" />
-              <h2 className="text-xl font-bold text-white">Color Scheme</h2>
+              <h2 className="text-xl font-bold text-gray-900">Color Scheme</h2>
             </div>
 
             <p className="text-gray-600 mb-6">
@@ -281,7 +281,7 @@ export default function BrandKitPage() {
           <Card>
             <div className="flex items-center gap-3 mb-4">
               <Type className="w-5 h-5 text-primary-600" />
-              <h2 className="text-xl font-bold text-white">Typography</h2>
+              <h2 className="text-xl font-bold text-gray-900">Typography</h2>
             </div>
 
             <p className="text-gray-600 mb-6">

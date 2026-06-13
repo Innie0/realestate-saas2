@@ -137,7 +137,7 @@ export default function DashboardPage() {
       />
 
       {/* Page content */}
-      <div className="p-4 sm:p-6 space-y-6 text-white">
+      <div className="p-4 sm:p-6 space-y-6 text-gray-900">
         {/* Quick actions */}
         <div className="flex gap-4">
           <Link href="/dashboard/projects/new" data-tour="new-project">
@@ -163,8 +163,8 @@ export default function DashboardPage() {
           <div data-tour="plan-usage"><Card>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Zap className="w-5 h-5 text-white/60" />
-                <h2 className="text-lg font-bold text-white">Plan Usage</h2>
+                <Zap className="w-5 h-5 text-gray-900/60" />
+                <h2 className="text-lg font-bold text-gray-900">Plan Usage</h2>
               </div>
               <Link href="/dashboard/upgrade">
                 <Button variant="outline" size="sm">Upgrade</Button>
@@ -187,15 +187,15 @@ export default function DashboardPage() {
                 const isAtLimit = !isUnlimited && pct >= 100;
                 return (
                   <div key={key} className="text-center">
-                    <p className="text-xs text-gray-400 mb-1">{label}</p>
-                    <p className={`text-lg font-bold ${isAtLimit ? 'text-red-400' : isNearLimit ? 'text-yellow-400' : 'text-white'}`}>
+                    <p className="text-xs text-gray-500 mb-1">{label}</p>
+                    <p className={`text-lg font-bold ${isAtLimit ? 'text-red-400' : isNearLimit ? 'text-yellow-400' : 'text-gray-900'}`}>
                       {isUnlimited
                         ? <span className="text-gray-500 text-base font-normal">∞</span>
                         : <>{item.current}<span className="text-gray-500 text-sm font-normal">/{item.limit}</span></>
                       }
                     </p>
                     {!isUnlimited && (
-                      <div className="w-full h-1.5 bg-gray-800 rounded-full mt-1.5">
+                      <div className="w-full h-1.5 bg-gray-100 rounded-full mt-1.5">
                         <div
                           className={`h-full rounded-full transition-all ${isAtLimit ? 'bg-red-500' : isNearLimit ? 'bg-yellow-500' : 'bg-white'}`}
                           style={{ width: `${pct}%` }}
@@ -213,7 +213,7 @@ export default function DashboardPage() {
         {/* Recent projects section */}
         <Card>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white">Recent Projects</h2>
+            <h2 className="text-xl font-bold text-gray-900">Recent Projects</h2>
             <Link href="/dashboard/projects">
               <Button variant="outline" size="sm">
                 View All
@@ -226,9 +226,9 @@ export default function DashboardPage() {
             <div className="grid gap-6 md:grid-cols-3">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="animate-pulse">
-                  <div className="h-48 bg-gray-700 rounded-lg mb-3"></div>
-                  <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
-                  <div className="h-3 bg-gray-700 rounded w-1/2"></div>
+                  <div className="h-48 bg-gray-200 rounded-lg mb-3"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
                 </div>
               ))}
             </div>
@@ -236,10 +236,10 @@ export default function DashboardPage() {
             // Empty state - shown when no projects exist
             <div className="text-center py-12">
               <FolderKanban className="w-12 h-12 mx-auto text-gray-500 mb-4" />
-              <h3 className="text-lg font-medium text-white mb-2">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
                 No projects yet
               </h3>
-              <p className="text-gray-400 mb-4">
+              <p className="text-gray-500 mb-4">
                 Get started by creating your first property listing project
               </p>
               <Link href="/dashboard/projects/new">
@@ -265,10 +265,10 @@ export default function DashboardPage() {
           <Card>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-white/60" />
-                <h2 className="text-base font-semibold text-white">Recent Clients</h2>
+                <Users className="w-5 h-5 text-gray-900/60" />
+                <h2 className="text-base font-semibold text-gray-900">Recent Clients</h2>
               </div>
-              <Link href="/dashboard/clients" className="text-xs text-gray-400 hover:text-white flex items-center gap-1 transition-colors">
+              <Link href="/dashboard/clients" className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1 transition-colors">
                 View all <ArrowRight className="w-3 h-3" />
               </Link>
             </div>
@@ -277,18 +277,18 @@ export default function DashboardPage() {
             ) : (
               <div className="space-y-2">
                 {recentClients.map(client => (
-                  <Link key={client.id} href={`/dashboard/clients/${client.id}`} className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors group">
+                  <Link key={client.id} href={`/dashboard/clients/${client.id}`} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-medium text-white flex-shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-medium text-gray-900 flex-shrink-0">
                         {client.name.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-white group-hover:text-white">{client.name}</p>
+                        <p className="text-sm font-medium text-gray-900 group-hover:text-gray-900">{client.name}</p>
                         {client.email && <p className="text-xs text-gray-500 truncate max-w-[160px]">{client.email}</p>}
                       </div>
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
-                      client.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-white/10 text-gray-400'
+                      client.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-gray-100 text-gray-500'
                     }`}>{client.status}</span>
                   </Link>
                 ))}
@@ -300,10 +300,10 @@ export default function DashboardPage() {
           <Card>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-white/60" />
-                <h2 className="text-base font-semibold text-white">Recent Transactions</h2>
+                <Clock className="w-5 h-5 text-gray-900/60" />
+                <h2 className="text-base font-semibold text-gray-900">Recent Transactions</h2>
               </div>
-              <Link href="/dashboard/transactions" className="text-xs text-gray-400 hover:text-white flex items-center gap-1 transition-colors">
+              <Link href="/dashboard/transactions" className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1 transition-colors">
                 View all <ArrowRight className="w-3 h-3" />
               </Link>
             </div>
@@ -312,14 +312,14 @@ export default function DashboardPage() {
             ) : (
               <div className="space-y-2">
                 {recentTransactions.map(tx => (
-                  <Link key={tx.id} href={`/dashboard/transactions/${tx.id}`} className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors group">
+                  <Link key={tx.id} href={`/dashboard/transactions/${tx.id}`} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group">
                     <div>
-                      <p className="text-sm font-medium text-white truncate max-w-[200px]">{tx.property_address}</p>
+                      <p className="text-sm font-medium text-gray-900 truncate max-w-[200px]">{tx.property_address}</p>
                       {tx.offer_price && <p className="text-xs text-gray-500">${tx.offer_price.toLocaleString()}</p>}
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
                       tx.status === 'active' ? 'bg-green-500/20 text-green-400' :
-                      tx.status === 'closed' ? 'bg-white/10 text-gray-400' :
+                      tx.status === 'closed' ? 'bg-gray-100 text-gray-500' :
                       'bg-yellow-500/20 text-yellow-400'
                     }`}>{tx.status}</span>
                   </Link>
