@@ -39,6 +39,8 @@ export function hasLeadCaptureAccess(
   email?: string | null
 ): boolean {
   if (!hasAppAccess(subscriptionStatus, email)) return false;
+  // Admin and free Pro accounts get full lead capture access
+  if (email && (isAdminEmail(email) || isFreePro(email))) return true;
   const plan = subscriptionPlan;
   return (
     plan === STARTER_PRICE_ID ||
