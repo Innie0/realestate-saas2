@@ -28,9 +28,9 @@ export default async function OpenHouseSignInPage({ params }: PageProps) {
 
   if (!openHouse) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center p-6">
         <div className="text-center">
-          <p className="text-gray-400 text-lg font-medium">This open house isn&apos;t available.</p>
+          <p className="text-gray-500 text-lg font-medium">This open house isn&apos;t available.</p>
           <p className="text-gray-600 text-sm mt-2">The link may have expired or is invalid.</p>
         </div>
       </div>
@@ -39,9 +39,9 @@ export default async function OpenHouseSignInPage({ params }: PageProps) {
 
   if (openHouse.status === 'ended') {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center p-6">
         <div className="text-center">
-          <p className="text-gray-400 text-lg font-medium">This open house has ended.</p>
+          <p className="text-gray-500 text-lg font-medium">This open house has ended.</p>
           <p className="text-gray-600 text-sm mt-2">Thanks for your interest!</p>
         </div>
       </div>
@@ -53,14 +53,14 @@ export default async function OpenHouseSignInPage({ params }: PageProps) {
   });
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
-          <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-3">
+          <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
             <span className="text-lg">🏠</span>
           </div>
-          <h1 className="text-xl font-bold text-white mb-1">Open House Sign-In</h1>
-          <p className="text-sm text-gray-400">{openHouse.property_address}</p>
+          <h1 className="text-xl font-bold text-gray-900 mb-1">Open House Sign-In</h1>
+          <p className="text-sm text-gray-500">{openHouse.property_address}</p>
           <p className="text-xs text-gray-600 mt-1">
             {displayDate} · {openHouse.start_time.slice(0, 5)} – {openHouse.end_time.slice(0, 5)}
           </p>

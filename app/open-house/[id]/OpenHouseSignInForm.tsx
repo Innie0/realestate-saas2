@@ -44,20 +44,20 @@ export default function OpenHouseSignInForm({ openHouseId }: { openHouseId: stri
 
   if (submitted) {
     return (
-      <div className="bg-[#111111] border border-white/10 rounded-2xl p-8 text-center">
-        <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-4">
+      <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center">
+        <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
           <span className="text-2xl">✓</span>
         </div>
-        <h2 className="text-lg font-semibold text-white mb-2">You&apos;re signed in!</h2>
-        <p className="text-sm text-gray-400">Thanks for visiting. The agent will follow up with you soon.</p>
+        <h2 className="text-lg font-semibold text-gray-900 mb-2">You&apos;re signed in!</h2>
+        <p className="text-sm text-gray-500">Thanks for visiting. The agent will follow up with you soon.</p>
       </div>
     );
   }
 
-  const inputClass = 'w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-white/30 transition-colors';
+  const inputClass = 'w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors';
 
   return (
-    <form onSubmit={handleSubmit} className="bg-[#111111] border border-white/10 rounded-2xl p-6 space-y-4">
+    <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
       <div>
         <input
           type="text"
@@ -91,26 +91,26 @@ export default function OpenHouseSignInForm({ openHouseId }: { openHouseId: stri
         <label className="flex items-center gap-3 cursor-pointer group">
           <div
             className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all flex-shrink-0 ${
-              interested ? 'bg-white border-white' : 'border-white/20 group-hover:border-white/40'
+              interested ? 'bg-gray-900 border-gray-900' : 'border-gray-300 group-hover:border-gray-400'
             }`}
             onClick={() => setInterested(!interested)}
           >
-            {interested && <span className="text-black text-xs font-bold">✓</span>}
+            {interested && <span className="text-white text-xs font-bold">✓</span>}
           </div>
-          <span className="text-sm text-gray-300" onClick={() => setInterested(!interested)}>
+          <span className="text-sm text-gray-600" onClick={() => setInterested(!interested)}>
             I&apos;m interested in this property
           </span>
         </label>
         <label className="flex items-center gap-3 cursor-pointer group">
           <div
             className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all flex-shrink-0 ${
-              workingWithAgent ? 'bg-white border-white' : 'border-white/20 group-hover:border-white/40'
+              workingWithAgent ? 'bg-gray-900 border-gray-900' : 'border-gray-300 group-hover:border-gray-400'
             }`}
             onClick={() => setWorkingWithAgent(!workingWithAgent)}
           >
-            {workingWithAgent && <span className="text-black text-xs font-bold">✓</span>}
+            {workingWithAgent && <span className="text-white text-xs font-bold">✓</span>}
           </div>
-          <span className="text-sm text-gray-300" onClick={() => setWorkingWithAgent(!workingWithAgent)}>
+          <span className="text-sm text-gray-600" onClick={() => setWorkingWithAgent(!workingWithAgent)}>
             I&apos;m already working with an agent
           </span>
         </label>

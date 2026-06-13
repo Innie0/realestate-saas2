@@ -154,13 +154,13 @@ export default function LoginPage() {
   };
 
   if (checkingAuth) {
-    return <div className="min-h-screen bg-black" />;
+    return <div className="min-h-screen bg-[#F5F5F5]" />;
   }
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-4 py-12 relative overflow-hidden">
+    <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center px-4 py-12 relative overflow-hidden">
       {/* Subtle background glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-white/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gray-50 rounded-full blur-3xl pointer-events-none" />
 
       <div className="w-full max-w-md relative z-10">
         {/* Logo */}
@@ -172,12 +172,12 @@ export default function LoginPage() {
 
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-white">Welcome back</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">Welcome back</h1>
           <p className="mt-2 text-sm sm:text-base text-gray-500">Sign in to your account</p>
         </div>
 
         {/* Card */}
-        <div className="rounded-2xl border border-white/10 bg-[#111111] p-6 sm:p-8">
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
           {/* Error message */}
           {error && (
             <div className="mb-5 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
@@ -203,10 +203,10 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/10" />
+              <div className="w-full border-t border-gray-200" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-3 bg-[#111111] text-gray-500">or sign in with email</span>
+              <span className="px-3 bg-white text-gray-500">or sign in with email</span>
             </div>
           </div>
 
@@ -232,7 +232,7 @@ export default function LoginPage() {
 
             {/* Forgot password link */}
             <div className="text-right">
-              <Link href="/auth/forgot-password" className="text-sm text-gray-500 hover:text-white transition-colors">
+              <Link href="/auth/forgot-password" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
                 Forgot password?
               </Link>
             </div>
@@ -256,7 +256,7 @@ export default function LoginPage() {
           {/* Sign up link */}
           <p className="mt-6 text-center text-sm text-gray-500">
             Don't have an account?{' '}
-            <Link href="/auth/signup" className="text-white hover:text-gray-300 font-medium transition-colors">
+            <Link href="/auth/signup" className="text-gray-900 hover:text-gray-900 font-medium transition-colors">
               Sign up
             </Link>
           </p>

@@ -67,9 +67,9 @@ export default async function AgentProfilePage({ params }: PageProps) {
 
   if (!agent) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center p-6">
         <div className="text-center">
-          <p className="text-gray-400 text-lg font-medium">Profile not available</p>
+          <p className="text-gray-500 text-lg font-medium">Profile not available</p>
           <p className="text-gray-600 text-sm mt-2">This agent hasn&apos;t set up their profile yet.</p>
         </div>
       </div>
@@ -84,35 +84,35 @@ export default async function AgentProfilePage({ params }: PageProps) {
     .slice(0, 2);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[#F5F5F5]">
       {/* Hero */}
-      <div className="border-b border-white/10">
+      <div className="border-b border-gray-200">
         <div className="max-w-2xl mx-auto px-4 py-12 text-center">
           {agent.photoUrl ? (
             <img
               src={agent.photoUrl}
               alt={agent.name}
-              className="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-2 border-white/10"
+              className="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-2 border-gray-200"
             />
           ) : (
-            <div className="w-24 h-24 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl font-bold text-white">{initials}</span>
+            <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl font-bold text-gray-900">{initials}</span>
             </div>
           )}
-          <h1 className="text-2xl font-bold text-white mb-1">{agent.name}</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">{agent.name}</h1>
           {agent.headline && (
-            <p className="text-gray-400 text-sm">{agent.headline}</p>
+            <p className="text-gray-500 text-sm">{agent.headline}</p>
           )}
 
           {/* Contact row */}
           <div className="flex items-center justify-center gap-4 mt-4 flex-wrap">
             {agent.phone && (
-              <a href={`tel:${agent.phone}`} className="text-xs text-gray-400 hover:text-white transition-colors">
+              <a href={`tel:${agent.phone}`} className="text-xs text-gray-500 hover:text-gray-900 transition-colors">
                 {agent.phone}
               </a>
             )}
             {agent.profileEmail && (
-              <a href={`mailto:${agent.profileEmail}`} className="text-xs text-gray-400 hover:text-white transition-colors">
+              <a href={`mailto:${agent.profileEmail}`} className="text-xs text-gray-500 hover:text-gray-900 transition-colors">
                 {agent.profileEmail}
               </a>
             )}
@@ -124,18 +124,18 @@ export default async function AgentProfilePage({ params }: PageProps) {
         {/* Bio */}
         {agent.bio && (
           <div>
-            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">About</h2>
-            <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{agent.bio}</p>
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">About</h2>
+            <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap">{agent.bio}</p>
           </div>
         )}
 
         {/* Specialties */}
         {agent.specialties.length > 0 && (
           <div>
-            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Specialties</h2>
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Specialties</h2>
             <div className="flex flex-wrap gap-2">
               {agent.specialties.map((s: string) => (
-                <span key={s} className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-gray-300">
+                <span key={s} className="px-3 py-1.5 rounded-full bg-gray-50 border border-gray-200 text-sm text-gray-600">
                   {s}
                 </span>
               ))}
@@ -146,10 +146,10 @@ export default async function AgentProfilePage({ params }: PageProps) {
         {/* Areas served */}
         {agent.areas.length > 0 && (
           <div>
-            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Areas Served</h2>
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Areas Served</h2>
             <div className="flex flex-wrap gap-2">
               {agent.areas.map((a: string) => (
-                <span key={a} className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-gray-300">
+                <span key={a} className="px-3 py-1.5 rounded-full bg-gray-50 border border-gray-200 text-sm text-gray-600">
                   {a}
                 </span>
               ))}
@@ -159,13 +159,13 @@ export default async function AgentProfilePage({ params }: PageProps) {
 
         {/* Lead capture form */}
         <div>
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Get In Touch</h2>
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Get In Touch</h2>
           <LeadCaptureForm agentId={agent.id} agentName={agent.name} />
         </div>
       </div>
 
       {/* Footer */}
-      <div className="border-t border-white/10 py-6 text-center">
+      <div className="border-t border-gray-200 py-6 text-center">
         <p className="text-xs text-gray-600">Powered by Realestic</p>
       </div>
     </div>

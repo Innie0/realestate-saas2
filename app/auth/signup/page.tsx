@@ -92,7 +92,7 @@ function SignUpForm() {
   }, [router, planParam]);
 
   if (checkingAuth) {
-    return <div className="min-h-screen bg-black" />;
+    return <div className="min-h-screen bg-[#F5F5F5]" />;
   }
 
   /**
@@ -199,9 +199,9 @@ function SignUpForm() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-4 py-12 relative overflow-hidden">
+    <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center px-4 py-12 relative overflow-hidden">
       {/* Subtle background glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-white/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gray-50 rounded-full blur-3xl pointer-events-none" />
 
       <div className="w-full max-w-md relative z-10">
         {/* Logo */}
@@ -213,12 +213,12 @@ function SignUpForm() {
 
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-white">Create your account</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">Create your account</h1>
           <p className="mt-2 text-sm sm:text-base text-gray-500">Create your account, then start your 7-day free trial</p>
         </div>
 
         {/* Card */}
-        <div className="rounded-2xl border border-white/10 bg-[#111111] p-6 sm:p-8">
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
           {/* Error message */}
           {error && (
             <div className="mb-5 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
@@ -244,10 +244,10 @@ function SignUpForm() {
           {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/10" />
+              <div className="w-full border-t border-gray-200" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-3 bg-[#111111] text-gray-500">or sign up with email</span>
+              <span className="px-3 bg-white text-gray-500">or sign up with email</span>
             </div>
           </div>
 
@@ -297,15 +297,15 @@ function SignUpForm() {
                 id="terms-agreement"
                 checked={agreedToTerms}
                 onChange={(e) => setAgreedToTerms(e.target.checked)}
-                className="mt-1 w-4 h-4 rounded border-white/20 bg-white/10 text-white focus:ring-2 focus:ring-white/20 cursor-pointer"
+                className="mt-1 w-4 h-4 rounded border-gray-300 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-gray-200 cursor-pointer"
               />
-              <label htmlFor="terms-agreement" className="text-sm text-gray-400 cursor-pointer leading-relaxed">
+              <label htmlFor="terms-agreement" className="text-sm text-gray-500 cursor-pointer leading-relaxed">
                 I agree to the{' '}
-                <Link href="/terms" target="_blank" className="text-white hover:text-gray-300 underline underline-offset-2 transition-colors">
+                <Link href="/terms" target="_blank" className="text-gray-900 hover:text-gray-900 underline underline-offset-2 transition-colors">
                   Terms of Service
                 </Link>{' '}
                 and{' '}
-                <Link href="/privacy" target="_blank" className="text-white hover:text-gray-300 underline underline-offset-2 transition-colors">
+                <Link href="/privacy" target="_blank" className="text-gray-900 hover:text-gray-900 underline underline-offset-2 transition-colors">
                   Privacy Policy
                 </Link>
               </label>
@@ -330,7 +330,7 @@ function SignUpForm() {
           {/* Sign in link */}
           <p className="mt-6 text-center text-sm text-gray-500">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-white hover:text-gray-300 font-medium transition-colors">
+            <Link href="/auth/login" className="text-gray-900 hover:text-gray-900 font-medium transition-colors">
               Sign in
             </Link>
           </p>
@@ -342,7 +342,7 @@ function SignUpForm() {
 
 export default function SignUpPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-black" />}>
+    <Suspense fallback={<div className="min-h-screen bg-[#F5F5F5]" />}>
       <SignUpForm />
     </Suspense>
   );

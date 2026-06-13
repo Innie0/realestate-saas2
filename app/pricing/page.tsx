@@ -113,9 +113,9 @@ export default function PricingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
+    <div className="min-h-screen bg-[#F5F5F5] relative overflow-hidden">
       {/* Background glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-white/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gray-50 rounded-full blur-3xl pointer-events-none" />
 
       {/* Header */}
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-6 flex items-center justify-between">
@@ -125,9 +125,9 @@ export default function PricingPage() {
         {!isLoading && (
           <div className="text-sm">
             {isAuthenticated ? (
-              <span className="text-gray-400 truncate max-w-[220px] block">✓ {userEmail}</span>
+              <span className="text-gray-500 truncate max-w-[220px] block">✓ {userEmail}</span>
             ) : (
-              <Link href="/auth/signup" className="text-gray-400 hover:text-white transition-colors">
+              <Link href="/auth/signup" className="text-gray-500 hover:text-gray-900 transition-colors">
                 Sign in to subscribe →
               </Link>
             )}
@@ -138,7 +138,7 @@ export default function PricingPage() {
       {/* Loading */}
       {isLoading && (
         <div className="flex items-center justify-center py-40">
-          <Loader2 className="w-8 h-8 text-white animate-spin" />
+          <Loader2 className="w-8 h-8 text-gray-900 animate-spin" />
         </div>
       )}
 
@@ -146,11 +146,11 @@ export default function PricingPage() {
         <div className="relative z-10 mx-auto max-w-5xl px-6 pb-24">
           {/* Page header */}
           <div className="text-center pt-12 pb-16">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/10 text-xs text-gray-300 mb-6">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-100 border border-gray-200 text-xs text-gray-600 mb-6">
               <Sparkles className="w-3.5 h-3.5" />
               7-day free trial on every plan
             </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 tracking-tight">
               Choose your plan
             </h1>
             <p className="text-gray-500 text-lg max-w-xl mx-auto">
@@ -165,8 +165,8 @@ export default function PricingPage() {
                 key={plan.name}
                 className={`relative rounded-2xl p-7 flex flex-col ${
                   plan.popular
-                    ? 'bg-[#111111] border-2 border-white/30'
-                    : 'bg-[#111111] border border-white/10'
+                    ? 'bg-white border-2 border-gray-400'
+                    : 'bg-white border border-gray-200'
                 }`}
               >
                 {/* Popular badge */}
@@ -181,14 +181,14 @@ export default function PricingPage() {
 
                 {/* Plan name & description */}
                 <div className="mb-5">
-                  <h3 className="text-xl font-bold text-white mb-1">{plan.name}</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">{plan.name}</h3>
                   <p className="text-gray-500 text-sm">{plan.description}</p>
                 </div>
 
                 {/* Price */}
                 <div className="mb-6">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-white">{plan.price}</span>
+                    <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
                     <span className="text-gray-500 text-sm">{plan.period}</span>
                   </div>
                 </div>
@@ -204,7 +204,7 @@ export default function PricingPage() {
                 </div>
 
                 {/* Divider */}
-                <div className="border-t border-white/10 mb-5" />
+                <div className="border-t border-gray-200 mb-5" />
 
                 {/* Features */}
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">What's included</p>
@@ -212,7 +212,7 @@ export default function PricingPage() {
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-300">{feature}</span>
+                      <span className="text-sm text-gray-600">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -222,8 +222,8 @@ export default function PricingPage() {
 
           {/* Not authenticated */}
           {!isAuthenticated && (
-            <div className="mt-8 p-5 bg-white/5 border border-white/10 rounded-2xl text-center">
-              <p className="text-gray-400 text-sm mb-4">You need an account to subscribe</p>
+            <div className="mt-8 p-5 bg-gray-50 border border-gray-200 rounded-2xl text-center">
+              <p className="text-gray-500 text-sm mb-4">You need an account to subscribe</p>
               <button
                 onClick={() => router.push('/auth/signup')}
                 className="px-6 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-gray-100 transition-colors"

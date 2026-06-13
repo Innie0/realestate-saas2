@@ -66,14 +66,14 @@ export default async function LeadCapturePage({ params }: LeadPageProps) {
 
   if (!agent) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] px-4">
+      <div className="min-h-screen flex items-center justify-center bg-[#F5F5F5] px-4">
         <div className="text-center">
-          <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-6">
-            <svg className="w-7 h-7 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="w-16 h-16 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center mx-auto mb-6">
+            <svg className="w-7 h-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
             </svg>
           </div>
-          <h1 className="text-xl font-semibold text-white mb-2">Form not available</h1>
+          <h1 className="text-xl font-semibold text-gray-900 mb-2">Form not available</h1>
           <p className="text-gray-500 text-sm">This contact link is invalid or has been removed.</p>
         </div>
       </div>
@@ -82,14 +82,14 @@ export default async function LeadCapturePage({ params }: LeadPageProps) {
 
   if (!agent.isPaid) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] px-4">
+      <div className="min-h-screen flex items-center justify-center bg-[#F5F5F5] px-4">
         <div className="text-center">
-          <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-6">
-            <svg className="w-7 h-7 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="w-16 h-16 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center mx-auto mb-6">
+            <svg className="w-7 h-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h1 className="text-xl font-semibold text-white mb-2">Form not available</h1>
+          <h1 className="text-xl font-semibold text-gray-900 mb-2">Form not available</h1>
           <p className="text-gray-500 text-sm">This contact link is not currently active.</p>
         </div>
       </div>
@@ -105,32 +105,32 @@ export default async function LeadCapturePage({ params }: LeadPageProps) {
     .slice(0, 2);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-10 px-4 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-[#F5F5F5] py-10 px-4 flex flex-col items-center justify-center">
       <div className="w-full max-w-lg">
 
         {/* Agent header */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-white/10 border border-white/20 flex items-center justify-center mx-auto mb-4 text-white text-xl font-bold">
+          <div className="w-16 h-16 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center mx-auto mb-4 text-gray-900 text-xl font-bold">
             {initials}
           </div>
-          <h1 className="text-2xl font-bold text-white mb-1">
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">
             Get in touch with {agentName}
           </h1>
-          <p className="text-gray-400 text-sm max-w-sm mx-auto">
+          <p className="text-gray-500 text-sm max-w-sm mx-auto">
             Fill out the form below and {agentName.split(' ')[0]} will reach
             out to help you with your real estate needs.
           </p>
         </div>
 
         {/* Form card */}
-        <div className="bg-[#111111] rounded-2xl border border-white/10 shadow-2xl p-6 sm:p-8">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-2xl p-6 sm:p-8">
           <LeadCaptureForm agentId={agent.id} agentName={agentName} />
         </div>
 
         {/* Footer */}
         <p className="text-center text-xs text-gray-600 mt-6">
           Powered by{' '}
-          <a href="https://realestic.ai" className="text-gray-500 hover:text-gray-400 transition-colors">
+          <a href="https://realestic.ai" className="text-gray-500 hover:text-gray-500 transition-colors">
             Realestic
           </a>
         </p>
