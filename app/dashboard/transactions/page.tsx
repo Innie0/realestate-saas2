@@ -88,7 +88,7 @@ export default function TransactionsPage() {
       under_contract: 'bg-purple-500/20 text-purple-300 border border-purple-500/30',
       closed: 'bg-green-500/20 text-green-300 border border-green-500/30',
       cancelled: 'bg-red-500/20 text-red-300 border border-red-500/30',
-      expired: 'bg-gray-500/20 text-gray-300 border border-gray-500/30',
+      expired: 'bg-gray-500/20 text-gray-600 border border-gray-500/30',
     };
 
     const labels: Record<string, string> = {
@@ -143,7 +143,7 @@ export default function TransactionsPage() {
     }
 
     return (
-      <span className="flex items-center text-xs text-gray-400">
+      <span className="flex items-center text-xs text-gray-500">
         <Calendar className="w-3 h-3 mr-1" />
         {daysToClosing} days to closing
       </span>
@@ -153,7 +153,7 @@ export default function TransactionsPage() {
   return (
     <div className="min-h-screen">
       <Header title="Transactions" subtitle="Manage your real estate transactions and track progress" />
-      <div className="p-4 sm:p-6 text-white">
+      <div className="p-4 sm:p-6 text-gray-900">
       <div className="space-y-4 sm:space-y-6">
         {/* Action buttons */}
         <div className="flex">
@@ -168,19 +168,19 @@ export default function TransactionsPage() {
       {/* Filters */}
       <div className="flex flex-col gap-3 sm:gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-300" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600" />
           <input
             type="text"
             placeholder="Search by address, buyer, or seller..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 text-sm border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20 bg-[#111111] text-white placeholder-gray-500"
+            className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 bg-white text-gray-900 placeholder-gray-400"
           />
         </div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-3 sm:px-4 py-2 text-sm border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20 bg-[#111111] text-white"
+          className="px-3 sm:px-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 bg-white text-gray-900"
         >
           <option value="all">All Status</option>
           <option value="active">Active</option>
@@ -208,10 +208,10 @@ export default function TransactionsPage() {
         /* Empty state */
         <Card className="text-center py-12">
           <Building2 className="w-12 h-12 mx-auto text-gray-500 mb-4" />
-          <h3 className="text-lg font-medium text-white mb-2">
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
             {searchTerm || statusFilter !== 'all' ? 'No matching transactions' : 'No transactions yet'}
           </h3>
-          <p className="text-gray-400 mb-6">
+          <p className="text-gray-500 mb-6">
             {searchTerm || statusFilter !== 'all' 
               ? 'Try adjusting your search or filters'
               : 'Create your first transaction to get started'}
@@ -235,15 +235,15 @@ export default function TransactionsPage() {
                   <div className="flex-1">
                     {/* Property info */}
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-700 rounded-lg border border-gray-600/50">
-                        <Building2 className="w-5 h-5 text-gray-300" />
+                      <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-700 rounded-lg border border-gray-300">
+                        <Building2 className="w-5 h-5 text-gray-600" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-white">
+                        <h3 className="text-lg font-semibold text-gray-900">
                           {transaction.property_address}
                         </h3>
                         {(transaction.property_city || transaction.property_state) && (
-                          <p className="text-sm text-gray-400">
+                          <p className="text-sm text-gray-500">
                             {[transaction.property_city, transaction.property_state, transaction.property_zip]
                               .filter(Boolean)
                               .join(', ')}
@@ -258,8 +258,8 @@ export default function TransactionsPage() {
                       <div className="flex items-center text-sm">
                         <DollarSign className="w-4 h-4 text-gray-500 mr-2" />
                         <div>
-                          <p className="text-gray-400">Price</p>
-                          <p className="font-semibold text-white">{formatCurrency(transaction.offer_price)}</p>
+                          <p className="text-gray-500">Price</p>
+                          <p className="font-semibold text-gray-900">{formatCurrency(transaction.offer_price)}</p>
                         </div>
                       </div>
 
@@ -267,8 +267,8 @@ export default function TransactionsPage() {
                       <div className="flex items-center text-sm">
                         <User className="w-4 h-4 text-gray-500 mr-2" />
                         <div>
-                          <p className="text-gray-400">Buyer</p>
-                          <p className="font-medium text-white">{transaction.buyer_name}</p>
+                          <p className="text-gray-500">Buyer</p>
+                          <p className="font-medium text-gray-900">{transaction.buyer_name}</p>
                         </div>
                       </div>
 
@@ -276,8 +276,8 @@ export default function TransactionsPage() {
                       <div className="flex items-center text-sm">
                         <Users className="w-4 h-4 text-gray-500 mr-2" />
                         <div>
-                          <p className="text-gray-400">Seller</p>
-                          <p className="font-medium text-white">{transaction.seller_name}</p>
+                          <p className="text-gray-500">Seller</p>
+                          <p className="font-medium text-gray-900">{transaction.seller_name}</p>
                         </div>
                       </div>
 
@@ -285,8 +285,8 @@ export default function TransactionsPage() {
                       <div className="flex items-center text-sm">
                         <CheckCircle2 className="w-4 h-4 text-gray-500 mr-2" />
                         <div>
-                          <p className="text-gray-400">Progress</p>
-                          <p className="font-medium text-white">
+                          <p className="text-gray-500">Progress</p>
+                          <p className="font-medium text-gray-900">
                             {transaction.completed_items_count}/{transaction.total_items_count} tasks
                           </p>
                         </div>
@@ -294,7 +294,7 @@ export default function TransactionsPage() {
                     </div>
 
                     {/* Timeline preview */}
-                    <div className="mt-4 pt-4 border-t border-gray-700/50">
+                    <div className="mt-4 pt-4 border-t border-gray-200">
                       <TransactionTimeline transaction={transaction} compact />
                     </div>
                   </div>
@@ -305,7 +305,7 @@ export default function TransactionsPage() {
                     <div className="mt-2">
                       {getClosingIndicator(transaction)}
                     </div>
-                    <ChevronRight className="w-5 h-5 text-gray-400 mt-4" />
+                    <ChevronRight className="w-5 h-5 text-gray-500 mt-4" />
                   </div>
                 </div>
               </Card>
@@ -316,32 +316,32 @@ export default function TransactionsPage() {
 
       {/* Summary stats */}
       {!isLoading && transactions.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-gray-700/50">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-gray-200">
           <Card className="text-center py-4">
-            <p className="text-2xl font-bold text-white">{transactions.length}</p>
-            <p className="text-sm text-gray-400">Total Transactions</p>
+            <p className="text-2xl font-bold text-gray-900">{transactions.length}</p>
+            <p className="text-sm text-gray-500">Total Transactions</p>
           </Card>
           <Card className="text-center py-4">
             <p className="text-2xl font-bold text-blue-400">
               {transactions.filter(t => t.status === 'active' || t.status === 'under_contract').length}
             </p>
-            <p className="text-sm text-gray-400">Active</p>
+            <p className="text-sm text-gray-500">Active</p>
           </Card>
           <Card className="text-center py-4">
             <p className="text-2xl font-bold text-green-400">
               {transactions.filter(t => t.status === 'closed').length}
             </p>
-            <p className="text-sm text-gray-400">Closed</p>
+            <p className="text-sm text-gray-500">Closed</p>
           </Card>
           <Card className="text-center py-4">
-            <p className="text-2xl font-bold text-white">
+            <p className="text-2xl font-bold text-gray-900">
               {formatCurrency(
                 transactions
                   .filter(t => t.status !== 'cancelled' && t.status !== 'expired')
                   .reduce((sum, t) => sum + t.offer_price, 0)
               )}
             </p>
-            <p className="text-sm text-gray-400">Total Volume</p>
+            <p className="text-sm text-gray-500">Total Volume</p>
           </Card>
         </div>
       )}

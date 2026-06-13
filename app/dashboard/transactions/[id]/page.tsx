@@ -130,7 +130,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
       under_contract: 'bg-purple-500/20 text-purple-300 border border-purple-500/30',
       closed: 'bg-green-500/20 text-green-300 border border-green-500/30',
       cancelled: 'bg-red-500/20 text-red-300 border border-red-500/30',
-      expired: 'bg-gray-500/20 text-gray-300 border border-gray-500/30',
+      expired: 'bg-gray-500/20 text-gray-600 border border-gray-500/30',
     };
 
     const labels: Record<string, string> = {
@@ -164,8 +164,8 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="text-center py-12">
           <AlertTriangle className="w-12 h-12 mx-auto text-red-400 mb-4" />
-          <h2 className="text-lg font-medium text-white mb-2">Error Loading Transaction</h2>
-          <p className="text-gray-400 mb-4">{error || 'Transaction not found'}</p>
+          <h2 className="text-lg font-medium text-gray-900 mb-2">Error Loading Transaction</h2>
+          <p className="text-gray-500 mb-4">{error || 'Transaction not found'}</p>
           <Link href="/dashboard/transactions">
             <Button variant="outline">Back to Transactions</Button>
           </Link>
@@ -183,23 +183,23 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
         {/* Header with gradient */}
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 pb-6 border-b border-gray-700/50">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 pb-6 border-b border-gray-200">
         <div className="flex items-start gap-4">
           <Link 
             href="/dashboard/transactions"
-            className="p-2 hover:bg-gray-800/50 rounded-lg transition-all duration-200 mt-1"
+            className="p-2 hover:bg-gray-100/50 rounded-lg transition-all duration-200 mt-1"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-400" />
+            <ArrowLeft className="w-5 h-5 text-gray-500" />
           </Link>
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <h1 className="text-3xl font-bold text-white">
+              <h1 className="text-3xl font-bold text-gray-900">
                 {transaction.property_address}
               </h1>
               {getStatusBadge(transaction.status)}
             </div>
             {(transaction.property_city || transaction.property_state) && (
-              <p className="text-gray-400">
+              <p className="text-gray-500">
                 {[transaction.property_city, transaction.property_state, transaction.property_zip]
                   .filter(Boolean)
                   .join(', ')}
@@ -247,7 +247,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
       )}
 
       {/* Tabs */}
-      <div className="border-b border-white/10">
+      <div className="border-b border-gray-200">
         <nav className="flex space-x-1">
           {[
             { id: 'overview', label: 'Overview', icon: Building2 },
@@ -262,8 +262,8 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center py-3 px-4 text-sm font-medium rounded-t-lg transition-colors ${
                   activeTab === tab.id
-                    ? 'bg-white/10 text-white border-b-2 border-white'
-                    : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                    ? 'bg-gray-100 text-gray-900 border-b-2 border-white'
+                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
                 }`}
               >
                 <Icon className="w-4 h-4 mr-2" />
@@ -288,14 +288,14 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
               ].map(stat => {
                 const Icon = stat.icon;
                 return (
-                  <Card key={stat.label} className="border border-white/10">
+                  <Card key={stat.label} className="border border-gray-200">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                        <Icon className="w-4 h-4 text-white/70" />
+                      <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+                        <Icon className="w-4 h-4 text-gray-900/70" />
                       </div>
                       <div>
-                        <p className="text-xs text-gray-400">{stat.label}</p>
-                        <p className="text-lg font-bold text-white">{stat.value}</p>
+                        <p className="text-xs text-gray-500">{stat.label}</p>
+                        <p className="text-lg font-bold text-gray-900">{stat.value}</p>
                       </div>
                     </div>
                   </Card>
@@ -306,48 +306,48 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
             {/* Buyer & Seller side by side */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
-                <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
                   <User className="w-4 h-4" /> Buyer
                 </h3>
                 <div className="space-y-2">
-                  <p className="font-medium text-white">{transaction.buyer_name || '-'}</p>
+                  <p className="font-medium text-gray-900">{transaction.buyer_name || '-'}</p>
                   {transaction.buyer_email && (
-                    <a href={`mailto:${transaction.buyer_email}`} className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+                    <a href={`mailto:${transaction.buyer_email}`} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors">
                       <Mail className="w-3.5 h-3.5" /> {transaction.buyer_email}
                     </a>
                   )}
                   {transaction.buyer_phone && (
-                    <a href={`tel:${transaction.buyer_phone}`} className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+                    <a href={`tel:${transaction.buyer_phone}`} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors">
                       <Phone className="w-3.5 h-3.5" /> {transaction.buyer_phone}
                     </a>
                   )}
                   {transaction.buyer_agent_name && (
-                    <div className="pt-2 mt-2 border-t border-white/10">
-                      <p className="text-xs text-gray-500">Agent: <span className="text-gray-300">{transaction.buyer_agent_name}</span></p>
+                    <div className="pt-2 mt-2 border-t border-gray-200">
+                      <p className="text-xs text-gray-500">Agent: <span className="text-gray-600">{transaction.buyer_agent_name}</span></p>
                     </div>
                   )}
                 </div>
               </Card>
 
               <Card>
-                <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
                   <Users className="w-4 h-4" /> Seller
                 </h3>
                 <div className="space-y-2">
-                  <p className="font-medium text-white">{transaction.seller_name || '-'}</p>
+                  <p className="font-medium text-gray-900">{transaction.seller_name || '-'}</p>
                   {transaction.seller_email && (
-                    <a href={`mailto:${transaction.seller_email}`} className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+                    <a href={`mailto:${transaction.seller_email}`} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors">
                       <Mail className="w-3.5 h-3.5" /> {transaction.seller_email}
                     </a>
                   )}
                   {transaction.seller_phone && (
-                    <a href={`tel:${transaction.seller_phone}`} className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+                    <a href={`tel:${transaction.seller_phone}`} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors">
                       <Phone className="w-3.5 h-3.5" /> {transaction.seller_phone}
                     </a>
                   )}
                   {transaction.seller_agent_name && (
-                    <div className="pt-2 mt-2 border-t border-white/10">
-                      <p className="text-xs text-gray-500">Agent: <span className="text-gray-300">{transaction.seller_agent_name}</span></p>
+                    <div className="pt-2 mt-2 border-t border-gray-200">
+                      <p className="text-xs text-gray-500">Agent: <span className="text-gray-600">{transaction.seller_agent_name}</span></p>
                     </div>
                   )}
                 </div>
@@ -357,10 +357,10 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
             {/* Notes */}
             {transaction.notes && (
               <Card>
-                <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
                   <FileText className="w-4 h-4" /> Notes
                 </h3>
-                <p className="text-gray-300 whitespace-pre-wrap text-sm leading-relaxed">{transaction.notes}</p>
+                <p className="text-gray-600 whitespace-pre-wrap text-sm leading-relaxed">{transaction.notes}</p>
               </Card>
             )}
           </div>
@@ -369,11 +369,11 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
         {activeTab === 'tasks' && (
           <div className="space-y-6">
             <Card>
-              <h2 className="text-base font-semibold text-white mb-4">Transaction Timeline</h2>
+              <h2 className="text-base font-semibold text-gray-900 mb-4">Transaction Timeline</h2>
               <TransactionTimeline transaction={transaction} />
             </Card>
             <Card>
-              <h2 className="text-base font-semibold text-white mb-4">Task Checklist</h2>
+              <h2 className="text-base font-semibold text-gray-900 mb-4">Task Checklist</h2>
               <TransactionChecklist
                 transactionId={transaction.id}
                 items={transaction.checklist_items || []}
@@ -386,7 +386,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
 
         {activeTab === 'reminders' && (
           <Card>
-            <h2 className="text-base font-semibold text-white mb-4">Reminders</h2>
+            <h2 className="text-base font-semibold text-gray-900 mb-4">Reminders</h2>
             {transaction.reminders && transaction.reminders.filter(r => !r.is_dismissed).length > 0 ? (
               <div className="space-y-3">
                 {transaction.reminders
@@ -395,18 +395,18 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                     <div 
                       key={reminder.id}
                       className={`flex items-center justify-between p-3 rounded-lg ${
-                        reminder.is_sent ? 'bg-white/5 border border-white/10' : 'bg-yellow-500/10 border border-yellow-500/30'
+                        reminder.is_sent ? 'bg-gray-50 border border-gray-200' : 'bg-yellow-500/10 border border-yellow-500/30'
                       }`}
                     >
                       <div className="flex items-center">
                         <Bell className={`w-5 h-5 mr-3 ${reminder.is_sent ? 'text-gray-500' : 'text-yellow-400'}`} />
                         <div>
-                          <p className={`font-medium ${reminder.is_sent ? 'text-gray-400' : 'text-white'}`}>{reminder.title}</p>
-                          <p className="text-sm text-gray-400">{format(new Date(reminder.reminder_date), 'MMM d, yyyy')}</p>
+                          <p className={`font-medium ${reminder.is_sent ? 'text-gray-500' : 'text-gray-900'}`}>{reminder.title}</p>
+                          <p className="text-sm text-gray-500">{format(new Date(reminder.reminder_date), 'MMM d, yyyy')}</p>
                         </div>
                       </div>
                       {!reminder.is_sent && (
-                        <button onClick={() => dismissReminder(reminder.id)} className="text-sm text-gray-400 hover:text-gray-300">
+                        <button onClick={() => dismissReminder(reminder.id)} className="text-sm text-gray-500 hover:text-gray-900">
                           Dismiss
                         </button>
                       )}
@@ -414,15 +414,15 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                   ))}
               </div>
             ) : (
-              <p className="text-gray-400 text-center py-8">No reminders set</p>
+              <p className="text-gray-500 text-center py-8">No reminders set</p>
             )}
           </Card>
         )}
 
         {activeTab === 'financials' && (
           <Card>
-            <h2 className="text-base font-semibold text-white mb-4">Financial Details</h2>
-            <div className="divide-y divide-white/10">
+            <h2 className="text-base font-semibold text-gray-900 mb-4">Financial Details</h2>
+            <div className="divide-y divide-gray-200">
               {[
                 { label: 'Offer Price', value: formatCurrency(transaction.offer_price) },
                 { label: 'Earnest Money', value: formatCurrency(transaction.earnest_money) },
@@ -430,8 +430,8 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                 { label: 'Loan Amount', value: formatCurrency(transaction.loan_amount) },
               ].map(row => (
                 <div key={row.label} className="flex justify-between py-3">
-                  <span className="text-gray-400">{row.label}</span>
-                  <span className="font-medium text-white">{row.value}</span>
+                  <span className="text-gray-500">{row.label}</span>
+                  <span className="font-medium text-gray-900">{row.value}</span>
                 </div>
               ))}
             </div>

@@ -123,16 +123,16 @@ export default function ProjectsPage() {
       />
 
       {/* Page content */}
-      <div className="p-4 sm:p-6 text-white">
+      <div className="p-4 sm:p-6 text-gray-900">
         {/* Toolbar - search, filter, and create button */}
         <div className="flex flex-col gap-3 sm:gap-4 mb-6">
           {/* Search input */}
           <div data-tour="projects-search" className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
             <input
               type="text"
               placeholder="Search projects..."
-              className="w-full pl-10 pr-4 py-2 bg-[#111111] border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20 text-white placeholder-gray-500"
+              className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 text-gray-900 placeholder-gray-400"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -142,7 +142,7 @@ export default function ProjectsPage() {
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">
             <select
               data-tour="projects-filter"
-              className="px-3 sm:px-4 py-2 text-sm bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-white"
+              className="px-3 sm:px-4 py-2 text-sm bg-gray-100 backdrop-blur-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900"
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
             >
@@ -164,7 +164,7 @@ export default function ProjectsPage() {
 
         {/* Projects count */}
         <div className="mb-4">
-          <p className="text-xs sm:text-sm text-gray-400">
+          <p className="text-xs sm:text-sm text-gray-500">
             Showing {filteredProjects.length} of {projects.length} projects
           </p>
         </div>
@@ -173,10 +173,10 @@ export default function ProjectsPage() {
         {loading ? (
           <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="animate-pulse bg-[#111111] rounded-xl p-4 border border-white/10">
-                <div className="h-48 bg-gray-700 rounded mb-4"></div>
-                <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
-                <div className="h-3 bg-gray-700 rounded mb-2"></div>
+              <div key={i} className="animate-pulse bg-white rounded-xl p-4 border border-gray-200">
+                <div className="h-48 bg-gray-200 rounded mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded mb-2"></div>
               </div>
             ))}
           </div>
@@ -192,12 +192,12 @@ export default function ProjectsPage() {
           </div>
         ) : (
           /* Empty state */
-          <div className="text-center py-12 bg-[#111111] rounded-xl border border-white/10">
+          <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
             <Filter className="w-12 h-12 mx-auto text-gray-500 mb-4" />
-            <h3 className="text-lg font-medium text-white mb-2">
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
               No projects found
             </h3>
-            <p className="text-gray-400 mb-4">
+            <p className="text-gray-500 mb-4">
               {searchQuery || filterStatus !== 'all'
                 ? 'Try adjusting your search or filters'
                 : 'Get started by creating your first project'}

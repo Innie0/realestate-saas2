@@ -169,7 +169,7 @@ export default function MarketAnalysisPage() {
       <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
 
         {/* Search form */}
-        <div data-tour="ma-form" className="bg-[#111111] border border-white/10 rounded-2xl p-5">
+        <div data-tour="ma-form" className="bg-white border border-gray-200 rounded-2xl p-5">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="sm:col-span-2">
@@ -179,7 +179,7 @@ export default function MarketAnalysisPage() {
                   onChange={e => setStreet(e.target.value)}
                   placeholder="123 Main St"
                   required
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-white/30"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-gray-400"
                 />
               </div>
               <div>
@@ -188,7 +188,7 @@ export default function MarketAnalysisPage() {
                   value={city}
                   onChange={e => setCity(e.target.value)}
                   placeholder="Los Angeles"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-white/30"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-gray-400"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -198,7 +198,7 @@ export default function MarketAnalysisPage() {
                     value={state}
                     onChange={e => setState(e.target.value)}
                     required
-                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-white/30"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 text-sm focus:outline-none focus:border-gray-400"
                   >
                     <option value="">State</option>
                     {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
@@ -211,7 +211,7 @@ export default function MarketAnalysisPage() {
                     onChange={e => setZip(e.target.value)}
                     placeholder="90210"
                     maxLength={10}
-                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-white/30"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-gray-400"
                   />
                 </div>
               </div>
@@ -220,7 +220,7 @@ export default function MarketAnalysisPage() {
                 <select
                   value={propertyType}
                   onChange={e => setPropertyType(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-white/30"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 text-sm focus:outline-none focus:border-gray-400"
                 >
                   {PROPERTY_TYPES.map(pt => (
                     <option key={pt.value} value={pt.value}>{pt.label}</option>
@@ -231,7 +231,7 @@ export default function MarketAnalysisPage() {
               <div className="sm:col-span-2 grid grid-cols-2 gap-3">
                 <div data-tour="ma-radius">
                   <label className="block text-xs text-gray-500 mb-2">
-                    Search Radius — <span className="text-white font-medium">{radius} mi</span>
+                    Search Radius — <span className="text-gray-900 font-medium">{radius} mi</span>
                   </label>
                   <input
                     type="range"
@@ -248,7 +248,7 @@ export default function MarketAnalysisPage() {
                 </div>
                 <div data-tour="ma-years">
                   <label className="block text-xs text-gray-500 mb-2">
-                    Sales History — <span className="text-white font-medium">Past {yearsBack} {yearsBack === 1 ? 'year' : 'years'}</span>
+                    Sales History — <span className="text-gray-900 font-medium">Past {yearsBack} {yearsBack === 1 ? 'year' : 'years'}</span>
                   </label>
                   <input
                     type="range"
@@ -291,10 +291,10 @@ export default function MarketAnalysisPage() {
         {loading && (
           <div className="space-y-4 animate-pulse">
             {[1, 2].map(i => (
-              <div key={i} className="bg-[#111111] border border-white/10 rounded-2xl p-5 space-y-3">
-                <div className="h-4 bg-white/5 rounded w-1/3" />
-                <div className="h-8 bg-white/5 rounded w-1/2" />
-                <div className="h-3 bg-white/5 rounded w-2/3" />
+              <div key={i} className="bg-white border border-gray-200 rounded-2xl p-5 space-y-3">
+                <div className="h-4 bg-gray-50 rounded w-1/3" />
+                <div className="h-8 bg-gray-50 rounded w-1/2" />
+                <div className="h-3 bg-gray-50 rounded w-2/3" />
               </div>
             ))}
           </div>
@@ -305,11 +305,11 @@ export default function MarketAnalysisPage() {
           <div className="space-y-4">
 
             {/* Address banner */}
-            <div className="flex items-center gap-2 text-sm text-gray-400 flex-wrap">
+            <div className="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
               <MapPin className="w-4 h-4 flex-shrink-0" />
-              <span className="font-medium text-white">{result.address}</span>
+              <span className="font-medium text-gray-900">{result.address}</span>
               {result.propertyType && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-gray-300 border border-white/15">
+                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 border border-gray-200">
                   {result.propertyType}
                 </span>
               )}
@@ -321,16 +321,16 @@ export default function MarketAnalysisPage() {
             {/* Value + Rent row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Estimated Value */}
-              <div className="bg-[#111111] border border-white/10 rounded-2xl p-5">
+              <div className="bg-white border border-gray-200 rounded-2xl p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center">
                     <Home className="w-4 h-4 text-emerald-400" />
                   </div>
-                  <p className="text-sm text-gray-400 font-medium">Estimated Value</p>
+                  <p className="text-sm text-gray-500 font-medium">Estimated Value</p>
                 </div>
                 {result.avm ? (
                   <>
-                    <p className="text-3xl font-bold text-white mb-1">
+                    <p className="text-3xl font-bold text-gray-900 mb-1">
                       {fmt(result.avm.estimatedValue, '$')}
                     </p>
                     <p className="text-xs text-gray-500">
@@ -343,16 +343,16 @@ export default function MarketAnalysisPage() {
               </div>
 
               {/* Rent Estimate */}
-              <div className="bg-[#111111] border border-white/10 rounded-2xl p-5">
+              <div className="bg-white border border-gray-200 rounded-2xl p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center">
                     <DollarSign className="w-4 h-4 text-blue-400" />
                   </div>
-                  <p className="text-sm text-gray-400 font-medium">Monthly Rent Estimate</p>
+                  <p className="text-sm text-gray-500 font-medium">Monthly Rent Estimate</p>
                 </div>
                 {result.rentEstimate ? (
                   <>
-                    <p className="text-3xl font-bold text-white mb-1">
+                    <p className="text-3xl font-bold text-gray-900 mb-1">
                       {fmt(result.rentEstimate.monthlyRent, '$')}<span className="text-base text-gray-500 font-normal">/mo</span>
                     </p>
                     <p className="text-xs text-gray-500">
@@ -367,24 +367,24 @@ export default function MarketAnalysisPage() {
 
             {/* AI Summary */}
             {result.summary && (
-              <div className="bg-[#111111] border border-white/10 rounded-2xl p-5">
+              <div className="bg-white border border-gray-200 rounded-2xl p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-8 rounded-lg bg-purple-500/15 flex items-center justify-center">
                     <Sparkles className="w-4 h-4 text-purple-400" />
                   </div>
-                  <p className="text-sm text-gray-400 font-medium">Market Summary</p>
+                  <p className="text-sm text-gray-500 font-medium">Market Summary</p>
                 </div>
                 <p className="text-gray-200 text-sm leading-relaxed">{result.summary}</p>
               </div>
             )}
 
             {/* Comps */}
-            <div className="bg-[#111111] border border-white/10 rounded-2xl p-5">
+            <div className="bg-white border border-gray-200 rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center">
                   <TrendingUp className="w-4 h-4 text-amber-400" />
                 </div>
-                <p className="text-sm text-gray-400 font-medium">
+                <p className="text-sm text-gray-500 font-medium">
                   Recent Comparable Sales
                   {result.propertyType ? ` · ${result.propertyType}` : ''}
                 </p>
@@ -401,12 +401,12 @@ export default function MarketAnalysisPage() {
                     const globalIdx = result!.comps.findIndex((c, ci) => !excludedIds.has(ci) && c === comp);
                     const realIdx = result!.comps.indexOf(comp);
                     return (
-                    <div key={realIdx} className="border border-white/8 rounded-xl p-3.5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
+                    <div key={realIdx} className="border border-gray-200 rounded-xl p-3.5 bg-white hover:bg-gray-50 transition-colors">
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
-                          <p className="text-sm font-medium text-white leading-tight">{comp.address}</p>
+                          <p className="text-sm font-medium text-gray-900 leading-tight">{comp.address}</p>
                           {comp.propertyType && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/5 text-gray-500 border border-white/10 whitespace-nowrap">
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-50 text-gray-500 border border-gray-200 whitespace-nowrap">
                               {comp.propertyType}
                             </span>
                           )}
@@ -416,7 +416,7 @@ export default function MarketAnalysisPage() {
                           <button
                             type="button"
                             onClick={() => setExcludedIds(prev => new Set([...prev, realIdx]))}
-                            className="p-1 rounded hover:bg-white/10 text-gray-600 hover:text-red-400 transition-colors"
+                            className="p-1 rounded hover:bg-gray-100 text-gray-600 hover:text-red-400 transition-colors"
                             title="Exclude this comp"
                           >
                             <X className="w-3.5 h-3.5" />
@@ -464,7 +464,7 @@ export default function MarketAnalysisPage() {
                     <button
                       type="button"
                       onClick={() => setShowAllComps(v => !v)}
-                      className="w-full flex items-center justify-center gap-1.5 text-xs text-gray-400 hover:text-white py-2 border border-white/10 rounded-lg hover:bg-white/5 transition-colors"
+                      className="w-full flex items-center justify-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                     >
                       {showAllComps ? (
                         <><ChevronUp className="w-3.5 h-3.5" /> Show fewer</>
@@ -477,7 +477,7 @@ export default function MarketAnalysisPage() {
                     <button
                       type="button"
                       onClick={() => setExcludedIds(new Set())}
-                      className="w-full text-xs text-gray-600 hover:text-gray-400 py-1.5 transition-colors"
+                      className="w-full text-xs text-gray-600 hover:text-gray-500 py-1.5 transition-colors"
                     >
                       Restore {excludedIds.size} excluded comp{excludedIds.size !== 1 ? 's' : ''}
                     </button>

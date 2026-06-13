@@ -116,7 +116,7 @@ export default function NewProjectPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic information */}
           <Card>
-            <h2 className="text-xl font-bold text-white mb-4">Basic Information</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Basic Information</h2>
             
             <div className="space-y-4">
               <Input
@@ -130,27 +130,27 @@ export default function NewProjectPage() {
               />
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
                   Description
                 </label>
                 <textarea
-                  className="block w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none"
+                  className="block w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 resize-none"
                   rows={6}
                   placeholder="Detailed description of the property... (This will be used by AI to generate marketing content)"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
-                <p className="mt-1 text-xs text-gray-400">
+                <p className="mt-1 text-xs text-gray-500">
                   💡 Tip: The more detailed your description, the better the AI-generated content will be!
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
                   Property Type
                 </label>
                 <select
-                  className="block w-full rounded-lg border border-white/10 bg-[#111111] px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white/20"
+                  className="block w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-200"
                   value={propertyType}
                   onChange={(e) => setPropertyType(e.target.value)}
                   required
@@ -167,7 +167,7 @@ export default function NewProjectPage() {
 
           {/* Property address */}
           <Card>
-            <h2 className="text-xl font-bold text-white mb-4">Property Address</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Property Address</h2>
             
             <div className="space-y-4">
               <Input
@@ -208,7 +208,7 @@ export default function NewProjectPage() {
 
           {/* Property details */}
           <Card>
-            <h2 className="text-xl font-bold text-white mb-4">Property Details</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Property Details</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
@@ -262,11 +262,11 @@ export default function NewProjectPage() {
             </div>
 
             <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-600 mb-1">
                 Special Features
               </label>
               <textarea
-                className="block w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 resize-none"
                 rows={7}
                 placeholder="Enter each feature on a new line:
 • Infinity pool with lake views
@@ -277,7 +277,7 @@ export default function NewProjectPage() {
                 value={features}
                 onChange={(e) => setFeatures(e.target.value)}
               />
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-gray-500">
                 💡 Enter each feature on a new line. Be specific and descriptive!
               </p>
             </div>

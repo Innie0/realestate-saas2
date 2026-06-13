@@ -51,8 +51,8 @@ function ComparisonCell({ value }: { value: string | boolean }) {
       : <span className="text-gray-600 text-sm">—</span>;
   }
   return (
-    <span className="text-sm text-gray-300 flex items-center justify-center gap-1">
-      {value === 'Unlimited' && <InfinityIcon className="w-3.5 h-3.5 text-white/60" />}
+    <span className="text-sm text-gray-600 flex items-center justify-center gap-1">
+      {value === 'Unlimited' && <InfinityIcon className="w-3.5 h-3.5 text-gray-900/60" />}
       {value !== 'Unlimited' && value}
     </span>
   );
@@ -124,7 +124,7 @@ export default function UpgradePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-white/20 border-t-white" />
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-white" />
       </div>
     );
   }
@@ -134,12 +134,12 @@ export default function UpgradePage() {
       <div>
         <Header title="Upgrade Plan" subtitle="Manage your subscription" />
         <div className="p-6 max-w-2xl mx-auto text-center mt-16">
-          <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-4">
-            <Sparkles className="w-8 h-8 text-white/60" />
+          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+            <Sparkles className="w-8 h-8 text-gray-900/60" />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">You&apos;re on Pro</h2>
-          <p className="text-gray-400 mb-6">You already have full access to everything Realestic offers.</p>
-          <Link href="/dashboard" className="text-sm text-gray-400 hover:text-white transition-colors flex items-center justify-center gap-1">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">You&apos;re on Pro</h2>
+          <p className="text-gray-500 mb-6">You already have full access to everything Realestic offers.</p>
+          <Link href="/dashboard" className="text-sm text-gray-500 hover:text-gray-900 transition-colors flex items-center justify-center gap-1">
             <ArrowLeft className="w-4 h-4" /> Back to Dashboard
           </Link>
         </div>
@@ -158,10 +158,10 @@ export default function UpgradePage() {
 
         {/* Current usage summary */}
         {usage && (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+          <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
             <div className="flex items-center gap-2 mb-4">
-              <Zap className="w-4 h-4 text-white/60" />
-              <span className="text-sm font-semibold text-white capitalize">
+              <Zap className="w-4 h-4 text-gray-900/60" />
+              <span className="text-sm font-semibold text-gray-900 capitalize">
                 Your Current Usage (Starter Plan)
               </span>
             </div>
@@ -179,18 +179,18 @@ export default function UpgradePage() {
                 const pct = isUnlimited ? 0 : item ? Math.min((item.current / item.limit) * 100, 100) : 0;
                 const nearLimit = !isUnlimited && pct >= 80;
                 return (
-                  <div key={key} className="bg-white/5 rounded-xl p-3">
+                  <div key={key} className="bg-gray-50 rounded-xl p-3">
                     <p className="text-xs text-gray-500 mb-1">{label}</p>
-                    <p className={`text-lg font-bold ${nearLimit ? 'text-red-400' : 'text-white'}`}>
+                    <p className={`text-lg font-bold ${nearLimit ? 'text-red-400' : 'text-gray-900'}`}>
                       {isUnlimited ? '∞' : item?.current ?? 0}
                       {!isUnlimited && (
                         <span className="text-xs font-normal text-gray-500">/{item?.limit ?? '—'}</span>
                       )}
                     </p>
                     {!isUnlimited && (
-                      <div className="mt-1.5 h-1 rounded-full bg-white/10">
+                      <div className="mt-1.5 h-1 rounded-full bg-gray-100">
                         <div
-                          className={`h-1 rounded-full transition-all ${nearLimit ? 'bg-red-500' : 'bg-white/50'}`}
+                          className={`h-1 rounded-full transition-all ${nearLimit ? 'bg-red-500' : 'bg-gray-500'}`}
                           style={{ width: `${pct}%` }}
                         />
                       </div>
@@ -206,7 +206,7 @@ export default function UpgradePage() {
         <div className="grid grid-cols-1 gap-6 max-w-xl mx-auto">
 
           {/* Pro card */}
-          <div className="rounded-2xl border-2 border-white/30 bg-[#111111] p-6 flex flex-col relative">
+          <div className="rounded-2xl border-2 border-gray-400 bg-white p-6 flex flex-col relative">
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
               <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-white text-black text-xs font-semibold">
                 <Sparkles className="w-3 h-3" />
@@ -214,24 +214,24 @@ export default function UpgradePage() {
               </span>
             </div>
             <div className="mb-5 mt-2">
-              <h3 className="text-xl font-bold text-white mb-1">Pro</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-1">Pro</h3>
               <p className="text-gray-500 text-sm">Everything you need to scale your real estate business</p>
             </div>
             <div className="mb-5">
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold text-white">$39.99</span>
+                <span className="text-4xl font-bold text-gray-900">$39.99</span>
                 <span className="text-gray-500 text-sm">/ month</span>
               </div>
             </div>
             <div className="mb-6">
               <SubscribeButton priceId={PRO_PRICE_ID} planName="Pro" className="w-full" />
             </div>
-            <div className="border-t border-white/10 mb-5" />
+            <div className="border-t border-gray-200 mb-5" />
             <ul className="space-y-2.5 flex-1">
               {PRO_HIGHLIGHTS.map((f, i) => (
                 <li key={i} className="flex items-start gap-2.5">
                   <Check className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-gray-300">{f}</span>
+                  <span className="text-sm text-gray-600">{f}</span>
                 </li>
               ))}
             </ul>
@@ -239,21 +239,21 @@ export default function UpgradePage() {
         </div>
 
         {/* Comparison table */}
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 overflow-x-auto">
-          <h3 className="text-lg font-bold text-white mb-5">Plan Comparison</h3>
+        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-6 overflow-x-auto">
+          <h3 className="text-lg font-bold text-gray-900 mb-5">Plan Comparison</h3>
           <div className="min-w-[480px]">
             {/* Header */}
             <div className="grid grid-cols-3 mb-3">
               <div />
-              <div className="text-center text-xs font-semibold text-gray-400 uppercase tracking-wider">Starter</div>
-              <div className="text-center text-xs font-semibold text-white uppercase tracking-wider">Pro</div>
+              <div className="text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Starter</div>
+              <div className="text-center text-xs font-semibold text-gray-900 uppercase tracking-wider">Pro</div>
             </div>
             {COMPARISON_ROWS.map((row, i) => (
               <div
                 key={i}
-                className={`grid grid-cols-3 py-3 ${i < COMPARISON_ROWS.length - 1 ? 'border-b border-white/5' : ''}`}
+                className={`grid grid-cols-3 py-3 ${i < COMPARISON_ROWS.length - 1 ? 'border-b border-gray-100' : ''}`}
               >
-                <span className="text-sm text-gray-400">{row.label}</span>
+                <span className="text-sm text-gray-500">{row.label}</span>
                 <div className="text-center"><ComparisonCell value={row.starter} /></div>
                 <div className="text-center"><ComparisonCell value={row.pro} /></div>
               </div>
@@ -263,7 +263,7 @@ export default function UpgradePage() {
 
         {/* Back link */}
         <div className="text-center pb-4">
-          <Link href="/dashboard" className="text-sm text-gray-500 hover:text-white transition-colors inline-flex items-center gap-1">
+          <Link href="/dashboard" className="text-sm text-gray-500 hover:text-gray-900 transition-colors inline-flex items-center gap-1">
             <ArrowLeft className="w-4 h-4" /> Back to Dashboard
           </Link>
         </div>

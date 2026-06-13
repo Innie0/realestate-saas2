@@ -396,8 +396,8 @@ export default function TasksPage() {
 
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar - Conversation History */}
-        <div className={`${isSidebarOpen ? 'w-64' : 'w-0'} bg-black/60 border-r border-white/10 transition-all duration-300 flex flex-col flex-shrink-0`}>
-          <div className="p-4 border-b border-white/10 flex-shrink-0">
+        <div className={`${isSidebarOpen ? 'w-64' : 'w-0'} bg-gray-50 border-r border-gray-200 transition-all duration-300 flex flex-col flex-shrink-0`}>
+          <div className="p-4 border-b border-gray-200 flex-shrink-0">
             <Button
               onClick={handleNewConversation}
               className="w-full justify-center"
@@ -411,7 +411,7 @@ export default function TasksPage() {
             {isLoadingConversations ? (
               <div className="space-y-2">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-12 bg-white/5 rounded-lg animate-pulse" />
+                  <div key={i} className="h-12 bg-gray-50 rounded-lg animate-pulse" />
                 ))}
               </div>
             ) : conversations.length === 0 ? (
@@ -426,15 +426,15 @@ export default function TasksPage() {
                     key={conv.id}
                     className={`group relative p-3 rounded-lg cursor-pointer transition-all ${
                       currentConversationId === conv.id
-                        ? 'bg-white/10 border border-white/20'
-                        : 'hover:bg-white/5 border border-transparent'
-                    } ${conv.pinned ? 'border-l-2 border-l-white' : ''}`}
+                        ? 'bg-gray-100 border border-gray-300'
+                        : 'hover:bg-gray-50 border border-transparent'
+                    } ${conv.pinned ? 'border-l-2 border-l-gray-900' : ''}`}
                     onClick={() => setCurrentConversationId(conv.id)}
                   >
                     <div className="flex items-start gap-2">
                       <div className="flex items-center gap-1 flex-shrink-0 mt-0.5">
-                        {conv.pinned && <Pin className="w-3 h-3 text-white fill-white" />}
-                        <MessageSquare className="w-4 h-4 text-gray-400" />
+                        {conv.pinned && <Pin className="w-3 h-3 text-gray-900 fill-white" />}
+                        <MessageSquare className="w-4 h-4 text-gray-500" />
                       </div>
                       <div className="flex-1 min-w-0">
                         {editingConversationId === conv.id ? (
@@ -448,7 +448,7 @@ export default function TasksPage() {
                                 if (e.key === 'Enter') handleSaveRename(conv.id);
                                 if (e.key === 'Escape') handleCancelRename();
                               }}
-                              className="w-full text-xs bg-white/10 border border-white/20 rounded px-2 py-1 text-white focus:outline-none focus:ring-1 focus:ring-white/50"
+                              className="w-full text-xs bg-gray-100 border border-gray-300 rounded px-2 py-1 text-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-300"
                               autoFocus
                             />
                             <div className="flex items-center gap-1">
@@ -472,7 +472,7 @@ export default function TasksPage() {
                           // View Mode
                           <>
                             <p 
-                              className="text-xs text-white leading-snug line-clamp-2" 
+                              className="text-xs text-gray-900 leading-snug line-clamp-2" 
                               title={conv.title || 'New conversation'}
                             >
                               {conv.title || 'New conversation'}
@@ -490,15 +490,15 @@ export default function TasksPage() {
                               e.stopPropagation();
                               setOpenMenuId(openMenuId === conv.id ? null : conv.id);
                             }}
-                            className="p-1 hover:bg-white/10 rounded transition-all opacity-0 group-hover:opacity-100"
+                            className="p-1 hover:bg-gray-100 rounded transition-all opacity-0 group-hover:opacity-100"
                           >
-                            <MoreVertical className="w-4 h-4 text-gray-400" />
+                            <MoreVertical className="w-4 h-4 text-gray-500" />
                           </button>
                           
                           {/* Dropdown Menu */}
                           {openMenuId === conv.id && (
                             <div 
-                              className="absolute right-0 top-8 z-50 w-40 bg-[#111111] border border-white/10 rounded-lg shadow-xl overflow-hidden"
+                              className="absolute right-0 top-8 z-50 w-40 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <button
@@ -506,7 +506,7 @@ export default function TasksPage() {
                                   handleStartRename(conv.id, conv.title || '');
                                   setOpenMenuId(null);
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-white hover:bg-white/10 transition-colors"
+                                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-900 hover:bg-gray-100 transition-colors"
                               >
                                 <Edit3 className="w-3.5 h-3.5" />
                                 Rename
@@ -516,7 +516,7 @@ export default function TasksPage() {
                                   handleTogglePin(conv.id, conv.pinned);
                                   setOpenMenuId(null);
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-white hover:bg-white/10 transition-colors"
+                                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-900 hover:bg-gray-100 transition-colors"
                               >
                                 <Pin className="w-3.5 h-3.5" />
                                 {conv.pinned ? 'Unpin' : 'Pin'}
@@ -544,13 +544,13 @@ export default function TasksPage() {
         </div>
 
         {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col bg-black min-w-0">
+        <div className="flex-1 flex flex-col bg-[#F5F5F5] min-w-0">
           {/* Toggle Sidebar Button */}
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="absolute top-20 left-2 z-10 p-2 bg-[#111111] hover:bg-white/10 rounded-lg border border-white/10 transition-colors"
+            className="absolute top-20 left-2 z-10 p-2 bg-white hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
           >
-            <MessageSquare className="w-4 h-4 text-gray-300" />
+            <MessageSquare className="w-4 h-4 text-gray-600" />
           </button>
 
           {/* Messages Area */}
@@ -559,13 +559,13 @@ export default function TasksPage() {
               {messages.length === 0 ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/5 border border-white/10 mb-4">
-                      <Sparkles className="w-8 h-8 text-white/60" />
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 border border-gray-200 mb-4">
+                      <Sparkles className="w-8 h-8 text-gray-900/60" />
                     </div>
-                    <h2 className="text-2xl font-bold text-white mb-2">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">
                       How can I help you today?
                     </h2>
-                    <p className="text-gray-400">
+                    <p className="text-gray-500">
                       Ask me anything about your real estate tasks
                     </p>
                   </div>
@@ -578,8 +578,8 @@ export default function TasksPage() {
                       className={`flex gap-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                       {msg.role === 'assistant' && (
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-black border border-white/20 flex items-center justify-center">
-                          <Sparkles className="w-4 h-4 text-white" />
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-black border border-gray-300 flex items-center justify-center">
+                          <Sparkles className="w-4 h-4 text-gray-900" />
                         </div>
                       )}
                       
@@ -588,7 +588,7 @@ export default function TasksPage() {
                           className={`rounded-2xl px-4 py-3 ${
                             msg.role === 'user'
                               ? 'bg-white text-black'
-                              : 'bg-[#111111] border border-white/10 text-gray-100'
+                              : 'bg-white border border-gray-200 text-gray-100'
                           }`}
                         >
                           {/* Image attachment */}
@@ -597,10 +597,10 @@ export default function TasksPage() {
                               <img
                                 src={msg.image_url}
                                 alt={msg.image_name || 'Uploaded image'}
-                                className="max-w-xs rounded-lg border border-white/10"
+                                className="max-w-xs rounded-lg border border-gray-200"
                               />
                               {msg.image_name && (
-                                <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                                <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
                                   <FileText className="w-3 h-3" />
                                   {msg.image_name}
                                 </p>
@@ -611,7 +611,7 @@ export default function TasksPage() {
                           {msg.image_name?.toLowerCase().endsWith('.pdf') && (
                             <div className="mb-3 flex items-center gap-2 px-3 py-2 bg-red-500/10 border border-red-500/20 rounded-lg w-fit">
                               <FileText className="w-4 h-4 text-red-400 flex-shrink-0" />
-                              <span className="text-xs text-gray-300 truncate max-w-[200px]">{msg.image_name}</span>
+                              <span className="text-xs text-gray-600 truncate max-w-[200px]">{msg.image_name}</span>
                             </div>
                           )}
                           <p className="text-sm whitespace-pre-wrap leading-relaxed">
@@ -630,14 +630,14 @@ export default function TasksPage() {
                   
                   {isLoading && (
                     <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-black border border-white/20 flex items-center justify-center">
-                        <Sparkles className="w-4 h-4 text-white" />
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-black border border-gray-300 flex items-center justify-center">
+                        <Sparkles className="w-4 h-4 text-gray-900" />
                       </div>
                       <div className="flex-1 max-w-2xl">
-                        <div className="bg-[#111111] border border-white/10 rounded-2xl px-4 py-3">
+                        <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3">
                           <div className="flex items-center gap-2">
-                            <Loader2 className="w-4 h-4 animate-spin text-white" />
-                            <span className="text-sm text-gray-400">Thinking...</span>
+                            <Loader2 className="w-4 h-4 animate-spin text-gray-900" />
+                            <span className="text-sm text-gray-500">Thinking...</span>
                           </div>
                         </div>
                       </div>
@@ -662,27 +662,27 @@ export default function TasksPage() {
           )}
 
           {/* Input Area */}
-          <div className="border-t border-white/10 p-6 bg-black flex-shrink-0">
+          <div className="border-t border-gray-200 p-6 bg-[#F5F5F5] flex-shrink-0">
             <div className="max-w-3xl mx-auto">
               <form onSubmit={handleSendMessage} className="space-y-3">
                 {/* Image Preview */}
                 {imagePreview && (
-                  <div className="border border-white/20 rounded-lg p-3 bg-white/5">
+                  <div className="border border-gray-300 rounded-lg p-3 bg-gray-50">
                     <div className="flex items-start gap-3">
                       <img
                         src={imagePreview}
                         alt="Preview"
-                        className="w-16 h-16 object-cover rounded border border-white/10 flex-shrink-0"
+                        className="w-16 h-16 object-cover rounded border border-gray-200 flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-gray-300 truncate">
+                        <p className="text-sm text-gray-600 truncate">
                           <FileText className="w-3.5 h-3.5 inline mr-1" />
                           {imageName}
                         </p>
                         <p className="text-xs text-gray-500 mt-0.5">Image ready to analyze</p>
                       </div>
                       <button type="button" onClick={handleRemoveImage} className="p-1.5 hover:bg-red-500/20 rounded transition-colors flex-shrink-0">
-                        <X className="w-4 h-4 text-gray-400 hover:text-red-300" />
+                        <X className="w-4 h-4 text-gray-500 hover:text-red-300" />
                       </button>
                     </div>
                   </div>
@@ -696,11 +696,11 @@ export default function TasksPage() {
                         <FileText className="w-5 h-5 text-red-400" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-gray-300 truncate font-medium">{pdfName}</p>
+                        <p className="text-sm text-gray-600 truncate font-medium">{pdfName}</p>
                         <p className="text-xs text-purple-400 mt-0.5">PDF ready — AI will read and analyze this</p>
                       </div>
                       <button type="button" onClick={handleRemoveImage} className="p-1.5 hover:bg-red-500/20 rounded transition-colors flex-shrink-0">
-                        <X className="w-4 h-4 text-gray-400 hover:text-red-300" />
+                        <X className="w-4 h-4 text-gray-500 hover:text-red-300" />
                       </button>
                     </div>
                   </div>
@@ -718,15 +718,15 @@ export default function TasksPage() {
                       }
                     }}
                     placeholder="Type your message... (Shift+Enter for new line)"
-                    className="w-full bg-[#111111] border border-white/10 rounded-xl pl-4 pr-24 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/20 resize-none"
+                    className="w-full bg-white border border-gray-200 rounded-xl pl-4 pr-24 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-gray-300 resize-none"
                     rows={1}
                     disabled={isLoading}
                   />
                   
                   {/* Action Buttons */}
                   <div className="absolute bottom-3 right-3 flex items-center gap-2">
-                    <label className="cursor-pointer p-2 hover:bg-white/10 rounded-lg transition-colors group" title="Attach image or PDF">
-                      <Paperclip className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+                    <label className="cursor-pointer p-2 hover:bg-gray-100 rounded-lg transition-colors group" title="Attach image or PDF">
+                      <Paperclip className="w-5 h-5 text-gray-500 group-hover:text-gray-900 transition-colors" />
                       <input
                         type="file"
                         accept="image/*,application/pdf"

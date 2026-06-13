@@ -1283,7 +1283,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       />
 
       {/* Page content */}
-      <div className="p-6 max-w-7xl mx-auto text-white">
+      <div className="p-6 max-w-7xl mx-auto text-gray-900">
         {/* Action buttons */}
         <div className="flex flex-wrap items-center gap-3 mb-4">
           <Button onClick={handleSave} isLoading={isSaving}>
@@ -1302,13 +1302,13 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           {autoSaveStatus !== 'idle' && (
             <div className={`
               flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all duration-300
-              ${autoSaveStatus === 'saving' ? 'bg-white/10 text-gray-300 border border-white/20' : ''}
+              ${autoSaveStatus === 'saving' ? 'bg-gray-100 text-gray-600 border border-gray-300' : ''}
               ${autoSaveStatus === 'saved' ? 'bg-green-500/20 text-green-300 border border-green-400/30' : ''}
               ${autoSaveStatus === 'error' ? 'bg-red-500/20 text-red-300 border border-red-400/30' : ''}
             `}>
               {autoSaveStatus === 'saving' && (
                 <>
-                  <div className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                  <div className="w-3 h-3 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
                   Saving...
                 </>
               )}
@@ -1329,7 +1329,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         </div>
 
         {/* Tab navigation */}
-        <div className="border-b border-white/10 mb-6">
+        <div className="border-b border-gray-200 mb-6">
           <nav className="flex space-x-1">
             {[
               { id: 'overview', label: 'Overview', icon: Home },
@@ -1343,8 +1343,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   onClick={() => setProjectTab(tab.id as any)}
                   className={`flex items-center py-3 px-4 text-sm font-medium rounded-t-lg transition-colors ${
                     projectTab === tab.id
-                      ? 'bg-white/10 text-white border-b-2 border-white'
-                      : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                      ? 'bg-gray-100 text-gray-900 border-b-2 border-white'
+                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
                   }`}
                 >
                   <Icon className="w-4 h-4 mr-2" />
@@ -1360,7 +1360,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               {/* Images section */}
               <Card>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold text-white">Property Images</h2>
+                  <h2 className="text-xl font-bold text-gray-900">Property Images</h2>
                   <Button size="sm" onClick={handleImageUpload} disabled={isUploading}>
                     <Upload className="w-4 h-4 mr-2" />
                     {isUploading ? 'Uploading...' : 'Upload Images'}
@@ -1382,7 +1382,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                             alt="Property image"
                             className="w-full h-40 object-cover rounded-lg"
                           />
-                          <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                          <div className="absolute inset-0 bg-[#F5F5F5] bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
                             <Button 
                               size="sm" 
                               variant="danger"
@@ -1405,15 +1405,15 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           className="w-full h-40 object-cover rounded-lg brightness-50"
                         />
                         <div className="absolute inset-0 flex flex-col items-center justify-center rounded-lg">
-                          <span className="text-white text-2xl font-bold">+{project.images.length - 7}</span>
-                          <span className="text-white text-sm font-medium mt-1">View All</span>
+                          <span className="text-gray-900 text-2xl font-bold">+{project.images.length - 7}</span>
+                          <span className="text-gray-900 text-sm font-medium mt-1">View All</span>
                         </div>
                       </div>
                     )}
                   </div>
                   {showAllImages && (
                     <button
-                      className="mt-3 text-sm text-gray-400 hover:text-white transition-colors"
+                      className="mt-3 text-sm text-gray-500 hover:text-gray-900 transition-colors"
                       onClick={() => setShowAllImages(false)}
                     >
                       Show less
@@ -1421,8 +1421,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   )}
                   </>
                 ) : (
-                  <div className="text-center py-12 border-2 border-dashed border-white/20 rounded-lg">
-                    <ImageIcon className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                  <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
+                    <ImageIcon className="w-12 h-12 mx-auto text-gray-500 mb-4" />
                     <p className="text-gray-600 mb-4">No images uploaded yet</p>
                     <Button onClick={handleImageUpload} disabled={isUploading}>
                       <Upload className="w-4 h-4 mr-2" />
@@ -1434,40 +1434,40 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
               {/* Property information */}
               <Card>
-                <h2 className="text-xl font-bold text-white mb-4">Property Information</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Property Information</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div className="p-3 bg-white/5 rounded-lg">
+                  <div className="p-3 bg-gray-50 rounded-lg">
                     <p className="text-sm text-gray-600">Address</p>
-                    <p className="font-medium text-white">{project.property_info?.address || 'Not specified'}</p>
+                    <p className="font-medium text-gray-900">{project.property_info?.address || 'Not specified'}</p>
                   </div>
-                  <div className="p-3 bg-white/5 rounded-lg">
+                  <div className="p-3 bg-gray-50 rounded-lg">
                     <p className="text-sm text-gray-600">City, State</p>
-                    <p className="font-medium text-white">
+                    <p className="font-medium text-gray-900">
                       {project.property_info?.city || 'N/A'}, {project.property_info?.state || 'N/A'}
                     </p>
                   </div>
-                  <div className="p-3 bg-white/5 rounded-lg">
+                  <div className="p-3 bg-gray-50 rounded-lg">
                     <p className="text-sm text-gray-600">Property Type</p>
-                    <p className="font-medium text-white capitalize">{project.property_type || 'N/A'}</p>
+                    <p className="font-medium text-gray-900 capitalize">{project.property_type || 'N/A'}</p>
                   </div>
-                  <div className="p-3 bg-white/5 rounded-lg">
+                  <div className="p-3 bg-gray-50 rounded-lg">
                     <p className="text-sm text-gray-600">Bedrooms</p>
-                    <p className="font-medium text-white">{project.property_info?.bedrooms || 'N/A'}</p>
+                    <p className="font-medium text-gray-900">{project.property_info?.bedrooms || 'N/A'}</p>
                   </div>
-                  <div className="p-3 bg-white/5 rounded-lg">
+                  <div className="p-3 bg-gray-50 rounded-lg">
                     <p className="text-sm text-gray-600">Bathrooms</p>
-                    <p className="font-medium text-white">{project.property_info?.bathrooms || 'N/A'}</p>
+                    <p className="font-medium text-gray-900">{project.property_info?.bathrooms || 'N/A'}</p>
                   </div>
-                  <div className="p-3 bg-white/5 rounded-lg">
+                  <div className="p-3 bg-gray-50 rounded-lg">
                     <p className="text-sm text-gray-600">Square Feet</p>
-                    <p className="font-medium text-white">
+                    <p className="font-medium text-gray-900">
                       {project.property_info?.square_feet?.toLocaleString() || 'N/A'} sq ft
                     </p>
                   </div>
-                  <div className="p-3 bg-white/5 rounded-lg col-span-full md:col-span-1 border border-white/10">
-                    <p className="text-sm text-gray-400">Listing Price</p>
-                    <p className="font-bold text-white text-xl">
+                  <div className="p-3 bg-gray-50 rounded-lg col-span-full md:col-span-1 border border-gray-200">
+                    <p className="text-sm text-gray-500">Listing Price</p>
+                    <p className="font-bold text-gray-900 text-xl">
                       {project.property_info?.price 
                         ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(project.property_info.price)
                         : 'Price not set'}
@@ -1482,7 +1482,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               {/* AI-generated content */}
               <Card>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold text-white">AI-Generated Content</h2>
+                  <h2 className="text-xl font-bold text-gray-900">AI-Generated Content</h2>
                   <Button 
                     onClick={handleGenerateAI} 
                     isLoading={isGenerating}
@@ -1509,15 +1509,15 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   const anyStarted = streamingPro || streamingCasual || streamingLuxury;
 
                   return (
-                    <div className="mb-6 bg-[#111111] rounded-xl border border-white/10 overflow-hidden">
+                    <div className="mb-6 bg-white rounded-xl border border-gray-200 overflow-hidden">
                       {/* Header */}
-                      <div className="flex items-center gap-3 px-5 py-3 border-b border-white/10">
+                      <div className="flex items-center gap-3 px-5 py-3 border-b border-gray-200">
                         <div className="relative flex-shrink-0">
-                          <div className="w-7 h-7 border-2 border-white/10 border-t-white rounded-full animate-spin" />
-                          <Sparkles className="w-3.5 h-3.5 text-white/60 absolute top-1.5 left-1.5" />
+                          <div className="w-7 h-7 border-2 border-gray-200 border-t-white rounded-full animate-spin" />
+                          <Sparkles className="w-3.5 h-3.5 text-gray-900/60 absolute top-1.5 left-1.5" />
                         </div>
                         <div>
-                          <h3 className="text-sm font-semibold text-white">
+                          <h3 className="text-sm font-semibold text-gray-900">
                             {anyStarted ? 'Writing descriptions...' : 'Analyzing property...'}
                           </h3>
                           <p className="text-xs text-gray-500">Generating 3 tone variations simultaneously</p>
@@ -1525,7 +1525,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                       </div>
 
                       {/* Tabs */}
-                      <div className="flex border-b border-white/10">
+                      <div className="flex border-b border-gray-200">
                         {(['professional', 'casual', 'luxury'] as DescriptionTone[]).map(tone => {
                           const text = streamMap[tone];
                           const isActive = activeStreamTab === tone;
@@ -1536,8 +1536,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                               onClick={() => setActiveStreamTab(tone)}
                               className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-medium transition-all ${
                                 isActive
-                                  ? 'text-white border-b-2 border-white bg-white/5'
-                                  : 'text-gray-500 hover:text-gray-300'
+                                  ? 'text-gray-900 border-b-2 border-white bg-gray-50'
+                                  : 'text-gray-500 hover:text-gray-900'
                               }`}
                             >
                               {tabLabels[tone]}
@@ -1552,17 +1552,17 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                       {/* Typewriter content */}
                       <div className="px-5 py-4 min-h-[160px]">
                         {activeText ? (
-                          <p className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">
+                          <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
                             {activeText}
-                            <span className="inline-block w-0.5 h-4 bg-white/70 ml-0.5 animate-pulse align-middle" />
+                            <span className="inline-block w-0.5 h-4 bg-gray-900/70 ml-0.5 animate-pulse align-middle" />
                           </p>
                         ) : (
                           <div className="space-y-2 pt-1">
-                            <div className="h-3 bg-white/5 rounded animate-pulse w-full" />
-                            <div className="h-3 bg-white/5 rounded animate-pulse w-5/6" />
-                            <div className="h-3 bg-white/5 rounded animate-pulse w-4/5" />
-                            <div className="h-3 bg-white/5 rounded animate-pulse w-full" />
-                            <div className="h-3 bg-white/5 rounded animate-pulse w-3/4" />
+                            <div className="h-3 bg-gray-50 rounded animate-pulse w-full" />
+                            <div className="h-3 bg-gray-50 rounded animate-pulse w-5/6" />
+                            <div className="h-3 bg-gray-50 rounded animate-pulse w-4/5" />
+                            <div className="h-3 bg-gray-50 rounded animate-pulse w-full" />
+                            <div className="h-3 bg-gray-50 rounded animate-pulse w-3/4" />
                           </div>
                         )}
                       </div>
@@ -1574,7 +1574,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   <div className="space-y-6">
                     {/* Headline */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-gray-600 mb-2">
                         Headline
                       </label>
                       <div className="flex gap-2">
@@ -1602,7 +1602,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     {/* Tone Selection */}
                     {toneVersions.length > 0 && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-3">
+                        <label className="block text-sm font-medium text-gray-600 mb-3">
                           Description Tone
                         </label>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -1612,11 +1612,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                               onClick={() => handleToneChange(version.tone)}
                               className={`p-4 rounded-lg border-2 text-left transition-all ${
                                 selectedTone === version.tone
-                                  ? 'border-white bg-white/10'
-                                  : 'border-white/10 hover:border-white/20'
+                                  ? 'border-white bg-gray-100'
+                                  : 'border-gray-200 hover:border-gray-300'
                               }`}
                             >
-                              <div className="font-medium text-white">{version.label}</div>
+                              <div className="font-medium text-gray-900">{version.label}</div>
                               <div className="text-sm text-gray-500">{version.description}</div>
                             </button>
                           ))}
@@ -1627,7 +1627,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     {/* Description with edit and refine options */}
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <label className="block text-sm font-medium text-gray-300">
+                        <label className="block text-sm font-medium text-gray-600">
                           Property Description
                         </label>
                         <div className="flex gap-2">
@@ -1651,8 +1651,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                       </div>
                       
                       <textarea
-                        className={`block w-full rounded-lg border px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          isEditingDescription ? 'border-purple-500/50 bg-white/10' : 'border-white/20 bg-white/5'
+                        className={`block w-full rounded-lg border px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                          isEditingDescription ? 'border-purple-500/50 bg-gray-100' : 'border-gray-300 bg-gray-50'
                         }`}
                         rows={8}
                         value={editedDescription}
@@ -1727,14 +1727,14 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
                     {/* Key features */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-gray-600 mb-2">
                         Key Features
                       </label>
                       <div className="flex flex-wrap gap-2">
                         {project.ai_content.key_features?.map((feature, index) => (
                           <span 
                             key={index} 
-                            className="group relative px-3 py-1 bg-white/10 rounded-full text-sm text-gray-300 hover:bg-white/20 transition-all duration-200 pr-8"
+                            className="group relative px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-600 hover:bg-gray-200 transition-all duration-200 pr-8"
                           >
                             {feature}
                             <button
@@ -1753,7 +1753,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <label className="block text-sm font-medium text-gray-300">
+                          <label className="block text-sm font-medium text-gray-600">
                             Instagram Caption
                           </label>
                           <Button
@@ -1765,7 +1765,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           </Button>
                         </div>
                         <textarea
-                          className="block w-full rounded-lg border border-white/20 px-4 py-2 text-white bg-white/5 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
+                          className="block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
                           rows={4}
                           value={project.ai_content?.instagram || ''}
                           onChange={(e) => {
@@ -1800,7 +1800,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <label className="block text-sm font-medium text-gray-300">
+                          <label className="block text-sm font-medium text-gray-600">
                             Facebook Post
                           </label>
                           <Button
@@ -1812,7 +1812,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           </Button>
                         </div>
                         <textarea
-                          className="block w-full rounded-lg border border-white/20 px-4 py-2 text-white bg-white/5 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
+                          className="block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
                           rows={4}
                           value={project.ai_content?.facebook || ''}
                           onChange={(e) => {
@@ -1847,8 +1847,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     </div>
                   </div>
                 ) : (
-                  <div className="text-center py-12 border-2 border-dashed border-white/20 rounded-lg">
-                    <Sparkles className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                  <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
+                    <Sparkles className="w-12 h-12 mx-auto text-gray-500 mb-4" />
                     <p className="text-gray-600 mb-4">No AI content generated yet</p>
                     <p className="text-sm text-gray-500">
                       Click the button above to generate compelling marketing content with multiple tone variations
@@ -1862,8 +1862,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           {/* Tasks & Events Section */}
           <Card>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-white flex items-center">
-                  <Calendar className="w-5 h-5 mr-2 text-white/60" />
+                <h2 className="text-xl font-bold text-gray-900 flex items-center">
+                  <Calendar className="w-5 h-5 mr-2 text-gray-900/60" />
                   Project Tasks & Events
                 </h2>
                 <Button 
@@ -1880,11 +1880,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   {relatedTasks.map((task) => (
                     <div 
                       key={task.id} 
-                      className="p-4 border border-white/10 rounded-lg hover:border-blue-300 transition-colors"
+                      className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h3 className="font-medium text-white">{task.title}</h3>
+                          <h3 className="font-medium text-gray-900">{task.title}</h3>
                           {task.description && (
                             <p className="text-sm text-gray-600 mt-1">{task.description}</p>
                           )}
@@ -1900,7 +1900,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           task.event_type === 'showing' ? 'bg-blue-500/20 text-blue-400 border border-blue-400/30' :
                           task.event_type === 'open_house' ? 'bg-green-500/20 text-green-400 border border-green-400/30' :
                           task.event_type === 'meeting' ? 'bg-purple-500/20 text-purple-400 border border-purple-400/30' :
-                          'bg-white/10 text-gray-300 border border-white/10'
+                          'bg-gray-100 text-gray-600 border border-gray-200'
                         }`}>
                           {task.event_type}
                         </span>
@@ -1909,8 +1909,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12 border-2 border-dashed border-white/20 rounded-lg">
-                  <Calendar className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
+                  <Calendar className="w-12 h-12 mx-auto text-gray-500 mb-4" />
                   <p className="text-gray-600 mb-4">No tasks linked to this project yet</p>
                   <Button onClick={() => router.push('/dashboard/calendar')}>
                     Go to Calendar
@@ -1922,8 +1922,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           {/* Transactions Section */}
           <Card>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-white flex items-center">
-                  <FileText className="w-5 h-5 mr-2 text-white/60" />
+                <h2 className="text-xl font-bold text-gray-900 flex items-center">
+                  <FileText className="w-5 h-5 mr-2 text-gray-900/60" />
                   Project Transactions
                 </h2>
                 <Button 
@@ -1940,12 +1940,12 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   {relatedTransactions.map((transaction) => (
                     <div 
                       key={transaction.id} 
-                      className="p-4 border border-white/10 rounded-lg hover:border-blue-300 transition-colors cursor-pointer"
+                      className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors cursor-pointer"
                       onClick={() => router.push(`/dashboard/transactions/${transaction.id}`)}
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h3 className="font-medium text-white">{transaction.property_address}</h3>
+                          <h3 className="font-medium text-gray-900">{transaction.property_address}</h3>
                           <p className="text-sm text-gray-600 mt-1">
                             Buyer: {transaction.buyer_name}
                           </p>
@@ -1967,7 +1967,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           transaction.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-400/30' :
                           transaction.status === 'under_contract' ? 'bg-purple-500/20 text-purple-400 border border-purple-400/30' :
                           transaction.status === 'closed' ? 'bg-green-500/20 text-green-400 border border-green-400/30' :
-                          'bg-white/10 text-gray-300 border border-white/10'
+                          'bg-gray-100 text-gray-600 border border-gray-200'
                         }`}>
                           {transaction.status === 'under_contract' ? 'Under Contract' : 
                            transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
@@ -1977,8 +1977,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12 border-2 border-dashed border-white/20 rounded-lg">
-                  <FileText className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
+                  <FileText className="w-12 h-12 mx-auto text-gray-500 mb-4" />
                   <p className="text-gray-600 mb-4">No transactions linked to this project yet</p>
                   <Button onClick={() => router.push('/dashboard/transactions/new')}>
                     Create Transaction
@@ -2008,10 +2008,10 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   className={`p-4 rounded-xl border-2 text-left transition-all duration-300 transform hover:scale-105 ${
                     selectedGenerationTone === version.tone
                       ? 'border-blue-500 bg-blue-500/10 shadow-lg scale-105'
-                      : 'border-white/10 hover:border-white/20 hover:shadow-md'
+                      : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
                   }`}
                 >
-                  <div className="font-semibold text-white mb-1">{version.label}</div>
+                  <div className="font-semibold text-gray-900 mb-1">{version.label}</div>
                   <div className="text-xs text-gray-500">{version.description}</div>
                 </button>
               ))}
@@ -2032,11 +2032,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     <>
                       {/* Description */}
                       <div className="animate-fadeIn">
-                        <label className="block text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
+                        <label className="block text-sm font-semibold text-gray-600 mb-2 flex items-center gap-2">
                           <Sparkles className="w-4 h-4 text-blue-500" />
                           Property Description
                         </label>
-                        <div className="p-4 bg-white/5 rounded-lg border border-white/10 max-h-60 overflow-y-auto">
+                        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 max-h-60 overflow-y-auto">
                           <p className="text-gray-200 leading-relaxed whitespace-pre-line">{version.content}</p>
                         </div>
                       </div>
@@ -2045,7 +2045,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fadeIn" style={{ animationDelay: '100ms' }}>
                         {/* Instagram */}
                         <div>
-                          <label className="block text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
+                          <label className="block text-sm font-semibold text-gray-600 mb-2 flex items-center gap-2">
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                               <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/><path d="M12 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                             </svg>
@@ -2053,7 +2053,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           </label>
                           <textarea
                             readOnly
-                            className="block w-full rounded-lg border border-white/20 px-3 py-2 text-sm text-white bg-white/10 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
                             rows={6}
                             value={version.instagram}
                           />
@@ -2061,7 +2061,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
                         {/* Facebook */}
                         <div>
-                          <label className="block text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
+                          <label className="block text-sm font-semibold text-gray-600 mb-2 flex items-center gap-2">
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                               <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                             </svg>
@@ -2069,7 +2069,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           </label>
                           <textarea
                             readOnly
-                            className="block w-full rounded-lg border border-white/20 px-3 py-2 text-sm text-white bg-white/10 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
                             rows={6}
                             value={version.facebook}
                           />
@@ -2082,7 +2082,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-between items-center pt-4 border-t border-white/10">
+            <div className="flex justify-between items-center pt-4 border-t border-gray-200">
               <Button variant="outline" onClick={() => setShowGenerationModal(false)}>
                 Cancel
               </Button>
@@ -2130,7 +2130,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               <li>"Make it sound more luxurious"</li>
             </ul>
             <textarea
-              className="block w-full rounded-lg border border-white/20 bg-gray-800/50 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-gray-800"
+              className="block w-full rounded-lg border border-gray-300 bg-gray-100/50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-gray-100"
               rows={4}
               placeholder="Tell the AI what changes you want..."
               value={refineInstructions}
@@ -2200,9 +2200,9 @@ function ZillowStylePreview({
   };
 
   return (
-    <div className="rounded-xl shadow-lg overflow-hidden border border-white/10 bg-[#111111]">
+    <div className="rounded-xl shadow-lg overflow-hidden border border-gray-200 bg-white">
       {/* Hero Image Gallery */}
-      <div className="relative bg-gray-900">
+      <div className="relative bg-gray-100">
         {imageUrls.length > 0 ? (
           <>
             <div className="aspect-[16/9] md:aspect-[21/9]">
@@ -2218,19 +2218,19 @@ function ZillowStylePreview({
               <>
                 <button
                   onClick={prevImage}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/70 backdrop-blur-sm rounded-full shadow-lg hover:bg-black/90 transition-colors border border-white/20"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/70 backdrop-blur-sm rounded-full shadow-lg hover:bg-black/90 transition-colors border border-gray-300"
                 >
                   <ChevronLeft className="w-6 h-6 text-gray-200" />
                 </button>
                 <button
                   onClick={nextImage}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/70 backdrop-blur-sm rounded-full shadow-lg hover:bg-black/90 transition-colors border border-white/20"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/70 backdrop-blur-sm rounded-full shadow-lg hover:bg-black/90 transition-colors border border-gray-300"
                 >
                   <ChevronRight className="w-6 h-6 text-gray-200" />
                 </button>
                 
                 {/* Image Counter */}
-                <div className="absolute bottom-4 right-4 px-3 py-1 bg-black/70 text-white text-sm rounded-full">
+                <div className="absolute bottom-4 right-4 px-3 py-1 bg-black/70 text-gray-900 text-sm rounded-full">
                   {currentImageIndex + 1} / {imageUrls.length}
                 </div>
               </>
@@ -2251,7 +2251,7 @@ function ZillowStylePreview({
                   </button>
                 ))}
                 {imageUrls.length > 5 && (
-                  <div className="w-16 h-12 rounded bg-black/70 flex items-center justify-center text-white text-sm">
+                  <div className="w-16 h-12 rounded bg-black/70 flex items-center justify-center text-gray-900 text-sm">
                     +{imageUrls.length - 5}
                   </div>
                 )}
@@ -2261,7 +2261,7 @@ function ZillowStylePreview({
         ) : (
           <div className="aspect-[16/9] md:aspect-[21/9] flex items-center justify-center bg-gray-200">
             <div className="text-center">
-              <Home className="w-16 h-16 mx-auto text-gray-400 mb-2" />
+              <Home className="w-16 h-16 mx-auto text-gray-500 mb-2" />
               <p className="text-gray-500">No photos available</p>
             </div>
           </div>
@@ -2273,7 +2273,7 @@ function ZillowStylePreview({
         {/* Price and Status Bar */}
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <div>
-            <div className="text-3xl md:text-4xl font-bold text-white">
+            <div className="text-3xl md:text-4xl font-bold text-gray-900">
               {info.price 
                 ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(info.price)
                 : 'Price Upon Request'}
@@ -2292,25 +2292,25 @@ function ZillowStylePreview({
         </div>
 
         {/* Key Stats */}
-        <div className="flex flex-wrap gap-6 mb-6 py-4 border-y border-white/10">
+        <div className="flex flex-wrap gap-6 mb-6 py-4 border-y border-gray-200">
           {info.bedrooms && (
             <div className="flex items-center gap-2">
               <Bed className="w-5 h-5 text-gray-600" />
-              <span className="text-lg font-semibold text-white">{info.bedrooms}</span>
+              <span className="text-lg font-semibold text-gray-900">{info.bedrooms}</span>
               <span className="text-gray-600">beds</span>
             </div>
           )}
           {info.bathrooms && (
             <div className="flex items-center gap-2">
               <Bath className="w-5 h-5 text-gray-600" />
-              <span className="text-lg font-semibold text-white">{info.bathrooms}</span>
+              <span className="text-lg font-semibold text-gray-900">{info.bathrooms}</span>
               <span className="text-gray-600">baths</span>
             </div>
           )}
           {info.square_feet && (
             <div className="flex items-center gap-2">
               <Square className="w-5 h-5 text-gray-600" />
-              <span className="text-lg font-semibold text-white">{info.square_feet.toLocaleString()}</span>
+              <span className="text-lg font-semibold text-gray-900">{info.square_feet.toLocaleString()}</span>
               <span className="text-gray-600">sq ft</span>
             </div>
           )}
@@ -2320,7 +2320,7 @@ function ZillowStylePreview({
         <div className="flex items-start gap-2 mb-6">
           <MapPin className="w-5 h-5 text-gray-500 mt-0.5 flex-shrink-0" />
           <div>
-            <div className="text-lg font-semibold text-white">
+            <div className="text-lg font-semibold text-gray-900">
               {info.address || project.title}
             </div>
             <div className="text-gray-600">
@@ -2331,8 +2331,8 @@ function ZillowStylePreview({
 
         {/* Description */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-white mb-3">About this home</h3>
-          <div className="text-gray-300 leading-relaxed whitespace-pre-line">
+          <h3 className="text-lg font-semibold text-gray-900 mb-3">About this home</h3>
+          <div className="text-gray-600 leading-relaxed whitespace-pre-line">
             {description || 'No description available. Generate AI content to create a compelling listing description.'}
           </div>
         </div>
@@ -2340,10 +2340,10 @@ function ZillowStylePreview({
         {/* Key Features */}
         {project.ai_content?.key_features && project.ai_content.key_features.length > 0 && (
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-white mb-3">Key Features</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Key Features</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {project.ai_content.key_features.map((feature, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-gray-300">
+                <div key={idx} className="flex items-center gap-2 text-gray-600">
                   <div className="w-2 h-2 bg-blue-500 rounded-full" />
                   {feature}
                 </div>
@@ -2353,24 +2353,24 @@ function ZillowStylePreview({
         )}
 
         {/* Property Details Grid */}
-        <div className="bg-white/5 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-white mb-3">Property Details</h3>
+        <div className="bg-gray-50 rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-3">Property Details</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <div className="text-sm text-gray-500">Type</div>
-              <div className="font-medium text-white capitalize">{project.property_type || 'N/A'}</div>
+              <div className="font-medium text-gray-900 capitalize">{project.property_type || 'N/A'}</div>
             </div>
             <div>
               <div className="text-sm text-gray-500">Year Built</div>
-              <div className="font-medium text-white">{info.year_built || 'N/A'}</div>
+              <div className="font-medium text-gray-900">{info.year_built || 'N/A'}</div>
             </div>
             <div>
               <div className="text-sm text-gray-500">Lot Size</div>
-              <div className="font-medium text-white">{info.lot_size || 'N/A'}</div>
+              <div className="font-medium text-gray-900">{info.lot_size || 'N/A'}</div>
             </div>
             <div>
               <div className="text-sm text-gray-500">ZIP Code</div>
-              <div className="font-medium text-white">{info.zip_code || 'N/A'}</div>
+              <div className="font-medium text-gray-900">{info.zip_code || 'N/A'}</div>
             </div>
           </div>
         </div>
