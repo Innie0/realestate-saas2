@@ -37,12 +37,12 @@ export default function TestAuthPage() {
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold text-white mb-8">Authentication Test</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">Authentication Test</h1>
 
       <div className="space-y-6">
         {/* Client-Side Check */}
         <Card>
-          <h2 className="text-xl font-bold text-white mb-4">Client-Side</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Client-Side</h2>
           {loading ? (
             <p>Loading...</p>
           ) : (
@@ -65,7 +65,7 @@ export default function TestAuthPage() {
 
         {/* Server-Side Check */}
         <Card>
-          <h2 className="text-xl font-bold text-white mb-4">Server-Side (API Routes)</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Server-Side (API Routes)</h2>
           {loading ? (
             <p>Loading...</p>
           ) : (
@@ -104,7 +104,7 @@ export default function TestAuthPage() {
 
         {/* Test API Call */}
         <Card>
-          <h2 className="text-xl font-bold text-white mb-4">Test Client Creation</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Test Client Creation</h2>
           <Button onClick={async () => {
             const result = await fetch('/api/clients', {
               method: 'POST',

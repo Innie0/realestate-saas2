@@ -2230,7 +2230,7 @@ function ZillowStylePreview({
                 </button>
                 
                 {/* Image Counter */}
-                <div className="absolute bottom-4 right-4 px-3 py-1 bg-black/70 text-gray-900 text-sm rounded-full">
+                <div className="absolute bottom-4 right-4 px-3 py-1 bg-black/70 text-white text-sm rounded-full">
                   {currentImageIndex + 1} / {imageUrls.length}
                 </div>
               </>
@@ -2251,7 +2251,7 @@ function ZillowStylePreview({
                   </button>
                 ))}
                 {imageUrls.length > 5 && (
-                  <div className="w-16 h-12 rounded bg-black/70 flex items-center justify-center text-gray-900 text-sm">
+                  <div className="w-16 h-12 rounded bg-black/70 flex items-center justify-center text-white text-sm">
                     +{imageUrls.length - 5}
                   </div>
                 )}
