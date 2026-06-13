@@ -100,9 +100,9 @@ export default function LeadCaptureForm({ agentId, agentName }: LeadCaptureFormP
   };
 
   const inputClasses =
-    'block w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/20 transition-colors text-sm';
+    'block w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-gray-300 transition-colors text-sm';
 
-  const labelClasses = 'block text-sm font-medium text-gray-300 mb-2';
+  const labelClasses = 'block text-sm font-medium text-gray-600 mb-2';
 
   const showBudget = formData.leadType === 'buyer' || formData.leadType === 'renter';
   const budgetOptions = formData.leadType === 'renter' ? RENTER_BUDGETS : BUYER_BUDGETS;
@@ -110,11 +110,11 @@ export default function LeadCaptureForm({ agentId, agentName }: LeadCaptureFormP
   if (submitted) {
     return (
       <div className="text-center py-10">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white/10 border border-white/20 mb-6">
-          <Check className="h-8 w-8 text-white" />
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 border border-gray-300 mb-6">
+          <Check className="h-8 w-8 text-gray-900" />
         </div>
-        <h2 className="text-xl font-bold text-white mb-2">You&apos;re all set!</h2>
-        <p className="text-gray-400 text-sm max-w-xs mx-auto">
+        <h2 className="text-xl font-bold text-gray-900 mb-2">You&apos;re all set!</h2>
+        <p className="text-gray-500 text-sm max-w-xs mx-auto">
           {agentName.split(' ')[0]} will review your details and be in touch soon.
         </p>
       </div>
@@ -184,7 +184,7 @@ export default function LeadCaptureForm({ agentId, agentName }: LeadCaptureFormP
                 className={`flex flex-col items-center justify-center gap-1.5 rounded-lg border px-2 py-3 text-sm font-medium transition-all ${
                   selected
                     ? 'border-white bg-white text-gray-900'
-                    : 'border-white/10 text-gray-400 hover:border-white/30 hover:text-white'
+                    : 'border-gray-200 text-gray-500 hover:border-gray-400 hover:text-gray-900'
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -209,7 +209,7 @@ export default function LeadCaptureForm({ agentId, agentName }: LeadCaptureFormP
                 className={`rounded-lg border px-4 py-2 text-sm font-medium transition-all ${
                   selected
                     ? 'border-white bg-white text-gray-900'
-                    : 'border-white/10 text-gray-400 hover:border-white/30 hover:text-white'
+                    : 'border-gray-200 text-gray-500 hover:border-gray-400 hover:text-gray-900'
                 }`}
               >
                 {label}
@@ -236,7 +236,7 @@ export default function LeadCaptureForm({ agentId, agentName }: LeadCaptureFormP
                   className={`rounded-lg border px-4 py-2 text-sm font-medium transition-all ${
                     selected
                       ? 'border-white bg-white text-gray-900'
-                      : 'border-white/10 text-gray-400 hover:border-white/30 hover:text-white'
+                      : 'border-gray-200 text-gray-500 hover:border-gray-400 hover:text-gray-900'
                   }`}
                 >
                   {label}
@@ -288,7 +288,7 @@ export default function LeadCaptureForm({ agentId, agentName }: LeadCaptureFormP
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-lg bg-white px-6 py-3.5 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full rounded-lg bg-white px-6 py-3.5 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isSubmitting ? 'Sending...' : `Contact ${agentName.split(' ')[0]}`}
       </button>

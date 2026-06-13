@@ -35,7 +35,7 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
 
   // Get status badge color
   const statusColors = {
-    draft: 'bg-gray-500/20 text-gray-300 border border-gray-400/30',
+    draft: 'bg-gray-500/20 text-gray-600 border border-gray-400/30',
     in_progress: 'bg-blue-500/20 text-blue-300 border border-blue-400/30',
     completed: 'bg-green-500/20 text-green-300 border border-green-400/30',
   };
@@ -53,7 +53,7 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
       <Link href={`/dashboard/projects/${project.id}`}>
         <Card padding="none" hover>
         {/* Project thumbnail image */}
-        <div className="relative h-48 w-full overflow-hidden rounded-t-xl bg-gray-700">
+        <div className="relative h-48 w-full overflow-hidden rounded-t-xl bg-gray-200">
           <img
             src={thumbnailUrl}
             alt={project.title}
@@ -64,19 +64,19 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
         {/* Project details */}
         <div className="p-4">
           {/* Project title */}
-          <h3 className="text-lg font-semibold text-white mb-2 line-clamp-1">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-1">
             {project.title}
           </h3>
 
           {/* Project description */}
           {project.description && (
-            <p className="text-sm text-gray-400 mb-3 line-clamp-2">
+            <p className="text-sm text-gray-500 mb-3 line-clamp-2">
               {project.description}
             </p>
           )}
 
           {/* Property information - displayed as icons with text */}
-          <div className="flex flex-wrap gap-3 text-sm text-gray-400 mb-3">
+          <div className="flex flex-wrap gap-3 text-sm text-gray-500 mb-3">
             {project.property_type && (
               <div className="flex items-center gap-1">
                 <Home className="w-4 h-4" />
@@ -104,7 +104,7 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
     {onDelete && (
       <button
         onClick={handleDelete}
-        className="absolute top-2 left-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg transition-colors z-10"
+        className="absolute top-2 left-2 p-2 bg-red-500 hover:bg-red-600 text-gray-900 rounded-full shadow-lg transition-colors z-10"
         title="Delete project"
       >
         <Trash2 className="w-4 h-4" />

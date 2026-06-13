@@ -8,7 +8,7 @@ export default function FeedbackFooterButton() {
   return (
     <button
       onClick={handleClick}
-      className="hover:text-gray-300 transition-colors"
+      className="hover:text-gray-900 transition-colors"
     >
       Feedback
     </button>

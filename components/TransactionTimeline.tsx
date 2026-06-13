@@ -125,7 +125,7 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
         return {
           bg: 'bg-gray-500/20',
           border: 'border-gray-600',
-          icon: 'text-gray-400',
+          icon: 'text-gray-500',
           line: 'bg-gradient-to-b from-gray-600 to-gray-700',
         };
     }
@@ -147,7 +147,7 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
 
   if (events.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-400">
+      <div className="text-center py-8 text-gray-500">
         <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
         <p>No dates set for this transaction.</p>
         <p className="text-sm">Add important dates to see the timeline.</p>
@@ -173,10 +173,10 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
 
     return (
       <div className="flex items-center text-sm">
-        <span className={`font-medium ${daysUntil <= 3 ? 'text-orange-400' : 'text-white'}`}>
+        <span className={`font-medium ${daysUntil <= 3 ? 'text-orange-400' : 'text-gray-900'}`}>
           {nextEvent.title}
         </span>
-        <span className="text-gray-400 ml-2">
+        <span className="text-gray-500 ml-2">
           {daysUntil === 0 ? 'Today' : daysUntil === 1 ? 'Tomorrow' : `in ${daysUntil} days`}
         </span>
       </div>
@@ -204,7 +204,7 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
             {/* Icon circle */}
             <div className="relative z-10">
               {/* Solid background to hide line */}
-              <div className="absolute inset-0 bg-black rounded-full" style={{ margin: '-2px' }} />
+              <div className="absolute inset-0 bg-[#F5F5F5] rounded-full" style={{ margin: '-2px' }} />
               {/* Icon circle */}
               <div 
                 className={`relative flex items-center justify-center w-10 h-10 rounded-full border-2 ${colors.bg} ${colors.border}`}
@@ -217,15 +217,15 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
             <div className="ml-4 flex-1">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <h4 className="text-sm font-semibold text-white">{event.title}</h4>
+                  <h4 className="text-sm font-semibold text-gray-900">{event.title}</h4>
                   <span className="ml-2">{getStatusIndicator(event.status)}</span>
                 </div>
-                <span className={`text-sm ${event.status === 'today' ? 'text-blue-400 font-medium' : 'text-gray-400'}`}>
+                <span className={`text-sm ${event.status === 'today' ? 'text-blue-400 font-medium' : 'text-gray-500'}`}>
                   {format(new Date(event.date), 'MMM d, yyyy')}
                 </span>
               </div>
               {event.description && (
-                <p className="mt-1 text-sm text-gray-400">{event.description}</p>
+                <p className="mt-1 text-sm text-gray-500">{event.description}</p>
               )}
               {event.status === 'upcoming' && (
                 <p className="mt-1 text-xs text-gray-500">

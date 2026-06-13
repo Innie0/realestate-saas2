@@ -180,7 +180,7 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
       )}
 
       {/* Section tabs */}
-      <div className="flex space-x-1 bg-black/40 p-1 rounded-lg border border-white/10">
+      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg border border-gray-200">
         {sections.map((section) => (
           <button
             key={section.id}
@@ -189,7 +189,7 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
               activeSection === section.id
                 ? 'bg-white text-black shadow-sm'
-                : 'text-gray-400 hover:text-white hover:bg-white/10'
+                : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
             }`}
           >
             {section.label}
@@ -200,7 +200,7 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
       {/* Property Section */}
       {activeSection === 'property' && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">Property Information</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Property Information</h3>
           
           <Input
             label="Property Address *"
@@ -232,13 +232,13 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-600 mb-1">
               Property Type
             </label>
             <select
               value={propertyType}
               onChange={(e) => setPropertyType(e.target.value as any)}
-              className="w-full px-3 py-2 bg-[#111111] border border-white/10 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20"
+              className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
             >
               <option value="house">House</option>
               <option value="apartment">Apartment</option>
@@ -255,7 +255,7 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
         <div className="space-y-6">
           {/* Buyer Info */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white">Buyer Information</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Buyer Information</h3>
             
             <Input
               label="Buyer Name *"
@@ -305,8 +305,8 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
           </div>
 
           {/* Seller Info */}
-          <div className="space-y-4 pt-4 border-t border-white/10">
-            <h3 className="text-lg font-semibold text-white">Seller Information</h3>
+          <div className="space-y-4 pt-4 border-t border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">Seller Information</h3>
             
             <Input
               label="Seller Name *"
@@ -360,7 +360,7 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
       {/* Financial Section */}
       {activeSection === 'financial' && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">Financial Information</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Financial Information</h3>
           
           <Input
             label="Offer Price *"
@@ -396,13 +396,13 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-600 mb-1">
               Status
             </label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as any)}
-              className="w-full px-3 py-2 bg-[#111111] border border-white/10 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20"
+              className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
             >
               <option value="active">Active</option>
               <option value="pending">Pending</option>
@@ -414,7 +414,7 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-600 mb-1">
               Notes
             </label>
             <textarea
@@ -422,7 +422,7 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Additional notes about this transaction..."
               rows={4}
-              className="w-full px-3 py-2 bg-[#111111] border border-white/10 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20 resize-none"
+              className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 resize-none"
             />
           </div>
         </div>
@@ -431,8 +431,8 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
       {/* Dates Section */}
       {activeSection === 'dates' && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">Important Dates</h3>
-          <p className="text-sm text-gray-400">
+          <h3 className="text-lg font-semibold text-gray-900">Important Dates</h3>
+          <p className="text-sm text-gray-500">
             Set key milestone dates to auto-generate timeline, checklist, and reminders.
           </p>
           
@@ -451,8 +451,8 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
             />
           </div>
 
-          <div className="pt-4 border-t border-white/10">
-            <h4 className="text-md font-medium text-gray-300 mb-3">Inspection</h4>
+          <div className="pt-4 border-t border-gray-200">
+            <h4 className="text-md font-medium text-gray-600 mb-3">Inspection</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
                 label="Inspection Date"
@@ -469,8 +469,8 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
             </div>
           </div>
 
-          <div className="pt-4 border-t border-white/10">
-            <h4 className="text-md font-medium text-gray-300 mb-3">Appraisal</h4>
+          <div className="pt-4 border-t border-gray-200">
+            <h4 className="text-md font-medium text-gray-600 mb-3">Appraisal</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
                 label="Appraisal Date"
@@ -487,8 +487,8 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
             </div>
           </div>
 
-          <div className="pt-4 border-t border-white/10">
-            <h4 className="text-md font-medium text-gray-300 mb-3">Financing & Title</h4>
+          <div className="pt-4 border-t border-gray-200">
+            <h4 className="text-md font-medium text-gray-600 mb-3">Financing & Title</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
                 label="Financing Deadline"
@@ -505,8 +505,8 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
             </div>
           </div>
 
-          <div className="pt-4 border-t border-white/10">
-            <h4 className="text-md font-medium text-gray-300 mb-3">Closing</h4>
+          <div className="pt-4 border-t border-gray-200">
+            <h4 className="text-md font-medium text-gray-600 mb-3">Closing</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
                 label="Closing Date"
@@ -526,7 +526,7 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
       )}
 
       {/* Form actions */}
-      <div className="flex justify-end space-x-3 pt-4 border-t border-white/10">
+      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
         {onCancel && (
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancel

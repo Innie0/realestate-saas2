@@ -57,14 +57,14 @@ export default function ClientForm({ client, onSubmit, onCancel, isLoading }: Cl
     setFormData({ ...formData, phone: formatted });
   };
 
-  const fieldStyle = { colorScheme: 'dark' as const, backgroundColor: '#111111' };
-  const fieldClass = "w-full px-3 py-2 text-white placeholder-gray-500 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/20";
+  const fieldStyle = { backgroundColor: 'white' };
+  const fieldClass = "w-full px-3 py-2 text-gray-900 placeholder-gray-400 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Name field */}
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor="name" className="block text-sm font-medium text-gray-600 mb-1">
           Name *
         </label>
         <input
@@ -81,7 +81,7 @@ export default function ClientForm({ client, onSubmit, onCancel, isLoading }: Cl
 
       {/* Email field */}
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor="email" className="block text-sm font-medium text-gray-600 mb-1">
           Email
         </label>
         <input
@@ -97,7 +97,7 @@ export default function ClientForm({ client, onSubmit, onCancel, isLoading }: Cl
 
       {/* Phone field */}
       <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor="phone" className="block text-sm font-medium text-gray-600 mb-1">
           Phone
         </label>
         <input
@@ -114,7 +114,7 @@ export default function ClientForm({ client, onSubmit, onCancel, isLoading }: Cl
       {/* Status field (only for editing) */}
       {client && (
         <div>
-          <label htmlFor="status" className="block text-sm font-medium text-gray-300 mb-1">
+          <label htmlFor="status" className="block text-sm font-medium text-gray-600 mb-1">
             Status
           </label>
           <select
@@ -132,7 +132,7 @@ export default function ClientForm({ client, onSubmit, onCancel, isLoading }: Cl
       )}
 
       {/* Form actions */}
-      <div className="flex gap-3 pt-4 border-t border-white/10">
+      <div className="flex gap-3 pt-4 border-t border-gray-200">
         <Button
           type="submit"
           variant="primary"

@@ -64,12 +64,12 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
               <User className="w-5 h-5 text-sky-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-lg text-white">{client.name}</h3>
+              <h3 className="font-semibold text-lg text-gray-900">{client.name}</h3>
               <span className={`text-xs px-2 py-1 rounded-full ${
                 client.status === 'active' 
                   ? 'bg-green-500/20 text-green-400 border border-green-400/30' 
                   : client.status === 'inactive'
-                  ? 'bg-gray-500/20 text-gray-400 border border-gray-400/30'
+                  ? 'bg-gray-500/20 text-gray-500 border border-gray-400/30'
                   : 'bg-red-500/20 text-red-400 border border-red-400/30'
               }`}>
                 {client.status}
@@ -80,13 +80,13 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
           {/* Contact information */}
           <div className="space-y-2">
             {client.email && (
-              <div className="flex items-center gap-2 text-sm text-gray-400">
+              <div className="flex items-center gap-2 text-sm text-gray-500">
                 <Mail className="w-4 h-4" />
                 <span>{client.email}</span>
               </div>
             )}
             {client.phone && (
-              <div className="flex items-center gap-2 text-sm text-gray-400">
+              <div className="flex items-center gap-2 text-sm text-gray-500">
                 <Phone className="w-4 h-4" />
                 <span>{client.phone}</span>
               </div>
@@ -105,11 +105,11 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
 
       {/* Notes carousel */}
       {notes.length > 0 && currentNote && (
-        <div className="mt-4 p-3 bg-white/5 rounded-lg border border-white/10 relative">
+        <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200 relative">
           <div className="flex items-start gap-2 mb-1">
-            <StickyNote className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+            <StickyNote className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
             <div className="flex-1 min-w-0 pr-8">
-              <p className="text-sm text-gray-300 line-clamp-2">{currentNote.note}</p>
+              <p className="text-sm text-gray-600 line-clamp-2">{currentNote.note}</p>
               <p className="text-xs text-gray-500 mt-1">
                 {new Date(currentNote.created_at).toLocaleDateString()}
                 {notes.length > 1 && (
@@ -124,17 +124,17 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
             <div className="absolute top-1/2 -translate-y-1/2 right-2 flex gap-1">
               <button
                 onClick={handlePrevNote}
-                className="p-1 hover:bg-white/10 rounded transition-colors"
+                className="p-1 hover:bg-gray-100 rounded transition-colors"
                 title="Previous note"
               >
-                <ChevronLeft className="w-4 h-4 text-gray-400" />
+                <ChevronLeft className="w-4 h-4 text-gray-500" />
               </button>
               <button
                 onClick={handleNextNote}
-                className="p-1 hover:bg-white/10 rounded transition-colors"
+                className="p-1 hover:bg-gray-100 rounded transition-colors"
                 title="Next note"
               >
-                <ChevronRight className="w-4 h-4 text-gray-400" />
+                <ChevronRight className="w-4 h-4 text-gray-500" />
               </button>
             </div>
           )}
@@ -142,7 +142,7 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
       )}
 
       {/* Created date and quick actions */}
-      <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+      <div className="mt-4 pt-4 border-t border-gray-200 flex items-center justify-between">
         <p className="text-xs text-gray-500">
           Added {new Date(client.created_at).toLocaleDateString()}
         </p>
@@ -151,17 +151,17 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
         <div className="flex gap-2">
           <button
             onClick={handleAddNote}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors group"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
             title="Add note"
           >
-            <StickyNote className="w-4 h-4 text-gray-400 group-hover:text-white" />
+            <StickyNote className="w-4 h-4 text-gray-500 group-hover:text-gray-900" />
           </button>
           <button
             onClick={handleAddReminder}
             className="p-2 hover:bg-orange-500/20 rounded-lg transition-colors group"
             title="Add reminder"
           >
-            <Bell className="w-4 h-4 text-gray-400 group-hover:text-orange-400" />
+            <Bell className="w-4 h-4 text-gray-500 group-hover:text-orange-400" />
           </button>
         </div>
       </div>

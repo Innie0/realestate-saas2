@@ -52,7 +52,7 @@ export default function TransactionChecklist({
     financing: { label: 'Financing', color: 'bg-green-500/20 text-green-300 border border-green-500/30' },
     title: { label: 'Title', color: 'bg-orange-500/20 text-orange-300 border border-orange-500/30' },
     closing: { label: 'Closing', color: 'bg-red-500/20 text-red-300 border border-red-500/30' },
-    other: { label: 'Other', color: 'bg-gray-500/20 text-gray-300 border border-gray-500/30' },
+    other: { label: 'Other', color: 'bg-gray-500/20 text-gray-600 border border-gray-500/30' },
   };
 
   // Toggle item completion
@@ -152,14 +152,14 @@ export default function TransactionChecklist({
   return (
     <div className="space-y-4">
       {/* Progress bar */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50">
+      <div className="bg-gray-100 rounded-lg p-4 border border-gray-200">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-white">Overall Progress</span>
-          <span className="text-sm text-gray-400">
+          <span className="text-sm font-medium text-gray-900">Overall Progress</span>
+          <span className="text-sm text-gray-500">
             {completedCount} of {totalCount} completed ({progressPercent}%)
           </span>
         </div>
-        <div className="w-full bg-gray-700 rounded-full h-2">
+        <div className="w-full bg-gray-200 rounded-full h-2">
           <div 
             className="bg-green-500 h-2 rounded-full transition-all duration-300"
             style={{ width: `${progressPercent}%` }}
@@ -176,34 +176,34 @@ export default function TransactionChecklist({
         const isExpanded = expandedCategories.has(category);
 
         return (
-          <div key={category} className="border border-gray-700/50 rounded-lg overflow-hidden">
+          <div key={category} className="border border-gray-200 rounded-lg overflow-hidden">
             {/* Category header */}
             <button
               onClick={() => toggleCategory(category)}
-              className="w-full flex items-center justify-between p-3 bg-gray-800/30 hover:bg-gray-800/50 transition-colors"
+              className="w-full flex items-center justify-between p-3 bg-gray-100 hover:bg-gray-100 transition-colors"
             >
               <div className="flex items-center">
                 <span className={`px-2 py-1 rounded text-xs font-medium ${info.color}`}>
                   {info.label}
                 </span>
-                <span className="ml-3 text-sm text-gray-400">
+                <span className="ml-3 text-sm text-gray-500">
                   {categoryCompleted}/{categoryItems.length} completed
                 </span>
               </div>
               {isExpanded ? (
-                <ChevronUp className="w-5 h-5 text-gray-400" />
+                <ChevronUp className="w-5 h-5 text-gray-500" />
               ) : (
-                <ChevronDown className="w-5 h-5 text-gray-400" />
+                <ChevronDown className="w-5 h-5 text-gray-500" />
               )}
             </button>
 
             {/* Category items */}
             {isExpanded && (
-              <div className="divide-y divide-gray-700/30">
+              <div className="divide-y divide-gray-200">
                 {categoryItems.map((item) => (
                   <div 
                     key={item.id}
-                    className={`flex items-center p-3 hover:bg-gray-800/30 transition-colors ${
+                    className={`flex items-center p-3 hover:bg-gray-100 transition-colors ${
                       item.is_completed ? 'bg-green-500/10' : ''
                     }`}
                   >
@@ -223,12 +223,12 @@ export default function TransactionChecklist({
                     {/* Item content */}
                     <div className="flex-1 min-w-0">
                       <p className={`text-sm font-medium ${
-                        item.is_completed ? 'text-gray-500 line-through' : 'text-white'
+                        item.is_completed ? 'text-gray-500 line-through' : 'text-gray-900'
                       }`}>
                         {item.title}
                       </p>
                       {item.due_date && (
-                        <p className="flex items-center text-xs text-gray-400 mt-0.5">
+                        <p className="flex items-center text-xs text-gray-500 mt-0.5">
                           <Calendar className="w-3 h-3 mr-1" />
                           Due: {format(new Date(item.due_date), 'MMM d, yyyy')}
                         </p>
@@ -258,7 +258,7 @@ export default function TransactionChecklist({
 
       {/* Add new item */}
       {isAdding ? (
-        <div className="border border-gray-700/50 rounded-lg p-4 space-y-3 bg-gray-800/30">
+        <div className="border border-gray-200 rounded-lg p-4 space-y-3 bg-gray-100">
           <Input
             label="Task Title"
             value={newItemTitle}
@@ -269,13 +269,13 @@ export default function TransactionChecklist({
           
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-1">
+              <label className="block text-sm font-medium text-gray-500 mb-1">
                 Category
               </label>
               <select
                 value={newItemCategory}
                 onChange={(e) => setNewItemCategory(e.target.value as any)}
-                className="w-full px-3 py-2 border border-gray-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-gray-800/50 text-white"
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-gray-100 text-gray-900"
               >
                 {Object.entries(categoryInfo).map(([key, info]) => (
                   <option key={key} value={key}>{info.label}</option>
@@ -311,7 +311,7 @@ export default function TransactionChecklist({
       ) : (
         <button
           onClick={() => setIsAdding(true)}
-          className="w-full flex items-center justify-center p-3 border-2 border-dashed border-gray-700/50 rounded-lg text-gray-400 hover:border-gray-600 hover:text-gray-300 transition-colors"
+          className="w-full flex items-center justify-center p-3 border-2 border-dashed border-gray-200 rounded-lg text-gray-500 hover:border-gray-300 hover:text-gray-900 transition-colors"
         >
           <Plus className="w-5 h-5 mr-2" />
           Add Custom Task

@@ -231,14 +231,14 @@ export default function FileUploader({
             </>
           ) : (
             <>
-              <Upload className="w-10 h-10 text-gray-400 mb-3" />
+              <Upload className="w-10 h-10 text-gray-500 mb-3" />
               <p className="text-sm font-medium text-gray-700 mb-1">
                 {uploadText}
               </p>
               <p className="text-xs text-gray-500">
                 Drag and drop or click to browse
               </p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 {accept.split(',').map(t => t.split('/')[1]).join(', ').toUpperCase()} • Max {(maxSize / 1024 / 1024).toFixed(0)}MB
               </p>
             </>
@@ -264,7 +264,7 @@ export default function FileUploader({
             {value.map((file, index) => (
               <div
                 key={`${file.path}-${index}`}
-                className="relative group bg-white/5 border border-white/10 rounded-lg overflow-hidden"
+                className="relative group bg-gray-50 border border-gray-200 rounded-lg overflow-hidden"
               >
                 {/* Preview */}
                 <div className="aspect-square bg-gray-100 flex items-center justify-center">
@@ -277,7 +277,7 @@ export default function FileUploader({
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <File className="w-10 h-10 text-gray-400" />
+                    <File className="w-10 h-10 text-gray-500" />
                   )}
                 </div>
 
@@ -286,7 +286,7 @@ export default function FileUploader({
                   <p className="text-xs text-gray-700 truncate" title={file.name}>
                     {file.name}
                   </p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-gray-500">
                     {(file.size / 1024).toFixed(1)} KB
                   </p>
                 </div>
@@ -297,14 +297,14 @@ export default function FileUploader({
                     e.stopPropagation();
                     handleRemoveFile(file);
                   }}
-                  className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                  className="absolute top-1 right-1 p-1 bg-red-500 text-gray-900 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
                   title="Remove file"
                 >
                   <X className="w-3 h-3" />
                 </button>
 
                 {/* Success Indicator */}
-                <div className="absolute top-1 left-1 p-1 bg-green-500 text-white rounded-full">
+                <div className="absolute top-1 left-1 p-1 bg-green-500 text-gray-900 rounded-full">
                   <CheckCircle2 className="w-3 h-3" />
                 </div>
               </div>
