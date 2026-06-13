@@ -26,8 +26,17 @@ interface UsageData {
  * Overview of user's projects and statistics
  */
 export default function DashboardPage() {
+  const [recentProjects, setRecentProjects] = useState<Project[]>([]);
+  const [recentClients, setRecentClients] = useState<RecentClient[]>([]);
+  const [recentTransactions, setRecentTransactions] = useState<RecentTransaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [projectsLoading, setProjectsLoading] = useState(true);
+  const [usage, setUsage] = useState<UsageData | null>(null);
+  const [plan, setPlan] = useState<'starter' | 'pro'>('starter');
+
   useTour({
     tourKey: 'tour_dashboard',
+    ready: !loading, // wait until plan/usage data is fetched
     steps: [
       {
         element: '[data-tour="new-project"]',
@@ -57,20 +66,14 @@ export default function DashboardPage() {
         element: '[data-tour="plan-usage"]',
         popover: {
           title: '📊 Plan Usage',
-          description: 'Track how many projects, lookups, and AI messages you\'ve used this month. Upgrade anytime for unlimited access.',
+          description: plan === 'pro'
+            ? 'You\'re on Pro — all your limits are unlimited. This panel shows your current usage at a glance.'
+            : 'Track how many projects, lookups, and AI messages you\'ve used this month. Upgrade to Pro for unlimited access.',
           side: 'top',
         },
       },
     ],
   });
-
-  const [recentProjects, setRecentProjects] = useState<Project[]>([]);
-  const [recentClients, setRecentClients] = useState<RecentClient[]>([]);
-  const [recentTransactions, setRecentTransactions] = useState<RecentTransaction[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [projectsLoading, setProjectsLoading] = useState(true);
-  const [usage, setUsage] = useState<UsageData | null>(null);
-  const [plan, setPlan] = useState<'starter' | 'pro'>('starter');
 
   useEffect(() => {
     document.title = 'Dashboard - Realestic';

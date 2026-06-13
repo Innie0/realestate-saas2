@@ -16,10 +16,12 @@ interface UseTourOptions {
   tourKey: string;       // unique key stored in localStorage e.g. 'tour_dashboard'
   steps: TourStep[];
   delayMs?: number;      // ms to wait before starting (default 800)
+  ready?: boolean;       // set to false to delay until data is loaded (default true)
 }
 
-export function useTour({ tourKey, steps, delayMs = 800 }: UseTourOptions) {
+export function useTour({ tourKey, steps, delayMs = 800, ready = true }: UseTourOptions) {
   useEffect(() => {
+    if (!ready) return;
     // Only run on client, only if not already seen
     if (typeof window === 'undefined') return;
     if (localStorage.getItem(tourKey)) return;
@@ -59,7 +61,7 @@ export function useTour({ tourKey, steps, delayMs = 800 }: UseTourOptions) {
     timeout = setTimeout(run, delayMs);
     return () => clearTimeout(timeout);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [ready]);
 
   /** Call this to manually restart the tour (e.g. from a help button) */
   const restartTour = () => {
