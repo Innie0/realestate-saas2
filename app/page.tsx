@@ -929,7 +929,7 @@ export default function HomePage() {
               className="flex items-center absolute left-1/2 -translate-x-1/2 sm:left-6 sm:translate-x-0 lg:left-8"
               whileHover={{ scale: 1.02 }}
             >
-              <Image src="/logo-wordmark.png" alt="Realestic" width={480} height={144} priority className="h-16 w-auto object-contain" />
+              <Image src="/logo-wordmark.png" alt="Realestic" width={640} height={192} priority className="h-24 w-auto object-contain" />
             </motion.div>
             <div className="flex-1" />
             <div className="hidden sm:flex items-center gap-4">
