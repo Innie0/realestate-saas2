@@ -150,7 +150,7 @@ export default function Sidebar() {
             width={480}
             height={144}
             priority
-            className="h-9 w-auto max-w-[200px] object-contain scale-[1.65] origin-left"
+            className="h-9 w-auto max-w-[200px] object-contain scale-[1.8] origin-left"
           />
         </div>
         <button
