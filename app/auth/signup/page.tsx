@@ -207,7 +207,7 @@ function SignUpForm() {
         {/* Logo */}
         <div className="flex justify-center mb-8">
           <Link href="/">
-            <Image src="/logo.png" alt="Realestic" width={160} height={48} priority className="h-12 w-auto" />
+            <Image src="/logo-auth.png" alt="Realestic" width={192} height={108} priority className="h-14 w-auto object-contain" />
           </Link>
         </div>
 
