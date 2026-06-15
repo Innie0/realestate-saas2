@@ -203,7 +203,7 @@ export default function Sidebar() {
                 width={128}
                 height={128}
                 priority
-                className="h-9 w-9 object-contain scale-[1.35] origin-center"
+                className="h-10 w-10 object-contain scale-[1.45] origin-center"
               />
             )}
           </div>
