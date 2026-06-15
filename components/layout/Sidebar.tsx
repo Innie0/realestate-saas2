@@ -198,12 +198,12 @@ export default function Sidebar() {
           )}>
             {isCollapsed && (
               <Image
-                src="/favicon.png"
+                src="/logo-collapsed.png"
                 alt="Realestic"
-                width={32}
-                height={32}
+                width={128}
+                height={128}
                 priority
-                className="h-8 w-8"
+                className="h-9 w-9 object-contain scale-[1.35] origin-center"
               />
             )}
           </div>
