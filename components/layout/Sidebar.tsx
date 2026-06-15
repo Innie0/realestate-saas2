@@ -145,12 +145,12 @@ export default function Sidebar() {
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center flex-1">
           <Image
-            src="/logo.png"
+            src="/logo-wordmark.png"
             alt="Realestic"
-            width={160}
-            height={48}
+            width={480}
+            height={144}
             priority
-            className="h-10 w-auto"
+            className="h-8 w-auto max-w-[180px] object-contain"
           />
         </div>
         <button
@@ -191,7 +191,7 @@ export default function Sidebar() {
         }}
       >
         {/* Logo / Brand section at the top - hidden on mobile (shown in header) */}
-        <div className="hidden lg:flex h-20 items-center justify-center border-b border-gray-200 bg-white overflow-hidden">
+        <div className="hidden lg:flex h-20 items-center justify-center border-b border-gray-200 bg-white overflow-hidden px-3">
           <div className={clsx(
             'transition-all duration-400',
             isCollapsed ? 'opacity-100 scale-100' : 'opacity-0 scale-50 absolute'
@@ -208,17 +208,17 @@ export default function Sidebar() {
             )}
           </div>
           <div className={clsx(
-            'transition-all duration-400',
+            'transition-all duration-400 w-full flex justify-center',
             !isCollapsed ? 'opacity-100 scale-100' : 'opacity-0 scale-50 absolute'
           )}>
             {!isCollapsed && (
               <Image
-                src="/logo.png"
+                src="/logo-wordmark.png"
                 alt="Realestic"
-                width={240}
-                height={72}
+                width={640}
+                height={192}
                 priority
-                className="h-14 w-auto"
+                className="h-10 w-auto max-w-full object-contain"
               />
             )}
           </div>
