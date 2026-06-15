@@ -166,7 +166,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="flex justify-center mb-8">
           <Link href="/">
-            <Image src="/logo-auth.png" alt="Realestic" width={480} height={270} priority className="h-28 sm:h-32 w-auto object-contain" />
+            <Image src="/logo-auth.png" alt="Realestic" width={320} height={180} priority className="h-16 sm:h-20 w-auto object-contain" />
           </Link>
         </div>
 
