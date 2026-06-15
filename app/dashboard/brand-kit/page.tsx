@@ -24,7 +24,7 @@ export default function BrandKitPage() {
   // Brand kit state (in a real app, this would be fetched from an API)
   const [brandKit, setBrandKit] = useState({
     logo_url: '',
-    primary_color: '#0ea5e9',
+    primary_color: '#fc5c03',
     secondary_color: '#0369a1',
     accent_color: '#f59e0b',
     font_family: 'Inter',

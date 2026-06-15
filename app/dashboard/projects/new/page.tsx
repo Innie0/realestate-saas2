@@ -134,7 +134,7 @@ export default function NewProjectPage() {
                   Description
                 </label>
                 <textarea
-                  className="block w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 resize-none"
+                  className="block w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 resize-none"
                   rows={6}
                   placeholder="Detailed description of the property... (This will be used by AI to generate marketing content)"
                   value={description}
@@ -150,7 +150,7 @@ export default function NewProjectPage() {
                   Property Type
                 </label>
                 <select
-                  className="block w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                  className="block w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                   value={propertyType}
                   onChange={(e) => setPropertyType(e.target.value)}
                   required
@@ -266,7 +266,7 @@ export default function NewProjectPage() {
                 Special Features
               </label>
               <textarea
-                className="block w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 resize-none"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 resize-none"
                 rows={7}
                 placeholder="Enter each feature on a new line:
 • Infinity pool with lake views

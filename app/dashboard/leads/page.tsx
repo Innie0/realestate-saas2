@@ -70,7 +70,7 @@ function TempBadge({ temp }: { temp: 'hot' | 'warm' | 'cold' }) {
     </span>
   );
   if (temp === 'warm') return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-500/15 text-yellow-400 border border-yellow-500/20">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-brand-500/15 text-brand-600 border border-brand-500/20">
       <Thermometer className="w-3 h-3" /> Warm
     </span>
   );
@@ -134,13 +134,13 @@ function LeadCard({
 
       <div className="flex flex-wrap gap-3 mb-3">
         {lead.email && (
-          <a href={`mailto:${lead.email}`} className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 transition-colors">
+          <a href={`mailto:${lead.email}`} className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-brand-600 transition-colors">
             <Mail className="w-3.5 h-3.5" />
             {lead.email}
           </a>
         )}
         {lead.phone && (
-          <a href={`tel:${lead.phone}`} className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 transition-colors">
+          <a href={`tel:${lead.phone}`} className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-brand-600 transition-colors">
             <Phone className="w-3.5 h-3.5" />
             {lead.phone}
           </a>
@@ -560,7 +560,7 @@ export default function LeadsPage() {
                           href={leadFormUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+                          className="flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-brand-600 transition-colors"
                         >
                           <Link2 className="w-4 h-4" />
                           Preview form
@@ -593,7 +593,7 @@ export default function LeadsPage() {
                   <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
                     <DoorOpen className="w-5 h-5 text-gray-900/70" />
                   </div>
-                  <ArrowRight className="w-4 h-4 text-gray-600 ml-auto group-hover:text-gray-900 transition-colors" />
+                  <ArrowRight className="w-4 h-4 text-gray-600 ml-auto group-hover:text-brand-600 transition-colors" />
                 </div>
                 <h3 className="text-base font-semibold text-gray-900 mb-1">Open houses</h3>
                 <p className="text-sm text-gray-500">
@@ -609,7 +609,7 @@ export default function LeadsPage() {
                   <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
                     <Users className="w-5 h-5 text-gray-900/70" />
                   </div>
-                  <ArrowRight className="w-4 h-4 text-gray-600 ml-auto group-hover:text-gray-900 transition-colors" />
+                  <ArrowRight className="w-4 h-4 text-gray-600 ml-auto group-hover:text-brand-600 transition-colors" />
                 </div>
                 <h3 className="text-base font-semibold text-gray-900 mb-1">Agent profile</h3>
                 <p className="text-sm text-gray-500">
@@ -678,7 +678,7 @@ export default function LeadsPage() {
                     value={smsPhone}
                     onChange={(e) => setSmsPhone(e.target.value)}
                     onBlur={() => { if (smsPhone) saveSettings({ sms_phone: smsPhone }); }}
-                    className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 text-sm placeholder-gray-600 focus:outline-none focus:border-gray-400"
+                    className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 text-sm placeholder-gray-600 focus:outline-none focus:border-brand-500"
                   />
                   <button
                     onClick={() => {

@@ -70,7 +70,7 @@ export default function EventForm({
           placeholder="e.g., Property Showing - 123 Main St"
           required
           style={{ backgroundColor: 'white' }}
-          className="w-full px-3 py-2 text-gray-900 placeholder-gray-400 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
+          className="w-full px-3 py-2 text-gray-900 placeholder-gray-400 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
         />
       </div>
 
@@ -84,7 +84,7 @@ export default function EventForm({
           value={formData.event_type}
           onChange={(e) => setFormData({ ...formData, event_type: e.target.value as 'showing' | 'open_house' | 'meeting' | 'other' })}
           style={{ backgroundColor: 'white' }}
-          className="w-full px-3 py-2 text-gray-900 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
+          className="w-full px-3 py-2 text-gray-900 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
         >
           <option value="showing">Property Showing</option>
           <option value="open_house">Open House</option>
@@ -105,7 +105,7 @@ export default function EventForm({
           onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
           required
           style={{ backgroundColor: 'white' }}
-          className="w-full px-3 py-2 text-gray-900 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
+          className="w-full px-3 py-2 text-gray-900 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
         />
       </div>
 
@@ -122,7 +122,7 @@ export default function EventForm({
           min={formData.start_time}
           required
           style={{ backgroundColor: 'white' }}
-          className="w-full px-3 py-2 text-gray-900 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
+          className="w-full px-3 py-2 text-gray-900 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
         />
         {formData.start_time && formData.end_time && 
          new Date(formData.end_time) <= new Date(formData.start_time) && (
@@ -142,7 +142,7 @@ export default function EventForm({
           onChange={(e) => setFormData({ ...formData, location: e.target.value })}
           placeholder="e.g., 123 Main St, City, State"
           style={{ backgroundColor: 'white' }}
-          className="w-full px-3 py-2 text-gray-900 placeholder-gray-400 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
+          className="w-full px-3 py-2 text-gray-900 placeholder-gray-400 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
         />
       </div>
 
@@ -158,7 +158,7 @@ export default function EventForm({
           placeholder="Add event details..."
           rows={3}
           style={{ backgroundColor: 'white' }}
-          className="w-full px-3 py-2 text-gray-900 placeholder-gray-400 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200 resize-none"
+          className="w-full px-3 py-2 text-gray-900 placeholder-gray-400 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/30 resize-none"
         />
       </div>
 

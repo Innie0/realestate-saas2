@@ -125,9 +125,9 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
   // Get status badge
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
-      active: 'bg-blue-500/20 text-blue-300 border border-blue-500/30',
+      active: 'bg-brand-500/20 text-brand-400 border border-brand-500/30',
       pending: 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30',
-      under_contract: 'bg-purple-500/20 text-purple-300 border border-purple-500/30',
+      under_contract: 'bg-brand-500/20 text-brand-400 border border-brand-500/30',
       closed: 'bg-green-500/20 text-green-300 border border-green-500/30',
       cancelled: 'bg-red-500/20 text-red-300 border border-red-500/30',
       expired: 'bg-gray-500/20 text-gray-600 border border-gray-500/30',
@@ -153,7 +153,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
     return (
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
         </div>
       </div>
     );
@@ -312,12 +312,12 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                 <div className="space-y-2">
                   <p className="font-medium text-gray-900">{transaction.buyer_name || '-'}</p>
                   {transaction.buyer_email && (
-                    <a href={`mailto:${transaction.buyer_email}`} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                    <a href={`mailto:${transaction.buyer_email}`} className="flex items-center gap-2 text-sm text-gray-500 hover:text-brand-600 transition-colors">
                       <Mail className="w-3.5 h-3.5" /> {transaction.buyer_email}
                     </a>
                   )}
                   {transaction.buyer_phone && (
-                    <a href={`tel:${transaction.buyer_phone}`} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                    <a href={`tel:${transaction.buyer_phone}`} className="flex items-center gap-2 text-sm text-gray-500 hover:text-brand-600 transition-colors">
                       <Phone className="w-3.5 h-3.5" /> {transaction.buyer_phone}
                     </a>
                   )}
@@ -336,12 +336,12 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                 <div className="space-y-2">
                   <p className="font-medium text-gray-900">{transaction.seller_name || '-'}</p>
                   {transaction.seller_email && (
-                    <a href={`mailto:${transaction.seller_email}`} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                    <a href={`mailto:${transaction.seller_email}`} className="flex items-center gap-2 text-sm text-gray-500 hover:text-brand-600 transition-colors">
                       <Mail className="w-3.5 h-3.5" /> {transaction.seller_email}
                     </a>
                   )}
                   {transaction.seller_phone && (
-                    <a href={`tel:${transaction.seller_phone}`} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                    <a href={`tel:${transaction.seller_phone}`} className="flex items-center gap-2 text-sm text-gray-500 hover:text-brand-600 transition-colors">
                       <Phone className="w-3.5 h-3.5" /> {transaction.seller_phone}
                     </a>
                   )}

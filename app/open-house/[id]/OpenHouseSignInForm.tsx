@@ -54,7 +54,7 @@ export default function OpenHouseSignInForm({ openHouseId }: { openHouseId: stri
     );
   }
 
-  const inputClass = 'w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors';
+  const inputClass = 'w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-brand-500 transition-colors';
 
   return (
     <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
@@ -91,7 +91,7 @@ export default function OpenHouseSignInForm({ openHouseId }: { openHouseId: stri
         <label className="flex items-center gap-3 cursor-pointer group">
           <div
             className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all flex-shrink-0 ${
-              interested ? 'bg-gray-900 border-gray-900' : 'border-gray-300 group-hover:border-gray-400'
+              interested ? 'bg-brand-500 border-brand-500' : 'border-gray-300 group-hover:border-brand-400'
             }`}
             onClick={() => setInterested(!interested)}
           >
@@ -104,7 +104,7 @@ export default function OpenHouseSignInForm({ openHouseId }: { openHouseId: stri
         <label className="flex items-center gap-3 cursor-pointer group">
           <div
             className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all flex-shrink-0 ${
-              workingWithAgent ? 'bg-gray-900 border-gray-900' : 'border-gray-300 group-hover:border-gray-400'
+              workingWithAgent ? 'bg-brand-500 border-brand-500' : 'border-gray-300 group-hover:border-brand-400'
             }`}
             onClick={() => setWorkingWithAgent(!workingWithAgent)}
           >

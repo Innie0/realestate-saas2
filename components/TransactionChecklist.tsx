@@ -47,8 +47,8 @@ export default function TransactionChecklist({
 
   // Category display info
   const categoryInfo: Record<string, { label: string; color: string }> = {
-    inspection: { label: 'Inspection', color: 'bg-purple-500/20 text-purple-300 border border-purple-500/30' },
-    appraisal: { label: 'Appraisal', color: 'bg-blue-500/20 text-blue-300 border border-blue-500/30' },
+    inspection: { label: 'Inspection', color: 'bg-brand-500/20 text-brand-400 border border-brand-500/30' },
+    appraisal: { label: 'Appraisal', color: 'bg-brand-500/20 text-brand-400 border border-brand-500/30' },
     financing: { label: 'Financing', color: 'bg-green-500/20 text-green-300 border border-green-500/30' },
     title: { label: 'Title', color: 'bg-orange-500/20 text-orange-300 border border-orange-500/30' },
     closing: { label: 'Closing', color: 'bg-red-500/20 text-red-300 border border-red-500/30' },
@@ -275,7 +275,7 @@ export default function TransactionChecklist({
               <select
                 value={newItemCategory}
                 onChange={(e) => setNewItemCategory(e.target.value as any)}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-gray-100 text-gray-900"
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm bg-gray-100 text-gray-900"
               >
                 {Object.entries(categoryInfo).map(([key, info]) => (
                   <option key={key} value={key}>{info.label}</option>
@@ -311,7 +311,7 @@ export default function TransactionChecklist({
       ) : (
         <button
           onClick={() => setIsAdding(true)}
-          className="w-full flex items-center justify-center p-3 border-2 border-dashed border-gray-200 rounded-lg text-gray-500 hover:border-gray-300 hover:text-gray-900 transition-colors"
+          className="w-full flex items-center justify-center p-3 border-2 border-dashed border-gray-200 rounded-lg text-gray-500 hover:border-gray-300 hover:text-brand-600 transition-colors"
         >
           <Plus className="w-5 h-5 mr-2" />
           Add Custom Task

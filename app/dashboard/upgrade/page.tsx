@@ -139,7 +139,7 @@ export default function UpgradePage() {
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">You&apos;re on Pro</h2>
           <p className="text-gray-500 mb-6">You already have full access to everything Realestic offers.</p>
-          <Link href="/dashboard" className="text-sm text-gray-500 hover:text-gray-900 transition-colors flex items-center justify-center gap-1">
+          <Link href="/dashboard" className="text-sm text-gray-500 hover:text-brand-600 transition-colors flex items-center justify-center gap-1">
             <ArrowLeft className="w-4 h-4" /> Back to Dashboard
           </Link>
         </div>
@@ -208,7 +208,7 @@ export default function UpgradePage() {
           {/* Pro card */}
           <div className="rounded-2xl border-2 border-gray-400 bg-white p-6 flex flex-col relative">
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-              <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-white text-black text-xs font-semibold">
+              <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-brand-500 text-white text-xs font-semibold">
                 <Sparkles className="w-3 h-3" />
                 Most Popular
               </span>
@@ -263,7 +263,7 @@ export default function UpgradePage() {
 
         {/* Back link */}
         <div className="text-center pb-4">
-          <Link href="/dashboard" className="text-sm text-gray-500 hover:text-gray-900 transition-colors inline-flex items-center gap-1">
+          <Link href="/dashboard" className="text-sm text-gray-500 hover:text-brand-600 transition-colors inline-flex items-center gap-1">
             <ArrowLeft className="w-4 h-4" /> Back to Dashboard
           </Link>
         </div>

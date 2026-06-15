@@ -338,7 +338,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         <Card>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <StickyNote className="w-5 h-5 text-sky-600" />
+              <StickyNote className="w-5 h-5 text-brand-600" />
               <h2 className="text-xl font-bold text-gray-900">Notes</h2>
             </div>
             <Button
@@ -359,7 +359,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 onChange={(e) => setNewNote(e.target.value)}
                 placeholder="Enter your note..."
                 rows={3}
-                className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-gray-200 focus:outline-none resize-none"
+                className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-brand-500/30 focus:outline-none resize-none"
               />
               <div className="flex gap-2 mt-2">
                 <Button
@@ -396,7 +396,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                         value={editingNoteContent}
                         onChange={(e) => setEditingNoteContent(e.target.value)}
                         rows={3}
-                        className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-gray-200 focus:outline-none resize-none text-sm"
+                        className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-brand-500/30 focus:outline-none resize-none text-sm"
                       />
                       <div className="flex gap-2 mt-2">
                         <Button
@@ -425,7 +425,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                         <div className="flex gap-1">
                           <button
                             onClick={() => handleEditNote(note.id, note.note)}
-                            className="text-gray-500 hover:text-sky-600"
+                            className="text-gray-500 hover:text-brand-600"
                             title="Edit note"
                           >
                             <Edit className="w-4 h-4" />
@@ -456,7 +456,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         <Card>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-sky-600" />
+              <Calendar className="w-5 h-5 text-brand-600" />
               <h2 className="text-xl font-bold text-gray-900">Reminders</h2>
             </div>
             <Button
@@ -488,7 +488,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 <div
                   key={reminder.id}
                   className={`p-3 rounded-lg ${
-                    reminder.is_completed ? 'bg-gray-50 opacity-60' : 'bg-sky-500/10'
+                    reminder.is_completed ? 'bg-gray-50 opacity-60' : 'bg-brand-500/10'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">

@@ -100,7 +100,7 @@ export default function LeadCaptureForm({ agentId, agentName }: LeadCaptureFormP
   };
 
   const inputClasses =
-    'block w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-gray-300 transition-colors text-sm';
+    'block w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-gray-300 transition-colors text-sm';
 
   const labelClasses = 'block text-sm font-medium text-gray-600 mb-2';
 
@@ -288,7 +288,7 @@ export default function LeadCaptureForm({ agentId, agentName }: LeadCaptureFormP
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-lg bg-white px-6 py-3.5 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full rounded-lg bg-white px-6 py-3.5 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isSubmitting ? 'Sending...' : `Contact ${agentName.split(' ')[0]}`}
       </button>

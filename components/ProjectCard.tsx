@@ -36,7 +36,7 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
   // Get status badge color
   const statusColors = {
     draft: 'bg-gray-500/20 text-gray-600 border border-gray-400/30',
-    in_progress: 'bg-blue-500/20 text-blue-300 border border-blue-400/30',
+    in_progress: 'bg-brand-500/20 text-brand-400 border border-brand-400/30',
     completed: 'bg-green-500/20 text-green-300 border border-green-400/30',
   };
 

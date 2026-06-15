@@ -195,7 +195,7 @@ export default function ClientsPage() {
             placeholder="Search clients..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 text-gray-900 placeholder-gray-400"
+            className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-gray-900 placeholder-gray-400"
           />
         </div>
 
@@ -205,7 +205,7 @@ export default function ClientsPage() {
             data-tour="clients-filter"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg bg-gray-100 backdrop-blur-sm text-gray-900 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 focus:outline-none"
+            className="px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg bg-gray-100 backdrop-blur-sm text-gray-900 focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500/50 focus:outline-none"
           >
             <option value="all" className="bg-gray-100 text-gray-900">All Clients</option>
             <option value="active" className="bg-gray-100 text-gray-900">Active</option>
@@ -235,7 +235,7 @@ export default function ClientsPage() {
               <h2 className="text-lg sm:text-xl font-bold text-gray-900">New Client</h2>
               <button
                 onClick={() => setShowCreateForm(false)}
-                className="text-gray-500 hover:text-gray-900 transition-colors"
+                className="text-gray-500 hover:text-brand-600 transition-colors"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -305,7 +305,7 @@ export default function ClientsPage() {
               onChange={(e) => setNoteText(e.target.value)}
               placeholder="Enter your note..."
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 mb-4"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 mb-4"
               autoFocus
             />
             <div className="flex gap-3">

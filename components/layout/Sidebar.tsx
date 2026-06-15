@@ -246,14 +246,14 @@ export default function Sidebar() {
                   'group relative flex items-center rounded-lg text-sm font-medium transition-all duration-200',
                   isCollapsed ? 'justify-center px-2 py-3' : 'gap-3 px-3 py-3',
                   active
-                    ? 'bg-gray-100 text-gray-900 font-medium'
-                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'bg-brand-50 text-brand-700 font-medium'
+                    : 'text-gray-500 hover:bg-brand-50/50 hover:text-brand-700'
                 )}
               >
                 <Icon className={clsx(
                   'flex-shrink-0 transition-all duration-200',
                   isCollapsed ? 'h-5 w-5' : 'h-5 w-5',
-                  active ? 'text-gray-900' : 'text-gray-400 group-hover:text-gray-900'
+                  active ? 'text-brand-600' : 'text-gray-400 group-hover:text-brand-600'
                 )} />
                 
                 <span className={clsx(

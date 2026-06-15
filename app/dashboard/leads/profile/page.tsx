@@ -104,7 +104,7 @@ export default function ProfileEditorPage() {
     }
   };
 
-  const inputClass = 'w-full px-3 py-2.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 text-sm placeholder-gray-600 focus:outline-none focus:border-gray-400';
+  const inputClass = 'w-full px-3 py-2.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 text-sm placeholder-gray-600 focus:outline-none focus:border-brand-500';
 
   if (loading) {
     return (
@@ -124,7 +124,7 @@ export default function ProfileEditorPage() {
       <div className="p-4 sm:p-6 text-gray-900 max-w-2xl">
 
         <div className="flex items-center justify-between mb-6">
-          <Link href="/dashboard/leads" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors">
+          <Link href="/dashboard/leads" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-brand-600 transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to Leads
           </Link>
           <div className="flex items-center gap-2">
@@ -133,7 +133,7 @@ export default function ProfileEditorPage() {
                 href={profileUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-gray-50 text-gray-500 border border-gray-200 hover:text-gray-900 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-gray-50 text-gray-500 border border-gray-200 hover:text-brand-600 transition-colors"
               >
                 <Eye className="w-3.5 h-3.5" /> Preview
               </a>
@@ -261,7 +261,7 @@ export default function ProfileEditorPage() {
                 placeholder="e.g. Luxury Homes, First-Time Buyers"
                 className={inputClass}
               />
-              <button onClick={addSpecialty} className="px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-500 hover:text-gray-900 transition-colors flex-shrink-0">
+              <button onClick={addSpecialty} className="px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-500 hover:text-brand-600 transition-colors flex-shrink-0">
                 <Plus className="w-4 h-4" />
               </button>
             </div>
@@ -289,7 +289,7 @@ export default function ProfileEditorPage() {
                 placeholder="e.g. Miami Beach, Coral Gables"
                 className={inputClass}
               />
-              <button onClick={addArea} className="px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-500 hover:text-gray-900 transition-colors flex-shrink-0">
+              <button onClick={addArea} className="px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-500 hover:text-brand-600 transition-colors flex-shrink-0">
                 <Plus className="w-4 h-4" />
               </button>
             </div>

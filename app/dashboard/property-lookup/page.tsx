@@ -339,7 +339,7 @@ export default function PropertyLookupPage() {
           <div className="mb-6">
             <button
               onClick={() => setShowHistory(v => !v)}
-              className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-3"
+              className="flex items-center gap-2 text-sm text-gray-500 hover:text-brand-600 transition-colors mb-3"
             >
               <History className="w-4 h-4" />
               Recent Lookups ({history.length})
@@ -401,7 +401,7 @@ export default function PropertyLookupPage() {
                   value={street}
                   onChange={(e) => setStreet(e.target.value)}
                   placeholder="e.g. 123 Main Street"
-                  className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all"
+                  className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 transition-all"
                 />
               </div>
             </div>
@@ -418,7 +418,7 @@ export default function PropertyLookupPage() {
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   placeholder="e.g. Los Angeles"
-                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all"
+                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 transition-all"
                 />
               </div>
 
@@ -430,7 +430,7 @@ export default function PropertyLookupPage() {
                 <select
                   value={state}
                   onChange={(e) => setState(e.target.value)}
-                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all appearance-none cursor-pointer"
+                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30 transition-all appearance-none cursor-pointer"
                 >
                   <option value="" className="bg-white">Select State</option>
                   {US_STATES.map((s) => (
@@ -451,7 +451,7 @@ export default function PropertyLookupPage() {
                   value={zip}
                   onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
                   placeholder="e.g. 90001"
-                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all"
+                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 transition-all"
                 />
               </div>
             </div>
@@ -641,13 +641,13 @@ export default function PropertyLookupPage() {
 
                 {/* Recently Sold Banner — always visible when inactive MLS listing exists */}
                 {!person.activeListing && person.recentlySold && (
-                  <div className="mx-4 mb-3 flex items-center justify-between gap-3 p-3 bg-blue-500/10 border border-blue-500/25 rounded-xl">
+                  <div className="mx-4 mb-3 flex items-center justify-between gap-3 p-3 bg-brand-500/10 border border-brand-500/25 rounded-xl">
                     <div className="flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                      <TrendingUp className="w-4 h-4 text-brand-500 flex-shrink-0" />
                       <div>
-                        <span className="text-blue-300 font-semibold text-sm">Recently Sold</span>
+                        <span className="text-brand-400 font-semibold text-sm">Recently Sold</span>
                         {person.recentlySold.price && (
-                          <span className="text-blue-400 font-bold text-sm ml-2">
+                          <span className="text-brand-500 font-bold text-sm ml-2">
                             Listed at ${person.recentlySold.price.toLocaleString()}
                           </span>
                         )}
@@ -1176,7 +1176,7 @@ export default function PropertyLookupPage() {
                                           </div>
                                         </div>
                                         <div
-                                          className={`w-full rounded-t transition-all ${isLatest ? 'bg-gray-900' : 'bg-gray-300'}`}
+                                          className={`w-full rounded-t transition-all ${isLatest ? 'bg-brand-500' : 'bg-gray-300'}`}
                                           style={{ height: `${Math.max(pct, 8)}%` }}
                                         />
                                       </div>
@@ -1204,7 +1204,7 @@ export default function PropertyLookupPage() {
                                     {/* Left: dot + date */}
                                     <div className="flex items-center gap-3 min-w-0">
                                       <div className="flex flex-col items-center flex-shrink-0">
-                                        <div className={`w-2.5 h-2.5 rounded-full ${saleIndex === 0 ? 'bg-gray-900' : 'bg-gray-300'}`} />
+                                        <div className={`w-2.5 h-2.5 rounded-full ${saleIndex === 0 ? 'bg-brand-500' : 'bg-gray-300'}`} />
                                         {saleIndex < history.length - 1 && (
                                           <div className="w-px h-6 bg-gray-100 mt-0.5" />
                                         )}

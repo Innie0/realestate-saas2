@@ -125,13 +125,13 @@
 }
 
 .driver-popover-next-btn {
-  background: #111827 !important;
+  background: #fc5c03 !important;
   color: #ffffff !important;
-  border-color: #111827 !important;
+  border-color: #fc5c03 !important;
 }
 
 .driver-popover-next-btn:hover {
-  background: #374151 !important;
+  background: #e04a02 !important;
 }
 
 .driver-popover-arrow-side-left .driver-popover-arrow { border-right-color: #ffffff !important; }

@@ -29,14 +29,14 @@ export default function Input({
   const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
 
   // Base input styles with gradient background
-  const baseStyles = 'block w-full rounded-lg border px-3 sm:px-4 py-2 text-sm sm:text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all duration-200 bg-white border-gray-200';
+  const baseStyles = 'block w-full rounded-lg border px-3 sm:px-4 py-2 text-sm sm:text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 transition-all duration-200 bg-white border-gray-200';
 
   // Conditional styles based on error state
   const inputClasses = clsx(
     baseStyles,
     error
       ? 'border-red-300 focus:border-red-500 focus:ring-red-200 bg-red-50'
-      : 'border-gray-300 focus:border-gray-400 focus:ring-gray-200 hover:border-gray-400',
+      : 'border-gray-300 focus:border-brand-500 focus:ring-brand-500/30 hover:border-brand-300',
     className
   );
 

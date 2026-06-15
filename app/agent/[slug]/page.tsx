@@ -107,12 +107,12 @@ export default async function AgentProfilePage({ params }: PageProps) {
           {/* Contact row */}
           <div className="flex items-center justify-center gap-4 mt-4 flex-wrap">
             {agent.phone && (
-              <a href={`tel:${agent.phone}`} className="text-xs text-gray-500 hover:text-gray-900 transition-colors">
+              <a href={`tel:${agent.phone}`} className="text-xs text-gray-500 hover:text-brand-600 transition-colors">
                 {agent.phone}
               </a>
             )}
             {agent.profileEmail && (
-              <a href={`mailto:${agent.profileEmail}`} className="text-xs text-gray-500 hover:text-gray-900 transition-colors">
+              <a href={`mailto:${agent.profileEmail}`} className="text-xs text-gray-500 hover:text-brand-600 transition-colors">
                 {agent.profileEmail}
               </a>
             )}

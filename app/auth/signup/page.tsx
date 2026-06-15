@@ -230,7 +230,7 @@ function SignUpForm() {
           <button
             type="button"
             onClick={handleGoogleSignUp}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-white text-black text-sm font-semibold hover:bg-gray-100 transition-colors"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-white text-gray-900 border border-gray-200 text-sm font-semibold hover:bg-gray-50 transition-colors"
           >
             <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -297,7 +297,7 @@ function SignUpForm() {
                 id="terms-agreement"
                 checked={agreedToTerms}
                 onChange={(e) => setAgreedToTerms(e.target.checked)}
-                className="mt-1 w-4 h-4 rounded border-gray-300 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-gray-200 cursor-pointer"
+                className="mt-1 w-4 h-4 rounded border-gray-300 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-brand-500/30 cursor-pointer"
               />
               <label htmlFor="terms-agreement" className="text-sm text-gray-500 cursor-pointer leading-relaxed">
                 I agree to the{' '}
@@ -315,7 +315,7 @@ function SignUpForm() {
             <button
               type="submit"
               disabled={!agreedToTerms || isLoading}
-              className="w-full py-3 rounded-xl bg-white text-black text-sm font-semibold hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-xl bg-brand-500 text-white text-sm font-semibold hover:bg-brand-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
             >
               {isLoading && (
                 <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">

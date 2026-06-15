@@ -58,7 +58,7 @@ export default function ClientForm({ client, onSubmit, onCancel, isLoading }: Cl
   };
 
   const fieldStyle = { backgroundColor: 'white' };
-  const fieldClass = "w-full px-3 py-2 text-gray-900 placeholder-gray-400 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200";
+  const fieldClass = "w-full px-3 py-2 text-gray-900 placeholder-gray-400 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/30";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">

@@ -201,7 +201,7 @@ export default function FileUploader({
         onDrop={handleDrop}
         className={`
           relative border-2 border-dashed rounded-lg p-6 transition-colors
-          ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-gray-50'}
+          ${dragActive ? 'border-brand-500 bg-brand-50' : 'border-gray-300 bg-gray-50'}
           ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-gray-400'}
         `}
         onClick={() => !disabled && fileInputRef.current?.click()}
@@ -219,11 +219,11 @@ export default function FileUploader({
         <div className="flex flex-col items-center justify-center text-center">
           {uploading ? (
             <>
-              <Loader2 className="w-10 h-10 text-blue-600 animate-spin mb-3" />
+              <Loader2 className="w-10 h-10 text-brand-600 animate-spin mb-3" />
               <p className="text-sm text-gray-600 mb-2">Uploading...</p>
               <div className="w-full max-w-xs bg-gray-200 rounded-full h-2 overflow-hidden">
                 <div
-                  className="bg-blue-600 h-full transition-all duration-300"
+                  className="bg-brand-600 h-full transition-all duration-300"
                   style={{ width: `${progress}%` }}
                 />
               </div>

@@ -34,10 +34,10 @@ export default function Button({
 
   // Variant styles - different colors for different button types with gradients
   const variants = {
-    primary: 'bg-gray-900 text-white hover:bg-gray-800 focus:ring-gray-400 shadow-lg border border-gray-900',
-    secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-300 border border-gray-200',
-    outline: 'border-2 border-gray-300 text-gray-900 hover:bg-gray-100 focus:ring-gray-400',
-    'outline-light': 'border-2 border-gray-300 text-gray-900 hover:bg-gray-900 hover:text-white focus:ring-gray-400',
+    primary: 'bg-brand-500 text-white hover:bg-brand-600 focus:ring-brand-400 shadow-lg border border-brand-500',
+    secondary: 'bg-brand-50 text-brand-700 hover:bg-brand-100 focus:ring-brand-300 border border-brand-200',
+    outline: 'border-2 border-brand-500 text-brand-600 hover:bg-brand-50 focus:ring-brand-400',
+    'outline-light': 'border-2 border-brand-500 text-brand-600 hover:bg-brand-500 hover:text-white focus:ring-brand-400',
     white: 'bg-white text-gray-900 hover:bg-gray-50 focus:ring-gray-400 border border-gray-200',
     danger: 'bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 focus:ring-red-500',
   };

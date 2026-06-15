@@ -587,7 +587,7 @@ export default function TasksPage() {
                         <div
                           className={`rounded-2xl px-4 py-3 ${
                             msg.role === 'user'
-                              ? 'bg-white text-black'
+                              ? 'bg-brand-500 text-white'
                               : 'bg-white border border-gray-200 text-gray-100'
                           }`}
                         >
@@ -690,14 +690,14 @@ export default function TasksPage() {
 
                 {/* PDF Preview */}
                 {selectedPdf && (
-                  <div className="border border-purple-500/30 rounded-lg p-3 bg-purple-500/5">
+                  <div className="border border-brand-500/30 rounded-lg p-3 bg-brand-500/5">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
                         <FileText className="w-5 h-5 text-red-400" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-gray-600 truncate font-medium">{pdfName}</p>
-                        <p className="text-xs text-purple-400 mt-0.5">PDF ready — AI will read and analyze this</p>
+                        <p className="text-xs text-brand-500 mt-0.5">PDF ready — AI will read and analyze this</p>
                       </div>
                       <button type="button" onClick={handleRemoveImage} className="p-1.5 hover:bg-red-500/20 rounded transition-colors flex-shrink-0">
                         <X className="w-4 h-4 text-gray-500 hover:text-red-300" />
@@ -718,7 +718,7 @@ export default function TasksPage() {
                       }
                     }}
                     placeholder="Type your message... (Shift+Enter for new line)"
-                    className="w-full bg-white border border-gray-200 rounded-xl pl-4 pr-24 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-gray-300 resize-none"
+                    className="w-full bg-white border border-gray-200 rounded-xl pl-4 pr-24 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-gray-300 resize-none"
                     rows={1}
                     disabled={isLoading}
                   />
@@ -726,7 +726,7 @@ export default function TasksPage() {
                   {/* Action Buttons */}
                   <div className="absolute bottom-3 right-3 flex items-center gap-2">
                     <label className="cursor-pointer p-2 hover:bg-gray-100 rounded-lg transition-colors group" title="Attach image or PDF">
-                      <Paperclip className="w-5 h-5 text-gray-500 group-hover:text-gray-900 transition-colors" />
+                      <Paperclip className="w-5 h-5 text-gray-500 group-hover:text-brand-600 transition-colors" />
                       <input
                         type="file"
                         accept="image/*,application/pdf"

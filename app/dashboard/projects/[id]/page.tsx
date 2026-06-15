@@ -1251,7 +1251,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       <div>
         <Header title="Loading..." subtitle="Please wait" />
         <div className="p-6 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-brand-600 border-t-transparent"></div>
         </div>
       </div>
     );
@@ -1413,7 +1413,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   </div>
                   {showAllImages && (
                     <button
-                      className="mt-3 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+                      className="mt-3 text-sm text-gray-500 hover:text-brand-600 transition-colors"
                       onClick={() => setShowAllImages(false)}
                     >
                       Show less
@@ -1651,8 +1651,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                       </div>
                       
                       <textarea
-                        className={`block w-full rounded-lg border px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          isEditingDescription ? 'border-purple-500/50 bg-gray-100' : 'border-gray-300 bg-gray-50'
+                        className={`block w-full rounded-lg border px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 ${
+                          isEditingDescription ? 'border-brand-500/50 bg-gray-100' : 'border-gray-300 bg-gray-50'
                         }`}
                         rows={8}
                         value={editedDescription}
@@ -1765,7 +1765,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           </Button>
                         </div>
                         <textarea
-                          className="block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
+                          className="block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 text-sm"
                           rows={4}
                           value={project.ai_content?.instagram || ''}
                           onChange={(e) => {
@@ -1812,7 +1812,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           </Button>
                         </div>
                         <textarea
-                          className="block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
+                          className="block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 text-sm"
                           rows={4}
                           value={project.ai_content?.facebook || ''}
                           onChange={(e) => {
@@ -1880,7 +1880,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   {relatedTasks.map((task) => (
                     <div 
                       key={task.id} 
-                      className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors"
+                      className="p-4 border border-gray-200 rounded-lg hover:border-brand-300 transition-colors"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -1897,9 +1897,9 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           </div>
                         </div>
                         <span className={`px-2 py-1 text-xs rounded-full ${
-                          task.event_type === 'showing' ? 'bg-blue-500/20 text-blue-400 border border-blue-400/30' :
+                          task.event_type === 'showing' ? 'bg-brand-500/20 text-brand-500 border border-brand-400/30' :
                           task.event_type === 'open_house' ? 'bg-green-500/20 text-green-400 border border-green-400/30' :
-                          task.event_type === 'meeting' ? 'bg-purple-500/20 text-purple-400 border border-purple-400/30' :
+                          task.event_type === 'meeting' ? 'bg-brand-500/20 text-brand-500 border border-brand-400/30' :
                           'bg-gray-100 text-gray-600 border border-gray-200'
                         }`}>
                           {task.event_type}
@@ -1940,7 +1940,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   {relatedTransactions.map((transaction) => (
                     <div 
                       key={transaction.id} 
-                      className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors cursor-pointer"
+                      className="p-4 border border-gray-200 rounded-lg hover:border-brand-300 transition-colors cursor-pointer"
                       onClick={() => router.push(`/dashboard/transactions/${transaction.id}`)}
                     >
                       <div className="flex items-start justify-between">
@@ -1950,7 +1950,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                             Buyer: {transaction.buyer_name}
                           </p>
                           <div className="flex items-center gap-4 mt-2">
-                            <span className="text-sm font-medium text-blue-600">
+                            <span className="text-sm font-medium text-brand-600">
                               {transaction.offer_price 
                                 ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(transaction.offer_price)
                                 : 'Price not set'}
@@ -1963,9 +1963,9 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           </div>
                         </div>
                         <span className={`px-3 py-1 text-xs rounded-full font-medium ${
-                          transaction.status === 'active' ? 'bg-blue-500/20 text-blue-400 border border-blue-400/30' :
+                          transaction.status === 'active' ? 'bg-brand-500/20 text-brand-500 border border-brand-400/30' :
                           transaction.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-400/30' :
-                          transaction.status === 'under_contract' ? 'bg-purple-500/20 text-purple-400 border border-purple-400/30' :
+                          transaction.status === 'under_contract' ? 'bg-brand-500/20 text-brand-500 border border-brand-400/30' :
                           transaction.status === 'closed' ? 'bg-green-500/20 text-green-400 border border-green-400/30' :
                           'bg-gray-100 text-gray-600 border border-gray-200'
                         }`}>
@@ -2007,7 +2007,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   onClick={() => setSelectedGenerationTone(version.tone)}
                   className={`p-4 rounded-xl border-2 text-left transition-all duration-300 transform hover:scale-105 ${
                     selectedGenerationTone === version.tone
-                      ? 'border-blue-500 bg-blue-500/10 shadow-lg scale-105'
+                      ? 'border-brand-500 bg-brand-500/10 shadow-lg scale-105'
                       : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
                   }`}
                 >
@@ -2033,7 +2033,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                       {/* Description */}
                       <div className="animate-fadeIn">
                         <label className="block text-sm font-semibold text-gray-600 mb-2 flex items-center gap-2">
-                          <Sparkles className="w-4 h-4 text-blue-500" />
+                          <Sparkles className="w-4 h-4 text-brand-500" />
                           Property Description
                         </label>
                         <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 max-h-60 overflow-y-auto">
@@ -2053,7 +2053,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           </label>
                           <textarea
                             readOnly
-                            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
                             rows={6}
                             value={version.instagram}
                           />
@@ -2069,7 +2069,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           </label>
                           <textarea
                             readOnly
-                            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
                             rows={6}
                             value={version.facebook}
                           />
@@ -2086,7 +2086,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               <Button variant="outline" onClick={() => setShowGenerationModal(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleApplySelectedTone} className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transition-all duration-300">
+              <Button onClick={handleApplySelectedTone} className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 transition-all duration-300">
                 <Check className="w-4 h-4 mr-2" />
                 Use This Style
               </Button>
@@ -2130,7 +2130,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               <li>"Make it sound more luxurious"</li>
             </ul>
             <textarea
-              className="block w-full rounded-lg border border-gray-300 bg-gray-100/50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-gray-100"
+              className="block w-full rounded-lg border border-gray-300 bg-gray-100/50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-gray-100"
               rows={4}
               placeholder="Tell the AI what changes you want..."
               value={refineInstructions}
@@ -2344,7 +2344,7 @@ function ZillowStylePreview({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {project.ai_content.key_features.map((feature, idx) => (
                 <div key={idx} className="flex items-center gap-2 text-gray-600">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                  <div className="w-2 h-2 bg-brand-500 rounded-full" />
                   {feature}
                 </div>
               ))}

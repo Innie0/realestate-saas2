@@ -98,7 +98,7 @@ export default function OpenHousesPage() {
     a.click();
   };
 
-  const inputClass = 'w-full px-3 py-2.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-gray-400';
+  const inputClass = 'w-full px-3 py-2.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-brand-500';
 
   return (
     <div className="min-h-screen">
@@ -108,7 +108,7 @@ export default function OpenHousesPage() {
 
         {/* Back + Create */}
         <div className="flex items-center justify-between mb-6">
-          <Link href="/dashboard/leads" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors">
+          <Link href="/dashboard/leads" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-brand-600 transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to Leads
           </Link>
           <button
@@ -210,7 +210,7 @@ export default function OpenHousesPage() {
                         </button>
                         <button
                           onClick={() => handleDownloadQR(oh.id)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-50 text-gray-500 border border-gray-200 hover:text-gray-900 transition-colors"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-50 text-gray-500 border border-gray-200 hover:text-brand-600 transition-colors"
                         >
                           <Download className="w-3 h-3" /> QR
                         </button>
@@ -218,7 +218,7 @@ export default function OpenHousesPage() {
                           href={getSignInUrl(oh.id)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 transition-colors"
+                          className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-brand-600 transition-colors"
                         >
                           <Link2 className="w-3 h-3" /> Preview
                         </a>

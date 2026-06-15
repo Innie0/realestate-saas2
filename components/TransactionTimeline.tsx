@@ -108,10 +108,10 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
         };
       case 'today':
         return {
-          bg: 'bg-blue-500/20',
-          border: 'border-blue-500 shadow-lg shadow-blue-500/20',
-          icon: 'text-blue-400',
-          line: 'bg-gradient-to-b from-blue-500 to-blue-600',
+          bg: 'bg-brand-500/20',
+          border: 'border-brand-500 shadow-lg shadow-brand-500/20',
+          icon: 'text-brand-500',
+          line: 'bg-gradient-to-b from-brand-500 to-brand-600',
         };
       case 'overdue':
         return {
@@ -137,7 +137,7 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
       case 'completed':
         return <CheckCircle2 className="w-4 h-4 text-green-400" />;
       case 'today':
-        return <Clock className="w-4 h-4 text-blue-400 animate-pulse" />;
+        return <Clock className="w-4 h-4 text-brand-500 animate-pulse" />;
       case 'overdue':
         return <AlertCircle className="w-4 h-4 text-red-400" />;
       default:
@@ -220,7 +220,7 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
                   <h4 className="text-sm font-semibold text-gray-900">{event.title}</h4>
                   <span className="ml-2">{getStatusIndicator(event.status)}</span>
                 </div>
-                <span className={`text-sm ${event.status === 'today' ? 'text-blue-400 font-medium' : 'text-gray-500'}`}>
+                <span className={`text-sm ${event.status === 'today' ? 'text-brand-500 font-medium' : 'text-gray-500'}`}>
                   {format(new Date(event.date), 'MMM d, yyyy')}
                 </span>
               </div>

@@ -86,7 +86,7 @@ function FeatureTile({
         </div>
       </motion.div>
       <h3 className="relative z-10 text-xl font-semibold text-gray-900 mb-3">{title}</h3>
-      <p className="relative z-10 text-gray-500 leading-relaxed group-hover:text-gray-900 transition-colors">{description}</p>
+      <p className="relative z-10 text-gray-500 leading-relaxed group-hover:text-brand-600 transition-colors">{description}</p>
     </motion.div>
   );
 }
@@ -202,7 +202,7 @@ function AIDemoMockup() {
               <motion.div className="absolute inset-0 bg-[#F5F5F5]" initial={{ scaleX: 1 }} animate={{ scaleX: 1 - progress / 100 }} style={{ transformOrigin: 'right' }} />
             </div>
             <div className="mt-3 w-full bg-gray-100 rounded-full h-1.5">
-              <motion.div className="h-full bg-gray-900 rounded-full" style={{ width: `${progress}%` }} transition={{ duration: 0.1 }} />
+              <motion.div className="h-full bg-brand-500 rounded-full" style={{ width: `${progress}%` }} transition={{ duration: 0.1 }} />
             </div>
           </motion.div>
         )}
@@ -210,13 +210,13 @@ function AIDemoMockup() {
         {phase === 1 && (
           <motion.div key="analyzing" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4 }} className="flex-1 flex flex-col items-center justify-center">
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} className="mb-3">
-              <Loader2 className="w-8 h-8 text-purple-400" />
+              <Loader2 className="w-8 h-8 text-brand-500" />
             </motion.div>
             <p className="text-sm text-gray-900 font-medium">Analyzing with AI...</p>
             <p className="text-xs text-gray-500 mt-1">Identifying features & style</p>
             <div className="flex gap-1.5 mt-4">
               {[0, 1, 2].map(i => (
-                <motion.div key={i} className="w-1.5 h-1.5 rounded-full bg-purple-400" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.3 }} />
+                <motion.div key={i} className="w-1.5 h-1.5 rounded-full bg-brand-500" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.3 }} />
               ))}
             </div>
           </motion.div>
@@ -225,13 +225,13 @@ function AIDemoMockup() {
         {phase === 2 && (
           <motion.div key="typing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="flex-1 flex flex-col">
             <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="w-4 h-4 text-purple-400" />
-              <span className="text-xs text-purple-400 font-medium">Generating description...</span>
+              <Sparkles className="w-4 h-4 text-brand-500" />
+              <span className="text-xs text-brand-500 font-medium">Generating description...</span>
             </div>
             <div className="flex-1 rounded-lg bg-gray-100 border border-gray-100 p-4 overflow-hidden">
               <p className="text-sm text-gray-600 leading-relaxed">
                 {typedText}
-                <motion.span className="inline-block w-0.5 h-4 bg-gray-900 ml-0.5 align-middle" animate={{ opacity: [1, 0] }} transition={{ duration: 0.6, repeat: Infinity }} />
+                <motion.span className="inline-block w-0.5 h-4 bg-brand-500 ml-0.5 align-middle" animate={{ opacity: [1, 0] }} transition={{ duration: 0.6, repeat: Infinity }} />
               </p>
             </div>
           </motion.div>
@@ -240,7 +240,7 @@ function AIDemoMockup() {
         {phase === 3 && (
           <motion.div key="done" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="flex-1 flex flex-col items-center justify-center">
             <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 15 }}>
-              <CheckCircle className="w-12 h-12 text-green-400 mb-3" />
+              <CheckCircle className="w-12 h-12 text-brand-500 mb-3" />
             </motion.div>
             <p className="text-base text-gray-900 font-semibold">Description ready!</p>
             <p className="text-xs text-gray-500 mt-1">247 words generated in 4.2 seconds</p>
@@ -258,15 +258,15 @@ function AIDemoMockup() {
 // ─── CRM Demo Mockup ──────────────────────────────────────────────────────────
 
 const clients = [
-  { name: 'Sarah Johnson', status: 'Active', note: 'Interested in 4BR homes in Riverside', initials: 'SJ', color: 'bg-blue-500' },
-  { name: 'Marcus Williams', status: 'Follow-up', note: 'Viewing scheduled for Saturday 2pm', initials: 'MW', color: 'bg-purple-500' },
-  { name: 'Emily Chen', status: 'Closed', note: 'Closed on Oak Street property ✓', initials: 'EC', color: 'bg-green-500' },
+  { name: 'Sarah Johnson', status: 'Active', note: 'Interested in 4BR homes in Riverside', initials: 'SJ', color: 'bg-brand-500' },
+  { name: 'Marcus Williams', status: 'Follow-up', note: 'Viewing scheduled for Saturday 2pm', initials: 'MW', color: 'bg-brand-500' },
+  { name: 'Emily Chen', status: 'Closed', note: 'Closed on Oak Street property ✓', initials: 'EC', color: 'bg-brand-500' },
 ];
 
 const statusColors: Record<string, string> = {
-  Active: 'bg-blue-500/20 text-blue-400',
-  'Follow-up': 'bg-yellow-500/20 text-yellow-400',
-  Closed: 'bg-green-500/20 text-green-400',
+  Active: 'bg-brand-500/20 text-brand-600',
+  'Follow-up': 'bg-brand-400/20 text-brand-500',
+  Closed: 'bg-brand-600/20 text-brand-700',
 };
 
 function CRMDemoMockup() {
@@ -392,7 +392,7 @@ function CRMDemoMockup() {
                     <p className="text-xs text-gray-600 leading-relaxed">
                       {typedNote}
                       {phase === 2 && (
-                        <motion.span className="inline-block w-0.5 h-3 bg-gray-900 ml-0.5 align-middle" animate={{ opacity: [1, 0] }} transition={{ duration: 0.5, repeat: Infinity }} />
+                        <motion.span className="inline-block w-0.5 h-3 bg-brand-500 ml-0.5 align-middle" animate={{ opacity: [1, 0] }} transition={{ duration: 0.5, repeat: Infinity }} />
                       )}
                     </p>
                   </div>
@@ -416,9 +416,9 @@ function CRMDemoMockup() {
 // ─── Calendar Demo Mockup ─────────────────────────────────────────────────────
 
 const calendarEvents = [
-  { day: 8, time: '9:00 AM', label: 'Client Call — Johnson', color: 'bg-blue-500/30 border-blue-500/50 text-blue-300' },
-  { day: 11, time: '2:00 PM', label: 'Showing — Oak Street', color: 'bg-purple-500/30 border-purple-500/50 text-purple-300' },
-  { day: 15, time: '11:00 AM', label: 'Closing — Chen Deal', color: 'bg-green-500/30 border-green-500/50 text-green-300' },
+  { day: 8, time: '9:00 AM', label: 'Client Call — Johnson', color: 'bg-brand-500/30 border-brand-500/50 text-brand-400' },
+  { day: 11, time: '2:00 PM', label: 'Showing — Oak Street', color: 'bg-brand-500/30 border-brand-500/50 text-brand-400' },
+  { day: 15, time: '11:00 AM', label: 'Closing — Chen Deal', color: 'bg-brand-500/30 border-brand-500/50 text-brand-300' },
 ];
 
 const calendarDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
@@ -473,7 +473,7 @@ function CalendarDemoMockup() {
             transition={{ duration: 0.35 }}
             className="absolute top-3 right-3 z-20 bg-gray-100 border border-gray-200 rounded-xl p-3 shadow-2xl flex items-start gap-2 w-56"
           >
-            <Bell className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
+            <Bell className="w-4 h-4 text-brand-500 flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-xs text-gray-900 font-semibold">Reminder</p>
               <p className="text-[10px] text-gray-500 mt-0.5">Showing — Oak Street in 1 hour</p>
@@ -490,9 +490,9 @@ function CalendarDemoMockup() {
         </div>
         <AnimatePresence>
           {showSynced && (
-            <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4, type: 'spring' }} className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/10 border border-green-500/30">
-              <CheckCircle className="w-3 h-3 text-green-400" />
-              <span className="text-[10px] text-green-400">Synced with Google</span>
+            <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4, type: 'spring' }} className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-brand-500/10 border border-brand-500/30">
+              <CheckCircle className="w-3 h-3 text-brand-500" />
+              <span className="text-[10px] text-brand-500">Synced with Google</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -517,7 +517,7 @@ function CalendarDemoMockup() {
             <motion.div
               key={n}
               className={`relative rounded-lg flex flex-col items-center justify-start pt-1 pb-1 text-[10px] font-medium min-h-0 cursor-pointer transition-colors ${
-                isToday ? 'bg-gray-900 text-white' :
+                isToday ? 'bg-brand-500 text-white' :
                 hasEvent || isNewEvent ? 'bg-gray-50' : 'hover:bg-gray-50 text-gray-500'
               }`}
             >
@@ -534,7 +534,7 @@ function CalendarDemoMockup() {
               )}
               {isNewEvent && (
                 <motion.div initial={{ opacity: 0, scaleX: 0 }} animate={{ opacity: 1, scaleX: 1 }} transition={{ duration: 0.4 }} className="mt-0.5 w-full px-0.5">
-                  <div className="h-1 rounded-full bg-yellow-500/60" />
+                  <div className="h-1 rounded-full bg-brand-400/60" />
                 </motion.div>
               )}
             </motion.div>
@@ -558,7 +558,7 @@ function CalendarDemoMockup() {
           </motion.div>
         ))}
         {showNewEvent && (
-          <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35 }} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-yellow-500/50 bg-yellow-500/20 text-yellow-300 text-[10px]">
+          <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35 }} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-brand-500/50 bg-brand-500/20 text-brand-300 text-[10px]">
             <Clock className="w-3 h-3 flex-shrink-0" />
             <span className="font-medium">Apr 19 · 3:00 PM</span>
             <span className="text-gray-500 truncate">— New Listing Walkthrough</span>
@@ -639,7 +639,7 @@ function PropertyLookupDemoMockup() {
           <span className="text-sm text-gray-900 flex-1 truncate">
             {typedAddress}
             {phase === 1 && (
-              <motion.span className="inline-block w-0.5 h-4 bg-gray-900 ml-0.5 align-middle" animate={{ opacity: [1, 0] }} transition={{ duration: 0.5, repeat: Infinity }} />
+              <motion.span className="inline-block w-0.5 h-4 bg-brand-500 ml-0.5 align-middle" animate={{ opacity: [1, 0] }} transition={{ duration: 0.5, repeat: Infinity }} />
             )}
           </span>
           {phase >= 2 && phase < 3 && (
@@ -647,7 +647,7 @@ function PropertyLookupDemoMockup() {
               <Loader2 className="w-3.5 h-3.5 text-gray-500" />
             </motion.div>
           )}
-          {phase >= 3 && <CheckCircle className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />}
+          {phase >= 3 && <CheckCircle className="w-3.5 h-3.5 text-brand-500 flex-shrink-0" />}
         </div>
       </div>
 
@@ -658,7 +658,7 @@ function PropertyLookupDemoMockup() {
 
             {/* Address banner */}
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
+              <div className="w-2 h-2 rounded-full bg-brand-500 flex-shrink-0" />
               <p className="text-xs text-gray-900 font-medium truncate">123 W Main Street, Austin, TX 78701</p>
             </div>
 
@@ -721,10 +721,10 @@ function PropertyLookupDemoMockup() {
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35 }}
-                  className="mt-2 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-500/15 border border-green-500/30 w-fit"
+                  className="mt-2 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-500/15 border border-brand-500/30 w-fit"
                 >
-                  <CheckCircle className="w-3 h-3 text-green-400 flex-shrink-0" />
-                  <span className="text-[11px] text-green-400 font-medium">Property saved to project</span>
+                  <CheckCircle className="w-3 h-3 text-brand-500 flex-shrink-0" />
+                  <span className="text-[11px] text-brand-500 font-medium">Property saved to project</span>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -789,7 +789,7 @@ function LeadFormDemoMockup() {
             transition={{ duration: 0.35 }}
             className="absolute top-3 right-3 z-20 bg-gray-100 border border-gray-200 rounded-xl p-3 shadow-2xl flex items-start gap-2 w-60"
           >
-            <Bell className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
+            <Bell className="w-4 h-4 text-brand-500 flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-xs text-gray-900 font-semibold">New Lead!</p>
               <p className="text-[10px] text-gray-500 mt-0.5">Jane Smith · Buying · ASAP · $300k–$500k</p>
@@ -811,7 +811,7 @@ function LeadFormDemoMockup() {
         transition={{ duration: 0.4, delay: 0.2 }}
         className="flex items-center gap-2 bg-gray-100 border border-gray-200 rounded-xl px-4 py-2.5 mb-4"
       >
-        <div className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
+        <div className="w-2 h-2 rounded-full bg-brand-500 flex-shrink-0" />
         <span className="text-xs text-gray-600 truncate flex-1">realestic.ai/lead/your-name</span>
         <span className="text-[10px] text-gray-500 bg-gray-50 border border-gray-200 px-2 py-0.5 rounded">Copy</span>
       </motion.div>
@@ -824,7 +824,7 @@ function LeadFormDemoMockup() {
           <div className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-900 min-h-[28px]">
             {typedName}
             {phase === 1 && (
-              <motion.span className="inline-block w-0.5 h-3 bg-gray-900 ml-0.5 align-middle" animate={{ opacity: [1, 0] }} transition={{ duration: 0.5, repeat: Infinity }} />
+              <motion.span className="inline-block w-0.5 h-3 bg-brand-500 ml-0.5 align-middle" animate={{ opacity: [1, 0] }} transition={{ duration: 0.5, repeat: Infinity }} />
             )}
           </div>
         </div>
@@ -836,7 +836,7 @@ function LeadFormDemoMockup() {
               <p className="text-[10px] text-gray-500 mb-1">I&apos;m</p>
               <div className="grid grid-cols-4 gap-1.5">
                 {['Buying', 'Selling', 'Renting', 'Looking'].map((t, idx) => (
-                  <div key={t} className={`text-center text-[10px] py-1.5 rounded-lg border transition-all ${idx === 0 ? 'bg-white text-black border-white font-semibold' : 'border-gray-200 text-gray-500'}`}>
+                  <div key={t} className={`text-center text-[10px] py-1.5 rounded-lg border transition-all ${idx === 0 ? 'bg-brand-500 text-white border-brand-500 font-semibold' : 'border-gray-200 text-gray-500'}`}>
                     {t}
                   </div>
                 ))}
@@ -852,7 +852,7 @@ function LeadFormDemoMockup() {
               <div className="flex-1">
                 <p className="text-[10px] text-gray-500 mb-1">Timeline</p>
                 <div className="flex gap-1">
-                  <span className="text-[9px] px-2 py-1 rounded-lg bg-white text-black font-semibold border border-white">ASAP</span>
+                  <span className="text-[9px] px-2 py-1 rounded-lg bg-brand-500 text-white font-semibold border border-brand-500">ASAP</span>
                   <span className="text-[9px] px-2 py-1 rounded-lg border border-gray-200 text-gray-500">1–3mo</span>
                 </div>
               </div>
@@ -860,7 +860,7 @@ function LeadFormDemoMockup() {
                 <p className="text-[10px] text-gray-500 mb-1">Budget</p>
                 <div className="flex gap-1">
                   <span className="text-[9px] px-2 py-1 rounded-lg border border-gray-200 text-gray-500">Under $300k</span>
-                  <span className="text-[9px] px-2 py-1 rounded-lg bg-white text-black font-semibold border border-white">$300–500k</span>
+                  <span className="text-[9px] px-2 py-1 rounded-lg bg-brand-500 text-white font-semibold border border-brand-500">$300–500k</span>
                 </div>
               </div>
             </motion.div>
@@ -871,7 +871,7 @@ function LeadFormDemoMockup() {
         <AnimatePresence>
           {phase >= 3 && (
             <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mt-auto">
-              <div className="bg-white text-black text-xs font-semibold text-center py-2 rounded-lg">
+              <div className="bg-brand-500 text-white text-xs font-semibold text-center py-2 rounded-lg">
                 Contact You →
               </div>
             </motion.div>
@@ -934,12 +934,12 @@ export default function HomePage() {
             <div className="flex-1" />
             <div className="hidden sm:flex items-center gap-4">
               <Link href="/auth/login">
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="px-5 py-2.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="px-5 py-2.5 text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors">
                   Sign In
                 </motion.button>
               </Link>
               <Link href="/auth/signup">
-                <motion.button whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(255,255,255,0.2)' }} whileTap={{ scale: 0.98 }} className="px-5 py-2.5 text-sm font-medium bg-white text-black rounded-lg hover:bg-gray-100 transition-colors">
+                <motion.button whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(252,92,3,0.25)' }} whileTap={{ scale: 0.98 }} className="px-5 py-2.5 text-sm font-medium bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors">
                   Get Started
                 </motion.button>
               </Link>
@@ -954,13 +954,13 @@ export default function HomePage() {
           <div>
             <motion.div variants={itemVariants} className="mb-6">
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 border border-gray-300 text-sm text-gray-600 backdrop-blur-sm">
-                <Sparkles className="w-4 h-4 text-yellow-400" />
+                <Sparkles className="w-4 h-4 text-brand-500" />
                 AI-Powered Real Estate Platform
               </span>
             </motion.div>
 
             <motion.h1 variants={itemVariants} className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight leading-[1.1]">
-              <span className="bg-gradient-to-r from-gray-900 via-gray-600 to-gray-400 bg-clip-text text-transparent">Work Smarter</span>
+              <span className="bg-gradient-to-r from-brand-600 via-brand-500 to-brand-400 bg-clip-text text-transparent">Work Smarter</span>
               <br />
               <span className="text-gray-900">Close Faster</span>
             </motion.h1>
@@ -972,7 +972,7 @@ export default function HomePage() {
 
             <motion.div variants={itemVariants} className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
               <Link href="/auth/signup" className="w-full sm:w-auto">
-                <motion.button whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255,255,255,0.3)' }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto group px-8 py-4 text-base font-semibold bg-white text-black rounded-xl hover:bg-gray-100 transition-all flex items-center justify-center gap-2">
+                <motion.button whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255,255,255,0.3)' }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto group px-8 py-4 text-base font-semibold bg-brand-500 text-white rounded-xl hover:bg-brand-600 transition-all flex items-center justify-center gap-2">
                   Get Started
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </motion.button>
@@ -990,7 +990,7 @@ export default function HomePage() {
             <div className="relative w-full h-[500px]">
               <motion.div initial={{ opacity: 0, y: 50, rotate: -5 }} animate={{ opacity: 1, y: 0, rotate: -5 }} transition={{ duration: 0.8, delay: 0.5 }} whileHover={{ y: -10, rotate: 0, scale: 1.02, transition: { duration: 0.15 } }} className="absolute top-0 right-0 w-72 rounded-2xl p-6 shadow-2xl border border-gray-200 bg-white">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-green-500/20 rounded-lg"><Users className="w-5 h-5 text-green-400" /></div>
+                  <div className="p-2 bg-brand-500/20 rounded-lg"><Users className="w-5 h-5 text-brand-500" /></div>
                   <span className="text-sm font-medium text-gray-600">New Leads Today</span>
                 </div>
                 <div className="text-3xl font-bold text-gray-900">4</div>
@@ -999,7 +999,7 @@ export default function HomePage() {
 
               <motion.div initial={{ opacity: 0, y: 50, rotate: 3 }} animate={{ opacity: 1, y: 0, rotate: 3 }} transition={{ duration: 0.8, delay: 0.7 }} whileHover={{ y: -10, rotate: 0, scale: 1.02, transition: { duration: 0.15 } }} className="absolute top-32 left-0 w-64 rounded-2xl p-6 shadow-2xl border border-gray-200 bg-white">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-blue-500/20 rounded-lg"><Home className="w-5 h-5 text-blue-400" /></div>
+                  <div className="p-2 bg-brand-500/20 rounded-lg"><Home className="w-5 h-5 text-brand-500" /></div>
                   <span className="text-sm font-medium text-gray-600">Active Listings</span>
                 </div>
                 <div className="text-3xl font-bold text-gray-900">47</div>
@@ -1008,7 +1008,7 @@ export default function HomePage() {
 
               <motion.div initial={{ opacity: 0, y: 50, rotate: -2 }} animate={{ opacity: 1, y: 0, rotate: -2 }} transition={{ duration: 0.8, delay: 0.9 }} whileHover={{ y: -10, rotate: 0, scale: 1.02, transition: { duration: 0.15 } }} className="absolute bottom-10 right-10 w-80 rounded-2xl p-6 shadow-2xl border border-gray-200 bg-white">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-purple-500/20 rounded-lg"><Sparkles className="w-5 h-5 text-purple-400" /></div>
+                  <div className="p-2 bg-brand-500/20 rounded-lg"><Sparkles className="w-5 h-5 text-brand-500" /></div>
                   <span className="text-sm font-medium text-gray-600">AI Generated</span>
                 </div>
                 <p className="text-sm text-gray-500 leading-relaxed">"Stunning 4BR home with panoramic views, chef's kitchen, and resort-style backyard..."</p>
@@ -1116,7 +1116,7 @@ export default function HomePage() {
                       transition={{ duration: 0.4, delay: j * 0.1 }}
                       className="flex items-center gap-3 text-gray-600"
                     >
-                      <CheckCircle className="w-5 h-5 text-gray-900 flex-shrink-0" />
+                      <CheckCircle className="w-5 h-5 text-brand-500 flex-shrink-0" />
                       {h}
                     </motion.li>
                   ))}
@@ -1182,7 +1182,7 @@ export default function HomePage() {
             className="text-center mb-16"
           >
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 border border-gray-300 text-sm text-gray-600 mb-6">
-              <Star className="w-4 h-4 text-yellow-400" />
+              <Star className="w-4 h-4 text-brand-500" />
               7-Day Free Trial on Every Plan
             </span>
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Simple, transparent pricing</h2>
@@ -1242,7 +1242,7 @@ export default function HomePage() {
               >
                 {plan.popular && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-white text-black text-xs font-semibold">
+                    <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-brand-500 text-white text-xs font-semibold">
                       <Sparkles className="w-3 h-3" />
                       Most Popular
                     </span>
@@ -1267,7 +1267,7 @@ export default function HomePage() {
                     whileTap={{ scale: 0.97 }}
                     className={`w-full py-3 rounded-xl text-sm font-semibold transition-colors ${
                       plan.popular
-                        ? 'bg-white text-black hover:bg-gray-100'
+                        ? 'bg-brand-500 text-white hover:bg-brand-600'
                         : 'bg-gray-100 text-gray-900 border border-gray-300 hover:bg-gray-200'
                     }`}
                   >
@@ -1280,7 +1280,7 @@ export default function HomePage() {
                 <ul className="space-y-3 flex-1">
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-3">
-                      <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-4 h-4 text-brand-500 flex-shrink-0 mt-0.5" />
                       <span className="text-sm text-gray-600">{feature}</span>
                     </li>
                   ))}
@@ -1311,12 +1311,12 @@ export default function HomePage() {
             transition={{ duration: 0.7 }}
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 border border-gray-300 text-sm text-gray-600 mb-8">
-              <Star className="w-4 h-4 text-yellow-400" />
+              <Star className="w-4 h-4 text-brand-500" />
               7-Day Free Trial
             </div>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
               Stop wasting time.<br />
-              <span className="bg-gradient-to-r from-gray-900 via-gray-600 to-gray-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-brand-600 via-brand-500 to-brand-400 bg-clip-text text-transparent">
                 Start closing more deals.
               </span>
             </h2>
@@ -1328,7 +1328,7 @@ export default function HomePage() {
                 <motion.button
                   whileHover={{ scale: 1.05, boxShadow: '0 0 50px rgba(255,255,255,0.25)' }}
                   whileTap={{ scale: 0.98 }}
-                  className="group px-10 py-4 text-lg font-semibold bg-white text-black rounded-xl hover:bg-gray-100 transition-all flex items-center gap-2"
+                  className="group px-10 py-4 text-lg font-semibold bg-brand-500 text-white rounded-xl hover:bg-brand-600 transition-all flex items-center gap-2"
                 >
                   Get Started
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -1355,9 +1355,9 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-500 text-sm">© 2026 Realestic. All rights reserved.</p>
             <div className="flex items-center gap-6 text-sm text-gray-500">
-              <Link href="/privacy" className="hover:text-gray-900 transition-colors">Privacy</Link>
-              <Link href="/terms" className="hover:text-gray-900 transition-colors">Terms</Link>
-              <a href="#" className="hover:text-gray-900 transition-colors">Contact</a>
+              <Link href="/privacy" className="hover:text-brand-600 transition-colors">Privacy</Link>
+              <Link href="/terms" className="hover:text-brand-600 transition-colors">Terms</Link>
+              <a href="#" className="hover:text-brand-600 transition-colors">Contact</a>
             </div>
           </div>
         </div>

@@ -83,9 +83,9 @@ export default function TransactionsPage() {
   // Get status badge
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
-      active: 'bg-blue-500/20 text-blue-300 border border-blue-500/30',
+      active: 'bg-brand-500/20 text-brand-400 border border-brand-500/30',
       pending: 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30',
-      under_contract: 'bg-purple-500/20 text-purple-300 border border-purple-500/30',
+      under_contract: 'bg-brand-500/20 text-brand-400 border border-brand-500/30',
       closed: 'bg-green-500/20 text-green-300 border border-green-500/30',
       cancelled: 'bg-red-500/20 text-red-300 border border-red-500/30',
       expired: 'bg-gray-500/20 text-gray-600 border border-gray-500/30',
@@ -126,7 +126,7 @@ export default function TransactionsPage() {
 
     if (daysToClosing === 0) {
       return (
-        <span className="flex items-center text-xs text-blue-400 font-medium">
+        <span className="flex items-center text-xs text-brand-500 font-medium">
           <Clock className="w-3 h-3 mr-1 animate-pulse" />
           Closing Today!
         </span>
@@ -174,13 +174,13 @@ export default function TransactionsPage() {
             placeholder="Search by address, buyer, or seller..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 bg-white text-gray-900 placeholder-gray-400"
+            className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 bg-white text-gray-900 placeholder-gray-400"
           />
         </div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-3 sm:px-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 bg-white text-gray-900"
+          className="px-3 sm:px-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 bg-white text-gray-900"
         >
           <option value="all">All Status</option>
           <option value="active">Active</option>
@@ -202,7 +202,7 @@ export default function TransactionsPage() {
       {/* Loading state */}
       {isLoading ? (
         <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
         </div>
       ) : filteredTransactions.length === 0 ? (
         /* Empty state */
@@ -322,7 +322,7 @@ export default function TransactionsPage() {
             <p className="text-sm text-gray-500">Total Transactions</p>
           </Card>
           <Card className="text-center py-4">
-            <p className="text-2xl font-bold text-blue-400">
+            <p className="text-2xl font-bold text-brand-500">
               {transactions.filter(t => t.status === 'active' || t.status === 'under_contract').length}
             </p>
             <p className="text-sm text-gray-500">Active</p>

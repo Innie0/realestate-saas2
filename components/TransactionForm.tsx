@@ -188,7 +188,7 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
             onClick={() => setActiveSection(section.id)}
             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
               activeSection === section.id
-                ? 'bg-white text-black shadow-sm'
+                ? 'bg-brand-500 text-white shadow-sm'
                 : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
             }`}
           >
@@ -238,7 +238,7 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
             <select
               value={propertyType}
               onChange={(e) => setPropertyType(e.target.value as any)}
-              className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
+              className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
             >
               <option value="house">House</option>
               <option value="apartment">Apartment</option>
@@ -402,7 +402,7 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as any)}
-              className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
+              className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
             >
               <option value="active">Active</option>
               <option value="pending">Pending</option>
@@ -422,7 +422,7 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Additional notes about this transaction..."
               rows={4}
-              className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 resize-none"
+              className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 resize-none"
             />
           </div>
         </div>

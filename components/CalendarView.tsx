@@ -148,9 +148,9 @@ export default function CalendarView() {
    */
   const getEventColor = (eventType: string) => {
     const colors = {
-      showing: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+      showing: 'bg-brand-500/20 text-brand-400 border-brand-500/30',
       open_house: 'bg-green-500/20 text-green-300 border-green-500/30',
-      meeting: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+      meeting: 'bg-brand-500/20 text-brand-400 border-brand-500/30',
       other: 'bg-gray-500/20 text-gray-600 border-gray-500/30',
     };
     return colors[eventType as keyof typeof colors] || colors.other;
@@ -178,7 +178,7 @@ export default function CalendarView() {
       <div
         key={day}
         className={`min-h-[100px] border border-gray-200 p-2 ${
-          isToday ? 'bg-purple-500/20' : 'bg-gray-100'
+          isToday ? 'bg-brand-500/20' : 'bg-gray-100'
         } hover:bg-gray-200/30 cursor-pointer transition-colors`}
       >
         <div className={`text-sm font-semibold mb-1 ${
@@ -246,7 +246,7 @@ export default function CalendarView() {
       {/* Event type legend */}
       <div className="flex flex-wrap gap-3 mb-4 text-sm">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded bg-blue-500/20 border border-blue-500/30"></div>
+          <div className="w-3 h-3 rounded bg-brand-500/20 border border-brand-500/30"></div>
           <span className="text-gray-500">Property Showing</span>
         </div>
         <div className="flex items-center gap-2">
@@ -254,7 +254,7 @@ export default function CalendarView() {
           <span className="text-gray-500">Open House</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded bg-purple-500/20 border border-purple-500/30"></div>
+          <div className="w-3 h-3 rounded bg-brand-500/20 border border-brand-500/30"></div>
           <span className="text-gray-500">Meeting</span>
         </div>
         <div className="flex items-center gap-2">
@@ -266,7 +266,7 @@ export default function CalendarView() {
       {/* Calendar grid */}
       {isLoading ? (
         <div className="text-center py-12">
-          <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+          <div className="animate-spin w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full mx-auto"></div>
           <p className="text-gray-500 mt-4">Loading calendar...</p>
         </div>
       ) : (

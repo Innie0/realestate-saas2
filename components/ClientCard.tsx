@@ -60,8 +60,8 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
         <div className="flex-1">
           {/* Client name */}
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-10 h-10 rounded-full bg-sky-500/20 flex items-center justify-center border border-sky-400/30">
-              <User className="w-5 h-5 text-sky-400" />
+            <div className="w-10 h-10 rounded-full bg-brand-500/20 flex items-center justify-center border border-brand-400/30">
+              <User className="w-5 h-5 text-brand-500" />
             </div>
             <div>
               <h3 className="font-semibold text-lg text-gray-900">{client.name}</h3>

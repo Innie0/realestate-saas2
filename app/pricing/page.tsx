@@ -127,7 +127,7 @@ export default function PricingPage() {
             {isAuthenticated ? (
               <span className="text-gray-500 truncate max-w-[220px] block">✓ {userEmail}</span>
             ) : (
-              <Link href="/auth/signup" className="text-gray-500 hover:text-gray-900 transition-colors">
+              <Link href="/auth/signup" className="text-gray-500 hover:text-brand-600 transition-colors">
                 Sign in to subscribe →
               </Link>
             )}
@@ -172,7 +172,7 @@ export default function PricingPage() {
                 {/* Popular badge */}
                 {plan.popular && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-white text-black text-xs font-semibold">
+                    <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-brand-500 text-white text-xs font-semibold">
                       <Sparkles className="w-3 h-3" />
                       Most Popular
                     </span>
@@ -211,7 +211,7 @@ export default function PricingPage() {
                 <ul className="space-y-3 flex-1">
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-3">
-                      <Check className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
+                      <Check className="w-4 h-4 text-brand-500 flex-shrink-0 mt-0.5" />
                       <span className="text-sm text-gray-600">{feature}</span>
                     </li>
                   ))}
@@ -226,7 +226,7 @@ export default function PricingPage() {
               <p className="text-gray-500 text-sm mb-4">You need an account to subscribe</p>
               <button
                 onClick={() => router.push('/auth/signup')}
-                className="px-6 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-gray-100 transition-colors"
+                className="px-6 py-2.5 rounded-xl bg-brand-500 text-white text-sm font-semibold hover:bg-brand-600 transition-colors"
               >
                 Create your account
               </button>

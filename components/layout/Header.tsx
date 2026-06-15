@@ -212,7 +212,7 @@ export default function Header({ title, subtitle }: HeaderProps) {
           <div className="relative" ref={notificationRef}>
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+              className="relative rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-brand-600 transition-colors"
               aria-label="Notifications"
             >
               <Bell className="h-5 w-5" />

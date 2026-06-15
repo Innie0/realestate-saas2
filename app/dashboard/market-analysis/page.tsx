@@ -179,7 +179,7 @@ export default function MarketAnalysisPage() {
                   onChange={e => setStreet(e.target.value)}
                   placeholder="123 Main St"
                   required
-                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-gray-400"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-brand-500"
                 />
               </div>
               <div>
@@ -188,7 +188,7 @@ export default function MarketAnalysisPage() {
                   value={city}
                   onChange={e => setCity(e.target.value)}
                   placeholder="Los Angeles"
-                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-gray-400"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-brand-500"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -198,7 +198,7 @@ export default function MarketAnalysisPage() {
                     value={state}
                     onChange={e => setState(e.target.value)}
                     required
-                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 text-sm focus:outline-none focus:border-gray-400"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 text-sm focus:outline-none focus:border-brand-500"
                   >
                     <option value="">State</option>
                     {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
@@ -211,7 +211,7 @@ export default function MarketAnalysisPage() {
                     onChange={e => setZip(e.target.value)}
                     placeholder="90210"
                     maxLength={10}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-gray-400"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-brand-500"
                   />
                 </div>
               </div>
@@ -220,7 +220,7 @@ export default function MarketAnalysisPage() {
                 <select
                   value={propertyType}
                   onChange={e => setPropertyType(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 text-sm focus:outline-none focus:border-gray-400"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 text-sm focus:outline-none focus:border-brand-500"
                 >
                   {PROPERTY_TYPES.map(pt => (
                     <option key={pt.value} value={pt.value}>{pt.label}</option>
@@ -323,8 +323,8 @@ export default function MarketAnalysisPage() {
               {/* Estimated Value */}
               <div className="bg-white border border-gray-200 rounded-2xl p-5">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center">
-                    <Home className="w-4 h-4 text-emerald-400" />
+                  <div className="w-8 h-8 rounded-lg bg-brand-500/15 flex items-center justify-center">
+                    <Home className="w-4 h-4 text-brand-500" />
                   </div>
                   <p className="text-sm text-gray-500 font-medium">Estimated Value</p>
                 </div>
@@ -345,8 +345,8 @@ export default function MarketAnalysisPage() {
               {/* Rent Estimate */}
               <div className="bg-white border border-gray-200 rounded-2xl p-5">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center">
-                    <DollarSign className="w-4 h-4 text-blue-400" />
+                  <div className="w-8 h-8 rounded-lg bg-brand-500/15 flex items-center justify-center">
+                    <DollarSign className="w-4 h-4 text-brand-500" />
                   </div>
                   <p className="text-sm text-gray-500 font-medium">Monthly Rent Estimate</p>
                 </div>
@@ -369,8 +369,8 @@ export default function MarketAnalysisPage() {
             {result.summary && (
               <div className="bg-white border border-gray-200 rounded-2xl p-5">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-8 h-8 rounded-lg bg-purple-500/15 flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 text-purple-400" />
+                  <div className="w-8 h-8 rounded-lg bg-brand-500/15 flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 text-brand-500" />
                   </div>
                   <p className="text-sm text-gray-500 font-medium">Market Summary</p>
                 </div>
@@ -412,7 +412,7 @@ export default function MarketAnalysisPage() {
                           )}
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          <p className="text-sm font-bold text-emerald-400 whitespace-nowrap">{fmt(comp.price, '$')}</p>
+                          <p className="text-sm font-bold text-brand-500 whitespace-nowrap">{fmt(comp.price, '$')}</p>
                           <button
                             type="button"
                             onClick={() => setExcludedIds(prev => new Set([...prev, realIdx]))}

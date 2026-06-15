@@ -71,7 +71,7 @@ export default function FeedbackWidget() {
             <span className="text-sm font-semibold text-gray-900">Share Feedback</span>
             <button
               onClick={() => setOpen(false)}
-              className="text-gray-500 hover:text-gray-900 transition-colors"
+              className="text-gray-500 hover:text-brand-600 transition-colors"
             >
               <ChevronDown className="w-4 h-4" />
             </button>
@@ -123,7 +123,7 @@ export default function FeedbackWidget() {
               <button
                 type="submit"
                 disabled={submitting || !message.trim()}
-                className="w-full py-2 rounded-xl bg-white text-black text-sm font-semibold hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                className="w-full py-2 rounded-xl bg-brand-500 text-white text-sm font-semibold hover:bg-brand-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
                 {submitting ? (
                   <span>Sending...</span>
@@ -154,7 +154,7 @@ export default function FeedbackWidget() {
 
         <button
           onClick={() => setOpen((prev) => !prev)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-white text-black text-sm font-semibold shadow-lg hover:bg-gray-100 transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-brand-500 text-white text-sm font-semibold shadow-lg hover:bg-brand-600 transition-colors"
         >
           <MessageSquare className="w-4 h-4" />
           Feedback
