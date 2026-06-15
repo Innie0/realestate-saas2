@@ -143,14 +143,14 @@ export default function Sidebar() {
     <>
       {/* Mobile Header with Hamburger Menu */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center flex-1">
+        <div className="flex items-center flex-1 min-h-0 overflow-visible">
           <Image
             src="/logo-sidebar.png"
             alt="Realestic"
             width={480}
             height={144}
             priority
-            className="h-12 w-auto max-w-[260px] object-contain"
+            className="h-9 w-auto max-w-[200px] object-contain scale-[1.65] origin-left"
           />
         </div>
         <button
@@ -191,7 +191,7 @@ export default function Sidebar() {
         }}
       >
         {/* Logo / Brand section at the top - hidden on mobile (shown in header) */}
-        <div className="hidden lg:flex h-28 items-center justify-center border-b border-gray-200 bg-white overflow-hidden px-3">
+        <div className="hidden lg:flex h-16 shrink-0 items-center justify-center border-b border-gray-200 bg-white overflow-visible px-2">
           <div className={clsx(
             'transition-all duration-400',
             isCollapsed ? 'opacity-100 scale-100' : 'opacity-0 scale-50 absolute'
@@ -208,7 +208,7 @@ export default function Sidebar() {
             )}
           </div>
           <div className={clsx(
-            'transition-all duration-400 w-full flex justify-center',
+            'transition-all duration-400 w-full flex justify-center overflow-visible',
             !isCollapsed ? 'opacity-100 scale-100' : 'opacity-0 scale-50 absolute'
           )}>
             {!isCollapsed && (
@@ -218,7 +218,7 @@ export default function Sidebar() {
                 width={640}
                 height={192}
                 priority
-                className="h-20 w-auto max-w-full object-contain"
+                className="h-11 w-auto max-w-[230px] object-contain scale-[1.75] origin-center"
               />
             )}
           </div>
