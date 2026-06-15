@@ -150,7 +150,7 @@ export default function Sidebar() {
             width={480}
             height={144}
             priority
-            className="h-10 w-auto max-w-[220px] object-contain"
+            className="h-12 w-auto max-w-[260px] object-contain"
           />
         </div>
         <button
@@ -191,7 +191,7 @@ export default function Sidebar() {
         }}
       >
         {/* Logo / Brand section at the top - hidden on mobile (shown in header) */}
-        <div className="hidden lg:flex h-24 items-center justify-center border-b border-gray-200 bg-white overflow-hidden px-3">
+        <div className="hidden lg:flex h-28 items-center justify-center border-b border-gray-200 bg-white overflow-hidden px-3">
           <div className={clsx(
             'transition-all duration-400',
             isCollapsed ? 'opacity-100 scale-100' : 'opacity-0 scale-50 absolute'
@@ -218,7 +218,7 @@ export default function Sidebar() {
                 width={640}
                 height={192}
                 priority
-                className="h-14 w-auto max-w-full object-contain"
+                className="h-20 w-auto max-w-full object-contain"
               />
             )}
           </div>
