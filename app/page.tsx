@@ -925,12 +925,12 @@ export default function HomePage() {
         className="relative z-50 border-b border-gray-200 backdrop-blur-md bg-[#F5F5F5]/20"
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="flex h-20 items-center justify-center sm:justify-between">
+          <div className="flex h-28 items-center justify-center sm:justify-between">
             <motion.div
               className="flex items-center absolute left-1/2 -translate-x-1/2 sm:left-6 sm:translate-x-0 lg:left-8"
               whileHover={{ scale: 1.02 }}
             >
-              <Image src="/logo-wordmark.png" alt="Realestic" width={640} height={192} priority className="h-24 w-auto object-contain" />
+              <Image src="/logo-wordmark.png" alt="Realestic" width={800} height={240} priority className="h-32 w-auto object-contain" />
             </motion.div>
             <div className="flex-1" />
             <div className="hidden sm:flex items-center gap-4">
