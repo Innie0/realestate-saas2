@@ -218,7 +218,7 @@ export default function Sidebar() {
                 width={640}
                 height={192}
                 priority
-                className="h-12 w-auto max-w-[240px] object-contain scale-[2.05] origin-center"
+                className="h-12 w-auto max-w-[240px] object-contain scale-[2.25] origin-center"
               />
             )}
           </div>
