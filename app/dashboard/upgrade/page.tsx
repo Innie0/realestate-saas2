@@ -7,6 +7,7 @@ import Header from '@/components/layout/Header';
 import SubscribeButton from '@/components/SubscribeButton';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
+import { formatFeatureText } from '@/lib/formatFeatureText';
 
 const STARTER_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || 'price_1Sw9B7Enz9g2d62xiHw3wYn5';
 const PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || 'price_1Sw9MdEnz9g2d62xlyjilIoq';
@@ -231,7 +232,7 @@ export default function UpgradePage() {
               {PRO_HIGHLIGHTS.map((f, i) => (
                 <li key={i} className="flex items-start gap-2.5">
                   <Check className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-gray-600">{f}</span>
+                  <span className="text-sm text-gray-600">{formatFeatureText(f)}</span>
                 </li>
               ))}
             </ul>

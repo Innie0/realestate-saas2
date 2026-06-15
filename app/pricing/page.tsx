@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Check, Sparkles, Loader2 } from 'lucide-react';
 import SubscribeButton from '@/components/SubscribeButton';
 import { supabase } from '@/lib/supabase';
+import { formatFeatureText } from '@/lib/formatFeatureText';
 
 /**
  * Pricing Page
@@ -212,7 +213,9 @@ export default function PricingPage() {
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-brand-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-600">{feature}</span>
+                      <span className="text-sm text-gray-600">
+                        {plan.name === 'Pro' ? formatFeatureText(feature) : feature}
+                      </span>
                     </li>
                   ))}
                 </ul>

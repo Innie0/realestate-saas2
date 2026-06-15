@@ -11,6 +11,7 @@ import {
   Upload, ImageIcon, Loader2, Link2
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { formatFeatureText } from '@/lib/formatFeatureText';
 
 // ─── Animation Variants ───────────────────────────────────────────────────────
 
@@ -1281,7 +1282,9 @@ export default function HomePage() {
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-3">
                       <CheckCircle className="w-4 h-4 text-brand-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-600">{feature}</span>
+                      <span className="text-sm text-gray-600">
+                        {plan.name === 'Pro' ? formatFeatureText(feature) : feature}
+                      </span>
                     </li>
                   ))}
                 </ul>
