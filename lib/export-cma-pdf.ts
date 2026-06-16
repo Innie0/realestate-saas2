@@ -1,34 +1,12 @@
-import type { ScoredComp, SubjectProperty } from '@/lib/cma';
-import {
-  compsFromScored,
-  type CmaPdfPayload,
-} from '@/lib/cma-pdf-types';
+'use client';
 
-export interface CmaReportForPdf {
-  address: string;
-  propertyType: string | null;
-  radius: number;
-  yearsBack: number;
-  subject: SubjectProperty;
-  valuation: {
-    suggestedPrice: number | null;
-    priceLow: number | null;
-    priceHigh: number | null;
-    compCount: number;
-    medianPricePerSqft: number | null;
-    conditionFactor: number;
-  };
-  avm: {
-    estimatedValue: number | null;
-    valueLow: number | null;
-    valueHigh: number | null;
-  } | null;
-  rentEstimate: {
-    monthlyRent: number | null;
-  } | null;
-  comps: ScoredComp[];
-  summary: string | null;
-}
+import React from 'react';
+import type { CmaPdfPayload } from '@/lib/cma-pdf-types';
+import type { CmaReportForPdf } from '@/lib/cma-report-types';
+import { compsFromScored } from '@/lib/cma-pdf-types';
+import type { ScoredComp, SubjectProperty } from '@/lib/cma';
+
+export type { CmaReportForPdf };
 
 export function buildCmaPdfPayload(
   result: CmaReportForPdf,
@@ -71,24 +49,46 @@ export function buildCmaPdfPayload(
   };
 }
 
-export async function downloadCmaPdf(payload: CmaPdfPayload): Promise<void> {
-  const res = await fetch('/api/market-analysis/pdf', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
+function sanitizeFilename(address: string): string {
+  const base = address
+    .replace(/[^a-zA-Z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .slice(0, 60);
+  return `CMA-${base || 'report'}.pdf`;
+}
 
-  if (!res.ok) {
-    const errData = await res.json().catch(() => ({}));
+export async function downloadCmaPdf(payload: CmaPdfPayload): Promise<void> {
+  const brandingRes = await fetch('/api/market-analysis/pdf/branding');
+  const brandingJson = await brandingRes.json().catch(() => ({}));
+
+  if (!brandingRes.ok || !brandingJson.success) {
     throw new Error(
-      typeof errData.error === 'string' ? errData.error : 'Failed to generate PDF.'
+      typeof brandingJson.error === 'string'
+        ? brandingJson.error
+        : 'Could not load agent branding for PDF.'
     );
   }
 
-  const blob = await res.blob();
-  const disposition = res.headers.get('Content-Disposition') ?? '';
-  const match = disposition.match(/filename="([^"]+)"/);
-  const filename = match?.[1] ?? 'CMA-report.pdf';
+  const [{ pdf }, { CmaPdfDocument }] = await Promise.all([
+    import('@react-pdf/renderer'),
+    import('@/lib/cma-pdf-document'),
+  ]);
+
+  let blob: Blob;
+  try {
+    blob = await pdf(
+      React.createElement(CmaPdfDocument, {
+        report: payload,
+        branding: brandingJson.data,
+      }) as React.ReactElement
+    ).toBlob();
+  } catch (err) {
+    console.error('Client PDF render error:', err);
+    throw new Error('Could not build PDF. Try again or contact support.');
+  }
+
+  const filename = sanitizeFilename(payload.address);
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;

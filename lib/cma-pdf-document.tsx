@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {
   Document,
@@ -201,13 +203,13 @@ export function CmaPdfDocument({ report, branding }: CmaPdfDocumentProps) {
         <View style={styles.box}>
           <Text style={styles.sectionTitle}>Suggested list price</Text>
           {valuation.suggestedPrice ? (
-            <>
+            <View>
               <Text style={styles.priceHero}>{formatPdfMoney(valuation.suggestedPrice)}</Text>
               <Text style={styles.priceRange}>
                 Estimated range: {formatPdfMoney(valuation.priceLow)} –{' '}
                 {formatPdfMoney(valuation.priceHigh)}
               </Text>
-            </>
+            </View>
           ) : (
             <Text style={styles.priceRange}>
               Insufficient comparable sales for a price estimate. Widen search radius or history.
@@ -249,14 +251,14 @@ export function CmaPdfDocument({ report, branding }: CmaPdfDocumentProps) {
           <View style={styles.halfBox}>
             <Text style={styles.refLabel}>AVM reference (automated estimate)</Text>
             {report.avm?.estimatedValue ? (
-              <>
+              <View>
                 <Text style={styles.refValue}>{formatPdfMoney(report.avm.estimatedValue)}</Text>
                 {(report.avm.valueLow || report.avm.valueHigh) && (
                   <Text style={{ fontSize: 8, color: '#9ca3af', marginTop: 2 }}>
                     {formatPdfMoney(report.avm.valueLow)} – {formatPdfMoney(report.avm.valueHigh)}
                   </Text>
                 )}
-              </>
+              </View>
             ) : (
               <Text style={styles.refValue}>—</Text>
             )}
@@ -265,8 +267,7 @@ export function CmaPdfDocument({ report, branding }: CmaPdfDocumentProps) {
             <Text style={styles.refLabel}>Rent estimate</Text>
             {report.rentEstimate?.monthlyRent ? (
               <Text style={styles.refValue}>
-                {formatPdfMoney(report.rentEstimate.monthlyRent)}
-                <Text style={{ fontSize: 10, fontFamily: 'Helvetica' }}>/mo</Text>
+                {`${formatPdfMoney(report.rentEstimate.monthlyRent)}/mo`}
               </Text>
             ) : (
               <Text style={styles.refValue}>—</Text>
