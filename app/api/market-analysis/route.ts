@@ -21,6 +21,13 @@ import {
   filterSoldComps,
   mapRawComp,
 } from '@/lib/comp-filters';
+import {
+  getResearchCache,
+  setResearchCache,
+  normalizeAddressKey,
+  marketAnalysisCacheKey,
+  marketPrefillCacheKey,
+} from '@/lib/property-research-cache';
 
 const RENTCAST_BASE = 'https://api.rentcast.io/v1';
 
@@ -251,7 +258,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { street, city, state, zip, propertyType, radius, yearsBack, prefillOnly } = body;
+    const { street, city, state, zip, propertyType, radius, yearsBack, prefillOnly, forceRefresh } = body;
 
     if (!street || !state) {
       return NextResponse.json(
@@ -259,6 +266,9 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    const addressKey = normalizeAddressKey({ street, city, state, zip });
+    const refresh = forceRefresh === true;
 
     const key = getRentcastKey();
     if (!key) {
@@ -269,10 +279,18 @@ export async function POST(request: NextRequest) {
     }
 
     const address = buildAddress(street, city, state, zip);
-    const rentcastProperty = await fetchRentcastProperty(street, city, state, zip);
 
     // Prefill only — return subject details without using quota
     if (prefillOnly) {
+      const prefillCacheKey = marketPrefillCacheKey(addressKey);
+      if (!refresh) {
+        const cachedPrefill = await getResearchCache(supabase, user.id, 'market_prefill', prefillCacheKey);
+        if (cachedPrefill) {
+          return NextResponse.json({ success: true, data: cachedPrefill, fromCache: true });
+        }
+      }
+
+      const rentcastProperty = await fetchRentcastProperty(street, city, state, zip);
       const [activeListing, avm] = await Promise.all([
         fetchActiveListing(street, city, state, zip),
         fetchAVM(address, key),
@@ -285,16 +303,36 @@ export async function POST(request: NextRequest) {
       );
       const { subject, subjectEnrichment } = mergeSubject(base, body, enrichment);
 
+      const prefillData = {
+        address,
+        subject,
+        subjectEnrichment,
+        propertyType: propertyType || rentcastProperty?.propertyType || null,
+        formattedAddress: rentcastProperty?.formattedAddress || address,
+      };
+
+      await setResearchCache(supabase, user.id, 'market_prefill', prefillCacheKey, prefillData);
+
       return NextResponse.json({
         success: true,
-        data: {
-          address,
-          subject,
-          subjectEnrichment,
-          propertyType: propertyType || rentcastProperty?.propertyType || null,
-          formattedAddress: rentcastProperty?.formattedAddress || address,
-        },
+        data: prefillData,
       });
+    }
+
+    const resolvedPropertyType = propertyType || rentcastProperty?.propertyType || undefined;
+    const resolvedRadius = typeof radius === 'number' && radius > 0 && radius <= 5 ? radius : 0.5;
+    const resolvedDaysOld = typeof yearsBack === 'number' ? Math.round(yearsBack * 365) : 365;
+    const cmaCacheKey = marketAnalysisCacheKey(addressKey, {
+      propertyType: resolvedPropertyType,
+      radius: resolvedRadius,
+      yearsBack: resolvedDaysOld / 365,
+    });
+
+    if (!refresh) {
+      const cachedCma = await getResearchCache(supabase, user.id, 'market_analysis', cmaCacheKey);
+      if (cachedCma) {
+        return NextResponse.json({ success: true, data: cachedCma, fromCache: true });
+      }
     }
 
     const usage = await checkUsageLimit(supabase, user.id, 'market_analyses');
@@ -310,17 +348,18 @@ export async function POST(request: NextRequest) {
 
     await incrementUsage(supabase, user.id, 'market_analyses');
 
+    const rentcastProperty = await fetchRentcastProperty(street, city, state, zip);
+
     const [avm, rentEstimate] = await Promise.all([
       fetchAVM(address, key),
       fetchRentEstimate(address, key),
     ]);
 
-    const resolvedPropertyType = propertyType || rentcastProperty?.propertyType || avm?.propertyType || undefined;
-    const resolvedRadius = typeof radius === 'number' && radius > 0 && radius <= 5 ? radius : 0.5;
-    const resolvedDaysOld = typeof yearsBack === 'number' ? Math.round(yearsBack * 365) : 365;
+    const resolvedPropertyTypeFinal =
+      resolvedPropertyType || avm?.propertyType || undefined;
 
     const [compsRaw, activeListing] = await Promise.all([
-      fetchComps(address, key, resolvedPropertyType, resolvedRadius, resolvedDaysOld),
+      fetchComps(address, key, resolvedPropertyTypeFinal, resolvedRadius, resolvedDaysOld),
       fetchActiveListing(street, city, state, zip),
     ]);
 
@@ -369,44 +408,48 @@ export async function POST(request: NextRequest) {
     const { scoredComps, valuation } = calculateCma(subject, comps);
     const summary = await buildAISummary(address, subject, valuation, avm, rentEstimate, scoredComps);
 
+    const responseData = {
+      address,
+      propertyType: resolvedPropertyTypeFinal ?? null,
+      radius: resolvedRadius,
+      yearsBack: resolvedDaysOld / 365,
+      subject,
+      subjectEnrichment,
+      valuation,
+      activeListing: activeListing
+        ? {
+            address: compAddressFromRaw(activeListing),
+            price: activeListing.price ?? null,
+            listedDate: activeListing.listedDate ?? null,
+            mlsNumber: activeListing.mlsNumber ?? null,
+          }
+        : null,
+      compsFiltered: excludedComps.length,
+      avm: avm
+        ? {
+            estimatedValue: avm.price ?? null,
+            valueLow: avm.priceLow ?? null,
+            valueHigh: avm.priceHigh ?? null,
+            confidence: avm.priceRangePercent ?? null,
+          }
+        : null,
+      rentEstimate: rentEstimate
+        ? {
+            monthlyRent: rentEstimate.rent ?? null,
+            rentLow: rentEstimate.rentRangeLow ?? null,
+            rentHigh: rentEstimate.rentRangeHigh ?? null,
+          }
+        : null,
+      comps: scoredComps,
+      summary,
+      queriedAt: new Date().toISOString(),
+    };
+
+    await setResearchCache(supabase, user.id, 'market_analysis', cmaCacheKey, responseData);
+
     return NextResponse.json({
       success: true,
-      data: {
-        address,
-        propertyType: resolvedPropertyType ?? null,
-        radius: resolvedRadius,
-        yearsBack: resolvedDaysOld / 365,
-        subject,
-        subjectEnrichment,
-        valuation,
-        activeListing: activeListing
-          ? {
-              address: compAddressFromRaw(activeListing),
-              price: activeListing.price ?? null,
-              listedDate: activeListing.listedDate ?? null,
-              mlsNumber: activeListing.mlsNumber ?? null,
-            }
-          : null,
-        compsFiltered: excludedComps.length,
-        avm: avm
-          ? {
-              estimatedValue: avm.price ?? null,
-              valueLow: avm.priceLow ?? null,
-              valueHigh: avm.priceHigh ?? null,
-              confidence: avm.priceRangePercent ?? null,
-            }
-          : null,
-        rentEstimate: rentEstimate
-          ? {
-              monthlyRent: rentEstimate.rent ?? null,
-              rentLow: rentEstimate.rentRangeLow ?? null,
-              rentHigh: rentEstimate.rentRangeHigh ?? null,
-            }
-          : null,
-        comps: scoredComps,
-        summary,
-        queriedAt: new Date().toISOString(),
-      },
+      data: responseData,
     });
   } catch (err) {
     console.error('Error in POST /api/market-analysis:', err);

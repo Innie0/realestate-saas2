@@ -1,7 +1,13 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { MapPin, Phone, Mail, Home, Building, Loader2, AlertCircle, ChevronDown, ChevronUp, Shield, Copy, Check, X, Calendar, DollarSign, Ruler, Bed, Bath, FileText, TrendingUp, Tag, Clock, ExternalLink } from 'lucide-react';
+import { MapPin, Phone, Mail, Home, Building, Loader2, AlertCircle, ChevronDown, ChevronUp, Shield, Copy, Check, X, Calendar, DollarSign, Ruler, Bed, Bath, FileText, TrendingUp, Tag, Clock, ExternalLink, RefreshCw } from 'lucide-react';
+import { normalizeAddressKey } from '@/lib/property-research-cache';
+import {
+  getLocalResearchCache,
+  lookupLocalCacheKey,
+  setLocalResearchCache,
+} from '@/lib/research-local-cache';
 
 // Types for property lookup results
 interface PhoneNumber {
@@ -143,6 +149,7 @@ export function OwnerContactPanel({
   const [error, setError] = useState<string | null>(null);
   const [expandedPersonIndex, setExpandedPersonIndex] = useState<number | null>(0);
   const [copiedText, setCopiedText] = useState<string | null>(null);
+  const [fromCache, setFromCache] = useState(false);
   const isFetchingRef = useRef(false);
   const lastTriggerRef = useRef(0);
   const onCompleteRef = useRef(onComplete);
@@ -155,11 +162,10 @@ export function OwnerContactPanel({
     setTimeout(() => setCopiedText(null), 2000);
   };
 
-  const runLookup = useCallback(async () => {
+  const runLookup = useCallback(async (forceRefresh = false) => {
     if (isFetchingRef.current) return;
 
     setError(null);
-    setResults(null);
     setExpandedPersonIndex(0);
 
     if (!street.trim()) {
@@ -178,6 +184,26 @@ export function OwnerContactPanel({
       return;
     }
 
+    const addressKey = normalizeAddressKey({
+      street: street.trim(),
+      city: city.trim(),
+      state,
+      zip: zip.trim(),
+    });
+    const localKey = lookupLocalCacheKey(addressKey);
+
+    if (!forceRefresh) {
+      const cached = getLocalResearchCache<LookupResponse>(localKey);
+      if (cached) {
+        setResults(cached);
+        setFromCache(true);
+        onCompleteRef.current?.(cached);
+        return;
+      }
+    }
+
+    setResults(null);
+    setFromCache(false);
     isFetchingRef.current = true;
     setIsLoading(true);
     try {
@@ -189,6 +215,7 @@ export function OwnerContactPanel({
           city: city.trim(),
           state,
           zip: zip.trim(),
+          forceRefresh,
         }),
       });
       const data = await response.json();
@@ -198,6 +225,8 @@ export function OwnerContactPanel({
         return;
       }
       setResults(data.data);
+      setFromCache(!!data.fromCache);
+      setLocalResearchCache(localKey, data.data);
       onCompleteRef.current?.(data.data);
     } catch (err) {
       console.error('Property lookup error:', err);
@@ -228,6 +257,20 @@ export function OwnerContactPanel({
         <div className="flex items-center justify-center gap-2 py-12 text-gray-500">
           <Loader2 className="w-5 h-5 animate-spin" />
           Looking up owner and property records…
+        </div>
+      )}
+
+      {fromCache && results && !isLoading && (
+        <div className="flex items-center justify-between gap-3 flex-wrap text-sm bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
+          <span className="text-emerald-800">Loaded from saved search — no API usage.</span>
+          <button
+            type="button"
+            onClick={() => runLookup(true)}
+            className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-900 underline"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            Refresh live data
+          </button>
         </div>
       )}
 

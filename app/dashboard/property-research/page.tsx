@@ -6,6 +6,12 @@ import Header from '@/components/layout/Header';
 import { CmaPanel, type CmaAnalysisResult } from '@/components/property-research/CmaPanel';
 import { OwnerContactPanel, type LookupResponse } from '@/components/property-research/OwnerContactPanel';
 import { PropertyOverviewCard } from '@/components/property-research/PropertyOverviewCard';
+import { normalizeAddressKey } from '@/lib/property-research-cache';
+import {
+  cmaLocalCacheKey,
+  getLocalResearchCache,
+  lookupLocalCacheKey,
+} from '@/lib/research-local-cache';
 import {
   Search, MapPin, Loader2, History, ChevronDown, Trash2, X,
   User, BarChart2, LayoutGrid,
@@ -157,10 +163,21 @@ function PropertyResearchContent() {
     setCity(entry.city);
     setState(entry.state);
     setZip(entry.zip);
-    setLookupData(null);
-    setCmaResult(null);
     setShowHistory(false);
     setActiveTab('overview');
+
+    const addressKey = normalizeAddressKey({
+      street: entry.street,
+      city: entry.city,
+      state: entry.state,
+      zip: entry.zip,
+    });
+    const cachedLookup = getLocalResearchCache<LookupResponse>(lookupLocalCacheKey(addressKey));
+    const cachedCma = getLocalResearchCache<CmaAnalysisResult>(
+      cmaLocalCacheKey(addressKey, { radius: 0.5, yearsBack: 1 })
+    );
+    setLookupData(cachedLookup);
+    setCmaResult(cachedCma);
   };
 
   const clearForm = () => {

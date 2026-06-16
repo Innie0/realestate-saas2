@@ -15,6 +15,12 @@ import {
   ChevronDown, ChevronUp, X, RefreshCw, Info, Download,
 } from 'lucide-react';
 import { buildCmaPdfPayload, downloadCmaPdf } from '@/lib/export-cma-pdf';
+import { normalizeAddressKey } from '@/lib/property-research-cache';
+import {
+  cmaLocalCacheKey,
+  getLocalResearchCache,
+  setLocalResearchCache,
+} from '@/lib/research-local-cache';
 
 export interface CmaValuationResult {
   suggestedPrice: number | null;
@@ -141,12 +147,13 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
   const [excludedIds, setExcludedIds] = useState<Set<number>>(new Set());
   const [showAllComps, setShowAllComps] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
+  const [fromCache, setFromCache] = useState(false);
   const isRunningRef = useRef(false);
   const lastTriggerRef = useRef(0);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
 
-  const buildPayload = (prefillOnly = false) => ({
+  const buildPayload = (prefillOnly = false, forceRefresh = false) => ({
     street: street.trim(),
     city: city.trim(),
     state,
@@ -155,6 +162,7 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
     radius,
     yearsBack,
     prefillOnly,
+    forceRefresh,
     manualFields: Array.from(manualFields),
     bedrooms: subject.bedrooms,
     bathrooms: subject.bathrooms,
@@ -194,17 +202,43 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
     }
   };
 
-  const runAnalysis = useCallback(async () => {
+  const runAnalysis = useCallback(async (forceRefresh = false) => {
     if (isRunningRef.current) return;
     if (!street.trim() || !state) {
       setError('Enter a street address and state above first.');
       return;
     }
 
+    const addressKey = normalizeAddressKey({
+      street: street.trim(),
+      city: city.trim(),
+      state,
+      zip: zip.trim(),
+    });
+    const localKey = cmaLocalCacheKey(addressKey, {
+      propertyType: propertyType || undefined,
+      radius,
+      yearsBack,
+    });
+
+    if (!forceRefresh) {
+      const cached = getLocalResearchCache<CmaAnalysisResult>(localKey);
+      if (cached) {
+        setResult(cached);
+        setSubject(cached.subject);
+        setSubjectEnrichment(cached.subjectEnrichment ?? null);
+        setFromCache(true);
+        setError('');
+        onCompleteRef.current?.(cached);
+        return;
+      }
+    }
+
     isRunningRef.current = true;
     setLoading(true);
     setError('');
     setResult(null);
+    setFromCache(false);
     setShowAllComps(false);
     setExcludedIds(new Set());
 
@@ -212,7 +246,7 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
       const res = await fetch('/api/market-analysis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(buildPayload(false)),
+        body: JSON.stringify(buildPayload(false, forceRefresh)),
       });
       const data = await res.json();
 
@@ -223,6 +257,8 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
         setResult(data.data);
         setSubject(data.data.subject);
         setSubjectEnrichment(data.data.subjectEnrichment ?? null);
+        setFromCache(!!data.fromCache);
+        setLocalResearchCache(localKey, data.data);
         onCompleteRef.current?.(data.data);
       }
     } catch {
@@ -381,7 +417,7 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
 
         <button
           type="button"
-          onClick={runAnalysis}
+          onClick={() => runAnalysis()}
           disabled={loading || !street.trim() || !state}
           className="w-full flex items-center justify-center gap-2 bg-brand-500 text-white font-semibold py-2.5 rounded-xl hover:bg-brand-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
@@ -421,6 +457,18 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
 
       {result && !loading && liveValuation && (
         <div className="space-y-4">
+          {fromCache && (
+            <div className="flex items-center justify-between gap-3 flex-wrap text-sm bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
+              <span className="text-emerald-800">Loaded from saved search — no API usage.</span>
+              <button
+                type="button"
+                onClick={() => runAnalysis(true)}
+                className="text-xs font-medium text-emerald-700 hover:text-emerald-900 underline"
+              >
+                Refresh live data
+              </button>
+            </div>
+          )}
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <div className="flex items-center gap-2 text-sm text-gray-500 flex-wrap min-w-0">
               <MapPin className="w-4 h-4 flex-shrink-0" />

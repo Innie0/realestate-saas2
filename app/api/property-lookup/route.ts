@@ -6,6 +6,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { checkUsageLimit, incrementUsage, usageLimitError } from '@/lib/usage';
+import {
+  getResearchCache,
+  setResearchCache,
+  normalizeAddressKey,
+} from '@/lib/property-research-cache';
 
 /**
  * Step 1: Call Rentcast to get verified owner name and property details.
@@ -200,13 +205,28 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { street, city, state, zip } = body;
+    const { street, city, state, zip, forceRefresh } = body;
 
     if (!street) {
       return NextResponse.json({ success: false, error: 'Street address is required' }, { status: 400 });
     }
     if (!state) {
       return NextResponse.json({ success: false, error: 'State is required' }, { status: 400 });
+    }
+
+    const addressKey = normalizeAddressKey({ street, city, state, zip });
+    const refresh = forceRefresh === true;
+
+    if (!refresh) {
+      const cached = await getResearchCache<{ found: boolean; [key: string]: unknown }>(
+        supabase,
+        user.id,
+        'property_lookup',
+        addressKey
+      );
+      if (cached) {
+        return NextResponse.json({ success: true, data: cached, fromCache: true });
+      }
     }
 
     // Check usage limit (increment only after a successful lookup)
@@ -219,6 +239,11 @@ export async function POST(request: NextRequest) {
     }
 
     const recordLookupUsage = () => incrementUsage(supabase, user.id, 'property_lookups');
+
+    const respondLookup = async (data: Record<string, unknown>) => {
+      await setResearchCache(supabase, user.id, 'property_lookup', addressKey, data);
+      return NextResponse.json({ success: true, data });
+    };
 
     // ── STEP 1: Rentcast — property record + active listing + recently sold (in parallel) ─
     const [rentcastProperty, activeListing, recentlySoldListing] = await Promise.all([
@@ -303,64 +328,58 @@ export async function POST(request: NextRequest) {
         const latestAssessment = latestTaxYear ? rentcastProperty.taxAssessments[latestTaxYear] : null;
 
         await recordLookupUsage();
-        return NextResponse.json({
-          success: true,
-          data: {
-            found: true,
-            results: [{
-              owner: {
-                firstName: parsedFirst,
-                lastName: parsedLast,
-                fullName: rentcastOwnerName || 'Unknown',
-                type: rentcastProperty.owner?.type || 'Unknown',
-              },
-              propertyAddress: {
-                street: rentcastProperty.addressLine1 || street,
-                city: rentcastProperty.city || city,
-                state: rentcastProperty.state || state,
-                zip: rentcastProperty.zipCode || zip,
-                county: rentcastProperty.county || '',
-                latitude: rentcastProperty.latitude || null,
-                longitude: rentcastProperty.longitude || null,
-                formatted: rentcastProperty.formattedAddress || `${street}, ${city}, ${state} ${zip}`.trim(),
-              },
-              mailingAddress: ownerMailingAddr ? {
-                street: ownerMailingAddr.addressLine1 || '',
-                city: ownerMailingAddr.city || '',
-                state: ownerMailingAddr.state || '',
-                zip: ownerMailingAddr.zipCode || '',
-                formatted: ownerMailingAddr.formattedAddress || '',
-              } : { street: '', city: '', state: '', zip: '', formatted: '' },
-              occupancyStatus: rentcastProperty.ownerOccupied === true
-                ? 'Owner-Occupied'
-                : rentcastProperty.ownerOccupied === false
-                  ? 'Absentee Owner (Likely Rental)'
-                  : 'Unknown',
-              phoneNumbers: [],
-              emails: [],
-              isLitigator: false,
-              bankruptcy: {},
-              dnc: {},
-              involuntaryLien: {},
-              matched: true,
-              propertyDetails: buildPropertyDetails(rentcastProperty, latestAssessment),
-              activeListing: buildListingInfo(activeListing),
-              recentlySold: buildListingInfo(recentlySoldListing),
-              dataSource: 'county_records_only',
-            }],
-            searchedAddress: { street, city, state, zip },
-            meta: { requestCount: 1, matchCount: 1 },
-          },
+        return respondLookup({
+          found: true,
+          results: [{
+            owner: {
+              firstName: parsedFirst,
+              lastName: parsedLast,
+              fullName: rentcastOwnerName || 'Unknown',
+              type: rentcastProperty.owner?.type || 'Unknown',
+            },
+            propertyAddress: {
+              street: rentcastProperty.addressLine1 || street,
+              city: rentcastProperty.city || city,
+              state: rentcastProperty.state || state,
+              zip: rentcastProperty.zipCode || zip,
+              county: rentcastProperty.county || '',
+              latitude: rentcastProperty.latitude || null,
+              longitude: rentcastProperty.longitude || null,
+              formatted: rentcastProperty.formattedAddress || `${street}, ${city}, ${state} ${zip}`.trim(),
+            },
+            mailingAddress: ownerMailingAddr ? {
+              street: ownerMailingAddr.addressLine1 || '',
+              city: ownerMailingAddr.city || '',
+              state: ownerMailingAddr.state || '',
+              zip: ownerMailingAddr.zipCode || '',
+              formatted: ownerMailingAddr.formattedAddress || '',
+            } : { street: '', city: '', state: '', zip: '', formatted: '' },
+            occupancyStatus: rentcastProperty.ownerOccupied === true
+              ? 'Owner-Occupied'
+              : rentcastProperty.ownerOccupied === false
+                ? 'Absentee Owner (Likely Rental)'
+                : 'Unknown',
+            phoneNumbers: [],
+            emails: [],
+            isLitigator: false,
+            bankruptcy: {},
+            dnc: {},
+            involuntaryLien: {},
+            matched: true,
+            propertyDetails: buildPropertyDetails(rentcastProperty, latestAssessment),
+            activeListing: buildListingInfo(activeListing),
+            recentlySold: buildListingInfo(recentlySoldListing),
+            dataSource: 'county_records_only',
+          }],
+          searchedAddress: { street, city, state, zip },
+          meta: { requestCount: 1, matchCount: 1 },
         });
       }
 
-      return NextResponse.json({
-        success: true,
-        data: {
-          found: false,
-          message: 'No records found for this address. Please verify the address and try again.',
-          searchedAddress: { street, city, state, zip },
-        },
+      return respondLookup({
+        found: false,
+        message: 'No records found for this address. Please verify the address and try again.',
+        searchedAddress: { street, city, state, zip },
       });
     }
 
@@ -475,16 +494,13 @@ export async function POST(request: NextRequest) {
     });
 
     await recordLookupUsage();
-    return NextResponse.json({
-      success: true,
-      data: {
-        found: true,
-        results: formattedResults,
-        searchedAddress: { street, city, state, zip },
-        meta: {
-          requestCount: meta.results?.requestCount || 1,
-          matchCount: meta.results?.matchCount || formattedResults.length,
-        },
+    return respondLookup({
+      found: true,
+      results: formattedResults,
+      searchedAddress: { street, city, state, zip },
+      meta: {
+        requestCount: meta.results?.requestCount || 1,
+        matchCount: meta.results?.matchCount || formattedResults.length,
       },
     });
 
