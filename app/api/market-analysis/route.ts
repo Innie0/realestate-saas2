@@ -13,6 +13,11 @@ import {
   type ConditionLevel,
   type SubjectProperty,
 } from '@/lib/cma';
+import {
+  compAddressFromRaw,
+  filterSoldComps,
+  mapRawComp,
+} from '@/lib/comp-filters';
 
 const RENTCAST_BASE = 'https://api.rentcast.io/v1';
 
@@ -95,6 +100,23 @@ async function fetchComps(
     return Array.isArray(data) ? data : (data?.listings ?? []);
   } catch {
     return [];
+  }
+}
+
+async function fetchActiveListing(street: string, city: string, state: string, zip: string) {
+  const key = getRentcastKey();
+  if (!key) return null;
+  const address = buildAddress(street, city, state, zip);
+  try {
+    const params = new URLSearchParams({ address, status: 'Active', limit: '1' });
+    const res = await fetch(`${RENTCAST_BASE}/listings/sale?${params}`, {
+      headers: { 'X-Api-Key': key, Accept: 'application/json' },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return Array.isArray(data) && data.length > 0 ? data[0] : null;
+  } catch {
+    return null;
   }
 }
 
@@ -253,21 +275,45 @@ export async function POST(request: NextRequest) {
     const resolvedPropertyType = propertyType || rentcastProperty?.propertyType || avm?.propertyType || undefined;
     const resolvedRadius = typeof radius === 'number' && radius > 0 && radius <= 5 ? radius : 0.5;
     const resolvedDaysOld = typeof yearsBack === 'number' ? Math.round(yearsBack * 365) : 365;
-    const compsRaw = await fetchComps(address, key, resolvedPropertyType, resolvedRadius, resolvedDaysOld);
 
-    const comps = compsRaw.map((c: Record<string, unknown>) => ({
-      address: (c.formattedAddress as string) || [c.addressLine1, c.city, c.state].filter(Boolean).join(', '),
-      propertyType: (c.propertyType as string) ?? null,
-      price: (c.price as number) ?? null,
-      bedrooms: (c.bedrooms as number) ?? null,
-      bathrooms: (c.bathrooms as number) ?? null,
-      squareFootage: (c.squareFootage as number) ?? null,
-      pricePerSqft:
-        c.price && c.squareFootage ? Math.round((c.price as number) / (c.squareFootage as number)) : null,
-      daysOnMarket: (c.daysOnMarket as number) ?? null,
-      soldDate: (c.listedDate as string) ?? (c.lastSaleDate as string) ?? null,
-      distance: (c.distance as number) ?? null,
-    }));
+    const [compsRaw, activeListing] = await Promise.all([
+      fetchComps(address, key, resolvedPropertyType, resolvedRadius, resolvedDaysOld),
+      fetchActiveListing(street, city, state, zip),
+    ]);
+
+    const subjectFormattedAddress =
+      (rentcastProperty?.formattedAddress as string) || address;
+
+    const activeListingAddresses: string[] = [];
+    const activeMlsNumbers: string[] = [];
+    if (activeListing) {
+      const activeAddr = compAddressFromRaw(activeListing);
+      if (activeAddr) activeListingAddresses.push(activeAddr);
+      if (activeListing.mlsNumber) {
+        activeMlsNumbers.push(String(activeListing.mlsNumber));
+      }
+    }
+
+    const { included: validRawComps, excluded: excludedComps } = filterSoldComps(
+      compsRaw,
+      {
+        subjectAddress: subjectFormattedAddress,
+        activeListingAddresses,
+        activeMlsNumbers,
+      }
+    );
+
+    const comps = validRawComps.map(mapRawComp);
+
+    if (excludedComps.length > 0) {
+      console.log(
+        `CMA: filtered ${excludedComps.length} invalid comp(s):`,
+        excludedComps.map((e) => ({
+          address: compAddressFromRaw(e.raw),
+          reason: e.reason,
+        }))
+      );
+    }
 
     const { scoredComps, valuation } = calculateCma(subject, comps);
     const summary = await buildAISummary(address, subject, valuation, avm, rentEstimate, scoredComps);
@@ -281,6 +327,15 @@ export async function POST(request: NextRequest) {
         yearsBack: resolvedDaysOld / 365,
         subject,
         valuation,
+        activeListing: activeListing
+          ? {
+              address: compAddressFromRaw(activeListing),
+              price: activeListing.price ?? null,
+              listedDate: activeListing.listedDate ?? null,
+              mlsNumber: activeListing.mlsNumber ?? null,
+            }
+          : null,
+        compsFiltered: excludedComps.length,
         avm: avm
           ? {
               estimatedValue: avm.price ?? null,

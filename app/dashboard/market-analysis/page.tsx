@@ -47,6 +47,13 @@ interface AnalysisResult {
   yearsBack: number;
   subject: SubjectProperty;
   valuation: CmaValuationResult;
+  activeListing: {
+    address: string;
+    price: number | null;
+    listedDate: string | null;
+    mlsNumber: string | null;
+  } | null;
+  compsFiltered: number;
   avm: AVMResult | null;
   rentEstimate: RentEstimate | null;
   comps: ScoredComp[];
@@ -376,6 +383,27 @@ export default function MarketAnalysisPage() {
                 <span className="text-xs text-gray-500">{result.subject.bedrooms ?? '?'}bd · {result.subject.bathrooms ?? '?'}ba · {result.subject.squareFootage.toLocaleString()} sqft</span>
               )}
             </div>
+
+            {result.activeListing && (
+              <div className="flex items-start gap-2 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="font-medium">This property is currently listed for sale</p>
+                  <p className="text-xs mt-0.5 text-amber-700">
+                    Active list price: {fmt(result.activeListing.price, '$')}
+                    {result.activeListing.mlsNumber && ` · MLS #${result.activeListing.mlsNumber}`}
+                    {result.activeListing.listedDate && ` · Listed ${fmtDate(result.activeListing.listedDate)}`}
+                  </p>
+                  <p className="text-xs mt-1 text-amber-600">It was excluded from comparable sales so it won&apos;t appear as a false &quot;sold&quot; comp.</p>
+                </div>
+              </div>
+            )}
+
+            {result.compsFiltered > 0 && (
+              <p className="text-xs text-gray-500">
+                {result.compsFiltered} listing{result.compsFiltered !== 1 ? 's' : ''} removed — active listings, the subject property, or records without a verified sale date.
+              </p>
+            )}
 
             {/* Primary: comp-based CMA */}
             <div className="bg-white border-2 border-brand-500/30 rounded-2xl p-5">
