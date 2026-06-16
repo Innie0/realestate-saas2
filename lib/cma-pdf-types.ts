@@ -43,6 +43,10 @@ export interface CmaPdfBranding {
   agentPhone: string | null;
   agentHeadline: string | null;
   logoUrl: string | null;
+  /** Pre-fetched logo bytes for PDF embedding */
+  logoBytes?: Uint8Array | null;
+  /** Pre-fetched profile photo bytes for PDF embedding */
+  photoBytes?: Uint8Array | null;
   primaryColor: string;
   secondaryColor: string;
 }

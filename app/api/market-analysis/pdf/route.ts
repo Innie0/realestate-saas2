@@ -19,7 +19,7 @@ function sanitizeFilename(address: string): string {
   return `CMA-${base || 'report'}.pdf`;
 }
 
-function safeLogoUrl(url: unknown): string | null {
+function safeImageUrl(url: unknown): string | null {
   if (typeof url !== 'string' || !url.trim()) return null;
   try {
     const parsed = new URL(url);
@@ -28,6 +28,17 @@ function safeLogoUrl(url: unknown): string | null {
     /* ignore */
   }
   return null;
+}
+
+async function fetchImageBytes(url: string | null): Promise<Uint8Array | null> {
+  if (!url) return null;
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) return null;
+    return new Uint8Array(await res.arrayBuffer());
+  } catch {
+    return null;
+  }
 }
 
 function isValidPayload(body: unknown): body is CmaPdfPayload {
@@ -71,6 +82,14 @@ export async function POST(request: NextRequest) {
     const agent = agentResult.error ? null : agentResult.data;
     const meta = user.user_metadata ?? {};
 
+    const logoUrl = safeImageUrl(brand?.logo_url);
+    const photoUrl = safeImageUrl(agent?.profile_photo_url);
+
+    const [logoBytes, photoBytes] = await Promise.all([
+      fetchImageBytes(logoUrl),
+      fetchImageBytes(photoUrl),
+    ]);
+
     const branding: CmaPdfBranding = {
       agentName:
         (typeof meta.full_name === 'string' && meta.full_name) ||
@@ -80,7 +99,9 @@ export async function POST(request: NextRequest) {
       agentEmail: agent?.profile_email || user.email || '',
       agentPhone: agent?.profile_phone || null,
       agentHeadline: agent?.profile_headline || null,
-      logoUrl: safeLogoUrl(brand?.logo_url),
+      logoUrl,
+      logoBytes,
+      photoBytes,
       primaryColor: brand?.primary_color || DEFAULT_PRIMARY,
       secondaryColor: brand?.secondary_color || DEFAULT_SECONDARY,
     };
