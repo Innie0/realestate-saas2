@@ -319,11 +319,10 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const resolvedPropertyType = propertyType || rentcastProperty?.propertyType || undefined;
     const resolvedRadius = typeof radius === 'number' && radius > 0 && radius <= 5 ? radius : 0.5;
     const resolvedDaysOld = typeof yearsBack === 'number' ? Math.round(yearsBack * 365) : 365;
     const cmaCacheKey = marketAnalysisCacheKey(addressKey, {
-      propertyType: resolvedPropertyType,
+      propertyType: propertyType || undefined,
       radius: resolvedRadius,
       yearsBack: resolvedDaysOld / 365,
     });
@@ -356,7 +355,7 @@ export async function POST(request: NextRequest) {
     ]);
 
     const resolvedPropertyTypeFinal =
-      resolvedPropertyType || avm?.propertyType || undefined;
+      propertyType || rentcastProperty?.propertyType || avm?.propertyType || undefined;
 
     const [compsRaw, activeListing] = await Promise.all([
       fetchComps(address, key, resolvedPropertyTypeFinal, resolvedRadius, resolvedDaysOld),
