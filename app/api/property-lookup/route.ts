@@ -209,7 +209,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'State is required' }, { status: 400 });
     }
 
-    // Check usage limit
+    // Check usage limit (increment only after a successful lookup)
     const usage = await checkUsageLimit(supabase, user.id, 'property_lookups');
     if (!usage.allowed) {
       return NextResponse.json(
@@ -218,8 +218,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Increment usage before making API calls (cost is incurred regardless of result)
-    await incrementUsage(supabase, user.id, 'property_lookups');
+    const recordLookupUsage = () => incrementUsage(supabase, user.id, 'property_lookups');
 
     // ── STEP 1: Rentcast — property record + active listing + recently sold (in parallel) ─
     const [rentcastProperty, activeListing, recentlySoldListing] = await Promise.all([
@@ -303,6 +302,7 @@ export async function POST(request: NextRequest) {
           : null;
         const latestAssessment = latestTaxYear ? rentcastProperty.taxAssessments[latestTaxYear] : null;
 
+        await recordLookupUsage();
         return NextResponse.json({
           success: true,
           data: {
@@ -474,6 +474,7 @@ export async function POST(request: NextRequest) {
       };
     });
 
+    await recordLookupUsage();
     return NextResponse.json({
       success: true,
       data: {

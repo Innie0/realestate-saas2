@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState, Suspense } from 'react';
+import { useCallback, useEffect, useState, Suspense, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import { CmaPanel, type CmaAnalysisResult } from '@/components/property-research/CmaPanel';
@@ -69,16 +69,52 @@ function PropertyResearchContent() {
   const [cmaResult, setCmaResult] = useState<CmaAnalysisResult | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [usageHint, setUsageHint] = useState<string | null>(null);
 
   useEffect(() => {
     document.title = 'Property Research - Realestic';
   }, []);
 
   useEffect(() => {
+    fetch('/api/usage')
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data.success) return;
+        const lookups = data.data?.property_lookups;
+        const cma = data.data?.market_analyses;
+        const parts: string[] = [];
+        if (lookups) {
+          parts.push(
+            lookups.limit === -1
+              ? 'Lookups: unlimited'
+              : `Lookups: ${lookups.current}/${lookups.limit} this month`
+          );
+        }
+        if (cma) {
+          parts.push(
+            cma.limit === -1
+              ? 'CMA: unlimited'
+              : `CMA: ${cma.current}/${cma.limit} this month`
+          );
+        }
+        if (parts.length) setUsageHint(parts.join(' · '));
+      })
+      .catch(() => {});
+  }, [lookupTrigger, cmaTrigger]);
+
+  useEffect(() => {
     try {
       const stored = localStorage.getItem(HISTORY_KEY);
       if (stored) setHistory(JSON.parse(stored));
     } catch {}
+  }, []);
+
+  const handleLookupComplete = useCallback((data: LookupResponse | null) => {
+    setLookupData(data);
+  }, []);
+
+  const handleCmaComplete = useCallback((data: CmaAnalysisResult | null) => {
+    setCmaResult(data);
   }, []);
 
   const addressLabel = [street, city, state, zip].filter(Boolean).join(', ');
@@ -212,7 +248,9 @@ function PropertyResearchContent() {
                 <input type="text" value={zip} onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder="93291" className="w-full px-4 py-3 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
               </div>
             </div>
-            <p className="text-xs text-gray-500">Look up uses your property lookup quota. CMA uses your market analysis quota.</p>
+            <p className="text-xs text-gray-500">
+              {usageHint || 'Look up uses your property lookup quota. CMA uses your market analysis quota.'}
+            </p>
             <div className="flex flex-wrap items-center gap-3">
               <button
                 type="button"
@@ -260,8 +298,8 @@ function PropertyResearchContent() {
           ))}
         </div>
 
-        {/* Tab content */}
-        {activeTab === 'overview' && (
+        {/* Tab content — keep mounted to avoid re-triggering lookups on tab switch */}
+        <div className={activeTab === 'overview' ? '' : 'hidden'}>
           <PropertyOverviewCard
             addressLabel={addressLabel || 'No address entered'}
             person={firstPerson}
@@ -270,29 +308,29 @@ function PropertyResearchContent() {
             onLookUpOwner={() => { setActiveTab('owner'); if (!firstPerson) handleLookUp(); }}
             onRunCma={() => { setActiveTab('cma'); if (!cmaResult) handleRunCma(); }}
           />
-        )}
+        </div>
 
-        {activeTab === 'owner' && (
+        <div className={activeTab === 'owner' ? '' : 'hidden'}>
           <OwnerContactPanel
             street={street}
             city={city}
             state={state}
             zip={zip}
             lookupTrigger={lookupTrigger}
-            onComplete={(data) => setLookupData(data ?? null)}
+            onComplete={handleLookupComplete}
           />
-        )}
+        </div>
 
-        {activeTab === 'cma' && (
+        <div className={activeTab === 'cma' ? '' : 'hidden'}>
           <CmaPanel
             street={street}
             city={city}
             state={state}
             zip={zip}
             runTrigger={cmaTrigger}
-            onComplete={(data) => setCmaResult(data)}
+            onComplete={handleCmaComplete}
           />
-        )}
+        </div>
       </div>
     </div>
   );

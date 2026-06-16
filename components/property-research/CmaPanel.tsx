@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import {
   CONDITION_OPTIONS,
   defaultSubject,
@@ -104,6 +104,10 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
   const [result, setResult] = useState<CmaAnalysisResult | null>(null);
   const [excludedIds, setExcludedIds] = useState<Set<number>>(new Set());
   const [showAllComps, setShowAllComps] = useState(false);
+  const isRunningRef = useRef(false);
+  const lastTriggerRef = useRef(0);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   const buildPayload = (prefillOnly = false) => ({
     street: street.trim(),
@@ -150,12 +154,14 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
     }
   };
 
-  const runAnalysis = async () => {
+  const runAnalysis = useCallback(async () => {
+    if (isRunningRef.current) return;
     if (!street.trim() || !state) {
       setError('Enter a street address and state above first.');
       return;
     }
 
+    isRunningRef.current = true;
     setLoading(true);
     setError('');
     setResult(null);
@@ -172,26 +178,26 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
 
       if (!data.success) {
         setError(data.error || 'Analysis failed. Please try again.');
-        onComplete?.(null);
+        onCompleteRef.current?.(null);
       } else {
         setResult(data.data);
         setSubject(data.data.subject);
-        onComplete?.(data.data);
+        onCompleteRef.current?.(data.data);
       }
     } catch {
       setError('Something went wrong. Please try again.');
-      onComplete?.(null);
+      onCompleteRef.current?.(null);
     } finally {
+      isRunningRef.current = false;
       setLoading(false);
     }
-  };
+  }, [street, city, state, zip, propertyType, radius, yearsBack, subject]);
 
   useEffect(() => {
-    if (runTrigger > 0) {
-      runAnalysis();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [runTrigger]);
+    if (runTrigger <= 0 || runTrigger === lastTriggerRef.current) return;
+    lastTriggerRef.current = runTrigger;
+    runAnalysis();
+  }, [runTrigger, runAnalysis]);
 
   const activeComps = result?.comps.filter((_, i) => !excludedIds.has(i)) ?? [];
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { MapPin, Phone, Mail, Home, Building, Loader2, AlertCircle, ChevronDown, ChevronUp, Shield, Copy, Check, X, Calendar, DollarSign, Ruler, Bed, Bath, FileText, TrendingUp, Tag, Clock, ExternalLink } from 'lucide-react';
 
 // Types for property lookup results
@@ -143,6 +143,10 @@ export function OwnerContactPanel({
   const [error, setError] = useState<string | null>(null);
   const [expandedPersonIndex, setExpandedPersonIndex] = useState<number | null>(0);
   const [copiedText, setCopiedText] = useState<string | null>(null);
+  const isFetchingRef = useRef(false);
+  const lastTriggerRef = useRef(0);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   // Copy to clipboard helper
   const copyToClipboard = (text: string) => {
@@ -152,26 +156,29 @@ export function OwnerContactPanel({
   };
 
   const runLookup = useCallback(async () => {
+    if (isFetchingRef.current) return;
+
     setError(null);
     setResults(null);
     setExpandedPersonIndex(0);
 
     if (!street.trim()) {
       setError('Please enter a street address');
-      onComplete?.(null);
+      onCompleteRef.current?.(null);
       return;
     }
     if (!state) {
       setError('Please select a state');
-      onComplete?.(null);
+      onCompleteRef.current?.(null);
       return;
     }
     if (!city.trim() && !zip.trim()) {
       setError('Please enter either a city or ZIP code');
-      onComplete?.(null);
+      onCompleteRef.current?.(null);
       return;
     }
 
+    isFetchingRef.current = true;
     setIsLoading(true);
     try {
       const response = await fetch('/api/property-lookup', {
@@ -187,24 +194,25 @@ export function OwnerContactPanel({
       const data = await response.json();
       if (!data.success) {
         setError(data.error || 'Failed to look up property');
-        onComplete?.(null);
+        onCompleteRef.current?.(null);
         return;
       }
       setResults(data.data);
-      onComplete?.(data.data);
+      onCompleteRef.current?.(data.data);
     } catch (err) {
       console.error('Property lookup error:', err);
       setError('An unexpected error occurred. Please try again.');
-      onComplete?.(null);
+      onCompleteRef.current?.(null);
     } finally {
+      isFetchingRef.current = false;
       setIsLoading(false);
     }
-  }, [street, city, state, zip, onComplete]);
+  }, [street, city, state, zip]);
 
   useEffect(() => {
-    if (lookupTrigger > 0) {
-      runLookup();
-    }
+    if (lookupTrigger <= 0 || lookupTrigger === lastTriggerRef.current) return;
+    lastTriggerRef.current = lookupTrigger;
+    runLookup();
   }, [lookupTrigger, runLookup]);
 
   // Get occupancy status badge color
