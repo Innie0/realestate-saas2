@@ -1,7 +1,9 @@
 'use client';
 
-import { Bed, Bath, Ruler, Home, Tag, DollarSign, TrendingUp, User, BarChart2 } from 'lucide-react';
+import { useState } from 'react';
+import { Bed, Bath, Ruler, Home, Tag, DollarSign, TrendingUp, User, BarChart2, Download, Loader2 } from 'lucide-react';
 import type { CmaAnalysisResult } from './CmaPanel';
+import { buildCmaPdfPayload, downloadCmaPdf } from '@/lib/export-cma-pdf';
 
 interface PropertyDetails {
   bedrooms?: string | number | null;
@@ -54,6 +56,22 @@ export function PropertyOverviewCard({
   onLookUpOwner,
   onRunCma,
 }: PropertyOverviewCardProps) {
+  const [exportingPdf, setExportingPdf] = useState(false);
+  const [exportError, setExportError] = useState('');
+
+  const handleExportPdf = async () => {
+    if (!cmaResult) return;
+    setExportingPdf(true);
+    setExportError('');
+    try {
+      await downloadCmaPdf(buildCmaPdfPayload(cmaResult));
+    } catch (err) {
+      setExportError(err instanceof Error ? err.message : 'Could not export PDF.');
+    } finally {
+      setExportingPdf(false);
+    }
+  };
+
   const details = person?.propertyDetails;
   const active = person?.activeListing;
   const ownerName = person?.owner?.fullName;
@@ -138,16 +156,37 @@ export function PropertyOverviewCard({
           )}
         </div>
 
-        {cmaResult?.valuation?.suggestedPrice && (
+        {cmaResult && (
           <div className="p-4 rounded-xl border-2 border-brand-500/20 bg-brand-50/30">
             <div className="flex items-center gap-2 mb-1">
               <TrendingUp className="w-4 h-4 text-brand-500" />
-              <p className="text-xs font-medium text-gray-600">Suggested List Price (CMA)</p>
+              <p className="text-xs font-medium text-gray-600">CMA Results</p>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{fmt(cmaResult.valuation.suggestedPrice, '$')}</p>
-            <p className="text-xs text-gray-500 mt-1">
-              Range {fmt(cmaResult.valuation.priceLow, '$')} – {fmt(cmaResult.valuation.priceHigh, '$')}
-            </p>
+            {cmaResult.valuation?.suggestedPrice ? (
+              <>
+                <p className="text-2xl font-bold text-gray-900">{fmt(cmaResult.valuation.suggestedPrice, '$')}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Range {fmt(cmaResult.valuation.priceLow, '$')} – {fmt(cmaResult.valuation.priceHigh, '$')}
+                </p>
+              </>
+            ) : (
+              <p className="text-sm text-gray-600">Analysis complete — open Market / CMA for full details.</p>
+            )}
+            <button
+              type="button"
+              onClick={handleExportPdf}
+              disabled={exportingPdf}
+              className="mt-3 w-full flex items-center justify-center gap-2 text-sm font-medium text-brand-600 border border-brand-300 bg-white rounded-lg py-2 hover:bg-brand-50 disabled:opacity-50"
+            >
+              {exportingPdf ? (
+                <><Loader2 className="w-4 h-4 animate-spin" /> Generating PDF…</>
+              ) : (
+                <><Download className="w-4 h-4" /> Export Seller PDF</>
+              )}
+            </button>
+            {exportError && (
+              <p className="text-xs text-red-600 mt-2">{exportError}</p>
+            )}
           </div>
         )}
 

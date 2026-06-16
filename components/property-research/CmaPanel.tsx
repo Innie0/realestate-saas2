@@ -14,7 +14,7 @@ import {
   TrendingUp, BedDouble, Bath, Ruler, MapPin, Sparkles,
   ChevronDown, ChevronUp, X, RefreshCw, Info, Download,
 } from 'lucide-react';
-import { compsFromScored, type CmaPdfPayload } from '@/lib/cma-pdf-types';
+import { buildCmaPdfPayload, downloadCmaPdf } from '@/lib/export-cma-pdf';
 
 export interface CmaValuationResult {
   suggestedPrice: number | null;
@@ -269,55 +269,12 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
     setExportingPdf(true);
     setError('');
     try {
-      const payload: CmaPdfPayload = {
-        address: result.address,
-        propertyType: result.propertyType,
-        radius: result.radius,
-        yearsBack: result.yearsBack,
+      const payload = buildCmaPdfPayload(result, {
         subject,
-        valuation: {
-          suggestedPrice: liveValuation.suggestedPrice,
-          priceLow: liveValuation.priceLow,
-          priceHigh: liveValuation.priceHigh,
-          compCount: liveValuation.compCount,
-          medianPricePerSqft: liveValuation.medianPricePerSqft,
-        },
-        avm: result.avm
-          ? {
-              estimatedValue: result.avm.estimatedValue,
-              valueLow: result.avm.valueLow,
-              valueHigh: result.avm.valueHigh,
-            }
-          : null,
-        rentEstimate: result.rentEstimate?.monthlyRent
-          ? { monthlyRent: result.rentEstimate.monthlyRent }
-          : null,
-        comps: compsFromScored(activeComps, liveValuation.conditionFactor),
-        summary: result.summary,
-        generatedAt: new Date().toISOString(),
-      };
-
-      const res = await fetch('/api/market-analysis/pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        comps: activeComps,
+        valuation: liveValuation,
       });
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || 'Failed to generate PDF.');
-      }
-
-      const blob = await res.blob();
-      const disposition = res.headers.get('Content-Disposition') ?? '';
-      const match = disposition.match(/filename="([^"]+)"/);
-      const filename = match?.[1] ?? 'CMA-report.pdf';
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      link.click();
-      URL.revokeObjectURL(url);
+      await downloadCmaPdf(payload);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not export PDF.');
     } finally {
@@ -434,6 +391,21 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
             <><TrendingUp className="w-4 h-4" /> Run Comp-Based Analysis</>
           )}
         </button>
+
+        {result && liveValuation && !loading && (
+          <button
+            type="button"
+            onClick={handleExportPdf}
+            disabled={exportingPdf}
+            className="w-full flex items-center justify-center gap-2 bg-white border-2 border-brand-500 text-brand-600 font-semibold py-2.5 rounded-xl hover:bg-brand-50 transition-colors disabled:opacity-50"
+          >
+            {exportingPdf ? (
+              <><Loader2 className="w-4 h-4 animate-spin" /> Generating PDF…</>
+            ) : (
+              <><Download className="w-4 h-4" /> Export Seller PDF</>
+            )}
+          </button>
+        )}
       </div>
 
       {loading && (
