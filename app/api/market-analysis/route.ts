@@ -7,9 +7,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { checkUsageLimit, incrementUsage, usageLimitError } from '@/lib/usage';
 import {
+  enrichSubjectFromRecords,
+  type SubjectEnrichmentMeta,
+} from '@/lib/subject-enrichment';
+import {
   calculateCma,
   defaultSubject,
-  subjectFromRentcast,
   type ConditionLevel,
   type SubjectProperty,
 } from '@/lib/cma';
@@ -121,24 +124,52 @@ async function fetchActiveListing(street: string, city: string, state: string, z
 }
 
 function mergeSubject(
-  rentcastProperty: Record<string, unknown> | null,
-  body: Record<string, unknown>
-): SubjectProperty {
-  const base = rentcastProperty ? subjectFromRentcast(rentcastProperty) : defaultSubject();
-
+  base: SubjectProperty,
+  body: Record<string, unknown>,
+  enrichment: SubjectEnrichmentMeta | null
+): { subject: SubjectProperty; subjectEnrichment: SubjectEnrichmentMeta | null } {
   const num = (v: unknown) => (typeof v === 'number' && !Number.isNaN(v) ? v : null);
   const bool = (v: unknown) => v === true;
+  const manual = new Set(
+    Array.isArray(body.manualFields) ? body.manualFields.map(String) : []
+  );
 
   return {
-    bedrooms: num(body.bedrooms) ?? base.bedrooms,
-    bathrooms: num(body.bathrooms) ?? base.bathrooms,
-    squareFootage: num(body.squareFootage) ?? base.squareFootage,
-    lotSize: num(body.lotSize) ?? base.lotSize,
-    yearBuilt: num(body.yearBuilt) ?? base.yearBuilt,
-    condition: (body.condition as ConditionLevel) || base.condition,
-    hasPool: body.hasPool !== undefined ? bool(body.hasPool) : base.hasPool,
-    garageSpaces: num(body.garageSpaces) ?? base.garageSpaces,
+    subject: {
+      bedrooms: num(body.bedrooms) ?? base.bedrooms,
+      bathrooms: num(body.bathrooms) ?? base.bathrooms,
+      squareFootage: num(body.squareFootage) ?? base.squareFootage,
+      lotSize: num(body.lotSize) ?? base.lotSize,
+      yearBuilt: num(body.yearBuilt) ?? base.yearBuilt,
+      condition: manual.has('condition') && body.condition
+        ? (body.condition as ConditionLevel)
+        : base.condition,
+      hasPool: manual.has('hasPool') && body.hasPool !== undefined ? bool(body.hasPool) : base.hasPool,
+      garageSpaces: manual.has('garageSpaces') && body.garageSpaces !== undefined
+        ? (num(body.garageSpaces) ?? 0)
+        : base.garageSpaces,
+    },
+    subjectEnrichment: enrichment,
   };
+}
+
+async function buildAutoSubject(
+  rentcastProperty: Record<string, unknown> | null,
+  activeListing: Record<string, unknown> | null,
+  avmPrice: number | null,
+  useAi: boolean
+) {
+  if (!rentcastProperty) {
+    return { base: defaultSubject(), enrichment: null as SubjectEnrichmentMeta | null };
+  }
+  const enriched = await enrichSubjectFromRecords(
+    rentcastProperty,
+    activeListing,
+    avmPrice,
+    useAi
+  );
+  const { enrichment, ...base } = enriched;
+  return { base, enrichment: enrichment ?? null };
 }
 
 async function buildAISummary(
@@ -239,15 +270,27 @@ export async function POST(request: NextRequest) {
 
     const address = buildAddress(street, city, state, zip);
     const rentcastProperty = await fetchRentcastProperty(street, city, state, zip);
-    const subject = mergeSubject(rentcastProperty, body);
 
     // Prefill only — return subject details without using quota
     if (prefillOnly) {
+      const [activeListing, avm] = await Promise.all([
+        fetchActiveListing(street, city, state, zip),
+        fetchAVM(address, key),
+      ]);
+      const { base, enrichment } = await buildAutoSubject(
+        rentcastProperty,
+        activeListing,
+        avm?.price ?? null,
+        true
+      );
+      const { subject, subjectEnrichment } = mergeSubject(base, body, enrichment);
+
       return NextResponse.json({
         success: true,
         data: {
           address,
           subject,
+          subjectEnrichment,
           propertyType: propertyType || rentcastProperty?.propertyType || null,
           formattedAddress: rentcastProperty?.formattedAddress || address,
         },
@@ -315,6 +358,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const { base: autoSubject, enrichment } = await buildAutoSubject(
+      rentcastProperty,
+      activeListing,
+      avm?.price ?? null,
+      true
+    );
+    const { subject, subjectEnrichment } = mergeSubject(autoSubject, body, enrichment);
+
     const { scoredComps, valuation } = calculateCma(subject, comps);
     const summary = await buildAISummary(address, subject, valuation, avm, rentEstimate, scoredComps);
 
@@ -326,6 +377,7 @@ export async function POST(request: NextRequest) {
         radius: resolvedRadius,
         yearsBack: resolvedDaysOld / 365,
         subject,
+        subjectEnrichment,
         valuation,
         activeListing: activeListing
           ? {

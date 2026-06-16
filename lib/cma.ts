@@ -84,6 +84,17 @@ export function defaultSubject(): SubjectProperty {
 
 export function subjectFromRentcast(property: Record<string, unknown> | null): SubjectProperty {
   if (!property) return defaultSubject();
+  // Sync subset — full enrichment runs in enrichSubjectFromRecords (API)
+  const features =
+    property.features && typeof property.features === 'object'
+      ? (property.features as Record<string, unknown>)
+      : null;
+  const garageSpaces =
+    typeof features?.garageSpaces === 'number' && features.garageSpaces > 0
+      ? features.garageSpaces
+      : features?.garage === true
+        ? 1
+        : 0;
   return {
     bedrooms: typeof property.bedrooms === 'number' ? property.bedrooms : null,
     bathrooms: typeof property.bathrooms === 'number' ? property.bathrooms : null,
@@ -91,8 +102,8 @@ export function subjectFromRentcast(property: Record<string, unknown> | null): S
     lotSize: typeof property.lotSize === 'number' ? property.lotSize : null,
     yearBuilt: typeof property.yearBuilt === 'number' ? property.yearBuilt : null,
     condition: 'average',
-    hasPool: false,
-    garageSpaces: 0,
+    hasPool: features?.pool === true,
+    garageSpaces,
   };
 }
 

@@ -25,12 +25,19 @@ export interface CmaValuationResult {
   conditionFactor: number;
 }
 
+export interface SubjectEnrichmentMeta {
+  hasPool: 'county' | 'mls' | 'heuristic' | 'ai' | 'default';
+  garageSpaces: 'county' | 'mls' | 'heuristic' | 'ai' | 'default';
+  condition: 'county' | 'mls' | 'heuristic' | 'ai' | 'default';
+}
+
 export interface CmaAnalysisResult {
   address: string;
   propertyType: string | null;
   radius: number;
   yearsBack: number;
   subject: SubjectProperty;
+  subjectEnrichment?: SubjectEnrichmentMeta | null;
   valuation: CmaValuationResult;
   activeListing: {
     address: string;
@@ -74,6 +81,32 @@ function fmt(n: number | null | undefined, prefix = '', suffix = '') {
   return `${prefix}${n.toLocaleString()}${suffix}`;
 }
 
+function enrichmentLabel(source: SubjectEnrichmentMeta[keyof SubjectEnrichmentMeta] | undefined) {
+  switch (source) {
+    case 'county':
+      return 'County records';
+    case 'mls':
+      return 'MLS listing';
+    case 'heuristic':
+      return 'Estimated from price & size';
+    case 'ai':
+      return 'AI from listing remarks';
+    default:
+      return null;
+  }
+}
+
+function AutoDetectHint({ source }: { source: SubjectEnrichmentMeta[keyof SubjectEnrichmentMeta] | undefined }) {
+  const label = enrichmentLabel(source);
+  if (!label) return null;
+  return (
+    <span className="inline-flex items-center gap-1 text-[10px] text-brand-600 mt-0.5">
+      <Sparkles className="w-3 h-3" />
+      Auto: {label}
+    </span>
+  );
+}
+
 function fmtDate(s: string | null) {
   if (!s) return '—';
   try {
@@ -98,6 +131,8 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
   const [radius, setRadius] = useState(0.5);
   const [yearsBack, setYearsBack] = useState(1);
   const [subject, setSubject] = useState<SubjectProperty>(defaultSubject());
+  const [subjectEnrichment, setSubjectEnrichment] = useState<SubjectEnrichmentMeta | null>(null);
+  const [manualFields, setManualFields] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
   const [prefilling, setPrefilling] = useState(false);
   const [error, setError] = useState('');
@@ -118,6 +153,7 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
     radius,
     yearsBack,
     prefillOnly,
+    manualFields: Array.from(manualFields),
     bedrooms: subject.bedrooms,
     bathrooms: subject.bathrooms,
     squareFootage: subject.squareFootage,
@@ -143,6 +179,8 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
         setError(data.error || 'Could not load property details.');
       } else {
         setSubject(data.data.subject);
+        setSubjectEnrichment(data.data.subjectEnrichment ?? null);
+        setManualFields(new Set());
         if (data.data.propertyType && !propertyType) {
           setPropertyType(data.data.propertyType);
         }
@@ -182,6 +220,7 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
       } else {
         setResult(data.data);
         setSubject(data.data.subject);
+        setSubjectEnrichment(data.data.subjectEnrichment ?? null);
         onCompleteRef.current?.(data.data);
       }
     } catch {
@@ -191,7 +230,15 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
       isRunningRef.current = false;
       setLoading(false);
     }
-  }, [street, city, state, zip, propertyType, radius, yearsBack, subject]);
+  }, [street, city, state, zip, propertyType, radius, yearsBack, subject, manualFields]);
+
+  useEffect(() => {
+    setSubject(defaultSubject());
+    setSubjectEnrichment(null);
+    setManualFields(new Set());
+    setResult(null);
+    setError('');
+  }, [street, city, state, zip]);
 
   useEffect(() => {
     if (runTrigger <= 0 || runTrigger === lastTriggerRef.current) return;
@@ -209,6 +256,9 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
   const visibleComps = showAllComps ? activeComps : activeComps.slice(0, 5);
 
   const updateSubject = <K extends keyof SubjectProperty>(key: K, value: SubjectProperty[K]) => {
+    if (key === 'condition' || key === 'hasPool' || key === 'garageSpaces') {
+      setManualFields((prev) => new Set(prev).add(key));
+    }
     setSubject((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -254,18 +304,31 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
                   <option key={c.value} value={c.value}>{c.label}</option>
                 ))}
               </select>
+              {!manualFields.has('condition') && (
+                <AutoDetectHint source={subjectEnrichment?.condition} />
+              )}
             </div>
             <div>
               <label className="block text-xs text-gray-500 mb-1">Garage Spaces</label>
               <input type="number" min={0} max={10} value={subject.garageSpaces} onChange={(e) => updateSubject('garageSpaces', Number(e.target.value) || 0)} className={inputClass} />
+              {!manualFields.has('garageSpaces') && (
+                <AutoDetectHint source={subjectEnrichment?.garageSpaces} />
+              )}
             </div>
-            <div className="flex items-end pb-1">
+            <div className="flex flex-col justify-end pb-1">
               <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
                 <input type="checkbox" checked={subject.hasPool} onChange={(e) => updateSubject('hasPool', e.target.checked)} className="rounded border-gray-300 text-brand-500 focus:ring-brand-500" />
                 Has pool
               </label>
+              {!manualFields.has('hasPool') && (
+                <AutoDetectHint source={subjectEnrichment?.hasPool} />
+              )}
             </div>
           </div>
+          <p className="text-xs text-gray-500 flex items-start gap-1.5">
+            <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
+            Pool and garage come from county/MLS when available. Luxury condition is estimated from price, size, and listing text — verify before sharing with a client.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
