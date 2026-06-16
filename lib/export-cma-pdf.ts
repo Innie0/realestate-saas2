@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
 import type { CmaPdfPayload } from '@/lib/cma-pdf-types';
 import type { CmaReportForPdf } from '@/lib/cma-report-types';
 import { compsFromScored } from '@/lib/cma-pdf-types';
 import type { ScoredComp, SubjectProperty } from '@/lib/cma';
+import { createCmaReportElement } from '@/lib/cma-pdf-html';
 
 export type { CmaReportForPdf };
 
@@ -58,7 +58,7 @@ function sanitizeFilename(address: string): string {
   return `CMA-${base || 'report'}.pdf`;
 }
 
-export async function downloadCmaPdf(payload: CmaPdfPayload): Promise<void> {
+async function fetchBranding() {
   const brandingRes = await fetch('/api/market-analysis/pdf/branding');
   const brandingJson = await brandingRes.json().catch(() => ({}));
 
@@ -70,29 +70,41 @@ export async function downloadCmaPdf(payload: CmaPdfPayload): Promise<void> {
     );
   }
 
-  const [{ pdf }, { CmaPdfDocument }] = await Promise.all([
-    import('@react-pdf/renderer'),
-    import('@/lib/cma-pdf-document'),
-  ]);
+  return brandingJson.data;
+}
 
-  let blob: Blob;
-  try {
-    blob = await pdf(
-      React.createElement(CmaPdfDocument, {
-        report: payload,
-        branding: brandingJson.data,
-      }) as React.ReactElement
-    ).toBlob();
-  } catch (err) {
-    console.error('Client PDF render error:', err);
-    throw new Error('Could not build PDF. Try again or contact support.');
+export async function downloadCmaPdf(payload: CmaPdfPayload): Promise<void> {
+  const branding = await fetchBranding();
+  const filename = sanitizeFilename(payload.address);
+  const mount = createCmaReportElement(payload, branding);
+  const root = mount.querySelector('#cma-report-root') as HTMLElement | null;
+
+  if (!root) {
+    mount.remove();
+    throw new Error('Could not prepare PDF layout.');
   }
 
-  const filename = sanitizeFilename(payload.address);
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
+  try {
+    const html2pdf = (await import('html2pdf.js')).default;
+    await html2pdf()
+      .set({
+        margin: [0.4, 0.4, 0.4, 0.4],
+        filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          backgroundColor: '#ffffff',
+        },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+      })
+      .from(root)
+      .save();
+  } catch (err) {
+    console.error('html2pdf export error:', err);
+    throw new Error('Could not generate PDF. Try again or use Print to PDF from your browser.');
+  } finally {
+    mount.remove();
+  }
 }

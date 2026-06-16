@@ -19,6 +19,7 @@
     "driver.js": "^1.4.0",
     "framer-motion": "^12.23.26",
     "googleapis": "^128.0.0",
+    "html2pdf.js": "^0.14.0",
     "lucide-react": "^0.294.0",
     "next": "^16.1.6",
     "openai": "^4.20.1",
