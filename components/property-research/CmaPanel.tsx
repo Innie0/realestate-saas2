@@ -12,8 +12,9 @@ import {
 import {
   BarChart2, Loader2, AlertCircle, Home, DollarSign,
   TrendingUp, BedDouble, Bath, Ruler, MapPin, Sparkles,
-  ChevronDown, ChevronUp, X, RefreshCw, Info,
+  ChevronDown, ChevronUp, X, RefreshCw, Info, Download,
 } from 'lucide-react';
+import { compsFromScored, type CmaPdfPayload } from '@/lib/cma-pdf-types';
 
 export interface CmaValuationResult {
   suggestedPrice: number | null;
@@ -139,6 +140,7 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
   const [result, setResult] = useState<CmaAnalysisResult | null>(null);
   const [excludedIds, setExcludedIds] = useState<Set<number>>(new Set());
   const [showAllComps, setShowAllComps] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
   const isRunningRef = useRef(false);
   const lastTriggerRef = useRef(0);
   const onCompleteRef = useRef(onComplete);
@@ -260,6 +262,67 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
       setManualFields((prev) => new Set(prev).add(key));
     }
     setSubject((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleExportPdf = async () => {
+    if (!result || !liveValuation) return;
+    setExportingPdf(true);
+    setError('');
+    try {
+      const payload: CmaPdfPayload = {
+        address: result.address,
+        propertyType: result.propertyType,
+        radius: result.radius,
+        yearsBack: result.yearsBack,
+        subject,
+        valuation: {
+          suggestedPrice: liveValuation.suggestedPrice,
+          priceLow: liveValuation.priceLow,
+          priceHigh: liveValuation.priceHigh,
+          compCount: liveValuation.compCount,
+          medianPricePerSqft: liveValuation.medianPricePerSqft,
+        },
+        avm: result.avm
+          ? {
+              estimatedValue: result.avm.estimatedValue,
+              valueLow: result.avm.valueLow,
+              valueHigh: result.avm.valueHigh,
+            }
+          : null,
+        rentEstimate: result.rentEstimate?.monthlyRent
+          ? { monthlyRent: result.rentEstimate.monthlyRent }
+          : null,
+        comps: compsFromScored(activeComps, liveValuation.conditionFactor),
+        summary: result.summary,
+        generatedAt: new Date().toISOString(),
+      };
+
+      const res = await fetch('/api/market-analysis/pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Failed to generate PDF.');
+      }
+
+      const blob = await res.blob();
+      const disposition = res.headers.get('Content-Disposition') ?? '';
+      const match = disposition.match(/filename="([^"]+)"/);
+      const filename = match?.[1] ?? 'CMA-report.pdf';
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not export PDF.');
+    } finally {
+      setExportingPdf(false);
+    }
   };
 
   return (
@@ -386,12 +449,27 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
 
       {result && !loading && liveValuation && (
         <div className="space-y-4">
-          <div className="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
-            <MapPin className="w-4 h-4 flex-shrink-0" />
-            <span className="font-medium text-gray-900">{result.address}</span>
-            {result.propertyType && (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 border border-gray-200">{result.propertyType}</span>
-            )}
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-2 text-sm text-gray-500 flex-wrap min-w-0">
+              <MapPin className="w-4 h-4 flex-shrink-0" />
+              <span className="font-medium text-gray-900">{result.address}</span>
+              {result.propertyType && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 border border-gray-200">{result.propertyType}</span>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={handleExportPdf}
+              disabled={exportingPdf}
+              className="flex items-center gap-1.5 text-sm font-medium text-brand-600 hover:text-brand-700 border border-brand-200 bg-brand-50 hover:bg-brand-100 rounded-lg px-3 py-2 disabled:opacity-50"
+            >
+              {exportingPdf ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Download className="w-4 h-4" />
+              )}
+              Export seller PDF
+            </button>
           </div>
 
           {result.activeListing && (
