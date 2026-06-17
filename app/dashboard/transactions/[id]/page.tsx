@@ -275,32 +275,31 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
       )}
 
       {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <nav className="flex space-x-1">
-          {[
-            { id: 'overview', label: 'Overview', icon: Building2 },
-            { id: 'tasks', label: 'Timeline & Tasks', icon: CheckCircle2 },
-            { id: 'documents', label: 'Documents', icon: FileText },
-            { id: 'reminders', label: 'Reminders', icon: Bell },
-            { id: 'financials', label: 'Financials', icon: DollarSign },
-          ].map(tab => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center py-3 px-4 text-sm font-medium rounded-t-lg transition-colors ${
-                  activeTab === tab.id
-                    ? 'bg-gray-100 text-gray-900 border-b-2 border-white'
-                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
-                }`}
-              >
-                <Icon className="w-4 h-4 mr-2" />
-                {tab.label}
-              </button>
-            );
-          })}
-        </nav>
+      <div className="flex flex-wrap gap-1 p-1 bg-gray-50 border border-gray-200 rounded-xl">
+        {[
+          { id: 'overview', label: 'Overview', icon: Building2 },
+          { id: 'tasks', label: 'Timeline & Tasks', icon: CheckCircle2 },
+          { id: 'documents', label: 'Documents', icon: FileText },
+          { id: 'reminders', label: 'Reminders', icon: Bell },
+          { id: 'financials', label: 'Financials', icon: DollarSign },
+        ].map(tab => {
+          const Icon = tab.icon;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id as typeof activeTab)}
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all min-w-[7rem] ${
+                activeTab === tab.id
+                  ? 'bg-white text-gray-900'
+                  : 'text-gray-500 hover:text-gray-900'
+              }`}
+            >
+              <Icon className="w-4 h-4 shrink-0" />
+              <span className="truncate">{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Tab Content */}
