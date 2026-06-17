@@ -578,8 +578,8 @@ export default function TasksPage() {
                       className={`flex gap-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                       {msg.role === 'assistant' && (
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-black border border-gray-300 flex items-center justify-center">
-                          <Sparkles className="w-4 h-4 text-gray-900" />
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 border border-brand-500/20 flex items-center justify-center">
+                          <Sparkles className="w-4 h-4 text-brand-600" />
                         </div>
                       )}
                       
@@ -588,7 +588,7 @@ export default function TasksPage() {
                           className={`rounded-2xl px-4 py-3 ${
                             msg.role === 'user'
                               ? 'bg-brand-500 text-white'
-                              : 'bg-white border border-gray-200 text-gray-100'
+                              : 'bg-white border border-gray-200 text-gray-900'
                           }`}
                         >
                           {/* Image attachment */}
@@ -630,8 +630,8 @@ export default function TasksPage() {
                   
                   {isLoading && (
                     <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-black border border-gray-300 flex items-center justify-center">
-                        <Sparkles className="w-4 h-4 text-gray-900" />
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 border border-brand-500/20 flex items-center justify-center">
+                        <Sparkles className="w-4 h-4 text-brand-600" />
                       </div>
                       <div className="flex-1 max-w-2xl">
                         <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3">
