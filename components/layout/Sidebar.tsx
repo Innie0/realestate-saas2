@@ -148,15 +148,15 @@ export default function Sidebar() {
 
   return (
     <>
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 h-14 flex items-center justify-between">
-        <Link href="/dashboard" className="flex items-center min-h-0">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 h-16 flex items-center justify-between">
+        <Link href="/dashboard" className="flex items-center flex-1 min-h-0 overflow-visible">
           <Image
             src="/logo-sidebar.png"
             alt="Realestic"
-            width={320}
-            height={96}
+            width={480}
+            height={144}
             priority
-            className="h-8 w-auto max-w-[160px] object-contain object-left"
+            className="h-9 w-auto max-w-[200px] object-contain scale-[1.8] origin-left"
           />
         </Link>
         <button
@@ -176,35 +176,35 @@ export default function Sidebar() {
         className={clsx(
           'fixed top-0 h-screen flex flex-col bg-white z-50 border-r border-gray-200',
           'lg:translate-x-0 lg:relative',
-          isCollapsed ? 'lg:w-[72px]' : 'lg:w-60',
+          isCollapsed ? 'lg:w-[72px]' : 'lg:w-64',
           'w-60',
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
         style={{ transition: 'width 0.3s ease, transform 0.3s ease' }}
       >
-        <div className="hidden lg:flex h-14 shrink-0 items-center justify-center border-b border-gray-200 px-3 overflow-hidden">
+        <div className="hidden lg:flex h-16 shrink-0 items-center justify-center border-b border-gray-200 bg-white overflow-visible px-2">
           {isCollapsed ? (
             <Image
               src="/logo-collapsed.png"
               alt="Realestic"
-              width={40}
-              height={40}
+              width={128}
+              height={128}
               priority
-              className="h-9 w-9 object-contain"
+              className="h-10 w-10 object-contain scale-[1.45] origin-center"
             />
           ) : (
             <Image
               src="/logo-sidebar.png"
               alt="Realestic"
-              width={320}
-              height={96}
+              width={640}
+              height={192}
               priority
-              className="h-9 w-auto max-w-full object-contain"
+              className="h-12 w-auto max-w-[240px] object-contain scale-[2.25] origin-center"
             />
           )}
         </div>
 
-        <div className="lg:hidden h-14 shrink-0" />
+        <div className="lg:hidden h-16 shrink-0" />
 
         <nav
           className={clsx(
