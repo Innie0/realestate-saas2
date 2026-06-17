@@ -8,7 +8,8 @@ import { motion, useInView, AnimatePresence } from 'framer-motion';
 import {
   Home, TrendingUp, Shield, Sparkles, Users, Calendar, ArrowRight,
   FileText, Search, Bell, CheckCircle, ChevronDown, Clock, Zap, Star,
-  Upload, ImageIcon, Loader2, Link2
+  Upload, ImageIcon, Loader2, Link2, Inbox, DoorOpen, Flame, Thermometer,
+  Snowflake, BarChart2, QrCode, MapPin, UserPlus,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { formatFeatureText } from '@/lib/formatFeatureText';
@@ -570,14 +571,16 @@ function CalendarDemoMockup() {
   );
 }
 
-// ─── Property Lookup Demo ─────────────────────────────────────────────────────
+// ─── Property Research Demo (lookup + CMA) ────────────────────────────────────
 
 function PropertyLookupDemoMockup() {
   const [phase, setPhase] = useState(0);
   const [typedAddress, setTypedAddress] = useState('');
   const [showResults, setShowResults] = useState(false);
   const [visibleDetails, setVisibleDetails] = useState(0);
-  const [showSaved, setShowSaved] = useState(false);
+  const [activeTab, setActiveTab] = useState<'overview' | 'cma'>('overview');
+  const [visibleComps, setVisibleComps] = useState(0);
+  const [showCmaValue, setShowCmaValue] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: false, margin: '-100px' });
 
@@ -589,22 +592,29 @@ function PropertyLookupDemoMockup() {
     setTypedAddress('');
     setShowResults(false);
     setVisibleDetails(0);
-    setShowSaved(false);
+    setActiveTab('overview');
+    setVisibleComps(0);
+    setShowCmaValue(false);
 
-    const t1 = setTimeout(() => setPhase(1), 500);   // start typing
-    const t2 = setTimeout(() => setPhase(2), 3000);  // searching
-    const t3 = setTimeout(() => { setPhase(3); setShowResults(true); }, 4200); // results
+    const t1 = setTimeout(() => setPhase(1), 500);
+    const t2 = setTimeout(() => setPhase(2), 3000);
+    const t3 = setTimeout(() => { setPhase(3); setShowResults(true); }, 4200);
     const t4 = setTimeout(() => setVisibleDetails(1), 4500);
     const t5 = setTimeout(() => setVisibleDetails(2), 4900);
     const t6 = setTimeout(() => setVisibleDetails(3), 5300);
     const t7 = setTimeout(() => setVisibleDetails(4), 5700);
-    const t8 = setTimeout(() => setShowSaved(true), 7000);
-    const t9 = setTimeout(() => {
+    const t8 = setTimeout(() => { setActiveTab('cma'); setPhase(4); }, 7200);
+    const t9 = setTimeout(() => setVisibleComps(1), 7600);
+    const t10 = setTimeout(() => setVisibleComps(2), 8000);
+    const t11 = setTimeout(() => setVisibleComps(3), 8400);
+    const t12 = setTimeout(() => setShowCmaValue(true), 9000);
+    const t13 = setTimeout(() => {
       setPhase(0); setTypedAddress(''); setShowResults(false);
-      setVisibleDetails(0); setShowSaved(false);
-    }, 10500);
+      setVisibleDetails(0); setActiveTab('overview');
+      setVisibleComps(0); setShowCmaValue(false);
+    }, 13000);
 
-    return () => [t1,t2,t3,t4,t5,t6,t7,t8,t9].forEach(clearTimeout);
+    return () => [t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13].forEach(clearTimeout);
   }, [inView]);
 
   useEffect(() => {
@@ -625,15 +635,19 @@ function PropertyLookupDemoMockup() {
     { label: 'Year Built', value: '2008', icon: '🏗' },
   ];
 
+  const comps = [
+    { address: '118 W Main St', price: '$498k', sqft: '3,420', distance: '0.2 mi' },
+    { address: '131 Oak Lane', price: '$512k', sqft: '3,680', distance: '0.4 mi' },
+    { address: '99 Elm Court', price: '$475k', sqft: '3,290', distance: '0.5 mi' },
+  ];
+
   return (
-    <div ref={ref} className="rounded-2xl bg-white border border-gray-200 p-5 flex flex-col overflow-hidden" style={{ minHeight: '320px' }}>
-      {/* Header */}
-      <div className="flex items-center gap-2 mb-4 flex-shrink-0">
+    <div ref={ref} className="rounded-2xl bg-white border border-gray-200 p-5 flex flex-col overflow-hidden" style={{ minHeight: '360px' }}>
+      <div className="flex items-center gap-2 mb-3 flex-shrink-0">
         <Search className="w-4 h-4 text-gray-500" />
-        <span className="text-xs text-gray-500 font-medium">Property Lookup</span>
+        <span className="text-xs text-gray-500 font-medium">Property Research</span>
       </div>
 
-      {/* Search bar */}
       <div className="relative flex-shrink-0">
         <div className="flex items-center gap-2 bg-gray-100 border border-gray-200 rounded-xl px-4 py-2.5">
           <Search className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
@@ -652,83 +666,120 @@ function PropertyLookupDemoMockup() {
         </div>
       </div>
 
-      {/* Results */}
       <AnimatePresence>
         {showResults && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="flex-1 flex flex-col mt-4 min-h-0">
-
-            {/* Address banner */}
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-2 h-2 rounded-full bg-brand-500 flex-shrink-0" />
-              <p className="text-xs text-gray-900 font-medium truncate">123 W Main Street, Austin, TX 78701</p>
-            </div>
-
-            {/* Stats grid */}
-            <div className="grid grid-cols-4 gap-2 mb-3">
-              {details.map((d, i) => (
-                <AnimatePresence key={i}>
-                  {visibleDetails > i && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.35 }}
-                      className="bg-gray-100 border border-gray-100 rounded-xl p-3 text-center"
-                    >
-                      <div className="text-lg mb-1">{d.icon}</div>
-                      <div className="text-sm font-bold text-gray-900">{d.value}</div>
-                      <div className="text-[10px] text-gray-500">{d.label}</div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="flex-1 flex flex-col mt-3 min-h-0">
+            {/* Tabs */}
+            <div className="flex gap-1 p-1 bg-gray-100 border border-gray-200 rounded-lg mb-3">
+              {(['overview', 'cma'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  className={`flex-1 text-[10px] font-medium py-1.5 rounded-md transition-colors ${
+                    activeTab === tab
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-500'
+                  }`}
+                >
+                  {tab === 'overview' ? 'Overview' : 'Market / CMA'}
+                </button>
               ))}
             </div>
 
-            {/* Extra details */}
-            {visibleDetails >= 3 && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="bg-gray-100 border border-gray-100 rounded-xl p-3 flex items-center justify-between">
-                <div>
-                  <p className="text-[10px] text-gray-500 mb-0.5">Estimated Value</p>
-                  <p className="text-base font-bold text-gray-900">$1,500,000</p>
+            {activeTab === 'overview' ? (
+              <>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-2 h-2 rounded-full bg-brand-500 flex-shrink-0" />
+                  <p className="text-xs text-gray-900 font-medium truncate">123 W Main Street, Austin, TX 78701</p>
                 </div>
-                <div className="text-right">
-                  <p className="text-[10px] text-gray-500 mb-0.5">Price per sq ft</p>
-                  <p className="text-sm font-semibold text-gray-900">$429</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-[10px] text-gray-500 mb-0.5">Lot Size</p>
-                  <p className="text-sm font-semibold text-gray-900">0.42 ac</p>
-                </div>
-              </motion.div>
-            )}
 
-            {/* Owner info */}
-            {visibleDetails >= 4 && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="bg-gray-100 border border-gray-100 rounded-xl p-3 flex items-center justify-between">
-                <div>
-                  <p className="text-[10px] text-gray-500 mb-0.5">Owner</p>
-                  <p className="text-sm font-semibold text-gray-900">James R. Mitchell</p>
+                <div className="grid grid-cols-4 gap-2 mb-3">
+                  {details.map((d, i) => (
+                    <AnimatePresence key={i}>
+                      {visibleDetails > i && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.35 }}
+                          className="bg-gray-100 border border-gray-100 rounded-xl p-2 text-center"
+                        >
+                          <div className="text-base mb-0.5">{d.icon}</div>
+                          <div className="text-xs font-bold text-gray-900">{d.value}</div>
+                          <div className="text-[9px] text-gray-500">{d.label}</div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  ))}
                 </div>
-                <div className="text-right">
-                  <p className="text-[10px] text-gray-500 mb-0.5">Phone</p>
-                  <p className="text-sm font-semibold text-gray-900">(555) 555-5555</p>
-                </div>
-              </motion.div>
-            )}
 
-            {/* Save confirmation */}
-            <AnimatePresence>
-              {showSaved && (
-                <motion.div
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.35 }}
-                  className="mt-2 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-500/15 border border-brand-500/30 w-fit"
-                >
-                  <CheckCircle className="w-3 h-3 text-brand-500 flex-shrink-0" />
-                  <span className="text-[11px] text-brand-500 font-medium">Property saved to project</span>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                {visibleDetails >= 3 && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="bg-gray-100 border border-gray-100 rounded-xl p-3 flex items-center justify-between mb-2">
+                    <div>
+                      <p className="text-[10px] text-gray-500 mb-0.5">Estimated Value</p>
+                      <p className="text-base font-bold text-gray-900">$1,500,000</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] text-gray-500 mb-0.5">Price / sq ft</p>
+                      <p className="text-sm font-semibold text-gray-900">$429</p>
+                    </div>
+                  </motion.div>
+                )}
+
+                {visibleDetails >= 4 && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="bg-gray-100 border border-gray-100 rounded-xl p-3 flex items-center justify-between">
+                    <div>
+                      <p className="text-[10px] text-gray-500 mb-0.5">Owner</p>
+                      <p className="text-sm font-semibold text-gray-900">James R. Mitchell</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] text-gray-500 mb-0.5">Phone</p>
+                      <p className="text-sm font-semibold text-gray-900">(555) 555-5555</p>
+                    </div>
+                  </motion.div>
+                )}
+              </>
+            ) : (
+              <div className="flex-1 flex flex-col min-h-0">
+                <div className="flex items-center gap-2 mb-2">
+                  <BarChart2 className="w-3.5 h-3.5 text-brand-500" />
+                  <p className="text-[10px] text-gray-500 font-medium">Comparable sales · 0.5 mi · 12 mo</p>
+                </div>
+                <div className="space-y-2 flex-1">
+                  {comps.map((comp, i) => (
+                    <AnimatePresence key={comp.address}>
+                      {visibleComps > i && (
+                        <motion.div
+                          initial={{ opacity: 0, x: -12 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.35 }}
+                          className="flex items-center justify-between bg-gray-100 border border-gray-100 rounded-xl px-3 py-2"
+                        >
+                          <div className="min-w-0">
+                            <p className="text-xs font-medium text-gray-900 truncate">{comp.address}</p>
+                            <p className="text-[10px] text-gray-500">{comp.sqft} sq ft · {comp.distance}</p>
+                          </div>
+                          <p className="text-xs font-bold text-gray-900 flex-shrink-0 ml-2">{comp.price}</p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  ))}
+                </div>
+                <AnimatePresence>
+                  {showCmaValue && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4 }}
+                      className="mt-3 p-3 rounded-xl bg-brand-50 border border-brand-200"
+                    >
+                      <p className="text-[10px] text-brand-700 font-medium mb-0.5">Suggested price range</p>
+                      <p className="text-lg font-bold text-gray-900">$475k – $512k</p>
+                      <p className="text-[10px] text-gray-500 mt-0.5">Based on 3 adjusted comps</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -878,6 +929,298 @@ function LeadFormDemoMockup() {
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+// ─── Leads Inbox Demo Mockup ──────────────────────────────────────────────────
+
+const inboxLeads = [
+  {
+    name: 'Marcus Rivera',
+    source: 'Open house · 456 Oak Ave',
+    detail: 'Buying · $400–550k · 1–3 mo',
+    temp: 'hot' as const,
+    initials: 'MR',
+  },
+  {
+    name: 'Sarah Chen',
+    source: 'Lead form link',
+    detail: 'Renting · Under $2k/mo',
+    temp: 'warm' as const,
+    initials: 'SC',
+  },
+  {
+    name: 'David Park',
+    source: 'Lead form link',
+    detail: 'Looking · No budget yet',
+    temp: 'cold' as const,
+    initials: 'DP',
+  },
+];
+
+const tempStyles = {
+  hot: { label: 'Hot', icon: Flame, className: 'bg-red-100 text-red-700 border-red-200' },
+  warm: { label: 'Warm', icon: Thermometer, className: 'bg-amber-100 text-amber-700 border-amber-200' },
+  cold: { label: 'Cold', icon: Snowflake, className: 'bg-sky-100 text-sky-700 border-sky-200' },
+};
+
+function LeadsInboxDemoMockup() {
+  const [visibleLeads, setVisibleLeads] = useState(0);
+  const [selectedLead, setSelectedLead] = useState<number | null>(null);
+  const [showAddCrm, setShowAddCrm] = useState(false);
+  const [addedToCrm, setAddedToCrm] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: false, margin: '-100px' });
+
+  useEffect(() => {
+    if (!inView) return;
+    setVisibleLeads(0);
+    setSelectedLead(null);
+    setShowAddCrm(false);
+    setAddedToCrm(false);
+
+    const t1 = setTimeout(() => setVisibleLeads(1), 400);
+    const t2 = setTimeout(() => setVisibleLeads(2), 900);
+    const t3 = setTimeout(() => setVisibleLeads(3), 1400);
+    const t4 = setTimeout(() => { setSelectedLead(0); setShowAddCrm(true); }, 2400);
+    const t5 = setTimeout(() => setAddedToCrm(true), 3800);
+    const t6 = setTimeout(() => {
+      setVisibleLeads(0);
+      setSelectedLead(null);
+      setShowAddCrm(false);
+      setAddedToCrm(false);
+    }, 9500);
+
+    return () => [t1, t2, t3, t4, t5, t6].forEach(clearTimeout);
+  }, [inView]);
+
+  return (
+    <div ref={ref} className="rounded-2xl bg-white border border-gray-200 p-5 flex flex-col overflow-hidden" style={{ minHeight: '340px' }}>
+      <div className="flex items-center gap-2 mb-4 flex-shrink-0">
+        <Inbox className="w-4 h-4 text-gray-500" />
+        <span className="text-xs text-gray-500 font-medium">Leads Inbox</span>
+        <span className="ml-auto text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200">3 new</span>
+      </div>
+
+      <div className="flex flex-1 gap-3 min-h-0">
+        <div className="flex flex-col gap-2 w-[45%] flex-shrink-0">
+          {inboxLeads.map((lead, i) => {
+            const temp = tempStyles[lead.temp];
+            const TempIcon = temp.icon;
+            return (
+              <AnimatePresence key={lead.name}>
+                {visibleLeads > i && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -16 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className={`p-2.5 rounded-xl border cursor-pointer transition-all ${
+                      selectedLead === i
+                        ? 'bg-gray-100 border-gray-300'
+                        : 'bg-gray-50 border-gray-100'
+                    }`}
+                  >
+                    <div className="flex items-start gap-2">
+                      <div className="w-7 h-7 rounded-full bg-brand-500 flex items-center justify-center text-white text-[9px] font-bold flex-shrink-0">
+                        {lead.initials}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <p className="text-xs font-medium text-gray-900 truncate">{lead.name}</p>
+                          <span className={`inline-flex items-center gap-0.5 text-[8px] px-1.5 py-0.5 rounded-full border font-medium ${temp.className}`}>
+                            <TempIcon className="w-2.5 h-2.5" />
+                            {temp.label}
+                          </span>
+                        </div>
+                        <p className="text-[9px] text-gray-500 truncate">{lead.source}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            );
+          })}
+        </div>
+
+        <AnimatePresence>
+          {selectedLead !== null && (
+            <motion.div
+              initial={{ opacity: 0, x: 16 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 16 }}
+              transition={{ duration: 0.35 }}
+              className="flex-1 bg-gray-100 border border-gray-100 rounded-xl p-3 flex flex-col"
+            >
+              <p className="text-sm font-semibold text-gray-900 mb-1">{inboxLeads[selectedLead].name}</p>
+              <p className="text-[10px] text-gray-500 mb-3">{inboxLeads[selectedLead].detail}</p>
+              <div className="flex items-center gap-1.5 text-[10px] text-gray-600 mb-3">
+                <MapPin className="w-3 h-3 text-brand-500" />
+                {inboxLeads[selectedLead].source}
+              </div>
+              <div className="mt-auto space-y-2">
+                <AnimatePresence>
+                  {showAddCrm && !addedToCrm && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex items-center justify-center gap-1.5 bg-brand-500 text-white text-xs font-semibold py-2 rounded-lg"
+                    >
+                      <UserPlus className="w-3.5 h-3.5" />
+                      Add to CRM
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <AnimatePresence>
+                  {addedToCrm && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-brand-500/15 border border-brand-500/30"
+                    >
+                      <CheckCircle className="w-3.5 h-3.5 text-brand-500 flex-shrink-0" />
+                      <span className="text-[11px] text-brand-600 font-medium">Added to Client Manager</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+// ─── Open House Demo Mockup ─────────────────────────────────────────────────────
+
+function OpenHouseDemoMockup() {
+  const [phase, setPhase] = useState(0);
+  const [typedName, setTypedName] = useState('');
+  const [showSignedIn, setShowSignedIn] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: false, margin: '-100px' });
+
+  const visitorName = 'Alex Thompson';
+
+  useEffect(() => {
+    if (!inView) return;
+    setPhase(0);
+    setTypedName('');
+    setShowSignedIn(false);
+    setShowNotification(false);
+
+    const t1 = setTimeout(() => setPhase(1), 800);
+    const t2 = setTimeout(() => setPhase(2), 3200);
+    const t3 = setTimeout(() => { setShowSignedIn(true); setPhase(3); }, 4200);
+    const t4 = setTimeout(() => setShowNotification(true), 5000);
+    const t5 = setTimeout(() => {
+      setPhase(0);
+      setTypedName('');
+      setShowSignedIn(false);
+      setShowNotification(false);
+    }, 11000);
+
+    return () => [t1, t2, t3, t4, t5].forEach(clearTimeout);
+  }, [inView]);
+
+  useEffect(() => {
+    if (phase !== 1) return;
+    let i = 0;
+    const timer = setInterval(() => {
+      i++;
+      setTypedName(visitorName.slice(0, i));
+      if (i >= visitorName.length) clearInterval(timer);
+    }, 55);
+    return () => clearInterval(timer);
+  }, [phase]);
+
+  return (
+    <div ref={ref} className="rounded-2xl bg-white border border-gray-200 p-5 flex flex-col overflow-hidden relative" style={{ minHeight: '340px' }}>
+      <AnimatePresence>
+        {showNotification && (
+          <motion.div
+            initial={{ opacity: 0, y: -12, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -12, scale: 0.95 }}
+            transition={{ duration: 0.35 }}
+            className="absolute top-3 right-3 z-20 bg-white border border-gray-200 rounded-xl p-3 shadow-2xl flex items-start gap-2 w-64"
+          >
+            <Bell className="w-4 h-4 text-brand-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-xs text-gray-900 font-semibold">Open house sign-in</p>
+              <p className="text-[10px] text-gray-500 mt-0.5">Alex Thompson · 456 Oak Ave · Buying</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="flex items-center gap-2 mb-3 flex-shrink-0">
+        <DoorOpen className="w-4 h-4 text-gray-500" />
+        <span className="text-xs text-gray-500 font-medium">Open House Sign-In</span>
+        <span className="ml-auto text-[9px] text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-200 font-medium">Pro</span>
+      </div>
+
+      <div className="flex gap-4 flex-1 min-h-0">
+        {/* QR side */}
+        <div className="w-[38%] flex flex-col items-center justify-center bg-gray-100 border border-gray-200 rounded-xl p-3">
+          <div className="w-16 h-16 bg-white border-2 border-gray-300 rounded-lg flex items-center justify-center mb-2">
+            <QrCode className="w-10 h-10 text-gray-800" strokeWidth={1.25} />
+          </div>
+          <p className="text-[9px] text-gray-500 text-center">Scan to sign in</p>
+          <p className="text-[8px] text-gray-400 text-center mt-1">456 Oak Ave · Sat 1–4pm</p>
+        </div>
+
+        {/* Phone sign-in form */}
+        <div className="flex-1 bg-gray-100 border border-gray-100 rounded-xl p-3 flex flex-col gap-2.5">
+          <p className="text-[10px] text-gray-500 font-medium">Welcome — sign in below</p>
+          <div>
+            <p className="text-[9px] text-gray-500 mb-1">Full name</p>
+            <div className="bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs text-gray-900 min-h-[26px]">
+              {typedName}
+              {phase === 1 && (
+                <motion.span className="inline-block w-0.5 h-3 bg-brand-500 ml-0.5 align-middle" animate={{ opacity: [1, 0] }} transition={{ duration: 0.5, repeat: Infinity }} />
+              )}
+            </div>
+          </div>
+          <AnimatePresence>
+            {phase >= 2 && (
+              <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                <p className="text-[9px] text-gray-500 mb-1">I&apos;m</p>
+                <div className="grid grid-cols-2 gap-1">
+                  <span className="text-[9px] py-1 rounded-md bg-brand-500 text-white text-center font-semibold">Buying</span>
+                  <span className="text-[9px] py-1 rounded-md border border-gray-200 text-gray-500 text-center">Just browsing</span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {phase >= 2 && !showSignedIn && (
+              <motion.div
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.15 }}
+                className="mt-auto bg-brand-500 text-white text-[10px] font-semibold text-center py-2 rounded-lg"
+              >
+                Sign In
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {showSignedIn && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="mt-auto flex items-center justify-center gap-1.5 py-2 rounded-lg bg-brand-500/15 border border-brand-500/30"
+              >
+                <CheckCircle className="w-3.5 h-3.5 text-brand-500" />
+                <span className="text-[10px] text-brand-600 font-medium">You&apos;re signed in!</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
@@ -1058,6 +1401,7 @@ export default function HomePage() {
               description: 'Upload your property photos, enter a few details, and our AI instantly crafts a professional, compelling listing description. Refine it to exactly the word count and tone you want. No more staring at a blank page.',
               highlights: ['Generates in under 10 seconds', 'Customize tone and length', 'Works from photos + details'],
               flip: false,
+              mockup: AIDemoMockup,
             },
             {
               icon: Users,
@@ -1066,6 +1410,7 @@ export default function HomePage() {
               description: 'All your clients, their preferences, notes, and history — in one clean place. Never lose track of a follow-up again. Add notes, track status, and see your entire pipeline at a glance.',
               highlights: ['Client notes & history', 'Status tracking', 'Instant search'],
               flip: true,
+              mockup: CRMDemoMockup,
             },
             {
               icon: Link2,
@@ -1074,6 +1419,25 @@ export default function HomePage() {
               description: 'Get a custom link with your name in it — share it in your Instagram bio, email signature, or business cards. Every lead lands straight in your CRM with their timeline, budget, and area already captured.',
               highlights: ['Your name in the link', 'Leads auto-added to your CRM', 'Captures timeline, budget & area'],
               flip: false,
+              mockup: LeadFormDemoMockup,
+            },
+            {
+              icon: Inbox,
+              tag: 'Leads Inbox',
+              title: 'Every lead in one place, scored and ready',
+              description: 'All form submissions and open house sign-ins land in your inbox — tagged Hot, Warm, or Cold so you know who to call first. Review details and add the best leads to your CRM in one click.',
+              highlights: ['Hot / Warm / Cold scoring', 'Open house & form leads together', 'One-click add to CRM'],
+              flip: true,
+              mockup: LeadsInboxDemoMockup,
+            },
+            {
+              icon: DoorOpen,
+              tag: 'Open Houses',
+              title: 'Paperless sign-in at every open house',
+              description: 'Create an open house event, print or display a QR code, and let visitors sign in from their phone. Every attendee becomes a lead in your inbox — with the property and event already attached.',
+              highlights: ['QR code sign-in', 'No clipboards or spreadsheets', 'Leads tagged with property & event'],
+              flip: false,
+              mockup: OpenHouseDemoMockup,
             },
             {
               icon: Calendar,
@@ -1081,15 +1445,17 @@ export default function HomePage() {
               title: 'Never miss an appointment or deadline',
               description: 'Syncs with Google Calendar. Set automated reminders for showings, closings, and follow-ups. Stay on top of every transaction from offer to close.',
               highlights: ['Google Calendar sync', 'Automated reminders', 'Transaction timelines'],
-              flip: false,
+              flip: true,
+              mockup: CalendarDemoMockup,
             },
             {
               icon: Search,
-              tag: 'Property Lookup',
-              title: 'Get property details instantly',
-              description: 'Look up any property address and pull key details fast — no more jumping between five different websites. Save time on every listing you work.',
-              highlights: ['Instant property data', 'Save time on research', 'All in one place'],
-              flip: true,
+              tag: 'Property Research',
+              title: 'Property data and CMA in one search',
+              description: 'Look up any address for beds, baths, owner info, and estimated value — then switch to Market / CMA to see comparable sales and a suggested price range. No more jumping between five different websites.',
+              highlights: ['Instant property details', 'Comparable sales & price range', 'All in one place'],
+              flip: false,
+              mockup: PropertyLookupDemoMockup,
             },
           ].map((feature, i) => (
             <motion.div
@@ -1125,29 +1491,7 @@ export default function HomePage() {
               </div>
 
               <div className={feature.flip ? 'lg:order-1' : ''}>
-                {i === 0 ? (
-                  <AIDemoMockup />
-                ) : i === 1 ? (
-                  <CRMDemoMockup />
-                ) : i === 2 ? (
-                  <LeadFormDemoMockup />
-                ) : i === 3 ? (
-                  <CalendarDemoMockup />
-                ) : i === 4 ? (
-                  <PropertyLookupDemoMockup />
-                ) : (
-                  <motion.div
-                    whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
-                    className="rounded-2xl bg-white border border-gray-200 p-8 aspect-video flex items-center justify-center"
-                  >
-                    <div className="text-center">
-                      <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gray-100 border border-gray-200 mb-4">
-                        <feature.icon className="w-10 h-10 text-gray-900" strokeWidth={1.5} />
-                      </div>
-                      <p className="text-gray-500 text-sm">{feature.tag} Preview</p>
-                    </div>
-                  </motion.div>
-                )}
+                <feature.mockup />
               </div>
             </motion.div>
           ))}
