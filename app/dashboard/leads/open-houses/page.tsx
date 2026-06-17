@@ -142,8 +142,9 @@ export default function OpenHousesPage() {
               </div>
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1.5">Notes (optional)</label>
-              <input type="text" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. Refreshments provided" className={inputClass} />
+              <label className="block text-xs text-gray-500 mb-1.5">Open house label (optional)</label>
+              <input type="text" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. Sunday Open House — 5721 West Prospect Dr" className={inputClass} />
+              <p className="text-[11px] text-gray-500 mt-1">Shown in your leads inbox when someone signs in. Leave blank to use the address only.</p>
             </div>
             <button
               type="submit"

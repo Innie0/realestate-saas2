@@ -12,7 +12,7 @@ export async function GET() {
 
     const { data, error } = await supabase
       .from('agent_settings')
-      .select('profile_enabled, profile_headline, profile_bio, profile_photo_url, profile_specialties, profile_areas, profile_phone, profile_email')
+      .select('profile_enabled, profile_headline, profile_bio, profile_photo_url, profile_specialties, profile_areas, profile_phone, profile_email, profile_brokerage, profile_license, profile_website, profile_years_experience')
       .eq('user_id', user.id)
       .single();
 
@@ -49,6 +49,7 @@ export async function PUT(request: NextRequest) {
       'profile_enabled', 'profile_headline', 'profile_bio',
       'profile_photo_url', 'profile_specialties', 'profile_areas',
       'profile_phone', 'profile_email',
+      'profile_brokerage', 'profile_license', 'profile_website', 'profile_years_experience',
     ];
 
     const updates: Record<string, unknown> = {};

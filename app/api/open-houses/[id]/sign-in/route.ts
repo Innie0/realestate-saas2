@@ -33,7 +33,7 @@ export async function POST(
     // Verify the open house exists and is active
     const { data: openHouse, error: ohError } = await supabase
       .from('open_houses')
-      .select('id, user_id, property_address')
+      .select('id, user_id, property_address, date, start_time, end_time, notes')
       .eq('id', id)
       .eq('status', 'active')
       .single();
@@ -43,6 +43,16 @@ export async function POST(
     }
 
     const cleanName = name.trim().slice(0, 120);
+    const eventDate = new Date(openHouse.date + 'T00:00:00').toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+    const eventLabel = openHouse.notes?.trim()
+      ? `${openHouse.notes.trim()} — ${openHouse.property_address}`
+      : openHouse.property_address;
+    const openHouseSummary = `${eventLabel} (${eventDate}, ${openHouse.start_time.slice(0, 5)}–${openHouse.end_time.slice(0, 5)})`;
 
     // Create lead
     const { data: client, error: insertError } = await supabase
@@ -56,7 +66,7 @@ export async function POST(
         source: 'open_house',
         in_crm: false,
         lead_type: interested === true ? 'buyer' : null,
-        message: `Open house sign-in at ${openHouse.property_address}`,
+        message: `Open house: ${openHouseSummary}`,
       })
       .select()
       .single();
@@ -68,7 +78,7 @@ export async function POST(
 
     // Create note
     const noteParts = [
-      `Signed in at open house: ${openHouse.property_address}`,
+      `Open house: ${openHouseSummary}`,
       working_with_agent ? 'Already working with an agent' : 'Not currently working with an agent',
       interested ? 'Interested in this property' : null,
     ].filter(Boolean);
@@ -84,7 +94,7 @@ export async function POST(
       client_id: client.id,
       user_id: openHouse.user_id,
       title: `Open house visitor: ${cleanName}`,
-      description: `Signed in at ${openHouse.property_address}\n${cleanEmail ? `Email: ${cleanEmail}` : ''}${cleanPhone ? `\nPhone: ${cleanPhone}` : ''}`,
+      description: `${openHouseSummary}\n${cleanEmail ? `Email: ${cleanEmail}` : ''}${cleanPhone ? `\nPhone: ${cleanPhone}` : ''}`,
       reminder_date: new Date().toISOString(),
       is_completed: false,
     });
@@ -104,7 +114,7 @@ export async function POST(
           null,
           cleanPhone || null,
           cleanEmail || null,
-          `open house at ${openHouse.property_address}`,
+          `open house: ${eventLabel}`,
         );
       }
     } catch (e) {

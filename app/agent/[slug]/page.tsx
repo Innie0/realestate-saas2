@@ -43,7 +43,7 @@ async function getAgentProfile(slug: string) {
   // Get profile settings
   const { data: settings } = await supabase
     .from('agent_settings')
-    .select('profile_enabled, profile_headline, profile_bio, profile_photo_url, profile_specialties, profile_areas, profile_phone, profile_email')
+    .select('profile_enabled, profile_headline, profile_bio, profile_photo_url, profile_specialties, profile_areas, profile_phone, profile_email, profile_brokerage, profile_license, profile_website, profile_years_experience')
     .eq('user_id', uuid)
     .single();
 
@@ -60,6 +60,10 @@ async function getAgentProfile(slug: string) {
     areas: settings.profile_areas || [],
     phone: settings.profile_phone || '',
     profileEmail: settings.profile_email || '',
+    brokerage: settings.profile_brokerage || '',
+    license: settings.profile_license || '',
+    website: settings.profile_website || '',
+    yearsExperience: settings.profile_years_experience ?? null,
   };
 }
 
@@ -120,6 +124,16 @@ export default async function AgentProfilePage({ params }: PageProps) {
           {agent.headline && (
             <p className="text-gray-500 text-sm">{agent.headline}</p>
           )}
+          {(agent.brokerage || agent.yearsExperience != null) && (
+            <p className="text-gray-500 text-xs mt-2">
+              {[agent.brokerage, agent.yearsExperience != null ? `${agent.yearsExperience}+ years experience` : null]
+                .filter(Boolean)
+                .join(' · ')}
+            </p>
+          )}
+          {agent.license && (
+            <p className="text-gray-400 text-xs mt-1">{agent.license}</p>
+          )}
 
           {/* Contact row */}
           <div className="flex items-center justify-center gap-4 mt-4 flex-wrap">
@@ -131,6 +145,16 @@ export default async function AgentProfilePage({ params }: PageProps) {
             {agent.profileEmail && (
               <a href={`mailto:${agent.profileEmail}`} className="text-xs text-gray-500 hover:text-brand-600 transition-colors">
                 {agent.profileEmail}
+              </a>
+            )}
+            {agent.website && (
+              <a
+                href={agent.website.startsWith('http') ? agent.website : `https://${agent.website}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-gray-500 hover:text-brand-600 transition-colors"
+              >
+                Website
               </a>
             )}
           </div>

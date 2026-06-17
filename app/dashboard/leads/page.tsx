@@ -10,7 +10,7 @@ import {
   Inbox, Link2, Copy, Check, Download, Phone, Mail,
   Home, Building2, KeyRound, Search, Flame, Thermometer,
   Snowflake, ArrowRight, Users, Clock, Lock, MailCheck,
-  Loader2, DoorOpen, Megaphone, Zap, UserPlus, MailX,
+  Loader2, DoorOpen, Megaphone, Zap, UserPlus, MailX, MapPin,
 } from 'lucide-react';
 
 type LeadsTab = 'inbox' | 'capture' | 'automations';
@@ -106,6 +106,12 @@ function LeadCard({
   const infoLines = msg.split('\n').filter(l =>
     l.startsWith('Timeline:') || l.startsWith('Budget:') || l.startsWith('Area:')
   );
+  const openHouseLine = lead.source === 'open_house' && msg.startsWith('Open house:')
+    ? msg.replace(/^Open house:\s*/, '')
+    : null;
+  const listingLine = lead.source === 'listing_page' && msg.includes('interested in')
+    ? msg.replace(/^I'm interested in\s*/i, '')
+    : null;
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
@@ -132,6 +138,22 @@ function LeadCard({
           </p>
         </div>
       </div>
+
+      {(openHouseLine || listingLine) && (
+        <div className="mb-3 flex items-start gap-2 rounded-lg bg-brand-500/5 border border-brand-500/15 px-3 py-2">
+          {openHouseLine ? (
+            <DoorOpen className="w-3.5 h-3.5 text-brand-600 mt-0.5 shrink-0" />
+          ) : (
+            <MapPin className="w-3.5 h-3.5 text-brand-600 mt-0.5 shrink-0" />
+          )}
+          <div className="min-w-0">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-brand-600">
+              {openHouseLine ? 'Open house' : 'Listing inquiry'}
+            </p>
+            <p className="text-xs text-gray-700 mt-0.5 break-words">{openHouseLine || listingLine}</p>
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-3 mb-3">
         {lead.email && (
