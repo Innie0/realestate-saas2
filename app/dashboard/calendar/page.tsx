@@ -3,7 +3,7 @@
 
 'use client'; // This page uses client-side features
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -12,6 +12,9 @@ import CalendarView from '@/components/CalendarView';
 import EventForm from '@/components/EventForm';
 import { Calendar as CalendarIcon, Plus, RefreshCw, Settings } from 'lucide-react';
 import { CalendarEvent } from '@/types';
+import { useApi } from '@/lib/swr';
+import { mutate as globalMutate } from 'swr';
+import { calendarEventsPrefetchUrl } from '@/lib/dashboard-prefetch';
 
 /**
  * Calendar page component
@@ -23,55 +26,36 @@ export default function CalendarPage() {
   const [showEventModal, setShowEventModal] = useState(false);
   const [showConnectionsModal, setShowConnectionsModal] = useState(false);
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
-  const [connections, setConnections] = useState({
-    google: {
-      connected: false,
-      email: '',
-    },
-  });
+
+  const { data: connectionsData, mutate: mutateConnections } = useApi<
+    Array<{ provider: string; is_active?: boolean; email?: string }>
+  >('/api/calendar/connections');
+
+  const connections = useMemo(() => {
+    const googleConn = connectionsData?.find((c) => c.provider === 'google');
+    return {
+      google: {
+        connected: !!googleConn?.is_active,
+        email: googleConn?.email || '',
+      },
+    };
+  }, [connectionsData]);
 
   // Set page title
   React.useEffect(() => {
     document.title = 'Calendar - Realestic';
   }, []);
 
-  // Load connection status on mount
+  // Sync on page load and every 5 minutes
   React.useEffect(() => {
-    loadConnections();
-    
-    // Sync immediately on page load (silent)
     handleRefresh(true);
-    
-    // Auto-sync every 5 minutes
+
     const syncInterval = setInterval(() => {
-      handleRefresh(true); // Silent sync
+      handleRefresh(true);
     }, 5 * 60 * 1000);
 
     return () => clearInterval(syncInterval);
   }, []);
-
-  /**
-   * Load calendar connections from database
-   */
-  const loadConnections = async () => {
-    try {
-      const response = await fetch('/api/calendar/connections');
-      const data = await response.json();
-      
-      if (data.success && data.data) {
-        const googleConn = data.data.find((c: any) => c.provider === 'google');
-        
-        setConnections({
-          google: {
-            connected: !!googleConn?.is_active,
-            email: googleConn?.email || '',
-          },
-        });
-      }
-    } catch (error) {
-      console.error('Failed to load connections:', error);
-    }
-  };
 
   /**
    * Create a new calendar event
@@ -90,8 +74,7 @@ export default function CalendarPage() {
       
       if (data.success) {
         setShowEventModal(false);
-        // Reload calendar events
-        window.location.reload();
+        void globalMutate(calendarEventsPrefetchUrl());
       } else {
         alert(data.error || 'Failed to create event');
       }
@@ -147,8 +130,7 @@ export default function CalendarPage() {
       const data = await response.json();
       
       if (data.success) {
-        // Reload connections
-        loadConnections();
+        void mutateConnections();
         alert('Calendar disconnected successfully!');
       }
     } catch (error) {
@@ -173,7 +155,7 @@ export default function CalendarPage() {
       const data = await response.json();
       
       if (data.success) {
-        // Events will be refreshed in CalendarView component
+        void globalMutate(calendarEventsPrefetchUrl());
         if (!silent) {
           setTimeout(() => setRefreshing(false), 1000);
         }

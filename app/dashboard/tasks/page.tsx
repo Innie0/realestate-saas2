@@ -5,15 +5,27 @@ import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
 import { Sparkles, Send, Loader2, Paperclip, X, Plus, MessageSquare, Trash2, FileText, Pin, Edit3, Check, MoreVertical } from 'lucide-react';
 import { Conversation, ConversationMessage } from '@/types';
+import { useApi } from '@/lib/swr';
+
+function sortConversations(list: Conversation[]): Conversation[] {
+  return [...list].sort((a, b) => {
+    if (a.pinned && !b.pinned) return -1;
+    if (!a.pinned && b.pinned) return 1;
+    return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+  });
+}
 
 export default function TasksPage() {
-  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const {
+    data: conversations = [],
+    isLoading: isLoadingConversations,
+    mutate: mutateConversations,
+  } = useApi<Conversation[]>('/api/conversations');
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
-  const [isLoadingConversations, setIsLoadingConversations] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [userInitials, setUserInitials] = useState<string>('U');
   
@@ -53,10 +65,9 @@ export default function TasksPage() {
     document.title = 'AI Assistant - Realestic';
   }, []);
 
-  // Fetch user info and conversations on page load
+  // Fetch user info on page load
   useEffect(() => {
     fetchUserInfo();
-    fetchConversations();
   }, []);
 
   // Auto-scroll to bottom when messages change
@@ -100,6 +111,14 @@ export default function TasksPage() {
     );
   }, []);
 
+  // Prefetch message threads once conversations are cached
+  useEffect(() => {
+    if (conversations.length > 0 && !prefetchStartedRef.current) {
+      prefetchStartedRef.current = true;
+      void prefetchConversationMessages(conversations);
+    }
+  }, [conversations, prefetchConversationMessages]);
+
   const fetchUserInfo = async () => {
     try {
       const { supabase } = await import('@/lib/supabase');
@@ -123,29 +142,6 @@ export default function TasksPage() {
       }
     } catch (err) {
       console.error('Error fetching user info:', err);
-    }
-  };
-
-  const fetchConversations = async () => {
-    try {
-      setIsLoadingConversations(true);
-      const response = await fetch('/api/conversations');
-      const result = await response.json();
-
-      if (result.success) {
-        setConversations(result.data);
-        if (result.data.length > 0 && !prefetchStartedRef.current) {
-          prefetchStartedRef.current = true;
-          void prefetchConversationMessages(result.data);
-        }
-      } else {
-        setError(result.error || 'Failed to load conversations');
-      }
-    } catch (err) {
-      console.error('Error fetching conversations:', err);
-      setError('Failed to load conversations');
-    } finally {
-      setIsLoadingConversations(false);
     }
   };
 
@@ -293,7 +289,13 @@ export default function TasksPage() {
       const result = await response.json();
 
         if (result.success) {
-        setConversations(prev => prev.filter(c => c.id !== conversationId));
+        void mutateConversations(
+          (current) =>
+            current?.data
+              ? { ...current, data: current.data.filter((c) => c.id !== conversationId) }
+              : current,
+          { revalidate: false },
+        );
         delete messageCacheRef.current[conversationId];
         if (currentConversationId === conversationId) {
           handleNewConversation();
@@ -321,18 +323,19 @@ export default function TasksPage() {
       const result = await response.json();
 
       if (result.success) {
-        // Update local state
-        setConversations(prev => 
-          prev.map(c => 
-            c.id === conversationId 
-              ? { ...c, pinned: !currentPinned }
-              : c
-          ).sort((a, b) => {
-            // Sort: pinned first, then by updated_at
-            if (a.pinned && !b.pinned) return -1;
-            if (!a.pinned && b.pinned) return 1;
-            return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-          })
+        void mutateConversations(
+          (current) =>
+            current?.data
+              ? {
+                  ...current,
+                  data: sortConversations(
+                    current.data.map((c) =>
+                      c.id === conversationId ? { ...c, pinned: !currentPinned } : c,
+                    ),
+                  ),
+                }
+              : current,
+          { revalidate: false },
         );
       } else {
         setError(result.error || 'Failed to pin conversation');
@@ -369,12 +372,17 @@ export default function TasksPage() {
       const result = await response.json();
 
       if (result.success) {
-        setConversations(prev =>
-          prev.map(c =>
-            c.id === conversationId
-              ? { ...c, title: editingTitle.trim() }
-              : c
-          )
+        void mutateConversations(
+          (current) =>
+            current?.data
+              ? {
+                  ...current,
+                  data: current.data.map((c) =>
+                    c.id === conversationId ? { ...c, title: editingTitle.trim() } : c,
+                  ),
+                }
+              : current,
+          { revalidate: false },
         );
         setEditingConversationId(null);
         setEditingTitle('');
@@ -442,7 +450,7 @@ export default function TasksPage() {
         // Update conversation ID if it's a new conversation
         if (!currentConversationId) {
           setCurrentConversationId(conversation_id);
-          fetchConversations(); // Refresh conversation list
+          void mutateConversations();
         }
         
         // Update messages with actual data from server

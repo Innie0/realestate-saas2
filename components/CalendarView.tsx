@@ -3,10 +3,11 @@
 
 'use client'; // This component uses client-side features
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Clock, MapPin, Trash2 } from 'lucide-react';
 import { CalendarEvent } from '@/types';
 import Button from './ui/Button';
+import { useApi } from '@/lib/swr';
 
 /**
  * CalendarView component
@@ -14,44 +15,17 @@ import Button from './ui/Button';
  */
 export default function CalendarView() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [deletingEventId, setDeletingEventId] = useState<string | null>(null);
 
   // Get calendar display data
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
+  const eventsUrl = `/api/calendar/events?month=${month}&year=${year}`;
+  const { data: events = [], isLoading, mutate } = useApi<CalendarEvent[]>(eventsUrl);
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
-
-  /**
-   * Load events from API
-   */
-  useEffect(() => {
-    loadEvents();
-  }, [currentDate]);
-
-  const loadEvents = async () => {
-    setIsLoading(true);
-    try {
-      // Fetch real events from API
-      const response = await fetch(`/api/calendar/events?month=${month}&year=${year}`);
-      const data = await response.json();
-      
-      if (data.success && data.data) {
-        setEvents(data.data);
-      } else {
-        setEvents([]);
-      }
-    } catch (error) {
-      console.error('Failed to load events:', error);
-      setEvents([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   /**
    * Navigate to previous month
@@ -92,8 +66,13 @@ export default function CalendarView() {
       const data = await response.json();
 
       if (data.success) {
-        // Remove from local state
-        setEvents(events.filter(e => e.id !== eventId));
+        void mutate(
+          (current) =>
+            current?.data
+              ? { ...current, data: current.data.filter((e) => e.id !== eventId) }
+              : current,
+          { revalidate: false },
+        );
       } else {
         alert(data.error || 'Failed to delete event');
       }

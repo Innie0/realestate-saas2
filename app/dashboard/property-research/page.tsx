@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState, Suspense, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/layout/Header';
+import { useApi } from '@/lib/swr';
 import { CmaPanel, type CmaAnalysisResult } from '@/components/property-research/CmaPanel';
 import { OwnerContactPanel, type LookupResponse } from '@/components/property-research/OwnerContactPanel';
 import { PropertyOverviewCard } from '@/components/property-research/PropertyOverviewCard';
@@ -77,36 +78,38 @@ function PropertyResearchContent() {
   const [showHistory, setShowHistory] = useState(false);
   const [usageHint, setUsageHint] = useState<string | null>(null);
 
+  const { response: usageResponse, mutate: mutateUsage } = useApi('/api/usage');
+
   useEffect(() => {
     document.title = 'Property Research - Realestic';
   }, []);
 
   useEffect(() => {
-    fetch('/api/usage')
-      .then((r) => r.json())
-      .then((data) => {
-        if (!data.success) return;
-        const lookups = data.data?.property_lookups;
-        const cma = data.data?.market_analyses;
-        const parts: string[] = [];
-        if (lookups) {
-          parts.push(
-            lookups.limit === -1
-              ? 'Lookups: unlimited'
-              : `Lookups: ${lookups.current}/${lookups.limit} this month`
-          );
-        }
-        if (cma) {
-          parts.push(
-            cma.limit === -1
-              ? 'CMA: unlimited'
-              : `CMA: ${cma.current}/${cma.limit} this month`
-          );
-        }
-        if (parts.length) setUsageHint(parts.join(' · '));
-      })
-      .catch(() => {});
-  }, [lookupTrigger, cmaTrigger]);
+    void mutateUsage();
+  }, [lookupTrigger, cmaTrigger, mutateUsage]);
+
+  useEffect(() => {
+    const data = usageResponse?.data as Record<string, { current: number; limit: number }> | undefined;
+    if (!data) return;
+    const lookups = data.property_lookups;
+    const cma = data.market_analyses;
+    const parts: string[] = [];
+    if (lookups) {
+      parts.push(
+        lookups.limit === -1
+          ? 'Lookups: unlimited'
+          : `Lookups: ${lookups.current}/${lookups.limit} this month`,
+      );
+    }
+    if (cma) {
+      parts.push(
+        cma.limit === -1
+          ? 'CMA: unlimited'
+          : `CMA: ${cma.current}/${cma.limit} this month`,
+      );
+    }
+    setUsageHint(parts.length ? parts.join(' · ') : null);
+  }, [usageResponse]);
 
   useEffect(() => {
     try {

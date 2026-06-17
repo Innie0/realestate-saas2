@@ -12,6 +12,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, FolderKanban, Calendar, User, LogOut, Users, FileText, Sparkles, Menu, X, ChevronsLeft, ChevronsRight, Search, Inbox } from 'lucide-react';
 import clsx from 'clsx';
 import { signOut } from '@/lib/supabase';
+import { prefetchDashboardRoute } from '@/lib/dashboard-prefetch';
 
 /**
  * Navigation items configuration
@@ -88,6 +89,10 @@ export default function Sidebar() {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
     localStorage.setItem('sidebar-collapsed', String(newState));
+  };
+
+  const handleNavPrefetch = (href: string) => {
+    prefetchDashboardRoute(href, router);
   };
 
   /**
@@ -236,6 +241,8 @@ export default function Sidebar() {
                 key={item.name}
                 href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)}
+                onMouseEnter={() => handleNavPrefetch(item.href)}
+                onFocus={() => handleNavPrefetch(item.href)}
                 title={isCollapsed ? item.name : undefined}
                 className={clsx(
                   'group relative flex items-center rounded-lg text-sm font-medium transition-all duration-200',
