@@ -8,117 +8,83 @@ import { Check, Sparkles, Loader2 } from 'lucide-react';
 import SubscribeButton from '@/components/SubscribeButton';
 import { supabase } from '@/lib/supabase';
 import { formatFeatureText } from '@/lib/formatFeatureText';
+import {
+  type BillingInterval,
+  type PlanSlug,
+  STARTER_FEATURES,
+  PRO_FEATURES,
+  getAnnualSavings,
+  getPlanDisplayPrice,
+  getPlanPeriodLabel,
+  getStripePriceId,
+  isAnyAnnualBillingAvailable,
+} from '@/lib/pricing';
 
-/**
- * Pricing Page
- * Displays available subscription plans with Stripe checkout
- */
+const PLANS: { slug: PlanSlug; name: string; description: string; popular: boolean; features: readonly string[] }[] = [
+  {
+    slug: 'starter',
+    name: 'Starter',
+    description: 'Perfect for active agents growing their business',
+    popular: false,
+    features: STARTER_FEATURES,
+  },
+  {
+    slug: 'pro',
+    name: 'Pro',
+    description: 'Everything you need to scale your real estate business',
+    popular: true,
+    features: PRO_FEATURES,
+  },
+];
+
 export default function PricingPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState('');
+  const [billingInterval, setBillingInterval] = useState<BillingInterval>('monthly');
+  const showAnnual = isAnyAnnualBillingAvailable();
 
-  // Set page title
   useEffect(() => {
     document.title = 'Pricing - Realestic';
   }, []);
 
-  // Check authentication and subscription status on mount
   useEffect(() => {
     const checkAuth = async () => {
-      console.log('[Pricing] Checking auth...');
-      
-      const { data: { session }, error } = await supabase.auth.getSession();
-      
-      console.log('[Pricing] Session check:', {
-        hasSession: !!session,
-        hasUser: !!session?.user,
-        userEmail: session?.user?.email,
-        error: error?.message,
-      });
+      const { data: { session } } = await supabase.auth.getSession();
 
       if (session?.user) {
         setIsAuthenticated(true);
         setUserEmail(session.user.email || '');
-        
-        // Check if user already has an active subscription
+
         const { data: userData } = await supabase
           .from('users')
           .select('subscription_status')
           .eq('id', session.user.id)
           .single();
-        
-        const hasActiveSubscription = 
-          userData?.subscription_status === 'active' || 
+
+        const hasActiveSubscription =
+          userData?.subscription_status === 'active' ||
           userData?.subscription_status === 'trialing';
-        
+
         if (hasActiveSubscription) {
-          console.log('[Pricing] User already has active subscription - redirecting to dashboard');
           router.push('/dashboard');
           return;
         }
       } else {
         setIsAuthenticated(false);
       }
-      
+
       setIsLoading(false);
     };
 
     checkAuth();
   }, [router]);
 
-  const plans = [
-    {
-      name: 'Starter',
-      price: '$19.99',
-      period: 'per month after trial',
-      description: 'Perfect for active agents growing their business',
-      priceId: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || 'price_1Sw9B7Enz9g2d62xiHw3wYn5',
-      features: [
-        '7-day free trial',
-        '20 AI Listing Projects per Month',
-        '20 Property Lookups per Month',
-        '75 AI Assistant Messages per Month',
-        'Up to 50 Clients',
-        'Up to 20 Transactions',
-        'Lead Capture Form & QR Code',
-        'Automated Lead Follow-Up Emails',
-        'Calendar Integration (Unlimited Events)',
-        'AI-Powered Descriptions',
-        'Email Support',
-      ],
-      popular: false,
-    },
-    {
-      name: 'Pro',
-      price: '$39.99',
-      period: 'per month after trial',
-      description: 'Everything you need to scale your real estate business',
-      priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || 'price_1Sw9MdEnz9g2d62xlyjilIoq',
-      features: [
-        '7-day free trial',
-        'Unlimited Property Listings',
-        'Unlimited Property Lookups',
-        'Unlimited AI Assistant Messages',
-        'Unlimited Clients & Transactions',
-        'Lead Capture, Open Houses & Agent Profile',
-        'Automated Lead Follow-Up Emails',
-        'Unlimited Calendar Events',
-        'AI-Powered Descriptions (3 Tones)',
-        'Transaction Checklists & Reminders',
-        'Priority Support',
-      ],
-      popular: true,
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-[#F5F5F5] relative overflow-hidden">
-      {/* Background glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gray-50 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Header */}
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-6 flex items-center justify-between">
         <Link href="/">
           <Image src="/logo.png" alt="Realestic" width={160} height={48} priority className="h-10 w-auto" />
@@ -136,7 +102,6 @@ export default function PricingPage() {
         )}
       </div>
 
-      {/* Loading */}
       {isLoading && (
         <div className="flex items-center justify-center py-40">
           <Loader2 className="w-8 h-8 text-gray-900 animate-spin" />
@@ -145,8 +110,7 @@ export default function PricingPage() {
 
       {!isLoading && (
         <div className="relative z-10 mx-auto max-w-5xl px-6 pb-24">
-          {/* Page header */}
-          <div className="text-center pt-12 pb-16">
+          <div className="text-center pt-12 pb-10">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-100 border border-gray-200 text-xs text-gray-600 mb-6">
               <Sparkles className="w-3.5 h-3.5" />
               7-day free trial on every plan
@@ -157,20 +121,46 @@ export default function PricingPage() {
             <p className="text-gray-500 text-lg max-w-xl mx-auto">
               Start your free trial today. You won&apos;t be charged until the trial ends.
             </p>
+
+            {showAnnual && (
+              <div className="inline-flex items-center gap-1 p-1 mt-8 bg-gray-100 border border-gray-200 rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => setBillingInterval('monthly')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    billingInterval === 'monthly'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-900'
+                  }`}
+                >
+                  Monthly
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBillingInterval('annual')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    billingInterval === 'annual'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-900'
+                  }`}
+                >
+                  Annual
+                  <span className="ml-1.5 text-xs text-brand-600 font-semibold">Save 2 months</span>
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            {plans.map((plan) => (
+            {PLANS.map((plan) => (
               <div
-                key={plan.name}
+                key={plan.slug}
                 className={`relative rounded-2xl p-7 flex flex-col ${
                   plan.popular
                     ? 'bg-white border-2 border-gray-400'
                     : 'bg-white border border-gray-200'
                 }`}
               >
-                {/* Popular badge */}
                 {plan.popular && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
                     <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-brand-500 text-white text-xs font-semibold">
@@ -180,41 +170,48 @@ export default function PricingPage() {
                   </div>
                 )}
 
-                {/* Plan name & description */}
                 <div className="mb-5">
                   <h3 className="text-xl font-bold text-gray-900 mb-1">{plan.name}</h3>
                   <p className="text-gray-500 text-sm">{plan.description}</p>
                 </div>
 
-                {/* Price */}
                 <div className="mb-6">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
-                    <span className="text-gray-500 text-sm">{plan.period}</span>
+                    <span className="text-4xl font-bold text-gray-900">
+                      {getPlanDisplayPrice(plan.slug, billingInterval)}
+                    </span>
+                    <span className="text-gray-500 text-sm">{getPlanPeriodLabel(billingInterval)}</span>
                   </div>
+                  {billingInterval === 'annual' && (
+                    <p className="text-xs text-brand-600 font-medium mt-2">
+                      Save ${getAnnualSavings(plan.slug)}/year vs paying monthly
+                    </p>
+                  )}
+                  {billingInterval === 'monthly' && showAnnual && (
+                    <p className="text-xs text-gray-500 mt-2">
+                      or {getPlanDisplayPrice(plan.slug, 'annual')}/year (2 months free)
+                    </p>
+                  )}
                 </div>
 
-                {/* CTA */}
                 <div className="mb-7">
                   <SubscribeButton
-                    priceId={plan.priceId!}
+                    priceId={getStripePriceId(plan.slug, billingInterval)}
                     planName={plan.name}
-                    planSlug={plan.name.toLowerCase()}
+                    planSlug={plan.slug}
                     className="w-full"
                   />
                 </div>
 
-                {/* Divider */}
                 <div className="border-t border-gray-200 mb-5" />
 
-                {/* Features */}
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">What's included</p>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">What&apos;s included</p>
                 <ul className="space-y-3 flex-1">
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-3">
                       <Check className="w-4 h-4 text-brand-500 flex-shrink-0 mt-0.5" />
                       <span className="text-sm text-gray-600">
-                        {plan.name === 'Pro' ? formatFeatureText(feature) : feature}
+                        {plan.slug === 'pro' ? formatFeatureText(feature) : feature}
                       </span>
                     </li>
                   ))}
@@ -223,7 +220,6 @@ export default function PricingPage() {
             ))}
           </div>
 
-          {/* Not authenticated */}
           {!isAuthenticated && (
             <div className="mt-8 p-5 bg-gray-50 border border-gray-200 rounded-2xl text-center">
               <p className="text-gray-500 text-sm mb-4">You need an account to subscribe</p>
@@ -236,7 +232,6 @@ export default function PricingPage() {
             </div>
           )}
 
-          {/* Footer note */}
           <p className="text-center text-gray-600 text-sm mt-10">
             7-day free trial · Cancel anytime · No hidden fees
           </p>

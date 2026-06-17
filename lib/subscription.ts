@@ -2,15 +2,22 @@
  * Subscription helpers — hard paywall: only trialing/active paid plans get app access.
  */
 
+import {
+  STARTER_MONTHLY_PRICE_ID,
+  PRO_MONTHLY_PRICE_ID,
+  isProPriceId,
+  isStarterPriceId,
+} from '@/lib/pricing';
+
 export const ADMIN_EMAIL = 'callon786@outlook.com';
 
 // Free Pro accounts — full Pro access, no subscription required
 const FREE_PRO_EMAILS = ['aliq@theagencyre.com', 'realesticai@gmail.com'];
 
-export const STARTER_PRICE_ID =
-  process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || 'price_1Sw9B7Enz9g2d62xiHw3wYn5';
-export const PRO_PRICE_ID =
-  process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || 'price_1Sw9MdEnz9g2d62xlyjilIoq';
+/** @deprecated Use STARTER_MONTHLY_PRICE_ID from lib/pricing */
+export const STARTER_PRICE_ID = STARTER_MONTHLY_PRICE_ID;
+/** @deprecated Use PRO_MONTHLY_PRICE_ID from lib/pricing */
+export const PRO_PRICE_ID = PRO_MONTHLY_PRICE_ID;
 
 export type PaidPlanName = 'starter' | 'pro';
 
@@ -42,27 +49,16 @@ export function hasLeadCaptureAccess(
   // Admin and free Pro accounts get full lead capture access
   if (email && (isAdminEmail(email) || isFreePro(email))) return true;
   const plan = subscriptionPlan;
-  return (
-    plan === STARTER_PRICE_ID ||
-    plan === PRO_PRICE_ID ||
-    plan === 'starter' ||
-    plan === 'pro'
-  );
+  return isStarterPriceId(plan) || isProPriceId(plan);
 }
 
 export function getPaidPlanName(
   subscriptionPlan: string | null | undefined
 ): PaidPlanName | null {
-  if (
-    subscriptionPlan === PRO_PRICE_ID ||
-    subscriptionPlan === 'pro'
-  ) {
+  if (isProPriceId(subscriptionPlan)) {
     return 'pro';
   }
-  if (
-    subscriptionPlan === STARTER_PRICE_ID ||
-    subscriptionPlan === 'starter'
-  ) {
+  if (isStarterPriceId(subscriptionPlan)) {
     return 'starter';
   }
   return null;

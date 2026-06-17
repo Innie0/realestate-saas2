@@ -8,40 +8,33 @@ import SubscribeButton from '@/components/SubscribeButton';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { formatFeatureText } from '@/lib/formatFeatureText';
-
-const STARTER_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || 'price_1Sw9B7Enz9g2d62xiHw3wYn5';
-const PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || 'price_1Sw9MdEnz9g2d62xlyjilIoq';
+import {
+  PRO_MONTHLY_PRICE_ID,
+  PRO_FEATURES,
+  getPlanDisplayPrice,
+  isProPriceId,
+} from '@/lib/pricing';
 
 const STARTER_LIMITS: Record<string, number> = {
-  projects: 10,
-  property_lookups: 10,
-  ai_messages: 50,
-  clients: 25,
-  transactions: 10,
+  projects: 20,
+  property_lookups: 20,
+  ai_messages: 75,
+  clients: 50,
+  transactions: 20,
   calendar_events: -1,
 };
 
 const COMPARISON_ROWS = [
-  { label: 'Projects',         starter: '10 / mo',  pro: 'Unlimited' },
-  { label: 'Property Lookups', starter: '10 / mo',  pro: 'Unlimited' },
-  { label: 'AI Messages',      starter: '50 / mo',  pro: 'Unlimited' },
-  { label: 'Clients',          starter: '25 total', pro: 'Unlimited' },
-  { label: 'Transactions',     starter: '10 total', pro: 'Unlimited' },
+  { label: 'Projects',         starter: '20 / mo',  pro: 'Unlimited' },
+  { label: 'Property Lookups', starter: '20 / mo',  pro: 'Unlimited' },
+  { label: 'AI Messages',      starter: '75 / mo',  pro: 'Unlimited' },
+  { label: 'Clients',          starter: '50 total', pro: 'Unlimited' },
+  { label: 'Transactions',     starter: '20 total', pro: 'Unlimited' },
   { label: 'Calendar Events',  starter: 'Unlimited', pro: 'Unlimited' },
   { label: 'Priority Support', starter: false,      pro: true },
 ];
 
-const PRO_HIGHLIGHTS = [
-  'Unlimited Property Listings & Lookups',
-  'Unlimited AI Assistant Messages',
-  'Unlimited Clients & Transactions',
-  'Unlimited Calendar Events',
-  'AI-Powered Descriptions (3 Tones)',
-  'Advanced Image Analysis',
-  'Google Calendar Integration',
-  'Transaction Checklists & Reminders',
-  'Priority Support',
-];
+const PRO_HIGHLIGHTS = [...PRO_FEATURES].filter((f) => f !== '7-day free trial');
 
 type PlanType = 'starter' | 'pro';
 
@@ -89,10 +82,7 @@ export default function UpgradePage() {
         return;
       }
 
-      let plan: PlanType = 'starter';
-      if (userData?.subscription_plan === PRO_PRICE_ID) {
-        plan = 'pro';
-      }
+      const plan: PlanType = isProPriceId(userData?.subscription_plan) ? 'pro' : 'starter';
       setCurrentPlan(plan);
 
       if (plan === 'starter') {
@@ -148,16 +138,11 @@ export default function UpgradePage() {
     );
   }
 
-  const pageTitle = 'Upgrade to Pro';
-  const pageSubtitle = 'Unlock unlimited access to every feature';
-
   return (
     <div className="min-h-screen">
-      <Header title={pageTitle} subtitle={pageSubtitle} />
+      <Header title="Upgrade to Pro" subtitle="Unlock unlimited access to every feature" />
 
       <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-8">
-
-        {/* Current usage summary */}
         {usage && (
           <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
             <div className="flex items-center gap-2 mb-4">
@@ -203,10 +188,7 @@ export default function UpgradePage() {
           </div>
         )}
 
-        {/* Upgrade cards */}
         <div className="grid grid-cols-1 gap-6 max-w-xl mx-auto">
-
-          {/* Pro card */}
           <div className="rounded-2xl border-2 border-gray-400 bg-white p-6 flex flex-col relative">
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
               <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-brand-500 text-white text-xs font-semibold">
@@ -220,12 +202,13 @@ export default function UpgradePage() {
             </div>
             <div className="mb-5">
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold text-gray-900">$39.99</span>
+                <span className="text-4xl font-bold text-gray-900">{getPlanDisplayPrice('pro', 'monthly')}</span>
                 <span className="text-gray-500 text-sm">/ month</span>
               </div>
+              <p className="text-xs text-gray-500 mt-1">or {getPlanDisplayPrice('pro', 'annual')}/year on annual billing</p>
             </div>
             <div className="mb-6">
-              <SubscribeButton priceId={PRO_PRICE_ID} planName="Pro" className="w-full" />
+              <SubscribeButton priceId={PRO_MONTHLY_PRICE_ID} planName="Pro" className="w-full" />
             </div>
             <div className="border-t border-gray-200 mb-5" />
             <ul className="space-y-2.5 flex-1">
@@ -239,11 +222,9 @@ export default function UpgradePage() {
           </div>
         </div>
 
-        {/* Comparison table */}
         <div className="rounded-2xl border border-gray-200 bg-gray-50 p-6 overflow-x-auto">
           <h3 className="text-lg font-bold text-gray-900 mb-5">Plan Comparison</h3>
           <div className="min-w-[480px]">
-            {/* Header */}
             <div className="grid grid-cols-3 mb-3">
               <div />
               <div className="text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Starter</div>
@@ -262,13 +243,11 @@ export default function UpgradePage() {
           </div>
         </div>
 
-        {/* Back link */}
         <div className="text-center pb-4">
           <Link href="/dashboard" className="text-sm text-gray-500 hover:text-brand-600 transition-colors inline-flex items-center gap-1">
             <ArrowLeft className="w-4 h-4" /> Back to Dashboard
           </Link>
         </div>
-
       </div>
     </div>
   );

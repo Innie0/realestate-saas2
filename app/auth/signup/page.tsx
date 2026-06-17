@@ -10,10 +10,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { signUpWithEmail, signInWithGoogle, supabase } from '@/lib/supabase';
+import { PRO_MONTHLY_PRICE_ID, STARTER_MONTHLY_PRICE_ID } from '@/lib/pricing';
 
 const PLAN_PRICE_IDS: Record<string, string> = {
-  starter: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || 'price_1ThC6REnz9g2d62xbnpRKW0h',
-  pro: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || 'price_1Sw9MdEnz9g2d62xlyjilIoq',
+  starter: STARTER_MONTHLY_PRICE_ID,
+  pro: PRO_MONTHLY_PRICE_ID,
 };
 
 /**
