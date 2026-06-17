@@ -235,8 +235,8 @@ export default function TransactionsPage() {
                   <div className="flex-1">
                     {/* Property info */}
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-700 rounded-lg border border-gray-300">
-                        <Building2 className="w-5 h-5 text-gray-600" />
+                      <div className="p-2 rounded-lg bg-brand-500/10 border border-brand-500/20">
+                        <Building2 className="w-5 h-5 text-brand-600" />
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">
