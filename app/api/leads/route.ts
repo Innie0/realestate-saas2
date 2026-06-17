@@ -43,10 +43,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Require at least one way to contact the lead
+    // Require contact info (both for listing inquiries; either for general lead form)
     const cleanEmail = typeof email === 'string' ? email.trim() : '';
     const cleanPhone = typeof phone === 'string' ? phone.trim() : '';
-    if (!cleanEmail && !cleanPhone) {
+    const leadSource =
+      source === 'listing_page' ? 'listing_page' : 'lead_form';
+
+    if (leadSource === 'listing_page') {
+      if (!cleanEmail) {
+        return NextResponse.json(
+          { success: false, error: 'Please enter your email.' },
+          { status: 400 }
+        );
+      }
+      const phoneDigits = cleanPhone.replace(/\D/g, '');
+      if (phoneDigits.length < 10) {
+        return NextResponse.json(
+          { success: false, error: 'Please enter a valid phone number.' },
+          { status: 400 }
+        );
+      }
+    } else if (!cleanEmail && !cleanPhone) {
       return NextResponse.json(
         { success: false, error: 'Please provide an email or phone number.' },
         { status: 400 }
@@ -63,8 +80,6 @@ export async function POST(request: NextRequest) {
     const cleanTimeline = typeof timeline === 'string' ? timeline.trim().slice(0, 50) : '';
     const cleanBudget = typeof budget === 'string' ? budget.trim().slice(0, 50) : '';
     const cleanArea = typeof area === 'string' ? area.trim().slice(0, 200) : '';
-    const leadSource =
-      source === 'listing_page' ? 'listing_page' : 'lead_form';
     const cleanListingAddress =
       typeof listingAddress === 'string' ? listingAddress.trim().slice(0, 300) : '';
 

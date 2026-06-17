@@ -91,7 +91,17 @@ export default function LeadCaptureForm({
       setError('Please enter your name.');
       return;
     }
-    if (!formData.email.trim() && !formData.phone.trim()) {
+    if (isListingForm) {
+      if (!formData.email.trim()) {
+        setError('Please enter your email.');
+        return;
+      }
+      const phoneDigits = formData.phone.replace(/\D/g, '');
+      if (phoneDigits.length < 10) {
+        setError('Please enter a valid 10-digit phone number.');
+        return;
+      }
+    } else if (!formData.email.trim() && !formData.phone.trim()) {
       setError('Please add an email or phone number so we can reach you.');
       return;
     }
@@ -160,7 +170,9 @@ export default function LeadCaptureForm({
       {/* Email + Phone side by side */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="email" className={labelClasses}>Email</label>
+          <label htmlFor="email" className={labelClasses}>
+            Email{isListingForm && <span className="text-gray-500"> *</span>}
+          </label>
           <input
             id="email"
             type="email"
@@ -168,10 +180,13 @@ export default function LeadCaptureForm({
             onChange={(e) => set('email', e.target.value)}
             placeholder="jane@example.com"
             className={inputClasses}
+            required={isListingForm}
           />
         </div>
         <div>
-          <label htmlFor="phone" className={labelClasses}>Phone</label>
+          <label htmlFor="phone" className={labelClasses}>
+            Phone{isListingForm && <span className="text-gray-500"> *</span>}
+          </label>
           <input
             id="phone"
             type="tel"
@@ -179,10 +194,13 @@ export default function LeadCaptureForm({
             onChange={(e) => set('phone', formatPhoneNumber(e.target.value))}
             placeholder="(555) 123-4567"
             className={inputClasses}
+            required={isListingForm}
           />
         </div>
       </div>
-      <p className="text-xs text-gray-600 -mt-3">At least one contact method required.</p>
+      {!isListingForm && (
+        <p className="text-xs text-gray-600 -mt-3">At least one contact method required.</p>
+      )}
 
       {!isListingForm && (
         <>
