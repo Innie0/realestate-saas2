@@ -380,20 +380,14 @@ function drawPriceHero(w: PdfWriter, report: CmaPdfPayload) {
 
 function drawTwoColumnFacts(w: PdfWriter, report: CmaPdfPayload) {
   w.sectionTitle('Property overview');
-  w.ensureSpace(80);
 
   const colW = (CONTENT_W - 16) / 2;
   const leftX = MARGIN;
   const rightX = MARGIN + colW + 16;
-  const topY = w.y;
-  const boxH = 76;
+  const pad = 12;
 
-  w.drawRoundedBox(leftX, topY, colW, boxH, COLORS.light, COLORS.border);
-  w.drawRoundedBox(rightX, topY, colW, boxH, COLORS.light, COLORS.border);
-
-  w.textAt(leftX + 12, topY - 18, 'Subject property', 8, true, w.secondary);
   const { subject } = report;
-  const subjectLines = [
+  const subjectStr = [
     subject.bedrooms !== null ? `${subject.bedrooms} beds` : null,
     subject.bathrooms !== null ? `${subject.bathrooms} baths` : null,
     subject.squareFootage !== null ? `${subject.squareFootage.toLocaleString()} sq ft` : null,
@@ -406,35 +400,49 @@ function drawTwoColumnFacts(w: PdfWriter, report: CmaPdfPayload) {
     .filter(Boolean)
     .join('  ·  ');
 
-  const savedY = w.y;
-  w.y = topY - 28;
-  w.textBlock(leftX + 12, colW - 24, subjectLines, 9);
+  const leftLines = wrapText(subjectStr, Math.max(24, Math.floor((colW - pad * 2) / 4.6)));
+  const leftInnerH = 28 + leftLines.length * 13 + pad;
+  const rightInnerH = 34 + 16 + 14 + 22 + 16 + 12 + pad;
+  const boxH = Math.max(leftInnerH, rightInnerH, 102);
 
-  w.textAt(rightX + 12, topY - 18, 'Reference estimates', 8, true, w.secondary);
-  w.y = topY - 34;
-  w.textAt(rightX + 12, w.y, 'Automated valuation (AVM)', 8, false, COLORS.muted);
-  w.y -= 14;
+  w.ensureSpace(boxH + 8);
+  const topY = w.y;
+
+  w.drawRoundedBox(leftX, topY, colW, boxH, COLORS.light, COLORS.border);
+  w.drawRoundedBox(rightX, topY, colW, boxH, COLORS.light, COLORS.border);
+
+  w.textAt(leftX + pad, topY - 18, 'Subject property', 8, true, w.secondary);
+  let ly = topY - 32;
+  for (const line of leftLines) {
+    w.textAt(leftX + pad, ly, line, 9);
+    ly -= 13;
+  }
+
+  w.textAt(rightX + pad, topY - 18, 'Reference estimates', 8, true, w.secondary);
+  let ry = topY - 34;
+  w.textAt(rightX + pad, ry, 'Automated valuation (AVM)', 8, false, COLORS.muted);
+  ry -= 16;
   w.textAt(
-    rightX + 12,
-    w.y,
+    rightX + pad,
+    ry,
     report.avm?.estimatedValue ? formatPdfMoney(report.avm.estimatedValue) : '—',
     14,
     true,
     COLORS.text
   );
-  w.y -= 20;
-  w.textAt(rightX + 12, w.y, 'Estimated rent', 8, false, COLORS.muted);
-  w.y -= 14;
+  ry -= 22;
+  w.textAt(rightX + pad, ry, 'Estimated rent', 8, false, COLORS.muted);
+  ry -= 16;
   w.textAt(
-    rightX + 12,
-    w.y,
+    rightX + pad,
+    ry,
     report.rentEstimate?.monthlyRent ? `${formatPdfMoney(report.rentEstimate.monthlyRent)}/mo` : '—',
     12,
     true,
     COLORS.text
   );
 
-  w.y = Math.min(savedY - boxH - 12, w.y - 12);
+  w.y = topY - boxH - 12;
 }
 
 function drawSummaryBox(w: PdfWriter, summary: string) {
