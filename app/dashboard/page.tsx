@@ -6,11 +6,13 @@
 import React, { useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
+import PageShell from '@/components/layout/PageShell';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import EmptyState from '@/components/ui/EmptyState';
 import NotificationsPanel from '@/components/NotificationsPanel';
 import ProjectCard from '@/components/ProjectCard';
-import { Plus, Zap, Users, ArrowRight, Clock, FolderKanban } from 'lucide-react';
+import { Plus, Zap, Users, ArrowRight, Clock, FolderKanban, Inbox, Flame } from 'lucide-react';
 import { Project } from '@/types';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
@@ -30,6 +32,7 @@ export default function DashboardPage() {
   const { response: usageResponse, isLoading: usageLoading } = useApi<UsageData>('/api/usage');
   const { data: recentProjects = [], isLoading: projectsLoading } = useApi<Project[]>('/api/projects?limit=3');
   const { data: allClients = [] } = useApi<RecentClient[]>('/api/clients?status=all');
+  const { data: inboxLeads = [] } = useApi<RecentClient[]>('/api/clients?status=all&view=inbox');
   const { data: allTransactions = [] } = useApi<RecentTransaction[]>('/api/transactions?limit=4');
 
   const usage = usageResponse?.data ?? null;
@@ -37,6 +40,13 @@ export default function DashboardPage() {
 
   const recentClients = useMemo(() => allClients.slice(0, 4), [allClients]);
   const recentTransactions = useMemo(() => allTransactions.slice(0, 4), [allTransactions]);
+  const hotLeadCount = useMemo(
+    () =>
+      inboxLeads.filter(
+        (l) => Date.now() - new Date(l.created_at).getTime() < 48 * 3_600_000
+      ).length,
+    [inboxLeads]
+  );
   const loading = usageLoading && !usage;
 
   useTour({
@@ -89,21 +99,58 @@ export default function DashboardPage() {
       {/* Page header */}
       <Header 
         title="Dashboard" 
-        subtitle="Welcome back! Here's an overview of your projects."
+        subtitle="Welcome back! Here's what needs your attention today."
       />
 
-      {/* Page content */}
-      <div className="p-4 sm:p-6 space-y-6 text-gray-900">
-        {/* Quick actions */}
-        <div className="flex gap-4">
-          <Link href="/dashboard/projects/new" data-tour="new-project">
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              New Project
-            </Button>
+      <PageShell className="space-y-6">
+        {/* Focus strip */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <Link
+            href="/dashboard/leads"
+            className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-xl hover:border-brand-200 hover:shadow-sm transition-all group"
+          >
+            <div className="p-2 rounded-lg bg-red-50 border border-red-100">
+              <Flame className="w-5 h-5 text-red-600" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Hot leads</p>
+              <p className="text-lg font-bold text-gray-900">{hotLeadCount}</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors" />
           </Link>
+          <Link
+            href="/dashboard/projects/new"
+            data-tour="new-project"
+            className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-xl hover:border-brand-200 hover:shadow-sm transition-all group"
+          >
+            <div className="p-2 rounded-lg bg-brand-50 border border-brand-100">
+              <Plus className="w-5 h-5 text-brand-600" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Quick start</p>
+              <p className="text-sm font-semibold text-gray-900">New listing project</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors" />
+          </Link>
+          <Link
+            href="/dashboard/leads"
+            className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-xl hover:border-brand-200 hover:shadow-sm transition-all group"
+          >
+            <div className="p-2 rounded-lg bg-gray-50 border border-gray-200">
+              <Inbox className="w-5 h-5 text-gray-600" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Inbox</p>
+              <p className="text-lg font-bold text-gray-900">{inboxLeads.length}</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors" />
+          </Link>
+        </div>
+
+        {/* Quick actions */}
+        <div className="flex flex-wrap gap-3">
           <Link href="/dashboard/clients" data-tour="manage-clients">
-            <Button variant="outline">
+            <Button variant="outline" size="sm">
               Manage Clients
             </Button>
           </Link>
@@ -285,7 +332,7 @@ export default function DashboardPage() {
             )}
           </Card>
         </div>
-      </div>
+      </PageShell>
     </div>
   );
 }

@@ -4,6 +4,12 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
+import PageShell from '@/components/layout/PageShell';
+import Badge from '@/components/ui/Badge';
+import Tabs from '@/components/ui/Tabs';
+import StatCard from '@/components/ui/StatCard';
+import EmptyState from '@/components/ui/EmptyState';
+import Button from '@/components/ui/Button';
 import { supabase } from '@/lib/supabase';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
@@ -67,20 +73,15 @@ const SOURCE_LABELS: Record<string, string> = {
 };
 
 function TempBadge({ temp }: { temp: 'hot' | 'warm' | 'cold' }) {
-  if (temp === 'hot') return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-red-500/15 text-red-400 border border-red-500/20">
-      <Flame className="w-3 h-3" /> Hot
-    </span>
-  );
-  if (temp === 'warm') return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-brand-500/15 text-brand-600 border border-brand-500/20">
-      <Thermometer className="w-3 h-3" /> Warm
-    </span>
-  );
+  const config = {
+    hot: { variant: 'hot' as const, icon: Flame, label: 'Hot' },
+    warm: { variant: 'warm' as const, icon: Thermometer, label: 'Warm' },
+    cold: { variant: 'cold' as const, icon: Snowflake, label: 'Cold' },
+  }[temp];
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-50 text-gray-500 border border-gray-200">
-      <Snowflake className="w-3 h-3" /> Cold
-    </span>
+    <Badge variant={config.variant} icon={config.icon}>
+      {config.label}
+    </Badge>
   );
 }
 
@@ -389,43 +390,18 @@ export default function LeadsPage() {
     <div className="min-h-screen">
       <Header title="Leads" subtitle="Respond to leads and grow your pipeline" />
 
-      <div className="p-4 sm:p-6 text-gray-900 max-w-4xl mx-auto">
-
-        {/* Tab navigation */}
-        <div data-tour="leads-tabs" className="flex gap-1 p-1 bg-gray-50 border border-gray-200 rounded-xl mb-6">
-          {TABS.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              onClick={() => setActiveTab(id)}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                activeTab === id
-                  ? 'bg-white text-gray-900'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              <Icon className="w-4 h-4" />
-              <span className="hidden sm:inline">{label}</span>
-            </button>
-          ))}
+      <PageShell size="narrow" className="space-y-6">
+        <div data-tour="leads-tabs">
+          <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} hideLabelsOnMobile />
         </div>
 
         {/* ─── INBOX ─────────────────────────────────────────────────────── */}
         {activeTab === 'inbox' && (
           <div className="space-y-6">
-            <div data-tour="leads-stats" className="grid grid-cols-3 gap-3">
-              {[
-                { label: 'Total Leads', value: leads.length, icon: Users },
-                { label: 'New This Week', value: thisWeek.length, icon: Clock },
-                { label: 'Hot Leads', value: hotLeads.length, icon: Flame },
-              ].map(({ label, value, icon: Icon }) => (
-                <div key={label} className="bg-white border border-gray-200 rounded-xl p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Icon className="w-4 h-4 text-gray-500" />
-                    <p className="text-xs text-gray-500">{label}</p>
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900">{value}</p>
-                </div>
-              ))}
+            <div data-tour="leads-stats" className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <StatCard label="Total Leads" value={leads.length} icon={Users} />
+              <StatCard label="New This Week" value={thisWeek.length} icon={Clock} />
+              <StatCard label="Hot Leads" value={hotLeads.length} icon={Flame} />
             </div>
 
             <div className="space-y-4">
@@ -459,25 +435,22 @@ export default function LeadsPage() {
                   ))}
                 </div>
               ) : filteredLeads.length === 0 ? (
-                <div className="bg-white border border-gray-200 rounded-xl p-10 text-center">
-                  <Inbox className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-                  <p className="text-gray-500 font-medium mb-1">
-                    {filter === 'all' ? 'No leads yet' : `No ${filter} leads`}
-                  </p>
-                  <p className="text-gray-600 text-sm mb-4">
-                    {filter === 'all'
+                <EmptyState
+                  icon={Inbox}
+                  title={filter === 'all' ? 'No leads yet' : `No ${filter} leads`}
+                  description={
+                    filter === 'all'
                       ? 'Share your lead form or run an open house to start collecting leads.'
-                      : 'Try a different filter.'}
-                  </p>
-                  {filter === 'all' && (
-                    <button
-                      onClick={() => setActiveTab('capture')}
-                      className="text-sm font-medium text-gray-900 bg-gray-100 hover:bg-gray-200 border border-gray-300 px-4 py-2 rounded-lg transition-colors"
-                    >
-                      Go to Capture
-                    </button>
-                  )}
-                </div>
+                      : 'Try a different filter to see more leads.'
+                  }
+                  action={
+                    filter === 'all' ? (
+                      <Button variant="secondary" size="sm" onClick={() => setActiveTab('capture')}>
+                        Go to Capture
+                      </Button>
+                    ) : undefined
+                  }
+                />
               ) : (
                 <div className="space-y-3">
                   {filteredLeads.map(lead => (
@@ -708,7 +681,7 @@ export default function LeadsPage() {
             </div>
           </div>
         )}
-      </div>
+      </PageShell>
     </div>
   );
 }

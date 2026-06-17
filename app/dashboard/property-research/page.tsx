@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState, Suspense, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/layout/Header';
+import PageShell from '@/components/layout/PageShell';
+import Tabs from '@/components/ui/Tabs';
 import { useApi } from '@/lib/swr';
 import { CmaPanel, type CmaAnalysisResult } from '@/components/property-research/CmaPanel';
 import { OwnerContactPanel, type LookupResponse } from '@/components/property-research/OwnerContactPanel';
@@ -201,7 +203,7 @@ function PropertyResearchContent() {
         subtitle="Look up owners, property details, and run comp-based CMA — one address, one place"
       />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <PageShell size="medium" className="space-y-6">
 
         {history.length > 0 && (
           <div>
@@ -299,24 +301,7 @@ function PropertyResearchContent() {
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-1 p-1 bg-gray-100 rounded-xl border border-gray-200">
-          {TABS.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => setActiveTab(id)}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                activeTab === id
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              <Icon className="w-4 h-4 hidden sm:block" />
-              {label}
-            </button>
-          ))}
-        </div>
+        <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
         {/* Tab content — keep mounted to avoid re-triggering lookups on tab switch */}
         <div className={activeTab === 'overview' ? '' : 'hidden'}>
@@ -351,7 +336,7 @@ function PropertyResearchContent() {
             onComplete={handleCmaComplete}
           />
         </div>
-      </div>
+      </PageShell>
     </div>
   );
 }

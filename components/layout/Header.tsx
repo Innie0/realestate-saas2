@@ -4,7 +4,7 @@
 'use client'; // This component uses client-side features
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Bell, Clock, Calendar, X } from 'lucide-react';
+import { Bell, Clock, Calendar, X, User, MapPin } from 'lucide-react';
 import { getCurrentUser } from '@/lib/supabase';
 
 /**
@@ -303,9 +303,19 @@ export default function Header({ title, subtitle }: HeaderProps) {
                                 )}
                               </div>
                               {(item.clientName || item.location) && (
-                                <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
-                                  {item.clientName && <span>👤 {item.clientName}</span>}
-                                  {item.location && <span>📍 {item.location}</span>}
+                                <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-500">
+                                  {item.clientName && (
+                                    <span className="inline-flex items-center gap-1">
+                                      <User className="w-3 h-3" />
+                                      {item.clientName}
+                                    </span>
+                                  )}
+                                  {item.location && (
+                                    <span className="inline-flex items-center gap-1 truncate">
+                                      <MapPin className="w-3 h-3 flex-shrink-0" />
+                                      {item.location}
+                                    </span>
+                                  )}
                                 </div>
                               )}
                             </div>

@@ -8,7 +8,9 @@ import ReminderForm from '@/components/ReminderForm';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Header from '@/components/layout/Header';
-import { Search, Plus, X } from 'lucide-react';
+import PageShell from '@/components/layout/PageShell';
+import EmptyState from '@/components/ui/EmptyState';
+import { Search, Plus, X, Users } from 'lucide-react';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
 
@@ -168,7 +170,7 @@ export default function ClientsPage() {
   return (
     <div className="min-h-screen">
       <Header title="Clients" subtitle="Manage your client relationships and follow-ups" />
-      <div className="p-4 sm:p-6 text-gray-900">
+      <PageShell>
 
       {/* Filters and search */}
       <div className="mb-6 flex flex-col gap-3 sm:gap-4">
@@ -246,17 +248,17 @@ export default function ClientsPage() {
           ))}
         </div>
       ) : clients.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500 mb-4">No clients found</p>
-          <Button
-            variant="primary"
-            size="md"
-            onClick={() => setShowCreateForm(true)}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Create Your First Client
-          </Button>
-        </div>
+        <EmptyState
+          icon={Users}
+          title="No clients yet"
+          description="Add your first client to start tracking notes, reminders, and transactions."
+          action={
+            <Button variant="primary" size="md" onClick={() => setShowCreateForm(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Create Your First Client
+            </Button>
+          }
+        />
       ) : (
         <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {clients.map((client) => (
@@ -339,7 +341,7 @@ export default function ClientsPage() {
           </div>
         </div>
       )}
-      </div>
+      </PageShell>
     </div>
   );
 }
