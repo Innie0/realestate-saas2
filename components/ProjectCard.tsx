@@ -104,7 +104,7 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
     {onDelete && (
       <button
         onClick={handleDelete}
-        className="absolute top-2 left-2 p-2 bg-red-500 hover:bg-red-600 text-gray-900 rounded-full shadow-lg transition-colors z-10"
+        className="absolute top-2 left-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-full border-2 border-white shadow-lg transition-colors z-10"
         title="Delete project"
       >
         <Trash2 className="w-4 h-4" />
