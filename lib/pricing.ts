@@ -20,33 +20,66 @@ export const PLAN_PRICES = {
   pro: { monthly: 99, annual: 990 },
 } as const;
 
+export const STARTER_PLAN_DESCRIPTION = 'Perfect for active agents growing their business';
+export const PRO_PLAN_DESCRIPTION = 'Everything you need to scale your real estate business';
+
 export const STARTER_FEATURES = [
   '7-day free trial',
   '20 AI Listing Projects per Month',
-  '20 Property Lookups per Month',
+  '20 Property Research Lookups per Month',
+  '5 CMA / Market Analyses per Month',
   '75 AI Assistant Messages per Month',
   'Up to 50 Clients (total)',
   '20 Transactions per Month',
+  'Client Manager (CRM)',
+  'Leads Inbox & Hot/Warm/Cold Scoring',
   'Lead Capture Form & QR Code',
   'Automated Lead Follow-Up Emails',
-  'Calendar Integration (Unlimited Events)',
-  'AI-Powered Descriptions',
+  'Google Calendar & Task Manager',
+  'Transaction Checklists, Reminders & Documents',
+  'AI Listing Descriptions (3 Tones)',
   'Email Support',
 ] as const;
 
 export const PRO_FEATURES = [
   '7-day free trial',
-  'Unlimited Property Listings',
-  'Unlimited Property Lookups',
+  'Unlimited AI Listing Projects',
+  'Unlimited Property Research & Lookups',
+  'Unlimited CMA / Market Analyses',
   'Unlimited AI Assistant Messages',
   'Unlimited Clients & Transactions',
-  'Lead Capture, Open Houses & Agent Profile',
+  'Client Manager (CRM)',
+  'Leads Inbox & Hot/Warm/Cold Scoring',
+  'Lead Capture Form & QR Code',
+  'Open House QR Sign-In',
+  'Public Agent Profile Page',
   'Automated Lead Follow-Up Emails',
-  'Unlimited Calendar Events',
-  'AI-Powered Descriptions (3 Tones)',
-  'Transaction Checklists & Reminders',
+  'Google Calendar & Task Manager',
+  'Transaction Checklists, Reminders & Documents',
+  'AI Listing Descriptions (3 Tones)',
+  'SMS Lead Alerts (Coming Soon)',
   'Priority Support',
 ] as const;
+
+/** Short comparison rows for upgrade page — numeric limits + Pro-only features. */
+export const PLAN_COMPARISON_ROWS = [
+  { label: 'Listing Projects', starter: '20 / mo', pro: 'Unlimited' },
+  { label: 'Property Research', starter: '20 / mo', pro: 'Unlimited' },
+  { label: 'CMA / Market Analysis', starter: '5 / mo', pro: 'Unlimited' },
+  { label: 'AI Messages', starter: '75 / mo', pro: 'Unlimited' },
+  { label: 'Clients', starter: '50 total', pro: 'Unlimited' },
+  { label: 'Transactions', starter: '20 / mo', pro: 'Unlimited' },
+  { label: 'Calendar & Tasks', starter: true, pro: true },
+  { label: 'Lead Capture Form', starter: true, pro: true },
+  { label: 'Leads Inbox', starter: true, pro: true },
+  { label: 'Open House Sign-In', starter: false, pro: true },
+  { label: 'Public Agent Profile', starter: false, pro: true },
+  { label: 'Priority Support', starter: false, pro: true },
+] as const;
+
+export function getPricingFootnote(): string {
+  return `7-day free trial · Cancel anytime · Starter ${formatPlanPrice(PLAN_PRICES.starter.annual)}/yr · Pro ${formatPlanPrice(PLAN_PRICES.pro.annual)}/yr (save 2 months)`;
+}
 
 export const ALL_STARTER_PRICE_IDS = [
   STARTER_MONTHLY_PRICE_ID,

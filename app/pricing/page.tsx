@@ -13,9 +13,12 @@ import {
   type PlanSlug,
   STARTER_FEATURES,
   PRO_FEATURES,
+  STARTER_PLAN_DESCRIPTION,
+  PRO_PLAN_DESCRIPTION,
   getAnnualSavings,
   getPlanDisplayPrice,
   getPlanPeriodLabel,
+  getPricingFootnote,
   getStripePriceId,
   isAnyAnnualBillingAvailable,
 } from '@/lib/pricing';
@@ -24,14 +27,14 @@ const PLANS: { slug: PlanSlug; name: string; description: string; popular: boole
   {
     slug: 'starter',
     name: 'Starter',
-    description: 'Perfect for active agents growing their business',
+    description: STARTER_PLAN_DESCRIPTION,
     popular: false,
     features: STARTER_FEATURES,
   },
   {
     slug: 'pro',
     name: 'Pro',
-    description: 'Everything you need to scale your real estate business',
+    description: PRO_PLAN_DESCRIPTION,
     popular: true,
     features: PRO_FEATURES,
   },
@@ -233,7 +236,7 @@ export default function PricingPage() {
           )}
 
           <p className="text-center text-gray-600 text-sm mt-10">
-            7-day free trial · Cancel anytime · No hidden fees
+            {getPricingFootnote()}
           </p>
         </div>
       )}

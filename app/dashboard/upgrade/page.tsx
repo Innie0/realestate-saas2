@@ -11,6 +11,7 @@ import { formatFeatureText } from '@/lib/formatFeatureText';
 import {
   PRO_MONTHLY_PRICE_ID,
   PRO_FEATURES,
+  PLAN_COMPARISON_ROWS,
   getPlanDisplayPrice,
   isProPriceId,
 } from '@/lib/pricing';
@@ -22,17 +23,10 @@ const STARTER_LIMITS: Record<string, number> = {
   clients: 50,
   transactions: 20,
   calendar_events: -1,
+  market_analyses: 5,
 };
 
-const COMPARISON_ROWS = [
-  { label: 'Projects',         starter: '20 / mo',  pro: 'Unlimited' },
-  { label: 'Property Lookups', starter: '20 / mo',  pro: 'Unlimited' },
-  { label: 'AI Messages',      starter: '75 / mo',  pro: 'Unlimited' },
-  { label: 'Clients',          starter: '50 total', pro: 'Unlimited' },
-  { label: 'Transactions',     starter: '20 / mo',  pro: 'Unlimited' },
-  { label: 'Calendar Events',  starter: 'Unlimited', pro: 'Unlimited' },
-  { label: 'Priority Support', starter: false,      pro: true },
-];
+const COMPARISON_ROWS = PLAN_COMPARISON_ROWS;
 
 const PRO_HIGHLIGHTS = [...PRO_FEATURES].filter((f) => f !== '7-day free trial');
 
@@ -151,10 +145,11 @@ export default function UpgradePage() {
                 Your Current Usage (Starter Plan)
               </span>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
               {[
                 { key: 'projects', label: 'Projects' },
                 { key: 'property_lookups', label: 'Lookups' },
+                { key: 'market_analyses', label: 'CMA' },
                 { key: 'ai_messages', label: 'AI Messages' },
                 { key: 'clients', label: 'Clients' },
                 { key: 'transactions', label: 'Transactions' },

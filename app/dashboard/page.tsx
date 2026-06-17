@@ -126,10 +126,11 @@ export default function DashboardPage() {
                 <Button variant="outline" size="sm">Upgrade</Button>
               </Link>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
               {[
                 { key: 'projects', label: 'Projects', period: '/mo' },
                 { key: 'property_lookups', label: 'Lookups', period: plan === 'pro' ? '' : '/mo' },
+                { key: 'market_analyses', label: 'CMA', period: '/mo' },
                 { key: 'ai_messages', label: 'AI Messages', period: '/mo' },
                 { key: 'clients', label: 'Clients', period: 'total' },
                 { key: 'transactions', label: 'Transactions', period: '/mo' },

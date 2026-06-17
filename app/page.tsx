@@ -13,6 +13,14 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { formatFeatureText } from '@/lib/formatFeatureText';
+import {
+  STARTER_FEATURES,
+  PRO_FEATURES,
+  STARTER_PLAN_DESCRIPTION,
+  PRO_PLAN_DESCRIPTION,
+  getPlanDisplayPrice,
+  getPricingFootnote,
+} from '@/lib/pricing';
 
 // ─── Animation Variants ───────────────────────────────────────────────────────
 
@@ -1511,7 +1519,7 @@ export default function HomePage() {
             <FAQItem question="Does it work for commercial real estate too?" answer="Absolutely. Realestic works for any type of real estate — residential, commercial, rental, and land. The AI adapts to the type of property you're working with." delay={0.1} />
             <FAQItem question="Can I cancel anytime?" answer="Yes, you can cancel your subscription at any time with no cancellation fees. If you cancel, you'll continue to have access until the end of your current billing period." delay={0.15} />
             <FAQItem question="Is my data secure?" answer="Yes. All data is encrypted in transit and at rest. We use enterprise-grade infrastructure and never sell your data to third parties. Your client information stays private and protected." delay={0.2} />
-            <FAQItem question="What's the difference between Starter and Pro?" answer="The Starter plan ($49/month) includes 20 listing projects, 20 property lookups, 75 AI messages, and 20 transactions per month, plus up to 50 clients total on your account — perfect for individual agents. The Pro plan ($99/month) gives you unlimited access to everything, ideal for busy agents or small teams. Save with annual billing — Pro is $990/year (2 months free)." delay={0.25} />
+            <FAQItem question="What's the difference between Starter and Pro?" answer="Starter ($49/month) includes 20 listing projects, 20 property research lookups, 5 CMA analyses, 75 AI messages, and 20 transactions per month, plus up to 50 clients total — with lead capture, CRM, calendar, and transaction tools. Pro ($99/month) unlocks unlimited usage on all of those, plus open house sign-in, a public agent profile, and priority support. Both plans include a 7-day free trial. Save with annual billing — Starter is $490/year, Pro is $990/year (2 months free)." delay={0.25} />
           </div>
         </div>
       </section>
@@ -1538,38 +1546,18 @@ export default function HomePage() {
             {[
               {
                 name: 'Starter',
-                price: '$49',
-                description: 'Perfect for active agents growing their business',
+                price: getPlanDisplayPrice('starter', 'monthly'),
+                description: STARTER_PLAN_DESCRIPTION,
                 plan: 'starter',
-                features: [
-                  '7-day free trial',
-                  '20 AI Listing Projects / month',
-                  '20 Property Lookups / month',
-                  '75 AI Assistant Messages / month',
-                  'Up to 50 Clients (total)',
-                  '20 Transactions / month',
-                  'Lead Capture Form & QR Code',
-                  'Automated Lead Follow-Up Emails',
-                  'Calendar Integration',
-                ],
+                features: STARTER_FEATURES,
                 popular: false,
               },
               {
                 name: 'Pro',
-                price: '$99',
-                description: 'Everything you need to scale your real estate business',
+                price: getPlanDisplayPrice('pro', 'monthly'),
+                description: PRO_PLAN_DESCRIPTION,
                 plan: 'pro',
-                features: [
-                  '7-day free trial',
-                  'Unlimited Listing Projects',
-                  'Unlimited Property Lookups',
-                  'Unlimited AI Messages',
-                  'Unlimited Clients & Transactions',
-                  'Lead Capture, Open Houses & Profile',
-                  'Automated Lead Follow-Up Emails',
-                  'Market Analysis Tool',
-                  'Priority Support',
-                ],
+                features: PRO_FEATURES,
                 popular: true,
               },
             ].map((plan, i) => (
@@ -1643,7 +1631,7 @@ export default function HomePage() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="text-center text-gray-600 text-sm mt-10"
           >
-            7-day free trial · Cancel anytime · Pro annual plan $990/yr (save 2 months)
+            {getPricingFootnote()}
           </motion.p>
         </div>
       </section>
