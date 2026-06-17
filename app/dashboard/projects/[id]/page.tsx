@@ -14,7 +14,7 @@ import Modal from '@/components/ui/Modal';
 import { 
   Upload, Sparkles, Save, Trash2, Image as ImageIcon, Calendar, FileText, 
   Building2, Copy, Check, Edit3, Wand2, Eye, ChevronLeft, ChevronRight,
-  Home, MapPin, Bed, Bath, Square, DollarSign, ExternalLink, X
+  Home, MapPin, Bed, Bath, Square, DollarSign, ExternalLink, X, Globe, Link2
 } from 'lucide-react';
 import { Project, AIGeneratedContent } from '@/types';
 
@@ -90,6 +90,55 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
   // Project detail tab
   const [projectTab, setProjectTab] = useState<'overview' | 'ai_content' | 'linked'>('overview');
+
+  // Publish listing
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  const publicListingUrl =
+    typeof window !== 'undefined' && project
+      ? `${window.location.origin}/listing/${project.id}`
+      : project
+        ? `/listing/${project.id}`
+        : '';
+
+  const handleTogglePublish = async () => {
+    if (!project) return;
+    setIsPublishing(true);
+    try {
+      const nextPublished = !project.published;
+      const response = await fetch(`/api/projects/${project.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ published: nextPublished }),
+      });
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to update listing');
+      }
+      setProject({ ...project, ...result.data });
+    } catch (err) {
+      console.error(err);
+      alert('Could not update publish status. Try again.');
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
+  const handleCopyListingLink = async () => {
+    const url =
+      typeof window !== 'undefined'
+        ? `${window.location.origin}/listing/${project?.id}`
+        : '';
+    if (!url) return;
+    try {
+      await navigator.clipboard.writeText(url);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    } catch {
+      alert('Could not copy link.');
+    }
+  };
 
   // Load project data from API on mount
   useEffect(() => {
@@ -1327,6 +1376,74 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             </div>
           )}
         </div>
+
+        {/* Publish listing */}
+        <Card className="mb-6 border border-gray-200">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-lg bg-brand-500/10 text-brand-600">
+                <Globe className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-base font-semibold text-gray-900">Publish listing page</h2>
+                <p className="text-sm text-gray-500 mt-1 max-w-xl">
+                  Share a public link with photos, price, and description. Leads from the page go to your inbox.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={handleTogglePublish}
+                disabled={isPublishing}
+                className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${
+                  project.published ? 'bg-brand-500' : 'bg-gray-300'
+                } ${isPublishing ? 'opacity-60 cursor-not-allowed' : ''}`}
+                aria-pressed={!!project.published}
+                aria-label="Publish listing"
+              >
+                <span
+                  className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+                    project.published ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+              <span className="text-sm font-medium text-gray-700">
+                {project.published ? 'Published' : 'Draft'}
+              </span>
+            </div>
+          </div>
+
+          {project.published && (
+            <div className="mt-4 pt-4 border-t border-gray-200 flex flex-col sm:flex-row gap-2">
+              <div className="flex-1 flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-600 truncate">
+                <Link2 className="w-4 h-4 shrink-0 text-gray-400" />
+                <span className="truncate">{publicListingUrl}</span>
+              </div>
+              <Button variant="outline" size="sm" onClick={handleCopyListingLink}>
+                {linkCopied ? (
+                  <>
+                    <Check className="w-4 h-4 mr-1" />
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4 mr-1" />
+                    Copy link
+                  </>
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.open(`/listing/${project.id}`, '_blank')}
+              >
+                <ExternalLink className="w-4 h-4 mr-1" />
+                View live
+              </Button>
+            </div>
+          )}
+        </Card>
 
         {/* Tab navigation */}
         <div className="border-b border-gray-200 mb-6">

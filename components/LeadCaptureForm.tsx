@@ -6,6 +6,12 @@ import { Check, Home, Building2, KeyRound, Search } from 'lucide-react';
 interface LeadCaptureFormProps {
   agentId: string;
   agentName: string;
+  /** Lead source for CRM (default: lead_form) */
+  source?: 'lead_form' | 'listing_page';
+  /** Pre-fill interest message with listing address */
+  listingAddress?: string;
+  /** Default lead type selection */
+  defaultLeadType?: string;
 }
 
 const formatPhoneNumber = (value: string) => {
@@ -45,16 +51,22 @@ const RENTER_BUDGETS = [
   { value: '4000+',       label: '$4,000+/mo' },
 ];
 
-export default function LeadCaptureForm({ agentId, agentName }: LeadCaptureFormProps) {
+export default function LeadCaptureForm({
+  agentId,
+  agentName,
+  source = 'lead_form',
+  listingAddress,
+  defaultLeadType = '',
+}: LeadCaptureFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    leadType: '',
+    leadType: defaultLeadType,
     timeline: '',
     budget: '',
     area: '',
-    message: '',
+    message: listingAddress ? `I'm interested in ${listingAddress}` : '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -84,7 +96,7 @@ export default function LeadCaptureForm({ agentId, agentName }: LeadCaptureFormP
       const response = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ agentId, ...formData }),
+        body: JSON.stringify({ agentId, source, listingAddress, ...formData }),
       });
       const result = await response.json();
       if (result.success) {

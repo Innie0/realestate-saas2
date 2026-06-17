@@ -108,6 +108,10 @@ export async function PUT(
     if (body.status !== undefined) updateData.status = body.status;
     if (body.selected_tone !== undefined) updateData.selected_tone = body.selected_tone;
     if (body.tone_versions !== undefined) updateData.tone_versions = body.tone_versions;
+    if (body.published !== undefined) {
+      updateData.published = Boolean(body.published);
+      updateData.published_at = body.published ? new Date().toISOString() : null;
+    }
 
     const { data: project, error } = await supabase
       .from('projects')

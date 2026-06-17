@@ -26,7 +26,7 @@ const VALID_LEAD_TYPES = ['buyer', 'seller', 'renter', 'browsing'];
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { agentId, name, email, phone, leadType, timeline, budget, area, message } = body;
+    const { agentId, name, email, phone, leadType, timeline, budget, area, message, source, listingAddress } = body;
 
     // --- Validation -------------------------------------------------------
     if (!agentId || !UUID_REGEX.test(agentId)) {
@@ -63,6 +63,10 @@ export async function POST(request: NextRequest) {
     const cleanTimeline = typeof timeline === 'string' ? timeline.trim().slice(0, 50) : '';
     const cleanBudget = typeof budget === 'string' ? budget.trim().slice(0, 50) : '';
     const cleanArea = typeof area === 'string' ? area.trim().slice(0, 200) : '';
+    const leadSource =
+      source === 'listing_page' ? 'listing_page' : 'lead_form';
+    const cleanListingAddress =
+      typeof listingAddress === 'string' ? listingAddress.trim().slice(0, 300) : '';
 
     const supabase = createAdminClient();
 
@@ -89,7 +93,7 @@ export async function POST(request: NextRequest) {
         email: cleanEmail || null,
         phone: cleanPhone || null,
         status: 'active',
-        source: 'lead_form',
+        source: leadSource,
         in_crm: false,
         lead_type: cleanLeadType,
         message: cleanMessage || null,
@@ -107,6 +111,7 @@ export async function POST(request: NextRequest) {
 
     // --- Store the message as a note (shows in the CRM timeline) ----------
     const noteParts = [
+      cleanListingAddress ? `Listing: ${cleanListingAddress}` : null,
       cleanLeadType ? `Interested in: ${cleanLeadType}` : null,
       cleanTimeline ? `Timeline: ${cleanTimeline}` : null,
       cleanBudget ? `Budget: ${cleanBudget}` : null,
@@ -118,7 +123,7 @@ export async function POST(request: NextRequest) {
       await supabase.from('client_notes').insert({
         client_id: client.id,
         user_id: agentId,
-        note: `New lead from website form.\n${noteParts.join('\n')}`,
+        note: `New lead from ${leadSource === 'listing_page' ? 'listing page' : 'website form'}.\n${noteParts.join('\n')}`,
       });
     }
 
@@ -132,7 +137,7 @@ export async function POST(request: NextRequest) {
     await supabase.from('reminders').insert({
       client_id: client.id,
       user_id: agentId,
-      title: `New lead: ${cleanName}${leadTypeLabel} submitted your lead form`,
+      title: `New lead: ${cleanName}${leadTypeLabel} — ${leadSource === 'listing_page' ? 'listing inquiry' : 'submitted your lead form'}`,
       description: [
         cleanEmail ? `Email: ${cleanEmail}` : null,
         cleanPhone ? `Phone: ${cleanPhone}` : null,

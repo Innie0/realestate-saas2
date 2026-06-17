@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { checkUsageLimit, incrementUsage, usageLimitError } from '@/lib/usage';
 
-const INBOX_SOURCES = ['lead_form', 'open_house'];
+const INBOX_SOURCES = ['lead_form', 'open_house', 'listing_page'];
 
 export async function POST(
   request: NextRequest,

@@ -26,6 +26,8 @@ export interface Project {
   images: (string | ProjectImage)[]; // Array of image URLs or image objects (supports both formats)
   ai_content?: AIGeneratedContent; // AI-generated marketing content
   status: 'draft' | 'in_progress' | 'completed'; // Project status
+  published?: boolean; // Public listing page enabled
+  published_at?: string | null; // When the listing was published
   created_at: string; // When the project was created
   updated_at: string; // When the project was last updated
 }
@@ -161,7 +163,7 @@ export interface Client {
   email?: string; // Client's email address
   phone?: string; // Client's phone number
   status: 'active' | 'inactive' | 'archived'; // Client status
-  source?: 'manual' | 'lead_form' | 'open_house'; // How the client was added
+  source?: 'manual' | 'lead_form' | 'open_house' | 'listing_page'; // How the client was added
   in_crm?: boolean; // false = leads inbox only until agent adds to CRM
   lead_type?: 'buyer' | 'seller' | 'renter' | 'browsing' | null; // What a lead is interested in
   message?: string | null; // Message left by a lead via the public form

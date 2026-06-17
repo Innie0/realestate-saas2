@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     // CRM list: only promoted clients + manually added
     // Inbox: captured leads not yet in CRM
     if (view === 'inbox') {
-      query = query.eq('in_crm', false).in('source', ['lead_form', 'open_house']);
+      query = query.eq('in_crm', false).in('source', ['lead_form', 'open_house', 'listing_page']);
     } else {
       query = query.eq('in_crm', true);
     }

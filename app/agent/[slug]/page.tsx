@@ -1,6 +1,8 @@
+import Link from 'next/link';
 import { createAdminClient } from '@/lib/supabase-admin';
 import { hasLeadCaptureAccess } from '@/lib/subscription';
 import LeadCaptureForm from '@/components/LeadCaptureForm';
+import { formatListingPrice, normalizeProjectImages } from '@/lib/listing-utils';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -61,6 +63,19 @@ async function getAgentProfile(slug: string) {
   };
 }
 
+async function getPublishedListings(userId: string) {
+  const supabase = createAdminClient();
+  const { data } = await supabase
+    .from('projects')
+    .select('id, title, property_info, images, published_at')
+    .eq('user_id', userId)
+    .eq('published', true)
+    .order('published_at', { ascending: false })
+    .limit(12);
+
+  return data ?? [];
+}
+
 export default async function AgentProfilePage({ params }: PageProps) {
   const { slug } = await params;
   const agent = await getAgentProfile(slug);
@@ -75,6 +90,8 @@ export default async function AgentProfilePage({ params }: PageProps) {
       </div>
     );
   }
+
+  const listings = await getPublishedListings(agent.id);
 
   const initials = agent.name
     .split(' ')
@@ -153,6 +170,53 @@ export default async function AgentProfilePage({ params }: PageProps) {
                   {a}
                 </span>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Published listings */}
+        {listings.length > 0 && (
+          <div>
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
+              Listings
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {listings.map((listing) => {
+                const info = (listing.property_info as Record<string, unknown>) || {};
+                const thumb = normalizeProjectImages(listing.images)[0];
+                const address =
+                  (typeof info.address === 'string' && info.address) || listing.title;
+                const price =
+                  typeof info.price === 'number' ? info.price : null;
+
+                return (
+                  <Link
+                    key={listing.id}
+                    href={`/listing/${listing.id}`}
+                    className="group rounded-xl border border-gray-200 bg-white overflow-hidden hover:border-brand-300 hover:shadow-sm transition-all"
+                  >
+                    <div className="aspect-[16/10] bg-gray-100">
+                      {thumb ? (
+                        <img
+                          src={thumb}
+                          alt={address}
+                          className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                          No photo
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-3">
+                      <p className="font-semibold text-gray-900 text-sm">
+                        {formatListingPrice(price)}
+                      </p>
+                      <p className="text-gray-600 text-xs mt-1 line-clamp-2">{address}</p>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         )}

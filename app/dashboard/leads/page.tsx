@@ -61,6 +61,7 @@ const LEAD_TYPE_LABELS: Record<string, string> = {
 const SOURCE_LABELS: Record<string, string> = {
   lead_form: 'Lead form',
   open_house: 'Open house',
+  listing_page: 'Listing page',
 };
 
 function TempBadge({ temp }: { temp: 'hot' | 'warm' | 'cold' }) {
