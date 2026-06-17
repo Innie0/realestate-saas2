@@ -130,9 +130,9 @@ export default async function PublicListingPage({ params }: PageProps) {
           <LeadCaptureForm
             agentId={agent.id}
             agentName={agent.name}
+            variant="listing"
             source="listing_page"
             listingAddress={listingAddress}
-            defaultLeadType="buyer"
           />
         </div>
       </div>

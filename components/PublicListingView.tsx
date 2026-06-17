@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Bed,
   Bath,
@@ -9,6 +9,8 @@ import {
   Home,
   ChevronLeft,
   ChevronRight,
+  X,
+  ZoomIn,
 } from 'lucide-react';
 import type { Project } from '@/types';
 import {
@@ -23,37 +25,72 @@ interface PublicListingViewProps {
 
 export default function PublicListingView({ project }: PublicListingViewProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const imageUrls = normalizeProjectImages(project.images);
   const info = project.property_info || {};
   const description = getListingDescription(project);
 
-  const nextImage = () => {
+  const nextImage = useCallback(() => {
     if (imageUrls.length <= 1) return;
     setCurrentImageIndex((prev) => (prev + 1) % imageUrls.length);
-  };
+  }, [imageUrls.length]);
 
-  const prevImage = () => {
+  const prevImage = useCallback(() => {
     if (imageUrls.length <= 1) return;
     setCurrentImageIndex((prev) => (prev - 1 + imageUrls.length) % imageUrls.length);
+  }, [imageUrls.length]);
+
+  const openLightbox = (index?: number) => {
+    if (index != null) setCurrentImageIndex(index);
+    setLightboxOpen(true);
   };
+
+  useEffect(() => {
+    if (!lightboxOpen) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightboxOpen(false);
+      if (e.key === 'ArrowRight') nextImage();
+      if (e.key === 'ArrowLeft') prevImage();
+    };
+
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [lightboxOpen, nextImage, prevImage]);
 
   return (
     <div className="rounded-xl shadow-sm overflow-hidden border border-gray-200 bg-white">
       <div className="relative bg-gray-100">
         {imageUrls.length > 0 ? (
           <>
-            <div className="aspect-[16/9] md:aspect-[21/9]">
+            <button
+              type="button"
+              onClick={() => openLightbox()}
+              className="group relative block w-full aspect-[16/9] md:aspect-[21/9] cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+              aria-label="View full-size photo"
+            >
               <img
                 src={imageUrls[currentImageIndex]}
                 alt="Property"
                 className="w-full h-full object-cover"
               />
-            </div>
+              <span className="absolute bottom-3 left-3 flex items-center gap-1.5 px-2.5 py-1 bg-black/60 text-white text-xs rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                <ZoomIn className="w-3.5 h-3.5" />
+                Click to enlarge
+              </span>
+            </button>
             {imageUrls.length > 1 && (
               <>
                 <button
                   type="button"
-                  onClick={prevImage}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    prevImage();
+                  }}
                   className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-black/60 rounded-full text-white hover:bg-black/80 transition-colors"
                   aria-label="Previous photo"
                 >
@@ -61,7 +98,10 @@ export default function PublicListingView({ project }: PublicListingViewProps) {
                 </button>
                 <button
                   type="button"
-                  onClick={nextImage}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextImage();
+                  }}
                   className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-black/60 rounded-full text-white hover:bg-black/80 transition-colors"
                   aria-label="Next photo"
                 >
@@ -82,6 +122,61 @@ export default function PublicListingView({ project }: PublicListingViewProps) {
           </div>
         )}
       </div>
+
+      {/* Full-screen photo lightbox */}
+      {lightboxOpen && imageUrls.length > 0 && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Photo gallery"
+          onClick={() => setLightboxOpen(false)}
+        >
+          <button
+            type="button"
+            onClick={() => setLightboxOpen(false)}
+            className="absolute top-4 right-4 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors z-10"
+            aria-label="Close gallery"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          <div
+            className="relative max-w-6xl w-full max-h-[90vh] flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={imageUrls[currentImageIndex]}
+              alt={`Property photo ${currentImageIndex + 1}`}
+              className="max-w-full max-h-[85vh] object-contain rounded-lg"
+            />
+
+            {imageUrls.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={prevImage}
+                  className="absolute left-0 sm:-left-14 top-1/2 -translate-y-1/2 p-3 bg-white/10 rounded-full text-white hover:bg-white/20 transition-colors"
+                  aria-label="Previous photo"
+                >
+                  <ChevronLeft className="w-7 h-7" />
+                </button>
+                <button
+                  type="button"
+                  onClick={nextImage}
+                  className="absolute right-0 sm:-right-14 top-1/2 -translate-y-1/2 p-3 bg-white/10 rounded-full text-white hover:bg-white/20 transition-colors"
+                  aria-label="Next photo"
+                >
+                  <ChevronRight className="w-7 h-7" />
+                </button>
+                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-white/80 text-sm">
+                  {currentImageIndex + 1} / {imageUrls.length}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="p-6 md:p-8">
         <div className="flex flex-wrap items-start justify-between gap-4 mb-5">

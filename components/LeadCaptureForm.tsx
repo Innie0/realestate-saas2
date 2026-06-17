@@ -6,11 +6,13 @@ import { Check, Home, Building2, KeyRound, Search } from 'lucide-react';
 interface LeadCaptureFormProps {
   agentId: string;
   agentName: string;
+  /** Full lead form vs. simplified listing inquiry */
+  variant?: 'full' | 'listing';
   /** Lead source for CRM (default: lead_form) */
   source?: 'lead_form' | 'listing_page';
   /** Pre-fill interest message with listing address */
   listingAddress?: string;
-  /** Default lead type selection */
+  /** Default lead type selection (full form only) */
   defaultLeadType?: string;
 }
 
@@ -54,15 +56,18 @@ const RENTER_BUDGETS = [
 export default function LeadCaptureForm({
   agentId,
   agentName,
+  variant = 'full',
   source = 'lead_form',
   listingAddress,
   defaultLeadType = '',
 }: LeadCaptureFormProps) {
+  const isListingForm = variant === 'listing' || source === 'listing_page';
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    leadType: defaultLeadType,
+    leadType: isListingForm ? 'buyer' : defaultLeadType,
     timeline: '',
     budget: '',
     area: '',
@@ -179,6 +184,8 @@ export default function LeadCaptureForm({
       </div>
       <p className="text-xs text-gray-600 -mt-3">At least one contact method required.</p>
 
+      {!isListingForm && (
+        <>
       {/* What are you looking to do */}
       <div>
         <label className={labelClasses}>I&apos;m</label>
@@ -273,17 +280,27 @@ export default function LeadCaptureForm({
           className={inputClasses}
         />
       </div>
+        </>
+      )}
 
       {/* Message */}
       <div>
         <label htmlFor="message" className={labelClasses}>
-          Anything else? <span className="text-gray-600">(optional)</span>
+          {isListingForm ? (
+            <>Your message <span className="text-gray-600">(optional)</span></>
+          ) : (
+            <>Anything else? <span className="text-gray-600">(optional)</span></>
+          )}
         </label>
         <textarea
           id="message"
           value={formData.message}
           onChange={(e) => set('message', e.target.value)}
-          placeholder="Tell us more about what you're looking for..."
+          placeholder={
+            isListingForm
+              ? 'Ask about showings, offers, or anything else...'
+              : "Tell us more about what you're looking for..."
+          }
           rows={3}
           className={inputClasses}
         />
@@ -302,7 +319,7 @@ export default function LeadCaptureForm({
         disabled={isSubmitting}
         className="w-full rounded-lg bg-white px-6 py-3.5 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isSubmitting ? 'Sending...' : `Contact ${agentName.split(' ')[0]}`}
+        {isSubmitting ? 'Sending...' : isListingForm ? 'Request info' : `Contact ${agentName.split(' ')[0]}`}
       </button>
 
       <p className="text-center text-xs text-gray-600">
