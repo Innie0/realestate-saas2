@@ -217,7 +217,7 @@ export default function LeadsPage() {
         element: '[data-tour="leads-tabs"]',
         popover: {
           title: '📬 Leads Hub',
-          description: 'Three sections: Inbox (new leads), Capture (your form & QR code), and Automations (email follow-up & SMS alerts).',
+          description: 'Three sections: Inbox (new leads), Capture (your form & QR code), and Automations (email follow-up).',
           side: 'bottom',
         },
       },
@@ -253,8 +253,6 @@ export default function LeadsPage() {
   const [cancelledSequenceIds, setCancelledSequenceIds] = useState<Set<string>>(new Set());
 
   const [autoFollowup, setAutoFollowup] = useState(false);
-  const [smsEnabled, setSmsEnabled] = useState(false);
-  const [smsPhone, setSmsPhone] = useState('');
   const [savingSettings, setSavingSettings] = useState(false);
 
   useEffect(() => {
@@ -341,8 +339,6 @@ export default function LeadsPage() {
       const result = await res.json();
       if (result.success && result.data) {
         setAutoFollowup(result.data.auto_followup_enabled || false);
-        setSmsEnabled(result.data.sms_alerts_enabled || false);
-        setSmsPhone(result.data.sms_phone || '');
       }
     } catch (e) {
       console.error('Error fetching settings:', e);
@@ -661,43 +657,30 @@ export default function LeadsPage() {
                 </button>
               </div>
 
-              {/* SMS Alerts */}
-              <div className="bg-white border border-gray-200 rounded-xl p-6">
+              {/* SMS Alerts — coming soon */}
+              <div className="bg-white border border-gray-200 rounded-xl p-6 opacity-90">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                    <Phone className="w-5 h-5 text-gray-900/70" />
+                    <Phone className="w-5 h-5 text-gray-400" />
                   </div>
-                  <h3 className="text-base font-semibold text-gray-900">SMS alerts</h3>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <h3 className="text-base font-semibold text-gray-900">SMS alerts</h3>
+                    <span className="shrink-0 px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-medium">
+                      Coming soon
+                    </span>
+                  </div>
                 </div>
                 <p className="text-sm text-gray-500 mb-5">
-                  Get a text the moment a lead submits your form or signs in at an open house.
+                  Get a text the moment a lead submits your form or signs in at an open house. We&apos;re finishing setup — check back soon.
                 </p>
-                <div className="space-y-3">
-                  <input
-                    type="tel"
-                    placeholder="+1 (555) 123-4567"
-                    value={smsPhone}
-                    onChange={(e) => setSmsPhone(e.target.value)}
-                    onBlur={() => { if (smsPhone) saveSettings({ sms_phone: smsPhone }); }}
-                    className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 text-sm placeholder-gray-600 focus:outline-none focus:border-brand-500"
-                  />
-                  <button
-                    onClick={() => {
-                      const next = !smsEnabled;
-                      setSmsEnabled(next);
-                      saveSettings({ sms_alerts_enabled: next, sms_phone: smsPhone });
-                    }}
-                    disabled={savingSettings || !smsPhone.trim()}
-                    className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all border disabled:opacity-40 disabled:cursor-not-allowed ${
-                      smsEnabled
-                        ? 'bg-white text-gray-900 border-white'
-                        : 'bg-gray-50 text-gray-500 border-gray-200 hover:border-gray-300 hover:text-gray-900'
-                    }`}
-                  >
-                    {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : smsEnabled ? <Check className="w-4 h-4" /> : <Phone className="w-4 h-4" />}
-                    {smsEnabled ? 'Enabled' : 'Enable SMS alerts'}
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  disabled
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium border bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
+                >
+                  <Phone className="w-4 h-4" />
+                  Coming soon
+                </button>
               </div>
             </div>
           </div>
