@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
 import { Sparkles, Send, Loader2, Paperclip, X, Plus, MessageSquare, Trash2, FileText, Pin, Edit3, Check, MoreVertical } from 'lucide-react';
@@ -12,6 +12,7 @@ export default function TasksPage() {
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [isLoadingConversations, setIsLoadingConversations] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [userInitials, setUserInitials] = useState<string>('U');
@@ -37,6 +38,15 @@ export default function TasksPage() {
   
   // Ref for auto-scrolling
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messageCacheRef = useRef<Record<string, ConversationMessage[]>>({});
+  const fetchAbortRef = useRef<AbortController | null>(null);
+  const currentConversationIdRef = useRef<string | null>(null);
+  const skipSmoothScrollRef = useRef(false);
+  const prefetchStartedRef = useRef(false);
+
+  useEffect(() => {
+    currentConversationIdRef.current = currentConversationId;
+  }, [currentConversationId]);
 
   // Set page title
   useEffect(() => {
@@ -49,18 +59,10 @@ export default function TasksPage() {
     fetchConversations();
   }, []);
 
-  // Fetch messages when conversation changes
-  useEffect(() => {
-    if (currentConversationId) {
-      fetchMessages(currentConversationId);
-    } else {
-      setMessages([]);
-    }
-  }, [currentConversationId]);
-
   // Auto-scroll to bottom when messages change
   useEffect(() => {
-    scrollToBottom();
+    scrollToBottom(skipSmoothScrollRef.current);
+    skipSmoothScrollRef.current = false;
   }, [messages]);
 
   // Close menu when clicking outside
@@ -72,9 +74,31 @@ export default function TasksPage() {
     }
   }, [openMenuId]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToBottom = (instant = false) => {
+    messagesEndRef.current?.scrollIntoView({ behavior: instant ? 'auto' : 'smooth' });
   };
+
+  const prefetchConversationMessages = useCallback(async (conversations: Conversation[]) => {
+    const uncached = conversations.filter((c) => !messageCacheRef.current[c.id]).slice(0, 40);
+    await Promise.all(
+      uncached.map(async (conv) => {
+        try {
+          const response = await fetch(`/api/conversations?conversation_id=${conv.id}`);
+          const result = await response.json();
+          if (result.success) {
+            messageCacheRef.current[conv.id] = result.data.messages || [];
+            if (currentConversationIdRef.current === conv.id) {
+              skipSmoothScrollRef.current = true;
+              setMessages(result.data.messages || []);
+              setIsLoadingMessages(false);
+            }
+          }
+        } catch {
+          /* non-fatal prefetch */
+        }
+      })
+    );
+  }, []);
 
   const fetchUserInfo = async () => {
     try {
@@ -110,6 +134,10 @@ export default function TasksPage() {
 
       if (result.success) {
         setConversations(result.data);
+        if (result.data.length > 0 && !prefetchStartedRef.current) {
+          prefetchStartedRef.current = true;
+          void prefetchConversationMessages(result.data);
+        }
       } else {
         setError(result.error || 'Failed to load conversations');
       }
@@ -121,21 +149,74 @@ export default function TasksPage() {
     }
   };
 
-  const fetchMessages = async (conversationId: string) => {
+  const fetchMessages = useCallback(async (conversationId: string) => {
+    const cached = messageCacheRef.current[conversationId];
+    if (cached) {
+      skipSmoothScrollRef.current = true;
+      setMessages(cached);
+      setIsLoadingMessages(false);
+      return;
+    }
+
+    fetchAbortRef.current?.abort();
+    const controller = new AbortController();
+    fetchAbortRef.current = controller;
+
+    setIsLoadingMessages(true);
+
     try {
-      const response = await fetch(`/api/conversations?conversation_id=${conversationId}`);
+      const response = await fetch(`/api/conversations?conversation_id=${conversationId}`, {
+        signal: controller.signal,
+      });
       const result = await response.json();
 
+      if (controller.signal.aborted) return;
+
       if (result.success) {
-        setMessages(result.data.messages || []);
+        const loaded = result.data.messages || [];
+        messageCacheRef.current[conversationId] = loaded;
+        if (currentConversationIdRef.current === conversationId) {
+          skipSmoothScrollRef.current = true;
+          setMessages(loaded);
+        }
       } else {
         setError(result.error || 'Failed to load messages');
       }
     } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') return;
       console.error('Error fetching messages:', err);
       setError('Failed to load messages');
+    } finally {
+      if (!controller.signal.aborted && currentConversationIdRef.current === conversationId) {
+        setIsLoadingMessages(false);
+      }
+    }
+  }, []);
+
+  const selectConversation = (conversationId: string) => {
+    if (conversationId === currentConversationId) return;
+    setError(null);
+    setCurrentConversationId(conversationId);
+    const cached = messageCacheRef.current[conversationId];
+    if (cached) {
+      skipSmoothScrollRef.current = true;
+      setMessages(cached);
+      setIsLoadingMessages(false);
+    } else {
+      setMessages([]);
+      setIsLoadingMessages(true);
     }
   };
+
+  // Fetch messages when conversation changes (background refresh if uncached)
+  useEffect(() => {
+    if (currentConversationId) {
+      void fetchMessages(currentConversationId);
+    } else {
+      setMessages([]);
+      setIsLoadingMessages(false);
+    }
+  }, [currentConversationId, fetchMessages]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -191,8 +272,10 @@ export default function TasksPage() {
   };
 
   const handleNewConversation = () => {
+    fetchAbortRef.current?.abort();
     setCurrentConversationId(null);
     setMessages([]);
+    setIsLoadingMessages(false);
     setInputMessage('');
     handleRemoveImage();
   };
@@ -209,8 +292,9 @@ export default function TasksPage() {
 
       const result = await response.json();
 
-      if (result.success) {
+        if (result.success) {
         setConversations(prev => prev.filter(c => c.id !== conversationId));
+        delete messageCacheRef.current[conversationId];
         if (currentConversationId === conversationId) {
           handleNewConversation();
         }
@@ -322,7 +406,13 @@ export default function TasksPage() {
       image_name: imageName || pdfName,
       created_at: new Date().toISOString(),
     };
-    setMessages(prev => [...prev, tempUserMessage]);
+    setMessages((prev) => {
+      const next = [...prev, tempUserMessage];
+      if (currentConversationId) {
+        messageCacheRef.current[currentConversationId] = next;
+      }
+      return next;
+    });
 
     const messageText = inputMessage.trim();
     const capturedPdf = selectedPdf;
@@ -357,6 +447,9 @@ export default function TasksPage() {
         
         // Update messages with actual data from server
         setMessages(updatedMessages);
+        if (conversation_id) {
+          messageCacheRef.current[conversation_id] = updatedMessages;
+        }
       } else {
         setError(result.error || 'Failed to send message');
         // Remove optimistic message on error
@@ -429,7 +522,7 @@ export default function TasksPage() {
                         ? 'bg-gray-100 border border-gray-300'
                         : 'hover:bg-gray-50 border border-transparent'
                     } ${conv.pinned ? 'border-l-2 border-l-gray-900' : ''}`}
-                    onClick={() => setCurrentConversationId(conv.id)}
+                    onClick={() => selectConversation(conv.id)}
                   >
                     <div className="flex items-start gap-2">
                       <div className="flex items-center gap-1 flex-shrink-0 mt-0.5">
@@ -556,7 +649,25 @@ export default function TasksPage() {
           {/* Messages Area */}
           <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 min-h-0">
             <div className="max-w-3xl mx-auto">
-              {messages.length === 0 ? (
+              {isLoadingMessages ? (
+                <div className="space-y-4 py-2">
+                  {[1, 2, 3].map((i) => (
+                    <div
+                      key={i}
+                      className={`flex gap-4 ${i % 2 === 0 ? 'justify-end' : 'justify-start'}`}
+                    >
+                      {i % 2 !== 0 && (
+                        <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse shrink-0" />
+                      )}
+                      <div
+                        className={`h-16 rounded-2xl bg-gray-200 animate-pulse ${
+                          i % 2 === 0 ? 'w-2/5' : 'w-3/5'
+                        }`}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : messages.length === 0 ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 border border-gray-200 mb-4">
