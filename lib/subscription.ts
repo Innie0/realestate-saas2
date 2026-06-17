@@ -59,7 +59,8 @@ export function hasProLeadToolsAccess(
   email?: string | null
 ): boolean {
   if (!hasAppAccess(subscriptionStatus, email)) return false;
-  if (email && (isAdminEmail(email) || isFreePro(email))) return true;
+  // Comp Pro accounts only — admin follows their real subscription for plan-gated features
+  if (email && isFreePro(email)) return true;
   return isProPriceId(subscriptionPlan);
 }
 
