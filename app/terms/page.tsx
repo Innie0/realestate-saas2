@@ -45,7 +45,7 @@ export default function TermsPage() {
             </div>
             <div>
               <h1 className="text-4xl font-bold text-gray-900">Terms of Service</h1>
-              <p className="text-gray-500 mt-2">Last Updated: March 25, 2026</p>
+              <p className="text-gray-500 mt-2">Last Updated: June 13, 2026</p>
             </div>
           </div>
 
@@ -64,13 +64,16 @@ export default function TermsPage() {
                 Realestic is a SaaS platform designed for real estate professionals, providing tools for:
               </p>
               <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
-                <li>Property and transaction management</li>
-                <li>Client relationship management (CRM)</li>
-                <li>Calendar integration and scheduling (Google Calendar, Outlook)</li>
+                <li>Property and transaction management, including per-transaction document storage</li>
+                <li>Client relationship management (CRM) and a separate Leads inbox</li>
+                <li>Public lead capture forms, QR codes, and open house digital sign-in</li>
+                <li>Optional public agent profile pages with published listings</li>
+                <li>Automated lead follow-up emails and SMS lead alerts (when enabled)</li>
+                <li>Calendar integration and scheduling (Google Calendar; Outlook where available)</li>
                 <li>AI-powered conversational assistant with conversation memory</li>
-                <li>AI-powered content generation and document analysis</li>
+                <li>AI-powered content generation and document analysis (including PDFs)</li>
                 <li>Image analysis for property listings and documents</li>
-                <li>Property Lookup — search any address to retrieve publicly available owner information, contact details, and listing data from third-party data providers</li>
+                <li>Property Research — search addresses for owner information, contact details, comparable sales (CMA), and listing data from third-party providers</li>
                 <li>Automated reminders and notifications</li>
                 <li>In-app feedback submission to help us improve the Service</li>
               </ul>
@@ -121,6 +124,38 @@ export default function TermsPage() {
                 <li>Harass, abuse, or harm other users</li>
                 <li>Share your account with others</li>
                 <li>Use the Service to spam or send unsolicited messages</li>
+                <li>Collect lead information without complying with applicable privacy, email, and telemarketing laws</li>
+                <li>Publish false, misleading, or non-compliant content on your public agent profile or listing pages</li>
+              </ul>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Lead Capture, Open Houses & Public Profiles</h2>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                If you use lead capture forms, open house sign-in links, or public agent profiles, you agree that:
+              </p>
+              <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+                <li>You are responsible for the lawful collection and use of prospect information submitted through your links</li>
+                <li>You will provide appropriate privacy notice to individuals who submit their information</li>
+                <li>You will comply with the CAN-SPAM Act, TCPA, state telemarketing laws, and Do Not Call rules when contacting leads</li>
+                <li>Automated follow-up emails are sent only when you enable that feature; you may disable it or cancel sequences for individual leads</li>
+                <li>SMS alerts notify you of new leads; they are not a substitute for obtaining proper consent before you contact prospects</li>
+                <li>Public profile and listing content you publish is your responsibility and must comply with fair housing and advertising laws</li>
+                <li>We may disable public links if they are abused, generate spam, or violate these Terms</li>
+              </ul>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Transaction Documents</h2>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                You may upload documents (PDF, Word, and image files) to individual transactions for your own record-keeping. You agree that:
+              </p>
+              <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+                <li>You have the right to upload and store the documents you submit</li>
+                <li>Document storage is provided as a convenience tool, not as a legal document management or e-signature service</li>
+                <li>You are responsible for maintaining independent copies of important legal documents</li>
+                <li>We are not responsible for reviewing, validating, or enforcing the contents of uploaded documents</li>
+                <li>Documents may contain sensitive personal or financial information; protect your account credentials accordingly</li>
               </ul>
             </section>
 
@@ -142,7 +177,7 @@ export default function TermsPage() {
               
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Your Content</h3>
               <p className="text-gray-600 leading-relaxed mb-4">
-                You retain all rights to content you upload, create, or store on the Service ("User Content"), including property listings, client information, documents, images, and all messages sent to our AI Assistant.
+                You retain all rights to content you upload, create, or store on the Service ("User Content"), including property listings, client and lead information, transaction documents, public profile content, and all messages sent to our AI Assistant.
               </p>
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">License to Us</h3>
@@ -180,12 +215,17 @@ export default function TermsPage() {
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Property Data Services</h3>
               <p className="text-gray-600 leading-relaxed mb-4">
-                The Property Lookup feature uses Rentcast (county property records and MLS listings) and BatchData (skip tracing for contact information). When you perform a property lookup, the address you enter is sent to these third-party services to retrieve results. These results are not stored in your account. Your use of the Property Lookup feature is subject to the terms and availability of these third-party providers.
+                Property Research, Property Lookup, and Market Analysis / CMA features use Rentcast (county property records and MLS listings) and BatchData (skip tracing for contact information). When you perform a property search, the address you enter is sent to these third-party services to retrieve results. Results may be cached in your account for a limited time to improve performance. Your use of these features is subject to the terms and availability of these third-party providers.
+              </p>
+
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Email & SMS Delivery</h3>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                Automated lead follow-up emails are delivered through Resend. SMS lead alerts are delivered through Twilio. Your use of these features is subject to Resend's and Twilio's respective terms and policies. You are responsible for ensuring your use of automated communications complies with applicable law.
               </p>
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Third-Party Services</h3>
               <p className="text-gray-600 leading-relaxed mb-4">
-                Our Service integrates with third-party services including Supabase (database and authentication), OpenAI (AI features), Stripe (payments), Google (calendar and authentication), Microsoft (calendar), Rentcast (property records and listings), and BatchData (skip tracing). Your use of these services is subject to their respective terms and conditions. We are not responsible for third-party services or their availability.
+                Our Service integrates with third-party services including Supabase (database and authentication), OpenAI (AI features), Stripe (payments), Google (calendar and authentication), Microsoft (calendar), Rentcast (property records and listings), BatchData (skip tracing), Resend (email delivery), and Twilio (SMS notifications). Your use of these services is subject to their respective terms and conditions. We are not responsible for third-party services or their availability.
               </p>
             </section>
 
@@ -203,7 +243,7 @@ export default function TermsPage() {
               </p>
               <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
                 <li>All conversations and messages are stored indefinitely in our database</li>
-                <li>Images you attach to conversations are stored and analyzed</li>
+                <li>Images and PDF documents you attach to conversations are stored and analyzed</li>
                 <li>Your full conversation history is sent to OpenAI to maintain context</li>
                 <li>You can view, manage, pin, rename, and delete conversations at any time</li>
                 <li>Deleting a conversation permanently removes it from our database</li>
@@ -324,16 +364,16 @@ export default function TermsPage() {
                 <li>AI-generated content will be accurate or complete</li>
               </ul>
 
-              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Property Lookup Data Accuracy</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Property Research Data Accuracy</h3>
               <p className="text-gray-600 leading-relaxed mb-4">
-                <strong className="text-yellow-400">IMPORTANT:</strong> Property lookup results — including owner names, phone numbers, email addresses, occupancy status, listing data, and property details — are sourced from county public records and third-party databases. This information may be inaccurate, incomplete, or outdated. Realestic does not guarantee the accuracy of any property lookup result. You agree to:
+                <strong className="text-yellow-400">IMPORTANT:</strong> Property research results — including owner names, phone numbers, email addresses, occupancy status, comparable sales, listing data, and property details — are sourced from county public records and third-party databases. This information may be inaccurate, incomplete, or outdated. Realestic does not guarantee the accuracy of any property research result. You agree to:
               </p>
               <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
-                <li>Independently verify all property lookup information before use</li>
-                <li>Use property lookup data only for lawful purposes</li>
+                <li>Independently verify all property research information before use</li>
+                <li>Use property research data only for lawful purposes</li>
                 <li>Comply with all applicable laws when contacting individuals found through the feature, including the TCPA, CAN-SPAM Act, and Do Not Call regulations</li>
                 <li>Not use the feature to harass, stalk, or harm any individual</li>
-                <li>Not hold Realestic liable for decisions made based on inaccurate lookup data</li>
+                <li>Not hold Realestic liable for decisions made based on inaccurate research data</li>
               </ul>
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Professional Advice</h3>

@@ -45,7 +45,7 @@ export default function PrivacyPage() {
             </div>
             <div>
               <h1 className="text-4xl font-bold text-gray-900">Privacy Policy</h1>
-              <p className="text-gray-500 mt-2">Last Updated: March 25, 2026</p>
+              <p className="text-gray-500 mt-2">Last Updated: June 13, 2026</p>
             </div>
           </div>
 
@@ -92,7 +92,7 @@ export default function PrivacyPage() {
                 <li>Your messages and prompts sent to the AI</li>
                 <li>AI-generated responses and content</li>
                 <li>Complete conversation history to maintain context across multiple exchanges</li>
-                <li>Images you attach to conversations for analysis</li>
+                <li>Images and PDF documents you attach to conversations for analysis</li>
                 <li>Auto-generated conversation titles based on your first message</li>
                 <li>Conversation metadata (creation date, last updated, pinned status)</li>
               </ul>
@@ -100,27 +100,86 @@ export default function PrivacyPage() {
                 <strong>Note:</strong> Conversations are stored in your account and you can delete them at any time from the AI Assistant page.
               </p>
 
-              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">4. Property Lookup Search Data</h3>
-              <p className="text-gray-600 leading-relaxed mb-4">When you use the Property Lookup feature, we process:</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">4. Property Research & Lookup Data</h3>
+              <p className="text-gray-600 leading-relaxed mb-4">When you use Property Research, Property Lookup, or Market Analysis / CMA features, we process:</p>
               <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
                 <li>Property addresses you search for</li>
-                <li>Search history stored locally in your browser session</li>
+                <li>CMA parameters you select (property type, radius, time range)</li>
+                <li>Recent search history stored locally in your browser</li>
+                <li>Cached lookup and analysis results in your account (typically for up to 7 days) to reduce repeat API calls</li>
               </ul>
               <p className="text-gray-600 leading-relaxed mb-4">
-                <strong>Important:</strong> Property lookup results — including owner names, contact information, and property details — are retrieved in real time from third-party data providers (Rentcast, BatchData) and are <strong>not stored</strong> in your account. This data originates from county public records and third-party databases and may be inaccurate or outdated. We do not guarantee its accuracy.
+                <strong>Important:</strong> Property research results — including owner names, contact information, comparable sales, and property details — are retrieved from third-party data providers (Rentcast, BatchData). Results may be cached temporarily in your account or browser. This data originates from county public records and third-party databases and may be inaccurate or outdated. We do not guarantee its accuracy.
               </p>
 
-              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">5. Other Usage Information</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">5. Lead Capture & Open House Sign-In Data</h3>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                When prospects submit your public lead form or sign in at an open house you host, we collect the information they provide on your behalf, which may include:
+              </p>
+              <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+                <li>Name, email address, and phone number</li>
+                <li>Lead type or interest (e.g., buyer, seller, renter)</li>
+                <li>Timeline, budget, preferred area, and free-text messages</li>
+                <li>Listing or property address context (if applicable)</li>
+                <li>Open house event details (property address, date, time, and label)</li>
+                <li>Whether they are working with another agent</li>
+              </ul>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                This information is stored in your Leads inbox and associated with your account. You are the data controller for lead information you collect through these tools and are responsible for using it lawfully.
+              </p>
+
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">6. Public Agent Profile Data</h3>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                If you enable your public agent profile, we may display the profile information you choose to publish, such as:
+              </p>
+              <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+                <li>Name, headline, bio, and profile photo</li>
+                <li>Specialties, service areas, brokerage, license number, website, and years of experience</li>
+                <li>Contact phone and email you provide for public display</li>
+                <li>Published listing projects you choose to showcase</li>
+              </ul>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                Your profile is only publicly visible when you turn on the public profile setting. You can disable it at any time from your dashboard.
+              </p>
+
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">7. Agent Lead Tools & Automated Communications</h3>
+              <p className="text-gray-600 leading-relaxed mb-4">If you enable lead tools in your account settings, we may process:</p>
+              <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+                <li>Your SMS alert phone number (to notify you of new leads)</li>
+                <li>Automated follow-up email preferences and scheduling for leads who provided an email address</li>
+                <li>Email sequence records (template type, send time, and delivery status)</li>
+              </ul>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                Automated follow-up emails are sent to leads on your behalf when you enable that feature. You can disable auto follow-up or cancel sequences for individual leads at any time.
+              </p>
+
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">8. Transaction Documents</h3>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                When you upload documents to a transaction, we store:
+              </p>
+              <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+                <li>File name, type, and size</li>
+                <li>Document category (e.g., purchase agreement, disclosure, inspection report)</li>
+                <li>The file itself in private, encrypted cloud storage linked to your transaction</li>
+              </ul>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                Transaction documents are private to your account and are not shared publicly. You can delete documents at any time from the transaction page.
+              </p>
+
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">9. Other Usage Information</h3>
               <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
                 <li>Property listings and project information you create</li>
-                <li>Client information you add</li>
-                <li>Transactions you manage</li>
+                <li>Published listing pages you enable for public sharing</li>
+                <li>Client and lead information you add or receive</li>
+                <li>Transactions you manage and related notes</li>
+                <li>Open house events you create</li>
                 <li>Calendar events you create</li>
-                <li>Files and images you upload</li>
+                <li>Files and images you upload (including transaction documents)</li>
                 <li>Notes and communications within the platform</li>
+                <li>Brand kit preferences (logo, colors, fonts)</li>
               </ul>
 
-              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">6. Feedback Data</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">10. Feedback Data</h3>
               <p className="text-gray-600 leading-relaxed mb-4">When you submit feedback through the feedback widget or any feedback form, we collect:</p>
               <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
                 <li>The feedback message you write</li>
@@ -132,7 +191,7 @@ export default function PrivacyPage() {
                 Feedback is stored in our database and used solely to improve the Service. We do not share feedback with third parties.
               </p>
 
-              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">7. Payment Information</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">11. Payment Information</h3>
               <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
                 <li>Payment method details (processed by Stripe)</li>
                 <li>Billing address</li>
@@ -143,7 +202,7 @@ export default function PrivacyPage() {
                 <strong>Note:</strong> We do not store your full credit card numbers. Payment processing is handled securely by Stripe.
               </p>
 
-              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">8. Automatically Collected Information</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">12. Automatically Collected Information</h3>
               <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
                 <li>IP address</li>
                 <li>Browser type and version</li>
@@ -163,11 +222,15 @@ export default function PrivacyPage() {
                 <li>Provide access to platform features</li>
                 <li>Sync your Google Calendar events</li>
                 <li>Create calendar events for showings and meetings</li>
-                <li>Store and display your client and property information</li>
+                <li>Store and display your client, lead, and property information</li>
+                <li>Power lead capture forms, open house sign-in, and public agent profiles</li>
+                <li>Send automated follow-up emails and SMS lead alerts when you enable those features</li>
+                <li>Store transaction documents you upload</li>
+                <li>Cache property research results to improve performance</li>
                 <li>Generate AI-powered content descriptions</li>
                 <li>Analyze property images and documents using AI</li>
                 <li>Provide task assistance and document analysis</li>
-                <li>Query third-party property data APIs to return property owner, contact, and listing information</li>
+                <li>Query third-party property data APIs to return property owner, contact, comparable sales, and listing information</li>
               </ul>
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Communication</h3>
@@ -198,7 +261,7 @@ export default function PrivacyPage() {
                 <li>File storage for uploaded images and documents</li>
               </ul>
               <p className="text-gray-600 leading-relaxed mb-4">
-                <strong>Data stored:</strong> User profiles, calendar events, client information, property data, uploaded files
+                <strong>Data stored:</strong> User profiles, calendar events, client and lead information, property data, agent profile settings, transaction documents, property research cache, uploaded files
               </p>
               <p className="text-gray-600 leading-relaxed mb-4">
                 <strong>Privacy Policy:</strong>{' '}
@@ -238,7 +301,7 @@ export default function PrivacyPage() {
                 <li>Provide AI-powered conversational assistance with conversation memory</li>
                 <li>Generate descriptive titles for your conversations</li>
                 <li>Maintain conversation context across multiple messages</li>
-                <li>Extract information from uploaded documents and images</li>
+                <li>Extract information from uploaded documents, images, and PDFs</li>
               </ul>
               <p className="text-gray-600 leading-relaxed mb-4">
                 <strong>Data sent to OpenAI:</strong> Your conversation messages, property information, images, and documents you explicitly request us to process. Your full conversation history is sent to OpenAI to maintain context and provide relevant responses. We store conversation history in our database to enable you to resume conversations later. AI responses are for informational purposes only and do not constitute financial, legal, or professional advice.
@@ -278,7 +341,7 @@ export default function PrivacyPage() {
                 <li>Check active and recent MLS listings for a searched property</li>
               </ul>
               <p className="text-gray-600 leading-relaxed mb-4">
-                <strong>Data sent to Rentcast:</strong> The property address you search. Results are returned in real time and are not stored in your account.
+                <strong>Data sent to Rentcast:</strong> The property address you search. Results may be cached in your account for a limited time (typically up to 7 days).
               </p>
               <p className="text-gray-600 leading-relaxed mb-4">
                 <strong>Rentcast Privacy Policy:</strong>{' '}
@@ -293,12 +356,43 @@ export default function PrivacyPage() {
                 <li>Retrieve phone numbers and email addresses associated with a property owner</li>
               </ul>
               <p className="text-gray-600 leading-relaxed mb-4">
-                <strong>Data sent to BatchData:</strong> The property address and verified owner name (obtained from county records via Rentcast). Results are returned in real time and are not stored in your account. Contact information returned may be inaccurate, outdated, or belong to a previous owner. Always verify before use.
+                <strong>Data sent to BatchData:</strong> The property address and verified owner name (obtained from county records via Rentcast). Results may be cached in your account for a limited time (typically up to 7 days). Contact information returned may be inaccurate, outdated, or belong to a previous owner. Always verify before use.
               </p>
               <p className="text-gray-600 leading-relaxed mb-4">
                 <strong>BatchData Privacy Policy:</strong>{' '}
                 <a href="https://batchdata.com/privacy" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 underline">
                   https://batchdata.com/privacy
+                </a>
+              </p>
+
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Resend</h3>
+              <p className="text-gray-600 leading-relaxed mb-2">We use Resend to deliver transactional and automated emails, including:</p>
+              <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+                <li>Welcome and follow-up emails to leads when you enable auto follow-up</li>
+                <li>Service-related email notifications</li>
+              </ul>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                <strong>Data shared with Resend:</strong> Recipient email addresses, message content, and sender identification required to deliver emails on your behalf.
+              </p>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                <strong>Resend Privacy Policy:</strong>{' '}
+                <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 underline">
+                  https://resend.com/legal/privacy-policy
+                </a>
+              </p>
+
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Twilio</h3>
+              <p className="text-gray-600 leading-relaxed mb-2">We use Twilio to send SMS notifications when you enable SMS lead alerts:</p>
+              <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+                <li>Alert you when a new lead submits your form or signs in at an open house</li>
+              </ul>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                <strong>Data shared with Twilio:</strong> Your SMS alert phone number and the content of lead alert messages. We do not send marketing SMS to your leads through Twilio unless you separately configure such communications outside this feature.
+              </p>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                <strong>Twilio Privacy Policy:</strong>{' '}
+                <a href="https://www.twilio.com/en-us/legal/privacy" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 underline">
+                  https://www.twilio.com/en-us/legal/privacy
                 </a>
               </p>
 
@@ -338,6 +432,9 @@ export default function PrivacyPage() {
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">Data Retention</h2>
               <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
                 <li><strong>Active accounts:</strong> We retain your data for as long as your account is active</li>
+                <li><strong>Property research cache:</strong> Cached lookup and analysis results expire automatically (typically within 7 days)</li>
+                <li><strong>Transaction documents:</strong> Retained until you delete them or delete your account</li>
+                <li><strong>Lead data:</strong> Retained in your account until you delete the lead or your account</li>
                 <li><strong>Inactive accounts:</strong> We may delete accounts inactive for 2+ years after notice</li>
                 <li><strong>Deleted accounts:</strong> Data is permanently deleted within 30 days of account deletion</li>
                 <li><strong>Backups:</strong> Backup copies are retained for 90 days for disaster recovery</li>
@@ -354,8 +451,16 @@ export default function PrivacyPage() {
                 <li>Update or correct your information</li>
                 <li>Delete your account and data</li>
                 <li>Export your data</li>
-                <li>Disconnect third-party integrations (Google Calendar)</li>
+                <li>Disconnect third-party integrations (Google Calendar, Outlook)</li>
+                <li>Disable your public agent profile at any time</li>
+                <li>Turn off automated follow-up emails and SMS alerts</li>
+                <li>Delete leads, clients, conversations, and transaction documents from your account</li>
               </ul>
+
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Lead Data You Collect</h3>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                If you use lead capture or open house sign-in tools, you collect personal information from prospects. You are responsible for providing appropriate notice to those individuals and honoring their privacy rights under applicable law. Contact us if a prospect requests access to or deletion of data you collected through our platform.
+              </p>
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Google Calendar Integration</h3>
               <p className="text-gray-600 leading-relaxed mb-2">You can:</p>
