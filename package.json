@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "stripe:setup-prices": "node --env-file=.env.local scripts/create-stripe-prices.mjs"
   },
   "dependencies": {
     "@microsoft/microsoft-graph-client": "^3.0.7",

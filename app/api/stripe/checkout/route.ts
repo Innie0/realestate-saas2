@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { stripe } from '@/lib/stripe-server';
+import { isValidCheckoutPriceId } from '@/lib/pricing';
 
 /**
  * POST /api/stripe/checkout
@@ -37,6 +38,13 @@ export async function POST(req: NextRequest) {
     if (!priceId) {
       return NextResponse.json(
         { error: 'Price ID is required' },
+        { status: 400 }
+      );
+    }
+
+    if (!isValidCheckoutPriceId(priceId)) {
+      return NextResponse.json(
+        { error: 'Invalid plan selected. Please refresh the pricing page and try again.' },
         { status: 400 }
       );
     }

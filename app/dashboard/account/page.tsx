@@ -8,8 +8,11 @@ import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
-import { User, Mail, Lock, X } from 'lucide-react';
+import { User, Mail, Lock, X, CreditCard, Sparkles } from 'lucide-react';
 import { getCurrentUser, updateUserProfile, supabase } from '@/lib/supabase';
+import { getPaidPlanName } from '@/lib/subscription';
+import { getPlanDisplayPrice } from '@/lib/pricing';
+import Link from 'next/link';
 
 /**
  * Account page component
@@ -32,6 +35,10 @@ export default function AccountPage() {
   const [passwordError, setPasswordError] = useState('');
   const [isPasswordLoading, setIsPasswordLoading] = useState(false);
   const [generatedCode, setGeneratedCode] = useState('');
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
+  const [subscriptionPlan, setSubscriptionPlan] = useState<string | null>(null);
+  const [periodEnd, setPeriodEnd] = useState<string | null>(null);
+  const [isPortalLoading, setIsPortalLoading] = useState(false);
 
   // Set page title
   React.useEffect(() => {
@@ -54,6 +61,18 @@ export default function AccountPage() {
         setUserId(user.id);
         setEmail(user.email || '');
         setFullName(user.user_metadata?.full_name || '');
+
+        const { data: billing } = await supabase
+          .from('users')
+          .select('subscription_status, subscription_plan, subscription_current_period_end')
+          .eq('id', user.id)
+          .single();
+
+        if (billing) {
+          setSubscriptionStatus(billing.subscription_status);
+          setSubscriptionPlan(billing.subscription_plan);
+          setPeriodEnd(billing.subscription_current_period_end);
+        }
       }
     } catch (error) {
       console.error('Error loading user data:', error);
@@ -178,6 +197,38 @@ export default function AccountPage() {
     setShowPasswordModal(true);
   };
 
+  const handleManageBilling = async () => {
+    setIsPortalLoading(true);
+    try {
+      const res = await fetch('/api/stripe/portal', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not open billing portal');
+      if (data.url) window.location.href = data.url;
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Something went wrong';
+      alert(message);
+    } finally {
+      setIsPortalLoading(false);
+    }
+  };
+
+  const planName = getPaidPlanName(subscriptionPlan);
+  const planLabel = planName
+    ? planName === 'pro'
+      ? `Pro (${getPlanDisplayPrice('pro', 'monthly')}/mo)`
+      : `Starter (${getPlanDisplayPrice('starter', 'monthly')}/mo)`
+    : 'No active plan';
+  const statusLabel =
+    subscriptionStatus === 'trialing'
+      ? 'Free trial'
+      : subscriptionStatus === 'active'
+        ? 'Active'
+        : subscriptionStatus === 'past_due'
+          ? 'Past due'
+          : subscriptionStatus === 'canceled'
+            ? 'Canceled'
+            : subscriptionStatus ?? '—';
+
   // Show loading state while fetching user data
   if (isLoadingData) {
     return (
@@ -239,6 +290,56 @@ export default function AccountPage() {
                 </Button>
               </div>
             </form>
+          </Card>
+
+          {/* Subscription & billing */}
+          <Card>
+            <div className="flex items-center gap-3 mb-6">
+              <CreditCard className="w-5 h-5 text-gray-900" />
+              <h2 className="text-xl font-bold text-gray-900">Subscription & Billing</h2>
+            </div>
+
+            <div className="space-y-3 mb-6">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm text-gray-500">Plan</span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-50 text-brand-700 text-sm font-medium border border-brand-200">
+                  {planName === 'pro' && <Sparkles className="w-3.5 h-3.5" />}
+                  {planLabel}
+                </span>
+              </div>
+              <p className="text-sm text-gray-600">
+                Status: <span className="font-medium text-gray-900">{statusLabel}</span>
+                {periodEnd && subscriptionStatus && ['active', 'trialing'].includes(subscriptionStatus) && (
+                  <span className="text-gray-500">
+                    {' '}· Renews {new Date(periodEnd).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </span>
+                )}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleManageBilling}
+                isLoading={isPortalLoading}
+              >
+                Manage billing in Stripe
+              </Button>
+              {planName === 'starter' && (
+                <Link href="/dashboard/upgrade">
+                  <Button type="button">Upgrade to Pro</Button>
+                </Link>
+              )}
+              {!planName && (
+                <Link href="/pricing">
+                  <Button type="button">View plans</Button>
+                </Link>
+              )}
+            </div>
+            <p className="text-xs text-gray-500 mt-4">
+              Update payment method, view invoices, or cancel your subscription through Stripe&apos;s secure portal.
+            </p>
           </Card>
 
           {/* Password section */}

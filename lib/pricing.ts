@@ -83,6 +83,21 @@ export function isAnyAnnualBillingAvailable(): boolean {
   return !!STARTER_ANNUAL_PRICE_ID || !!PRO_ANNUAL_PRICE_ID;
 }
 
+/** All configured Stripe price IDs accepted at checkout. */
+export function getValidCheckoutPriceIds(): string[] {
+  return [
+    STARTER_MONTHLY_PRICE_ID,
+    PRO_MONTHLY_PRICE_ID,
+    STARTER_ANNUAL_PRICE_ID,
+    PRO_ANNUAL_PRICE_ID,
+  ].filter(Boolean);
+}
+
+export function isValidCheckoutPriceId(priceId: string | null | undefined): boolean {
+  if (!priceId) return false;
+  return getValidCheckoutPriceIds().includes(priceId);
+}
+
 export function isStarterPriceId(priceId: string | null | undefined): boolean {
   if (!priceId) return false;
   return ALL_STARTER_PRICE_IDS.includes(priceId);
