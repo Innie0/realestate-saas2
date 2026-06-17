@@ -142,13 +142,13 @@ export default function PublicListingView({ project }: PublicListingViewProps) {
           </button>
 
           <div
-            className="relative max-w-6xl w-full max-h-[90vh] flex items-center justify-center"
+            className="relative w-[min(96vw,72rem)] h-[85vh] flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
             <img
               src={imageUrls[currentImageIndex]}
               alt={`Property photo ${currentImageIndex + 1}`}
-              className="max-w-full max-h-[85vh] object-contain rounded-lg"
+              className="w-full h-full object-contain rounded-lg"
             />
 
             {imageUrls.length > 1 && (
