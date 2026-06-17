@@ -1026,7 +1026,7 @@ export default function HomePage() {
             {[
               { value: 10, suffix: 'x', label: 'Faster Listing Descriptions' },
               { value: 5, suffix: '+', label: 'Hours Saved Per Week' },
-              { value: 3, suffix: ' min', label: 'To Write a Full Listing' },
+              { value: 10, suffix: '+', label: 'More Leads' },
               { value: 100, suffix: '%', label: 'Built for Real Estate' },
             ].map((stat, i) => (
               <motion.div
