@@ -44,15 +44,19 @@ CREATE INDEX IF NOT EXISTS idx_contracts_created_at ON contracts(created_at DESC
 ALTER TABLE contracts ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
+DROP POLICY IF EXISTS "Users can view own contracts" ON contracts;
 CREATE POLICY "Users can view own contracts" ON contracts
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own contracts" ON contracts;
 CREATE POLICY "Users can insert own contracts" ON contracts
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update own contracts" ON contracts;
 CREATE POLICY "Users can update own contracts" ON contracts
   FOR UPDATE USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete own contracts" ON contracts;
 CREATE POLICY "Users can delete own contracts" ON contracts
   FOR DELETE USING (auth.uid() = user_id);
 
@@ -68,24 +72,28 @@ VALUES (
 ON CONFLICT (id) DO NOTHING;
 
 -- Storage policies for contracts bucket
+DROP POLICY IF EXISTS "Users can upload own contracts" ON storage.objects;
 CREATE POLICY "Users can upload own contracts" ON storage.objects
   FOR INSERT WITH CHECK (
     bucket_id = 'contracts' AND 
     (storage.foldername(name))[1] = auth.uid()::text
   );
 
+DROP POLICY IF EXISTS "Users can view own contracts" ON storage.objects;
 CREATE POLICY "Users can view own contracts" ON storage.objects
   FOR SELECT USING (
     bucket_id = 'contracts' AND 
     (storage.foldername(name))[1] = auth.uid()::text
   );
 
+DROP POLICY IF EXISTS "Users can update own contracts" ON storage.objects;
 CREATE POLICY "Users can update own contracts" ON storage.objects
   FOR UPDATE USING (
     bucket_id = 'contracts' AND 
     (storage.foldername(name))[1] = auth.uid()::text
   );
 
+DROP POLICY IF EXISTS "Users can delete own contracts" ON storage.objects;
 CREATE POLICY "Users can delete own contracts" ON storage.objects
   FOR DELETE USING (
     bucket_id = 'contracts' AND 

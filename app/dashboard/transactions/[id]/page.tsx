@@ -18,6 +18,7 @@ import Modal from '@/components/ui/Modal';
 import TransactionForm from '@/components/TransactionForm';
 import TransactionTimeline from '@/components/TransactionTimeline';
 import TransactionChecklist from '@/components/TransactionChecklist';
+import TransactionDocuments from '@/components/TransactionDocuments';
 import { TransactionWithDetails, TransactionReminder } from '@/types';
 
 interface TransactionDetailPageProps {
@@ -34,7 +35,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'tasks' | 'reminders' | 'financials'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'tasks' | 'documents' | 'reminders' | 'financials'>('overview');
 
   // Optimistic update for checklist items
   const handleChecklistItemToggle = (itemId: string, isCompleted: boolean) => {
@@ -252,6 +253,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
           {[
             { id: 'overview', label: 'Overview', icon: Building2 },
             { id: 'tasks', label: 'Timeline & Tasks', icon: CheckCircle2 },
+            { id: 'documents', label: 'Documents', icon: FileText },
             { id: 'reminders', label: 'Reminders', icon: Bell },
             { id: 'financials', label: 'Financials', icon: DollarSign },
           ].map(tab => {
@@ -382,6 +384,16 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
               />
             </Card>
           </div>
+        )}
+
+        {activeTab === 'documents' && (
+          <Card>
+            <h2 className="text-base font-semibold text-gray-900 mb-4">Deal Documents</h2>
+            <p className="text-sm text-gray-500 mb-6 -mt-2">
+              Store contracts, disclosures, inspection reports, and other files for this transaction.
+            </p>
+            <TransactionDocuments transactionId={transaction.id} />
+          </Card>
         )}
 
         {activeTab === 'reminders' && (
