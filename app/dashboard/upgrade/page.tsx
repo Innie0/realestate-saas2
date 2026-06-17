@@ -7,10 +7,9 @@ import Header from '@/components/layout/Header';
 import SubscribeButton from '@/components/SubscribeButton';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
-import { formatFeatureText } from '@/lib/formatFeatureText';
+import PricingFeatureList from '@/components/PricingFeatureList';
 import {
   PRO_MONTHLY_PRICE_ID,
-  PRO_FEATURES,
   PLAN_COMPARISON_ROWS,
   getPlanDisplayPrice,
   isProPriceId,
@@ -27,8 +26,6 @@ const STARTER_LIMITS: Record<string, number> = {
 };
 
 const COMPARISON_ROWS = PLAN_COMPARISON_ROWS;
-
-const PRO_HIGHLIGHTS = [...PRO_FEATURES].filter((f) => f !== '7-day free trial');
 
 type PlanType = 'starter' | 'pro';
 
@@ -206,14 +203,7 @@ export default function UpgradePage() {
               <SubscribeButton priceId={PRO_MONTHLY_PRICE_ID} planName="Pro" className="w-full" />
             </div>
             <div className="border-t border-gray-200 mb-5" />
-            <ul className="space-y-2.5 flex-1">
-              {PRO_HIGHLIGHTS.map((f, i) => (
-                <li key={i} className="flex items-start gap-2.5">
-                  <Check className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-gray-600">{formatFeatureText(f)}</span>
-                </li>
-              ))}
-            </ul>
+            <PricingFeatureList plan="pro" icon="check" className="space-y-2.5 flex-1" />
           </div>
         </div>
 

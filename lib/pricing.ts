@@ -41,24 +41,22 @@ export const STARTER_FEATURES = [
   'Email Support',
 ] as const;
 
-export const PRO_FEATURES = [
-  '7-day free trial',
-  'Unlimited AI Listing Projects',
-  'Unlimited Property Research & Lookups',
-  'Unlimited CMA / Market Analyses',
-  'Unlimited AI Assistant Messages',
-  'Unlimited Clients & Transactions',
-  'Client Manager (CRM)',
-  'Leads Inbox & Hot/Warm/Cold Scoring',
-  'Lead Capture Form & QR Code',
+export const PRO_PLAN_INTRO = 'Everything in Starter, plus:';
+
+/** Features only on Pro — shown after PRO_PLAN_INTRO on pricing cards. */
+export const PRO_EXCLUSIVE_FEATURES = [
+  'Unlimited Listing Projects, Property Research, CMA, AI Messages, Clients & Transactions',
   'Open House QR Sign-In',
   'Public Agent Profile Page',
-  'Automated Lead Follow-Up Emails',
-  'Google Calendar & Task Manager',
-  'Transaction Checklists, Reminders & Documents',
-  'AI Listing Descriptions (3 Tones)',
   'SMS Lead Alerts (Coming Soon)',
   'Priority Support',
+] as const;
+
+/** @deprecated Use PRO_PLAN_INTRO + PRO_EXCLUSIVE_FEATURES for Pro plan cards */
+export const PRO_FEATURES = [
+  '7-day free trial',
+  PRO_PLAN_INTRO,
+  ...PRO_EXCLUSIVE_FEATURES,
 ] as const;
 
 /** Short comparison rows for upgrade page — numeric limits + Pro-only features. */

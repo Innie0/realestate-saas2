@@ -12,10 +12,8 @@ import {
   Snowflake, BarChart2, QrCode, MapPin, UserPlus,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { formatFeatureText } from '@/lib/formatFeatureText';
+import PricingFeatureList from '@/components/PricingFeatureList';
 import {
-  STARTER_FEATURES,
-  PRO_FEATURES,
   STARTER_PLAN_DESCRIPTION,
   PRO_PLAN_DESCRIPTION,
   getPlanDisplayPrice,
@@ -1548,16 +1546,14 @@ export default function HomePage() {
                 name: 'Starter',
                 price: getPlanDisplayPrice('starter', 'monthly'),
                 description: STARTER_PLAN_DESCRIPTION,
-                plan: 'starter',
-                features: STARTER_FEATURES,
+                plan: 'starter' as const,
                 popular: false,
               },
               {
                 name: 'Pro',
                 price: getPlanDisplayPrice('pro', 'monthly'),
                 description: PRO_PLAN_DESCRIPTION,
-                plan: 'pro',
-                features: PRO_FEATURES,
+                plan: 'pro' as const,
                 popular: true,
               },
             ].map((plan, i) => (
@@ -1610,16 +1606,7 @@ export default function HomePage() {
 
                 <div className="border-t border-gray-200 mb-5" />
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">What&apos;s included</p>
-                <ul className="space-y-3 flex-1">
-                  {plan.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-3">
-                      <CheckCircle className="w-4 h-4 text-brand-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-600">
-                        {plan.name === 'Pro' ? formatFeatureText(feature) : feature}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+                <PricingFeatureList plan={plan.plan} />
               </motion.div>
             ))}
           </div>

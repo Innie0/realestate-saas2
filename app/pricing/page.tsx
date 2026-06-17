@@ -4,15 +4,13 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Check, Sparkles, Loader2 } from 'lucide-react';
+import { Sparkles, Loader2 } from 'lucide-react';
 import SubscribeButton from '@/components/SubscribeButton';
+import PricingFeatureList from '@/components/PricingFeatureList';
 import { supabase } from '@/lib/supabase';
-import { formatFeatureText } from '@/lib/formatFeatureText';
 import {
   type BillingInterval,
   type PlanSlug,
-  STARTER_FEATURES,
-  PRO_FEATURES,
   STARTER_PLAN_DESCRIPTION,
   PRO_PLAN_DESCRIPTION,
   getAnnualSavings,
@@ -23,20 +21,18 @@ import {
   isAnyAnnualBillingAvailable,
 } from '@/lib/pricing';
 
-const PLANS: { slug: PlanSlug; name: string; description: string; popular: boolean; features: readonly string[] }[] = [
+const PLANS: { slug: PlanSlug; name: string; description: string; popular: boolean }[] = [
   {
     slug: 'starter',
     name: 'Starter',
     description: STARTER_PLAN_DESCRIPTION,
     popular: false,
-    features: STARTER_FEATURES,
   },
   {
     slug: 'pro',
     name: 'Pro',
     description: PRO_PLAN_DESCRIPTION,
     popular: true,
-    features: PRO_FEATURES,
   },
 ];
 
@@ -209,16 +205,7 @@ export default function PricingPage() {
                 <div className="border-t border-gray-200 mb-5" />
 
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">What&apos;s included</p>
-                <ul className="space-y-3 flex-1">
-                  {plan.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-3">
-                      <Check className="w-4 h-4 text-brand-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-600">
-                        {plan.slug === 'pro' ? formatFeatureText(feature) : feature}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+                <PricingFeatureList plan={plan.slug} icon="check" />
               </div>
             ))}
           </div>
