@@ -19,7 +19,7 @@ import TransactionForm from '@/components/TransactionForm';
 import TransactionTimeline from '@/components/TransactionTimeline';
 import TransactionChecklist from '@/components/TransactionChecklist';
 import TransactionDocuments from '@/components/TransactionDocuments';
-import { TransactionWithDetails, TransactionReminder } from '@/types';
+import { TransactionWithDetails, TransactionReminder, Contract } from '@/types';
 
 interface TransactionDetailPageProps {
   params: Promise<{ id: string }>;
@@ -36,6 +36,9 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'tasks' | 'documents' | 'reminders' | 'financials'>('overview');
+  const [prefetchedDocuments, setPrefetchedDocuments] = useState<Contract[]>([]);
+  const [documentsSetupError, setDocumentsSetupError] = useState('');
+  const [documentsReady, setDocumentsReady] = useState(false);
 
   // Optimistic update for checklist items
   const handleChecklistItemToggle = (itemId: string, isCompleted: boolean) => {
@@ -70,8 +73,32 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
     }
   };
 
+  const prefetchDocuments = async () => {
+    try {
+      const docsResponse = await fetch(`/api/transactions/${id}/documents`);
+      const docsData = await docsResponse.json();
+
+      if (docsData.success) {
+        setPrefetchedDocuments(docsData.data ?? []);
+        setDocumentsSetupError('');
+      } else if (docsResponse.status === 503) {
+        setPrefetchedDocuments([]);
+        setDocumentsSetupError(docsData.error || 'Documents storage is not set up yet.');
+      }
+    } catch {
+      // Non-fatal — documents tab can retry
+    } finally {
+      setDocumentsReady(true);
+    }
+  };
+
   useEffect(() => {
+    setDocumentsReady(false);
+    setDocumentsSetupError('');
+    setPrefetchedDocuments([]);
+
     fetchTransaction();
+    prefetchDocuments();
   }, [id]);
 
   // Delete transaction
@@ -386,15 +413,20 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
           </div>
         )}
 
-        {activeTab === 'documents' && (
+        <div className={activeTab === 'documents' ? '' : 'hidden'}>
           <Card>
             <h2 className="text-base font-semibold text-gray-900 mb-4">Deal Documents</h2>
             <p className="text-sm text-gray-500 mb-6 -mt-2">
               Store contracts, disclosures, inspection reports, and other files for this transaction.
             </p>
-            <TransactionDocuments transactionId={transaction.id} />
+            <TransactionDocuments
+              transactionId={transaction.id}
+              prefetchedDocuments={prefetchedDocuments}
+              prefetchedSetupError={documentsSetupError}
+              documentsReady={documentsReady}
+            />
           </Card>
-        )}
+        </div>
 
         {activeTab === 'reminders' && (
           <Card>

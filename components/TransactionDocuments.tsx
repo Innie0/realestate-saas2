@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { format } from 'date-fns';
 import {
   Upload,
@@ -45,45 +45,35 @@ function fileIcon(mime: string) {
 
 interface TransactionDocumentsProps {
   transactionId: string;
+  prefetchedDocuments?: Contract[];
+  prefetchedSetupError?: string;
+  documentsReady?: boolean;
 }
 
-export default function TransactionDocuments({ transactionId }: TransactionDocumentsProps) {
+export default function TransactionDocuments({
+  transactionId,
+  prefetchedDocuments = [],
+  prefetchedSetupError = '',
+  documentsReady = false,
+}: TransactionDocumentsProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [documents, setDocuments] = useState<Contract[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [documents, setDocuments] = useState<Contract[]>(prefetchedDocuments);
+  const [loading, setLoading] = useState(!documentsReady);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
-  const [setupError, setSetupError] = useState('');
+  const [setupError, setSetupError] = useState(prefetchedSetupError);
   const [title, setTitle] = useState('');
   const [contractType, setContractType] = useState<string>('other');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
-  const fetchDocuments = useCallback(async () => {
-    setLoading(true);
-    setSetupError('');
-    setError('');
-    try {
-      const res = await fetch(`/api/transactions/${transactionId}/documents`);
-      const result = await res.json();
-      if (result.success) {
-        setDocuments(result.data ?? []);
-      } else if (res.status === 503) {
-        setSetupError(result.error);
-      } else {
-        setError(result.error || 'Failed to load documents');
-      }
-    } catch {
-      setError('Failed to load documents');
-    } finally {
-      setLoading(false);
-    }
-  }, [transactionId]);
-
   useEffect(() => {
-    fetchDocuments();
-  }, [fetchDocuments]);
+    if (!documentsReady) return;
+    setDocuments(prefetchedDocuments);
+    setSetupError(prefetchedSetupError);
+    setLoading(false);
+  }, [documentsReady, prefetchedDocuments, prefetchedSetupError]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
