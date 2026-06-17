@@ -29,7 +29,7 @@ const COMPARISON_ROWS = [
   { label: 'Property Lookups', starter: '20 / mo',  pro: 'Unlimited' },
   { label: 'AI Messages',      starter: '75 / mo',  pro: 'Unlimited' },
   { label: 'Clients',          starter: '50 total', pro: 'Unlimited' },
-  { label: 'Transactions',     starter: '20 total', pro: 'Unlimited' },
+  { label: 'Transactions',     starter: '20 / mo',  pro: 'Unlimited' },
   { label: 'Calendar Events',  starter: 'Unlimited', pro: 'Unlimited' },
   { label: 'Priority Support', starter: false,      pro: true },
 ];
@@ -96,7 +96,7 @@ export default function UpgradePage() {
         if (usageRows) {
           const map: Record<string, { current: number; limit: number }> = {};
           for (const [feature, limit] of Object.entries(STARTER_LIMITS)) {
-            const isTotal = ['clients', 'transactions'].includes(feature);
+            const isTotal = feature === 'clients';
             const row = usageRows.find(r =>
               r.feature === feature && r.period === (isTotal ? 'total' : period)
             );

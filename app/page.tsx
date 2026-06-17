@@ -1511,7 +1511,7 @@ export default function HomePage() {
             <FAQItem question="Does it work for commercial real estate too?" answer="Absolutely. Realestic works for any type of real estate — residential, commercial, rental, and land. The AI adapts to the type of property you're working with." delay={0.1} />
             <FAQItem question="Can I cancel anytime?" answer="Yes, you can cancel your subscription at any time with no cancellation fees. If you cancel, you'll continue to have access until the end of your current billing period." delay={0.15} />
             <FAQItem question="Is my data secure?" answer="Yes. All data is encrypted in transit and at rest. We use enterprise-grade infrastructure and never sell your data to third parties. Your client information stays private and protected." delay={0.2} />
-            <FAQItem question="What's the difference between Starter and Pro?" answer="The Starter plan ($49/month) gives you 20 listing projects, 20 property lookups, 75 AI messages, and up to 50 clients per month — perfect for individual agents. The Pro plan ($99/month) gives you unlimited access to everything, ideal for busy agents or small teams. Save with annual billing — Pro is $990/year (2 months free)." delay={0.25} />
+            <FAQItem question="What's the difference between Starter and Pro?" answer="The Starter plan ($49/month) includes 20 listing projects, 20 property lookups, 75 AI messages, and 20 transactions per month, plus up to 50 clients total on your account — perfect for individual agents. The Pro plan ($99/month) gives you unlimited access to everything, ideal for busy agents or small teams. Save with annual billing — Pro is $990/year (2 months free)." delay={0.25} />
           </div>
         </div>
       </section>
@@ -1546,8 +1546,8 @@ export default function HomePage() {
                   '20 AI Listing Projects / month',
                   '20 Property Lookups / month',
                   '75 AI Assistant Messages / month',
-                  'Up to 50 Clients',
-                  'Up to 20 Transactions',
+                  'Up to 50 Clients (total)',
+                  '20 Transactions / month',
                   'Lead Capture Form & QR Code',
                   'Automated Lead Follow-Up Emails',
                   'Calendar Integration',

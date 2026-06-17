@@ -34,8 +34,8 @@ const PRO_LIMITS: PlanLimits = {
   market_analyses: Infinity,
 };
 
-const MONTHLY_FEATURES: Feature[] = ['projects', 'property_lookups', 'ai_messages', 'market_analyses'];
-const TOTAL_FEATURES: Feature[] = ['clients', 'transactions', 'calendar_events'];
+const MONTHLY_FEATURES: Feature[] = ['projects', 'property_lookups', 'ai_messages', 'market_analyses', 'transactions'];
+const TOTAL_FEATURES: Feature[] = ['clients', 'calendar_events'];
 
 export function getPlanName(
   subscriptionPlan: string | null,

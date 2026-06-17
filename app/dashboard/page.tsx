@@ -132,7 +132,7 @@ export default function DashboardPage() {
                 { key: 'property_lookups', label: 'Lookups', period: plan === 'pro' ? '' : '/mo' },
                 { key: 'ai_messages', label: 'AI Messages', period: '/mo' },
                 { key: 'clients', label: 'Clients', period: 'total' },
-                { key: 'transactions', label: 'Transactions', period: 'total' },
+                { key: 'transactions', label: 'Transactions', period: '/mo' },
                 { key: 'calendar_events', label: 'Events', period: '' },
               ].map(({ key, label, period }) => {
                 const item = usage[key];
