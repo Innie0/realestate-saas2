@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin';
-import { hasLeadCaptureAccess } from '@/lib/subscription';
+import { hasProLeadToolsAccess } from '@/lib/subscription';
 import PublicAgentProfileView from '@/components/PublicAgentProfileView';
 
 interface PageProps {
@@ -30,7 +30,7 @@ async function getAgentProfile(slug: string) {
     .eq('id', uuid)
     .single();
 
-  if (!hasLeadCaptureAccess(
+  if (!hasProLeadToolsAccess(
     userData?.subscription_status,
     userData?.subscription_plan,
     user.email

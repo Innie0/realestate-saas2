@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import { QRCodeCanvas } from 'qrcode.react';
 import {
@@ -21,8 +22,10 @@ interface OpenHouse {
 }
 
 export default function OpenHousesPage() {
+  const router = useRouter();
   const [openHouses, setOpenHouses] = useState<OpenHouse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [checkingPlan, setCheckingPlan] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [creating, setCreating] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -36,8 +39,24 @@ export default function OpenHousesPage() {
 
   useEffect(() => {
     document.title = 'Open Houses - Realestic';
-    fetchOpenHouses();
-  }, []);
+    const init = async () => {
+      try {
+        const usageRes = await fetch('/api/usage');
+        const usage = await usageRes.json();
+        if (!usage.hasProLeadTools) {
+          router.replace('/dashboard/upgrade');
+          return;
+        }
+      } catch {
+        router.replace('/dashboard/leads');
+        return;
+      } finally {
+        setCheckingPlan(false);
+      }
+      fetchOpenHouses();
+    };
+    void init();
+  }, [router]);
 
   const fetchOpenHouses = async () => {
     try {
@@ -99,6 +118,14 @@ export default function OpenHousesPage() {
   };
 
   const inputClass = 'w-full px-3 py-2.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-brand-500';
+
+  if (checkingPlan) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">

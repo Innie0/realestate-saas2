@@ -1,6 +1,20 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
+import { hasProLeadToolsAccess } from '@/lib/subscription';
+
+async function getUserPlanContext(supabase: Awaited<ReturnType<typeof createClient>>, userId: string, email?: string | null) {
+  const { data } = await supabase
+    .from('users')
+    .select('subscription_plan, subscription_status')
+    .eq('id', userId)
+    .single();
+  return {
+    subscription_plan: data?.subscription_plan,
+    subscription_status: data?.subscription_status,
+    email,
+  };
+}
 
 export async function GET() {
   try {
@@ -31,6 +45,14 @@ export async function POST(request: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const planCtx = await getUserPlanContext(supabase, user.id, user.email);
+    if (!hasProLeadToolsAccess(planCtx.subscription_status, planCtx.subscription_plan, planCtx.email)) {
+      return NextResponse.json(
+        { success: false, error: 'Open houses are available on the Pro plan. Upgrade to create sign-in pages.' },
+        { status: 403 },
+      );
     }
 
     const body = await request.json();

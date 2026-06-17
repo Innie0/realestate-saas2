@@ -52,6 +52,17 @@ export function hasLeadCaptureAccess(
   return isStarterPriceId(plan) || isProPriceId(plan);
 }
 
+/** Pro-only lead tools: open houses, public agent profile, SMS alerts */
+export function hasProLeadToolsAccess(
+  subscriptionStatus: string | null | undefined,
+  subscriptionPlan: string | null | undefined,
+  email?: string | null
+): boolean {
+  if (!hasAppAccess(subscriptionStatus, email)) return false;
+  if (email && (isAdminEmail(email) || isFreePro(email))) return true;
+  return isProPriceId(subscriptionPlan);
+}
+
 export function getPaidPlanName(
   subscriptionPlan: string | null | undefined
 ): PaidPlanName | null {

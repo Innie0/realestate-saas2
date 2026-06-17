@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import { supabase } from '@/lib/supabase';
 import { useTour } from '@/hooks/useTour';
@@ -11,7 +12,7 @@ import {
   Inbox, Link2, Copy, Check, Download, Phone, Mail,
   Home, Building2, KeyRound, Search, Flame, Thermometer,
   Snowflake, ArrowRight, Users, Clock, Lock, MailCheck,
-  Loader2, DoorOpen, Megaphone, Zap, UserPlus, MailX, MapPin,
+  Loader2, DoorOpen, Megaphone, Zap, UserPlus, MailX, MapPin, Sparkles,
 } from 'lucide-react';
 
 type LeadsTab = 'inbox' | 'capture' | 'automations';
@@ -264,13 +265,23 @@ export default function LeadsPage() {
   });
 
   const [activeTab, setActiveTab] = useState<LeadsTab>('inbox');
+  const router = useRouter();
   const { data: leads = [], isLoading, mutate: mutateLeads } = useApi<Lead[]>('/api/clients?status=all&view=inbox');
   const { response: usageResponse } = useApi('/api/usage');
   const { response: profileResponse } = useApi('/api/agent-profile');
   const { data: settingsData, mutate: mutateSettings } = useApi<{ auto_followup_enabled?: boolean }>('/api/agent-settings');
 
   const isPaidPlan = usageResponse?.hasAccess === true;
+  const isProPlan = usageResponse?.hasProLeadTools === true;
   const profileUrl = (profileResponse?.profileUrl as string) || '';
+
+  const handleProFeatureClick = (href: string) => {
+    if (isProPlan) {
+      router.push(href);
+      return;
+    }
+    router.push('/dashboard/upgrade');
+  };
 
   const [leadFormUrl, setLeadFormUrl] = useState('');
   const [copied, setCopied] = useState(false);
@@ -574,42 +585,56 @@ export default function LeadsPage() {
               )}
             </div>
 
-            {/* Open Houses + Agent Profile */}
+            {/* Open Houses + Agent Profile (Pro) */}
             <div className="grid sm:grid-cols-2 gap-4">
-              <Link
-                href="/dashboard/leads/open-houses"
-                className="bg-white border border-gray-200 rounded-xl p-6 hover:border-gray-300 transition-colors group"
+              <button
+                type="button"
+                onClick={() => handleProFeatureClick('/dashboard/leads/open-houses')}
+                className="bg-white border border-gray-200 rounded-xl p-6 hover:border-gray-300 transition-colors group text-left w-full"
               >
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
                     <DoorOpen className="w-5 h-5 text-gray-900/70" />
                   </div>
+                  {!isProPlan && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200 text-xs font-medium">
+                      <Sparkles className="w-3 h-3" />
+                      Pro
+                    </span>
+                  )}
                   <ArrowRight className="w-4 h-4 text-gray-600 ml-auto group-hover:text-brand-600 transition-colors" />
                 </div>
                 <h3 className="text-base font-semibold text-gray-900 mb-1">Open houses</h3>
                 <p className="text-sm text-gray-500">
                   Create a sign-in page and QR code for each open house. Visitors become leads automatically.
                 </p>
-              </Link>
+              </button>
 
-              <Link
-                href="/dashboard/leads/profile"
-                className="bg-white border border-gray-200 rounded-xl p-6 hover:border-gray-300 transition-colors group"
+              <button
+                type="button"
+                onClick={() => handleProFeatureClick('/dashboard/leads/profile')}
+                className="bg-white border border-gray-200 rounded-xl p-6 hover:border-gray-300 transition-colors group text-left w-full"
               >
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
                     <Users className="w-5 h-5 text-gray-900/70" />
                   </div>
+                  {!isProPlan && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200 text-xs font-medium">
+                      <Sparkles className="w-3 h-3" />
+                      Pro
+                    </span>
+                  )}
                   <ArrowRight className="w-4 h-4 text-gray-600 ml-auto group-hover:text-brand-600 transition-colors" />
                 </div>
                 <h3 className="text-base font-semibold text-gray-900 mb-1">Agent profile</h3>
                 <p className="text-sm text-gray-500">
                   Your public landing page with bio, specialties, and a built-in lead form.
                 </p>
-                {profileUrl && (
+                {isProPlan && profileUrl && (
                   <p className="text-xs text-gray-600 mt-3 truncate">{profileUrl}</p>
                 )}
-              </Link>
+              </button>
             </div>
           </div>
         )}
@@ -651,21 +676,25 @@ export default function LeadsPage() {
                 </button>
               </div>
 
-              {/* SMS Alerts — coming soon */}
+              {/* SMS Alerts — Pro, coming soon */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 opacity-90">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
                     <Phone className="w-5 h-5 text-gray-400" />
                   </div>
-                  <div className="flex items-center gap-2 min-w-0">
+                  <div className="flex items-center gap-2 min-w-0 flex-wrap">
                     <h3 className="text-base font-semibold text-gray-900">SMS alerts</h3>
+                    <span className="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200 text-xs font-medium">
+                      <Sparkles className="w-3 h-3" />
+                      Pro
+                    </span>
                     <span className="shrink-0 px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-medium">
                       Coming soon
                     </span>
                   </div>
                 </div>
                 <p className="text-sm text-gray-500 mb-5">
-                  Get a text the moment a lead submits your form or signs in at an open house. We&apos;re finishing setup — check back soon.
+                  Pro plan feature — get a text the moment a lead submits your form or signs in at an open house. Launching soon for Pro subscribers.
                 </p>
                 <button
                   type="button"
@@ -673,7 +702,7 @@ export default function LeadsPage() {
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium border bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
                 >
                   <Phone className="w-4 h-4" />
-                  Coming soon
+                  Pro · Coming soon
                 </button>
               </div>
             </div>

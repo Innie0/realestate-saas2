@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { getAllUsage, getPlanName } from '@/lib/usage';
-import { hasAppAccess } from '@/lib/subscription';
+import { hasAppAccess, hasProLeadToolsAccess } from '@/lib/subscription';
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,6 +22,11 @@ export async function GET(request: NextRequest) {
     const plan = getPlanName(userData?.subscription_plan, userData?.subscription_status);
     const usage = await getAllUsage(supabase, user.id);
     const hasAccess = hasAppAccess(userData?.subscription_status, user.email);
+    const hasProLeadTools = hasProLeadToolsAccess(
+      userData?.subscription_status,
+      userData?.subscription_plan,
+      user.email,
+    );
 
     return NextResponse.json({
       success: true,
@@ -29,6 +34,7 @@ export async function GET(request: NextRequest) {
       plan,
       subscription_status: userData?.subscription_status ?? null,
       hasAccess,
+      hasProLeadTools,
     });
   } catch (error: any) {
     console.error('Usage API error:', error);

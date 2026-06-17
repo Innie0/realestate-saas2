@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import {
   ArrowLeft, Save, Loader2, User, Copy, Check,
@@ -9,7 +10,9 @@ import {
 } from 'lucide-react';
 
 export default function ProfileEditorPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [checkingPlan, setCheckingPlan] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [profileUrl, setProfileUrl] = useState('');
@@ -34,8 +37,24 @@ export default function ProfileEditorPage() {
 
   useEffect(() => {
     document.title = 'Agent Profile - Realestic';
-    fetchProfile();
-  }, []);
+    const init = async () => {
+      try {
+        const usageRes = await fetch('/api/usage');
+        const usage = await usageRes.json();
+        if (!usage.hasProLeadTools) {
+          router.replace('/dashboard/upgrade');
+          return;
+        }
+      } catch {
+        router.replace('/dashboard/leads');
+        return;
+      } finally {
+        setCheckingPlan(false);
+      }
+      fetchProfile();
+    };
+    void init();
+  }, [router]);
 
   const fetchProfile = async () => {
     try {
@@ -138,7 +157,7 @@ export default function ProfileEditorPage() {
   const inputClass =
     'w-full px-3 py-2.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500';
 
-  if (loading) {
+  if (loading || checkingPlan) {
     return (
       <div className="min-h-screen">
         <Header title="Agent Profile" subtitle="Edit your public profile page" />
