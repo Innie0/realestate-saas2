@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Sidebar from '@/components/layout/Sidebar';
 import FeedbackWidget from '@/components/FeedbackWidget';
 import FeedbackFooterButton from '@/components/FeedbackFooterButton';
+import SWRProvider from '@/components/providers/SWRProvider';
 
 /**
  * DashboardLayout component
@@ -27,7 +28,7 @@ export default function DashboardLayout({
         
         {/* Scrollable content with dark background */}
         <main className="flex-1 overflow-y-auto bg-transparent">
-          {children}
+          <SWRProvider>{children}</SWRProvider>
         </main>
         
         <FeedbackWidget />

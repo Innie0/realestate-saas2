@@ -11,6 +11,7 @@ import ProjectCard from '@/components/ProjectCard';
 import { Plus, Search, Filter } from 'lucide-react';
 import { Project } from '@/types';
 import { useTour } from '@/hooks/useTour';
+import { useApi } from '@/lib/swr';
 
 /**
  * Projects page component
@@ -49,38 +50,13 @@ export default function ProjectsPage() {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
+
+  const { data: projects = [], isLoading, mutate } = useApi<Project[]>('/api/projects');
 
   // Set page title
   React.useEffect(() => {
     document.title = 'Projects - Realestic';
   }, []);
-
-  // Load projects from API on mount
-  React.useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  const fetchProjects = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/projects');
-      const result = await response.json();
-      
-      if (result.success) {
-        setProjects(result.data || []);
-      } else {
-        console.error('Failed to fetch projects:', result.error);
-        setProjects([]);
-      }
-    } catch (error) {
-      console.error('Error loading projects:', error);
-      setProjects([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDeleteProject = async (projectId: string) => {
     if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
@@ -95,8 +71,7 @@ export default function ProjectsPage() {
       const result = await response.json();
 
       if (result.success) {
-        // Refresh the projects list
-        fetchProjects();
+        mutate();
       } else {
         alert('Failed to delete project: ' + result.error);
       }
@@ -170,7 +145,7 @@ export default function ProjectsPage() {
         </div>
 
         {/* Projects grid */}
-        {loading ? (
+        {isLoading && projects.length === 0 ? (
           <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
               <div key={i} className="animate-pulse bg-white rounded-xl p-4 border border-gray-200">

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import { supabase } from '@/lib/supabase';
 import { useTour } from '@/hooks/useTour';
+import { useApi } from '@/lib/swr';
 import { QRCodeCanvas } from 'qrcode.react';
 import {
   Inbox, Link2, Copy, Check, Download, Phone, Mail,
@@ -263,11 +264,15 @@ export default function LeadsPage() {
   });
 
   const [activeTab, setActiveTab] = useState<LeadsTab>('inbox');
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isPaidPlan, setIsPaidPlan] = useState(false);
+  const { data: leads = [], isLoading, mutate: mutateLeads } = useApi<Lead[]>('/api/clients?status=all&view=inbox');
+  const { response: usageResponse } = useApi('/api/usage');
+  const { response: profileResponse } = useApi('/api/agent-profile');
+  const { data: settingsData, mutate: mutateSettings } = useApi<{ auto_followup_enabled?: boolean }>('/api/agent-settings');
+
+  const isPaidPlan = usageResponse?.hasAccess === true;
+  const profileUrl = (profileResponse?.profileUrl as string) || '';
+
   const [leadFormUrl, setLeadFormUrl] = useState('');
-  const [profileUrl, setProfileUrl] = useState('');
   const [copied, setCopied] = useState(false);
   const [filter, setFilter] = useState<'all' | 'hot' | 'warm' | 'cold'>('all');
   const [addingToCrmId, setAddingToCrmId] = useState<string | null>(null);
@@ -278,25 +283,19 @@ export default function LeadsPage() {
   const [savingSettings, setSavingSettings] = useState(false);
 
   useEffect(() => {
-    document.title = 'Leads - Realestic';
-    fetchLeads();
-    checkPlanAndUrl();
-    fetchSettings();
-  }, []);
+    setAutoFollowup(settingsData?.auto_followup_enabled || false);
+  }, [settingsData?.auto_followup_enabled]);
 
-  const fetchLeads = async () => {
-    try {
-      const res = await fetch('/api/clients?status=all&view=inbox');
-      const result = await res.json();
-      if (result.success) {
-        setLeads(result.data || []);
-      }
-    } catch (e) {
-      console.error('Error fetching leads:', e);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    document.title = 'Leads - Realestic';
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      const fullName: string = user.user_metadata?.full_name || '';
+      const nameSlug = fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const slug = nameSlug ? `${nameSlug}--${user.id}` : user.id;
+      setLeadFormUrl(`${window.location.origin}/lead/${slug}`);
+    });
+  }, []);
 
   const handleCancelSequence = async (leadId: string) => {
     setCancellingSequenceId(leadId);
@@ -321,7 +320,13 @@ export default function LeadsPage() {
       const res = await fetch(`/api/clients/${leadId}/add-to-crm`, { method: 'POST' });
       const result = await res.json();
       if (result.success) {
-        setLeads(prev => prev.filter(l => l.id !== leadId));
+        mutateLeads(
+          (current) =>
+            current
+              ? { ...current, data: (current.data as Lead[]).filter((l) => l.id !== leadId) }
+              : current,
+          { revalidate: false },
+        );
       } else {
         alert(result.error || 'Could not add to CRM');
       }
@@ -333,40 +338,6 @@ export default function LeadsPage() {
     }
   };
 
-  const checkPlanAndUrl = async () => {
-    const [{ data: { user } }, usageRes, profileRes] = await Promise.all([
-      supabase.auth.getUser(),
-      fetch('/api/usage'),
-      fetch('/api/agent-profile'),
-    ]);
-    const usageData = await usageRes.json();
-    if (usageData.success) {
-      setIsPaidPlan(usageData.hasAccess === true);
-    }
-    if (user) {
-      const fullName: string = user.user_metadata?.full_name || '';
-      const nameSlug = fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-      const slug = nameSlug ? `${nameSlug}--${user.id}` : user.id;
-      setLeadFormUrl(`${window.location.origin}/lead/${slug}`);
-    }
-    const profileData = await profileRes.json();
-    if (profileData.success && profileData.profileUrl) {
-      setProfileUrl(profileData.profileUrl);
-    }
-  };
-
-  const fetchSettings = async () => {
-    try {
-      const res = await fetch('/api/agent-settings');
-      const result = await res.json();
-      if (result.success && result.data) {
-        setAutoFollowup(result.data.auto_followup_enabled || false);
-      }
-    } catch (e) {
-      console.error('Error fetching settings:', e);
-    }
-  };
-
   const saveSettings = async (updates: Record<string, unknown>) => {
     setSavingSettings(true);
     try {
@@ -375,6 +346,7 @@ export default function LeadsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates),
       });
+      mutateSettings();
     } catch (e) {
       console.error('Error saving settings:', e);
     } finally {
@@ -466,7 +438,7 @@ export default function LeadsPage() {
                 </div>
               </div>
 
-              {loading ? (
+              {isLoading && leads.length === 0 ? (
                 <div className="space-y-3">
                   {[1, 2, 3].map(i => (
                     <div key={i} className="bg-white border border-gray-200 rounded-xl p-4 animate-pulse">

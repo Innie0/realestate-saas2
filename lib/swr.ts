@@ -1,0 +1,39 @@
+import useSWR, { type SWRConfiguration } from 'swr';
+
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  [key: string]: unknown;
+}
+
+export async function swrFetcher<T = unknown>(url: string): Promise<ApiResponse<T>> {
+  const res = await fetch(url);
+  const json = await res.json();
+  if (!json.success) {
+    throw new Error(json.error || 'Request failed');
+  }
+  return json;
+}
+
+/** Cached API fetch — shows stale data instantly while revalidating in the background. */
+export function useApi<T = unknown>(
+  url: string | null,
+  config?: SWRConfiguration<ApiResponse<T>>,
+) {
+  const { data, error, isLoading, isValidating, mutate } = useSWR<ApiResponse<T>>(
+    url,
+    swrFetcher,
+    config,
+  );
+
+  return {
+    response: data,
+    data: data?.data as T | undefined,
+    error,
+    /** True only when there is no cached data yet (first visit). */
+    isLoading: isLoading && data === undefined,
+    isValidating,
+    mutate,
+  };
+}

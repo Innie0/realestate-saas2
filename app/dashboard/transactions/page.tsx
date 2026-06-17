@@ -3,7 +3,7 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { format, differenceInDays } from 'date-fns';
 import { 
@@ -17,46 +17,26 @@ import Input from '@/components/ui/Input';
 import Header from '@/components/layout/Header';
 import TransactionTimeline from '@/components/TransactionTimeline';
 import { TransactionWithDetails } from '@/types';
+import { useApi } from '@/lib/swr';
 
 export default function TransactionsPage() {
-  const [transactions, setTransactions] = useState<TransactionWithDetails[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+
+  const transactionsUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    if (statusFilter !== 'all') params.set('status', statusFilter);
+    const qs = params.toString();
+    return `/api/transactions${qs ? `?${qs}` : ''}`;
+  }, [statusFilter]);
+
+  const { data: transactions = [], isLoading, error: fetchError } = useApi<TransactionWithDetails[]>(transactionsUrl);
+  const error = fetchError?.message ?? '';
 
   // Set page title
   useEffect(() => {
     document.title = 'Transactions - Realestic';
   }, []);
-
-  // Fetch transactions
-  const fetchTransactions = async () => {
-    setIsLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (statusFilter !== 'all') {
-        params.set('status', statusFilter);
-      }
-
-      const response = await fetch(`/api/transactions?${params.toString()}`);
-      const data = await response.json();
-
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to fetch transactions');
-      }
-
-      setTransactions(data.data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchTransactions();
-  }, [statusFilter]);
 
   // Filter transactions by search term
   const filteredTransactions = transactions.filter(transaction => {
@@ -199,10 +179,12 @@ export default function TransactionsPage() {
         </div>
       )}
 
-      {/* Loading state */}
+      {/* Loading state — only on first visit with no cache */}
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-32 bg-white border border-gray-200 rounded-xl animate-pulse" />
+          ))}
         </div>
       ) : filteredTransactions.length === 0 ? (
         /* Empty state */

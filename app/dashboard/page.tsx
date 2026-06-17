@@ -3,7 +3,7 @@
 
 'use client'; // This page uses client-side features
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
@@ -13,6 +13,7 @@ import ProjectCard from '@/components/ProjectCard';
 import { Plus, Zap, Users, ArrowRight, Clock, FolderKanban } from 'lucide-react';
 import { Project } from '@/types';
 import { useTour } from '@/hooks/useTour';
+import { useApi } from '@/lib/swr';
 
 interface RecentClient { id: string; name: string; email?: string; status: string; created_at: string; }
 interface RecentTransaction { id: string; property_address: string; status: string; offer_price?: number; updated_at: string; }
@@ -26,13 +27,17 @@ interface UsageData {
  * Overview of user's projects and statistics
  */
 export default function DashboardPage() {
-  const [recentProjects, setRecentProjects] = useState<Project[]>([]);
-  const [recentClients, setRecentClients] = useState<RecentClient[]>([]);
-  const [recentTransactions, setRecentTransactions] = useState<RecentTransaction[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [projectsLoading, setProjectsLoading] = useState(true);
-  const [usage, setUsage] = useState<UsageData | null>(null);
-  const [plan, setPlan] = useState<'starter' | 'pro'>('starter');
+  const { response: usageResponse, isLoading: usageLoading } = useApi<UsageData>('/api/usage');
+  const { data: recentProjects = [], isLoading: projectsLoading } = useApi<Project[]>('/api/projects?limit=3');
+  const { data: allClients = [] } = useApi<RecentClient[]>('/api/clients?status=all');
+  const { data: allTransactions = [] } = useApi<RecentTransaction[]>('/api/transactions?limit=4');
+
+  const usage = usageResponse?.data ?? null;
+  const plan = (usageResponse?.plan as 'starter' | 'pro') ?? 'starter';
+
+  const recentClients = useMemo(() => allClients.slice(0, 4), [allClients]);
+  const recentTransactions = useMemo(() => allTransactions.slice(0, 4), [allTransactions]);
+  const loading = usageLoading && !usage;
 
   useTour({
     tourKey: 'tour_dashboard',
@@ -78,55 +83,6 @@ export default function DashboardPage() {
   useEffect(() => {
     document.title = 'Dashboard - Realestic';
   }, []);
-
-  useEffect(() => {
-    fetchRecentProjects();
-    fetchUsage();
-    fetchRecentActivity();
-  }, []);
-
-  const fetchUsage = async () => {
-    try {
-      const response = await fetch('/api/usage');
-      const result = await response.json();
-      if (result.success) {
-        setUsage(result.data);
-        if (result.plan) setPlan(result.plan);
-      }
-    } catch (error) {
-      console.error('Error fetching usage:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchRecentActivity = async () => {
-    try {
-      const [clientsRes, txRes] = await Promise.all([
-        fetch('/api/clients?status=all'),
-        fetch('/api/transactions?limit=4'),
-      ]);
-      const clientsData = await clientsRes.json();
-      const txData = await txRes.json();
-      if (clientsData.success) setRecentClients(clientsData.data.slice(0, 4));
-      if (txData.success) setRecentTransactions(txData.data.slice(0, 4));
-    } catch (e) { console.error('Recent activity error:', e); }
-  };
-
-  const fetchRecentProjects = async () => {
-    try {
-      const response = await fetch('/api/projects?limit=3');
-      const result = await response.json();
-      
-      if (result.success) {
-        setRecentProjects(result.data);
-      }
-    } catch (error) {
-      console.error('Error fetching recent projects:', error);
-    } finally {
-      setProjectsLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen">
@@ -221,7 +177,7 @@ export default function DashboardPage() {
             </Link>
           </div>
 
-          {projectsLoading ? (
+          {projectsLoading && recentProjects.length === 0 ? (
             // Loading skeletons
             <div className="grid gap-6 md:grid-cols-3">
               {[1, 2, 3].map((i) => (

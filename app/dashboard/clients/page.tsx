@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Client } from '@/types';
 import ClientCard from '@/components/ClientCard';
 import ClientForm from '@/components/ClientForm';
@@ -10,6 +10,7 @@ import Input from '@/components/ui/Input';
 import Header from '@/components/layout/Header';
 import { Search, Plus, X } from 'lucide-react';
 import { useTour } from '@/hooks/useTour';
+import { useApi } from '@/lib/swr';
 
 /**
  * Clients page - CRM client management
@@ -45,13 +46,21 @@ export default function ClientsPage() {
     ],
   });
 
-  const [clients, setClients] = useState<Client[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('active');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  const clientsUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    if (searchQuery) params.append('search', searchQuery);
+    if (statusFilter) params.append('status', statusFilter);
+    const qs = params.toString();
+    return `/api/clients${qs ? `?${qs}` : ''}`;
+  }, [searchQuery, statusFilter]);
+
+  const { data: clients = [], isLoading, mutate } = useApi<Client[]>(clientsUrl);
+
   // Quick add modals
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [showReminderModal, setShowReminderModal] = useState(false);
@@ -62,30 +71,6 @@ export default function ClientsPage() {
   useEffect(() => {
     document.title = 'Clients - Realestic';
   }, []);
-
-  // Fetch clients
-  useEffect(() => {
-    fetchClients();
-  }, [searchQuery, statusFilter]);
-
-  const fetchClients = async () => {
-    try {
-      const params = new URLSearchParams();
-      if (searchQuery) params.append('search', searchQuery);
-      if (statusFilter) params.append('status', statusFilter);
-
-      const response = await fetch(`/api/clients?${params.toString()}`);
-      const result = await response.json();
-
-      if (result.success) {
-        setClients(result.data);
-      }
-    } catch (error) {
-      console.error('Error fetching clients:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleCreateClient = async (data: any) => {
     setIsSubmitting(true);
@@ -100,7 +85,7 @@ export default function ClientsPage() {
 
       if (result.success) {
         setShowCreateForm(false);
-        fetchClients();
+        mutate();
       } else {
         alert(result.error || 'Failed to create client');
       }
@@ -141,7 +126,7 @@ export default function ClientsPage() {
         setNoteText('');
         setSelectedClient(null);
         // Refresh clients list to show the new note
-        fetchClients();
+        mutate();
       } else {
         alert(result.error || 'Failed to add note');
       }
@@ -168,7 +153,7 @@ export default function ClientsPage() {
         setShowReminderModal(false);
         setSelectedClient(null);
         // Refresh clients list to show the new reminder count
-        fetchClients();
+        mutate();
       } else {
         alert(result.error || 'Failed to create reminder');
       }
@@ -250,7 +235,7 @@ export default function ClientsPage() {
       )}
 
       {/* Clients grid */}
-      {loading ? (
+      {isLoading && clients.length === 0 ? (
         <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="animate-pulse rounded-lg border border-gray-200 p-6 shadow bg-white">
