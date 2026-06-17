@@ -2,6 +2,64 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 
+const CORE_PROFILE_FIELDS = [
+  'profile_enabled',
+  'profile_headline',
+  'profile_bio',
+  'profile_photo_url',
+  'profile_specialties',
+  'profile_areas',
+  'profile_phone',
+  'profile_email',
+];
+
+const EXTENDED_PROFILE_FIELDS = [
+  'profile_brokerage',
+  'profile_license',
+  'profile_website',
+  'profile_years_experience',
+];
+
+function pickProfileUpdates(body: Record<string, unknown>, fields: string[]) {
+  const updates: Record<string, unknown> = {};
+  for (const key of fields) {
+    if (key in body) updates[key] = body[key];
+  }
+  return updates;
+}
+
+function isMissingColumnError(message?: string) {
+  if (!message) return false;
+  return /column .* does not exist/i.test(message) || /Could not find the .* column/i.test(message);
+}
+
+async function upsertAgentSettings(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  updates: Record<string, unknown>,
+) {
+  const { data: existing } = await supabase
+    .from('agent_settings')
+    .select('id')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (existing) {
+    return supabase
+      .from('agent_settings')
+      .update(updates)
+      .eq('user_id', userId)
+      .select()
+      .single();
+  }
+
+  return supabase
+    .from('agent_settings')
+    .insert({ user_id: userId, ...updates })
+    .select()
+    .single();
+}
+
 export async function GET() {
   try {
     const supabase = await createClient();
@@ -12,11 +70,11 @@ export async function GET() {
 
     const { data, error } = await supabase
       .from('agent_settings')
-      .select('profile_enabled, profile_headline, profile_bio, profile_photo_url, profile_specialties, profile_areas, profile_phone, profile_email, profile_brokerage, profile_license, profile_website, profile_years_experience')
+      .select('*')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error) {
       return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 
@@ -45,42 +103,38 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const profileFields = [
-      'profile_enabled', 'profile_headline', 'profile_bio',
-      'profile_photo_url', 'profile_specialties', 'profile_areas',
-      'profile_phone', 'profile_email',
-      'profile_brokerage', 'profile_license', 'profile_website', 'profile_years_experience',
-    ];
+    const coreUpdates = pickProfileUpdates(body, CORE_PROFILE_FIELDS);
+    const extendedUpdates = pickProfileUpdates(body, EXTENDED_PROFILE_FIELDS);
 
-    const updates: Record<string, unknown> = {};
-    for (const key of profileFields) {
-      if (key in body) updates[key] = body[key];
+    if (Object.keys(coreUpdates).length === 0 && Object.keys(extendedUpdates).length === 0) {
+      return NextResponse.json({ success: false, error: 'No profile fields to update.' }, { status: 400 });
     }
 
-    const { data: existing } = await supabase
-      .from('agent_settings')
-      .select('id')
-      .eq('user_id', user.id)
-      .single();
+    // Always save core fields first (includes profile_enabled toggle).
+    let { data, error } = await upsertAgentSettings(supabase, user.id, coreUpdates);
 
-    let data;
-    if (existing) {
-      const { data: updated, error } = await supabase
-        .from('agent_settings')
-        .update(updates)
-        .eq('user_id', user.id)
-        .select()
-        .single();
-      if (error) return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-      data = updated;
-    } else {
-      const { data: created, error } = await supabase
-        .from('agent_settings')
-        .insert({ user_id: user.id, ...updates })
-        .select()
-        .single();
-      if (error) return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-      data = created;
+    if (error) {
+      console.error('PUT /api/agent-profile core save error:', error);
+      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    }
+
+    // Extended fields are optional until agent-profile-enhancements.sql is applied.
+    if (Object.keys(extendedUpdates).length > 0) {
+      const extendedResult = await upsertAgentSettings(supabase, user.id, extendedUpdates);
+      if (extendedResult.error) {
+        if (isMissingColumnError(extendedResult.error.message)) {
+          console.warn('Extended profile columns missing; core profile saved without them.');
+        } else {
+          console.error('PUT /api/agent-profile extended save error:', extendedResult.error);
+          return NextResponse.json({
+            success: true,
+            data,
+            warning: 'Profile saved, but some optional fields could not be saved.',
+          });
+        }
+      } else if (extendedResult.data) {
+        data = extendedResult.data;
+      }
     }
 
     return NextResponse.json({ success: true, data });

@@ -30,6 +30,7 @@ export default function ProfileEditorPage() {
   const [email, setEmail] = useState('');
   const [newSpecialty, setNewSpecialty] = useState('');
   const [newArea, setNewArea] = useState('');
+  const [saveError, setSaveError] = useState('');
 
   useEffect(() => {
     document.title = 'Agent Profile - Realestic';
@@ -42,7 +43,7 @@ export default function ProfileEditorPage() {
       const result = await res.json();
       if (result.success) {
         if (result.data) {
-          setEnabled(result.data.profile_enabled || false);
+          setEnabled(result.data.profile_enabled === true);
           setHeadline(result.data.profile_headline || '');
           setBio(result.data.profile_bio || '');
           setPhotoUrl(result.data.profile_photo_url || '');
@@ -72,6 +73,7 @@ export default function ProfileEditorPage() {
   const handleSave = async () => {
     setSaving(true);
     setSaved(false);
+    setSaveError('');
     try {
       const res = await fetch('/api/agent-profile', {
         method: 'PUT',
@@ -92,9 +94,20 @@ export default function ProfileEditorPage() {
         }),
       });
       const result = await res.json();
-      if (result.success) setSaved(true);
+      if (result.success) {
+        setSaved(true);
+        if (result.data) {
+          setEnabled(result.data.profile_enabled === true);
+        }
+        if (result.warning) {
+          setSaveError(result.warning);
+        }
+      } else {
+        setSaveError(result.error || 'Could not save profile. Please try again.');
+      }
     } catch (e) {
       console.error('Error saving profile:', e);
+      setSaveError('Could not save profile. Please try again.');
     } finally {
       setSaving(false);
       setTimeout(() => setSaved(false), 2000);
@@ -178,6 +191,11 @@ export default function ProfileEditorPage() {
           </div>
 
           <div className="space-y-6">
+            {saveError && (
+              <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                {saveError}
+              </div>
+            )}
             {/* Public profile toggle */}
             <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
               <div className="flex items-center justify-between gap-4">

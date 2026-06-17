@@ -40,7 +40,7 @@ async function getAgentProfile(slug: string) {
 
   const { data: settings } = await supabase
     .from('agent_settings')
-    .select('profile_enabled, profile_headline, profile_bio, profile_photo_url, profile_specialties, profile_areas, profile_phone, profile_email, profile_brokerage, profile_license, profile_website, profile_years_experience')
+    .select('*')
     .eq('user_id', uuid)
     .single();
 

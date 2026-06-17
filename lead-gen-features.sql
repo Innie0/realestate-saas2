@@ -35,7 +35,8 @@ CREATE POLICY "Users can view own agent settings"
 DROP POLICY IF EXISTS "Users can manage own agent settings" ON agent_settings;
 CREATE POLICY "Users can manage own agent settings"
   ON agent_settings FOR ALL
-  USING (auth.uid() = user_id);
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
 
 -- ─── Email Sequences ─────────────────────────────────────────────────────────
 -- Scheduled outbound follow-up emails for leads.
