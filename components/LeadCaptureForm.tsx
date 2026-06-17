@@ -220,8 +220,8 @@ export default function LeadCaptureForm({
                 }}
                 className={`flex flex-col items-center justify-center gap-1.5 rounded-lg border px-2 py-3 text-sm font-medium transition-all ${
                   selected
-                    ? 'border-white bg-white text-gray-900'
-                    : 'border-gray-200 text-gray-500 hover:border-gray-400 hover:text-gray-900'
+                    ? 'border-brand-500 bg-brand-500/10 text-brand-800'
+                    : 'border-gray-200 text-gray-500 hover:border-brand-300 hover:text-gray-900'
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -245,8 +245,8 @@ export default function LeadCaptureForm({
                 onClick={() => toggle('timeline', value)}
                 className={`rounded-lg border px-4 py-2 text-sm font-medium transition-all ${
                   selected
-                    ? 'border-white bg-white text-gray-900'
-                    : 'border-gray-200 text-gray-500 hover:border-gray-400 hover:text-gray-900'
+                    ? 'border-brand-500 bg-brand-500/10 text-brand-800'
+                    : 'border-gray-200 text-gray-500 hover:border-brand-300 hover:text-gray-900'
                 }`}
               >
                 {label}
@@ -272,8 +272,8 @@ export default function LeadCaptureForm({
                   onClick={() => toggle('budget', value)}
                   className={`rounded-lg border px-4 py-2 text-sm font-medium transition-all ${
                     selected
-                      ? 'border-white bg-white text-gray-900'
-                      : 'border-gray-200 text-gray-500 hover:border-gray-400 hover:text-gray-900'
+                      ? 'border-brand-500 bg-brand-500/10 text-brand-800'
+                      : 'border-gray-200 text-gray-500 hover:border-brand-300 hover:text-gray-900'
                   }`}
                 >
                   {label}
@@ -335,11 +335,7 @@ export default function LeadCaptureForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className={`w-full rounded-lg px-6 py-3.5 text-sm font-semibold transition-colors focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed ${
-          isListingForm
-            ? 'bg-brand-500 text-white hover:bg-brand-600 focus:ring-brand-500/40'
-            : 'bg-white text-gray-900 hover:bg-gray-100 focus:ring-brand-500/30'
-        }`}
+        className="w-full rounded-lg px-6 py-3.5 text-sm font-semibold transition-colors focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed bg-brand-500 text-white hover:bg-brand-600 focus:ring-brand-500/40"
       >
         {isSubmitting ? 'Sending...' : isListingForm ? 'Request info' : `Contact ${agentName.split(' ')[0]}`}
       </button>
