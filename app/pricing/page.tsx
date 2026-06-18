@@ -86,7 +86,7 @@ export default function PricingPage() {
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-6 flex items-center justify-between">
         <Link href="/">
-          <Image src="/logo.png" alt="Realestic" width={160} height={48} priority className="h-10 w-auto" />
+          <Image src="/logo-auth.png" alt="Realestic" width={320} height={180} priority className="h-10 w-auto object-contain" />
         </Link>
         {!isLoading && (
           <div className="text-sm">
