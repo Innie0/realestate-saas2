@@ -167,32 +167,43 @@ function FAQItem({
 const FAQ_ITEMS = [
   {
     question: 'Is there a free trial?',
-    answer: "You'll only be charged after your trial ends if you choose to continue.",
-  },
-  {
-    question: 'How does the AI listing description work?',
     answer:
-      'You provide your property details (bedrooms, bathrooms, square footage, features) and optionally upload photos. The AI analyzes everything and writes a professional, compelling listing description in seconds. You can then refine it — adjust the tone, length, or focus — until it\'s exactly what you want.',
-  },
-  {
-    question: 'Does it work for commercial real estate too?',
-    answer:
-      "Absolutely. Realestic works for any type of real estate — residential, commercial, rental, and land. The AI adapts to the type of property you're working with.",
-  },
-  {
-    question: 'Can I cancel anytime?',
-    answer:
-      "Yes, you can cancel your subscription at any time with no cancellation fees. If you cancel, you'll continue to have access until the end of your current billing period.",
-  },
-  {
-    question: 'Is my data secure?',
-    answer:
-      'Yes. All data is encrypted in transit and at rest. We use enterprise-grade infrastructure and never sell your data to third parties. Your client information stays private and protected.',
+      'Yes — every plan includes a 7-day free trial. You\'ll add a payment method at checkout, but you won\'t be charged until the trial ends. Cancel anytime before then from Account → Manage billing and you won\'t pay.',
   },
   {
     question: "What's the difference between Starter and Pro?",
     answer:
-      'Starter ($49/month) includes 20 listing projects, 20 property research lookups, 5 CMA analyses, 75 AI messages, and 20 transactions per month, plus up to 50 clients total — with lead capture, CRM, calendar, and transaction tools. Pro ($99/month) unlocks unlimited usage on all of those, plus open house sign-in, a public agent profile, and priority support. Both plans include a 7-day free trial. Save with annual billing — Starter is $490/year, Pro is $990/year (2 months free).',
+      'Starter ($49/month or $490/year) includes 20 listing projects, 20 property research lookups, 5 CMA analyses, 75 AI messages, and 20 transactions per month, plus up to 50 clients total — with lead capture, CRM, leads inbox, automated follow-up emails, calendar, tasks, and transaction checklists. Pro ($99/month or $990/year) includes everything in Starter with unlimited usage, plus open house QR sign-in, a public agent profile page, and priority support. Both plans include a 7-day free trial.',
+  },
+  {
+    question: 'How does Property Research work?',
+    answer:
+      'Enter a property address to pull owner information, contact details, listing status, and property records — then run a CMA with comparable sales and an estimated value. Results for the same address are cached for 7 days to save time. Starter includes 20 lookups and 5 CMA analyses per month; Pro is unlimited.',
+  },
+  {
+    question: 'How does the AI listing tool work?',
+    answer:
+      'Create a listing project, add property details and photos, and Realestic generates a professional description plus social captions in seconds. Choose from three tones and refine the length or focus until it\'s ready to publish. Starter includes 20 projects per month; Pro is unlimited.',
+  },
+  {
+    question: 'How do leads and follow-up work?',
+    answer:
+      'You get a personal lead capture link and QR code to share anywhere — bio, email signature, open house flyers. New leads land in your inbox with hot, warm, and cold scoring. You can add them to your CRM and turn on automated follow-up emails. Open house QR sign-in and a public agent profile are included on Pro.',
+  },
+  {
+    question: 'Can I cancel anytime?',
+    answer:
+      'Yes — cancel anytime with no cancellation fee from Account → Manage billing in Stripe. You\'ll keep access until the end of your current billing period (or trial). If you cancel during the free trial, you won\'t be charged.',
+  },
+  {
+    question: 'Is my data secure?',
+    answer:
+      'Yes. Your data is encrypted in transit and at rest, hosted on Supabase with row-level security. Payments are handled by Stripe — we never store card numbers. We don\'t sell your data. See our Privacy Policy for full details on third-party services like property data providers.',
+  },
+  {
+    question: 'Does it work for commercial real estate?',
+    answer:
+      'AI listing projects work for residential, commercial, rentals, and land — the AI adapts to the property type you enter. Property Research and CMA are built primarily for residential markets; commercial coverage varies by location and available public records.',
   },
 ] as const;
 
