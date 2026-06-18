@@ -84,9 +84,9 @@ export default function PricingPage() {
     <div className="min-h-screen bg-[#F5F5F5] relative overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gray-50 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6 py-6 flex items-center justify-between">
-        <Link href="/">
-          <Image src="/logo-auth.png" alt="Realestic" width={320} height={180} priority className="h-10 w-auto object-contain" />
+      <div className="relative z-10 mx-auto max-w-7xl pl-3 pr-6 sm:pl-4 lg:pl-6 py-6 flex items-center justify-between">
+        <Link href="/" className="-ml-1 sm:-ml-2">
+          <Image src="/logo-auth.png" alt="Realestic" width={320} height={180} priority className="h-14 sm:h-16 w-auto object-contain" />
         </Link>
         {!isLoading && (
           <div className="text-sm">
