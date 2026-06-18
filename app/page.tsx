@@ -39,6 +39,22 @@ const itemVariants = {
   },
 };
 
+/** Gentle infinite float — staggered per card like Atlas hero UI chips */
+function heroCardFloat(duration: number, delay: number, y = 14, x = 0) {
+  return {
+    animate: {
+      y: [0, -y, 0],
+      ...(x !== 0 ? { x: [0, x, 0] } : {}),
+    },
+    transition: {
+      duration,
+      repeat: Infinity,
+      ease: 'easeInOut' as const,
+      delay,
+    },
+  };
+}
+
 // ─── CountUp Component ────────────────────────────────────────────────────────
 
 function CountUp({ end, suffix = '', duration = 2 }: { end: number; suffix?: string; duration?: number }) {
@@ -1335,33 +1351,66 @@ export default function HomePage() {
             </motion.div>
           </div>
 
-          {/* Floating cards */}
+          {/* Floating cards — continuous drift like Atlas hero chips */}
           <motion.div variants={itemVariants} className="hidden lg:block relative">
             <div className="relative w-full h-[500px]">
-              <motion.div initial={{ opacity: 0, y: 50, rotate: -5 }} animate={{ opacity: 1, y: 0, rotate: -5 }} transition={{ duration: 0.8, delay: 0.5 }} whileHover={{ y: -10, rotate: 0, scale: 1.02, transition: { duration: 0.15 } }} className="absolute top-0 right-0 w-72 rounded-2xl p-6 shadow-2xl border border-gray-200 bg-white">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-brand-500/20 rounded-lg"><Users className="w-5 h-5 text-brand-500" /></div>
-                  <span className="text-sm font-medium text-gray-600">New Leads Today</span>
-                </div>
-                <div className="text-3xl font-bold text-gray-900">4</div>
-                <div className="text-sm text-gray-500 mt-1">Via your lead form link</div>
+              <motion.div
+                {...heroCardFloat(5.2, 0.8, 16, 5)}
+                className="absolute top-0 right-0 w-72"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 50, rotate: -5 }}
+                  animate={{ opacity: 1, y: 0, rotate: -5 }}
+                  transition={{ duration: 0.8, delay: 0.5 }}
+                  whileHover={{ y: -8, rotate: 0, scale: 1.02, transition: { duration: 0.15 } }}
+                  className="rounded-2xl p-6 shadow-2xl border border-gray-200 bg-white will-change-transform"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-brand-500/20 rounded-lg"><Users className="w-5 h-5 text-brand-500" /></div>
+                    <span className="text-sm font-medium text-gray-600">New Leads Today</span>
+                  </div>
+                  <div className="text-3xl font-bold text-gray-900">4</div>
+                  <div className="text-sm text-gray-500 mt-1">Via your lead form link</div>
+                </motion.div>
               </motion.div>
 
-              <motion.div initial={{ opacity: 0, y: 50, rotate: 3 }} animate={{ opacity: 1, y: 0, rotate: 3 }} transition={{ duration: 0.8, delay: 0.7 }} whileHover={{ y: -10, rotate: 0, scale: 1.02, transition: { duration: 0.15 } }} className="absolute top-32 left-0 w-64 rounded-2xl p-6 shadow-2xl border border-gray-200 bg-white">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-brand-500/20 rounded-lg"><Home className="w-5 h-5 text-brand-500" /></div>
-                  <span className="text-sm font-medium text-gray-600">Active Listings</span>
-                </div>
-                <div className="text-3xl font-bold text-gray-900">47</div>
-                <div className="text-sm text-gray-500 mt-1">Properties</div>
+              <motion.div
+                {...heroCardFloat(4.6, 1.2, 12, -6)}
+                className="absolute top-32 left-0 w-64"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 50, rotate: 3 }}
+                  animate={{ opacity: 1, y: 0, rotate: 3 }}
+                  transition={{ duration: 0.8, delay: 0.7 }}
+                  whileHover={{ y: -8, rotate: 0, scale: 1.02, transition: { duration: 0.15 } }}
+                  className="rounded-2xl p-6 shadow-2xl border border-gray-200 bg-white will-change-transform"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-brand-500/20 rounded-lg"><Home className="w-5 h-5 text-brand-500" /></div>
+                    <span className="text-sm font-medium text-gray-600">Active Listings</span>
+                  </div>
+                  <div className="text-3xl font-bold text-gray-900">47</div>
+                  <div className="text-sm text-gray-500 mt-1">Properties</div>
+                </motion.div>
               </motion.div>
 
-              <motion.div initial={{ opacity: 0, y: 50, rotate: -2 }} animate={{ opacity: 1, y: 0, rotate: -2 }} transition={{ duration: 0.8, delay: 0.9 }} whileHover={{ y: -10, rotate: 0, scale: 1.02, transition: { duration: 0.15 } }} className="absolute bottom-10 right-10 w-80 rounded-2xl p-6 shadow-2xl border border-gray-200 bg-white">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-brand-500/20 rounded-lg"><Sparkles className="w-5 h-5 text-brand-500" /></div>
-                  <span className="text-sm font-medium text-gray-600">AI Generated</span>
-                </div>
-                <p className="text-sm text-gray-500 leading-relaxed">"Stunning 4BR home with panoramic views, chef's kitchen, and resort-style backyard..."</p>
+              <motion.div
+                {...heroCardFloat(5.8, 0.4, 18, 4)}
+                className="absolute bottom-10 right-10 w-80"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 50, rotate: -2 }}
+                  animate={{ opacity: 1, y: 0, rotate: -2 }}
+                  transition={{ duration: 0.8, delay: 0.9 }}
+                  whileHover={{ y: -8, rotate: 0, scale: 1.02, transition: { duration: 0.15 } }}
+                  className="rounded-2xl p-6 shadow-2xl border border-gray-200 bg-white will-change-transform"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-brand-500/20 rounded-lg"><Sparkles className="w-5 h-5 text-brand-500" /></div>
+                    <span className="text-sm font-medium text-gray-600">AI Generated</span>
+                  </div>
+                  <p className="text-sm text-gray-500 leading-relaxed">&ldquo;Stunning 4BR home with panoramic views, chef&apos;s kitchen, and resort-style backyard...&rdquo;</p>
+                </motion.div>
               </motion.div>
             </div>
           </motion.div>
