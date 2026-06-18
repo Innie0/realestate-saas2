@@ -117,8 +117,19 @@ function FeatureTile({
 
 // ─── FAQ Item ─────────────────────────────────────────────────────────────────
 
-function FAQItem({ question, answer, delay = 0 }: { question: string; answer: string; delay?: number }) {
-  const [open, setOpen] = useState(false);
+function FAQItem({
+  question,
+  answer,
+  delay = 0,
+  isOpen,
+  onToggle,
+}: {
+  question: string;
+  answer: string;
+  delay?: number;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -128,16 +139,16 @@ function FAQItem({ question, answer, delay = 0 }: { question: string; answer: st
       className="border border-gray-200 rounded-2xl overflow-hidden"
     >
       <button
-        onClick={() => setOpen(!open)}
+        onClick={onToggle}
         className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-gray-50 transition-colors"
       >
         <span className="text-gray-900 font-medium">{question}</span>
-        <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.3 }}>
+        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
           <ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0" />
         </motion.div>
       </button>
       <AnimatePresence initial={false}>
-        {open && (
+        {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
@@ -150,6 +161,57 @@ function FAQItem({ question, answer, delay = 0 }: { question: string; answer: st
         )}
       </AnimatePresence>
     </motion.div>
+  );
+}
+
+const FAQ_ITEMS = [
+  {
+    question: 'Is there a free trial?',
+    answer: "You'll only be charged after your trial ends if you choose to continue.",
+  },
+  {
+    question: 'How does the AI listing description work?',
+    answer:
+      'You provide your property details (bedrooms, bathrooms, square footage, features) and optionally upload photos. The AI analyzes everything and writes a professional, compelling listing description in seconds. You can then refine it — adjust the tone, length, or focus — until it\'s exactly what you want.',
+  },
+  {
+    question: 'Does it work for commercial real estate too?',
+    answer:
+      "Absolutely. Realestic works for any type of real estate — residential, commercial, rental, and land. The AI adapts to the type of property you're working with.",
+  },
+  {
+    question: 'Can I cancel anytime?',
+    answer:
+      "Yes, you can cancel your subscription at any time with no cancellation fees. If you cancel, you'll continue to have access until the end of your current billing period.",
+  },
+  {
+    question: 'Is my data secure?',
+    answer:
+      'Yes. All data is encrypted in transit and at rest. We use enterprise-grade infrastructure and never sell your data to third parties. Your client information stays private and protected.',
+  },
+  {
+    question: "What's the difference between Starter and Pro?",
+    answer:
+      'Starter ($49/month) includes 20 listing projects, 20 property research lookups, 5 CMA analyses, 75 AI messages, and 20 transactions per month, plus up to 50 clients total — with lead capture, CRM, calendar, and transaction tools. Pro ($99/month) unlocks unlimited usage on all of those, plus open house sign-in, a public agent profile, and priority support. Both plans include a 7-day free trial. Save with annual billing — Starter is $490/year, Pro is $990/year (2 months free).',
+  },
+] as const;
+
+function FAQAccordion() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  return (
+    <div className="space-y-3">
+      {FAQ_ITEMS.map((item, index) => (
+        <FAQItem
+          key={item.question}
+          question={item.question}
+          answer={item.answer}
+          delay={index * 0.05}
+          isOpen={openIndex === index}
+          onToggle={() => setOpenIndex(openIndex === index ? null : index)}
+        />
+      ))}
+    </div>
   );
 }
 
@@ -1560,14 +1622,7 @@ export default function HomePage() {
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Frequently asked questions</h2>
             <p className="text-gray-500 text-lg">Everything you need to know about Realestic.</p>
           </motion.div>
-          <div className="space-y-3">
-            <FAQItem question="Is there a free trial?" answer="You'll only be charged after your trial ends if you choose to continue." delay={0} />
-            <FAQItem question="How does the AI listing description work?" answer="You provide your property details (bedrooms, bathrooms, square footage, features) and optionally upload photos. The AI analyzes everything and writes a professional, compelling listing description in seconds. You can then refine it — adjust the tone, length, or focus — until it's exactly what you want." delay={0.05} />
-            <FAQItem question="Does it work for commercial real estate too?" answer="Absolutely. Realestic works for any type of real estate — residential, commercial, rental, and land. The AI adapts to the type of property you're working with." delay={0.1} />
-            <FAQItem question="Can I cancel anytime?" answer="Yes, you can cancel your subscription at any time with no cancellation fees. If you cancel, you'll continue to have access until the end of your current billing period." delay={0.15} />
-            <FAQItem question="Is my data secure?" answer="Yes. All data is encrypted in transit and at rest. We use enterprise-grade infrastructure and never sell your data to third parties. Your client information stays private and protected." delay={0.2} />
-            <FAQItem question="What's the difference between Starter and Pro?" answer="Starter ($49/month) includes 20 listing projects, 20 property research lookups, 5 CMA analyses, 75 AI messages, and 20 transactions per month, plus up to 50 clients total — with lead capture, CRM, calendar, and transaction tools. Pro ($99/month) unlocks unlimited usage on all of those, plus open house sign-in, a public agent profile, and priority support. Both plans include a 7-day free trial. Save with annual billing — Starter is $490/year, Pro is $990/year (2 months free)." delay={0.25} />
-          </div>
+          <FAQAccordion />
         </div>
       </section>
 
