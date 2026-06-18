@@ -11,6 +11,10 @@ import {
   setResearchCache,
   normalizeAddressKey,
 } from '@/lib/property-research-cache';
+import {
+  isDemoMarketingAddress,
+  getDemoPropertyLookupResponse,
+} from '@/lib/demo-property-research';
 
 /**
  * Step 1: Call Rentcast to get verified owner name and property details.
@@ -216,6 +220,12 @@ export async function POST(request: NextRequest) {
 
     const addressKey = normalizeAddressKey({ street, city, state, zip });
     const refresh = forceRefresh === true;
+
+    if (isDemoMarketingAddress({ street, city, state, zip })) {
+      const demoData = getDemoPropertyLookupResponse({ street, city, state, zip });
+      await setResearchCache(supabase, user.id, 'property_lookup', addressKey, demoData);
+      return NextResponse.json({ success: true, data: demoData, isDemo: true });
+    }
 
     if (!refresh) {
       const cached = await getResearchCache<{ found: boolean; [key: string]: unknown }>(

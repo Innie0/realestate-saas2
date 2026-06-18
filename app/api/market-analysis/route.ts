@@ -28,6 +28,11 @@ import {
   marketAnalysisCacheKey,
   marketPrefillCacheKey,
 } from '@/lib/property-research-cache';
+import {
+  isDemoMarketingAddress,
+  getDemoMarketPrefillResponse,
+  getDemoMarketAnalysisResponse,
+} from '@/lib/demo-property-research';
 
 const RENTCAST_BASE = 'https://api.rentcast.io/v1';
 
@@ -270,18 +275,17 @@ export async function POST(request: NextRequest) {
     const addressKey = normalizeAddressKey({ street, city, state, zip });
     const refresh = forceRefresh === true;
 
-    const key = getRentcastKey();
-    if (!key) {
-      return NextResponse.json(
-        { success: false, error: 'Market analysis is not configured.' },
-        { status: 500 }
-      );
-    }
-
-    const address = buildAddress(street, city, state, zip);
+    const demoAddress = { street, city, state, zip };
 
     // Prefill only — return subject details without using quota
     if (prefillOnly) {
+      if (isDemoMarketingAddress(demoAddress)) {
+        const prefillData = getDemoMarketPrefillResponse(demoAddress);
+        const prefillCacheKey = marketPrefillCacheKey(addressKey);
+        await setResearchCache(supabase, user.id, 'market_prefill', prefillCacheKey, prefillData);
+        return NextResponse.json({ success: true, data: prefillData, isDemo: true });
+      }
+
       const prefillCacheKey = marketPrefillCacheKey(addressKey);
       if (!refresh) {
         const cachedPrefill = await getResearchCache(supabase, user.id, 'market_prefill', prefillCacheKey);
@@ -289,6 +293,16 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ success: true, data: cachedPrefill, fromCache: true });
         }
       }
+
+      const key = getRentcastKey();
+      if (!key) {
+        return NextResponse.json(
+          { success: false, error: 'Market analysis is not configured.' },
+          { status: 500 }
+        );
+      }
+
+      const address = buildAddress(street, city, state, zip);
 
       const rentcastProperty = await fetchRentcastProperty(street, city, state, zip);
       const [activeListing, avm] = await Promise.all([
@@ -321,6 +335,32 @@ export async function POST(request: NextRequest) {
 
     const resolvedRadius = typeof radius === 'number' && radius > 0 && radius <= 5 ? radius : 0.5;
     const resolvedDaysOld = typeof yearsBack === 'number' ? Math.round(yearsBack * 365) : 365;
+
+    if (isDemoMarketingAddress(demoAddress)) {
+      const responseData = getDemoMarketAnalysisResponse(demoAddress, {
+        propertyType: propertyType || undefined,
+        radius: resolvedRadius,
+        yearsBack: resolvedDaysOld / 365,
+      });
+      const cmaCacheKey = marketAnalysisCacheKey(addressKey, {
+        propertyType: propertyType || undefined,
+        radius: resolvedRadius,
+        yearsBack: resolvedDaysOld / 365,
+      });
+      await setResearchCache(supabase, user.id, 'market_analysis', cmaCacheKey, responseData);
+      return NextResponse.json({ success: true, data: responseData, isDemo: true });
+    }
+
+    const key = getRentcastKey();
+    if (!key) {
+      return NextResponse.json(
+        { success: false, error: 'Market analysis is not configured.' },
+        { status: 500 }
+      );
+    }
+
+    const address = buildAddress(street, city, state, zip);
+
     const cmaCacheKey = marketAnalysisCacheKey(addressKey, {
       propertyType: propertyType || undefined,
       radius: resolvedRadius,

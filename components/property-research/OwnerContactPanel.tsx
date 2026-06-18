@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { MapPin, Phone, Mail, Home, Building, Loader2, AlertCircle, ChevronDown, ChevronUp, Shield, Copy, Check, X, Calendar, DollarSign, Ruler, Bed, Bath, FileText, TrendingUp, Tag, Clock, ExternalLink, RefreshCw } from 'lucide-react';
 import { normalizeAddressKey } from '@/lib/property-research-cache';
+import { isDemoMarketingAddress } from '@/lib/demo-property-research';
 import {
   getLocalResearchCache,
   lookupLocalCacheKey,
@@ -113,6 +114,7 @@ interface PropertyResult {
 
 export interface LookupResponse {
   found: boolean;
+  isDemo?: boolean;
   message?: string;
   results?: PropertyResult[];
   searchedAddress: {
@@ -191,8 +193,14 @@ export function OwnerContactPanel({
       zip: zip.trim(),
     });
     const localKey = lookupLocalCacheKey(addressKey);
+    const isDemo = isDemoMarketingAddress({
+      street: street.trim(),
+      city: city.trim(),
+      state,
+      zip: zip.trim(),
+    });
 
-    if (!forceRefresh) {
+    if (!forceRefresh && !isDemo) {
       const cached = getLocalResearchCache<LookupResponse>(localKey);
       if (cached) {
         setResults(cached);
@@ -260,7 +268,12 @@ export function OwnerContactPanel({
         </div>
       )}
 
-      {fromCache && results && !isLoading && (
+      {results?.isDemo && !isLoading && (
+        <div className="mb-4 rounded-xl border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-brand-800">
+          Sample marketing data — owner contact and property details are fictional for demo purposes.
+        </div>
+      )}
+      {fromCache && results && !isLoading && !results.isDemo && (
         <div className="flex items-center justify-between gap-3 flex-wrap text-sm bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
           <span className="text-emerald-800">Loaded from saved search — no API usage.</span>
           <button

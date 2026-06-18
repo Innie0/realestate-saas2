@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { buildCmaPdfPayload, downloadCmaPdf } from '@/lib/export-cma-pdf';
 import { normalizeAddressKey } from '@/lib/property-research-cache';
+import { isDemoMarketingAddress } from '@/lib/demo-property-research';
 import {
   cmaLocalCacheKey,
   getLocalResearchCache,
@@ -66,6 +67,7 @@ export interface CmaAnalysisResult {
   } | null;
   comps: ScoredComp[];
   summary: string | null;
+  isDemo?: boolean;
   queriedAt: string;
 }
 
@@ -220,8 +222,14 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
       radius,
       yearsBack,
     });
+    const isDemo = isDemoMarketingAddress({
+      street: street.trim(),
+      city: city.trim(),
+      state,
+      zip: zip.trim(),
+    });
 
-    if (!forceRefresh) {
+    if (!forceRefresh && !isDemo) {
       const cached = getLocalResearchCache<CmaAnalysisResult>(localKey);
       if (cached) {
         setResult(cached);
@@ -457,7 +465,12 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
 
       {result && !loading && liveValuation && (
         <div className="space-y-4">
-          {fromCache && (
+          {result.isDemo && (
+            <div className="rounded-xl border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-brand-800">
+              Sample marketing CMA — comps and valuation are fictional for demo purposes.
+            </div>
+          )}
+          {fromCache && !result.isDemo && (
             <div className="flex items-center justify-between gap-3 flex-wrap text-sm bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
               <span className="text-emerald-800">Loaded from saved search — no API usage.</span>
               <button

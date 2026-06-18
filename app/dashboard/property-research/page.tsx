@@ -248,7 +248,7 @@ function PropertyResearchContent() {
                   type="text"
                   value={street}
                   onChange={(e) => setStreet(e.target.value)}
-                  placeholder="e.g. 5721 W Prospect Dr"
+                  placeholder="e.g. 123 W Main Street"
                   className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                 />
               </div>
@@ -256,7 +256,7 @@ function PropertyResearchContent() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1.5">City</label>
-                <input type="text" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Visalia" className="w-full px-4 py-3 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
+                <input type="text" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Austin" className="w-full px-4 py-3 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1.5">State *</label>
@@ -271,7 +271,7 @@ function PropertyResearchContent() {
               </div>
             </div>
             <p className="text-xs text-gray-500">
-              {usageHint || 'Look up uses your property lookup quota. CMA uses your market analysis quota.'}
+              {usageHint || 'Try the demo address 123 W Main Street, Austin, TX for sample owner + CMA data (no real PII). Other addresses use your plan quota.'}
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <button
