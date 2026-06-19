@@ -288,28 +288,26 @@ export default function DashboardPage() {
             <ContinueSection loading={continueLoading} continueItem={continueItem} />
           </div>
 
-          <div className="space-y-5">
-            <Surface padding="md">
-              <p className="text-label mb-3">Quick actions</p>
-              <div className="space-y-1">
-                {QUICK_LINKS.map(({ href, label, icon: Icon, ...rest }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    data-tour={'tour' in rest ? rest.tour : undefined}
-                    className="flex items-center gap-3 px-2 py-2.5 -mx-2 rounded-xl text-body text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors group"
-                  >
-                    <Icon className="w-4 h-4 text-gray-400 group-hover:text-brand-500 transition-colors" />
-                    <span className="flex-1">{label}</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                ))}
-              </div>
-            </Surface>
-
-            {usage && <PlanUsagePanel usage={usage} plan={plan} layout="sidebar" />}
-          </div>
+          <Surface padding="md">
+            <p className="text-label mb-3">Quick actions</p>
+            <div className="space-y-1">
+              {QUICK_LINKS.map(({ href, label, icon: Icon, ...rest }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  data-tour={'tour' in rest ? rest.tour : undefined}
+                  className="flex items-center gap-3 px-2 py-2.5 -mx-2 rounded-xl text-body text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors group"
+                >
+                  <Icon className="w-4 h-4 text-gray-400 group-hover:text-brand-500 transition-colors" />
+                  <span className="flex-1">{label}</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
+              ))}
+            </div>
+          </Surface>
         </div>
+
+        {usage && <PlanUsagePanel usage={usage} plan={plan} />}
       </PageShell>
     </div>
   );
