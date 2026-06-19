@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Check, Zap, ArrowLeft, Sparkles, Infinity as InfinityIcon } from 'lucide-react';
+import { Check, X, Zap, ArrowLeft, Sparkles, Infinity as InfinityIcon } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import SubscribeButton from '@/components/SubscribeButton';
 import { supabase } from '@/lib/supabase';
@@ -33,7 +33,7 @@ function ComparisonCell({ value }: { value: string | boolean }) {
   if (typeof value === 'boolean') {
     return value
       ? <Check className="w-4 h-4 text-green-400 mx-auto" />
-      : <span className="text-gray-600 text-sm">—</span>;
+      : <X className="w-4 h-4 text-red-400 mx-auto" />;
   }
   return (
     <span className="text-sm text-gray-600 flex items-center justify-center gap-1">
