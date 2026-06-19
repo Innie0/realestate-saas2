@@ -100,7 +100,7 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
       return;
     }
 
-    const transactionData = {
+    const transactionData: Record<string, unknown> = {
       property_address: propertyAddress.trim(),
       property_city: propertyCity.trim() || null,
       property_state: propertyState.trim() || null,
@@ -133,8 +133,11 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
       title_deadline: titleDeadline || null,
       closing_date: closingDate || null,
       possession_date: possessionDate || null,
-      status: status,
     };
+
+    if (!isEditing) {
+      transactionData.status = status;
+    }
 
     try {
       const url = isEditing ? `/api/transactions/${transaction.id}` : '/api/transactions';
@@ -180,24 +183,26 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
         </div>
       )}
 
-      {/* Deal status — always visible */}
-      <div className="rounded-xl border border-gray-200 bg-gray-50/80 p-4">
-        <label className="block text-sm font-medium text-gray-900 mb-1.5">Deal status</label>
-        <p className="text-xs text-gray-500 mb-3">
-          Set to Closed or Cancelled when the deal is done — it will leave your in-progress list.
-        </p>
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value as typeof status)}
-          className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
-        >
-          {TRANSACTION_STATUSES.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
+      {/* Deal status — new transactions only (detail page has its own control) */}
+      {!isEditing && (
+        <div className="rounded-xl border border-gray-200 bg-gray-50/80 p-4">
+          <label className="block text-sm font-medium text-gray-900 mb-1.5">Deal status</label>
+          <p className="text-xs text-gray-500 mb-3">
+            Set to Closed or Cancelled when the deal is done — it will leave your in-progress list.
+          </p>
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value as typeof status)}
+            className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+          >
+            {TRANSACTION_STATUSES.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {/* Section tabs */}
       <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg border border-gray-200">

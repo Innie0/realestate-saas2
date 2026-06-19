@@ -17,7 +17,6 @@ import Card from '@/components/ui/Card';
 import Modal from '@/components/ui/Modal';
 import Tabs from '@/components/ui/Tabs';
 import PageShell from '@/components/layout/PageShell';
-import TransactionStatusBadge from '@/components/transactions/TransactionStatusBadge';
 import TransactionForm from '@/components/TransactionForm';
 import TransactionTimeline from '@/components/TransactionTimeline';
 import TransactionChecklist from '@/components/TransactionChecklist';
@@ -25,7 +24,6 @@ import TransactionDocuments from '@/components/TransactionDocuments';
 import { TransactionWithDetails, Contract } from '@/types';
 import {
   TRANSACTION_STATUSES,
-  isOpenTransactionStatus,
   type TransactionStatus,
 } from '@/lib/transaction-status';
 
@@ -168,8 +166,11 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
   const handleStatusChange = async (newStatus: TransactionStatus) => {
     if (!transaction || newStatus === transaction.status) return;
 
+    const previousStatus = transaction.status;
     setIsUpdatingStatus(true);
     setError('');
+    setTransaction((prev) => (prev ? { ...prev, status: newStatus } : prev));
+
     try {
       const response = await fetch(`/api/transactions/${id}`, {
         method: 'PUT',
@@ -180,8 +181,11 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
       if (!data.success) {
         throw new Error(data.error || 'Failed to update status');
       }
-      setTransaction((prev) => (prev ? { ...prev, status: newStatus } : prev));
+      setTransaction((prev) =>
+        prev ? { ...prev, ...data.data, status: data.data.status as TransactionStatus } : prev
+      );
     } catch (err: unknown) {
+      setTransaction((prev) => (prev ? { ...prev, status: previousStatus } : prev));
       setError(err instanceof Error ? err.message : 'Failed to update status');
     } finally {
       setIsUpdatingStatus(false);
@@ -239,12 +243,9 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                 <ArrowLeft className="w-5 h-5 text-gray-500" />
               </Link>
               <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2 mb-1">
-                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 truncate">
-                    {transaction.property_address}
-                  </h1>
-                  <TransactionStatusBadge status={transaction.status} />
-                </div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 truncate mb-1">
+                  {transaction.property_address}
+                </h1>
                 {(transaction.property_city || transaction.property_state) && (
                   <p className="text-gray-500 text-sm">
                     {[transaction.property_city, transaction.property_state, transaction.property_zip]
@@ -266,55 +267,24 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
             </div>
           </div>
 
-          <div className="rounded-xl border border-gray-200 bg-gray-50/80 p-4 flex flex-col sm:flex-row sm:items-end gap-3">
-            <div className="flex-1 min-w-0">
-              <label htmlFor="deal-status" className="block text-sm font-medium text-gray-900 mb-1">
-                Deal status
-              </label>
-              <select
-                id="deal-status"
-                value={transaction.status}
-                disabled={isUpdatingStatus}
-                onChange={(e) => handleStatusChange(e.target.value as TransactionStatus)}
-                className="w-full sm:max-w-xs px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-50"
-              >
-                {TRANSACTION_STATUSES.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {isOpenTransactionStatus(transaction.status) && (
-              <div className="flex flex-wrap gap-2">
-                {transaction.status !== 'under_contract' && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    disabled={isUpdatingStatus}
-                    onClick={() => handleStatusChange('under_contract')}
-                  >
-                    Under contract
-                  </Button>
-                )}
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={isUpdatingStatus}
-                  onClick={() => handleStatusChange('closed')}
-                >
-                  Mark closed
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={isUpdatingStatus}
-                  onClick={() => handleStatusChange('cancelled')}
-                >
-                  Cancel deal
-                </Button>
-              </div>
-            )}
+          <div className="sm:max-w-xs">
+            <label htmlFor="deal-status" className="block text-sm font-medium text-gray-900 mb-1">
+              Deal status
+            </label>
+            <select
+              id="deal-status"
+              key={transaction.status}
+              value={transaction.status}
+              disabled={isUpdatingStatus || isEditing}
+              onChange={(e) => handleStatusChange(e.target.value as TransactionStatus)}
+              className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-50"
+            >
+              {TRANSACTION_STATUSES.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           {error && (
@@ -362,7 +332,15 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
                 { label: 'Offer Price', value: formatCurrency(transaction.offer_price), icon: DollarSign },
-                { label: 'To Closing', value: transaction.days_to_closing != null ? (transaction.days_to_closing < 0 ? 'Closed' : `${transaction.days_to_closing}d`) : '-', icon: Calendar },
+                { label: 'To Closing', value: (() => {
+                  if (transaction.status === 'closed') return 'Deal closed';
+                  if (transaction.status === 'cancelled') return 'Cancelled';
+                  if (transaction.status === 'expired') return 'Expired';
+                  if (transaction.days_to_closing == null) return '-';
+                  if (transaction.days_to_closing < 0) return `${Math.abs(transaction.days_to_closing)}d past closing`;
+                  if (transaction.days_to_closing === 0) return 'Today';
+                  return `${transaction.days_to_closing}d`;
+                })(), icon: Calendar },
                 { label: 'Tasks', value: `${transaction.completed_items_count}/${transaction.total_items_count}`, icon: CheckCircle2 },
                 { label: 'Closing Date', value: transaction.closing_date ? format(new Date(transaction.closing_date), 'MMM d') : '-', icon: Clock },
               ].map(stat => {

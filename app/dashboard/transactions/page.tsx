@@ -8,19 +8,17 @@ import Link from 'next/link';
 import {
   Plus, Search, Building2, DollarSign,
   Calendar, ChevronRight, AlertCircle, CheckCircle2,
-  Clock, User, Users, TrendingUp,
+  Clock, User, Users,
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Header from '@/components/layout/Header';
 import PageShell from '@/components/layout/PageShell';
 import EmptyState from '@/components/ui/EmptyState';
-import StatCard from '@/components/ui/StatCard';
 import TransactionStatusBadge from '@/components/transactions/TransactionStatusBadge';
 import TransactionTimeline from '@/components/TransactionTimeline';
 import { TransactionWithDetails } from '@/types';
 import { useApi } from '@/lib/swr';
-import { isOpenTransactionStatus } from '@/lib/transaction-status';
 
 export default function TransactionsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -59,22 +57,20 @@ export default function TransactionsPage() {
       maximumFractionDigits: 0,
     }).format(amount);
 
-  const inProgressCount = transactions.filter((t) => isOpenTransactionStatus(t.status)).length;
-  const closedCount = transactions.filter((t) => t.status === 'closed').length;
-  const volumeTotal = transactions
-    .filter((t) => t.status !== 'cancelled' && t.status !== 'expired')
-    .reduce((sum, t) => sum + t.offer_price, 0);
-
   const getClosingIndicator = (transaction: TransactionWithDetails) => {
+    if (transaction.status === 'closed' || transaction.status === 'cancelled' || transaction.status === 'expired') {
+      return null;
+    }
+
     if (!transaction.closing_date) return null;
 
-    const daysToClosing = transaction.days_to_closing || 0;
+    const daysToClosing = transaction.days_to_closing ?? 0;
 
     if (daysToClosing < 0) {
       return (
-        <span className="flex items-center text-xs text-green-700">
-          <CheckCircle2 className="w-3 h-3 mr-1" />
-          Closed
+        <span className="flex items-center text-xs text-amber-700">
+          <AlertCircle className="w-3 h-3 mr-1" />
+          {Math.abs(daysToClosing)}d past closing
         </span>
       );
     }
@@ -110,15 +106,6 @@ export default function TransactionsPage() {
       <Header title="Transactions" subtitle="Track deals, milestones, documents, and closing dates" />
       <PageShell>
         <div className="space-y-6">
-          {!isLoading && transactions.length > 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <StatCard label="Showing" value={transactions.length} icon={Building2} />
-              <StatCard label="In progress" value={inProgressCount} icon={TrendingUp} />
-              <StatCard label="Closed" value={closedCount} icon={CheckCircle2} />
-              <StatCard label="Volume" value={formatCurrency(volumeTotal)} icon={DollarSign} />
-            </div>
-          )}
-
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-col sm:flex-row gap-3 flex-1">
               <div className="relative flex-1">
