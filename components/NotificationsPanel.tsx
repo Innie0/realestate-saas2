@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
+import useSWR from 'swr';
 import { Bell, Clock, Calendar, X, ArrowRight } from 'lucide-react';
 import Surface from './ui/Surface';
 import Card from './ui/Card';
@@ -18,131 +18,167 @@ interface UpcomingItem {
   eventType?: string;
 }
 
+async function fetchUpcomingItems(): Promise<UpcomingItem[]> {
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+  const sevenDaysFromNow = new Date(startOfToday.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+  const [remindersResponse, eventsResponse] = await Promise.all([
+    fetch('/api/reminders?include_completed=false'),
+    fetch('/api/calendar/events'),
+  ]);
+  const [remindersResult, eventsResult] = await Promise.all([
+    remindersResponse.json(),
+    eventsResponse.json(),
+  ]);
+
+  const upcomingItems: UpcomingItem[] = [];
+
+  if (remindersResult.success) {
+    upcomingItems.push(
+      ...remindersResult.data
+        .filter((reminder: { reminder_date: string }) => {
+          const reminderDate = new Date(reminder.reminder_date);
+          return reminderDate >= startOfToday && reminderDate <= sevenDaysFromNow;
+        })
+        .map((reminder: {
+          id: string;
+          title: string;
+          description?: string;
+          reminder_date: string;
+          clients?: { name?: string };
+        }) => ({
+          id: `reminder-${reminder.id}`,
+          title: reminder.title,
+          description: reminder.description,
+          date: reminder.reminder_date,
+          type: 'reminder' as const,
+          clientName: reminder.clients?.name,
+        })),
+    );
+  }
+
+  if (eventsResult.success) {
+    upcomingItems.push(
+      ...eventsResult.data
+        .filter((event: { start_time: string }) => {
+          const eventDate = new Date(event.start_time);
+          return eventDate >= startOfToday && eventDate <= sevenDaysFromNow;
+        })
+        .map((event: {
+          id: string;
+          title: string;
+          description?: string;
+          start_time: string;
+          location?: string;
+          event_type?: string;
+        }) => ({
+          id: `event-${event.id}`,
+          title: event.title,
+          description: event.description,
+          date: event.start_time,
+          type: 'event' as const,
+          location: event.location,
+          eventType: event.event_type,
+        })),
+    );
+  }
+
+  upcomingItems.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  return upcomingItems;
+}
+
 interface NotificationsPanelProps {
   /** Render inside dashboard Today layout — no outer card, tighter rows */
   embedded?: boolean;
   className?: string;
 }
 
+function ScheduleEmptyState() {
+  return (
+    <div className="py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 min-h-[5.5rem]">
+      <div className="flex items-center gap-3">
+        <Calendar className="w-8 h-8 text-gray-300 shrink-0" />
+        <div>
+          <p className="text-body text-gray-700 font-medium">Nothing scheduled this week</p>
+          <p className="text-caption text-gray-500 mt-0.5">Add a reminder or event to keep your day on track.</p>
+        </div>
+      </div>
+      <Link
+        href="/dashboard/calendar"
+        className="inline-flex items-center justify-center gap-1.5 text-caption font-medium text-brand-600 hover:text-brand-700 shrink-0"
+      >
+        Open calendar <ArrowRight className="w-3.5 h-3.5" />
+      </Link>
+    </div>
+  );
+}
+
+function ScheduleLoadingState() {
+  return (
+    <div className="py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 min-h-[5.5rem] animate-pulse">
+      <div className="flex items-center gap-3 flex-1">
+        <div className="w-8 h-8 rounded-lg bg-gray-100 shrink-0" />
+        <div className="flex-1 space-y-2">
+          <div className="h-4 bg-gray-100 rounded-lg w-48 max-w-full" />
+          <div className="h-3 bg-gray-100 rounded-lg w-64 max-w-full" />
+        </div>
+      </div>
+      <div className="h-4 bg-gray-100 rounded-lg w-28 shrink-0" />
+    </div>
+  );
+}
+
 export default function NotificationsPanel({ embedded = false, className }: NotificationsPanelProps) {
-  const [items, setItems] = useState<UpcomingItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchUpcomingItems();
-  }, []);
-
-  const fetchUpcomingItems = async () => {
-    try {
-      const now = new Date();
-      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-      const sevenDaysFromNow = new Date(startOfToday.getTime() + 7 * 24 * 60 * 60 * 1000);
-
-      const [remindersResponse, eventsResponse] = await Promise.all([
-        fetch('/api/reminders?include_completed=false'),
-        fetch('/api/calendar/events'),
-      ]);
-      const [remindersResult, eventsResult] = await Promise.all([
-        remindersResponse.json(),
-        eventsResponse.json(),
-      ]);
-
-      const upcomingItems: UpcomingItem[] = [];
-
-      if (remindersResult.success) {
-        upcomingItems.push(
-          ...remindersResult.data
-            .filter((reminder: { reminder_date: string }) => {
-              const reminderDate = new Date(reminder.reminder_date);
-              return reminderDate >= startOfToday && reminderDate <= sevenDaysFromNow;
-            })
-            .map((reminder: {
-              id: string;
-              title: string;
-              description?: string;
-              reminder_date: string;
-              clients?: { name?: string };
-            }) => ({
-              id: `reminder-${reminder.id}`,
-              title: reminder.title,
-              description: reminder.description,
-              date: reminder.reminder_date,
-              type: 'reminder' as const,
-              clientName: reminder.clients?.name,
-            })),
-        );
-      }
-
-      if (eventsResult.success) {
-        upcomingItems.push(
-          ...eventsResult.data
-            .filter((event: { start_time: string }) => {
-              const eventDate = new Date(event.start_time);
-              return eventDate >= startOfToday && eventDate <= sevenDaysFromNow;
-            })
-            .map((event: {
-              id: string;
-              title: string;
-              description?: string;
-              start_time: string;
-              location?: string;
-              event_type?: string;
-            }) => ({
-              id: `event-${event.id}`,
-              title: event.title,
-              description: event.description,
-              date: event.start_time,
-              type: 'event' as const,
-              location: event.location,
-              eventType: event.event_type,
-            })),
-        );
-      }
-
-      upcomingItems.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-      setItems(upcomingItems);
-    } catch (error) {
-      console.error('Error fetching upcoming items:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: items = [], isLoading, mutate } = useSWR('dashboard-upcoming', fetchUpcomingItems, {
+    revalidateOnFocus: true,
+  });
 
   const sortByDate = (list: UpcomingItem[]) =>
     [...list].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-  const restoreItem = (item: UpcomingItem) => {
-    setItems((prev) => sortByDate([...prev, item]));
-  };
+  const restoreItem = (item: UpcomingItem, list: UpcomingItem[]) => sortByDate([...list, item]);
 
   const handleComplete = async (itemId: string) => {
     if (!itemId.startsWith('reminder-')) return;
     const id = itemId.replace('reminder-', '');
     let previous: UpcomingItem | undefined;
-    setItems((prev) => {
-      previous = prev.find((i) => i.id === itemId);
-      return prev.filter((i) => i.id !== itemId);
-    });
+    await mutate(
+      (current = []) => {
+        previous = current.find((i) => i.id === itemId);
+        return current.filter((i) => i.id !== itemId);
+      },
+      { revalidate: false },
+    );
     try {
       const response = await fetch(`/api/reminders/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_completed: true }),
       });
-      if (!response.ok && previous) restoreItem(previous);
+      if (!response.ok && previous) {
+        const rollback = previous;
+        await mutate((current = []) => restoreItem(rollback, current), { revalidate: false });
+      }
     } catch (error) {
       console.error('Error completing reminder:', error);
-      if (previous) restoreItem(previous);
+      if (previous) {
+        const rollback = previous;
+        await mutate((current = []) => restoreItem(rollback, current), { revalidate: false });
+      }
     }
   };
 
   const handleDelete = async (itemId: string) => {
     if (!confirm('Are you sure you want to delete this item?')) return;
     let previous: UpcomingItem | undefined;
-    setItems((prev) => {
-      previous = prev.find((i) => i.id === itemId);
-      return prev.filter((i) => i.id !== itemId);
-    });
+    await mutate(
+      (current = []) => {
+        previous = current.find((i) => i.id === itemId);
+        return current.filter((i) => i.id !== itemId);
+      },
+      { revalidate: false },
+    );
     try {
       let response: Response | null = null;
       if (itemId.startsWith('reminder-')) {
@@ -150,10 +186,16 @@ export default function NotificationsPanel({ embedded = false, className }: Noti
       } else if (itemId.startsWith('event-')) {
         response = await fetch(`/api/calendar/events/${itemId.replace('event-', '')}`, { method: 'DELETE' });
       }
-      if (response && !response.ok && previous) restoreItem(previous);
+      if (response && !response.ok && previous) {
+        const rollback = previous;
+        await mutate((current = []) => restoreItem(rollback, current), { revalidate: false });
+      }
     } catch (error) {
       console.error('Error deleting item:', error);
-      if (previous) restoreItem(previous);
+      if (previous) {
+        const rollback = previous;
+        await mutate((current = []) => restoreItem(rollback, current), { revalidate: false });
+      }
     }
   };
 
@@ -196,28 +238,10 @@ export default function NotificationsPanel({ embedded = false, className }: Noti
     </div>
   );
 
-  const listContent = loading ? (
-    <div className="space-y-3 animate-pulse">
-      {[1, 2, 3].map((i) => (
-        <div key={i} className="h-14 bg-gray-100 rounded-xl" />
-      ))}
-    </div>
+  const listContent = isLoading ? (
+    <ScheduleLoadingState />
   ) : items.length === 0 ? (
-    <div className="py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div className="flex items-center gap-3">
-        <Calendar className="w-8 h-8 text-gray-300 shrink-0" />
-        <div>
-          <p className="text-body text-gray-700 font-medium">Nothing scheduled this week</p>
-          <p className="text-caption text-gray-500 mt-0.5">Add a reminder or event to keep your day on track.</p>
-        </div>
-      </div>
-      <Link
-        href="/dashboard/calendar"
-        className="inline-flex items-center justify-center gap-1.5 text-caption font-medium text-brand-600 hover:text-brand-700 shrink-0"
-      >
-        Open calendar <ArrowRight className="w-3.5 h-3.5" />
-      </Link>
-    </div>
+    <ScheduleEmptyState />
   ) : (
     <div className={embedded ? 'divide-y divide-gray-100' : 'space-y-2'}>
       {items.map((item) => (

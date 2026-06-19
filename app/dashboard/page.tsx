@@ -7,7 +7,7 @@ import PageShell from '@/components/layout/PageShell';
 import Surface from '@/components/ui/Surface';
 import Button from '@/components/ui/Button';
 import NotificationsPanel from '@/components/NotificationsPanel';
-import PlanUsagePanel from '@/components/dashboard/PlanUsagePanel';
+import PlanUsagePanel, { PlanUsagePanelSkeleton } from '@/components/dashboard/PlanUsagePanel';
 import {
   Plus,
   ArrowRight,
@@ -92,7 +92,13 @@ function ContinueSection({
       </div>
 
       {loading ? (
-        <div className="h-14 rounded-2xl bg-white shadow-sm animate-pulse" />
+        <Surface padding="sm" className="flex items-center gap-4 animate-pulse min-h-[4.5rem]">
+          <div className="p-2.5 rounded-xl bg-gray-100 h-10 w-10 shrink-0" />
+          <div className="flex-1 space-y-2">
+            <div className="h-4 bg-gray-100 rounded-lg w-48 max-w-full" />
+            <div className="h-3 bg-gray-100 rounded-lg w-20" />
+          </div>
+        </Surface>
       ) : continueItem ? (
         <div className="space-y-2">
           {continueItem.type === 'project' ? (
@@ -147,7 +153,7 @@ function ContinueSection({
 export default function DashboardPage() {
   const { response: usageResponse, isLoading: usageLoading } = useApi<UsageData>('/api/usage');
   const { data: recentProjects = [], isLoading: projectsLoading } = useApi<Project[]>('/api/projects?limit=3');
-  const { data: inboxLeads = [] } = useApi<RecentClient[]>('/api/clients?status=all&view=inbox');
+  const { data: inboxLeads = [], isLoading: leadsLoading } = useApi<RecentClient[]>('/api/clients?status=all&view=inbox');
   const { data: allTransactions = [], isLoading: transactionsLoading } = useApi<RecentTransaction[]>('/api/transactions?limit=3');
 
   const usage = usageResponse?.data ?? null;
@@ -163,6 +169,9 @@ export default function DashboardPage() {
   );
 
   const focusMessage = useMemo(() => {
+    if (leadsLoading && inboxLeads.length === 0) {
+      return 'Loading your workspace';
+    }
     if (hotLeadCount > 0) {
       return `${hotLeadCount} hot lead${hotLeadCount === 1 ? '' : 's'} need${hotLeadCount === 1 ? 's' : ''} a response`;
     }
@@ -170,7 +179,10 @@ export default function DashboardPage() {
       return `${inboxLeads.length} lead${inboxLeads.length === 1 ? '' : 's'} waiting in your inbox`;
     }
     return 'Your workspace is clear — start something new';
-  }, [hotLeadCount, inboxLeads.length]);
+  }, [hotLeadCount, inboxLeads.length, leadsLoading]);
+
+  const showPriorityBanner = hotLeadCount > 0 || inboxLeads.length > 0;
+  const priorityBannerLoading = leadsLoading && inboxLeads.length === 0;
 
   const continueItem = useMemo(() => {
     const latestProject = recentProjects[0];
@@ -251,7 +263,21 @@ export default function DashboardPage() {
 
       <PageShell className="space-y-8">
         {/* Primary focus */}
-        {(hotLeadCount > 0 || inboxLeads.length > 0) && (
+        {priorityBannerLoading ? (
+          <Surface padding="md" className="animate-pulse">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-3 flex-1">
+                <div className="p-2.5 rounded-xl bg-gray-100 h-10 w-10 shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-3 bg-gray-100 rounded w-16" />
+                  <div className="h-5 bg-gray-100 rounded w-56 max-w-full" />
+                  <div className="h-3 bg-gray-100 rounded w-72 max-w-full" />
+                </div>
+              </div>
+              <div className="h-5 bg-gray-100 rounded w-24 shrink-0" />
+            </div>
+          </Surface>
+        ) : showPriorityBanner ? (
           <Link href="/dashboard/leads">
             <Surface
               padding="md"
@@ -279,7 +305,7 @@ export default function DashboardPage() {
               </span>
             </Surface>
           </Link>
-        )}
+        ) : null}
 
         {/* Today layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6 items-start">
@@ -307,7 +333,11 @@ export default function DashboardPage() {
           </Surface>
         </div>
 
-        {usage && <PlanUsagePanel usage={usage} plan={plan} />}
+        {usage ? (
+          <PlanUsagePanel usage={usage} plan={plan} />
+        ) : usageLoading ? (
+          <PlanUsagePanelSkeleton />
+        ) : null}
       </PageShell>
     </div>
   );
