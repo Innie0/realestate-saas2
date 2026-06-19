@@ -5,10 +5,10 @@
 
 import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import AuthPageShell from '@/components/branding/AuthPageShell';
 import { signUpWithEmail, signInWithGoogle, supabase } from '@/lib/supabase';
 import { PRO_MONTHLY_PRICE_ID, STARTER_MONTHLY_PRICE_ID } from '@/lib/pricing';
 
@@ -93,7 +93,7 @@ function SignUpForm() {
   }, [router, planParam]);
 
   if (checkingAuth) {
-    return <div className="min-h-screen bg-[#F5F5F5]" />;
+    return <AuthPageShell />;
   }
 
   /**
@@ -200,18 +200,7 @@ function SignUpForm() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center px-4 py-12 relative overflow-hidden">
-      {/* Subtle background glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gray-50 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="w-full max-w-md relative z-10">
-        {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <Link href="/">
-            <Image src="/logo-auth.png" alt="Realestic" width={320} height={180} priority className="h-16 sm:h-20 w-auto object-contain" />
-          </Link>
-        </div>
-
+    <AuthPageShell>
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">Create your account</h1>
@@ -336,14 +325,13 @@ function SignUpForm() {
             </Link>
           </p>
         </div>
-      </div>
-    </div>
+    </AuthPageShell>
   );
 }
 
 export default function SignUpPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#F5F5F5]" />}>
+    <Suspense fallback={<AuthPageShell />}>
       <SignUpForm />
     </Suspense>
   );

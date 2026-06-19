@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Sparkles, Loader2 } from 'lucide-react';
+import AuthLogo from '@/components/branding/AuthLogo';
 import SubscribeButton from '@/components/SubscribeButton';
 import PricingFeatureList from '@/components/PricingFeatureList';
 import { supabase } from '@/lib/supabase';
@@ -85,9 +85,7 @@ export default function PricingPage() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gray-50 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative z-10 mx-auto max-w-7xl pl-3 pr-6 sm:pl-4 lg:pl-6 py-6 flex items-center justify-between">
-        <Link href="/" className="-ml-1 sm:-ml-2">
-          <Image src="/logo-auth.png" alt="Realestic" width={320} height={180} priority className="h-14 sm:h-16 w-auto object-contain" />
-        </Link>
+        <AuthLogo className="h-14 sm:h-16 w-auto" centered={false} />
         {!isLoading && (
           <div className="text-sm">
             {isAuthenticated ? (
