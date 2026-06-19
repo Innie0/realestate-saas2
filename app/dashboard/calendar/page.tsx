@@ -1,31 +1,26 @@
-// Calendar page - Manage calendar integrations and events
-// Connect Google Calendar and Outlook, view and create events
-
-'use client'; // This page uses client-side features
+'use client';
 
 import React, { useState, useMemo } from 'react';
 import Header from '@/components/layout/Header';
+import PageShell from '@/components/layout/PageShell';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Modal from '@/components/ui/Modal';
 import CalendarView from '@/components/CalendarView';
 import EventForm from '@/components/EventForm';
-import { Calendar as CalendarIcon, Plus, RefreshCw, Settings } from 'lucide-react';
+import { Plus, RefreshCw, Settings, Link2, X } from 'lucide-react';
 import { CalendarEvent } from '@/types';
 import { useApi } from '@/lib/swr';
 import { mutate as globalMutate } from 'swr';
 import { calendarEventsPrefetchUrl } from '@/lib/dashboard-prefetch';
 
-/**
- * Calendar page component
- * Main calendar view with integration management
- */
 export default function CalendarPage() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [showEventModal, setShowEventModal] = useState(false);
   const [showConnectionsModal, setShowConnectionsModal] = useState(false);
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
+  const [pageMessage, setPageMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const { data: connectionsData, mutate: mutateConnections } = useApi<
     Array<{ provider: string; is_active?: boolean; email?: string }>
@@ -41,12 +36,10 @@ export default function CalendarPage() {
     };
   }, [connectionsData]);
 
-  // Set page title
   React.useEffect(() => {
     document.title = 'Calendar - Realestic';
   }, []);
 
-  // Sync on page load and every 5 minutes
   React.useEffect(() => {
     handleRefresh(true);
 
@@ -57,66 +50,58 @@ export default function CalendarPage() {
     return () => clearInterval(syncInterval);
   }, []);
 
-  /**
-   * Create a new calendar event
-   */
   const handleCreateEvent = async (eventData: Partial<CalendarEvent>) => {
     setIsCreatingEvent(true);
-    
+    setPageMessage(null);
+
     try {
       const response = await fetch('/api/calendar/events', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(eventData),
       });
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
         setShowEventModal(false);
         void globalMutate(calendarEventsPrefetchUrl());
+        setPageMessage({ type: 'success', text: 'Event created successfully.' });
       } else {
-        alert(data.error || 'Failed to create event');
+        setPageMessage({ type: 'error', text: data.error || 'Failed to create event.' });
       }
     } catch (error) {
       console.error('Create event error:', error);
-      alert('Failed to create event. Please try again.');
+      setPageMessage({ type: 'error', text: 'Failed to create event. Please try again.' });
     } finally {
       setIsCreatingEvent(false);
     }
   };
 
-  /**
-   * Connect to Google Calendar
-   */
   const handleConnectGoogle = async () => {
     setIsConnecting(true);
-    
+    setPageMessage(null);
+
     try {
-      // Call OAuth API route
       const response = await fetch('/api/calendar/google/connect', {
         method: 'POST',
       });
-      
+
       const data = await response.json();
-      
+
       if (data.success && data.data?.authUrl) {
-        // Redirect to Google OAuth page
         window.location.href = data.data.authUrl;
       } else {
-        alert('Failed to connect to Google Calendar. Please try again.');
+        setPageMessage({ type: 'error', text: 'Failed to connect to Google Calendar. Please try again.' });
       }
     } catch (error) {
       console.error('Google Calendar connection error:', error);
-      alert('Failed to connect to Google Calendar. Please try again.');
+      setPageMessage({ type: 'error', text: 'Failed to connect to Google Calendar. Please try again.' });
     } finally {
       setIsConnecting(false);
     }
   };
 
-  /**
-   * Disconnect calendar
-   */
   const handleDisconnect = async (provider: 'google') => {
     if (!confirm('Are you sure you want to disconnect Google Calendar?')) {
       return;
@@ -126,39 +111,38 @@ export default function CalendarPage() {
       const response = await fetch(`/api/calendar/${provider}/disconnect`, {
         method: 'POST',
       });
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
         void mutateConnections();
-        alert('Calendar disconnected successfully!');
+        setPageMessage({ type: 'success', text: 'Google Calendar disconnected.' });
+      } else {
+        setPageMessage({ type: 'error', text: 'Failed to disconnect calendar.' });
       }
     } catch (error) {
       console.error('Disconnect error:', error);
-      alert('Failed to disconnect calendar.');
+      setPageMessage({ type: 'error', text: 'Failed to disconnect calendar.' });
     }
   };
 
-  /**
-   * Refresh calendar events
-   * @param silent - Whether to show loading state
-   */
   const handleRefresh = async (silent = false) => {
     if (!silent) setRefreshing(true);
-    
+
     try {
-      // Fetch latest events from connected calendars
       const response = await fetch('/api/calendar/sync', {
         method: 'POST',
       });
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
         void globalMutate(calendarEventsPrefetchUrl());
         if (!silent) {
           setTimeout(() => setRefreshing(false), 1000);
         }
+      } else if (!silent) {
+        setRefreshing(false);
       }
     } catch (error) {
       console.error('Refresh error:', error);
@@ -168,54 +152,84 @@ export default function CalendarPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Page header */}
-      <Header 
-        title="Calendar" 
-        subtitle="Manage your schedule and calendar integrations"
-      />
+      <Header title="Calendar" subtitle="Showings, closings, and synced Google Calendar events" />
 
-      {/* Page content */}
-      <div className="p-4 sm:p-6 text-gray-900">
-        {/* Calendar card - full width, connection settings tucked into corner */}
-        <Card>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Your Schedule</h2>
-            <div className="flex items-center gap-2">
-              {/* Connection status indicator */}
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200">
-                <div className={`w-2 h-2 rounded-full ${connections.google.connected ? 'bg-green-500' : 'bg-gray-600'}`} />
-                <span className="text-xs text-gray-500">
-                  {connections.google.connected ? 'Google Calendar' : 'Not connected'}
-                </span>
-              </div>
-              <button
-                onClick={() => handleRefresh()}
-                disabled={refreshing}
-                className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-500 hover:text-gray-900"
-                title="Sync calendars"
-              >
-                <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-              </button>
-              <button
-                onClick={() => setShowConnectionsModal(true)}
-                className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-500 hover:text-gray-900"
-                title="Calendar settings"
-              >
-                <Settings className="w-4 h-4" />
-              </button>
-              <Button size="sm" onClick={() => setShowEventModal(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                New Event
-              </Button>
-            </div>
+      <PageShell className="space-y-4">
+        {pageMessage && (
+          <div
+            className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 text-sm ${
+              pageMessage.type === 'error'
+                ? 'bg-red-50 border-red-200 text-red-700'
+                : 'bg-green-50 border-green-200 text-green-700'
+            }`}
+          >
+            <span>{pageMessage.text}</span>
+            <button
+              type="button"
+              onClick={() => setPageMessage(null)}
+              className="p-1 rounded hover:bg-black/5"
+              aria-label="Dismiss"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
+        )}
 
-          {/* Calendar component */}
+        {!connections.google.connected && (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border border-brand-200 bg-brand-50/50 px-5 py-4">
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-lg bg-white border border-brand-100">
+                <Link2 className="w-5 h-5 text-brand-600" />
+              </div>
+              <div>
+                <p className="font-medium text-gray-900">Connect Google Calendar</p>
+                <p className="text-sm text-gray-600 mt-0.5">
+                  Sync showings and closings automatically. You can still add events here without connecting.
+                </p>
+              </div>
+            </div>
+            <Button onClick={handleConnectGoogle} disabled={isConnecting} className="shrink-0">
+              {isConnecting ? 'Connecting…' : 'Connect Google'}
+            </Button>
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          {connections.google.connected && (
+            <span className="mr-auto flex items-center gap-1.5 text-xs text-gray-500">
+              <span className="w-2 h-2 rounded-full bg-green-500" />
+              Synced with {connections.google.email || 'Google Calendar'}
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={() => handleRefresh()}
+            disabled={refreshing}
+            className="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            title="Sync calendars"
+          >
+            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            Sync
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowConnectionsModal(true)}
+            className="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <Settings className="w-4 h-4" />
+            Settings
+          </button>
+          <Button size="sm" onClick={() => setShowEventModal(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            New Event
+          </Button>
+        </div>
+
+        <Card>
           <CalendarView />
         </Card>
-      </div>
+      </PageShell>
 
-      {/* Event Creation Modal */}
       {showEventModal && (
         <Modal
           isOpen={showEventModal}
@@ -230,7 +244,6 @@ export default function CalendarPage() {
         </Modal>
       )}
 
-      {/* Calendar Connections Modal */}
       <Modal
         isOpen={showConnectionsModal}
         onClose={() => setShowConnectionsModal(false)}
@@ -239,7 +252,6 @@ export default function CalendarPage() {
         <div className="space-y-4">
           <p className="text-sm text-gray-500">Connect your calendars to sync events automatically.</p>
 
-          {/* Google Calendar */}
           <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -287,5 +299,3 @@ export default function CalendarPage() {
     </div>
   );
 }
-
-

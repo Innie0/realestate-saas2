@@ -5,6 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import PageShell from '@/components/layout/PageShell';
 import Tabs from '@/components/ui/Tabs';
+import StatCard from '@/components/ui/StatCard';
+import Button from '@/components/ui/Button';
 import { useApi } from '@/lib/swr';
 import { CmaPanel, type CmaAnalysisResult } from '@/components/property-research/CmaPanel';
 import { OwnerContactPanel, type LookupResponse } from '@/components/property-research/OwnerContactPanel';
@@ -78,7 +80,8 @@ function PropertyResearchContent() {
   const [cmaResult, setCmaResult] = useState<CmaAnalysisResult | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [showHistory, setShowHistory] = useState(false);
-  const [usageHint, setUsageHint] = useState<string | null>(null);
+  const [lookupUsage, setLookupUsage] = useState<{ current: number; limit: number } | null>(null);
+  const [cmaUsage, setCmaUsage] = useState<{ current: number; limit: number } | null>(null);
 
   const { response: usageResponse, mutate: mutateUsage } = useApi('/api/usage');
 
@@ -93,24 +96,8 @@ function PropertyResearchContent() {
   useEffect(() => {
     const data = usageResponse?.data as Record<string, { current: number; limit: number }> | undefined;
     if (!data) return;
-    const lookups = data.property_lookups;
-    const cma = data.market_analyses;
-    const parts: string[] = [];
-    if (lookups) {
-      parts.push(
-        lookups.limit === -1
-          ? 'Lookups: unlimited'
-          : `Lookups: ${lookups.current}/${lookups.limit} this month`,
-      );
-    }
-    if (cma) {
-      parts.push(
-        cma.limit === -1
-          ? 'CMA: unlimited'
-          : `CMA: ${cma.current}/${cma.limit} this month`,
-      );
-    }
-    setUsageHint(parts.length ? parts.join(' · ') : null);
+    if (data.property_lookups) setLookupUsage(data.property_lookups);
+    if (data.market_analyses) setCmaUsage(data.market_analyses);
   }, [usageResponse]);
 
   useEffect(() => {
@@ -156,6 +143,13 @@ function PropertyResearchContent() {
     setLookupTrigger((n) => n + 1);
   };
 
+  const handleResearchAddress = () => {
+    if (!street.trim() || !state) return;
+    saveToHistory();
+    setActiveTab('overview');
+    setLookupTrigger((n) => n + 1);
+  };
+
   const handleRunCma = () => {
     if (!street.trim() || !state) return;
     saveToHistory();
@@ -196,6 +190,12 @@ function PropertyResearchContent() {
 
   const firstPerson = lookupData?.found && lookupData.results?.[0] ? lookupData.results[0] : null;
 
+  const formatUsage = (usage: { current: number; limit: number } | null) => {
+    if (!usage) return '—';
+    if (usage.limit === -1) return '∞';
+    return `${usage.current}/${usage.limit}`;
+  };
+
   return (
     <div className="min-h-screen">
       <Header
@@ -204,6 +204,13 @@ function PropertyResearchContent() {
       />
 
       <PageShell size="medium" className="space-y-6">
+
+        {(lookupUsage || cmaUsage) && (
+          <div className="grid grid-cols-2 gap-3">
+            <StatCard label="Lookups this month" value={formatUsage(lookupUsage)} icon={Search} />
+            <StatCard label="CMA this month" value={formatUsage(cmaUsage)} icon={BarChart2} />
+          </div>
+        )}
 
         {history.length > 0 && (
           <div>
@@ -237,8 +244,8 @@ function PropertyResearchContent() {
           </div>
         )}
 
-        {/* Shared address search */}
-        <div className="rounded-2xl border border-gray-200 p-6 bg-white">
+        {/* Shared address search — sticky while scrolling results */}
+        <div className="sticky top-16 z-10 rounded-2xl border border-gray-200 p-6 bg-white/95 backdrop-blur-sm shadow-sm">
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1.5">Street Address *</label>
@@ -271,27 +278,18 @@ function PropertyResearchContent() {
               </div>
             </div>
             <p className="text-xs text-gray-500">
-              {usageHint || 'Try the demo address 123 W Main Street, Austin, TX for sample owner + CMA data (no real PII). Other addresses use your plan quota.'}
+              Demo: 123 W Main Street, Austin, TX — sample owner + CMA (no real PII). Other addresses use your plan quota.
             </p>
             <div className="flex flex-wrap items-center gap-3">
-              <button
+              <Button
                 type="button"
-                onClick={handleLookUp}
+                onClick={handleResearchAddress}
                 disabled={!street.trim() || !state}
-                className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 text-gray-900 font-medium rounded-xl hover:bg-gray-50 disabled:opacity-50 shadow-sm"
+                className="inline-flex items-center gap-2"
               >
                 <Search className="w-4 h-4" />
-                Look Up Property
-              </button>
-              <button
-                type="button"
-                onClick={handleRunCma}
-                disabled={!street.trim() || !state}
-                className="flex items-center gap-2 px-5 py-2.5 bg-brand-500 text-white font-medium rounded-xl hover:bg-brand-600 disabled:opacity-50"
-              >
-                <BarChart2 className="w-4 h-4" />
-                Run CMA
-              </button>
+                Research address
+              </Button>
               {(street || city || state || zip) && (
                 <button type="button" onClick={clearForm} className="flex items-center gap-1.5 px-3 py-2.5 text-sm text-gray-500 hover:text-gray-900">
                   <X className="w-4 h-4" /> Clear

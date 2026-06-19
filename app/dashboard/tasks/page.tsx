@@ -3,9 +3,17 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
+import EmptyState from '@/components/ui/EmptyState';
 import { Sparkles, Send, Loader2, Paperclip, X, Plus, MessageSquare, Trash2, FileText, Pin, Edit3, Check, MoreVertical } from 'lucide-react';
 import { Conversation, ConversationMessage } from '@/types';
 import { useApi } from '@/lib/swr';
+
+const STARTER_PROMPTS = [
+  'Write a compelling listing description for a 3-bed home',
+  'Draft a follow-up email for a buyer who toured yesterday',
+  'Suggest social media captions for a new listing',
+  'Help me prepare talking points for a listing appointment',
+] as const;
 
 function sortConversations(list: Conversation[]): Conversation[] {
   return [...list].sort((a, b) => {
@@ -21,6 +29,7 @@ export default function TasksPage() {
     isLoading: isLoadingConversations,
     mutate: mutateConversations,
   } = useApi<Conversation[]>('/api/conversations');
+  const { response: usageResponse } = useApi('/api/usage');
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -397,19 +406,21 @@ export default function TasksPage() {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!inputMessage.trim() && !selectedImage && !selectedPdf) return;
+    await submitMessage(inputMessage);
+  };
+
+  const submitMessage = async (rawText: string) => {
+    if (!rawText.trim() && !selectedImage && !selectedPdf) return;
 
     setIsLoading(true);
     setError(null);
 
-    // Optimistically add user message to UI
     const tempUserMessage: ConversationMessage = {
       id: 'temp-' + Date.now(),
       conversation_id: currentConversationId || 'temp',
       user_id: 'current',
       role: 'user',
-      content: inputMessage.trim(),
+      content: rawText.trim(),
       image_url: selectedImage,
       image_name: imageName || pdfName,
       created_at: new Date().toISOString(),
@@ -422,7 +433,9 @@ export default function TasksPage() {
       return next;
     });
 
-    const messageText = inputMessage.trim();
+    const messageText = rawText.trim();
+    const capturedImage = selectedImage;
+    const capturedImageName = imageName;
     const capturedPdf = selectedPdf;
     const capturedPdfName = pdfName;
     setInputMessage('');
@@ -435,8 +448,8 @@ export default function TasksPage() {
         body: JSON.stringify({
           message: messageText,
           conversation_id: currentConversationId,
-          imageData: selectedImage,
-          imageName: imageName,
+          imageData: capturedImage,
+          imageName: capturedImageName,
           pdfData: capturedPdf,
           pdfName: capturedPdfName,
         }),
@@ -446,21 +459,18 @@ export default function TasksPage() {
 
       if (result.success) {
         const { conversation_id, messages: updatedMessages } = result.data;
-        
-        // Update conversation ID if it's a new conversation
+
         if (!currentConversationId) {
           setCurrentConversationId(conversation_id);
           void mutateConversations();
         }
-        
-        // Update messages with actual data from server
+
         setMessages(updatedMessages);
         if (conversation_id) {
           messageCacheRef.current[conversation_id] = updatedMessages;
         }
       } else {
         setError(result.error || 'Failed to send message');
-        // Remove optimistic message on error
         setMessages(prev => prev.filter(m => m.id !== tempUserMessage.id));
       }
     } catch (err) {
@@ -471,6 +481,20 @@ export default function TasksPage() {
       setIsLoading(false);
     }
   };
+
+  const handleStarterPrompt = (text: string) => {
+    if (isLoading) return;
+    void submitMessage(text);
+  };
+
+  const usageData = usageResponse?.data as Record<string, { current: number; limit: number }> | undefined;
+  const aiUsage = usageData?.ai_messages;
+
+  const usageSubtitle = aiUsage
+    ? aiUsage.limit === -1
+      ? 'Unlimited AI messages on your plan'
+      : `${aiUsage.current}/${aiUsage.limit} AI messages used this month`
+    : 'Chat with AI about listings, leads, and daily agent tasks';
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -492,12 +516,12 @@ export default function TasksPage() {
     <div className="h-screen flex flex-col">
       <Header 
         title="AI Assistant" 
-        subtitle="Chat with AI about your real estate tasks"
+        subtitle={usageSubtitle}
       />
 
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar - Conversation History */}
-        <div className={`${isSidebarOpen ? 'w-64' : 'w-0'} bg-gray-50 border-r border-gray-200 transition-all duration-300 flex flex-col flex-shrink-0`}>
+        <div className={`${isSidebarOpen ? 'w-64' : 'w-0'} bg-white border-r border-gray-200 transition-all duration-300 flex flex-col flex-shrink-0 overflow-hidden`}>
           <div className="p-4 border-b border-gray-200 flex-shrink-0">
             <Button
               onClick={handleNewConversation}
@@ -516,10 +540,12 @@ export default function TasksPage() {
                 ))}
               </div>
             ) : conversations.length === 0 ? (
-              <div className="text-center py-8 px-4">
-                <MessageSquare className="w-8 h-8 mx-auto text-gray-600 mb-2" />
-                <p className="text-sm text-gray-500">No conversations yet</p>
-              </div>
+              <EmptyState
+                icon={MessageSquare}
+                title="No chats yet"
+                description="Start a new conversation to get help with listings, leads, and more."
+                className="py-6"
+              />
             ) : (
               <div className="space-y-1">
                 {conversations.map((conv) => (
@@ -676,17 +702,24 @@ export default function TasksPage() {
                   ))}
                 </div>
               ) : messages.length === 0 ? (
-                <div className="flex items-center justify-center h-full">
-                  <div className="text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 border border-gray-200 mb-4">
-                      <Sparkles className="w-8 h-8 text-gray-900/60" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                      How can I help you today?
-                    </h2>
-                    <p className="text-gray-500">
-                      Ask me anything about your real estate tasks
-                    </p>
+                <div className="flex flex-col items-center justify-center min-h-[50vh] py-8">
+                  <EmptyState
+                    icon={Sparkles}
+                    title="How can I help you today?"
+                    description="Ask about listings, follow-ups, social posts, or upload a photo or PDF for analysis."
+                  />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full max-w-xl mt-2 px-4">
+                    {STARTER_PROMPTS.map((prompt) => (
+                      <button
+                        key={prompt}
+                        type="button"
+                        onClick={() => handleStarterPrompt(prompt)}
+                        disabled={isLoading}
+                        className="text-left text-sm px-4 py-3 rounded-xl border border-gray-200 bg-white hover:border-brand-200 hover:bg-brand-50/50 text-gray-700 transition-colors disabled:opacity-50"
+                      >
+                        {prompt}
+                      </button>
+                    ))}
                   </div>
                 </div>
               ) : (

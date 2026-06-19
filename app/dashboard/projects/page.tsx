@@ -6,7 +6,9 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
+import PageShell from '@/components/layout/PageShell';
 import Button from '@/components/ui/Button';
+import EmptyState from '@/components/ui/EmptyState';
 import ProjectCard from '@/components/ProjectCard';
 import { Plus, Search, Filter } from 'lucide-react';
 import { Project } from '@/types';
@@ -97,8 +99,7 @@ export default function ProjectsPage() {
         subtitle="Manage your property listing projects"
       />
 
-      {/* Page content */}
-      <div className="p-4 sm:p-6 text-gray-900">
+      <PageShell>
         {/* Toolbar - search, filter, and create button */}
         <div className="flex flex-col gap-3 sm:gap-4 mb-6">
           {/* Search input */}
@@ -166,28 +167,28 @@ export default function ProjectsPage() {
             ))}
           </div>
         ) : (
-          /* Empty state */
-          <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
-            <Filter className="w-12 h-12 mx-auto text-gray-500 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No projects found
-            </h3>
-            <p className="text-gray-500 mb-4">
-              {searchQuery || filterStatus !== 'all'
-                ? 'Try adjusting your search or filters'
-                : 'Get started by creating your first project'}
-            </p>
-            {!searchQuery && filterStatus === 'all' && (
-              <Link href="/dashboard/projects/new">
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Project
-                </Button>
-              </Link>
-            )}
-          </div>
+          <EmptyState
+            icon={Filter}
+            title="No projects found"
+            description={
+              searchQuery || filterStatus !== 'all'
+                ? 'Try adjusting your search or filters.'
+                : 'Get started by creating your first listing project.'
+            }
+            action={
+              !searchQuery && filterStatus === 'all' ? (
+                <Link href="/dashboard/projects/new">
+                  <Button>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Project
+                  </Button>
+                </Link>
+              ) : undefined
+            }
+            className="bg-white rounded-xl border border-gray-200"
+          />
         )}
-      </div>
+      </PageShell>
     </div>
   );
 }
