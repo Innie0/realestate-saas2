@@ -15,11 +15,19 @@ import {
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Modal from '@/components/ui/Modal';
+import Tabs from '@/components/ui/Tabs';
+import PageShell from '@/components/layout/PageShell';
+import TransactionStatusBadge from '@/components/transactions/TransactionStatusBadge';
 import TransactionForm from '@/components/TransactionForm';
 import TransactionTimeline from '@/components/TransactionTimeline';
 import TransactionChecklist from '@/components/TransactionChecklist';
 import TransactionDocuments from '@/components/TransactionDocuments';
-import { TransactionWithDetails, TransactionReminder, Contract } from '@/types';
+import { TransactionWithDetails, Contract } from '@/types';
+import {
+  TRANSACTION_STATUSES,
+  isOpenTransactionStatus,
+  type TransactionStatus,
+} from '@/lib/transaction-status';
 
 interface TransactionDetailPageProps {
   params: Promise<{ id: string }>;
@@ -35,6 +43,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'tasks' | 'documents' | 'reminders' | 'financials'>('overview');
   const [prefetchedDocuments, setPrefetchedDocuments] = useState<Contract[]>([]);
   const [documentsSetupError, setDocumentsSetupError] = useState('');
@@ -91,6 +100,12 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
       setDocumentsReady(true);
     }
   };
+
+  useEffect(() => {
+    document.title = transaction?.property_address
+      ? `${transaction.property_address} - Realestic`
+      : 'Transaction - Realestic';
+  }, [transaction?.property_address]);
 
   useEffect(() => {
     setDocumentsReady(false);
@@ -150,57 +165,61 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
     }).format(amount);
   };
 
-  // Get status badge
-  const getStatusBadge = (status: string) => {
-    const styles: Record<string, string> = {
-      active: 'bg-brand-500/20 text-brand-400 border border-brand-500/30',
-      pending: 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30',
-      under_contract: 'bg-brand-500/20 text-brand-400 border border-brand-500/30',
-      closed: 'bg-green-500/20 text-green-300 border border-green-500/30',
-      cancelled: 'bg-red-500/20 text-red-300 border border-red-500/30',
-      expired: 'bg-gray-500/20 text-gray-600 border border-gray-500/30',
-    };
+  const handleStatusChange = async (newStatus: TransactionStatus) => {
+    if (!transaction || newStatus === transaction.status) return;
 
-    const labels: Record<string, string> = {
-      active: 'Active',
-      pending: 'Pending',
-      under_contract: 'Under Contract',
-      closed: 'Closed',
-      cancelled: 'Cancelled',
-      expired: 'Expired',
-    };
-
-    return (
-      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${styles[status] || styles.active}`}>
-        {labels[status] || status}
-      </span>
-    );
+    setIsUpdatingStatus(true);
+    setError('');
+    try {
+      const response = await fetch(`/api/transactions/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to update status');
+      }
+      setTransaction((prev) => (prev ? { ...prev, status: newStatus } : prev));
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to update status');
+    } finally {
+      setIsUpdatingStatus(false);
+    }
   };
+
+  const DETAIL_TABS: { id: typeof activeTab; label: string; icon: React.ElementType }[] = [
+    { id: 'overview', label: 'Overview', icon: Building2 },
+    { id: 'tasks', label: 'Timeline & Tasks', icon: CheckCircle2 },
+    { id: 'documents', label: 'Documents', icon: FileText },
+    { id: 'reminders', label: 'Reminders', icon: Bell },
+    { id: 'financials', label: 'Financials', icon: DollarSign },
+  ];
 
   if (isLoading) {
     return (
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500" />
       </div>
     );
   }
 
-  if (error || !transaction) {
+  if (error && !transaction) {
     return (
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="text-center py-12">
-          <AlertTriangle className="w-12 h-12 mx-auto text-red-400 mb-4" />
+      <div className="min-h-screen">
+        <PageShell size="narrow" className="py-12 text-center">
+          <AlertTriangle className="w-12 h-12 mx-auto text-red-500 mb-4" />
           <h2 className="text-lg font-medium text-gray-900 mb-2">Error Loading Transaction</h2>
           <p className="text-gray-500 mb-4">{error || 'Transaction not found'}</p>
           <Link href="/dashboard/transactions">
             <Button variant="outline">Back to Transactions</Button>
           </Link>
-        </div>
+        </PageShell>
       </div>
     );
   }
+
+  if (!transaction) return null;
 
   // Get active reminders
   const activeReminders = transaction.reminders?.filter(
@@ -208,61 +227,120 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
   ) || [];
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <div className="space-y-6">
-        {/* Header with gradient */}
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 pb-6 border-b border-gray-200">
-        <div className="flex items-start gap-4">
-          <Link 
-            href="/dashboard/transactions"
-            className="p-2 hover:bg-gray-100/50 rounded-lg transition-all duration-200 mt-1"
-          >
-            <ArrowLeft className="w-5 h-5 text-gray-500" />
-          </Link>
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <h1 className="text-3xl font-bold text-gray-900">
-                {transaction.property_address}
-              </h1>
-              {getStatusBadge(transaction.status)}
+    <div className="min-h-screen">
+      <PageShell className="space-y-6">
+        <div className="flex flex-col gap-4 pb-2 border-b border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div className="flex items-start gap-3 min-w-0">
+              <Link
+                href="/dashboard/transactions"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors mt-0.5 shrink-0"
+              >
+                <ArrowLeft className="w-5 h-5 text-gray-500" />
+              </Link>
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2 mb-1">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 truncate">
+                    {transaction.property_address}
+                  </h1>
+                  <TransactionStatusBadge status={transaction.status} />
+                </div>
+                {(transaction.property_city || transaction.property_state) && (
+                  <p className="text-gray-500 text-sm">
+                    {[transaction.property_city, transaction.property_state, transaction.property_zip]
+                      .filter(Boolean)
+                      .join(', ')}
+                  </p>
+                )}
+              </div>
             </div>
-            {(transaction.property_city || transaction.property_state) && (
-              <p className="text-gray-500">
-                {[transaction.property_city, transaction.property_state, transaction.property_zip]
-                  .filter(Boolean)
-                  .join(', ')}
-              </p>
+            <div className="flex items-center gap-2 shrink-0">
+              <Button variant="outline" onClick={() => setIsEditing(true)}>
+                <Edit2 className="w-4 h-4 mr-2" />
+                Edit
+              </Button>
+              <Button variant="outline" onClick={handleDelete} isLoading={isDeleting}>
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete
+              </Button>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-gray-200 bg-gray-50/80 p-4 flex flex-col sm:flex-row sm:items-end gap-3">
+            <div className="flex-1 min-w-0">
+              <label htmlFor="deal-status" className="block text-sm font-medium text-gray-900 mb-1">
+                Deal status
+              </label>
+              <select
+                id="deal-status"
+                value={transaction.status}
+                disabled={isUpdatingStatus}
+                onChange={(e) => handleStatusChange(e.target.value as TransactionStatus)}
+                className="w-full sm:max-w-xs px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-50"
+              >
+                {TRANSACTION_STATUSES.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {isOpenTransactionStatus(transaction.status) && (
+              <div className="flex flex-wrap gap-2">
+                {transaction.status !== 'under_contract' && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={isUpdatingStatus}
+                    onClick={() => handleStatusChange('under_contract')}
+                  >
+                    Under contract
+                  </Button>
+                )}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={isUpdatingStatus}
+                  onClick={() => handleStatusChange('closed')}
+                >
+                  Mark closed
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={isUpdatingStatus}
+                  onClick={() => handleStatusChange('cancelled')}
+                >
+                  Cancel deal
+                </Button>
+              </div>
             )}
           </div>
+
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+              {error}
+            </div>
+          )}
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => setIsEditing(true)}>
-            <Edit2 className="w-4 h-4 mr-2" />
-            Edit
-          </Button>
-          <Button variant="outline" onClick={handleDelete} isLoading={isDeleting}>
-            <Trash2 className="w-4 h-4 mr-2" />
-            Delete
-          </Button>
-        </div>
-      </div>
 
       {/* Active Reminders Alert */}
       {activeReminders.length > 0 && (
-        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
           <div className="flex items-start">
-            <Bell className="w-5 h-5 text-yellow-400 mr-3 mt-0.5" />
+            <Bell className="w-5 h-5 text-amber-600 mr-3 mt-0.5 shrink-0" />
             <div className="flex-1">
-              <h3 className="text-sm font-medium text-yellow-300">
+              <h3 className="text-sm font-medium text-amber-900">
                 You have {activeReminders.length} active reminder{activeReminders.length > 1 ? 's' : ''}
               </h3>
               <div className="mt-2 space-y-2">
                 {activeReminders.map(reminder => (
                   <div key={reminder.id} className="flex items-center justify-between text-sm">
-                    <span className="text-yellow-200">{reminder.title}</span>
+                    <span className="text-amber-800">{reminder.title}</span>
                     <button
+                      type="button"
                       onClick={() => dismissReminder(reminder.id)}
-                      className="text-yellow-400 hover:text-yellow-300 underline"
+                      className="text-amber-700 hover:text-amber-900 underline"
                     >
                       Dismiss
                     </button>
@@ -274,36 +352,10 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
         </div>
       )}
 
-      {/* Tabs */}
-      <div className="flex flex-wrap gap-1 p-1 bg-gray-50 border border-gray-200 rounded-xl">
-        {[
-          { id: 'overview', label: 'Overview', icon: Building2 },
-          { id: 'tasks', label: 'Timeline & Tasks', icon: CheckCircle2 },
-          { id: 'documents', label: 'Documents', icon: FileText },
-          { id: 'reminders', label: 'Reminders', icon: Bell },
-          { id: 'financials', label: 'Financials', icon: DollarSign },
-        ].map(tab => {
-          const Icon = tab.icon;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all min-w-[7rem] ${
-                activeTab === tab.id
-                  ? 'bg-white text-gray-900'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              <Icon className="w-4 h-4 shrink-0" />
-              <span className="truncate">{tab.label}</span>
-            </button>
-          );
-        })}
-      </div>
+      <Tabs tabs={DETAIL_TABS} activeTab={activeTab} onChange={setActiveTab} hideLabelsOnMobile />
 
       {/* Tab Content */}
-      <div className="mt-6">
+      <div>
         {activeTab === 'overview' && (
           <div className="space-y-6">
             {/* Key Stats */}
@@ -493,7 +545,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
           onCancel={() => setIsEditing(false)}
         />
       </Modal>
-      </div>
+      </PageShell>
     </div>
   );
 }

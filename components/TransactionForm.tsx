@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { Transaction } from '@/types';
+import { TRANSACTION_STATUSES } from '@/lib/transaction-status';
 
 interface TransactionFormProps {
   transaction?: Transaction; // Existing transaction for editing
@@ -174,10 +175,29 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Error message */}
       {error && (
-        <div className="p-4 bg-red-900/30 border border-red-700 rounded-lg text-red-400 text-sm">
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
           {error}
         </div>
       )}
+
+      {/* Deal status — always visible */}
+      <div className="rounded-xl border border-gray-200 bg-gray-50/80 p-4">
+        <label className="block text-sm font-medium text-gray-900 mb-1.5">Deal status</label>
+        <p className="text-xs text-gray-500 mb-3">
+          Set to Closed or Cancelled when the deal is done — it will leave your in-progress list.
+        </p>
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value as typeof status)}
+          className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+        >
+          {TRANSACTION_STATUSES.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {/* Section tabs */}
       <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg border border-gray-200">
@@ -393,24 +413,6 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
               onChange={(e) => setLoanAmount(e.target.value)}
               placeholder="280000"
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Status
-            </label>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as any)}
-              className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
-            >
-              <option value="active">Active</option>
-              <option value="pending">Pending</option>
-              <option value="under_contract">Under Contract</option>
-              <option value="closed">Closed</option>
-              <option value="cancelled">Cancelled</option>
-              <option value="expired">Expired</option>
-            </select>
           </div>
 
           <div>

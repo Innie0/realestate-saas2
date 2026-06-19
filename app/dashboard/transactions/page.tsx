@@ -5,25 +5,26 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { format, differenceInDays } from 'date-fns';
-import { 
-  Plus, Search, Filter, Building2, DollarSign, 
+import {
+  Plus, Search, Building2, DollarSign,
   Calendar, ChevronRight, AlertCircle, CheckCircle2,
-  Clock, User, Users
+  Clock, User, Users, TrendingUp,
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
-import Input from '@/components/ui/Input';
 import Header from '@/components/layout/Header';
 import PageShell from '@/components/layout/PageShell';
 import EmptyState from '@/components/ui/EmptyState';
+import StatCard from '@/components/ui/StatCard';
+import TransactionStatusBadge from '@/components/transactions/TransactionStatusBadge';
 import TransactionTimeline from '@/components/TransactionTimeline';
 import { TransactionWithDetails } from '@/types';
 import { useApi } from '@/lib/swr';
+import { isOpenTransactionStatus } from '@/lib/transaction-status';
 
 export default function TransactionsPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('open');
 
   const transactionsUrl = useMemo(() => {
     const params = new URLSearchParams();
@@ -35,13 +36,11 @@ export default function TransactionsPage() {
   const { data: transactions = [], isLoading, error: fetchError } = useApi<TransactionWithDetails[]>(transactionsUrl);
   const error = fetchError?.message ?? '';
 
-  // Set page title
   useEffect(() => {
     document.title = 'Transactions - Realestic';
   }, []);
 
-  // Filter transactions by search term
-  const filteredTransactions = transactions.filter(transaction => {
+  const filteredTransactions = transactions.filter((transaction) => {
     if (!searchTerm) return true;
     const search = searchTerm.toLowerCase();
     return (
@@ -52,54 +51,28 @@ export default function TransactionsPage() {
     );
   });
 
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
-  };
 
-  // Get status badge
-  const getStatusBadge = (status: string) => {
-    const styles: Record<string, string> = {
-      active: 'bg-brand-500/20 text-brand-400 border border-brand-500/30',
-      pending: 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30',
-      under_contract: 'bg-brand-500/20 text-brand-400 border border-brand-500/30',
-      closed: 'bg-green-500/20 text-green-300 border border-green-500/30',
-      cancelled: 'bg-red-500/20 text-red-300 border border-red-500/30',
-      expired: 'bg-gray-500/20 text-gray-600 border border-gray-500/30',
-    };
+  const inProgressCount = transactions.filter((t) => isOpenTransactionStatus(t.status)).length;
+  const closedCount = transactions.filter((t) => t.status === 'closed').length;
+  const volumeTotal = transactions
+    .filter((t) => t.status !== 'cancelled' && t.status !== 'expired')
+    .reduce((sum, t) => sum + t.offer_price, 0);
 
-    const labels: Record<string, string> = {
-      active: 'Active',
-      pending: 'Pending',
-      under_contract: 'Under Contract',
-      closed: 'Closed',
-      cancelled: 'Cancelled',
-      expired: 'Expired',
-    };
-
-    return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status] || styles.active}`}>
-        {labels[status] || status}
-      </span>
-    );
-  };
-
-  // Get closing status indicator
   const getClosingIndicator = (transaction: TransactionWithDetails) => {
-    if (!transaction.closing_date) {
-      return null;
-    }
+    if (!transaction.closing_date) return null;
 
     const daysToClosing = transaction.days_to_closing || 0;
 
     if (daysToClosing < 0) {
       return (
-        <span className="flex items-center text-xs text-green-400">
+        <span className="flex items-center text-xs text-green-700">
           <CheckCircle2 className="w-3 h-3 mr-1" />
           Closed
         </span>
@@ -108,16 +81,16 @@ export default function TransactionsPage() {
 
     if (daysToClosing === 0) {
       return (
-        <span className="flex items-center text-xs text-brand-500 font-medium">
+        <span className="flex items-center text-xs text-brand-600 font-medium">
           <Clock className="w-3 h-3 mr-1 animate-pulse" />
-          Closing Today!
+          Closing today
         </span>
       );
     }
 
     if (daysToClosing <= 7) {
       return (
-        <span className="flex items-center text-xs text-orange-400">
+        <span className="flex items-center text-xs text-amber-700">
           <AlertCircle className="w-3 h-3 mr-1" />
           {daysToClosing} days to closing
         </span>
@@ -134,201 +107,160 @@ export default function TransactionsPage() {
 
   return (
     <div className="min-h-screen">
-      <Header title="Transactions" subtitle="Manage your real estate transactions and track progress" />
+      <Header title="Transactions" subtitle="Track deals, milestones, documents, and closing dates" />
       <PageShell>
-      <div className="space-y-4 sm:space-y-6">
-        {/* Action buttons */}
-        <div className="flex">
-        <Link href="/dashboard/transactions/new" className="w-full sm:w-auto">
-          <Button className="w-full sm:w-auto">
-            <Plus className="w-4 h-4 mr-2" />
-            New Transaction
-          </Button>
-        </Link>
-      </div>
+        <div className="space-y-6">
+          {!isLoading && transactions.length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <StatCard label="Showing" value={transactions.length} icon={Building2} />
+              <StatCard label="In progress" value={inProgressCount} icon={TrendingUp} />
+              <StatCard label="Closed" value={closedCount} icon={CheckCircle2} />
+              <StatCard label="Volume" value={formatCurrency(volumeTotal)} icon={DollarSign} />
+            </div>
+          )}
 
-      {/* Filters */}
-      <div className="flex flex-col gap-3 sm:gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600" />
-          <input
-            type="text"
-            placeholder="Search by address, buyer, or seller..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 bg-white text-gray-900 placeholder-gray-400"
-          />
-        </div>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-3 sm:px-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 bg-white text-gray-900"
-        >
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="pending">Pending</option>
-          <option value="under_contract">Under Contract</option>
-          <option value="closed">Closed</option>
-          <option value="cancelled">Cancelled</option>
-          <option value="expired">Expired</option>
-        </select>
-      </div>
-
-      {/* Error message */}
-      {error && (
-        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-300">
-          {error}
-        </div>
-      )}
-
-      {/* Loading state — only on first visit with no cache */}
-      {isLoading ? (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-32 bg-white border border-gray-200 rounded-xl animate-pulse" />
-          ))}
-        </div>
-      ) : filteredTransactions.length === 0 ? (
-        <EmptyState
-          icon={Building2}
-          title={searchTerm || statusFilter !== 'all' ? 'No matching transactions' : 'No transactions yet'}
-          description={
-            searchTerm || statusFilter !== 'all'
-              ? 'Try adjusting your search or filters.'
-              : 'Create your first transaction to track milestones, documents, and closing dates.'
-          }
-          action={
-            !searchTerm && statusFilter === 'all' ? (
-              <Link href="/dashboard/transactions/new">
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Transaction
-                </Button>
-              </Link>
-            ) : undefined
-          }
-        />
-      ) : (
-        /* Transactions list */
-        <div className="space-y-4">
-          {filteredTransactions.map((transaction) => (
-            <Link key={transaction.id} href={`/dashboard/transactions/${transaction.id}`}>
-              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    {/* Property info */}
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="p-2 rounded-lg bg-brand-500/10 border border-brand-500/20">
-                        <Building2 className="w-5 h-5 text-brand-600" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          {transaction.property_address}
-                        </h3>
-                        {(transaction.property_city || transaction.property_state) && (
-                          <p className="text-sm text-gray-500">
-                            {[transaction.property_city, transaction.property_state, transaction.property_zip]
-                              .filter(Boolean)
-                              .join(', ')}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Transaction details */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                      {/* Price */}
-                      <div className="flex items-center text-sm">
-                        <DollarSign className="w-4 h-4 text-gray-500 mr-2" />
-                        <div>
-                          <p className="text-gray-500">Price</p>
-                          <p className="font-semibold text-gray-900">{formatCurrency(transaction.offer_price)}</p>
-                        </div>
-                      </div>
-
-                      {/* Buyer */}
-                      <div className="flex items-center text-sm">
-                        <User className="w-4 h-4 text-gray-500 mr-2" />
-                        <div>
-                          <p className="text-gray-500">Buyer</p>
-                          <p className="font-medium text-gray-900">{transaction.buyer_name}</p>
-                        </div>
-                      </div>
-
-                      {/* Seller */}
-                      <div className="flex items-center text-sm">
-                        <Users className="w-4 h-4 text-gray-500 mr-2" />
-                        <div>
-                          <p className="text-gray-500">Seller</p>
-                          <p className="font-medium text-gray-900">{transaction.seller_name}</p>
-                        </div>
-                      </div>
-
-                      {/* Progress */}
-                      <div className="flex items-center text-sm">
-                        <CheckCircle2 className="w-4 h-4 text-gray-500 mr-2" />
-                        <div>
-                          <p className="text-gray-500">Progress</p>
-                          <p className="font-medium text-gray-900">
-                            {transaction.completed_items_count}/{transaction.total_items_count} tasks
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Timeline preview */}
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      <TransactionTimeline transaction={transaction} compact />
-                    </div>
-                  </div>
-
-                  {/* Status and arrow */}
-                  <div className="flex flex-col items-end ml-4">
-                    {getStatusBadge(transaction.status)}
-                    <div className="mt-2">
-                      {getClosingIndicator(transaction)}
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-gray-500 mt-4" />
-                  </div>
-                </div>
-              </Card>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col sm:flex-row gap-3 flex-1">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search by address, buyer, or seller..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 bg-white text-gray-900 placeholder-gray-400"
+                />
+              </div>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-3 sm:px-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 bg-white text-gray-900 sm:min-w-[180px]"
+              >
+                <option value="open">In progress (default)</option>
+                <option value="all">All deals</option>
+                <option value="active">Active</option>
+                <option value="pending">Pending</option>
+                <option value="under_contract">Under contract</option>
+                <option value="closed">Closed</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="expired">Expired</option>
+              </select>
+            </div>
+            <Link href="/dashboard/transactions/new" className="w-full sm:w-auto shrink-0">
+              <Button className="w-full sm:w-auto">
+                <Plus className="w-4 h-4 mr-2" />
+                New Transaction
+              </Button>
             </Link>
-          ))}
-        </div>
-      )}
+          </div>
 
-      {/* Summary stats */}
-      {!isLoading && transactions.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-gray-200">
-          <Card className="text-center py-4">
-            <p className="text-2xl font-bold text-gray-900">{transactions.length}</p>
-            <p className="text-sm text-gray-500">Total Transactions</p>
-          </Card>
-          <Card className="text-center py-4">
-            <p className="text-2xl font-bold text-brand-500">
-              {transactions.filter(t => t.status === 'active' || t.status === 'under_contract').length}
-            </p>
-            <p className="text-sm text-gray-500">Active</p>
-          </Card>
-          <Card className="text-center py-4">
-            <p className="text-2xl font-bold text-green-400">
-              {transactions.filter(t => t.status === 'closed').length}
-            </p>
-            <p className="text-sm text-gray-500">Closed</p>
-          </Card>
-          <Card className="text-center py-4">
-            <p className="text-2xl font-bold text-gray-900">
-              {formatCurrency(
-                transactions
-                  .filter(t => t.status !== 'cancelled' && t.status !== 'expired')
-                  .reduce((sum, t) => sum + t.offer_price, 0)
-              )}
-            </p>
-            <p className="text-sm text-gray-500">Total Volume</p>
-          </Card>
+          {error && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+              {error}
+            </div>
+          )}
+
+          {isLoading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-32 bg-white border border-gray-200 rounded-xl animate-pulse" />
+              ))}
+            </div>
+          ) : filteredTransactions.length === 0 ? (
+            <EmptyState
+              icon={Building2}
+              title={searchTerm || statusFilter !== 'all' ? 'No matching transactions' : 'No transactions yet'}
+              description={
+                searchTerm || statusFilter !== 'open'
+                  ? 'Try adjusting your search or filters.'
+                  : 'Create your first transaction to track milestones, documents, and closing dates.'
+              }
+              action={
+                !searchTerm && statusFilter === 'open' ? (
+                  <Link href="/dashboard/transactions/new">
+                    <Button>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Create Transaction
+                    </Button>
+                  </Link>
+                ) : undefined
+              }
+            />
+          ) : (
+            <div className="space-y-4">
+              {filteredTransactions.map((transaction) => (
+                <Link key={transaction.id} href={`/dashboard/transactions/${transaction.id}`}>
+                  <Card hover className="cursor-pointer">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="p-2 rounded-lg bg-brand-50 border border-brand-100 shrink-0">
+                            <Building2 className="w-5 h-5 text-brand-600" />
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="text-lg font-semibold text-gray-900 truncate">
+                              {transaction.property_address}
+                            </h3>
+                            {(transaction.property_city || transaction.property_state) && (
+                              <p className="text-sm text-gray-500 truncate">
+                                {[transaction.property_city, transaction.property_state, transaction.property_zip]
+                                  .filter(Boolean)
+                                  .join(', ')}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                          <div className="flex items-center text-sm gap-2">
+                            <DollarSign className="w-4 h-4 text-gray-400 shrink-0" />
+                            <div>
+                              <p className="text-gray-500 text-xs">Price</p>
+                              <p className="font-semibold text-gray-900">{formatCurrency(transaction.offer_price)}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center text-sm gap-2">
+                            <User className="w-4 h-4 text-gray-400 shrink-0" />
+                            <div className="min-w-0">
+                              <p className="text-gray-500 text-xs">Buyer</p>
+                              <p className="font-medium text-gray-900 truncate">{transaction.buyer_name}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center text-sm gap-2">
+                            <Users className="w-4 h-4 text-gray-400 shrink-0" />
+                            <div className="min-w-0">
+                              <p className="text-gray-500 text-xs">Seller</p>
+                              <p className="font-medium text-gray-900 truncate">{transaction.seller_name}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center text-sm gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-gray-400 shrink-0" />
+                            <div>
+                              <p className="text-gray-500 text-xs">Tasks</p>
+                              <p className="font-medium text-gray-900">
+                                {transaction.completed_items_count}/{transaction.total_items_count}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mt-4 pt-4 border-t border-gray-100 hidden md:block">
+                          <TransactionTimeline transaction={transaction} compact />
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col items-end shrink-0">
+                        <TransactionStatusBadge status={transaction.status} />
+                        <div className="mt-2">{getClosingIndicator(transaction)}</div>
+                        <ChevronRight className="w-5 h-5 text-gray-300 mt-4" />
+                      </div>
+                    </div>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
-      )}
-      </div>
       </PageShell>
     </div>
   );

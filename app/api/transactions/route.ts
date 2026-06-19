@@ -45,7 +45,11 @@ export async function GET(request: NextRequest) {
 
     // Apply status filter if provided
     if (status && status !== 'all') {
-      query = query.eq('status', status);
+      if (status === 'open') {
+        query = query.in('status', ['active', 'pending', 'under_contract']);
+      } else {
+        query = query.eq('status', status);
+      }
     }
 
     const { data: transactions, error } = await query;
