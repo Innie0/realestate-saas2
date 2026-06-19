@@ -1,4 +1,4 @@
-import useSWR, { type SWRConfiguration } from 'swr';
+import useSWR, { mutate as globalMutate, type SWRConfiguration } from 'swr';
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
@@ -14,6 +14,15 @@ export async function swrFetcher<T = unknown>(url: string): Promise<ApiResponse<
     throw new Error(json.error || 'Request failed');
   }
   return json;
+}
+
+/** Re-fetch all cached transaction list endpoints (any filter/limit). */
+export function revalidateTransactionsCache() {
+  return globalMutate(
+    (key) => typeof key === 'string' && key.startsWith('/api/transactions'),
+    undefined,
+    { revalidate: true },
+  );
 }
 
 /** Cached API fetch — shows stale data instantly while revalidating in the background. */

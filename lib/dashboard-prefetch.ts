@@ -10,7 +10,7 @@ const ROUTE_PREFETCH_APIS: Record<string, string[]> = {
     '/api/transactions?limit=4',
   ],
   '/dashboard/projects': ['/api/projects'],
-  '/dashboard/transactions': ['/api/transactions'],
+  '/dashboard/transactions': ['/api/transactions?status=open', '/api/transactions'],
   '/dashboard/clients': ['/api/clients?status=active'],
   '/dashboard/leads': [
     '/api/clients?status=all&view=inbox',

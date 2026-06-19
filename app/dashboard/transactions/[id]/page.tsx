@@ -26,6 +26,7 @@ import {
   TRANSACTION_STATUSES,
   type TransactionStatus,
 } from '@/lib/transaction-status';
+import { revalidateTransactionsCache } from '@/lib/swr';
 
 interface TransactionDetailPageProps {
   params: Promise<{ id: string }>;
@@ -129,6 +130,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
         throw new Error(data.error || 'Failed to delete transaction');
       }
 
+      await revalidateTransactionsCache();
       router.push('/dashboard/transactions');
     } catch (err: any) {
       setError(err.message);
@@ -184,6 +186,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
       setTransaction((prev) =>
         prev ? { ...prev, ...data.data, status: data.data.status as TransactionStatus } : prev
       );
+      await revalidateTransactionsCache();
     } catch (err: unknown) {
       setTransaction((prev) => (prev ? { ...prev, status: previousStatus } : prev));
       setError(err instanceof Error ? err.message : 'Failed to update status');

@@ -9,6 +9,7 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { Transaction } from '@/types';
 import { TRANSACTION_STATUSES } from '@/lib/transaction-status';
+import { revalidateTransactionsCache } from '@/lib/swr';
 
 interface TransactionFormProps {
   transaction?: Transaction; // Existing transaction for editing
@@ -154,6 +155,8 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
       if (!data.success) {
         throw new Error(data.error || 'Failed to save transaction');
       }
+
+      await revalidateTransactionsCache();
 
       if (onSuccess) {
         onSuccess(data.data);
