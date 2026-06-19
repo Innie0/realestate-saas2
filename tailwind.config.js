@@ -7,6 +7,16 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-jakarta)', 'system-ui', 'sans-serif'],
+      },
+      fontSize: {
+        'display-sm': ['1.75rem', { lineHeight: '2.125rem', letterSpacing: '-0.025em', fontWeight: '600' }],
+        'title': ['1.0625rem', { lineHeight: '1.5rem', letterSpacing: '-0.015em', fontWeight: '600' }],
+        'body': ['0.9375rem', { lineHeight: '1.5rem', fontWeight: '400' }],
+        'caption': ['0.8125rem', { lineHeight: '1.25rem', fontWeight: '400' }],
+        'label': ['0.6875rem', { lineHeight: '1rem', letterSpacing: '0.04em', fontWeight: '500' }],
+      },
       colors: {
         brand: {
           50: '#fff4ed',

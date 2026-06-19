@@ -16,7 +16,7 @@ export default function LegalPageLayout({
   children,
 }: LegalPageLayoutProps) {
   return (
-    <div className="min-h-screen bg-[#F5F5F5]">
+    <div className="min-h-screen bg-[#F3F3F2]">
       <header className="sticky top-0 z-10 bg-[#F5F5F5]/90 backdrop-blur-md">
         <div className="mx-auto max-w-3xl px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">

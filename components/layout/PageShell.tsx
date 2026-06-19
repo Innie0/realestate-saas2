@@ -17,7 +17,7 @@ export default function PageShell({ children, className, size = 'default' }: Pag
   return (
     <div
       className={clsx(
-        'px-4 sm:px-6 py-5 sm:py-6 text-gray-900 mx-auto w-full',
+        'px-4 sm:px-6 py-6 sm:py-8 text-gray-900 mx-auto w-full',
         sizeClasses[size],
         className
       )}

@@ -10,7 +10,16 @@
 /* Custom base styles */
 @layer base {
   body {
-    @apply bg-[#F5F5F5] text-gray-900;
+    @apply bg-[#F3F3F2] text-gray-900 antialiased;
+    font-feature-settings: 'ss01' on, 'cv01' on;
+  }
+
+  h1 {
+    @apply tracking-tight;
+  }
+
+  h2, h3 {
+    @apply tracking-tight text-gray-900;
   }
 
   /* Custom scrollbar styles */
@@ -38,7 +47,7 @@
   }
 
   /* Headings */
-  h1, h2, h3, h4, h5, h6 {
+  h4, h5, h6 {
     @apply text-gray-900;
   }
 
@@ -109,6 +118,14 @@
 
   .legal-prose a {
     @apply text-brand-600 hover:text-brand-700 underline underline-offset-2;
+  }
+
+  .text-muted {
+    @apply text-gray-500 text-[0.8125rem] leading-5;
+  }
+
+  .text-label {
+    @apply text-[0.6875rem] leading-4 font-medium uppercase tracking-wide text-gray-500;
   }
 }
 

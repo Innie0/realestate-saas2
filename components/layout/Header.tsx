@@ -197,12 +197,12 @@ export default function Header({ title, subtitle }: HeaderProps) {
   };
   return (
     <header className="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b border-gray-100">
-      <div className="flex h-[4.25rem] items-center justify-between px-6">
+      <div className="flex h-[4.5rem] items-center justify-between px-6">
         {/* Left side - Page title and subtitle */}
         <div className="min-w-0">
-          <h1 className="text-xl font-semibold tracking-tight text-gray-900 truncate">{title}</h1>
+          <h1 className="text-title sm:text-display-sm font-semibold tracking-tight text-gray-900 truncate">{title}</h1>
           {subtitle && (
-            <p className="text-sm text-gray-500 mt-0.5 truncate">{subtitle}</p>
+            <p className="text-caption sm:text-body text-gray-500 mt-1 truncate">{subtitle}</p>
           )}
         </div>
 

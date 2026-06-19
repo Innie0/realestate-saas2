@@ -2,11 +2,14 @@
 // This is the main layout file for the Next.js app
 
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 
-// Load Inter font from Google Fonts
-const inter = Inter({ subsets: ['latin'] });
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-jakarta',
+  display: 'swap',
+});
 
 /**
  * Metadata for the application
@@ -85,7 +88,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${jakarta.variable} font-sans antialiased`}>
         {children}
       </body>
     </html>
