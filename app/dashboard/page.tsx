@@ -7,6 +7,7 @@ import PageShell from '@/components/layout/PageShell';
 import Surface from '@/components/ui/Surface';
 import Button from '@/components/ui/Button';
 import NotificationsPanel from '@/components/NotificationsPanel';
+import PlanUsagePanel from '@/components/dashboard/PlanUsagePanel';
 import {
   Plus,
   ArrowRight,
@@ -63,11 +64,107 @@ const QUICK_LINKS = [
   { href: '/dashboard/clients', label: 'Clients', icon: FolderKanban, tour: 'manage-clients' },
 ] as const;
 
-const USAGE_KEYS = [
-  { key: 'projects', label: 'Projects' },
-  { key: 'property_lookups', label: 'Lookups' },
-  { key: 'ai_messages', label: 'AI messages' },
-] as const;
+function ContinueSection({
+  projectsLoading,
+  continueItem,
+  recentProjects,
+}: {
+  projectsLoading: boolean;
+  continueItem:
+    | { type: 'project'; item: Project }
+    | { type: 'transaction'; item: RecentTransaction }
+    | null;
+  recentProjects: Project[];
+}) {
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-3">
+        <div>
+          <p className="text-label mb-1">Continue</p>
+          <h2 className="text-title font-semibold tracking-tight text-gray-900">Pick up where you left off</h2>
+        </div>
+        <Link
+          href="/dashboard/projects"
+          className="text-caption text-gray-500 hover:text-gray-900 flex items-center gap-1 transition-colors"
+        >
+          All projects <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
+      </div>
+
+      {projectsLoading && recentProjects.length === 0 ? (
+        <div className="space-y-2">
+          {[1, 2].map((i) => (
+            <div key={i} className="h-14 rounded-2xl bg-white shadow-sm animate-pulse" />
+          ))}
+        </div>
+      ) : continueItem ? (
+        <div className="space-y-2">
+          {continueItem.type === 'project' ? (
+            <Link href={`/dashboard/projects/${continueItem.item.id}`}>
+              <Surface padding="sm" hover className="flex items-center gap-4 group">
+                <div className="p-2.5 rounded-xl bg-brand-50 text-brand-600">
+                  <FolderKanban className="w-5 h-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-body font-medium text-gray-900 truncate">{continueItem.item.title}</p>
+                  <p className="text-caption text-gray-500 capitalize">{continueItem.item.status.replace('_', ' ')}</p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors shrink-0" />
+              </Surface>
+            </Link>
+          ) : (
+            <Link href={`/dashboard/transactions/${continueItem.item.id}`}>
+              <Surface padding="sm" hover className="flex items-center gap-4 group">
+                <div className="p-2.5 rounded-xl bg-gray-100 text-gray-600">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-body font-medium text-gray-900 truncate">{continueItem.item.property_address}</p>
+                  <p className="text-caption text-gray-500 capitalize">{continueItem.item.status.replace('_', ' ')}</p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors shrink-0" />
+              </Surface>
+            </Link>
+          )}
+
+          {recentProjects
+            .filter((p) => continueItem.type !== 'project' || p.id !== continueItem.item.id)
+            .slice(0, 2)
+            .map((project) => (
+              <Link key={project.id} href={`/dashboard/projects/${project.id}`}>
+                <Surface padding="sm" hover className="flex items-center gap-4 group">
+                  <div className="p-2 rounded-lg bg-gray-100 text-gray-500">
+                    <FolderKanban className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-body text-gray-900 truncate">{project.title}</p>
+                    <p className="text-caption text-gray-500 capitalize">{project.status.replace('_', ' ')}</p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors shrink-0" />
+                </Surface>
+              </Link>
+            ))}
+        </div>
+      ) : (
+        <Surface padding="md" className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <FolderKanban className="w-8 h-8 text-gray-300 shrink-0" />
+            <div>
+              <p className="text-body font-medium text-gray-900">No recent work yet</p>
+              <p className="text-caption text-gray-500 mt-0.5">Create a listing project to get started with AI content.</p>
+            </div>
+          </div>
+          <Link href="/dashboard/projects/new" data-tour="new-project" className="shrink-0">
+            <Button size="sm">
+              <Plus className="w-4 h-4 mr-2" />
+              New listing
+            </Button>
+          </Link>
+        </Surface>
+      )}
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const { response: usageResponse, isLoading: usageLoading } = useApi<UsageData>('/api/usage');
@@ -193,162 +290,36 @@ export default function DashboardPage() {
         )}
 
         {/* Today layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6">
-          <div className="lg:col-span-2 space-y-5" data-tour="notifications">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6 items-start">
+          <div className="lg:col-span-2 space-y-6" data-tour="notifications">
             <NotificationsPanel embedded />
+            <ContinueSection
+              projectsLoading={projectsLoading}
+              continueItem={continueItem}
+              recentProjects={recentProjects}
+            />
           </div>
 
-          <div className="space-y-5">
-            <Surface padding="md">
-              <p className="text-label mb-3">Quick actions</p>
-              <div className="space-y-1">
-                {QUICK_LINKS.map(({ href, label, icon: Icon, ...rest }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    data-tour={'tour' in rest ? rest.tour : undefined}
-                    className="flex items-center gap-3 px-2 py-2.5 -mx-2 rounded-xl text-body text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors group"
-                  >
-                    <Icon className="w-4 h-4 text-gray-400 group-hover:text-brand-500 transition-colors" />
-                    <span className="flex-1">{label}</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                ))}
-              </div>
-            </Surface>
-
-            {usage && (
-              <Surface padding="md" data-tour="plan-usage">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <p className="text-label mb-1">Your plan</p>
-                    <p className="text-title font-semibold capitalize">{plan}</p>
-                  </div>
-                  {plan !== 'pro' && (
-                    <Link href="/dashboard/upgrade">
-                      <Button variant="outline" size="sm">
-                        Upgrade
-                      </Button>
-                    </Link>
-                  )}
-                </div>
-                <div className="space-y-3">
-                  {USAGE_KEYS.map(({ key, label }) => {
-                    const item = usage[key];
-                    if (!item) return null;
-                    const isUnlimited = item.limit === -1;
-                    const pct = isUnlimited ? 0 : Math.min((item.current / item.limit) * 100, 100);
-                    const isNearLimit = !isUnlimited && pct >= 80;
-                    return (
-                      <div key={key}>
-                        <div className="flex items-center justify-between text-caption mb-1.5">
-                          <span className="text-gray-600">{label}</span>
-                          <span className={isNearLimit ? 'text-amber-600 font-medium' : 'text-gray-500'}>
-                            {isUnlimited ? 'Unlimited' : `${item.current} / ${item.limit}`}
-                          </span>
-                        </div>
-                        {!isUnlimited && (
-                          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                            <div
-                              className={`h-full rounded-full transition-all ${
-                                pct >= 100 ? 'bg-red-500' : isNearLimit ? 'bg-amber-500' : 'bg-brand-500'
-                              }`}
-                              style={{ width: `${pct}%` }}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </Surface>
-            )}
-          </div>
-        </div>
-
-        {/* Pick up where you left off */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <p className="text-label mb-1">Continue</p>
-              <h2 className="text-title font-semibold tracking-tight text-gray-900">Pick up where you left off</h2>
-            </div>
-            <Link
-              href="/dashboard/projects"
-              className="text-caption text-gray-500 hover:text-gray-900 flex items-center gap-1 transition-colors"
-            >
-              All projects <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-
-          {projectsLoading && recentProjects.length === 0 ? (
-            <div className="space-y-2">
-              {[1, 2].map((i) => (
-                <div key={i} className="h-16 rounded-2xl bg-white shadow-sm animate-pulse" />
+          <Surface padding="md" className="lg:sticky lg:top-20">
+            <p className="text-label mb-3">Quick actions</p>
+            <div className="space-y-1">
+              {QUICK_LINKS.map(({ href, label, icon: Icon, ...rest }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  data-tour={'tour' in rest ? rest.tour : undefined}
+                  className="flex items-center gap-3 px-2 py-2.5 -mx-2 rounded-xl text-body text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors group"
+                >
+                  <Icon className="w-4 h-4 text-gray-400 group-hover:text-brand-500 transition-colors" />
+                  <span className="flex-1">{label}</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
               ))}
             </div>
-          ) : continueItem ? (
-            <div className="space-y-2">
-              {continueItem.type === 'project' ? (
-                <Link href={`/dashboard/projects/${continueItem.item.id}`}>
-                  <Surface padding="sm" hover className="flex items-center gap-4 group">
-                    <div className="p-2.5 rounded-xl bg-brand-50 text-brand-600">
-                      <FolderKanban className="w-5 h-5" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-body font-medium text-gray-900 truncate">{continueItem.item.title}</p>
-                      <p className="text-caption text-gray-500 capitalize">{continueItem.item.status.replace('_', ' ')}</p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors shrink-0" />
-                  </Surface>
-                </Link>
-              ) : (
-                <Link href={`/dashboard/transactions/${continueItem.item.id}`}>
-                  <Surface padding="sm" hover className="flex items-center gap-4 group">
-                    <div className="p-2.5 rounded-xl bg-gray-100 text-gray-600">
-                      <FileText className="w-5 h-5" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-body font-medium text-gray-900 truncate">{continueItem.item.property_address}</p>
-                      <p className="text-caption text-gray-500 capitalize">{continueItem.item.status.replace('_', ' ')}</p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors shrink-0" />
-                  </Surface>
-                </Link>
-              )}
-
-              {recentProjects
-                .filter((p) => continueItem.type !== 'project' || p.id !== continueItem.item.id)
-                .slice(0, 2)
-                .map((project) => (
-                  <Link key={project.id} href={`/dashboard/projects/${project.id}`}>
-                    <Surface padding="sm" hover className="flex items-center gap-4 group">
-                      <div className="p-2 rounded-lg bg-gray-100 text-gray-500">
-                        <FolderKanban className="w-4 h-4" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-body text-gray-900 truncate">{project.title}</p>
-                        <p className="text-caption text-gray-500 capitalize">{project.status.replace('_', ' ')}</p>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors shrink-0" />
-                    </Surface>
-                  </Link>
-                ))}
-            </div>
-          ) : (
-            <Surface padding="lg" className="text-center">
-              <FolderKanban className="w-8 h-8 mx-auto text-gray-300 mb-3" />
-              <p className="text-body font-medium text-gray-900 mb-1">No recent work yet</p>
-              <p className="text-caption text-gray-500 mb-4">Create a listing project to get started with AI content.</p>
-              <Link href="/dashboard/projects/new" data-tour="new-project">
-                <Button size="sm">
-                  <Plus className="w-4 h-4 mr-2" />
-                  New listing project
-                </Button>
-              </Link>
-            </Surface>
-          )}
+          </Surface>
         </div>
+
+        {usage && <PlanUsagePanel usage={usage} plan={plan} />}
       </PageShell>
     </div>
   );

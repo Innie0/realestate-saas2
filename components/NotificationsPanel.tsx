@@ -203,11 +203,18 @@ export default function NotificationsPanel({ embedded = false, className }: Noti
       ))}
     </div>
   ) : items.length === 0 ? (
-    <div className="py-8 text-center">
-      <Calendar className="w-8 h-8 mx-auto text-gray-300 mb-3" />
-      <p className="text-body text-gray-600 font-medium">Nothing scheduled this week</p>
-      <p className="text-caption text-gray-500 mt-1">Add a reminder or calendar event to see it here.</p>
-      <Link href="/dashboard/calendar" className="inline-flex items-center gap-1 text-caption text-brand-600 hover:text-brand-700 mt-4 font-medium">
+    <div className="py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex items-center gap-3">
+        <Calendar className="w-8 h-8 text-gray-300 shrink-0" />
+        <div>
+          <p className="text-body text-gray-700 font-medium">Nothing scheduled this week</p>
+          <p className="text-caption text-gray-500 mt-0.5">Add a reminder or event to keep your day on track.</p>
+        </div>
+      </div>
+      <Link
+        href="/dashboard/calendar"
+        className="inline-flex items-center justify-center gap-1.5 text-caption font-medium text-brand-600 hover:text-brand-700 shrink-0"
+      >
         Open calendar <ArrowRight className="w-3.5 h-3.5" />
       </Link>
     </div>
