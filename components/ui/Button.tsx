@@ -30,16 +30,16 @@ export default function Button({
   ...props
 }: ButtonProps) {
   // Base styles applied to all buttons
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg min-h-[44px] touch-manipulation';
+  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed min-h-[40px] touch-manipulation';
 
-  // Variant styles - different colors for different button types with gradients
+  // Variant styles
   const variants = {
-    primary: 'bg-brand-500 text-white hover:bg-brand-600 focus:ring-brand-400 shadow-lg border border-brand-500',
-    secondary: 'bg-brand-50 text-brand-700 hover:bg-brand-100 focus:ring-brand-300 border border-brand-200',
-    outline: 'border-2 border-brand-500 text-brand-600 hover:bg-brand-50 focus:ring-brand-400',
-    'outline-light': 'border-2 border-brand-500 text-brand-600 hover:bg-brand-500 hover:text-white focus:ring-brand-400',
-    white: 'bg-white text-gray-900 hover:bg-gray-50 focus:ring-gray-400 border border-gray-200',
-    danger: 'bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 focus:ring-red-500',
+    primary: 'bg-brand-500 text-white hover:bg-brand-600 focus:ring-brand-400/40 shadow-sm',
+    secondary: 'bg-gray-100 text-gray-800 hover:bg-gray-200 focus:ring-gray-300/60',
+    outline: 'border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300 focus:ring-brand-400/30 shadow-sm',
+    'outline-light': 'border border-brand-300 text-brand-700 bg-white hover:bg-brand-50 focus:ring-brand-400/30',
+    white: 'bg-white text-gray-900 hover:bg-gray-50 focus:ring-gray-300/60 shadow-sm',
+    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-400/40 shadow-sm',
   };
 
   // Size styles - different padding for different sizes

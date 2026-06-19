@@ -6,11 +6,11 @@ import ClientCard from '@/components/ClientCard';
 import ClientForm from '@/components/ClientForm';
 import ReminderForm from '@/components/ReminderForm';
 import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
-import Header from '@/components/layout/Header';
-import PageShell from '@/components/layout/PageShell';
+import DashboardPage from '@/components/layout/DashboardPage';
+import PageToolbar from '@/components/layout/PageToolbar';
+import SearchInput from '@/components/ui/SearchInput';
 import EmptyState from '@/components/ui/EmptyState';
-import { Search, Plus, X, Users } from 'lucide-react';
+import { Plus, X, Users } from 'lucide-react';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
 
@@ -168,63 +168,47 @@ export default function ClientsPage() {
   };
 
   return (
-    <div className="min-h-screen">
-      <Header title="Clients" subtitle="Manage your client relationships and follow-ups" />
-      <PageShell>
-
-      {/* Filters and search */}
-      <div className="mb-6 flex flex-col gap-3 sm:gap-4">
-        {/* Search bar */}
-        <div data-tour="clients-search" className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600 z-10" />
-          <input
-            type="text"
+    <DashboardPage title="Clients" subtitle="Manage your client relationships and follow-ups">
+      <PageToolbar meta={clients.length > 0 ? `${clients.length} client${clients.length === 1 ? '' : 's'}` : undefined}>
+        <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full">
+          <SearchInput
+            data-tour="clients-search"
             placeholder="Search clients..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-gray-900 placeholder-gray-400"
           />
-        </div>
-
-        {/* Status filter and Create button */}
-        <div className="flex flex-col sm:flex-row gap-2">
           <select
             data-tour="clients-filter"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg bg-gray-100 backdrop-blur-sm text-gray-900 focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500/50 focus:outline-none"
+            className="field-select sm:min-w-[140px]"
           >
-            <option value="all" className="bg-gray-100 text-gray-900">All Clients</option>
-            <option value="active" className="bg-gray-100 text-gray-900">Active</option>
-            <option value="inactive" className="bg-gray-100 text-gray-900">Inactive</option>
-            <option value="archived" className="bg-gray-100 text-gray-900">Archived</option>
+            <option value="all">All clients</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="archived">Archived</option>
           </select>
-
-          {/* Create button */}
-          <Button
-            data-tour="clients-add"
-            variant="primary"
-            size="md"
-            onClick={() => setShowCreateForm(true)}
-            className="w-full sm:w-auto"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            New Client
-          </Button>
         </div>
-      </div>
+        <Button
+          data-tour="clients-add"
+          onClick={() => setShowCreateForm(true)}
+          className="w-full sm:w-auto shrink-0"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          New Client
+        </Button>
+      </PageToolbar>
 
-      {/* Create form modal */}
       {showCreateForm && (
-        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50 p-4">
-          <div className="rounded-xl border border-gray-200 p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto bg-white">
-            <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-800">
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900">New Client</h2>
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="rounded-2xl shadow-xl p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto bg-white">
+            <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
+              <h2 className="text-lg font-semibold text-gray-900">New Client</h2>
               <button
                 onClick={() => setShowCreateForm(false)}
-                className="text-gray-500 hover:text-brand-600 transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
             <ClientForm
@@ -274,17 +258,17 @@ export default function ClientsPage() {
 
       {/* Quick Add Note Modal */}
       {showNoteModal && selectedClient && (
-        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50 p-4">
-          <div className="rounded-xl border border-gray-200 p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto bg-white">
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="rounded-2xl shadow-xl p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto bg-white">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900">
-                Add Note for {selectedClient.name}
+              <h2 className="text-lg font-semibold text-gray-900">
+                Add note for {selectedClient.name}
               </h2>
               <button
                 onClick={() => setShowNoteModal(false)}
-                className="text-gray-500 hover:text-gray-600 flex-shrink-0 ml-2"
+                className="text-gray-400 hover:text-gray-600 flex-shrink-0 ml-2"
               >
-                <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
             <textarea
@@ -292,7 +276,7 @@ export default function ClientsPage() {
               onChange={(e) => setNoteText(e.target.value)}
               placeholder="Enter your note..."
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 mb-4"
+              className="w-full px-3 py-2.5 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 mb-4"
               autoFocus
             />
             <div className="flex gap-3">
@@ -319,17 +303,17 @@ export default function ClientsPage() {
 
       {/* Quick Add Reminder Modal */}
       {showReminderModal && selectedClient && (
-        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50 p-4">
-          <div className="rounded-xl border border-gray-200 p-6 max-w-md w-full bg-white">
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="rounded-2xl shadow-xl p-6 max-w-md w-full bg-white">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900">
-                Add Reminder for {selectedClient.name}
+              <h2 className="text-lg font-semibold text-gray-900">
+                Add reminder for {selectedClient.name}
               </h2>
               <button
                 onClick={() => setShowReminderModal(false)}
-                className="text-gray-500 hover:text-gray-600"
+                className="text-gray-400 hover:text-gray-600"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
             <ReminderForm
@@ -341,8 +325,7 @@ export default function ClientsPage() {
           </div>
         </div>
       )}
-      </PageShell>
-    </div>
+    </DashboardPage>
   );
 }
 

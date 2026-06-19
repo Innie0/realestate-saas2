@@ -2,9 +2,8 @@
 // Legal document explaining data collection and usage
 
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Shield, ArrowLeft } from 'lucide-react';
+import LegalPageLayout from '@/components/layout/LegalPageLayout';
+import { Shield } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
@@ -14,43 +13,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-[#F5F5F5]">
-      {/* Header */}
-      <header className="relative z-10 border-b border-gray-200 backdrop-blur-md bg-[#F5F5F5]/20">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="flex h-20 items-center justify-between">
-            <Link href="/" className="flex items-center gap-2 text-gray-500 hover:text-brand-600 transition-colors">
-              <ArrowLeft className="w-4 h-4" />
-              Back to Home
-            </Link>
-            <Image
-              src="/logo.png"
-              alt="Realestic"
-              width={160}
-              height={48}
-              priority
-              className="h-10 w-auto"
-            />
-          </div>
-        </div>
-      </header>
-
-      {/* Content */}
-      <div className="relative z-10 mx-auto max-w-4xl px-6 py-16 lg:px-8">
-        <div className="bg-white border border-gray-200 rounded-2xl p-8 lg:p-12">
-          {/* Title */}
-          <div className="flex items-center gap-4 mb-8">
-            <div className="p-3 bg-gray-100 rounded-xl">
-              <Shield className="w-8 h-8 text-gray-900" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900">Privacy Policy</h1>
-              <p className="text-gray-500 mt-2">Last Updated: June 13, 2026</p>
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="prose max-w-none">
+    <LegalPageLayout title="Privacy Policy" updated="June 13, 2026" icon={Shield}>
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">Introduction</h2>
               <p className="text-gray-600 leading-relaxed mb-4">
@@ -572,30 +535,11 @@ export default function PrivacyPage() {
               </ul>
             </section>
 
-            <div className="border-t border-gray-200 pt-8 mt-12">
+            <div className="border-t border-gray-100 pt-8 mt-8">
               <p className="text-gray-500 text-sm italic">
                 By using our Service, you acknowledge that you have read and understood this Privacy Policy.
               </p>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-gray-200 bg-[#F5F5F5]/20 backdrop-blur-sm mt-16">
-        <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-gray-500 text-sm">
-              © 2026 Realestic. All rights reserved.
-            </p>
-            <div className="flex items-center gap-6 text-sm text-gray-500">
-              <Link href="/privacy" className="text-gray-900 font-medium">Privacy</Link>
-              <Link href="/terms" className="hover:text-brand-600 transition-colors">Terms</Link>
-              <Link href="/" className="hover:text-brand-600 transition-colors">Home</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </LegalPageLayout>
   );
 }

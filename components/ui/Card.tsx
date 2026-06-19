@@ -24,8 +24,8 @@ export default function Card({
   padding = 'md',
   hover = false,
 }: CardProps) {
-  // Base card styles with dark theme and glassmorphism effect
-  const baseStyles = 'rounded-xl border border-gray-200 relative bg-white shadow-sm';
+  // Base card styles — soft surface, minimal border
+  const baseStyles = 'rounded-2xl relative bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)]';
   const cardStyle = {};
 
   // Padding options
@@ -37,7 +37,7 @@ export default function Card({
   };
 
   // Hover effect - adds subtle lift and glow on hover
-  const hoverStyles = hover ? 'transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 hover:border-gray-300 hover:shadow-lg cursor-pointer' : '';
+  const hoverStyles = hover ? 'transition-all duration-200 hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.06)] cursor-pointer' : '';
 
   // Combine all styles
   const cardClasses = clsx(

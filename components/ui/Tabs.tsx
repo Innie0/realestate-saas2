@@ -26,7 +26,7 @@ export default function Tabs<T extends string>({
   return (
     <div
       className={clsx(
-        'flex gap-1 p-1 bg-gray-100 border border-gray-200 rounded-xl',
+        'flex gap-0.5 p-1 bg-gray-100/80 rounded-xl',
         className
       )}
       role="tablist"
@@ -41,10 +41,10 @@ export default function Tabs<T extends string>({
             aria-selected={active}
             onClick={() => onChange(id)}
             className={clsx(
-              'flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
+              'flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150',
               active
                 ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-900'
+                : 'text-gray-500 hover:text-gray-800 hover:bg-white/50'
             )}
           >
             {Icon && <Icon className="w-4 h-4 flex-shrink-0" />}

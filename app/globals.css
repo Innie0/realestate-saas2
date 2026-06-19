@@ -76,6 +76,40 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+
+  /* Dashboard form controls */
+  .field-select {
+    @apply px-3 py-2.5 text-sm bg-white rounded-xl text-gray-900 shadow-[0_1px_2px_rgba(0,0,0,0.04)] focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-shadow duration-150;
+  }
+
+  /* Legal page typography */
+  .legal-prose section {
+    @apply mb-8 last:mb-0;
+  }
+
+  .legal-prose h2 {
+    @apply text-lg font-semibold text-gray-900 mb-3 tracking-tight;
+  }
+
+  .legal-prose h3 {
+    @apply text-base font-medium text-gray-900 mb-2 mt-4;
+  }
+
+  .legal-prose p {
+    @apply text-gray-600 leading-relaxed mb-3 text-[15px];
+  }
+
+  .legal-prose ul {
+    @apply list-disc pl-5 space-y-1.5 mb-3 text-gray-600 text-[15px];
+  }
+
+  .legal-prose li {
+    @apply leading-relaxed;
+  }
+
+  .legal-prose a {
+    @apply text-brand-600 hover:text-brand-700 underline underline-offset-2;
+  }
 }
 
 /* ── Driver.js tour — light Realestic theme ───────────────────────────── */

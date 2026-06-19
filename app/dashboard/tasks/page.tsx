@@ -521,10 +521,11 @@ export default function TasksPage() {
 
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar - Conversation History */}
-        <div className={`${isSidebarOpen ? 'w-64' : 'w-0'} bg-white border-r border-gray-200 transition-all duration-300 flex flex-col flex-shrink-0 overflow-hidden`}>
-          <div className="p-4 border-b border-gray-200 flex-shrink-0">
+        <div className={`${isSidebarOpen ? 'w-64' : 'w-0'} bg-white border-r border-gray-100 transition-all duration-300 flex flex-col flex-shrink-0 overflow-hidden`}>
+          <div className="p-3 border-b border-gray-100 flex-shrink-0">
             <Button
               onClick={handleNewConversation}
+              variant="outline"
               className="w-full justify-center"
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -551,11 +552,11 @@ export default function TasksPage() {
                 {conversations.map((conv) => (
                   <div
                     key={conv.id}
-                    className={`group relative p-3 rounded-lg cursor-pointer transition-all ${
+                    className={`group relative p-2.5 rounded-xl cursor-pointer transition-all duration-150 ${
                       currentConversationId === conv.id
-                        ? 'bg-gray-100 border border-gray-300'
-                        : 'hover:bg-gray-50 border border-transparent'
-                    } ${conv.pinned ? 'border-l-2 border-l-gray-900' : ''}`}
+                        ? 'bg-gray-100'
+                        : 'hover:bg-gray-50'
+                    } ${conv.pinned ? 'border-l-2 border-l-brand-500 pl-2' : ''}`}
                     onClick={() => selectConversation(conv.id)}
                   >
                     <div className="flex items-start gap-2">
@@ -671,11 +672,10 @@ export default function TasksPage() {
         </div>
 
         {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col bg-[#F5F5F5] min-w-0">
-          {/* Toggle Sidebar Button */}
+        <div className="flex-1 flex flex-col bg-[#F5F5F5] min-w-0 relative">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="absolute top-20 left-2 z-10 p-2 bg-white hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+            className="absolute top-3 left-3 z-10 p-2 bg-white hover:bg-gray-50 rounded-lg shadow-sm transition-colors"
           >
             <MessageSquare className="w-4 h-4 text-gray-600" />
           </button>
@@ -715,7 +715,7 @@ export default function TasksPage() {
                         type="button"
                         onClick={() => handleStarterPrompt(prompt)}
                         disabled={isLoading}
-                        className="text-left text-sm px-4 py-3 rounded-xl border border-gray-200 bg-white hover:border-brand-200 hover:bg-brand-50/50 text-gray-700 transition-colors disabled:opacity-50"
+                        className="text-left text-sm px-4 py-3 rounded-xl bg-white shadow-sm hover:shadow-md text-gray-700 transition-all duration-150 disabled:opacity-50"
                       >
                         {prompt}
                       </button>
@@ -739,8 +739,8 @@ export default function TasksPage() {
                         <div
                           className={`rounded-2xl px-4 py-3 ${
                             msg.role === 'user'
-                              ? 'bg-brand-500 text-white'
-                              : 'bg-white border border-gray-200 text-gray-900'
+                              ? 'bg-brand-500 text-white shadow-sm'
+                              : 'bg-white text-gray-900 shadow-sm'
                           }`}
                         >
                           {/* Image attachment */}
@@ -786,7 +786,7 @@ export default function TasksPage() {
                         <Sparkles className="w-4 h-4 text-brand-600" />
                       </div>
                       <div className="flex-1 max-w-2xl">
-                        <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3">
+                        <div className="bg-white rounded-2xl px-4 py-3 shadow-sm">
                           <div className="flex items-center gap-2">
                             <Loader2 className="w-4 h-4 animate-spin text-gray-900" />
                             <span className="text-sm text-gray-500">Thinking...</span>
@@ -814,7 +814,7 @@ export default function TasksPage() {
           )}
 
           {/* Input Area */}
-          <div className="border-t border-gray-200 p-6 bg-[#F5F5F5] flex-shrink-0">
+          <div className="border-t border-gray-100 p-4 sm:p-6 bg-[#F5F5F5] flex-shrink-0">
             <div className="max-w-3xl mx-auto">
               <form onSubmit={handleSendMessage} className="space-y-3">
                 {/* Image Preview */}
@@ -870,7 +870,7 @@ export default function TasksPage() {
                       }
                     }}
                     placeholder="Type your message... (Shift+Enter for new line)"
-                    className="w-full bg-white border border-gray-200 rounded-xl pl-4 pr-24 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-gray-300 resize-none"
+                    className="w-full bg-white rounded-xl pl-4 pr-24 py-3 text-gray-900 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 resize-none"
                     rows={1}
                     disabled={isLoading}
                   />
@@ -890,12 +890,12 @@ export default function TasksPage() {
                     <button
                       type="submit"
                       disabled={isLoading || (!inputMessage.trim() && !selectedImage && !selectedPdf)}
-                      className="p-2 bg-white hover:bg-gray-200 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="p-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isLoading ? (
-                        <Loader2 className="w-5 h-5 text-black animate-spin" />
+                        <Loader2 className="w-5 h-5 text-white animate-spin" />
                       ) : (
-                        <Send className="w-5 h-5 text-black" />
+                        <Send className="w-5 h-5 text-white" />
                       )}
                     </button>
                   </div>

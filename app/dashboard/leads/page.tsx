@@ -3,11 +3,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Header from '@/components/layout/Header';
-import PageShell from '@/components/layout/PageShell';
+import DashboardPage from '@/components/layout/DashboardPage';
 import Badge from '@/components/ui/Badge';
 import Tabs from '@/components/ui/Tabs';
-import StatCard from '@/components/ui/StatCard';
+import Surface from '@/components/ui/Surface';
 import EmptyState from '@/components/ui/EmptyState';
 import Button from '@/components/ui/Button';
 import { supabase } from '@/lib/supabase';
@@ -117,7 +116,7 @@ function LeadCard({
     : null;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
+    <div className="rounded-2xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)] p-4 hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-200">
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
@@ -387,36 +386,30 @@ export default function LeadsPage() {
   const filteredLeads = leads.filter(l => filter === 'all' || getLeadTemp(l) === filter);
 
   return (
-    <div className="min-h-screen">
-      <Header title="Leads" subtitle="Respond to leads and grow your pipeline" />
-
-      <PageShell size="narrow" className="space-y-6">
+    <DashboardPage
+      title="Leads"
+      subtitle={`${leads.length} in inbox · ${hotLeads.length} hot · ${thisWeek.length} this week`}
+      size="narrow"
+    >
         <div data-tour="leads-tabs">
           <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} hideLabelsOnMobile />
         </div>
 
-        {/* ─── INBOX ─────────────────────────────────────────────────────── */}
         {activeTab === 'inbox' && (
-          <div className="space-y-6">
-            <div data-tour="leads-stats" className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <StatCard label="Total Leads" value={leads.length} icon={Users} />
-              <StatCard label="New This Week" value={thisWeek.length} icon={Clock} />
-              <StatCard label="Hot Leads" value={hotLeads.length} icon={Flame} />
-            </div>
-
+          <div className="space-y-5">
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
-                  <h2 className="text-base font-semibold text-gray-900">Leads inbox</h2>
-                  <p className="text-xs text-gray-500 mt-0.5">New captures stay here until you add them to your CRM.</p>
+                  <h2 className="text-base font-semibold tracking-tight text-gray-900">Inbox</h2>
+                  <p className="text-sm text-gray-500 mt-0.5">New captures stay here until you add them to your CRM.</p>
                 </div>
-                <div data-tour="leads-filter" className="flex gap-1 bg-gray-50 border border-gray-200 rounded-lg p-1 w-full sm:w-auto">
+                <div data-tour="leads-filter" className="flex gap-0.5 bg-gray-100/80 rounded-xl p-1 w-full sm:w-auto">
                   {(['all', 'hot', 'warm', 'cold'] as const).map(f => (
                     <button
                       key={f}
                       onClick={() => setFilter(f)}
-                      className={`flex-1 sm:flex-none px-3 py-1.5 rounded-md text-xs font-medium transition-all capitalize ${
-                        filter === f ? 'bg-white text-gray-900' : 'text-gray-500 hover:text-gray-900'
+                      className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 capitalize ${
+                        filter === f ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-800'
                       }`}
                     >
                       {f}
@@ -478,7 +471,7 @@ export default function LeadsPage() {
             </p>
 
             {/* Share Lead Form */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6">
+            <Surface padding="md">
               <div className="flex items-center gap-2 mb-2">
                 <Link2 className="w-5 h-5 text-gray-500" />
                 <h3 className="text-base font-semibold text-gray-900">Lead capture form</h3>
@@ -556,14 +549,13 @@ export default function LeadsPage() {
                   </Link>
                 </div>
               )}
-            </div>
+            </Surface>
 
-            {/* Open Houses + Agent Profile (Pro) */}
             <div className="grid sm:grid-cols-2 gap-4">
               <button
                 type="button"
                 onClick={() => handleProFeatureClick('/dashboard/leads/open-houses')}
-                className="bg-white border border-gray-200 rounded-xl p-6 hover:border-gray-300 transition-colors group text-left w-full"
+                className="rounded-2xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)] p-6 hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-200 group text-left w-full"
               >
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
@@ -586,7 +578,7 @@ export default function LeadsPage() {
               <button
                 type="button"
                 onClick={() => handleProFeatureClick('/dashboard/leads/profile')}
-                className="bg-white border border-gray-200 rounded-xl p-6 hover:border-gray-300 transition-colors group text-left w-full"
+                className="rounded-2xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)] p-6 hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-200 group text-left w-full"
               >
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
@@ -620,8 +612,7 @@ export default function LeadsPage() {
             </p>
 
             <div className="grid sm:grid-cols-2 gap-4">
-              {/* Auto Follow-Up */}
-              <div className="bg-white border border-gray-200 rounded-xl p-6">
+              <Surface padding="md">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
                     <MailCheck className="w-5 h-5 text-gray-900/70" />
@@ -647,10 +638,9 @@ export default function LeadsPage() {
                   {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : autoFollowup ? <Check className="w-4 h-4" /> : <MailCheck className="w-4 h-4" />}
                   {autoFollowup ? 'Enabled' : 'Enable auto follow-up'}
                 </button>
-              </div>
+              </Surface>
 
-              {/* SMS Alerts — Pro, coming soon */}
-              <div className="bg-white border border-gray-200 rounded-xl p-6 opacity-90">
+              <Surface padding="md" className="opacity-90">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
                     <Phone className="w-5 h-5 text-gray-400" />
@@ -677,11 +667,10 @@ export default function LeadsPage() {
                   <Phone className="w-4 h-4" />
                   Pro · Coming soon
                 </button>
-              </div>
+              </Surface>
             </div>
           </div>
         )}
-      </PageShell>
-    </div>
+    </DashboardPage>
   );
 }

@@ -18,8 +18,8 @@ export default function EmptyState({
 }: EmptyStateProps) {
   return (
     <div className={clsx('text-center py-12 px-4', className)}>
-      <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gray-100 border border-gray-200 mb-4">
-        <Icon className="w-7 h-7 text-gray-400" strokeWidth={1.5} />
+      <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gray-100 mb-4">
+        <Icon className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
       </div>
       <h3 className="text-base font-semibold text-gray-900 mb-1">{title}</h3>
       {description && (

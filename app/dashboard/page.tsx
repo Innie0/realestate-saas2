@@ -7,6 +7,8 @@ import React, { useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import PageShell from '@/components/layout/PageShell';
+import Surface from '@/components/ui/Surface';
+import SectionHeading from '@/components/ui/SectionHeading';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import EmptyState from '@/components/ui/EmptyState';
@@ -105,45 +107,41 @@ export default function DashboardPage() {
       <PageShell className="space-y-6">
         {/* Focus strip */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <Link
-            href="/dashboard/leads"
-            className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-xl hover:border-brand-200 hover:shadow-sm transition-all group"
-          >
-            <div className="p-2 rounded-lg bg-red-50 border border-red-100">
-              <Flame className="w-5 h-5 text-red-600" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Hot leads</p>
-              <p className="text-lg font-bold text-gray-900">{hotLeadCount}</p>
-            </div>
-            <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors" />
+          <Link href="/dashboard/leads">
+            <Surface padding="sm" hover className="flex items-center gap-3 group h-full">
+              <div className="p-2 rounded-lg bg-red-50">
+                <Flame className="w-5 h-5 text-red-600" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs text-gray-500">Hot leads</p>
+                <p className="text-xl font-semibold text-gray-900">{hotLeadCount}</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors" />
+            </Surface>
           </Link>
-          <Link
-            href="/dashboard/projects/new"
-            data-tour="new-project"
-            className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-xl hover:border-brand-200 hover:shadow-sm transition-all group"
-          >
-            <div className="p-2 rounded-lg bg-brand-50 border border-brand-100">
-              <Plus className="w-5 h-5 text-brand-600" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Quick start</p>
-              <p className="text-sm font-semibold text-gray-900">New listing project</p>
-            </div>
-            <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors" />
+          <Link href="/dashboard/projects/new" data-tour="new-project">
+            <Surface padding="sm" hover className="flex items-center gap-3 group h-full">
+              <div className="p-2 rounded-lg bg-brand-50">
+                <Plus className="w-5 h-5 text-brand-600" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs text-gray-500">Quick start</p>
+                <p className="text-sm font-medium text-gray-900">New listing project</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors" />
+            </Surface>
           </Link>
-          <Link
-            href="/dashboard/leads"
-            className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-xl hover:border-brand-200 hover:shadow-sm transition-all group"
-          >
-            <div className="p-2 rounded-lg bg-gray-50 border border-gray-200">
-              <Inbox className="w-5 h-5 text-gray-600" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Inbox</p>
-              <p className="text-lg font-bold text-gray-900">{inboxLeads.length}</p>
-            </div>
-            <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors" />
+          <Link href="/dashboard/leads">
+            <Surface padding="sm" hover className="flex items-center gap-3 group h-full">
+              <div className="p-2 rounded-lg bg-gray-100">
+                <Inbox className="w-5 h-5 text-gray-600" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs text-gray-500">Inbox</p>
+                <p className="text-xl font-semibold text-gray-900">{inboxLeads.length}</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors" />
+            </Surface>
           </Link>
         </div>
 
@@ -163,16 +161,16 @@ export default function DashboardPage() {
 
         {/* Plan Usage */}
         {usage && (
-          <div data-tour="plan-usage"><Card>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Zap className="w-5 h-5 text-gray-900/60" />
-                <h2 className="text-lg font-bold text-gray-900">Plan Usage</h2>
-              </div>
-              <Link href="/dashboard/upgrade">
-                <Button variant="outline" size="sm">Upgrade</Button>
-              </Link>
-            </div>
+          <div data-tour="plan-usage">
+            <Card>
+            <SectionHeading
+              title="Plan usage"
+              action={
+                <Link href="/dashboard/upgrade">
+                  <Button variant="outline" size="sm">Upgrade</Button>
+                </Link>
+              }
+            />
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
               {[
                 { key: 'projects', label: 'Projects', period: '/mo' },
@@ -216,14 +214,14 @@ export default function DashboardPage() {
 
         {/* Recent projects section */}
         <Card>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Recent Projects</h2>
-            <Link href="/dashboard/projects">
-              <Button variant="outline" size="sm">
-                View All
-              </Button>
-            </Link>
-          </div>
+          <SectionHeading
+            title="Recent projects"
+            action={
+              <Link href="/dashboard/projects">
+                <Button variant="outline" size="sm">View all</Button>
+              </Link>
+            }
+          />
 
           {projectsLoading && recentProjects.length === 0 ? (
             // Loading skeletons
@@ -267,15 +265,14 @@ export default function DashboardPage() {
         <div className="grid gap-6 md:grid-cols-2">
           {/* Recent Clients */}
           <Card>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-gray-900/60" />
-                <h2 className="text-base font-semibold text-gray-900">Recent Clients</h2>
-              </div>
-              <Link href="/dashboard/clients" className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1 transition-colors">
-                View all <ArrowRight className="w-3 h-3" />
-              </Link>
-            </div>
+            <SectionHeading
+              title="Recent clients"
+              action={
+                <Link href="/dashboard/clients" className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1 transition-colors">
+                  View all <ArrowRight className="w-3 h-3" />
+                </Link>
+              }
+            />
             {recentClients.length === 0 ? (
               <p className="text-sm text-gray-500 py-4 text-center">No clients yet</p>
             ) : (
@@ -302,15 +299,14 @@ export default function DashboardPage() {
 
           {/* Recent Transactions */}
           <Card>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-gray-900/60" />
-                <h2 className="text-base font-semibold text-gray-900">Recent Transactions</h2>
-              </div>
-              <Link href="/dashboard/transactions" className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1 transition-colors">
-                View all <ArrowRight className="w-3 h-3" />
-              </Link>
-            </div>
+            <SectionHeading
+              title="Recent transactions"
+              action={
+                <Link href="/dashboard/transactions" className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1 transition-colors">
+                  View all <ArrowRight className="w-3 h-3" />
+                </Link>
+              }
+            />
             {recentTransactions.length === 0 ? (
               <p className="text-sm text-gray-500 py-4 text-center">No transactions yet</p>
             ) : (

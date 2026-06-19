@@ -2,10 +2,9 @@
 
 import { useCallback, useEffect, useState, Suspense, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Header from '@/components/layout/Header';
-import PageShell from '@/components/layout/PageShell';
+import DashboardPage from '@/components/layout/DashboardPage';
 import Tabs from '@/components/ui/Tabs';
-import StatCard from '@/components/ui/StatCard';
+import Surface from '@/components/ui/Surface';
 import Button from '@/components/ui/Button';
 import { useApi } from '@/lib/swr';
 import { CmaPanel, type CmaAnalysisResult } from '@/components/property-research/CmaPanel';
@@ -196,42 +195,37 @@ function PropertyResearchContent() {
     return `${usage.current}/${usage.limit}`;
   };
 
+  const usageMeta =
+    lookupUsage || cmaUsage
+      ? `Lookups ${formatUsage(lookupUsage)} · CMA ${formatUsage(cmaUsage)} this month`
+      : undefined;
+
   return (
-    <div className="min-h-screen">
-      <Header
-        title="Property Research"
-        subtitle="Look up owners, property details, and run comp-based CMA — one address, one place"
-      />
-
-      <PageShell size="medium" className="space-y-6">
-
-        {(lookupUsage || cmaUsage) && (
-          <div className="grid grid-cols-2 gap-3">
-            <StatCard label="Lookups this month" value={formatUsage(lookupUsage)} icon={Search} />
-            <StatCard label="CMA this month" value={formatUsage(cmaUsage)} icon={BarChart2} />
-          </div>
-        )}
-
+    <DashboardPage
+      title="Property Research"
+      subtitle={usageMeta ?? 'Look up owners, property details, and run comp-based CMA'}
+      size="medium"
+    >
         {history.length > 0 && (
           <div>
             <button
               type="button"
               onClick={() => setShowHistory((v) => !v)}
-              className="flex items-center gap-2 text-sm text-gray-500 hover:text-brand-600 transition-colors mb-3"
+              className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 transition-colors mb-3"
             >
               <History className="w-4 h-4" />
               Recent ({history.length})
               <ChevronDown className={`w-4 h-4 transition-transform ${showHistory ? 'rotate-180' : ''}`} />
             </button>
             {showHistory && (
-              <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden mb-4">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
-                  <span className="text-xs font-semibold text-gray-500 uppercase">Recent addresses</span>
-                  <button type="button" onClick={() => { setHistory([]); localStorage.removeItem(HISTORY_KEY); setShowHistory(false); }} className="text-xs text-gray-500 hover:text-red-500 flex items-center gap-1">
+              <Surface padding="none" className="overflow-hidden mb-4">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                  <span className="text-xs font-medium text-gray-500">Recent addresses</span>
+                  <button type="button" onClick={() => { setHistory([]); localStorage.removeItem(HISTORY_KEY); setShowHistory(false); }} className="text-xs text-gray-500 hover:text-red-600 flex items-center gap-1">
                     <Trash2 className="w-3.5 h-3.5" /> Clear
                   </button>
                 </div>
-                <div className="divide-y divide-gray-200">
+                <div className="divide-y divide-gray-100">
                   {history.map((entry) => (
                     <button key={entry.id} type="button" onClick={() => loadHistory(entry)} className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors">
                       <p className="text-sm text-gray-900 truncate">{entry.label}</p>
@@ -239,65 +233,59 @@ function PropertyResearchContent() {
                     </button>
                   ))}
                 </div>
-              </div>
+              </Surface>
             )}
           </div>
         )}
 
-        {/* Shared address search — sticky while scrolling results */}
-        <div className="sticky top-16 z-10 rounded-2xl border border-gray-200 p-6 bg-white/95 backdrop-blur-sm shadow-sm">
+        <Surface sticky padding="md">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1.5">Street Address *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Street address *</label>
               <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
                   value={street}
                   onChange={(e) => setStreet(e.target.value)}
                   placeholder="e.g. 123 W Main Street"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
                 />
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1.5">City</label>
-                <input type="text" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Austin" className="w-full px-4 py-3 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">City</label>
+                <input type="text" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Austin" className="w-full px-3 py-2.5 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1.5">State *</label>
-                <select value={state} onChange={(e) => setState(e.target.value)} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">State *</label>
+                <select value={state} onChange={(e) => setState(e.target.value)} className="field-select w-full bg-gray-50">
                   <option value="">Select state</option>
                   {US_STATES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1.5">ZIP</label>
-                <input type="text" value={zip} onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder="93291" className="w-full px-4 py-3 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">ZIP</label>
+                <input type="text" value={zip} onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder="93291" className="w-full px-3 py-2.5 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
               </div>
             </div>
             <p className="text-xs text-gray-500">
-              Demo: 123 W Main Street, Austin, TX — sample owner + CMA (no real PII). Other addresses use your plan quota.
+              Demo: 123 W Main Street, Austin, TX — sample owner + CMA (no real PII).
             </p>
             <div className="flex flex-wrap items-center gap-3">
-              <Button
-                type="button"
-                onClick={handleResearchAddress}
-                disabled={!street.trim() || !state}
-                className="inline-flex items-center gap-2"
-              >
+              <Button type="button" onClick={handleResearchAddress} disabled={!street.trim() || !state} className="inline-flex items-center gap-2">
                 <Search className="w-4 h-4" />
                 Research address
               </Button>
               {(street || city || state || zip) && (
-                <button type="button" onClick={clearForm} className="flex items-center gap-1.5 px-3 py-2.5 text-sm text-gray-500 hover:text-gray-900">
+                <button type="button" onClick={clearForm} className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-500 hover:text-gray-900 transition-colors">
                   <X className="w-4 h-4" /> Clear
                 </button>
               )}
             </div>
           </div>
-        </div>
+        </Surface>
 
         <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
@@ -334,8 +322,7 @@ function PropertyResearchContent() {
             onComplete={handleCmaComplete}
           />
         </div>
-      </PageShell>
-    </div>
+    </DashboardPage>
   );
 }
 
