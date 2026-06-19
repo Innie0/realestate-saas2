@@ -22,6 +22,8 @@ import {
 import { Project } from '@/types';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
+import { isSameAddress } from '@/lib/comp-filters';
+import { isOpenTransactionStatus, type TransactionStatus } from '@/lib/transaction-status';
 
 interface RecentClient {
   id: string;
@@ -65,16 +67,14 @@ const QUICK_LINKS = [
 ] as const;
 
 function ContinueSection({
-  projectsLoading,
+  loading,
   continueItem,
-  recentProjects,
 }: {
-  projectsLoading: boolean;
+  loading: boolean;
   continueItem:
     | { type: 'project'; item: Project }
     | { type: 'transaction'; item: RecentTransaction }
     | null;
-  recentProjects: Project[];
 }) {
   return (
     <div>
@@ -91,12 +91,8 @@ function ContinueSection({
         </Link>
       </div>
 
-      {projectsLoading && recentProjects.length === 0 ? (
-        <div className="space-y-2">
-          {[1, 2].map((i) => (
-            <div key={i} className="h-14 rounded-2xl bg-white shadow-sm animate-pulse" />
-          ))}
-        </div>
+      {loading ? (
+        <div className="h-14 rounded-2xl bg-white shadow-sm animate-pulse" />
       ) : continueItem ? (
         <div className="space-y-2">
           {continueItem.type === 'project' ? (
@@ -126,24 +122,6 @@ function ContinueSection({
               </Surface>
             </Link>
           )}
-
-          {recentProjects
-            .filter((p) => continueItem.type !== 'project' || p.id !== continueItem.item.id)
-            .slice(0, 2)
-            .map((project) => (
-              <Link key={project.id} href={`/dashboard/projects/${project.id}`}>
-                <Surface padding="sm" hover className="flex items-center gap-4 group">
-                  <div className="p-2 rounded-lg bg-gray-100 text-gray-500">
-                    <FolderKanban className="w-4 h-4" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-body text-gray-900 truncate">{project.title}</p>
-                    <p className="text-caption text-gray-500 capitalize">{project.status.replace('_', ' ')}</p>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors shrink-0" />
-                </Surface>
-              </Link>
-            ))}
         </div>
       ) : (
         <Surface padding="md" className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -170,7 +148,7 @@ export default function DashboardPage() {
   const { response: usageResponse, isLoading: usageLoading } = useApi<UsageData>('/api/usage');
   const { data: recentProjects = [], isLoading: projectsLoading } = useApi<Project[]>('/api/projects?limit=3');
   const { data: inboxLeads = [] } = useApi<RecentClient[]>('/api/clients?status=all&view=inbox');
-  const { data: allTransactions = [] } = useApi<RecentTransaction[]>('/api/transactions?limit=3');
+  const { data: allTransactions = [], isLoading: transactionsLoading } = useApi<RecentTransaction[]>('/api/transactions?limit=3');
 
   const usage = usageResponse?.data ?? null;
   const plan = (usageResponse?.plan as 'starter' | 'pro') ?? 'starter';
@@ -196,16 +174,30 @@ export default function DashboardPage() {
 
   const continueItem = useMemo(() => {
     const latestProject = recentProjects[0];
-    const latestTx = allTransactions[0];
+    const latestTx =
+      allTransactions.find((tx) => isOpenTransactionStatus(tx.status as TransactionStatus)) ??
+      allTransactions[0];
+
     if (!latestProject && !latestTx) return null;
     if (!latestTx) return { type: 'project' as const, item: latestProject };
     if (!latestProject) return { type: 'transaction' as const, item: latestTx };
+
+    const sameProperty = isSameAddress(latestProject.title, latestTx.property_address);
+    if (sameProperty) {
+      return isOpenTransactionStatus(latestTx.status as TransactionStatus)
+        ? { type: 'transaction' as const, item: latestTx }
+        : { type: 'project' as const, item: latestProject };
+    }
+
     const projectTime = new Date(latestProject.updated_at || latestProject.created_at).getTime();
     const txTime = new Date(latestTx.updated_at).getTime();
     return txTime > projectTime
       ? { type: 'transaction' as const, item: latestTx }
       : { type: 'project' as const, item: latestProject };
   }, [recentProjects, allTransactions]);
+
+  const continueLoading =
+    (projectsLoading || transactionsLoading) && recentProjects.length === 0 && allTransactions.length === 0;
 
   useTour({
     tourKey: 'tour_dashboard',
@@ -293,33 +285,31 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6 items-start">
           <div className="lg:col-span-2 space-y-6" data-tour="notifications">
             <NotificationsPanel embedded />
-            <ContinueSection
-              projectsLoading={projectsLoading}
-              continueItem={continueItem}
-              recentProjects={recentProjects}
-            />
+            <ContinueSection loading={continueLoading} continueItem={continueItem} />
           </div>
 
-          <Surface padding="md" className="lg:sticky lg:top-20">
-            <p className="text-label mb-3">Quick actions</p>
-            <div className="space-y-1">
-              {QUICK_LINKS.map(({ href, label, icon: Icon, ...rest }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  data-tour={'tour' in rest ? rest.tour : undefined}
-                  className="flex items-center gap-3 px-2 py-2.5 -mx-2 rounded-xl text-body text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors group"
-                >
-                  <Icon className="w-4 h-4 text-gray-400 group-hover:text-brand-500 transition-colors" />
-                  <span className="flex-1">{label}</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </Link>
-              ))}
-            </div>
-          </Surface>
-        </div>
+          <div className="space-y-5">
+            <Surface padding="md">
+              <p className="text-label mb-3">Quick actions</p>
+              <div className="space-y-1">
+                {QUICK_LINKS.map(({ href, label, icon: Icon, ...rest }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    data-tour={'tour' in rest ? rest.tour : undefined}
+                    className="flex items-center gap-3 px-2 py-2.5 -mx-2 rounded-xl text-body text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors group"
+                  >
+                    <Icon className="w-4 h-4 text-gray-400 group-hover:text-brand-500 transition-colors" />
+                    <span className="flex-1">{label}</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                ))}
+              </div>
+            </Surface>
 
-        {usage && <PlanUsagePanel usage={usage} plan={plan} />}
+            {usage && <PlanUsagePanel usage={usage} plan={plan} layout="sidebar" />}
+          </div>
+        </div>
       </PageShell>
     </div>
   );

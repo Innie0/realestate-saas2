@@ -11,6 +11,7 @@ interface PlanUsagePanelProps {
   usage: Record<string, UsageItem>;
   plan: 'starter' | 'pro';
   className?: string;
+  layout?: 'full' | 'sidebar';
 }
 
 const USAGE_ROWS = [
@@ -23,7 +24,7 @@ const USAGE_ROWS = [
   { key: 'calendar_events', label: 'Events', period: '' },
 ] as const;
 
-export default function PlanUsagePanel({ usage, plan, className }: PlanUsagePanelProps) {
+export default function PlanUsagePanel({ usage, plan, className, layout = 'full' }: PlanUsagePanelProps) {
   const rows = USAGE_ROWS.map((row) =>
     row.key === 'property_lookups' && plan === 'pro'
       ? { ...row, period: '' }
@@ -47,7 +48,13 @@ export default function PlanUsagePanel({ usage, plan, className }: PlanUsagePane
         )}
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
+      <div
+        className={
+          layout === 'sidebar'
+            ? 'grid grid-cols-1 gap-3'
+            : 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4'
+        }
+      >
         {rows.map(({ key, label, period }) => {
           const item = usage[key];
           if (!item) return null;
