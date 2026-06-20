@@ -1,5 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { getPaidPlanName, hasAppAccess, isAdminEmail, isFreePro, PRO_PRICE_ID, STARTER_PRICE_ID } from '@/lib/subscription';
+import { isProPriceId } from '@/lib/pricing';
 
 type Feature = 'projects' | 'property_lookups' | 'ai_messages' | 'clients' | 'transactions' | 'calendar_events' | 'market_analyses';
 export type PlanName = 'starter' | 'pro';
@@ -44,8 +45,11 @@ export function getPlanName(
 ): PlanName | null {
   // Free Pro accounts get unlimited Pro limits
   if (email && isFreePro(email)) return 'pro';
-  // Admin gets Starter limits for display
-  if (email && isAdminEmail(email)) return 'starter';
+  // Admin: Starter limits by default, but respect a real Pro subscription after upgrade testing
+  if (email && isAdminEmail(email)) {
+    if (isProPriceId(subscriptionPlan)) return 'pro';
+    return 'starter';
+  }
   if (!hasAppAccess(subscriptionStatus)) {
     return null;
   }

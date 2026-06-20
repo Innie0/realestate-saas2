@@ -10,6 +10,7 @@ import {
   isStarterPriceId,
   isValidCheckoutPriceId,
 } from '@/lib/pricing';
+import { prepareAdminForUpgrade } from '@/lib/stripe-admin-upgrade-prep';
 
 const UPGRADEABLE_STATUSES = new Set(['active', 'trialing']);
 
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json().catch(() => ({}));
     const requestedPriceId = body.priceId as string | undefined;
 
-    const { data: userData, error: userError } = await supabase
+    const { data: userRow, error: userError } = await supabase
       .from('users')
       .select(
         'stripe_subscription_id, subscription_plan, subscription_status, stripe_customer_id',
@@ -36,8 +37,17 @@ export async function POST(req: NextRequest) {
       .eq('id', user.id)
       .single();
 
+    let userData = userRow;
     if (userError || !userData) {
       return NextResponse.json({ error: 'Could not load your account.' }, { status: 500 });
+    }
+
+    try {
+      userData = await prepareAdminForUpgrade(supabase, user.id, user.email, userData);
+    } catch (prepError: unknown) {
+      const message =
+        prepError instanceof Error ? prepError.message : 'Could not prepare account for upgrade';
+      return NextResponse.json({ error: message }, { status: 400 });
     }
 
     if (isProPriceId(userData.subscription_plan)) {
