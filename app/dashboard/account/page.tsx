@@ -10,7 +10,7 @@ import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
 import { User, Mail, Lock, X, CreditCard, Sparkles } from 'lucide-react';
 import { getCurrentUser, updateUserProfile, supabase } from '@/lib/supabase';
-import { getPaidPlanName } from '@/lib/subscription';
+import { getPaidPlanName, isAdminEmail, hasRealStripeSubscription } from '@/lib/subscription';
 import { getPlanDisplayPrice } from '@/lib/pricing';
 import Link from 'next/link';
 
@@ -38,8 +38,12 @@ export default function AccountPage() {
   const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
   const [subscriptionPlan, setSubscriptionPlan] = useState<string | null>(null);
   const [periodEnd, setPeriodEnd] = useState<string | null>(null);
+  const [stripeSubscriptionId, setStripeSubscriptionId] = useState<string | null>(null);
+  const [isAdminAccount, setIsAdminAccount] = useState(false);
   const [isPortalLoading, setIsPortalLoading] = useState(false);
+  const [isResettingBilling, setIsResettingBilling] = useState(false);
   const [showUpgradedBanner, setShowUpgradedBanner] = useState(false);
+  const [billingMessage, setBillingMessage] = useState<string | null>(null);
 
   // Set page title
   React.useEffect(() => {
@@ -69,10 +73,13 @@ export default function AccountPage() {
         setUserId(user.id);
         setEmail(user.email || '');
         setFullName(user.user_metadata?.full_name || '');
+        setIsAdminAccount(isAdminEmail(user.email));
 
         const { data: billing } = await supabase
           .from('users')
-          .select('subscription_status, subscription_plan, subscription_current_period_end')
+          .select(
+            'subscription_status, subscription_plan, subscription_current_period_end, stripe_subscription_id',
+          )
           .eq('id', user.id)
           .single();
 
@@ -80,6 +87,7 @@ export default function AccountPage() {
           setSubscriptionStatus(billing.subscription_status);
           setSubscriptionPlan(billing.subscription_plan);
           setPeriodEnd(billing.subscription_current_period_end);
+          setStripeSubscriptionId(billing.stripe_subscription_id);
         }
       }
     } catch (error) {
@@ -220,14 +228,41 @@ export default function AccountPage() {
     }
   };
 
-  const planName = getPaidPlanName(subscriptionPlan);
-  const planLabel = planName
-    ? planName === 'pro'
-      ? `Pro (${getPlanDisplayPrice('pro', 'monthly')}/mo)`
-      : `Starter (${getPlanDisplayPrice('starter', 'monthly')}/mo)`
-    : 'No active plan';
-  const statusLabel =
-    subscriptionStatus === 'trialing'
+  const handleResetAdminBilling = async () => {
+    if (!confirm('Cancel Stripe billing and restore free admin Starter access?')) return;
+    setIsResettingBilling(true);
+    setBillingMessage(null);
+    try {
+      const res = await fetch('/api/stripe/reset-admin-billing', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Reset failed');
+      setBillingMessage(data.message || 'Admin access restored.');
+      setSubscriptionStatus(null);
+      setSubscriptionPlan(null);
+      setPeriodEnd(null);
+      setStripeSubscriptionId(null);
+      setShowUpgradedBanner(false);
+    } catch (err: unknown) {
+      setBillingMessage(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setIsResettingBilling(false);
+    }
+  };
+
+  const hasPaidStripe = hasRealStripeSubscription(subscriptionStatus, stripeSubscriptionId);
+  const adminCompAccess = isAdminAccount && !hasPaidStripe;
+
+  const planName = adminCompAccess ? 'starter' : getPaidPlanName(subscriptionPlan);
+  const planLabel = adminCompAccess
+    ? 'Starter (Admin access)'
+    : planName
+      ? planName === 'pro'
+        ? `Pro (${getPlanDisplayPrice('pro', 'monthly')}/mo)`
+        : `Starter (${getPlanDisplayPrice('starter', 'monthly')}/mo)`
+      : 'No active plan';
+  const statusLabel = adminCompAccess
+    ? 'Comp access — no billing'
+    : subscriptionStatus === 'trialing'
       ? 'Free trial'
       : subscriptionStatus === 'active'
         ? 'Active'
@@ -336,15 +371,43 @@ export default function AccountPage() {
               </p>
             </div>
 
+            {billingMessage && (
+              <p className="text-sm text-brand-700 mb-4 rounded-xl bg-brand-50 border border-brand-200 px-3 py-2">
+                {billingMessage}
+              </p>
+            )}
+
             <div className="flex flex-wrap gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleManageBilling}
-                isLoading={isPortalLoading}
-              >
-                Manage billing in Stripe
-              </Button>
+              {!adminCompAccess && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleManageBilling}
+                  isLoading={isPortalLoading}
+                >
+                  Manage billing in Stripe
+                </Button>
+              )}
+              {adminCompAccess && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleResetAdminBilling}
+                  isLoading={isResettingBilling}
+                >
+                  Reset Stripe billing
+                </Button>
+              )}
+              {isAdminAccount && hasPaidStripe && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleResetAdminBilling}
+                  isLoading={isResettingBilling}
+                >
+                  Restore admin access
+                </Button>
+              )}
               {planName === 'starter' && (
                 <Link href="/dashboard/upgrade">
                   <Button type="button">Upgrade to Pro</Button>
@@ -357,7 +420,9 @@ export default function AccountPage() {
               )}
             </div>
             <p className="text-xs text-gray-500 mt-4">
-              Update payment method, view invoices, or cancel your subscription through Stripe&apos;s secure portal.
+              {adminCompAccess
+                ? 'Your admin account uses Starter plan limits with no Stripe subscription required.'
+                : 'Update payment method, view invoices, or cancel your subscription through Stripe\u2019s secure portal.'}
             </p>
           </Card>
 
