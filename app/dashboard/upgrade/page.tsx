@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Check, X, Zap, ArrowLeft, Sparkles, Infinity as InfinityIcon } from 'lucide-react';
 import Header from '@/components/layout/Header';
-import SubscribeButton from '@/components/SubscribeButton';
+import UpgradeButton from '@/components/UpgradeButton';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import PricingFeatureList from '@/components/PricingFeatureList';
@@ -200,7 +200,7 @@ export default function UpgradePage() {
               <p className="text-xs text-gray-500 mt-1">or {getPlanDisplayPrice('pro', 'annual')}/year on annual billing</p>
             </div>
             <div className="mb-6">
-              <SubscribeButton priceId={PRO_MONTHLY_PRICE_ID} planName="Pro" className="w-full" />
+              <UpgradeButton priceId={PRO_MONTHLY_PRICE_ID} className="w-full" />
             </div>
             <div className="border-t border-gray-200 mb-5" />
             <PricingFeatureList plan="pro" icon="check" className="space-y-2.5 flex-1" />

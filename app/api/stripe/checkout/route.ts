@@ -55,9 +55,24 @@ export async function POST(req: NextRequest) {
     // Check if user already has a Stripe customer ID
     const { data: userData } = await supabase
       .from('users')
-      .select('stripe_customer_id')
+      .select('stripe_customer_id, stripe_subscription_id, subscription_status')
       .eq('id', user.id)
       .single();
+
+    const hasExistingSubscription =
+      !!userData?.stripe_subscription_id &&
+      (userData.subscription_status === 'active' ||
+        userData.subscription_status === 'trialing');
+
+    if (mode === 'subscription' && hasExistingSubscription) {
+      return NextResponse.json(
+        {
+          error:
+            'You already have a subscription. Use the upgrade page to switch plans.',
+        },
+        { status: 400 },
+      );
+    }
 
     if (userData?.stripe_customer_id) {
       customerId = userData.stripe_customer_id;
@@ -98,8 +113,8 @@ export async function POST(req: NextRequest) {
       billing_address_collection: 'auto',
     };
 
-    // Add 7-day trial for subscriptions
-    if (mode === 'subscription') {
+    // 7-day trial for new subscriptions only
+    if (mode === 'subscription' && !hasExistingSubscription) {
       sessionConfig.subscription_data = {
         trial_period_days: 7,
         trial_settings: {

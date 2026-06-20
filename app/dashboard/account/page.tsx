@@ -39,10 +39,18 @@ export default function AccountPage() {
   const [subscriptionPlan, setSubscriptionPlan] = useState<string | null>(null);
   const [periodEnd, setPeriodEnd] = useState<string | null>(null);
   const [isPortalLoading, setIsPortalLoading] = useState(false);
+  const [showUpgradedBanner, setShowUpgradedBanner] = useState(false);
 
   // Set page title
   React.useEffect(() => {
     document.title = 'Account - Realestic';
+  }, []);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.search.includes('upgraded=1')) {
+      setShowUpgradedBanner(true);
+      window.history.replaceState({}, '', '/dashboard/account');
+    }
   }, []);
 
   // Load user data on mount
@@ -251,6 +259,17 @@ export default function AccountPage() {
 
       {/* Page content */}
       <div className="p-4 sm:p-6 max-w-4xl mx-auto text-gray-900">
+        {showUpgradedBanner && (
+          <div className="mb-6 flex items-start gap-3 rounded-2xl border border-brand-200 bg-brand-50 px-4 py-3">
+            <Sparkles className="w-5 h-5 text-brand-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-gray-900">You&apos;re on Pro</p>
+              <p className="text-sm text-gray-600 mt-0.5">
+                Your plan was upgraded. A prorated charge may appear on your next Stripe receipt.
+              </p>
+            </div>
+          </div>
+        )}
         <div className="space-y-6">
           {/* Profile information */}
           <Card>

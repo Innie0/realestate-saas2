@@ -139,6 +139,17 @@ export function isProPriceId(priceId: string | null | undefined): boolean {
   return ALL_PRO_PRICE_IDS.includes(priceId);
 }
 
+/** Pro price that matches the customer's current Starter billing interval. */
+export function getUpgradeProPriceId(currentPlanPriceId: string | null | undefined): string {
+  if (
+    currentPlanPriceId === STARTER_ANNUAL_PRICE_ID &&
+    PRO_ANNUAL_PRICE_ID
+  ) {
+    return PRO_ANNUAL_PRICE_ID;
+  }
+  return PRO_MONTHLY_PRICE_ID;
+}
+
 export function getPlanDisplayPrice(plan: PlanSlug, interval: BillingInterval): string {
   const amount = PLAN_PRICES[plan][interval];
   return formatPlanPrice(amount);
