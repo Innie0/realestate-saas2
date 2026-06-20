@@ -20,7 +20,6 @@ const publicPathPrefixes = ['/lead/', '/open-house/', '/agent/'];
 const publicApiPrefixes = [
   '/api/stripe/checkout',
   '/api/stripe/webhook',
-  '/api/debug-auth',
   '/api/leads',
   '/api/cron/',
 ];
