@@ -6,6 +6,7 @@ import type Stripe from 'stripe';
 import { stripe } from '@/lib/stripe-server';
 import { STARTER_MONTHLY_PRICE_ID, isProPriceId, isStarterPriceId } from '@/lib/pricing';
 import { isAdminEmail } from '@/lib/subscription';
+import { subscriptionFieldsFromStripe } from '@/lib/stripe-billing-sync';
 
 const UPGRADEABLE_STATUSES = new Set(['active', 'trialing']);
 
@@ -48,10 +49,7 @@ async function syncUserBilling(
   await supabase
     .from('users')
     .update({
-      stripe_subscription_id: row.stripe_subscription_id,
-      subscription_plan: row.subscription_plan,
-      subscription_status: row.subscription_status,
-      subscription_current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
+      ...subscriptionFieldsFromStripe(sub),
       ...(row.stripe_customer_id ? { stripe_customer_id: row.stripe_customer_id } : {}),
     })
     .eq('id', userId);

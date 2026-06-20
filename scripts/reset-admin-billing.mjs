@@ -86,6 +86,7 @@ async function main() {
       subscription_plan: null,
       stripe_subscription_id: null,
       subscription_current_period_end: null,
+      subscription_cancel_at_period_end: false,
     })
     .eq('id', user.id);
 

@@ -11,6 +11,7 @@ import {
   isValidCheckoutPriceId,
 } from '@/lib/pricing';
 import { prepareAdminForUpgrade } from '@/lib/stripe-admin-upgrade-prep';
+import { subscriptionFieldsFromStripe } from '@/lib/stripe-billing-sync';
 
 const UPGRADEABLE_STATUSES = new Set(['active', 'trialing']);
 
@@ -114,14 +115,7 @@ export async function POST(req: NextRequest) {
 
     await supabase
       .from('users')
-      .update({
-        stripe_subscription_id: updated.id,
-        subscription_plan: newPriceId,
-        subscription_status: updated.status,
-        subscription_current_period_end: new Date(
-          updated.current_period_end * 1000,
-        ).toISOString(),
-      })
+      .update(subscriptionFieldsFromStripe(updated))
       .eq('id', user.id);
 
     return NextResponse.json({

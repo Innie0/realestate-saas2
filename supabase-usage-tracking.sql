@@ -8,6 +8,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_plan TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS stripe_subscription_id TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_current_period_end TIMESTAMP WITH TIME ZONE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_cancel_at_period_end BOOLEAN DEFAULT FALSE;
 
 -- Usage tracking table — one row per user per month per feature
 CREATE TABLE IF NOT EXISTS usage_tracking (

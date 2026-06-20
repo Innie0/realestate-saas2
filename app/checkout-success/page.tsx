@@ -6,6 +6,7 @@
 import { redirect } from 'next/navigation';
 import { stripe } from '@/lib/stripe-server';
 import { createClient } from '@/lib/supabase-server';
+import { subscriptionFieldsFromStripe } from '@/lib/stripe-billing-sync';
 
 interface Props {
   searchParams: Promise<{ session_id?: string }>;
@@ -43,12 +44,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
 
       if (session.mode === 'subscription' && session.subscription) {
         const sub = session.subscription as import('stripe').Stripe.Subscription;
-        updateData.stripe_subscription_id = sub.id;
-        updateData.subscription_plan = sub.items.data[0]?.price.id ?? null;
-        updateData.subscription_status = sub.status; // 'trialing' or 'active'
-        updateData.subscription_current_period_end = new Date(
-          sub.current_period_end * 1000
-        ).toISOString();
+        Object.assign(updateData, subscriptionFieldsFromStripe(sub));
       } else {
         updateData.subscription_status = 'active';
       }

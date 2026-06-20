@@ -38,6 +38,7 @@ export default function AccountPage() {
   const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
   const [subscriptionPlan, setSubscriptionPlan] = useState<string | null>(null);
   const [periodEnd, setPeriodEnd] = useState<string | null>(null);
+  const [cancelAtPeriodEnd, setCancelAtPeriodEnd] = useState(false);
   const [stripeSubscriptionId, setStripeSubscriptionId] = useState<string | null>(null);
   const [isAdminAccount, setIsAdminAccount] = useState(false);
   const [isPortalLoading, setIsPortalLoading] = useState(false);
@@ -78,7 +79,7 @@ export default function AccountPage() {
         const { data: billing } = await supabase
           .from('users')
           .select(
-            'subscription_status, subscription_plan, subscription_current_period_end, stripe_subscription_id',
+            'subscription_status, subscription_plan, subscription_current_period_end, stripe_subscription_id, subscription_cancel_at_period_end',
           )
           .eq('id', user.id)
           .single();
@@ -88,6 +89,25 @@ export default function AccountPage() {
           setSubscriptionPlan(billing.subscription_plan);
           setPeriodEnd(billing.subscription_current_period_end);
           setStripeSubscriptionId(billing.stripe_subscription_id);
+          setCancelAtPeriodEnd(Boolean(billing.subscription_cancel_at_period_end));
+        }
+
+        if (billing?.stripe_subscription_id) {
+          try {
+            const syncRes = await fetch('/api/stripe/sync-billing');
+            if (syncRes.ok) {
+              const syncData = await syncRes.json();
+              if (syncData.billing) {
+                setSubscriptionStatus(syncData.billing.subscription_status);
+                setSubscriptionPlan(syncData.billing.subscription_plan);
+                setPeriodEnd(syncData.billing.subscription_current_period_end);
+                setStripeSubscriptionId(syncData.billing.stripe_subscription_id);
+                setCancelAtPeriodEnd(Boolean(syncData.billing.subscription_cancel_at_period_end));
+              }
+            }
+          } catch {
+            // Keep Supabase values if Stripe sync fails
+          }
         }
       }
     } catch (error) {
@@ -240,6 +260,7 @@ export default function AccountPage() {
       setSubscriptionStatus(null);
       setSubscriptionPlan(null);
       setPeriodEnd(null);
+      setCancelAtPeriodEnd(false);
       setStripeSubscriptionId(null);
       setShowUpgradedBanner(false);
     } catch (err: unknown) {
@@ -262,15 +283,32 @@ export default function AccountPage() {
       : 'No active plan';
   const statusLabel = adminCompAccess
     ? 'Comp access — no billing'
-    : subscriptionStatus === 'trialing'
-      ? 'Free trial'
-      : subscriptionStatus === 'active'
-        ? 'Active'
-        : subscriptionStatus === 'past_due'
-          ? 'Past due'
-          : subscriptionStatus === 'canceled'
-            ? 'Canceled'
-            : subscriptionStatus ?? '—';
+    : cancelAtPeriodEnd && (subscriptionStatus === 'active' || subscriptionStatus === 'trialing')
+      ? 'Canceling'
+      : subscriptionStatus === 'trialing'
+        ? 'Free trial'
+        : subscriptionStatus === 'active'
+          ? 'Active'
+          : subscriptionStatus === 'past_due'
+            ? 'Past due'
+            : subscriptionStatus === 'canceled'
+              ? 'Canceled'
+              : subscriptionStatus ?? '—';
+
+  const formattedPeriodEnd = periodEnd
+    ? new Date(periodEnd).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    : null;
+
+  const periodDetail =
+    formattedPeriodEnd &&
+    subscriptionStatus &&
+    ['active', 'trialing'].includes(subscriptionStatus)
+      ? cancelAtPeriodEnd
+        ? ` · Access until ${formattedPeriodEnd}`
+        : subscriptionStatus === 'trialing'
+          ? ` · Trial ends ${formattedPeriodEnd}`
+          : ` · Renews ${formattedPeriodEnd}`
+      : null;
 
   // Show loading state while fetching user data
   if (isLoadingData) {
@@ -363,12 +401,16 @@ export default function AccountPage() {
               </div>
               <p className="text-sm text-gray-600">
                 Status: <span className="font-medium text-gray-900">{statusLabel}</span>
-                {periodEnd && subscriptionStatus && ['active', 'trialing'].includes(subscriptionStatus) && (
-                  <span className="text-gray-500">
-                    {' '}· Renews {new Date(periodEnd).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                  </span>
+                {periodDetail && (
+                  <span className="text-gray-500">{periodDetail}</span>
                 )}
               </p>
+              {cancelAtPeriodEnd && formattedPeriodEnd && (
+                <p className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+                  Your subscription is canceled and will not renew. You&apos;ll keep access until{' '}
+                  <span className="font-medium">{formattedPeriodEnd}</span>.
+                </p>
+              )}
             </div>
 
             {billingMessage && (

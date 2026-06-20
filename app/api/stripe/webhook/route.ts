@@ -5,7 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe-server';
 import { createClient } from '@/lib/supabase-server';
-import Stripe from 'stripe';
+import { subscriptionFieldsFromStripe } from '@/lib/stripe-billing-sync';
 
 /**
  * POST /api/stripe/webhook
@@ -68,19 +68,13 @@ export async function POST(req: NextRequest) {
             session.subscription as string
           );
           
-          updateData.stripe_subscription_id = subscription.id;
-          updateData.subscription_plan = subscription.items.data[0]?.price.id;
-          updateData.subscription_current_period_end = new Date(
-            subscription.current_period_end * 1000
-          ).toISOString();
-          
-          // Set status based on whether it's a trial or active subscription
-          updateData.subscription_status = subscription.status; // 'trialing' or 'active'
+          Object.assign(updateData, subscriptionFieldsFromStripe(subscription));
           
           console.log('Subscription details:', {
             id: subscription.id,
             status: subscription.status,
             trial_end: subscription.trial_end,
+            cancel_at_period_end: subscription.cancel_at_period_end,
             isTrialing: subscription.status === 'trialing',
           });
         } else {
@@ -117,14 +111,7 @@ export async function POST(req: NextRequest) {
         // Update subscription details
         await supabase
           .from('users')
-          .update({
-            stripe_subscription_id: subscription.id,
-            subscription_status: subscription.status,
-            subscription_plan: subscription.items.data[0]?.price.id,
-            subscription_current_period_end: new Date(
-              subscription.current_period_end * 1000
-            ).toISOString(),
-          })
+          .update(subscriptionFieldsFromStripe(subscription))
           .eq('id', user.id);
 
         console.log('Subscription status updated:', user.id, subscription.status);
@@ -155,6 +142,7 @@ export async function POST(req: NextRequest) {
             subscription_status: 'canceled',
             stripe_subscription_id: null,
             subscription_plan: null,
+            subscription_cancel_at_period_end: false,
           })
           .eq('id', user.id);
 
