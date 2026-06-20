@@ -42,13 +42,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Could not load your account.' }, { status: 500 });
     }
 
-    try {
-      userData = await prepareAdminForUpgrade(supabase, user.id, user.email, userData);
-    } catch (prepError: unknown) {
-      const message =
-        prepError instanceof Error ? prepError.message : 'Could not prepare account for upgrade';
-      return NextResponse.json({ error: message }, { status: 400 });
+    const prep = await prepareAdminForUpgrade(supabase, user.id, user.email, userData);
+    if (prep.checkoutUrl) {
+      return NextResponse.json({
+        success: false,
+        needsCheckout: true,
+        url: prep.checkoutUrl,
+        message: 'Connect a Starter subscription first, then upgrade to Pro.',
+      });
     }
+    userData = prep.userData;
 
     if (isProPriceId(userData.subscription_plan)) {
       return NextResponse.json({ error: 'You are already on Pro.' }, { status: 400 });

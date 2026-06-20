@@ -5,14 +5,17 @@ import { useRouter } from 'next/navigation';
 import { Check, X, Zap, ArrowLeft, Sparkles, Infinity as InfinityIcon } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import UpgradeButton from '@/components/UpgradeButton';
+import SetupStarterButton from '@/components/SetupStarterButton';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import PricingFeatureList from '@/components/PricingFeatureList';
+import { hasAppAccess, isAdminEmail } from '@/lib/subscription';
 import {
   PRO_MONTHLY_PRICE_ID,
   PLAN_COMPARISON_ROWS,
   getPlanDisplayPrice,
   isProPriceId,
+  isStarterPriceId,
 } from '@/lib/pricing';
 
 const STARTER_LIMITS: Record<string, number> = {
@@ -48,6 +51,16 @@ export default function UpgradePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPlan, setCurrentPlan] = useState<PlanType>('starter');
   const [usage, setUsage] = useState<Record<string, { current: number; limit: number }> | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [hasStripeStarter, setHasStripeStarter] = useState(false);
+  const [starterReady, setStarterReady] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.search.includes('starter=ready')) {
+      setStarterReady(true);
+      window.history.replaceState({}, '', '/dashboard/upgrade');
+    }
+  }, []);
 
   useEffect(() => {
     document.title = 'Upgrade Plan - Realestic';
@@ -60,18 +73,23 @@ export default function UpgradePage() {
 
       const { data: userData } = await supabase
         .from('users')
-        .select('subscription_plan, subscription_status')
+        .select('subscription_plan, subscription_status, stripe_subscription_id')
         .eq('id', user.id)
         .single();
 
-      const hasAccess =
-        userData?.subscription_status === 'active' ||
-        userData?.subscription_status === 'trialing';
+      const admin = isAdminEmail(user.email);
+      setIsAdmin(admin);
 
-      if (!hasAccess) {
+      if (!hasAppAccess(userData?.subscription_status, user.email)) {
         router.push('/pricing');
         return;
       }
+
+      const stripeStarter =
+        !!userData?.stripe_subscription_id &&
+        isStarterPriceId(userData?.subscription_plan) &&
+        (userData?.subscription_status === 'active' || userData?.subscription_status === 'trialing');
+      setHasStripeStarter(stripeStarter);
 
       const plan: PlanType = isProPriceId(userData?.subscription_plan) ? 'pro' : 'starter';
       setCurrentPlan(plan);
@@ -134,6 +152,23 @@ export default function UpgradePage() {
       <Header title="Upgrade to Pro" subtitle="Unlock unlimited access to every feature" />
 
       <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-8">
+        {starterReady && (
+          <div className="rounded-2xl border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-gray-700">
+            Starter is connected in Stripe. Click <strong>Upgrade to Pro</strong> below to test the prorated upgrade.
+          </div>
+        )}
+
+        {isAdmin && !hasStripeStarter && (
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+            <p className="text-sm font-semibold text-gray-900 mb-1">Admin: test the upgrade flow</p>
+            <p className="text-sm text-gray-600 mb-4">
+              Your admin account skips normal billing. Connect a real Starter subscription in Stripe first,
+              then upgrade to Pro to test what customers experience.
+            </p>
+            <SetupStarterButton />
+          </div>
+        )}
+
         {usage && (
           <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
             <div className="flex items-center gap-2 mb-4">
@@ -200,7 +235,11 @@ export default function UpgradePage() {
               <p className="text-xs text-gray-500 mt-1">or {getPlanDisplayPrice('pro', 'annual')}/year on annual billing</p>
             </div>
             <div className="mb-6">
-              <UpgradeButton priceId={PRO_MONTHLY_PRICE_ID} className="w-full" />
+              <UpgradeButton
+                priceId={PRO_MONTHLY_PRICE_ID}
+                className="w-full"
+                disabled={isAdmin && !hasStripeStarter}
+              />
             </div>
             <div className="border-t border-gray-200 mb-5" />
             <PricingFeatureList plan="pro" icon="check" className="space-y-2.5 flex-1" />

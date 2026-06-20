@@ -8,9 +8,14 @@ import { Sparkles } from 'lucide-react';
 interface UpgradeButtonProps {
   priceId?: string;
   className?: string;
+  disabled?: boolean;
 }
 
-export default function UpgradeButton({ priceId, className = '' }: UpgradeButtonProps) {
+export default function UpgradeButton({
+  priceId,
+  className = '',
+  disabled = false,
+}: UpgradeButtonProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -29,8 +34,13 @@ export default function UpgradeButton({ priceId, className = '' }: UpgradeButton
 
       const data = await response.json();
 
+      if (data.needsCheckout && data.url) {
+        window.location.href = data.url;
+        return;
+      }
+
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to upgrade');
+        throw new Error(data.error || data.message || 'Failed to upgrade');
       }
 
       router.push('/dashboard/account?upgraded=1');
@@ -45,7 +55,12 @@ export default function UpgradeButton({ priceId, className = '' }: UpgradeButton
 
   return (
     <div className={className}>
-      <Button onClick={handleUpgrade} isLoading={loading} disabled={loading} className="w-full">
+      <Button
+        onClick={handleUpgrade}
+        isLoading={loading}
+        disabled={loading || disabled}
+        className="w-full"
+      >
         <Sparkles className="w-4 h-4 mr-2" />
         {loading ? 'Upgrading...' : 'Upgrade to Pro'}
       </Button>

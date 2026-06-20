@@ -9,11 +9,17 @@ import { isAdminEmail } from '@/lib/subscription';
 
 const UPGRADEABLE_STATUSES = new Set(['active', 'trialing']);
 
-type UserBillingRow = {
+export type UserBillingRow = {
   stripe_subscription_id: string | null;
   subscription_plan: string | null;
   subscription_status: string | null;
   stripe_customer_id: string | null;
+};
+
+export type PrepareAdminResult = {
+  userData: UserBillingRow;
+  /** When set, client should redirect to Stripe Checkout before upgrading. */
+  checkoutUrl?: string;
 };
 
 function subscriptionStarterPriceId(sub: Stripe.Subscription): string | null {
@@ -106,18 +112,45 @@ async function createTestStarterSubscription(customerId: string): Promise<Stripe
   });
 }
 
+export async function createAdminStarterCheckoutSession(
+  customerId: string,
+  userId: string,
+): Promise<string> {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const session = await stripe.checkout.sessions.create({
+    customer: customerId,
+    line_items: [{ price: STARTER_MONTHLY_PRICE_ID, quantity: 1 }],
+    mode: 'subscription',
+    success_url: `${appUrl}/dashboard/upgrade?starter=ready`,
+    cancel_url: `${appUrl}/dashboard/upgrade?canceled=1`,
+    metadata: { user_id: userId, admin_setup: 'true' },
+    allow_promotion_codes: true,
+    billing_address_collection: 'auto',
+    subscription_data: {
+      trial_period_days: 7,
+      trial_settings: { end_behavior: { missing_payment_method: 'cancel' } },
+    },
+    payment_method_collection: 'always',
+  });
+
+  if (!session.url) {
+    throw new Error('Could not create Stripe checkout session.');
+  }
+
+  return session.url;
+}
+
 /**
  * Admin-only: sync or create a Stripe Starter subscription so upgrade can be tested end-to-end.
- * Returns updated billing fields for the user row.
  */
 export async function prepareAdminForUpgrade(
   supabase: SupabaseClient,
   userId: string,
   email: string | undefined | null,
   userData: UserBillingRow,
-): Promise<UserBillingRow> {
+): Promise<PrepareAdminResult> {
   if (!isAdminEmail(email)) {
-    return userData;
+    return { userData };
   }
 
   if (
@@ -125,7 +158,7 @@ export async function prepareAdminForUpgrade(
     userData.stripe_subscription_id &&
     UPGRADEABLE_STATUSES.has(userData.subscription_status ?? '')
   ) {
-    return userData;
+    return { userData };
   }
 
   const customerId = await getOrCreateCustomer(
@@ -141,22 +174,32 @@ export async function prepareAdminForUpgrade(
       : null) ?? (await findStarterSubscription(customerId));
 
   if (existingSub && isUpgradeableStarterSub(existingSub)) {
-    return syncUserBilling(supabase, userId, existingSub);
+    const synced = await syncUserBilling(supabase, userId, existingSub);
+    return { userData: synced };
   }
 
   if (existingSub && isProPriceId(subscriptionStarterPriceId(existingSub))) {
-    await syncUserBilling(supabase, userId, existingSub);
-    throw new Error('You are already on Pro in Stripe.');
+    const synced = await syncUserBilling(supabase, userId, existingSub);
+    return { userData: synced };
   }
 
   const isTestMode = (process.env.STRIPE_SECRET_KEY ?? '').startsWith('sk_test_');
   if (!isTestMode) {
-    throw new Error(
-      'Subscribe to Starter once on the pricing page (live mode), then return here to test upgrade.',
-    );
+    const checkoutUrl = await createAdminStarterCheckoutSession(customerId, userId);
+    return { userData, checkoutUrl };
   }
 
   await attachTestPaymentMethod(customerId);
   const newSub = await createTestStarterSubscription(customerId);
-  return syncUserBilling(supabase, userId, newSub);
+  const synced = await syncUserBilling(supabase, userId, newSub);
+  return { userData: synced };
+}
+
+/** True when admin has an upgradeable Starter subscription in Stripe. */
+export function adminCanUpgrade(userData: UserBillingRow): boolean {
+  return (
+    isStarterPriceId(userData.subscription_plan) &&
+    !!userData.stripe_subscription_id &&
+    UPGRADEABLE_STATUSES.has(userData.subscription_status ?? '')
+  );
 }

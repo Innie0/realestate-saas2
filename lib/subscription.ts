@@ -30,6 +30,17 @@ export function isFreePro(email: string | undefined | null): boolean {
   return FREE_PRO_EMAILS.includes(email.toLowerCase());
 }
 
+/** Paid access backed by a Stripe subscription record (not just a status flag). */
+export function hasRealStripeSubscription(
+  subscriptionStatus: string | null | undefined,
+  stripeSubscriptionId: string | null | undefined,
+): boolean {
+  return (
+    !!stripeSubscriptionId &&
+    (subscriptionStatus === 'active' || subscriptionStatus === 'trialing')
+  );
+}
+
 /** User can use the dashboard and APIs */
 export function hasAppAccess(
   subscriptionStatus: string | null | undefined,

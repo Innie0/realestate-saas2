@@ -8,6 +8,7 @@ import AuthLogo from '@/components/branding/AuthLogo';
 import SubscribeButton from '@/components/SubscribeButton';
 import PricingFeatureList from '@/components/PricingFeatureList';
 import { supabase } from '@/lib/supabase';
+import { hasRealStripeSubscription, isAdminEmail } from '@/lib/subscription';
 import {
   type BillingInterval,
   type PlanSlug,
@@ -58,15 +59,16 @@ export default function PricingPage() {
 
         const { data: userData } = await supabase
           .from('users')
-          .select('subscription_status')
+          .select('subscription_status, stripe_subscription_id')
           .eq('id', session.user.id)
           .single();
 
-        const hasActiveSubscription =
-          userData?.subscription_status === 'active' ||
-          userData?.subscription_status === 'trialing';
+        const hasPaidSubscription = hasRealStripeSubscription(
+          userData?.subscription_status,
+          userData?.stripe_subscription_id,
+        );
 
-        if (hasActiveSubscription) {
+        if (!isAdminEmail(session.user.email) && hasPaidSubscription) {
           router.push('/dashboard');
           return;
         }
