@@ -173,7 +173,7 @@ const FAQ_ITEMS = [
   {
     question: "What's the difference between Starter and Pro?",
     answer:
-      'Starter ($49/month or $490/year) includes 20 listing projects, 20 property research lookups, 5 CMA analyses, 75 AI messages, and 20 transactions per month, plus up to 50 clients total — with lead capture, CRM, leads inbox, automated follow-up emails, calendar, tasks, and transaction checklists. Pro ($99/month or $990/year) includes everything in Starter with unlimited usage, plus open house QR sign-in, a public agent profile page, and priority support. Both plans include a 7-day free trial.',
+      'Starter ($49/month) includes 20 listing projects, 20 property research lookups, 5 CMA analyses, 75 AI messages, and 20 transactions per month, plus up to 50 clients total — with lead capture, CRM, leads inbox, automated follow-up emails, calendar, tasks, and transaction checklists. Pro ($99/month) includes everything in Starter with unlimited usage, plus open house QR sign-in, a public agent profile page, and priority support. Both plans include a 7-day free trial.',
   },
   {
     question: 'How does Property Research work?',
@@ -1758,7 +1758,7 @@ export default function HomePage() {
               </span>
             </h2>
             <p className="text-gray-500 text-lg mb-10 max-w-2xl mx-auto">
-              Join real estate agents already using Realestic to save hours every week and win more listings.
+              Built for real estate agents who want to save hours every week and win more listings.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href="/auth/signup">

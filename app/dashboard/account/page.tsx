@@ -8,7 +8,7 @@ import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
-import { User, Mail, Lock, X, CreditCard, Sparkles } from 'lucide-react';
+import { User, Lock, X, CreditCard, Sparkles } from 'lucide-react';
 import { getCurrentUser, updateUserProfile, supabase } from '@/lib/supabase';
 import { getPaidPlanName, isAdminEmail, hasRealStripeSubscription } from '@/lib/subscription';
 import { getPlanDisplayPrice } from '@/lib/pricing';
@@ -24,17 +24,20 @@ export default function AccountPage() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
-  const [userId, setUserId] = useState<string>('');
   
-  // Password change modal state
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [passwordStep, setPasswordStep] = useState<'request' | 'verify'>('request');
-  const [verificationCode, setVerificationCode] = useState('');
+  const [profileMessage, setProfileMessage] = useState<string | null>(null);
+  const [profileError, setProfileError] = useState<string | null>(null);
+
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [isPasswordLoading, setIsPasswordLoading] = useState(false);
-  const [generatedCode, setGeneratedCode] = useState('');
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
+  const [isPasswordSaving, setIsPasswordSaving] = useState(false);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
   const [subscriptionPlan, setSubscriptionPlan] = useState<string | null>(null);
   const [periodEnd, setPeriodEnd] = useState<string | null>(null);
@@ -123,66 +126,33 @@ export default function AccountPage() {
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setProfileMessage(null);
+    setProfileError(null);
 
     try {
-      const { profile, error } = await updateUserProfile({
+      const { error } = await updateUserProfile({
         full_name: fullName
       });
 
       if (error) throw error;
 
-      alert('Profile updated successfully!');
-    } catch (error: any) {
+      setProfileMessage('Profile updated successfully.');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
       console.error('Update error:', error);
-      alert(`Failed to update profile: ${error.message || 'Unknown error'}`);
+      setProfileError(`Failed to update profile: ${message}`);
     } finally {
       setIsLoading(false);
     }
   };
 
-  /**
-   * Request password change - sends verification code
-   */
-  const handleRequestPasswordChange = async () => {
-    setPasswordError('');
-    setIsPasswordLoading(true);
-
-    try {
-      // Generate a 6-digit verification code
-      const code = Math.floor(100000 + Math.random() * 900000).toString();
-      setGeneratedCode(code);
-
-      // In a real app, you would send this via email
-      // For now, we'll show it in a simulated email
-      console.log('Verification code:', code);
-      
-      // Simulate sending email
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      alert(`Verification code sent to ${email}!\n\nFor development: Your code is ${code}`);
-      setPasswordStep('verify');
-    } catch (error: any) {
-      setPasswordError('Failed to send verification code. Please try again.');
-    } finally {
-      setIsPasswordLoading(false);
-    }
-  };
-
-  /**
-   * Verify code and update password
-   */
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    setPasswordError('');
-    setIsPasswordLoading(true);
+    setPasswordError(null);
+    setPasswordSuccess(null);
+    setIsPasswordSaving(true);
 
     try {
-      // Validate verification code
-      if (verificationCode !== generatedCode) {
-        throw new Error('Invalid verification code');
-      }
-
-      // Validate password
       if (!newPassword || !confirmPassword) {
         throw new Error('Please enter both password fields');
       }
@@ -191,46 +161,46 @@ export default function AccountPage() {
         throw new Error('Passwords do not match');
       }
 
-      if (newPassword.length < 6) {
-        throw new Error('Password must be at least 6 characters');
+      if (newPassword.length < 8) {
+        throw new Error('Password must be at least 8 characters');
       }
 
-      // Update password in Supabase
-      const { data, error } = await supabase.auth.updateUser({
-        password: newPassword
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
       });
 
       if (error) throw error;
 
-      // Success
-      alert('Password changed successfully!');
-      setShowPasswordModal(false);
-      resetPasswordModal();
-    } catch (error: any) {
-      setPasswordError(error.message || 'Failed to change password');
+      setNewPassword('');
+      setConfirmPassword('');
+      setPasswordSuccess('Password updated successfully.');
+    } catch (error: unknown) {
+      setPasswordError(error instanceof Error ? error.message : 'Failed to change password');
     } finally {
-      setIsPasswordLoading(false);
+      setIsPasswordSaving(false);
     }
   };
 
-  /**
-   * Reset password modal state
-   */
-  const resetPasswordModal = () => {
-    setPasswordStep('request');
-    setVerificationCode('');
-    setNewPassword('');
-    setConfirmPassword('');
-    setPasswordError('');
-    setGeneratedCode('');
-  };
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText !== 'DELETE') {
+      setDeleteError('Type DELETE to confirm.');
+      return;
+    }
 
-  /**
-   * Open password change modal
-   */
-  const openPasswordModal = () => {
-    resetPasswordModal();
-    setShowPasswordModal(true);
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    try {
+      const res = await fetch('/api/account/delete', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not delete account');
+
+      await supabase.auth.signOut();
+      window.location.href = '/?account-deleted=1';
+    } catch (error: unknown) {
+      setDeleteError(error instanceof Error ? error.message : 'Something went wrong');
+      setIsDeleting(false);
+    }
   };
 
   const handleManageBilling = async () => {
@@ -373,6 +343,16 @@ export default function AccountPage() {
               />
 
               {/* Save button */}
+              {profileMessage && (
+                <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl px-3 py-2">
+                  {profileMessage}
+                </p>
+              )}
+              {profileError && (
+                <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
+                  {profileError}
+                </p>
+              )}
               <div className="flex gap-3">
                 <Button type="submit" isLoading={isLoading}>
                   Save Changes
@@ -468,7 +448,7 @@ export default function AccountPage() {
             </p>
           </Card>
 
-          {/* Password section */}
+          {/* Password */}
           <Card>
             <div className="flex items-center gap-3 mb-6">
               <Lock className="w-5 h-5 text-gray-900" />
@@ -476,166 +456,108 @@ export default function AccountPage() {
             </div>
 
             <p className="text-gray-600 mb-4">
-              Update your password to keep your account secure.
+              Choose a new password while you&apos;re signed in. You&apos;ll stay logged in on this device.
             </p>
 
-            <Button variant="outline" onClick={openPasswordModal}>
-              Change Password
-            </Button>
-          </Card>
-
-          {/* Email preferences */}
-          <Card>
-            <div className="flex items-center gap-3 mb-6">
-              <Mail className="w-5 h-5 text-gray-900" />
-              <h2 className="text-xl font-bold text-gray-900">Email Preferences</h2>
-            </div>
-
-            <div className="space-y-4">
-              {/* Email notification toggles */}
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" className="w-4 h-4 text-primary-600 rounded" defaultChecked />
-                <div>
-                  <p className="font-medium text-gray-900">Product Updates</p>
-                  <p className="text-sm text-gray-600">Get notified about new features and updates</p>
-                </div>
-              </label>
-
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" className="w-4 h-4 text-primary-600 rounded" defaultChecked />
-                <div>
-                  <p className="font-medium text-gray-900">Tips & Resources</p>
-                  <p className="text-sm text-gray-600">Receive helpful tips for creating better listings</p>
-                </div>
-              </label>
-
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" className="w-4 h-4 text-primary-600 rounded" />
-                <div>
-                  <p className="font-medium text-gray-900">Marketing Emails</p>
-                  <p className="text-sm text-gray-600">Promotional emails and special offers</p>
-                </div>
-              </label>
-            </div>
-
-            <div className="mt-6">
-              <Button>Save Preferences</Button>
-            </div>
+            <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
+              <Input
+                label="New password"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="At least 8 characters"
+                autoComplete="new-password"
+              />
+              <Input
+                label="Confirm new password"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Re-enter new password"
+                autoComplete="new-password"
+              />
+              {passwordError && (
+                <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
+                  {passwordError}
+                </p>
+              )}
+              {passwordSuccess && (
+                <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl px-3 py-2">
+                  {passwordSuccess}
+                </p>
+              )}
+              <Button type="submit" isLoading={isPasswordSaving}>
+                Update password
+              </Button>
+            </form>
           </Card>
 
           {/* Danger zone */}
           <Card>
             <h2 className="text-xl font-bold text-red-600 mb-4">Danger Zone</h2>
             <p className="text-gray-600 mb-4">
-              Once you delete your account, there is no going back. Please be certain.
+              Permanently delete your account, cancel any active subscription, and remove your data. This cannot be undone.
             </p>
-            <Button variant="danger">
-              Delete Account
+            <Button variant="danger" onClick={() => { setShowDeleteModal(true); setDeleteConfirmText(''); setDeleteError(null); }}>
+              Delete account
             </Button>
           </Card>
         </div>
       </div>
 
-      {/* Password Change Modal */}
-      {showPasswordModal && (
+      {/* Delete account modal */}
+      {showDeleteModal && (
         <div className="fixed inset-0 bg-black/20 flex items-center justify-center p-4 z-50">
           <div className="rounded-xl shadow-xl border border-gray-200 max-w-md w-full p-6 bg-white">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Change Password</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-900">Delete account</h3>
               <button
-                onClick={() => setShowPasswordModal(false)}
+                type="button"
+                onClick={() => setShowDeleteModal(false)}
                 className="text-gray-500 hover:text-gray-600"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Error message */}
-            {passwordError && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-                {passwordError}
-              </div>
+            <p className="text-sm text-gray-600 mb-4">
+              This cancels billing and permanently deletes your account and data. Type{' '}
+              <span className="font-mono font-semibold text-gray-900">DELETE</span> to confirm.
+            </p>
+
+            <Input
+              label="Confirmation"
+              type="text"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              placeholder="DELETE"
+              autoComplete="off"
+            />
+
+            {deleteError && (
+              <p className="mt-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
+                {deleteError}
+              </p>
             )}
 
-            {/* Step 1: Request verification code */}
-            {passwordStep === 'request' && (
-              <div>
-                <p className="text-gray-600 mb-4">
-                  We'll send a verification code to <strong>{email}</strong> to confirm it's you.
-                </p>
-                
-                <div className="flex gap-3">
-                  <Button
-                    onClick={handleRequestPasswordChange}
-                    isLoading={isPasswordLoading}
-                    fullWidth
-                  >
-                    Send Verification Code
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowPasswordModal(false)}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Step 2: Verify code and set new password */}
-            {passwordStep === 'verify' && (
-              <form onSubmit={handleChangePassword}>
-                <div className="space-y-4">
-                  <Input
-                    label="Verification Code"
-                    type="text"
-                    placeholder="Enter 6-digit code"
-                    value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value)}
-                    required
-                    maxLength={6}
-                    helperText={`Code sent to ${email}`}
-                  />
-
-                  <Input
-                    label="New Password"
-                    type="password"
-                    placeholder="Enter new password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    required
-                    helperText="Must be at least 6 characters"
-                  />
-
-                  <Input
-                    label="Confirm New Password"
-                    type="password"
-                    placeholder="Re-enter new password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                  />
-
-                  <div className="flex gap-3 pt-2">
-                    <Button
-                      type="submit"
-                      isLoading={isPasswordLoading}
-                      fullWidth
-                    >
-                      Change Password
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setPasswordStep('request')}
-                    >
-                      Back
-                    </Button>
-                  </div>
-                </div>
-              </form>
-            )}
+            <div className="flex gap-3 mt-6">
+              <Button
+                variant="danger"
+                onClick={handleDeleteAccount}
+                isLoading={isDeleting}
+                fullWidth
+              >
+                Delete my account
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowDeleteModal(false)}
+                disabled={isDeleting}
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
         </div>
       )}

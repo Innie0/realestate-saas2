@@ -647,17 +647,13 @@ export default function LeadsPage() {
                   </div>
                   <div className="flex items-center gap-2 min-w-0 flex-wrap">
                     <h3 className="text-base font-semibold text-gray-900">SMS alerts</h3>
-                    <span className="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200 text-xs font-medium">
-                      <Sparkles className="w-3 h-3" />
-                      Pro
-                    </span>
                     <span className="shrink-0 px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-medium">
                       Coming soon
                     </span>
                   </div>
                 </div>
                 <p className="text-sm text-gray-500 mb-5">
-                  Pro plan feature — get a text the moment a lead submits your form or signs in at an open house. Launching soon for Pro subscribers.
+                  Get a text when a lead submits your form or signs in at an open house. Not available yet — we&apos;ll announce when it launches.
                 </p>
                 <button
                   type="button"
@@ -665,7 +661,7 @@ export default function LeadsPage() {
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium border bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
                 >
                   <Phone className="w-4 h-4" />
-                  Pro · Coming soon
+                  Not available yet
                 </button>
               </Surface>
             </div>

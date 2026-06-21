@@ -48,7 +48,6 @@ export const PRO_EXCLUSIVE_FEATURES = [
   'Unlimited Listing Projects, Property Research, CMA, AI Messages, Clients & Transactions',
   'Open House QR Sign-In',
   'Public Agent Profile Page',
-  'SMS Lead Alerts (Coming Soon)',
   'Priority Support',
 ] as const;
 
@@ -76,7 +75,11 @@ export const PLAN_COMPARISON_ROWS = [
 ] as const;
 
 export function getPricingFootnote(): string {
-  return `7-day free trial · Cancel anytime · Starter ${formatPlanPrice(PLAN_PRICES.starter.annual)}/yr · Pro ${formatPlanPrice(PLAN_PRICES.pro.annual)}/yr (save 2 months)`;
+  const base = '7-day free trial · Cancel anytime';
+  if (isAnyAnnualBillingAvailable()) {
+    return `${base} · Starter ${formatPlanPrice(PLAN_PRICES.starter.annual)}/yr · Pro ${formatPlanPrice(PLAN_PRICES.pro.annual)}/yr (save 2 months)`;
+  }
+  return `${base} · Billed monthly after trial`;
 }
 
 export const ALL_STARTER_PRICE_IDS = [

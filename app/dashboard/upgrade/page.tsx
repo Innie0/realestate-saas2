@@ -14,6 +14,7 @@ import {
   PRO_MONTHLY_PRICE_ID,
   PLAN_COMPARISON_ROWS,
   getPlanDisplayPrice,
+  isAnyAnnualBillingAvailable,
   isProPriceId,
   isStarterPriceId,
 } from '@/lib/pricing';
@@ -232,7 +233,11 @@ export default function UpgradePage() {
                 <span className="text-4xl font-bold text-gray-900">{getPlanDisplayPrice('pro', 'monthly')}</span>
                 <span className="text-gray-500 text-sm">/ month</span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">or {getPlanDisplayPrice('pro', 'annual')}/year on annual billing</p>
+              <p className="text-xs text-gray-500 mt-1">
+                {isAnyAnnualBillingAvailable()
+                  ? `or ${getPlanDisplayPrice('pro', 'annual')}/year on annual billing`
+                  : 'Billed monthly after trial'}
+              </p>
             </div>
             <div className="mb-6">
               <UpgradeButton
