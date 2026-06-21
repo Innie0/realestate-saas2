@@ -1,63 +1,24 @@
-// @ts-nocheck
-// Checkout success page
-// Verifies the Stripe session server-side and updates the DB immediately,
-// eliminating the race condition between the redirect and the webhook.
+import { Suspense } from 'react';
+import { Loader2 } from 'lucide-react';
+import AuthPageShell from '@/components/branding/AuthPageShell';
+import CheckoutSuccessClient from './CheckoutSuccessClient';
 
-import { redirect } from 'next/navigation';
-import { stripe } from '@/lib/stripe-server';
-import { createClient } from '@/lib/supabase-server';
-import { subscriptionFieldsFromStripe } from '@/lib/stripe-billing-sync';
-
-interface Props {
-  searchParams: Promise<{ session_id?: string }>;
+function CheckoutSuccessFallback() {
+  return (
+    <AuthPageShell>
+      <div className="mt-8 rounded-2xl border border-gray-200 bg-white px-6 py-10 text-center shadow-sm">
+        <Loader2 className="mx-auto h-10 w-10 animate-spin text-brand-600" aria-hidden />
+        <p className="mt-5 text-lg font-semibold text-gray-900">Payment successful</p>
+        <p className="mt-2 text-sm text-gray-600">Setting up your account…</p>
+      </div>
+    </AuthPageShell>
+  );
 }
 
-export default async function CheckoutSuccessPage({ searchParams }: Props) {
-  const { session_id } = await searchParams;
-
-  if (!session_id) {
-    redirect('/pricing');
-  }
-
-  try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      redirect('/auth/login');
-    }
-
-    // Retrieve the completed checkout session directly from Stripe
-    const session = await stripe.checkout.sessions.retrieve(session_id, {
-      expand: ['subscription'],
-    });
-
-    // Make sure this session belongs to this user
-    if (session.metadata?.user_id && session.metadata.user_id !== user.id) {
-      redirect('/pricing');
-    }
-
-    if (session.status === 'complete' || session.status === 'open') {
-      const updateData: Record<string, unknown> = {
-        stripe_customer_id: session.customer,
-      };
-
-      if (session.mode === 'subscription' && session.subscription) {
-        const sub = session.subscription as import('stripe').Stripe.Subscription;
-        Object.assign(updateData, subscriptionFieldsFromStripe(sub));
-      } else {
-        updateData.subscription_status = 'active';
-      }
-
-      await supabase
-        .from('users')
-        .update(updateData)
-        .eq('id', user.id);
-    }
-  } catch (err) {
-    console.error('[checkout-success] Error verifying session:', err);
-    // Still redirect to dashboard — the webhook will catch up
-  }
-
-  redirect('/dashboard?welcome=true');
+export default function CheckoutSuccessPage() {
+  return (
+    <Suspense fallback={<CheckoutSuccessFallback />}>
+      <CheckoutSuccessClient />
+    </Suspense>
+  );
 }
