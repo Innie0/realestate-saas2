@@ -74,7 +74,6 @@ export default function AccountPage() {
       const { user } = await getCurrentUser();
       
       if (user) {
-        setUserId(user.id);
         setEmail(user.email || '');
         setFullName(user.user_metadata?.full_name || '');
         setIsAdminAccount(isAdminEmail(user.email));
