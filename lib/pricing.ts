@@ -166,3 +166,15 @@ export function getAnnualSavings(plan: PlanSlug): number {
   const monthlyTotal = PLAN_PRICES[plan].monthly * 12;
   return monthlyTotal - PLAN_PRICES[plan].annual;
 }
+
+/** Marketing copy for Starter vs Pro (monthly + annual when configured). */
+export function getStarterProComparisonAnswer(): string {
+  const starterPrice = isAnyAnnualBillingAvailable()
+    ? `Starter (${getPlanDisplayPrice('starter', 'monthly')}/month or ${getPlanDisplayPrice('starter', 'annual')}/year)`
+    : `Starter (${getPlanDisplayPrice('starter', 'monthly')}/month)`;
+  const proPrice = isAnyAnnualBillingAvailable()
+    ? `Pro (${getPlanDisplayPrice('pro', 'monthly')}/month or ${getPlanDisplayPrice('pro', 'annual')}/year)`
+    : `Pro (${getPlanDisplayPrice('pro', 'monthly')}/month)`;
+
+  return `${starterPrice} includes 20 listing projects, 20 property research lookups, 5 CMA analyses, 75 AI messages, and 20 transactions per month, plus up to 50 clients total — with lead capture, CRM, leads inbox, automated follow-up emails, calendar, tasks, and transaction checklists. ${proPrice} includes everything in Starter with unlimited usage, plus open house QR sign-in, a public agent profile page, and priority support. Both plans include a 7-day free trial.`;
+}

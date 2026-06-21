@@ -18,6 +18,8 @@ import {
   PRO_PLAN_DESCRIPTION,
   getPlanDisplayPrice,
   getPricingFootnote,
+  getStarterProComparisonAnswer,
+  isAnyAnnualBillingAvailable,
 } from '@/lib/pricing';
 
 // ─── Animation Variants ───────────────────────────────────────────────────────
@@ -172,8 +174,7 @@ const FAQ_ITEMS = [
   },
   {
     question: "What's the difference between Starter and Pro?",
-    answer:
-      'Starter ($49/month) includes 20 listing projects, 20 property research lookups, 5 CMA analyses, 75 AI messages, and 20 transactions per month, plus up to 50 clients total — with lead capture, CRM, leads inbox, automated follow-up emails, calendar, tasks, and transaction checklists. Pro ($99/month) includes everything in Starter with unlimited usage, plus open house QR sign-in, a public agent profile page, and priority support. Both plans include a 7-day free trial.',
+    answer: getStarterProComparisonAnswer(),
   },
   {
     question: 'How does Property Research work?',
@@ -1703,9 +1704,14 @@ export default function HomePage() {
                     <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
                     <span className="text-gray-500 text-sm">/ mo after trial</span>
                   </div>
+                  {isAnyAnnualBillingAvailable() && (
+                    <p className="text-xs text-gray-500 mt-2">
+                      or {getPlanDisplayPrice(plan.plan, 'annual')}/year — save 2 months
+                    </p>
+                  )}
                 </div>
 
-                <Link href={`/auth/signup?plan=${plan.plan}`} className="mb-7">
+                <Link href="/pricing" className="mb-7">
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
