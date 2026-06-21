@@ -66,6 +66,28 @@ export default function AccountPage() {
     loadUserData();
   }, []);
 
+  // Refresh billing after returning from Stripe portal
+  React.useEffect(() => {
+    const onFocus = () => {
+      if (stripeSubscriptionId) {
+        fetch('/api/stripe/sync-billing')
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.billing) {
+              setSubscriptionStatus(data.billing.subscription_status);
+              setSubscriptionPlan(data.billing.subscription_plan);
+              setPeriodEnd(data.billing.subscription_current_period_end);
+              setStripeSubscriptionId(data.billing.stripe_subscription_id);
+              setCancelAtPeriodEnd(Boolean(data.billing.subscription_cancel_at_period_end));
+            }
+          })
+          .catch(() => undefined);
+      }
+    };
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, [stripeSubscriptionId]);
+
   /**
    * Load user data from Supabase
    */
