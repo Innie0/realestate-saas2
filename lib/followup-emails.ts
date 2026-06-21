@@ -288,3 +288,55 @@ export function getFollowupScheduleSummary(settings?: FollowupSettings | null): 
   const days = normalizeFollowupDays(settings);
   return `day ${days[1]}, day ${days[2]}, and day ${days[3]}`;
 }
+
+export function formatFollowupScheduleHuman(settings?: FollowupSettings | null): string {
+  const days = normalizeFollowupDays(settings);
+  const welcome = days[1] === 0 ? 'right away' : `day ${days[1]}`;
+  return `${welcome}, day ${days[2]}, and day ${days[3]}`;
+}
+
+export const FOLLOWUP_PREVIEW_CONTEXT: LeadFollowupContext = {
+  leadName: 'Sarah Johnson',
+  leadEmail: 'sarah@example.com',
+  agentName: 'You',
+  leadType: 'buyer',
+  area: 'Riverside',
+};
+
+export function getFollowupPreview(
+  slot: FollowupTemplateSlot,
+  settings?: FollowupSettings | null,
+  context: LeadFollowupContext = FOLLOWUP_PREVIEW_CONTEXT,
+): { subject: string; body: string; label: string } {
+  const definition = TEMPLATE_BY_SLOT[slot];
+  const draft = getTemplateDraft(settings, slot);
+  return {
+    label: definition.label,
+    subject: applyMergeTags(draft.subject, context),
+    body: applyMergeTags(draft.body, context),
+  };
+}
+
+export function getDefaultFollowupSettingsPayload(): FollowupSettings {
+  return {
+    followup_email_1_day: FOLLOWUP_TEMPLATE_DEFINITIONS[0].defaultDay,
+    followup_email_2_day: FOLLOWUP_TEMPLATE_DEFINITIONS[1].defaultDay,
+    followup_email_3_day: FOLLOWUP_TEMPLATE_DEFINITIONS[2].defaultDay,
+    followup_email_1_subject: null,
+    followup_email_1_body: null,
+    followup_email_2_subject: null,
+    followup_email_2_body: null,
+    followup_email_3_subject: null,
+    followup_email_3_body: null,
+  };
+}
+
+export function hasCustomFollowupCopy(settings?: FollowupSettings | null): boolean {
+  if (!settings) return false;
+  return FOLLOWUP_TEMPLATE_DEFINITIONS.some((definition) => {
+    const subject = settings[`followup_email_${definition.slot}_subject` as keyof FollowupSettings];
+    const body = settings[`followup_email_${definition.slot}_body` as keyof FollowupSettings];
+    return Boolean(typeof subject === 'string' && subject.trim()) ||
+      Boolean(typeof body === 'string' && body.trim());
+  });
+}

@@ -28,12 +28,12 @@ function sanitizeFollowupUpdates(body: Record<string, unknown>): Record<string, 
     }
 
     if (key.endsWith('_subject')) {
-      updates[key] = sanitizeFollowupSubject(body[key]);
+      updates[key] = body[key] === null ? null : sanitizeFollowupSubject(body[key]);
       continue;
     }
 
     if (key.endsWith('_body')) {
-      updates[key] = sanitizeFollowupBody(body[key]);
+      updates[key] = body[key] === null ? null : sanitizeFollowupBody(body[key]);
     }
   }
 

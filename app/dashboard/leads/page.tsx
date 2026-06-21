@@ -15,7 +15,7 @@ import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
 import { useToast } from '@/components/providers/ToastProvider';
 import FollowupTemplatesEditor from '@/components/dashboard/FollowupTemplatesEditor';
-import { getFollowupScheduleSummary, type FollowupSettings } from '@/lib/followup-emails';
+import { formatFollowupScheduleHuman, type FollowupSettings } from '@/lib/followup-emails';
 import { QRCodeCanvas } from 'qrcode.react';
 import {
   Inbox, Link2, Copy, Check, Download, Phone, Mail,
@@ -360,7 +360,7 @@ export default function LeadsPage() {
   const [stoppedFollowupIds, setStoppedFollowupIds] = useState<Set<string>>(new Set());
   const [contactPrompt, setContactPrompt] = useState<{ lead: Lead; type: 'email' | 'phone' } | null>(null);
 
-  const followupScheduleText = getFollowupScheduleSummary(settingsData);
+  const followupScheduleText = formatFollowupScheduleHuman(settingsData);
   const [autoFollowup, setAutoFollowup] = useState(false);
   const [savingSettings, setSavingSettings] = useState(false);
 
@@ -738,7 +738,7 @@ export default function LeadsPage() {
                   <h3 className="text-base font-semibold text-gray-900">Auto follow-up</h3>
                 </div>
                 <p className="text-sm text-gray-500 mb-5">
-                  Leads with an email receive 3 automated messages on a schedule you set below. Replies go to your account email (or profile email on Pro).
+                  Leads with an email get 3 professional follow-ups — right away, then on your schedule. Replies go to your account email (or profile email on Pro).
                 </p>
                 <button
                   onClick={() => {
