@@ -14,6 +14,8 @@ import { supabase } from '@/lib/supabase';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
 import { useToast } from '@/components/providers/ToastProvider';
+import FollowupTemplatesEditor from '@/components/dashboard/FollowupTemplatesEditor';
+import { getFollowupScheduleSummary, type FollowupSettings } from '@/lib/followup-emails';
 import { QRCodeCanvas } from 'qrcode.react';
 import {
   Inbox, Link2, Copy, Check, Download, Phone, Mail,
@@ -103,6 +105,7 @@ function TempBadge({ temp }: { temp: 'hot' | 'warm' | 'cold' }) {
 function LeadCard({
   lead,
   autoFollowupEnabled,
+  followupScheduleText,
   onAddToCrm,
   addingId,
   onMarkContacted,
@@ -112,6 +115,7 @@ function LeadCard({
 }: {
   lead: Lead;
   autoFollowupEnabled: boolean;
+  followupScheduleText: string;
   onAddToCrm: (id: string) => void;
   addingId: string | null;
   onMarkContacted: (id: string) => void;
@@ -181,7 +185,7 @@ function LeadCard({
       {followupActive && (
         <div className="mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2">
           <p className="text-xs text-amber-800">
-            Auto follow-up is scheduled for this lead (check-in on day 2 and day 5).
+            Auto follow-up is scheduled ({followupScheduleText}).
           </p>
           <button
             type="button"
@@ -334,7 +338,7 @@ export default function LeadsPage() {
   const { data: leads = [], isLoading, mutate: mutateLeads } = useApi<Lead[]>('/api/clients?status=all&view=inbox');
   const { response: usageResponse } = useApi('/api/usage');
   const { response: profileResponse } = useApi('/api/agent-profile');
-  const { data: settingsData, mutate: mutateSettings } = useApi<{ auto_followup_enabled?: boolean }>('/api/agent-settings');
+  const { data: settingsData, mutate: mutateSettings } = useApi<FollowupSettings & { auto_followup_enabled?: boolean }>('/api/agent-settings');
 
   const isPaidPlan = usageResponse?.hasAccess === true;
   const isProPlan = usageResponse?.hasProLeadTools === true;
@@ -356,6 +360,7 @@ export default function LeadsPage() {
   const [stoppedFollowupIds, setStoppedFollowupIds] = useState<Set<string>>(new Set());
   const [contactPrompt, setContactPrompt] = useState<{ lead: Lead; type: 'email' | 'phone' } | null>(null);
 
+  const followupScheduleText = getFollowupScheduleSummary(settingsData);
   const [autoFollowup, setAutoFollowup] = useState(false);
   const [savingSettings, setSavingSettings] = useState(false);
 
@@ -561,6 +566,7 @@ export default function LeadsPage() {
                       key={lead.id}
                       lead={lead}
                       autoFollowupEnabled={autoFollowup}
+                      followupScheduleText={followupScheduleText}
                       onAddToCrm={handleAddToCrm}
                       addingId={addingToCrmId}
                       onMarkContacted={handleMarkContacted}
@@ -732,7 +738,7 @@ export default function LeadsPage() {
                   <h3 className="text-base font-semibold text-gray-900">Auto follow-up</h3>
                 </div>
                 <p className="text-sm text-gray-500 mb-5">
-                  Leads with an email receive 3 messages over 5 days — welcome, check-in, and a final nudge. Replies go to your account email (or profile email on Pro).
+                  Leads with an email receive 3 automated messages on a schedule you set below. Replies go to your account email (or profile email on Pro).
                 </p>
                 <button
                   onClick={() => {
@@ -777,6 +783,8 @@ export default function LeadsPage() {
                 </button>
               </Surface>
             </div>
+
+            <FollowupTemplatesEditor settings={settingsData} onSaved={() => mutateSettings()} />
           </div>
         )}
 

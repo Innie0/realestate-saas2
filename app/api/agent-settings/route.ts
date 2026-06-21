@@ -1,6 +1,57 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
+import { clampDay, sanitizeFollowupBody, sanitizeFollowupSubject } from '@/lib/followup-emails';
+
+const FOLLOWUP_TEMPLATE_FIELDS = [
+  'followup_email_1_day', 'followup_email_2_day', 'followup_email_3_day',
+  'followup_email_1_subject', 'followup_email_1_body',
+  'followup_email_2_subject', 'followup_email_2_body',
+  'followup_email_3_subject', 'followup_email_3_body',
+] as const;
+
+const FOLLOWUP_DAY_DEFAULTS: Record<string, number> = {
+  followup_email_1_day: 0,
+  followup_email_2_day: 2,
+  followup_email_3_day: 5,
+};
+
+function sanitizeFollowupUpdates(body: Record<string, unknown>): Record<string, unknown> {
+  const updates: Record<string, unknown> = {};
+
+  for (const key of FOLLOWUP_TEMPLATE_FIELDS) {
+    if (!(key in body)) continue;
+
+    if (key.endsWith('_day')) {
+      updates[key] = clampDay(body[key], FOLLOWUP_DAY_DEFAULTS[key] ?? 0);
+      continue;
+    }
+
+    if (key.endsWith('_subject')) {
+      updates[key] = sanitizeFollowupSubject(body[key]);
+      continue;
+    }
+
+    if (key.endsWith('_body')) {
+      updates[key] = sanitizeFollowupBody(body[key]);
+    }
+  }
+
+  const day1 = updates.followup_email_1_day ?? FOLLOWUP_DAY_DEFAULTS.followup_email_1_day;
+  const day2Raw = updates.followup_email_2_day ?? FOLLOWUP_DAY_DEFAULTS.followup_email_2_day;
+  const day3Raw = updates.followup_email_3_day ?? FOLLOWUP_DAY_DEFAULTS.followup_email_3_day;
+  const day2 = Math.max(day2Raw, day1);
+  const day3 = Math.max(day3Raw, day2);
+
+  if ('followup_email_2_day' in updates || 'followup_email_1_day' in updates) {
+    updates.followup_email_2_day = day2;
+  }
+  if ('followup_email_3_day' in updates || 'followup_email_2_day' in updates || 'followup_email_1_day' in updates) {
+    updates.followup_email_3_day = day3;
+  }
+
+  return updates;
+}
 
 export async function GET() {
   try {
@@ -42,12 +93,15 @@ export async function PUT(request: NextRequest) {
       'profile_enabled', 'profile_headline', 'profile_bio',
       'profile_photo_url', 'profile_specialties', 'profile_areas',
       'profile_phone', 'profile_email',
+      ...FOLLOWUP_TEMPLATE_FIELDS,
     ];
 
     const updates: Record<string, unknown> = {};
     for (const key of allowedFields) {
       if (key in body) updates[key] = body[key];
     }
+
+    Object.assign(updates, sanitizeFollowupUpdates(updates));
 
     const { data: existing } = await supabase
       .from('agent_settings')

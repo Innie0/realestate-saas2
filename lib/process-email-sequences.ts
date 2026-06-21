@@ -1,11 +1,7 @@
 import { createAdminClient } from '@/lib/supabase-admin';
 import { resolveAgentReplyEmail } from '@/lib/agent-reply-email';
-import {
-  buildWelcomeEmail,
-  buildFollowUp1Email,
-  buildFollowUp2Email,
-  sendEmail,
-} from '@/lib/resend';
+import { buildFollowupEmail, type FollowupSettings } from '@/lib/followup-emails';
+import { sendEmail } from '@/lib/resend';
 
 export type ProcessEmailSequencesResult = {
   processed: number;
@@ -51,7 +47,13 @@ export async function processEmailSequences(): Promise<ProcessEmailSequencesResu
 
       const { data: agentSettings } = await supabase
         .from('agent_settings')
-        .select('profile_email')
+        .select(`
+          profile_email,
+          followup_email_1_day, followup_email_2_day, followup_email_3_day,
+          followup_email_1_subject, followup_email_1_body,
+          followup_email_2_subject, followup_email_2_body,
+          followup_email_3_subject, followup_email_3_body
+        `)
         .eq('user_id', row.agent_user_id)
         .maybeSingle();
 
@@ -64,7 +66,7 @@ export async function processEmailSequences(): Promise<ProcessEmailSequencesResu
       const areaMatch = msg.match(/Area:\s*(.+)/i);
       const area = areaMatch ? areaMatch[1].trim() : '';
 
-      const emailData = {
+      const context = {
         leadName: client.name,
         leadEmail: client.email,
         agentName,
@@ -73,10 +75,9 @@ export async function processEmailSequences(): Promise<ProcessEmailSequencesResu
         area,
       };
 
-      let email;
-      if (row.template === 'welcome') email = buildWelcomeEmail(emailData);
-      else if (row.template === 'follow_up_1') email = buildFollowUp1Email(emailData);
-      else email = buildFollowUp2Email(emailData);
+      const settings = (agentSettings || null) as FollowupSettings | null;
+      const template = row.template as 'welcome' | 'follow_up_1' | 'follow_up_2';
+      const email = buildFollowupEmail(template, context, settings);
 
       await sendEmail(email);
       await supabase

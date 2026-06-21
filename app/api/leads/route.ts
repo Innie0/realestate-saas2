@@ -11,8 +11,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase-admin';
-import { resolveAgentReplyEmail } from '@/lib/agent-reply-email';
-import { buildWelcomeEmail, sendEmail } from '@/lib/resend';
+import { scheduleLeadFollowupEmails } from '@/lib/schedule-lead-followup';
 import { sendLeadAlertSMS } from '@/lib/twilio';
 
 const UUID_REGEX =
@@ -173,48 +172,28 @@ export async function POST(request: NextRequest) {
     try {
       const { data: settings } = await supabase
         .from('agent_settings')
-        .select('auto_followup_enabled, sms_alerts_enabled, sms_phone, profile_email')
+        .select(`
+          auto_followup_enabled, sms_alerts_enabled, sms_phone, profile_email,
+          followup_email_1_day, followup_email_2_day, followup_email_3_day,
+          followup_email_1_subject, followup_email_1_body,
+          followup_email_2_subject, followup_email_2_body,
+          followup_email_3_subject, followup_email_3_body
+        `)
         .eq('user_id', agentId)
         .single();
 
-      // Fetch agent name for email personalization
-      const { data: agentUser } = await supabase.auth.admin.getUserById(agentId);
-      const agentName = agentUser?.user?.user_metadata?.full_name || 'Your Agent';
-      const agentReplyEmail = resolveAgentReplyEmail({
-        profileEmail: settings?.profile_email,
-        authEmail: agentUser?.user?.email,
-      });
-
       // Schedule follow-up emails if enabled and lead has an email
       if (settings?.auto_followup_enabled && cleanEmail) {
-        const now = new Date();
-        const day2 = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000);
-        const day5 = new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000);
-
-        await supabase.from('email_sequences').insert([
-          { client_id: client.id, agent_user_id: agentId, template: 'welcome',     send_at: now.toISOString(),  status: 'pending' },
-          { client_id: client.id, agent_user_id: agentId, template: 'follow_up_1', send_at: day2.toISOString(), status: 'pending' },
-          { client_id: client.id, agent_user_id: agentId, template: 'follow_up_2', send_at: day5.toISOString(), status: 'pending' },
-        ]);
-
-        // Send the welcome email immediately
-        try {
-          const emailData = buildWelcomeEmail({
-            leadName: cleanName,
-            leadEmail: cleanEmail,
-            agentName,
-            agentReplyEmail,
-            leadType: cleanLeadType,
-            area: cleanArea,
-          });
-          await sendEmail(emailData);
-          await supabase.from('email_sequences')
-            .update({ status: 'sent', sent_at: new Date().toISOString() })
-            .eq('client_id', client.id)
-            .eq('template', 'welcome');
-        } catch (emailErr) {
-          console.error('Welcome email failed:', emailErr);
-        }
+        await scheduleLeadFollowupEmails({
+          supabase,
+          clientId: client.id,
+          agentId,
+          leadName: cleanName,
+          leadEmail: cleanEmail,
+          leadType: cleanLeadType,
+          area: cleanArea,
+          settings,
+        });
       }
 
       // Send SMS alert to agent if enabled
