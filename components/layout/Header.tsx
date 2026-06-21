@@ -11,8 +11,9 @@ import { getCurrentUser } from '@/lib/supabase';
  * HeaderProps - Props for the Header component
  */
 interface HeaderProps {
-  title: string; // Page title to display
-  subtitle?: string; // Optional subtitle/description
+  title: string;
+  subtitle?: string;
+  actions?: React.ReactNode;
 }
 
 interface UpcomingItem {
@@ -30,7 +31,7 @@ interface UpcomingItem {
  * Header component
  * Top bar that shows the current page title and user actions
  */
-export default function Header({ title, subtitle }: HeaderProps) {
+export default function Header({ title, subtitle, actions }: HeaderProps) {
   const [userName, setUserName] = useState('User');
   const [userEmail, setUserEmail] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
@@ -197,17 +198,21 @@ export default function Header({ title, subtitle }: HeaderProps) {
   };
   return (
     <header className="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b border-gray-100">
-      <div className="flex h-[4.5rem] items-center justify-between px-6">
-        {/* Left side - Page title and subtitle */}
-        <div className="min-w-0">
-          <h1 className="text-title sm:text-display-sm font-semibold tracking-tight text-gray-900 truncate">{title}</h1>
-          {subtitle && (
-            <p className="text-caption sm:text-body text-gray-500 mt-1 truncate">{subtitle}</p>
-          )}
-        </div>
+      <div className="px-4 sm:px-6 py-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-title sm:text-display-sm font-semibold tracking-tight text-gray-900 truncate">{title}</h1>
+            {subtitle && (
+              <p className="text-caption sm:text-body text-gray-500 mt-1 truncate">{subtitle}</p>
+            )}
+          </div>
 
-        {/* Right side - Notifications */}
-        <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
+            {actions && (
+              <div className="flex flex-wrap items-center gap-2">{actions}</div>
+            )}
+
+            <div className="flex items-center gap-3 sm:gap-4">
           {/* Notifications button */}
           <div className="relative" ref={notificationRef}>
             <button
@@ -337,6 +342,8 @@ export default function Header({ title, subtitle }: HeaderProps) {
             <div className="hidden md:block">
               <p className="text-sm font-medium text-gray-900">{userName}</p>
               <p className="text-xs text-gray-500">{userEmail}</p>
+            </div>
+          </div>
             </div>
           </div>
         </div>

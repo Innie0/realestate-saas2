@@ -1,5 +1,5 @@
-import DashboardPageSkeleton from '@/components/dashboard/DashboardPageSkeleton';
+import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
 
 export default function ClientsLoading() {
-  return <DashboardPageSkeleton />;
+  return <PageLoadingSkeleton variant="list" />;
 }

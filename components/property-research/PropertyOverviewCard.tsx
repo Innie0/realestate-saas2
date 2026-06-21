@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Bed, Bath, Ruler, Home, Tag, DollarSign, TrendingUp, User, BarChart2, Download, Loader2 } from 'lucide-react';
 import type { CmaAnalysisResult } from './CmaPanel';
 import { buildCmaPdfPayload, downloadCmaPdf } from '@/lib/export-cma-pdf';
+import { useToast } from '@/components/providers/ToastProvider';
 
 interface PropertyDetails {
   bedrooms?: string | number | null;
@@ -56,6 +57,7 @@ export function PropertyOverviewCard({
   onLookUpOwner,
   onRunCma,
 }: PropertyOverviewCardProps) {
+  const toast = useToast();
   const [exportingPdf, setExportingPdf] = useState(false);
   const [exportError, setExportError] = useState('');
 
@@ -65,6 +67,7 @@ export function PropertyOverviewCard({
     setExportError('');
     try {
       await downloadCmaPdf(buildCmaPdfPayload(cmaResult));
+      toast.success('CMA PDF downloaded');
     } catch (err) {
       setExportError(err instanceof Error ? err.message : 'Could not export PDF.');
     } finally {

@@ -3,7 +3,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Header from '@/components/layout/Header';
+import DashboardPage from '@/components/layout/DashboardPage';
+import Button from '@/components/ui/Button';
+import Surface from '@/components/ui/Surface';
+import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
 import { QRCodeCanvas } from 'qrcode.react';
 import {
   Plus, DoorOpen, MapPin, Clock, Download, Link2,
@@ -120,33 +123,26 @@ export default function OpenHousesPage() {
   const inputClass = 'w-full px-3 py-2.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-brand-500';
 
   if (checkingPlan) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
-      </div>
-    );
+    return <PageLoadingSkeleton variant="list" />;
   }
 
   return (
-    <div className="min-h-screen">
-      <Header title="Open Houses" subtitle="Create sign-in pages for your open house events" />
+    <DashboardPage
+      title="Open houses"
+      subtitle="Create sign-in pages for your open house events"
+      size="narrow"
+      actions={
+        <Button size="sm" variant={showCreate ? 'outline' : 'primary'} onClick={() => setShowCreate(!showCreate)}>
+          {showCreate ? <X className="w-4 h-4 mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
+          {showCreate ? 'Cancel' : 'New open house'}
+        </Button>
+      }
+    >
+      <Link href="/dashboard/leads" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-brand-600 transition-colors">
+        <ArrowLeft className="w-4 h-4" /> Back to leads
+      </Link>
 
-      <div className="p-4 sm:p-6 text-gray-900">
-
-        {/* Back + Create */}
-        <div className="flex items-center justify-between mb-6">
-          <Link href="/dashboard/leads" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-brand-600 transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Back to Leads
-          </Link>
-          <button
-            onClick={() => setShowCreate(!showCreate)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-gray-900 hover:bg-gray-100 text-sm font-medium transition-colors"
-          >
-            {showCreate ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-            {showCreate ? 'Cancel' : 'New Open House'}
-          </button>
-        </div>
-
+      <div className="mt-5">
         {/* Create form */}
         {showCreate && (
           <form onSubmit={handleCreate} className="bg-white border border-gray-200 rounded-xl p-5 mb-6 space-y-4">
@@ -270,6 +266,6 @@ export default function OpenHousesPage() {
           </div>
         )}
       </div>
-    </div>
+    </DashboardPage>
   );
 }

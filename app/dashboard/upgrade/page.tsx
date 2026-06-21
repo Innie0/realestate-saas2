@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Check, X, Zap, ArrowLeft, Sparkles, Infinity as InfinityIcon } from 'lucide-react';
-import Header from '@/components/layout/Header';
+import DashboardPage from '@/components/layout/DashboardPage';
+import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
 import UpgradeButton from '@/components/UpgradeButton';
 import SetupStarterButton from '@/components/SetupStarterButton';
 import { supabase } from '@/lib/supabase';
@@ -123,18 +124,13 @@ export default function UpgradePage() {
   }, [router]);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-white" />
-      </div>
-    );
+    return <PageLoadingSkeleton variant="account" />;
   }
 
   if (currentPlan === 'pro') {
     return (
-      <div>
-        <Header title="Upgrade Plan" subtitle="Manage your subscription" />
-        <div className="p-6 max-w-2xl mx-auto text-center mt-16">
+      <DashboardPage title="Your plan" subtitle="Manage your subscription" size="medium">
+        <div className="text-center py-12">
           <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
             <Sparkles className="w-8 h-8 text-gray-900/60" />
           </div>
@@ -144,15 +140,12 @@ export default function UpgradePage() {
             <ArrowLeft className="w-4 h-4" /> Back to Dashboard
           </Link>
         </div>
-      </div>
+      </DashboardPage>
     );
   }
 
   return (
-    <div className="min-h-screen">
-      <Header title="Upgrade to Pro" subtitle="Unlock unlimited access to every feature" />
-
-      <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-8">
+    <DashboardPage title="Upgrade to Pro" subtitle="Unlock unlimited access to every feature" size="medium">
         {starterReady && (
           <div className="rounded-2xl border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-gray-700">
             Starter is connected in Stripe. Click <strong>Upgrade to Pro</strong> below to test the prorated upgrade.
@@ -277,7 +270,6 @@ export default function UpgradePage() {
             <ArrowLeft className="w-4 h-4" /> Back to Dashboard
           </Link>
         </div>
-      </div>
-    </div>
+    </DashboardPage>
   );
 }

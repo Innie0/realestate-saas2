@@ -90,6 +90,7 @@ export default function ClientsPage() {
       if (result.success) {
         setShowCreateForm(false);
         mutate();
+        toast.success('Client added to your CRM');
       } else {
         toast.error(result.error || 'Failed to create client');
       }
@@ -170,7 +171,16 @@ export default function ClientsPage() {
   };
 
   return (
-    <DashboardPage title="Clients" subtitle="Manage your client relationships and follow-ups">
+    <DashboardPage
+      title="Clients"
+      subtitle="Manage your client relationships and follow-ups"
+      actions={
+        <Button data-tour="clients-add" onClick={() => setShowCreateForm(true)} size="sm">
+          <Plus className="w-4 h-4 mr-2" />
+          New Client
+        </Button>
+      }
+    >
       <PageToolbar meta={clients.length > 0 ? `${clients.length} client${clients.length === 1 ? '' : 's'}` : undefined}>
         <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full">
           <SearchInput
@@ -191,14 +201,6 @@ export default function ClientsPage() {
             <option value="archived">Archived</option>
           </select>
         </div>
-        <Button
-          data-tour="clients-add"
-          onClick={() => setShowCreateForm(true)}
-          className="w-full sm:w-auto shrink-0"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          New Client
-        </Button>
       </PageToolbar>
 
       {showCreateForm && (

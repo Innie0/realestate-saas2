@@ -6,10 +6,10 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Header from '@/components/layout/Header';
+import DashboardPage from '@/components/layout/DashboardPage';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import Card from '@/components/ui/Card';
+import Surface from '@/components/ui/Surface';
 import { useToast } from '@/components/providers/ToastProvider';
 
 /**
@@ -106,19 +106,20 @@ export default function NewProjectPage() {
   };
 
   return (
-    <div>
-      {/* Page header */}
-      <Header 
-        title="Create New Project" 
-        subtitle="Start a new property listing project"
-      />
-
-      {/* Page content */}
-      <div className="p-6 max-w-3xl mx-auto">
-        <form onSubmit={handleSubmit} className="space-y-6">
+    <DashboardPage
+      title="New project"
+      subtitle="Start a new property listing project"
+      size="medium"
+      actions={
+        <Button type="submit" form="new-project-form" isLoading={isLoading} size="sm">
+          Create project
+        </Button>
+      }
+    >
+        <form id="new-project-form" onSubmit={handleSubmit} className="space-y-5">
           {/* Basic information */}
-          <Card>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Basic Information</h2>
+          <Surface padding="md">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic information</h2>
             
             <div className="space-y-4">
               <Input
@@ -165,11 +166,11 @@ export default function NewProjectPage() {
                 </select>
               </div>
             </div>
-          </Card>
+          </Surface>
 
           {/* Property address */}
-          <Card>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Property Address</h2>
+          <Surface padding="md">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Property address</h2>
             
             <div className="space-y-4">
               <Input
@@ -206,11 +207,11 @@ export default function NewProjectPage() {
                 />
               </div>
             </div>
-          </Card>
+          </Surface>
 
           {/* Property details */}
-          <Card>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Property Details</h2>
+          <Surface padding="md">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Property details</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
@@ -283,15 +284,11 @@ export default function NewProjectPage() {
                 💡 Enter each feature on a new line. Be specific and descriptive!
               </p>
             </div>
-          </Card>
+          </Surface>
 
-          {/* Action buttons */}
           <div className="flex gap-3">
-            <Button type="submit" isLoading={isLoading}>
-              Create Project
-            </Button>
-            <Button 
-              type="button" 
+            <Button
+              type="button"
               variant="outline"
               onClick={() => router.back()}
             >
@@ -299,8 +296,7 @@ export default function NewProjectPage() {
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+    </DashboardPage>
   );
 }
 

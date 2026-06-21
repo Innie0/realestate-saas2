@@ -6,7 +6,8 @@
 
 import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
-import Header from '@/components/layout/Header';
+import DashboardPage from '@/components/layout/DashboardPage';
+import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
@@ -706,6 +707,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         },
       } : null);
       setHasUnsavedChanges(true);
+      toast.success('AI content generated — review and save when ready');
 
     } catch (error) {
       console.error('AI generation error:', error);
@@ -1296,89 +1298,71 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     }
   };
 
-  // Loading state
   if (isLoading) {
-    return (
-      <div>
-        <Header title="Loading..." subtitle="Please wait" />
-        <div className="p-6 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-brand-600 border-t-transparent"></div>
-        </div>
-      </div>
-    );
+    return <PageLoadingSkeleton variant="detail" />;
   }
 
-  // Not found state
   if (!project) {
     return (
-      <div>
-        <Header title="Project Not Found" subtitle="This project doesn't exist" />
-        <div className="p-6">
-          <Card>
-            <p className="text-gray-600 mb-4">The project you're looking for doesn't exist or you don't have access to it.</p>
-            <Button onClick={() => router.push('/dashboard/projects')}>
-              Back to Projects
-            </Button>
-          </Card>
-        </div>
-      </div>
+      <DashboardPage title="Project not found" subtitle="This project doesn't exist or you don't have access">
+        <Card>
+          <p className="text-gray-600 mb-4">The project you&apos;re looking for doesn&apos;t exist or you don&apos;t have access to it.</p>
+          <Button onClick={() => router.push('/dashboard/projects')}>
+            Back to Projects
+          </Button>
+        </Card>
+      </DashboardPage>
     );
   }
 
-  return (
-    <div className="min-h-screen">
-      {/* Page header */}
-      <Header 
-        title={project.title}
-        subtitle={project.property_info?.address || 'Project Details'}
-      />
-
-      {/* Page content */}
-      <div className="p-6 max-w-7xl mx-auto text-gray-900">
-        {/* Action buttons */}
-        <div className="flex flex-wrap items-center gap-3 mb-4">
-          <Button onClick={handleSave} isLoading={isSaving}>
-            <Save className="w-4 h-4 mr-2" />
-            Save Project
-          </Button>
-          <Button variant="outline" onClick={() => setShowPreviewModal(true)}>
-            <Eye className="w-4 h-4 mr-2" />
-            Preview
-          </Button>
-          <Button variant="outline" onClick={() => router.push('/dashboard/projects')}>
-            Back
-          </Button>
-          
-          {/* Auto-save status indicator */}
-          {autoSaveStatus !== 'idle' && (
-            <div className={`
-              flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all duration-300
-              ${autoSaveStatus === 'saving' ? 'bg-gray-100 text-gray-600 border border-gray-300' : ''}
-              ${autoSaveStatus === 'saved' ? 'bg-green-500/20 text-green-300 border border-green-400/30' : ''}
-              ${autoSaveStatus === 'error' ? 'bg-red-500/20 text-red-300 border border-red-400/30' : ''}
-            `}>
-              {autoSaveStatus === 'saving' && (
-                <>
-                  <div className="w-3 h-3 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
-                  Saving...
-                </>
-              )}
-              {autoSaveStatus === 'saved' && (
-                <>
-                  <Check className="w-4 h-4" />
-                  Saved
-                </>
-              )}
-              {autoSaveStatus === 'error' && (
-                <>
-                  <X className="w-4 h-4" />
-                  Save failed
-                </>
-              )}
-            </div>
+  const headerActions = (
+    <>
+      <Button onClick={handleSave} isLoading={isSaving} size="sm">
+        <Save className="w-4 h-4 mr-2" />
+        Save
+      </Button>
+      <Button variant="outline" size="sm" onClick={() => setShowPreviewModal(true)}>
+        <Eye className="w-4 h-4 mr-2" />
+        Preview
+      </Button>
+      {autoSaveStatus !== 'idle' && (
+        <div
+          className={`
+            flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300
+            ${autoSaveStatus === 'saving' ? 'bg-gray-100 text-gray-600 border border-gray-200' : ''}
+            ${autoSaveStatus === 'saved' ? 'bg-green-50 text-green-700 border border-green-200' : ''}
+            ${autoSaveStatus === 'error' ? 'bg-red-50 text-red-700 border border-red-200' : ''}
+          `}
+        >
+          {autoSaveStatus === 'saving' && (
+            <>
+              <div className="w-3 h-3 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+              Saving…
+            </>
+          )}
+          {autoSaveStatus === 'saved' && (
+            <>
+              <Check className="w-3.5 h-3.5" />
+              Saved
+            </>
+          )}
+          {autoSaveStatus === 'error' && (
+            <>
+              <X className="w-3.5 h-3.5" />
+              Save failed
+            </>
           )}
         </div>
+      )}
+    </>
+  );
 
+  return (
+    <DashboardPage
+      title={project.title}
+      subtitle={project.property_info?.address || 'Project details'}
+      actions={headerActions}
+    >
         {/* Publish listing */}
         <Card className="mb-6 border border-gray-200">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -2107,7 +2091,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             </Card>
           </>)}
         </div>
-      </div>
 
       {/* Generation Results Modal */}
       {showGenerationModal && (
@@ -2287,7 +2270,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           />
         </Modal>
       )}
-    </div>
+    </DashboardPage>
   );
 }
 

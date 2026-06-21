@@ -85,7 +85,18 @@ export default function ProjectsPage() {
   });
 
   return (
-    <DashboardPage title="Projects" subtitle="Manage your property listing projects">
+    <DashboardPage
+      title="Projects"
+      subtitle="Manage your property listing projects"
+      actions={
+        <Link data-tour="projects-new" href="/dashboard/projects/new">
+          <Button size="sm">
+            <Plus className="w-4 h-4 mr-2" />
+            New Project
+          </Button>
+        </Link>
+      }
+    >
       <PageToolbar
         meta={`Showing ${filteredProjects.length} of ${projects.length} projects`}
       >
@@ -108,12 +119,6 @@ export default function ProjectsPage() {
             <option value="completed">Completed</option>
           </select>
         </div>
-        <Link data-tour="projects-new" href="/dashboard/projects/new" className="w-full sm:w-auto shrink-0">
-          <Button className="w-full sm:w-auto">
-            <Plus className="w-4 h-4 mr-2" />
-            New Project
-          </Button>
-        </Link>
       </PageToolbar>
 
       {isLoading && projects.length === 0 ? (

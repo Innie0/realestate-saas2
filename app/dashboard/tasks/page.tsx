@@ -517,6 +517,12 @@ export default function TasksPage() {
       <Header 
         title="AI Assistant" 
         subtitle={usageSubtitle}
+        actions={
+          <Button onClick={handleNewConversation} variant="outline" size="sm">
+            <Plus className="w-4 h-4 mr-2" />
+            New chat
+          </Button>
+        }
       />
 
       <div className="flex-1 flex overflow-hidden">

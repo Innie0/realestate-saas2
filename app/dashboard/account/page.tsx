@@ -4,15 +4,18 @@
 'use client'; // This page uses client-side features
 
 import React, { useState } from 'react';
-import Header from '@/components/layout/Header';
+import DashboardPage from '@/components/layout/DashboardPage';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import Card from '@/components/ui/Card';
-import { User, Lock, X, CreditCard, Sparkles } from 'lucide-react';
+import Surface from '@/components/ui/Surface';
+import Modal from '@/components/ui/Modal';
+import PlanUsagePanel, { PlanUsagePanelSkeleton } from '@/components/dashboard/PlanUsagePanel';
+import { User, Lock, CreditCard, Sparkles } from 'lucide-react';
 import { getCurrentUser, updateUserProfile, supabase } from '@/lib/supabase';
 import { getPaidPlanName, isAdminEmail, hasRealStripeSubscription } from '@/lib/subscription';
 import { getPlanDisplayPrice } from '@/lib/pricing';
 import { useToast } from '@/components/providers/ToastProvider';
+import { useApi } from '@/lib/swr';
 import Link from 'next/link';
 
 /**
@@ -21,19 +24,20 @@ import Link from 'next/link';
  */
 export default function AccountPage() {
   const toast = useToast();
+  const { response: usageResponse, isLoading: usageLoading } = useApi('/api/usage');
+  const usage = (usageResponse?.data ?? null) as Record<string, { current: number; limit: number }> | null;
+  const usagePlan = (usageResponse?.plan as 'starter' | 'pro') ?? 'starter';
   // Form state
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
   
-  const [profileMessage, setProfileMessage] = useState<string | null>(null);
   const [profileError, setProfileError] = useState<string | null>(null);
 
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
   const [isPasswordSaving, setIsPasswordSaving] = useState(false);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -149,7 +153,6 @@ export default function AccountPage() {
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setProfileMessage(null);
     setProfileError(null);
 
     try {
@@ -159,7 +162,7 @@ export default function AccountPage() {
 
       if (error) throw error;
 
-      setProfileMessage('Profile updated successfully.');
+      toast.success('Profile updated');
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       console.error('Update error:', error);
@@ -172,7 +175,6 @@ export default function AccountPage() {
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setPasswordError(null);
-    setPasswordSuccess(null);
     setIsPasswordSaving(true);
 
     try {
@@ -196,7 +198,7 @@ export default function AccountPage() {
 
       setNewPassword('');
       setConfirmPassword('');
-      setPasswordSuccess('Password updated successfully.');
+      toast.success('Password updated');
     } catch (error: unknown) {
       setPasswordError(error instanceof Error ? error.message : 'Failed to change password');
     } finally {
@@ -303,28 +305,33 @@ export default function AccountPage() {
           : ` · Renews ${formattedPeriodEnd}`
       : null;
 
-  // Show loading state while fetching user data
   if (isLoadingData) {
     return (
-      <div>
-        <Header title="Account Settings" subtitle="Loading..." />
-        <div className="p-6 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-black border-t-transparent"></div>
-        </div>
-      </div>
+      <DashboardPage
+        title="Account"
+        subtitle="Manage your profile, plan, and preferences"
+        size="narrow"
+      >
+        {usageLoading ? <PlanUsagePanelSkeleton /> : usage ? <PlanUsagePanel usage={usage} plan={usagePlan} /> : null}
+        <Surface padding="md" className="animate-pulse space-y-3">
+          <div className="h-5 bg-gray-200 rounded w-1/3" />
+          <div className="h-10 bg-gray-100 rounded-xl" />
+          <div className="h-10 bg-gray-100 rounded-xl" />
+        </Surface>
+        <Surface padding="md" className="animate-pulse space-y-3">
+          <div className="h-5 bg-gray-200 rounded w-1/3" />
+          <div className="h-10 bg-gray-100 rounded-xl" />
+        </Surface>
+      </DashboardPage>
     );
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Page header */}
-      <Header 
-        title="Account Settings" 
-        subtitle="Manage your account information and preferences"
-      />
-
-      {/* Page content */}
-      <div className="p-4 sm:p-6 max-w-4xl mx-auto text-gray-900">
+    <DashboardPage
+      title="Account"
+      subtitle="Manage your profile, plan, and preferences"
+      size="narrow"
+    >
         {showUpgradedBanner && (
           <div className="mb-6 flex items-start gap-3 rounded-2xl border border-brand-200 bg-brand-50 px-4 py-3">
             <Sparkles className="w-5 h-5 text-brand-600 shrink-0 mt-0.5" />
@@ -336,12 +343,18 @@ export default function AccountPage() {
             </div>
           </div>
         )}
-        <div className="space-y-6">
+        {usage ? (
+          <PlanUsagePanel usage={usage} plan={usagePlan} />
+        ) : usageLoading ? (
+          <PlanUsagePanelSkeleton />
+        ) : null}
+
+        <div className="space-y-5">
           {/* Profile information */}
-          <Card>
-            <div className="flex items-center gap-3 mb-6">
+          <Surface padding="md">
+            <div className="flex items-center gap-3 mb-5">
               <User className="w-5 h-5 text-gray-900" />
-              <h2 className="text-xl font-bold text-gray-900">Profile Information</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Profile</h2>
             </div>
 
             <form onSubmit={handleUpdateProfile} className="space-y-4">
@@ -366,11 +379,6 @@ export default function AccountPage() {
               />
 
               {/* Save button */}
-              {profileMessage && (
-                <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl px-3 py-2">
-                  {profileMessage}
-                </p>
-              )}
               {profileError && (
                 <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
                   {profileError}
@@ -380,18 +388,15 @@ export default function AccountPage() {
                 <Button type="submit" isLoading={isLoading}>
                   Save Changes
                 </Button>
-                <Button type="button" variant="outline">
-                  Cancel
-                </Button>
               </div>
             </form>
-          </Card>
+          </Surface>
 
           {/* Subscription & billing */}
-          <Card>
-            <div className="flex items-center gap-3 mb-6">
+          <Surface padding="md">
+            <div className="flex items-center gap-3 mb-5">
               <CreditCard className="w-5 h-5 text-gray-900" />
-              <h2 className="text-xl font-bold text-gray-900">Subscription & Billing</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Subscription & Billing</h2>
             </div>
 
             <div className="space-y-3 mb-6">
@@ -469,13 +474,13 @@ export default function AccountPage() {
                 ? 'Your admin account uses Starter plan limits with no Stripe subscription required.'
                 : 'Update payment method, view invoices, or cancel your subscription from the billing portal.'}
             </p>
-          </Card>
+          </Surface>
 
           {/* Password */}
-          <Card>
-            <div className="flex items-center gap-3 mb-6">
+          <Surface padding="md">
+            <div className="flex items-center gap-3 mb-5">
               <Lock className="w-5 h-5 text-gray-900" />
-              <h2 className="text-xl font-bold text-gray-900">Password</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Password</h2>
             </div>
 
             <p className="text-gray-600 mb-4">
@@ -504,87 +509,70 @@ export default function AccountPage() {
                   {passwordError}
                 </p>
               )}
-              {passwordSuccess && (
-                <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl px-3 py-2">
-                  {passwordSuccess}
-                </p>
-              )}
               <Button type="submit" isLoading={isPasswordSaving}>
                 Update password
               </Button>
             </form>
-          </Card>
+          </Surface>
 
           {/* Danger zone */}
-          <Card>
-            <h2 className="text-xl font-bold text-red-600 mb-4">Danger Zone</h2>
+          <Surface padding="md">
+            <h2 className="text-lg font-semibold text-red-600 mb-3">Danger zone</h2>
             <p className="text-gray-600 mb-4">
               Permanently delete your account, cancel any active subscription, and remove your data. This cannot be undone.
             </p>
             <Button variant="danger" onClick={() => { setShowDeleteModal(true); setDeleteConfirmText(''); setDeleteError(null); }}>
               Delete account
             </Button>
-          </Card>
+          </Surface>
         </div>
-      </div>
 
-      {/* Delete account modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/20 flex items-center justify-center p-4 z-50">
-          <div className="rounded-xl shadow-xl border border-gray-200 max-w-md w-full p-6 bg-white">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-gray-900">Delete account</h3>
-              <button
-                type="button"
-                onClick={() => setShowDeleteModal(false)}
-                className="text-gray-500 hover:text-gray-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      <Modal
+        isOpen={showDeleteModal}
+        onClose={() => !isDeleting && setShowDeleteModal(false)}
+        title="Delete account"
+        size="sm"
+      >
+        <p className="text-sm text-gray-600 mb-4">
+          This cancels billing and permanently deletes your account and data. Type{' '}
+          <span className="font-mono font-semibold text-gray-900">DELETE</span> to confirm.
+        </p>
 
-            <p className="text-sm text-gray-600 mb-4">
-              This cancels billing and permanently deletes your account and data. Type{' '}
-              <span className="font-mono font-semibold text-gray-900">DELETE</span> to confirm.
-            </p>
+        <Input
+          label="Confirmation"
+          type="text"
+          value={deleteConfirmText}
+          onChange={(e) => setDeleteConfirmText(e.target.value)}
+          placeholder="DELETE"
+          autoComplete="off"
+        />
 
-            <Input
-              label="Confirmation"
-              type="text"
-              value={deleteConfirmText}
-              onChange={(e) => setDeleteConfirmText(e.target.value)}
-              placeholder="DELETE"
-              autoComplete="off"
-            />
+        {deleteError && (
+          <p className="mt-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
+            {deleteError}
+          </p>
+        )}
 
-            {deleteError && (
-              <p className="mt-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
-                {deleteError}
-              </p>
-            )}
-
-            <div className="flex gap-3 mt-6">
-              <Button
-                variant="danger"
-                onClick={handleDeleteAccount}
-                isLoading={isDeleting}
-                fullWidth
-              >
-                Delete my account
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowDeleteModal(false)}
-                disabled={isDeleting}
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
+        <div className="flex gap-3 mt-6">
+          <Button
+            variant="danger"
+            onClick={handleDeleteAccount}
+            isLoading={isDeleting}
+            fullWidth
+          >
+            Delete my account
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setShowDeleteModal(false)}
+            disabled={isDeleting}
+          >
+            Cancel
+          </Button>
         </div>
-      )}
-    </div>
+      </Modal>
+    </DashboardPage>
   );
 }
 

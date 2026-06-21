@@ -9,6 +9,7 @@ import {
   type ScoredComp,
   type SubjectProperty,
 } from '@/lib/cma';
+import { useToast } from '@/components/providers/ToastProvider';
 import {
   BarChart2, Loader2, AlertCircle, Home, DollarSign,
   TrendingUp, BedDouble, Bath, Ruler, MapPin, Sparkles,
@@ -136,6 +137,7 @@ export interface CmaPanelProps {
 }
 
 export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete }: CmaPanelProps) {
+  const toast = useToast();
   const [propertyType, setPropertyType] = useState('');
   const [radius, setRadius] = useState(0.5);
   const [yearsBack, setYearsBack] = useState(1);
@@ -268,6 +270,7 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
         setFromCache(!!data.fromCache);
         setLocalResearchCache(localKey, data.data);
         onCompleteRef.current?.(data.data);
+        toast.success('CMA analysis complete');
       }
     } catch {
       setError('Something went wrong. Please try again.');
@@ -319,6 +322,7 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
         valuation: liveValuation,
       });
       await downloadCmaPdf(payload);
+      toast.success('CMA PDF downloaded');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not export PDF.');
     } finally {

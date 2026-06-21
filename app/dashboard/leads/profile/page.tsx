@@ -3,7 +3,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Header from '@/components/layout/Header';
+import DashboardPage from '@/components/layout/DashboardPage';
+import Button from '@/components/ui/Button';
+import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
+import { useToast } from '@/components/providers/ToastProvider';
 import {
   ArrowLeft, Save, Loader2, User, Copy, Check,
   Plus, X, Eye, Award, Globe, Briefcase,
@@ -11,6 +14,7 @@ import {
 
 export default function ProfileEditorPage() {
   const router = useRouter();
+  const toast = useToast();
   const [loading, setLoading] = useState(true);
   const [checkingPlan, setCheckingPlan] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -115,6 +119,7 @@ export default function ProfileEditorPage() {
       const result = await res.json();
       if (result.success) {
         setSaved(true);
+        toast.success('Profile saved');
         if (result.data) {
           setEnabled(result.data.profile_enabled === true);
         }
@@ -158,58 +163,45 @@ export default function ProfileEditorPage() {
     'w-full px-3 py-2.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500';
 
   if (loading || checkingPlan) {
-    return (
-      <div className="min-h-screen">
-        <Header title="Agent Profile" subtitle="Edit your public profile page" />
-        <div className="flex items-center justify-center p-20">
-          <Loader2 className="w-6 h-6 text-gray-500 animate-spin" />
-        </div>
-      </div>
-    );
+    return <PageLoadingSkeleton variant="account" />;
   }
 
+  const saveButton = (
+    <Button size="sm" onClick={handleSave} isLoading={saving}>
+      {saved ? <Check className="w-4 h-4 mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+      {saving ? 'Saving…' : saved ? 'Saved' : 'Save changes'}
+    </Button>
+  );
+
   return (
-    <div className="min-h-screen bg-[#F5F5F5]">
-      <Header title="Agent Profile" subtitle="Edit your public profile page" />
-
-      <div className="p-4 sm:p-6 lg:p-8">
-        <div className="mx-auto w-full max-w-3xl text-gray-900">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <Link
-              href="/dashboard/leads"
-              className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-brand-600 transition-colors"
+    <DashboardPage
+      title="Agent profile"
+      subtitle="Edit your public profile page"
+      size="narrow"
+      actions={
+        <>
+          {enabled && profileUrl && (
+            <a
+              href={profileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-white text-gray-600 border border-gray-200 hover:text-brand-600 transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" /> Back to Leads
-            </Link>
-            <div className="flex items-center gap-2">
-              {enabled && profileUrl && (
-                <a
-                  href={profileUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-white text-gray-600 border border-gray-200 hover:text-brand-600 transition-colors"
-                >
-                  <Eye className="w-3.5 h-3.5" /> Preview
-                </a>
-              )}
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-500 text-white hover:bg-brand-600 text-sm font-medium transition-colors disabled:opacity-50 shadow-sm"
-              >
-                {saving ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : saved ? (
-                  <Check className="w-4 h-4" />
-                ) : (
-                  <Save className="w-4 h-4" />
-                )}
-                {saving ? 'Saving...' : saved ? 'Saved' : 'Save Changes'}
-              </button>
-            </div>
-          </div>
+              <Eye className="w-3.5 h-3.5" /> Preview
+            </a>
+          )}
+          {saveButton}
+        </>
+      }
+    >
+      <Link
+        href="/dashboard/leads"
+        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-brand-600 transition-colors"
+      >
+        <ArrowLeft className="w-4 h-4" /> Back to leads
+      </Link>
 
-          <div className="space-y-6">
+      <div className="mt-5 space-y-5">
             {saveError && (
               <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
                 {saveError}
@@ -481,9 +473,7 @@ export default function ProfileEditorPage() {
                 </button>
               </div>
             </div>
-          </div>
-        </div>
       </div>
-    </div>
+    </DashboardPage>
   );
 }

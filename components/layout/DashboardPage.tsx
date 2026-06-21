@@ -5,6 +5,7 @@ import clsx from 'clsx';
 interface DashboardPageProps {
   title: string;
   subtitle?: string;
+  actions?: React.ReactNode;
   children: React.ReactNode;
   size?: 'default' | 'narrow' | 'medium';
   className?: string;
@@ -13,13 +14,14 @@ interface DashboardPageProps {
 export default function DashboardPage({
   title,
   subtitle,
+  actions,
   children,
   size = 'default',
   className,
 }: DashboardPageProps) {
   return (
     <div className="min-h-screen">
-      <Header title={title} subtitle={subtitle} />
+      <Header title={title} subtitle={subtitle} actions={actions} />
       <PageShell size={size} className={clsx('space-y-5', className)}>
         {children}
       </PageShell>
