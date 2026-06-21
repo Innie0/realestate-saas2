@@ -8,16 +8,33 @@ export type StripeBillingFields = {
   subscription_cancel_at_period_end: boolean;
 };
 
+function getSubscriptionPeriodEnd(subscription: Stripe.Subscription): number | null {
+  const fromItem = subscription.items.data[0]?.current_period_end;
+  if (fromItem) return fromItem;
+
+  const legacy = (subscription as Stripe.Subscription & { current_period_end?: number })
+    .current_period_end;
+  if (legacy) return legacy;
+
+  if (subscription.status === 'trialing' && subscription.trial_end) {
+    return subscription.trial_end;
+  }
+
+  return null;
+}
+
 export function subscriptionFieldsFromStripe(
   subscription: Stripe.Subscription,
 ): StripeBillingFields {
+  const periodEnd = getSubscriptionPeriodEnd(subscription);
+
   return {
     stripe_subscription_id: subscription.id,
     subscription_status: subscription.status,
     subscription_plan: subscription.items.data[0]?.price.id ?? null,
-    subscription_current_period_end: new Date(
-      subscription.current_period_end * 1000,
-    ).toISOString(),
+    subscription_current_period_end: periodEnd
+      ? new Date(periodEnd * 1000).toISOString()
+      : new Date().toISOString(),
     subscription_cancel_at_period_end: subscription.cancel_at_period_end,
   };
 }
