@@ -47,6 +47,26 @@ export const FOLLOWUP_MERGE_TAGS = [
   '{{area_in}}',
 ] as const;
 
+export const FOLLOWUP_MERGE_TAG_OPTIONS = [
+  { tag: '{{first_name}}', label: 'Lead first name' },
+  { tag: '{{lead_name}}', label: 'Lead full name' },
+  { tag: '{{agent_first_name}}', label: 'Your first name' },
+  { tag: '{{agent_name}}', label: 'Your full name' },
+  { tag: '{{lead_type}}', label: 'Lead type' },
+  { tag: '{{area}}', label: 'Lead area' },
+  { tag: '{{area_in}}', label: 'Area phrase' },
+] as const;
+
+export function insertTextAtSelection(
+  value: string,
+  insert: string,
+  selectionStart: number,
+  selectionEnd: number,
+): { nextValue: string; cursor: number } {
+  const nextValue = `${value.slice(0, selectionStart)}${insert}${value.slice(selectionEnd)}`;
+  return { nextValue, cursor: selectionStart + insert.length };
+}
+
 export const FOLLOWUP_TEMPLATE_DEFINITIONS: FollowupTemplateDefinition[] = [
   {
     slot: 1,

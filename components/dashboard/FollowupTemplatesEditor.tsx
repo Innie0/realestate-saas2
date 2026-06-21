@@ -1,14 +1,15 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDown, Eye, Loader2, RotateCcw, Save, Settings2 } from 'lucide-react';
 import Surface from '@/components/ui/Surface';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import { useToast } from '@/components/providers/ToastProvider';
 import {
-  FOLLOWUP_MERGE_TAGS,
+  FOLLOWUP_MERGE_TAG_OPTIONS,
   FOLLOWUP_TEMPLATE_DEFINITIONS,
+  insertTextAtSelection,
   clampFollowupCheckinDay,
   clampFollowupNudgeDay,
   formatFollowupScheduleHuman,
@@ -62,8 +63,19 @@ function parseDayInput(value: string): number | null {
   return Number.parseInt(digits, 10);
 }
 
+type ActiveTemplateField = {
+  slot: FollowupTemplateSlot;
+  field: 'subject' | 'body';
+};
+
+function fieldKey(slot: FollowupTemplateSlot, field: 'subject' | 'body') {
+  return `${slot}-${field}`;
+}
+
 export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupTemplatesEditorProps) {
   const toast = useToast();
+  const fieldRefs = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
+  const [activeField, setActiveField] = useState<ActiveTemplateField | null>(null);
   const [timingDays, setTimingDays] = useState({ checkin: 2, nudge: 5 });
   const [checkinInput, setCheckinInput] = useState('2');
   const [nudgeInput, setNudgeInput] = useState('5');
@@ -218,6 +230,45 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
     toast.info(`${definition.label} reset to default wording`);
   };
 
+  const insertMergeTag = (tag: string, target?: ActiveTemplateField, append = false) => {
+    const field = target ?? activeField;
+    if (!field) {
+      toast.info('Click in the subject or message field first');
+      return;
+    }
+
+    setActiveField(field);
+    const element = fieldRefs.current[fieldKey(field.slot, field.field)];
+    if (!element) return;
+
+    const currentValue =
+      field.field === 'subject'
+        ? drafts[field.slot].subject
+        : drafts[field.slot].body;
+
+    let selectionStart = element.selectionStart ?? currentValue.length;
+    let selectionEnd = element.selectionEnd ?? selectionStart;
+    if (append) {
+      selectionStart = currentValue.length;
+      selectionEnd = currentValue.length;
+    }
+
+    const { nextValue, cursor } = insertTextAtSelection(currentValue, tag, selectionStart, selectionEnd);
+
+    updateDraft(field.slot, field.field === 'subject' ? { subject: nextValue } : { body: nextValue });
+
+    requestAnimationFrame(() => {
+      element.focus();
+      element.setSelectionRange(cursor, cursor);
+    });
+  };
+
+  const registerFieldRef =
+    (slot: FollowupTemplateSlot, field: 'subject' | 'body') =>
+    (element: HTMLInputElement | HTMLTextAreaElement | null) => {
+      fieldRefs.current[fieldKey(slot, field)] = element;
+    };
+
   const previewSettings = useMemo<FollowupSettings>(() => ({
     followup_email_1_day: 0,
     followup_email_2_day: timingDays.checkin,
@@ -365,11 +416,24 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                 Stick to the defaults unless you know what you&apos;re doing. Use preview before saving, and restore defaults if anything looks off.
               </p>
 
-              <div className="rounded-lg bg-gray-50 border border-gray-200 px-3 py-2">
+              <div className="rounded-lg bg-gray-50 border border-gray-200 px-3 py-3 space-y-2">
                 <p className="text-xs text-gray-600">
-                  <span className="font-medium text-gray-700">Optional tags:</span>{' '}
-                  {FOLLOWUP_MERGE_TAGS.join(', ')}
+                  <span className="font-medium text-gray-700">Insert shortcuts</span>
+                  {' '}— click in subject or message, then tap to add:
                 </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {FOLLOWUP_MERGE_TAG_OPTIONS.map(({ tag, label }) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => insertMergeTag(tag)}
+                      title={tag}
+                      className="inline-flex items-center rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 hover:border-brand-300 hover:text-brand-700 transition-colors"
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="space-y-3">
@@ -396,8 +460,10 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                           <div>
                             <label className="block text-xs font-medium text-gray-600 mb-1.5">Subject</label>
                             <input
+                              ref={registerFieldRef(definition.slot, 'subject')}
                               type="text"
                               value={draft.subject}
+                              onFocus={() => setActiveField({ slot: definition.slot, field: 'subject' })}
                               onChange={(e) => updateDraft(definition.slot, { subject: e.target.value })}
                               className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-brand-500"
                             />
@@ -406,11 +472,37 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                           <div>
                             <label className="block text-xs font-medium text-gray-600 mb-1.5">Message</label>
                             <textarea
+                              ref={registerFieldRef(definition.slot, 'body')}
                               value={draft.body}
+                              onFocus={() => setActiveField({ slot: definition.slot, field: 'body' })}
                               onChange={(e) => updateDraft(definition.slot, { body: e.target.value })}
                               rows={8}
                               className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-brand-500 resize-y"
                             />
+                          </div>
+
+                          <div className="flex flex-wrap gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => insertMergeTag('{{first_name}}', { slot: definition.slot, field: 'body' }, true)}
+                              className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600 hover:border-brand-300 hover:text-brand-700 transition-colors"
+                            >
+                              + Lead first name
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => insertMergeTag('{{agent_name}}', { slot: definition.slot, field: 'body' }, true)}
+                              className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600 hover:border-brand-300 hover:text-brand-700 transition-colors"
+                            >
+                              + Your name
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => insertMergeTag('{{lead_type}}', { slot: definition.slot, field: 'body' }, true)}
+                              className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600 hover:border-brand-300 hover:text-brand-700 transition-colors"
+                            >
+                              + Lead type
+                            </button>
                           </div>
 
                           <div className="flex flex-wrap gap-3">
