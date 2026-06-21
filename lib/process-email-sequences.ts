@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin';
+import { resolveAgentReplyEmail } from '@/lib/agent-reply-email';
 import {
   buildWelcomeEmail,
   buildFollowUp1Email,
@@ -48,6 +49,17 @@ export async function processEmailSequences(): Promise<ProcessEmailSequencesResu
       const { data: agentUser } = await supabase.auth.admin.getUserById(row.agent_user_id);
       const agentName = agentUser?.user?.user_metadata?.full_name || 'Your Agent';
 
+      const { data: agentSettings } = await supabase
+        .from('agent_settings')
+        .select('profile_email')
+        .eq('user_id', row.agent_user_id)
+        .maybeSingle();
+
+      const agentReplyEmail = resolveAgentReplyEmail({
+        profileEmail: agentSettings?.profile_email,
+        authEmail: agentUser?.user?.email,
+      });
+
       const msg = client.message || '';
       const areaMatch = msg.match(/Area:\s*(.+)/i);
       const area = areaMatch ? areaMatch[1].trim() : '';
@@ -56,6 +68,7 @@ export async function processEmailSequences(): Promise<ProcessEmailSequencesResu
         leadName: client.name,
         leadEmail: client.email,
         agentName,
+        agentReplyEmail,
         leadType: client.lead_type,
         area,
       };

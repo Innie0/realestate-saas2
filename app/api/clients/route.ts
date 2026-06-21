@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Process clients to add computed fields
-    const processedClients = clients?.map(client => {
+    let processedClients = clients?.map(client => {
       const notes = client.client_notes || [];
       const reminders = client.reminders || [];
       
@@ -98,6 +98,22 @@ export async function GET(request: NextRequest) {
         upcoming_reminders_count: upcomingReminders,
       };
     }) || [];
+
+    if (view === 'inbox' && processedClients.length > 0) {
+      const clientIds = processedClients.map((client) => client.id);
+      const { data: pendingSequences } = await supabase
+        .from('email_sequences')
+        .select('client_id')
+        .in('client_id', clientIds)
+        .eq('agent_user_id', user.id)
+        .eq('status', 'pending');
+
+      const pendingByClient = new Set(pendingSequences?.map((row) => row.client_id) ?? []);
+      processedClients = processedClients.map((client) => ({
+        ...client,
+        followup_active: pendingByClient.has(client.id),
+      }));
+    }
 
     return NextResponse.json({
       success: true,

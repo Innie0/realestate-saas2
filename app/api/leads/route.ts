@@ -11,6 +11,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase-admin';
+import { resolveAgentReplyEmail } from '@/lib/agent-reply-email';
 import { buildWelcomeEmail, sendEmail } from '@/lib/resend';
 import { sendLeadAlertSMS } from '@/lib/twilio';
 
@@ -172,13 +173,17 @@ export async function POST(request: NextRequest) {
     try {
       const { data: settings } = await supabase
         .from('agent_settings')
-        .select('auto_followup_enabled, sms_alerts_enabled, sms_phone')
+        .select('auto_followup_enabled, sms_alerts_enabled, sms_phone, profile_email')
         .eq('user_id', agentId)
         .single();
 
       // Fetch agent name for email personalization
       const { data: agentUser } = await supabase.auth.admin.getUserById(agentId);
       const agentName = agentUser?.user?.user_metadata?.full_name || 'Your Agent';
+      const agentReplyEmail = resolveAgentReplyEmail({
+        profileEmail: settings?.profile_email,
+        authEmail: agentUser?.user?.email,
+      });
 
       // Schedule follow-up emails if enabled and lead has an email
       if (settings?.auto_followup_enabled && cleanEmail) {
@@ -198,6 +203,7 @@ export async function POST(request: NextRequest) {
             leadName: cleanName,
             leadEmail: cleanEmail,
             agentName,
+            agentReplyEmail,
             leadType: cleanLeadType,
             area: cleanArea,
           });

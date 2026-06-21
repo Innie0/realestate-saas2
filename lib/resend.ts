@@ -1,6 +1,27 @@
 import { Resend } from 'resend';
+import { formatReplyToHeader } from '@/lib/agent-reply-email';
 
 const FROM_EMAIL = 'Realestic <noreply@realestic.ai>';
+
+export type OutboundEmail = {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+  reply_to?: string;
+};
+
+function withReplyTo(
+  email: Omit<OutboundEmail, 'reply_to'>,
+  agentReplyEmail?: string | null,
+  agentName?: string | null,
+): OutboundEmail {
+  if (!agentReplyEmail) return email;
+  return {
+    ...email,
+    reply_to: formatReplyToHeader(agentReplyEmail, agentName),
+  };
+}
 
 function getResendClient(): Resend | null {
   const apiKey = process.env.RESEND_API_KEY;
@@ -12,6 +33,7 @@ interface LeadEmailData {
   leadName: string;
   leadEmail: string;
   agentName: string;
+  agentReplyEmail?: string | null;
   leadType?: string | null;
   area?: string;
   timeline?: string;
@@ -49,11 +71,12 @@ export function buildWelcomeEmail(data: LeadEmailData) {
   const firstName = data.leadName.split(' ')[0];
   const agentFirst = data.agentName.split(' ')[0];
 
-  return {
-    from: FROM_EMAIL,
-    to: data.leadEmail,
-    subject: `Thanks for reaching out, ${firstName}!`,
-    html: baseHtml(`
+  return withReplyTo(
+    {
+      from: FROM_EMAIL,
+      to: data.leadEmail,
+      subject: `Thanks for reaching out, ${firstName}!`,
+      html: baseHtml(`
       <h2 style="margin:0 0 16px;font-size:20px;color:#111827;">Hi ${firstName},</h2>
       <p style="margin:0 0 12px;font-size:15px;color:#374151;line-height:1.6;">
         Thanks for reaching out! ${agentFirst} received your info and will be in touch shortly.
@@ -63,18 +86,22 @@ export function buildWelcomeEmail(data: LeadEmailData) {
       </p>
       <p style="margin:24px 0 0;font-size:15px;color:#374151;">Best,<br/>${data.agentName}</p>
     `, data.agentName),
-  };
+    },
+    data.agentReplyEmail,
+    data.agentName,
+  );
 }
 
 export function buildFollowUp1Email(data: LeadEmailData) {
   const firstName = data.leadName.split(' ')[0];
   const areaText = data.area ? ` in ${data.area}` : '';
 
-  return {
-    from: FROM_EMAIL,
-    to: data.leadEmail,
-    subject: `Still thinking about ${getLeadTypeLabel(data.leadType)}${areaText}?`,
-    html: baseHtml(`
+  return withReplyTo(
+    {
+      from: FROM_EMAIL,
+      to: data.leadEmail,
+      subject: `Still thinking about ${getLeadTypeLabel(data.leadType)}${areaText}?`,
+      html: baseHtml(`
       <h2 style="margin:0 0 16px;font-size:20px;color:#111827;">Hi ${firstName},</h2>
       <p style="margin:0 0 12px;font-size:15px;color:#374151;line-height:1.6;">
         Just checking in — I hope you're doing well! I wanted to follow up on your interest in ${getLeadTypeLabel(data.leadType)}${areaText}.
@@ -87,17 +114,21 @@ export function buildFollowUp1Email(data: LeadEmailData) {
       </p>
       <p style="margin:24px 0 0;font-size:15px;color:#374151;">Talk soon,<br/>${data.agentName}</p>
     `, data.agentName),
-  };
+    },
+    data.agentReplyEmail,
+    data.agentName,
+  );
 }
 
 export function buildFollowUp2Email(data: LeadEmailData) {
   const firstName = data.leadName.split(' ')[0];
 
-  return {
-    from: FROM_EMAIL,
-    to: data.leadEmail,
-    subject: `Any questions I can answer, ${firstName}?`,
-    html: baseHtml(`
+  return withReplyTo(
+    {
+      from: FROM_EMAIL,
+      to: data.leadEmail,
+      subject: `Any questions I can answer, ${firstName}?`,
+      html: baseHtml(`
       <h2 style="margin:0 0 16px;font-size:20px;color:#111827;">Hi ${firstName},</h2>
       <p style="margin:0 0 12px;font-size:15px;color:#374151;line-height:1.6;">
         I know life gets busy, so I just wanted to send a quick note. If ${getLeadTypeLabel(data.leadType)} is still on your mind, I'm happy to answer any questions — no pressure at all.
@@ -107,10 +138,13 @@ export function buildFollowUp2Email(data: LeadEmailData) {
       </p>
       <p style="margin:24px 0 0;font-size:15px;color:#374151;">All the best,<br/>${data.agentName}</p>
     `, data.agentName),
-  };
+    },
+    data.agentReplyEmail,
+    data.agentName,
+  );
 }
 
-export async function sendEmail(emailData: { from: string; to: string; subject: string; html: string }) {
+export async function sendEmail(emailData: OutboundEmail) {
   const resend = getResendClient();
   if (!resend) {
     console.warn('[Resend] RESEND_API_KEY not set — skipping email send');

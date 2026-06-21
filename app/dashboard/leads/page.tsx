@@ -9,6 +9,7 @@ import Tabs from '@/components/ui/Tabs';
 import Surface from '@/components/ui/Surface';
 import EmptyState from '@/components/ui/EmptyState';
 import Button from '@/components/ui/Button';
+import Modal from '@/components/ui/Modal';
 import { supabase } from '@/lib/supabase';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
@@ -18,7 +19,7 @@ import {
   Inbox, Link2, Copy, Check, Download, Phone, Mail,
   Home, Building2, KeyRound, Search, Flame, Thermometer,
   Snowflake, ArrowRight, Users, Clock, Lock, MailCheck,
-  Loader2, DoorOpen, Megaphone, Zap, UserPlus, MailX, MapPin, Sparkles,
+  Loader2, DoorOpen, Megaphone, Zap, UserPlus, MailX, MapPin, Sparkles, UserCheck,
 } from 'lucide-react';
 
 type LeadsTab = 'inbox' | 'capture' | 'automations';
@@ -33,6 +34,20 @@ interface Lead {
   source?: string;
   created_at: string;
   status: string;
+  followup_active?: boolean;
+}
+
+function leadHasActiveFollowup(
+  lead: Lead,
+  autoFollowupEnabled: boolean,
+  stoppedIds: Set<string>,
+): boolean {
+  return Boolean(
+    autoFollowupEnabled &&
+    lead.email &&
+    lead.followup_active &&
+    !stoppedIds.has(lead.id),
+  );
 }
 
 function getLeadTemp(lead: Lead): 'hot' | 'warm' | 'cold' {
@@ -87,23 +102,28 @@ function TempBadge({ temp }: { temp: 'hot' | 'warm' | 'cold' }) {
 
 function LeadCard({
   lead,
+  autoFollowupEnabled,
   onAddToCrm,
   addingId,
-  onCancelSequence,
-  cancellingId,
-  cancelledIds,
+  onMarkContacted,
+  markingContactedId,
+  stoppedIds,
+  onContactLead,
 }: {
   lead: Lead;
+  autoFollowupEnabled: boolean;
   onAddToCrm: (id: string) => void;
   addingId: string | null;
-  onCancelSequence: (id: string) => void;
-  cancellingId: string | null;
-  cancelledIds: Set<string>;
+  onMarkContacted: (id: string) => void;
+  markingContactedId: string | null;
+  stoppedIds: Set<string>;
+  onContactLead: (lead: Lead, type: 'email' | 'phone') => void;
 }) {
   const temp = getLeadTemp(lead);
   const isAdding = addingId === lead.id;
-  const isCancelling = cancellingId === lead.id;
-  const emailsStopped = cancelledIds.has(lead.id);
+  const isMarkingContacted = markingContactedId === lead.id;
+  const followupActive = leadHasActiveFollowup(lead, autoFollowupEnabled, stoppedIds);
+  const emailsStopped = stoppedIds.has(lead.id);
   const TypeIcon = lead.lead_type ? LEAD_TYPE_ICONS[lead.lead_type] : null;
   const msg = lead.message || '';
   const infoLines = msg.split('\n').filter(l =>
@@ -158,18 +178,54 @@ function LeadCard({
         </div>
       )}
 
+      {followupActive && (
+        <div className="mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2">
+          <p className="text-xs text-amber-800">
+            Auto follow-up is scheduled for this lead (check-in on day 2 and day 5).
+          </p>
+          <button
+            type="button"
+            onClick={() => onMarkContacted(lead.id)}
+            disabled={isMarkingContacted}
+            className="shrink-0 inline-flex items-center justify-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg bg-white text-amber-900 border border-amber-200 hover:bg-amber-100 transition-colors disabled:opacity-60"
+          >
+            {isMarkingContacted ? (
+              <Loader2 className="w-3 h-3 animate-spin" />
+            ) : (
+              <UserCheck className="w-3 h-3" />
+            )}
+            Mark contacted
+          </button>
+        </div>
+      )}
+
+      {!followupActive && emailsStopped && lead.email && autoFollowupEnabled && (
+        <p className="mb-3 text-xs text-gray-500 flex items-center gap-1.5">
+          <MailX className="w-3.5 h-3.5" />
+          Auto follow-up stopped for this lead
+        </p>
+      )}
+
       <div className="flex flex-wrap gap-3 mb-3">
         {lead.email && (
-          <a href={`mailto:${lead.email}`} className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-brand-600 transition-colors">
+          <button
+            type="button"
+            onClick={() => onContactLead(lead, 'email')}
+            className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-brand-600 transition-colors"
+          >
             <Mail className="w-3.5 h-3.5" />
             {lead.email}
-          </a>
+          </button>
         )}
         {lead.phone && (
-          <a href={`tel:${lead.phone}`} className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-brand-600 transition-colors">
+          <button
+            type="button"
+            onClick={() => onContactLead(lead, 'phone')}
+            className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-brand-600 transition-colors"
+          >
             <Phone className="w-3.5 h-3.5" />
             {lead.phone}
-          </a>
+          </button>
         )}
       </div>
 
@@ -183,12 +239,12 @@ function LeadCard({
         </div>
       )}
 
-      <div className="flex gap-2 pt-2 border-t border-gray-100">
+      <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100">
         <button
           type="button"
           onClick={() => onAddToCrm(lead.id)}
           disabled={isAdding}
-          className="flex-1 flex items-center justify-center gap-1.5 text-xs font-medium py-1.5 rounded-lg bg-white text-gray-900 hover:bg-gray-100 transition-colors disabled:opacity-60"
+          className="flex-1 min-w-[8rem] flex items-center justify-center gap-1.5 text-xs font-medium py-1.5 rounded-lg bg-white text-gray-900 hover:bg-gray-100 transition-colors disabled:opacity-60"
         >
           {isAdding ? (
             <><Loader2 className="w-3 h-3 animate-spin" /> Adding…</>
@@ -197,30 +253,37 @@ function LeadCard({
           )}
         </button>
         {lead.phone && (
-          <a
-            href={`tel:${lead.phone}`}
+          <button
+            type="button"
+            onClick={() => onContactLead(lead, 'phone')}
             className="flex items-center justify-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-600 border border-gray-200 transition-colors"
           >
             <Phone className="w-3 h-3" /> Call
-          </a>
+          </button>
         )}
         {lead.email && (
           <button
             type="button"
-            onClick={() => onCancelSequence(lead.id)}
-            disabled={isCancelling || emailsStopped}
-            title={emailsStopped ? 'Follow-up emails stopped' : 'Stop automated follow-up emails'}
-            className={`flex items-center justify-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors disabled:cursor-not-allowed ${
-              emailsStopped
-                ? 'bg-gray-50 text-gray-600 border-gray-100'
-                : 'bg-gray-50 hover:bg-red-500/10 text-gray-500 hover:text-red-400 border-gray-200 hover:border-red-500/20'
-            }`}
+            onClick={() => onContactLead(lead, 'email')}
+            className="flex items-center justify-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-600 border border-gray-200 transition-colors"
           >
-            {isCancelling ? (
+            <Mail className="w-3 h-3" /> Email
+          </button>
+        )}
+        {followupActive && (
+          <button
+            type="button"
+            onClick={() => onMarkContacted(lead.id)}
+            disabled={isMarkingContacted}
+            title="Stop automated follow-up emails"
+            className="flex items-center justify-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border bg-gray-50 hover:bg-red-50 text-gray-500 hover:text-red-600 border-gray-200 hover:border-red-200 transition-colors disabled:opacity-60"
+          >
+            {isMarkingContacted ? (
               <Loader2 className="w-3 h-3 animate-spin" />
             ) : (
               <MailX className="w-3 h-3" />
             )}
+            Stop emails
           </button>
         )}
       </div>
@@ -289,8 +352,9 @@ export default function LeadsPage() {
   const [copied, setCopied] = useState(false);
   const [filter, setFilter] = useState<'all' | 'hot' | 'warm' | 'cold'>('all');
   const [addingToCrmId, setAddingToCrmId] = useState<string | null>(null);
-  const [cancellingSequenceId, setCancellingSequenceId] = useState<string | null>(null);
-  const [cancelledSequenceIds, setCancelledSequenceIds] = useState<Set<string>>(new Set());
+  const [markingContactedId, setMarkingContactedId] = useState<string | null>(null);
+  const [stoppedFollowupIds, setStoppedFollowupIds] = useState<Set<string>>(new Set());
+  const [contactPrompt, setContactPrompt] = useState<{ lead: Lead; type: 'email' | 'phone' } | null>(null);
 
   const [autoFollowup, setAutoFollowup] = useState(false);
   const [savingSettings, setSavingSettings] = useState(false);
@@ -310,21 +374,63 @@ export default function LeadsPage() {
     });
   }, []);
 
-  const handleCancelSequence = async (leadId: string) => {
-    setCancellingSequenceId(leadId);
+  const openContactLink = (lead: Lead, type: 'email' | 'phone') => {
+    const href = type === 'email' ? `mailto:${lead.email}` : `tel:${lead.phone}`;
+    window.location.href = href;
+  };
+
+  const handleMarkContacted = async (leadId: string, options?: { toast?: boolean }) => {
+    setMarkingContactedId(leadId);
     try {
       const res = await fetch(`/api/clients/${leadId}/cancel-sequence`, { method: 'POST' });
       const result = await res.json();
       if (result.success) {
-        setCancelledSequenceIds(prev => new Set([...prev, leadId]));
-      } else {
-        toast.error(result.error || 'Could not stop emails');
+        setStoppedFollowupIds((prev) => new Set([...prev, leadId]));
+        mutateLeads(
+          (current) =>
+            current
+              ? {
+                  ...current,
+                  data: (current.data as Lead[]).map((lead) =>
+                    lead.id === leadId ? { ...lead, followup_active: false } : lead,
+                  ),
+                }
+              : current,
+          { revalidate: false },
+        );
+        if (options?.toast !== false) {
+          toast.success('Auto follow-up stopped for this lead');
+        }
+        return true;
       }
+      toast.error(result.error || 'Could not stop emails');
+      return false;
     } catch {
       toast.error('Could not stop emails');
+      return false;
     } finally {
-      setCancellingSequenceId(null);
+      setMarkingContactedId(null);
     }
+  };
+
+  const handleContactLead = (lead: Lead, type: 'email' | 'phone') => {
+    if (leadHasActiveFollowup(lead, autoFollowup, stoppedFollowupIds)) {
+      setContactPrompt({ lead, type });
+      return;
+    }
+    openContactLink(lead, type);
+  };
+
+  const handleContactPromptChoice = async (stopEmails: boolean) => {
+    if (!contactPrompt) return;
+    const { lead, type } = contactPrompt;
+    setContactPrompt(null);
+    if (stopEmails) {
+      const stopped = await handleMarkContacted(lead.id, { toast: false });
+      if (!stopped) return;
+      toast.success('Auto follow-up stopped — opening contact');
+    }
+    openContactLink(lead, type);
   };
 
   const handleAddToCrm = async (leadId: string) => {
@@ -333,6 +439,7 @@ export default function LeadsPage() {
       const res = await fetch(`/api/clients/${leadId}/add-to-crm`, { method: 'POST' });
       const result = await res.json();
       if (result.success) {
+        setStoppedFollowupIds((prev) => new Set([...prev, leadId]));
         mutateLeads(
           (current) =>
             current
@@ -340,6 +447,7 @@ export default function LeadsPage() {
               : current,
           { revalidate: false },
         );
+        toast.success('Added to CRM · auto follow-up stopped');
       } else {
         toast.error(result.error || 'Could not add to CRM');
       }
@@ -452,11 +560,13 @@ export default function LeadsPage() {
                     <LeadCard
                       key={lead.id}
                       lead={lead}
+                      autoFollowupEnabled={autoFollowup}
                       onAddToCrm={handleAddToCrm}
                       addingId={addingToCrmId}
-                      onCancelSequence={handleCancelSequence}
-                      cancellingId={cancellingSequenceId}
-                      cancelledIds={cancelledSequenceIds}
+                      onMarkContacted={handleMarkContacted}
+                      markingContactedId={markingContactedId}
+                      stoppedIds={stoppedFollowupIds}
+                      onContactLead={handleContactLead}
                     />
                   ))}
                 </div>
@@ -622,7 +732,7 @@ export default function LeadsPage() {
                   <h3 className="text-base font-semibold text-gray-900">Auto follow-up</h3>
                 </div>
                 <p className="text-sm text-gray-500 mb-5">
-                  Leads with an email receive 3 messages over 5 days — welcome, check-in, and a final nudge.
+                  Leads with an email receive 3 messages over 5 days — welcome, check-in, and a final nudge. Replies go to your account email (or profile email on Pro).
                 </p>
                 <button
                   onClick={() => {
@@ -669,6 +779,32 @@ export default function LeadsPage() {
             </div>
           </div>
         )}
+
+        <Modal
+          isOpen={contactPrompt !== null}
+          onClose={() => setContactPrompt(null)}
+          title="Stop auto follow-up?"
+          size="sm"
+        >
+          <p className="text-sm text-gray-600 mb-6">
+            This lead still has scheduled follow-up emails. Stop them before you reach out so they don&apos;t get duplicate messages?
+          </p>
+          <div className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleContactPromptChoice(false)}
+            >
+              Keep emails · contact anyway
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => handleContactPromptChoice(true)}
+            >
+              Stop emails & contact
+            </Button>
+          </div>
+        </Modal>
     </DashboardPage>
   );
 }
