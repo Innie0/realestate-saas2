@@ -14,8 +14,10 @@ import { Plus, FolderKanban } from 'lucide-react';
 import { Project } from '@/types';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
+import { useToast } from '@/components/providers/ToastProvider';
 
 export default function ProjectsPage() {
+  const toast = useToast();
   useTour({
     tourKey: 'tour_projects',
     steps: [
@@ -66,11 +68,11 @@ export default function ProjectsPage() {
       if (result.success) {
         mutate();
       } else {
-        alert('Failed to delete project: ' + result.error);
+        toast.error('Failed to delete project: ' + result.error);
       }
     } catch (error) {
       console.error('Error deleting project:', error);
-      alert('Failed to delete project');
+      toast.error('Failed to delete project');
     }
   };
 

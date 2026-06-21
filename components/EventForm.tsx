@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import Button from './ui/Button';
 import { CalendarEvent } from '@/types';
+import { useToast } from '@/components/providers/ToastProvider';
 
 interface EventFormProps {
   onSubmit: (eventData: Partial<CalendarEvent>) => Promise<void>;
@@ -20,6 +21,7 @@ export default function EventForm({
   initialData,
   isLoading = false,
 }: EventFormProps) {
+  const toast = useToast();
   const [formData, setFormData] = useState({
     title: initialData?.title || '',
     description: initialData?.description || '',
@@ -42,7 +44,7 @@ export default function EventForm({
     
     // Validate that end time is after start time
     if (endDate <= startDate) {
-      alert('End time must be after start time');
+      toast.error('End time must be after start time');
       return;
     }
     

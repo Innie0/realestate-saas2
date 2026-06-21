@@ -10,6 +10,7 @@ import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
+import { useToast } from '@/components/providers/ToastProvider';
 
 /**
  * New project page component
@@ -17,6 +18,7 @@ import Card from '@/components/ui/Card';
  */
 export default function NewProjectPage() {
   const router = useRouter();
+  const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
   // Set page title
@@ -49,7 +51,7 @@ export default function NewProjectPage() {
     
     // Validate required fields
     if (!title) {
-      alert('Please enter a project title');
+      toast.error('Please enter a project title');
       return;
     }
 
@@ -92,13 +94,13 @@ export default function NewProjectPage() {
       }
 
       // Success message
-      alert('Project created successfully!');
+      toast.success('Project created successfully!');
 
       // Redirect to project detail page with the real project ID from database
       router.push(`/dashboard/projects/${result.data.id}`);
     } catch (error: any) {
       console.error('Error creating project:', error);
-      alert(error.message || 'Failed to create project. Please try again.');
+      toast.error(error.message || 'Failed to create project. Please try again.');
       setIsLoading(false);
     }
   };

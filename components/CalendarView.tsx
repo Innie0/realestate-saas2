@@ -8,12 +8,14 @@ import { ChevronLeft, ChevronRight, Clock, MapPin, Trash2 } from 'lucide-react';
 import { CalendarEvent } from '@/types';
 import Button from './ui/Button';
 import { useApi } from '@/lib/swr';
+import { useToast } from '@/components/providers/ToastProvider';
 
 /**
  * CalendarView component
  * Monthly calendar grid with events
  */
 export default function CalendarView() {
+  const toast = useToast();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [deletingEventId, setDeletingEventId] = useState<string | null>(null);
 
@@ -74,11 +76,11 @@ export default function CalendarView() {
           { revalidate: false },
         );
       } else {
-        alert(data.error || 'Failed to delete event');
+        toast.error(data.error || 'Failed to delete event');
       }
     } catch (error) {
       console.error('Delete event error:', error);
-      alert('Failed to delete event. Please try again.');
+      toast.error('Failed to delete event. Please try again.');
     } finally {
       setDeletingEventId(null);
     }

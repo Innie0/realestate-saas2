@@ -12,6 +12,7 @@ import Button from '@/components/ui/Button';
 import { supabase } from '@/lib/supabase';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
+import { useToast } from '@/components/providers/ToastProvider';
 import { QRCodeCanvas } from 'qrcode.react';
 import {
   Inbox, Link2, Copy, Check, Download, Phone, Mail,
@@ -234,6 +235,7 @@ const TABS: { id: LeadsTab; label: string; icon: React.ElementType }[] = [
 ];
 
 export default function LeadsPage() {
+  const toast = useToast();
   useTour({
     tourKey: 'tour_leads',
     steps: [
@@ -316,10 +318,10 @@ export default function LeadsPage() {
       if (result.success) {
         setCancelledSequenceIds(prev => new Set([...prev, leadId]));
       } else {
-        alert(result.error || 'Could not stop emails');
+        toast.error(result.error || 'Could not stop emails');
       }
     } catch {
-      alert('Could not stop emails');
+      toast.error('Could not stop emails');
     } finally {
       setCancellingSequenceId(null);
     }
@@ -339,11 +341,11 @@ export default function LeadsPage() {
           { revalidate: false },
         );
       } else {
-        alert(result.error || 'Could not add to CRM');
+        toast.error(result.error || 'Could not add to CRM');
       }
     } catch (e) {
       console.error('Add to CRM error:', e);
-      alert('Could not add to CRM');
+      toast.error('Could not add to CRM');
     } finally {
       setAddingToCrmId(null);
     }

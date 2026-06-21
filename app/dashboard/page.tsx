@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import PageShell from '@/components/layout/PageShell';
@@ -8,6 +8,7 @@ import Surface from '@/components/ui/Surface';
 import Button from '@/components/ui/Button';
 import NotificationsPanel from '@/components/NotificationsPanel';
 import PlanUsagePanel, { PlanUsagePanelSkeleton } from '@/components/dashboard/PlanUsagePanel';
+import GettingStartedPanel from '@/components/dashboard/GettingStartedPanel';
 import {
   Plus,
   ArrowRight,
@@ -151,6 +152,9 @@ function ContinueSection({
 }
 
 export default function DashboardPage() {
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [showGettingStarted, setShowGettingStarted] = useState(false);
+
   const { response: usageResponse, isLoading: usageLoading } = useApi<UsageData>('/api/usage');
   const { data: recentProjects = [], isLoading: projectsLoading } = useApi<Project[]>('/api/projects?limit=3');
   const { data: inboxLeads = [], isLoading: leadsLoading } = useApi<RecentClient[]>('/api/clients?status=all&view=inbox');
@@ -257,11 +261,45 @@ export default function DashboardPage() {
     document.title = 'Today - Realestic';
   }, []);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('welcome') === 'true') {
+      setShowWelcome(true);
+      params.delete('welcome');
+      const next = params.toString();
+      window.history.replaceState({}, '', next ? `/dashboard?${next}` : '/dashboard');
+    } else if (localStorage.getItem('realestic_getting_started_dismissed') !== '1') {
+      setShowGettingStarted(true);
+    }
+  }, []);
+
+  const dismissGettingStarted = () => {
+    setShowWelcome(false);
+    setShowGettingStarted(false);
+    localStorage.setItem('realestic_getting_started_dismissed', '1');
+  };
+
+  const showOnboarding =
+    (showWelcome || showGettingStarted) &&
+    !loading &&
+    recentProjects.length === 0 &&
+    inboxLeads.length === 0 &&
+    allTransactions.length === 0;
+
   return (
     <div className="min-h-screen">
       <Header title={getGreeting()} subtitle={`${formatToday()} · ${focusMessage}`} />
 
       <PageShell className="space-y-8">
+        {showOnboarding && (
+          <GettingStartedPanel
+            variant={showWelcome ? 'welcome' : 'empty'}
+            onDismiss={dismissGettingStarted}
+          />
+        )}
+
         {/* Primary focus */}
         {priorityBannerLoading ? (
           <Surface padding="md" className="animate-pulse">

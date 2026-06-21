@@ -13,11 +13,13 @@ import EmptyState from '@/components/ui/EmptyState';
 import { Plus, X, Users } from 'lucide-react';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
+import { useToast } from '@/components/providers/ToastProvider';
 
 /**
  * Clients page - CRM client management
  */
 export default function ClientsPage() {
+  const toast = useToast();
   useTour({
     tourKey: 'tour_clients',
     steps: [
@@ -89,11 +91,11 @@ export default function ClientsPage() {
         setShowCreateForm(false);
         mutate();
       } else {
-        alert(result.error || 'Failed to create client');
+        toast.error(result.error || 'Failed to create client');
       }
     } catch (error) {
       console.error('Error creating client:', error);
-      alert('Failed to create client');
+      toast.error('Failed to create client');
     } finally {
       setIsSubmitting(false);
     }
@@ -130,11 +132,11 @@ export default function ClientsPage() {
         // Refresh clients list to show the new note
         mutate();
       } else {
-        alert(result.error || 'Failed to add note');
+        toast.error(result.error || 'Failed to add note');
       }
     } catch (error) {
       console.error('Error adding note:', error);
-      alert('Failed to add note');
+      toast.error('Failed to add note');
     } finally {
       setIsSubmitting(false);
     }
@@ -157,11 +159,11 @@ export default function ClientsPage() {
         // Refresh clients list to show the new reminder count
         mutate();
       } else {
-        alert(result.error || 'Failed to create reminder');
+        toast.error(result.error || 'Failed to create reminder');
       }
     } catch (error) {
       console.error('Error creating reminder:', error);
-      alert('Failed to create reminder');
+      toast.error('Failed to create reminder');
     } finally {
       setIsSubmitting(false);
     }

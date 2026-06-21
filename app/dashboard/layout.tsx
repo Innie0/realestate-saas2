@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Sidebar from '@/components/layout/Sidebar';
 import FeedbackWidget from '@/components/FeedbackWidget';
 import FeedbackFooterButton from '@/components/FeedbackFooterButton';
-import SWRProvider from '@/components/providers/SWRProvider';
+import DashboardProviders from '@/components/providers/DashboardProviders';
 
 /**
  * DashboardLayout component
@@ -28,13 +28,13 @@ export default function DashboardLayout({
         
         {/* Scrollable content with dark background */}
         <main className="flex-1 overflow-y-auto bg-transparent">
-          <SWRProvider>{children}</SWRProvider>
+          <DashboardProviders>{children}</DashboardProviders>
         </main>
         
         <FeedbackWidget />
 
         {/* Footer */}
-        <footer className="border-t border-gray-100 bg-white px-6 py-4">
+        <footer className="hidden sm:block border-t border-gray-100 bg-white px-6 py-4">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-gray-500">
             <p>© 2026 Realestic. All rights reserved.</p>
             <div className="flex gap-4">

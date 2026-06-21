@@ -8,6 +8,7 @@ import ReminderForm from '@/components/ReminderForm';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { ArrowLeft, Edit, Trash2, Plus, Clock, CheckCircle, StickyNote, Calendar, UserPlus, Loader2 } from 'lucide-react';
+import { useToast } from '@/components/providers/ToastProvider';
 
 /**
  * Client detail page
@@ -18,6 +19,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   // Unwrap the params Promise (Next.js 16 requirement)
   const { id: clientId } = use(params);
   const router = useRouter();
+  const toast = useToast();
   const [client, setClient] = useState<ClientWithDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -41,11 +43,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       if (result.success) {
         fetchClient();
       } else {
-        alert(result.error || 'Could not add to CRM');
+        toast.error(result.error || 'Could not add to CRM');
       }
     } catch (error) {
       console.error('Add to CRM error:', error);
-      alert('Could not add to CRM');
+      toast.error('Could not add to CRM');
     } finally {
       setAddingToCrm(false);
     }
@@ -84,11 +86,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         setIsEditing(false);
         fetchClient();
       } else {
-        alert(result.error || 'Failed to update client');
+        toast.error(result.error || 'Failed to update client');
       }
     } catch (error) {
       console.error('Error updating client:', error);
-      alert('Failed to update client');
+      toast.error('Failed to update client');
     } finally {
       setIsSubmitting(false);
     }
@@ -107,11 +109,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       if (response.ok) {
         router.push('/dashboard/clients');
       } else {
-        alert('Failed to delete client');
+        toast.error('Failed to delete client');
       }
     } catch (error) {
       console.error('Error deleting client:', error);
-      alert('Failed to delete client');
+      toast.error('Failed to delete client');
     }
   };
 
@@ -133,11 +135,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         setShowNoteForm(false);
         fetchClient();
       } else {
-        alert(result.error || 'Failed to add note');
+        toast.error(result.error || 'Failed to add note');
       }
     } catch (error) {
       console.error('Error adding note:', error);
-      alert('Failed to add note');
+      toast.error('Failed to add note');
     } finally {
       setIsSubmitting(false);
     }
@@ -182,11 +184,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         setEditingNoteContent('');
         fetchClient();
       } else {
-        alert(result.error || 'Failed to update note');
+        toast.error(result.error || 'Failed to update note');
       }
     } catch (error) {
       console.error('Error updating note:', error);
-      alert('Failed to update note');
+      toast.error('Failed to update note');
     } finally {
       setIsSubmitting(false);
     }
@@ -212,11 +214,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         setShowReminderForm(false);
         fetchClient();
       } else {
-        alert(result.error || 'Failed to create reminder');
+        toast.error(result.error || 'Failed to create reminder');
       }
     } catch (error) {
       console.error('Error creating reminder:', error);
-      alert('Failed to create reminder');
+      toast.error('Failed to create reminder');
     } finally {
       setIsSubmitting(false);
     }

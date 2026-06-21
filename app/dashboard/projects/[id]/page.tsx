@@ -17,6 +17,7 @@ import {
   Home, MapPin, Bed, Bath, Square, DollarSign, ExternalLink, X, Globe, Link2
 } from 'lucide-react';
 import { Project, AIGeneratedContent } from '@/types';
+import { useToast } from '@/components/providers/ToastProvider';
 
 // Tone types for description variations
 type DescriptionTone = 'professional' | 'casual' | 'luxury';
@@ -38,6 +39,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   // Unwrap the params Promise (Next.js 16 requirement)
   const { id: projectId } = use(params);
   const router = useRouter();
+  const toast = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -119,7 +121,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       setProject({ ...project, ...result.data });
     } catch (err) {
       console.error(err);
-      alert('Could not update publish status. Try again.');
+      toast.error('Could not update publish status. Try again.');
     } finally {
       setIsPublishing(false);
     }
@@ -136,7 +138,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       setLinkCopied(true);
       setTimeout(() => setLinkCopied(false), 2000);
     } catch {
-      alert('Could not copy link.');
+      toast.error('Could not copy link.');
     }
   };
 
@@ -357,7 +359,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           const file = files[i];
           
           if (file.size > 5 * 1024 * 1024) {
-            alert(`${file.name} is too large. Maximum file size is 5MB.`);
+            toast.error(`${file.name} is too large. Maximum file size is 5MB.`);
             continue;
           }
 
@@ -391,7 +393,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         }
       } catch (error) {
         console.error('Upload error:', error);
-        alert('Failed to upload images. Please try again.');
+        toast.error('Failed to upload images. Please try again.');
       } finally {
         setIsUploading(false);
       }
@@ -473,7 +475,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       }
     } catch (error) {
       console.error('Delete image error:', error);
-      alert('Failed to delete image. Please try again.');
+      toast.error('Failed to delete image. Please try again.');
     }
   };
 
@@ -707,7 +709,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
     } catch (error) {
       console.error('AI generation error:', error);
-      alert('Failed to generate content. Please try again.');
+      toast.error('Failed to generate content. Please try again.');
     } finally {
       setIsGenerating(false);
       setStreamingPro('');
@@ -1134,7 +1136,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       }
     } catch (error) {
       console.error('Refinement error:', error);
-      alert('Failed to refine content. Please try again.');
+      toast.error('Failed to refine content. Please try again.');
     } finally {
       setIsRefining(false);
     }
@@ -1253,7 +1255,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
         if (result.success) {
           setHasUnsavedChanges(false);
-          alert('Project saved successfully!');
+          toast.success('Project saved successfully!');
         } else {
           throw new Error(result.error || 'Save failed');
         }
@@ -1266,7 +1268,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       }
     } catch (error: any) {
       console.error('Save error:', error);
-      alert(`Failed to save project: ${error.message}\n\nIf this persists, check your internet connection or try again in a few minutes.`);
+      toast.error(`Failed to save project: ${error.message}`);
     } finally {
       setIsSaving(false);
     }

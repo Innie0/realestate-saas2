@@ -8,12 +8,14 @@ import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { Upload, Palette, Type, Save, X } from 'lucide-react';
+import { useToast } from '@/components/providers/ToastProvider';
 
 /**
  * Brand Kit page component
  * Allows users to customize their brand identity
  */
 export default function BrandKitPage() {
+  const toast = useToast();
   const [isSaving, setIsSaving] = useState(false);
 
   // Set page title
@@ -36,7 +38,7 @@ export default function BrandKitPage() {
    */
   const handleLogoUpload = () => {
     // In a real app, this would open a file picker and upload the logo
-    alert('Logo upload functionality would be implemented here');
+    toast.info('Logo upload is coming soon.');
   };
 
   /**
@@ -55,7 +57,7 @@ export default function BrandKitPage() {
     // Simulate save (in a real app, this would call the API)
     setTimeout(() => {
       setIsSaving(false);
-      alert('Brand kit saved successfully!');
+      toast.success('Brand kit saved successfully!');
     }, 1000);
   };
 

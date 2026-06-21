@@ -193,7 +193,7 @@ const FAQ_ITEMS = [
   {
     question: 'Can I cancel anytime?',
     answer:
-      'Yes — cancel anytime with no cancellation fee from Account → Manage billing in Stripe. You\'ll keep access until the end of your current billing period (or trial). If you cancel during the free trial, you won\'t be charged.',
+      'Yes — cancel anytime with no cancellation fee from Account → Manage billing. You\'ll keep access until the end of your current billing period (or trial). If you cancel during the free trial, you won\'t be charged.',
   },
   {
     question: 'Is my data secure?',

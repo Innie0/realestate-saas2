@@ -12,6 +12,7 @@ import { User, Lock, X, CreditCard, Sparkles } from 'lucide-react';
 import { getCurrentUser, updateUserProfile, supabase } from '@/lib/supabase';
 import { getPaidPlanName, isAdminEmail, hasRealStripeSubscription } from '@/lib/subscription';
 import { getPlanDisplayPrice } from '@/lib/pricing';
+import { useToast } from '@/components/providers/ToastProvider';
 import Link from 'next/link';
 
 /**
@@ -19,6 +20,7 @@ import Link from 'next/link';
  * User profile and account settings
  */
 export default function AccountPage() {
+  const toast = useToast();
   // Form state
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -233,7 +235,7 @@ export default function AccountPage() {
       if (data.url) window.location.href = data.url;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Something went wrong';
-      alert(message);
+      toast.error(message);
     } finally {
       setIsPortalLoading(false);
     }
@@ -428,7 +430,7 @@ export default function AccountPage() {
                   onClick={handleManageBilling}
                   isLoading={isPortalLoading}
                 >
-                  Manage billing in Stripe
+                  Manage billing
                 </Button>
               )}
               {adminCompAccess && (
@@ -465,7 +467,7 @@ export default function AccountPage() {
             <p className="text-xs text-gray-500 mt-4">
               {adminCompAccess
                 ? 'Your admin account uses Starter plan limits with no Stripe subscription required.'
-                : 'Update payment method, view invoices, or cancel your subscription through Stripe\u2019s secure portal.'}
+                : 'Update payment method, view invoices, or cancel your subscription from the billing portal.'}
             </p>
           </Card>
 

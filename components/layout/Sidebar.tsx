@@ -11,6 +11,7 @@ import {
 import clsx from 'clsx';
 import { signOut } from '@/lib/supabase';
 import { prefetchDashboardRoute } from '@/lib/dashboard-prefetch';
+import { useToast } from '@/components/providers/ToastProvider';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 
@@ -107,6 +108,7 @@ function NavLink({
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const toast = useToast();
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -133,13 +135,13 @@ export default function Sidebar() {
     try {
       const { error } = await signOut();
       if (error) {
-        alert('Failed to sign out. Please try again.');
+        toast.error('Failed to sign out. Please try again.');
         setIsSigningOut(false);
         return;
       }
       router.push('/auth/login');
     } catch {
-      alert('Failed to sign out. Please try again.');
+      toast.error('Failed to sign out. Please try again.');
       setIsSigningOut(false);
     }
   };
