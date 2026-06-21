@@ -209,16 +209,35 @@ export function normalizeFollowupDays(settings?: FollowupSettings | null): Recor
     3: FOLLOWUP_TEMPLATE_DEFINITIONS[2].defaultDay,
   } as const;
 
-  const raw = {
-    1: clampDay(getTemplateField<number>(settings, 1, 'day'), defaults[1]),
-    2: clampDay(getTemplateField<number>(settings, 2, 'day'), defaults[2]),
-    3: clampDay(getTemplateField<number>(settings, 3, 'day'), defaults[3]),
+  const checkin = clampFollowupCheckinDay(getTemplateField<number>(settings, 2, 'day'), defaults[2]);
+  const nudge = clampFollowupNudgeDay(
+    getTemplateField<number>(settings, 3, 'day'),
+    checkin,
+    defaults[3],
+  );
+
+  return {
+    1: 0,
+    2: checkin,
+    3: nudge,
   };
+}
 
-  if (raw[2] < raw[1]) raw[2] = raw[1];
-  if (raw[3] < raw[2]) raw[3] = raw[2];
+export const MIN_FOLLOWUP_CHECKIN_DAY = 1;
 
-  return raw;
+export function clampFollowupCheckinDay(value: unknown, fallback = FOLLOWUP_TEMPLATE_DEFINITIONS[1].defaultDay): number {
+  const parsed = clampDay(value, fallback);
+  return Math.min(60, Math.max(MIN_FOLLOWUP_CHECKIN_DAY, parsed));
+}
+
+export function clampFollowupNudgeDay(
+  value: unknown,
+  checkinDay: number,
+  fallback = FOLLOWUP_TEMPLATE_DEFINITIONS[2].defaultDay,
+): number {
+  const min = clampFollowupCheckinDay(checkinDay) + 1;
+  const parsed = clampDay(value, fallback);
+  return Math.min(60, Math.max(min, parsed));
 }
 
 export function clampDay(value: unknown, fallback: number): number {

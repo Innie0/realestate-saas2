@@ -9,6 +9,8 @@ import { useToast } from '@/components/providers/ToastProvider';
 import {
   FOLLOWUP_MERGE_TAGS,
   FOLLOWUP_TEMPLATE_DEFINITIONS,
+  clampFollowupCheckinDay,
+  clampFollowupNudgeDay,
   formatFollowupScheduleHuman,
   getDefaultFollowupSettingsPayload,
   getFollowupPreview,
@@ -46,14 +48,25 @@ const TIMELINE_LABELS: Record<FollowupTemplateSlot, string> = {
 
 function formatTimingLabel(slot: FollowupTemplateSlot, day: number): string {
   if (slot === 1 && day === 0) return 'Right when they submit';
-  if (day === 0) return 'Same day';
   if (day === 1) return '1 day later';
   return `${day} days later`;
+}
+
+function digitsOnly(value: string): string {
+  return value.replace(/\D/g, '').slice(0, 2);
+}
+
+function parseDayInput(value: string): number | null {
+  const digits = digitsOnly(value);
+  if (!digits) return null;
+  return Number.parseInt(digits, 10);
 }
 
 export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupTemplatesEditorProps) {
   const toast = useToast();
   const [timingDays, setTimingDays] = useState({ checkin: 2, nudge: 5 });
+  const [checkinInput, setCheckinInput] = useState('2');
+  const [nudgeInput, setNudgeInput] = useState('5');
   const [drafts, setDrafts] = useState<Record<FollowupTemplateSlot, TemplateDraft>>(() => buildDraftState(settings));
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [expandedSlot, setExpandedSlot] = useState<FollowupTemplateSlot | null>(null);
@@ -65,6 +78,8 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
   useEffect(() => {
     const days = normalizeFollowupDays(settings);
     setTimingDays({ checkin: days[2], nudge: days[3] });
+    setCheckinInput(String(days[2]));
+    setNudgeInput(String(days[3]));
     setDrafts(buildDraftState(settings));
   }, [settings]);
 
@@ -115,10 +130,17 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
     }
   };
 
-  const handleSaveTiming = async () => {
-    const checkin = Math.max(0, Math.round(timingDays.checkin));
-    const nudge = Math.max(checkin, Math.round(timingDays.nudge));
+  const commitTimingValues = () => {
+    const checkin = clampFollowupCheckinDay(parseDayInput(checkinInput) ?? timingDays.checkin);
+    const nudge = clampFollowupNudgeDay(parseDayInput(nudgeInput) ?? timingDays.nudge, checkin);
+    setCheckinInput(String(checkin));
+    setNudgeInput(String(nudge));
     setTimingDays({ checkin, nudge });
+    return { checkin, nudge };
+  };
+
+  const handleSaveTiming = async () => {
+    const { checkin, nudge } = commitTimingValues();
     await savePayload(
       {
         followup_email_1_day: 0,
@@ -131,6 +153,7 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
   };
 
   const handleSaveAdvanced = async () => {
+    const { checkin, nudge } = commitTimingValues();
     const matchesDefault = (slot: FollowupTemplateSlot, field: 'subject' | 'body') => {
       const definition = FOLLOWUP_TEMPLATE_DEFINITIONS.find((item) => item.slot === slot)!;
       const draft = drafts[slot];
@@ -142,8 +165,8 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
     await savePayload(
       {
         followup_email_1_day: 0,
-        followup_email_2_day: timingDays.checkin,
-        followup_email_3_day: timingDays.nudge,
+        followup_email_2_day: checkin,
+        followup_email_3_day: nudge,
         followup_email_1_subject: matchesDefault(1, 'subject'),
         followup_email_1_body: matchesDefault(1, 'body'),
         followup_email_2_subject: matchesDefault(2, 'subject'),
@@ -171,6 +194,8 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
         return;
       }
       setTimingDays({ checkin: 2, nudge: 5 });
+      setCheckinInput('2');
+      setNudgeInput('5');
       setDrafts(buildDraftState(null));
       setShowAdvanced(false);
       toast.success('Restored Realestic default emails');
@@ -250,12 +275,20 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500 shrink-0">Send after</span>
               <input
-                type="number"
-                min={0}
-                max={60}
-                value={timingDays.checkin}
-                onChange={(e) => setTimingDays((current) => ({ ...current, checkin: Number(e.target.value) }))}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={checkinInput}
+                onChange={(e) => setCheckinInput(digitsOnly(e.target.value))}
+                onBlur={() => {
+                  const checkin = clampFollowupCheckinDay(parseDayInput(checkinInput) ?? timingDays.checkin);
+                  const nudge = clampFollowupNudgeDay(parseDayInput(nudgeInput) ?? timingDays.nudge, checkin);
+                  setCheckinInput(String(checkin));
+                  setNudgeInput(String(nudge));
+                  setTimingDays({ checkin, nudge });
+                }}
                 className="w-20 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-brand-500"
+                aria-label="Check-in email days after lead capture"
               />
               <span className="text-sm text-gray-500">days</span>
             </div>
@@ -265,12 +298,20 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500 shrink-0">Send after</span>
               <input
-                type="number"
-                min={0}
-                max={60}
-                value={timingDays.nudge}
-                onChange={(e) => setTimingDays((current) => ({ ...current, nudge: Number(e.target.value) }))}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={nudgeInput}
+                onChange={(e) => setNudgeInput(digitsOnly(e.target.value))}
+                onBlur={() => {
+                  const checkin = clampFollowupCheckinDay(parseDayInput(checkinInput) ?? timingDays.checkin);
+                  const nudge = clampFollowupNudgeDay(parseDayInput(nudgeInput) ?? timingDays.nudge, checkin);
+                  setCheckinInput(String(checkin));
+                  setNudgeInput(String(nudge));
+                  setTimingDays({ checkin, nudge });
+                }}
                 className="w-20 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-brand-500"
+                aria-label="Final nudge days after lead capture"
               />
               <span className="text-sm text-gray-500">days</span>
             </div>
@@ -278,7 +319,11 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
         </div>
 
         <p className="text-xs text-gray-500">
-          Welcome email always sends right when someone submits your form. Current schedule: {scheduleSummary}.
+          Welcome sends right away. Check-in must be at least day 1, and the final nudge must be at least one day after that.
+        </p>
+
+        <p className="text-xs text-gray-500">
+          Current schedule: {scheduleSummary}.
         </p>
 
         <div className="flex flex-wrap gap-2">

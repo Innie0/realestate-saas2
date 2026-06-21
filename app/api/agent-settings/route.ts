@@ -1,7 +1,13 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
-import { clampDay, sanitizeFollowupBody, sanitizeFollowupSubject } from '@/lib/followup-emails';
+import {
+  clampDay,
+  clampFollowupCheckinDay,
+  clampFollowupNudgeDay,
+  sanitizeFollowupBody,
+  sanitizeFollowupSubject,
+} from '@/lib/followup-emails';
 
 const FOLLOWUP_TEMPLATE_FIELDS = [
   'followup_email_1_day', 'followup_email_2_day', 'followup_email_3_day',
@@ -40,8 +46,8 @@ function sanitizeFollowupUpdates(body: Record<string, unknown>): Record<string, 
   const day1 = updates.followup_email_1_day ?? FOLLOWUP_DAY_DEFAULTS.followup_email_1_day;
   const day2Raw = updates.followup_email_2_day ?? FOLLOWUP_DAY_DEFAULTS.followup_email_2_day;
   const day3Raw = updates.followup_email_3_day ?? FOLLOWUP_DAY_DEFAULTS.followup_email_3_day;
-  const day2 = Math.max(day2Raw, day1);
-  const day3 = Math.max(day3Raw, day2);
+  const day2 = clampFollowupCheckinDay(day2Raw, FOLLOWUP_DAY_DEFAULTS.followup_email_2_day);
+  const day3 = clampFollowupNudgeDay(day3Raw, day2, FOLLOWUP_DAY_DEFAULTS.followup_email_3_day);
 
   if ('followup_email_2_day' in updates || 'followup_email_1_day' in updates) {
     updates.followup_email_2_day = day2;
