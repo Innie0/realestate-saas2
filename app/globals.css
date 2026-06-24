@@ -120,6 +120,18 @@
     @apply text-brand-600 hover:text-brand-700 underline underline-offset-2;
   }
 
+  .legal-prose a.legal-btn {
+    @apply no-underline;
+  }
+
+  .legal-prose a.legal-btn-primary {
+    @apply text-white hover:text-white;
+  }
+
+  .legal-prose a.legal-btn-secondary {
+    @apply text-gray-700 hover:text-gray-900;
+  }
+
   .text-muted {
     @apply text-gray-500 text-[0.8125rem] leading-5;
   }

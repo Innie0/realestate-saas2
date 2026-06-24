@@ -76,18 +76,18 @@ export default function AboutPage() {
       <section>
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">Ready to try it?</h2>
         <p className="text-gray-600 leading-relaxed mb-6">
-          Start free and see if Realestic fits your workflow. No credit card required to explore.
+          Start free and see if Realestic fits your workflow.
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
           <Link
             href="/auth/signup"
-            className="inline-flex items-center justify-center rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-600 transition-colors"
+            className="legal-btn legal-btn-primary inline-flex items-center justify-center rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium shadow-sm hover:bg-brand-600 transition-colors"
           >
             Get started free
           </Link>
           <Link
             href="/pricing"
-            className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+            className="legal-btn legal-btn-secondary inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium shadow-sm hover:bg-gray-50 transition-colors"
           >
             View pricing
           </Link>
