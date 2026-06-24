@@ -6,17 +6,17 @@ interface AuthLogoProps {
   centered?: boolean;
 }
 
-/** Auth pages logo — plain img for instant paint (no Next image optimizer delay). */
+/** Auth pages logo — high-res PNG downscaled for crisp Retina display. */
 export default function AuthLogo({ className = 'h-16 sm:h-20 w-auto', centered = true }: AuthLogoProps) {
   const img = (
     /* eslint-disable-next-line @next/next/no-img-element */
     <img
-      src="/logo-auth.png"
+      src="/logo-collapsed.png"
       alt="Realestic"
-      width={200}
-      height={112}
+      width={512}
+      height={288}
       fetchPriority="high"
-      decoding="sync"
+      decoding="async"
       className={`object-contain ${className}`}
     />
   );
