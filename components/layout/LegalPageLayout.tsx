@@ -4,7 +4,8 @@ import { ArrowLeft, LucideIcon } from 'lucide-react';
 
 interface LegalPageLayoutProps {
   title: string;
-  updated: string;
+  updated?: string;
+  subtitle?: string;
   icon: LucideIcon;
   children: React.ReactNode;
 }
@@ -12,6 +13,7 @@ interface LegalPageLayoutProps {
 export default function LegalPageLayout({
   title,
   updated,
+  subtitle,
   icon: Icon,
   children,
 }: LegalPageLayoutProps) {
@@ -48,7 +50,11 @@ export default function LegalPageLayout({
               </div>
               <div>
                 <h1 className="text-3xl font-semibold tracking-tight text-gray-900">{title}</h1>
-                <p className="text-sm text-gray-500 mt-1.5">Last updated: {updated}</p>
+                {subtitle ? (
+                  <p className="text-sm text-gray-500 mt-1.5">{subtitle}</p>
+                ) : updated ? (
+                  <p className="text-sm text-gray-500 mt-1.5">Last updated: {updated}</p>
+                ) : null}
               </div>
             </div>
           </header>

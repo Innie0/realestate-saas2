@@ -39,6 +39,7 @@ export default function DashboardLayout({
             <p>© 2026 Realestic. All rights reserved.</p>
             <div className="flex gap-4">
               <Link href="/" className="hover:text-brand-600 transition-colors">Home</Link>
+              <Link href="/about" className="hover:text-brand-600 transition-colors">About</Link>
               <Link href="/privacy" className="hover:text-brand-600 transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-brand-600 transition-colors">Terms</Link>
               <FeedbackFooterButton />

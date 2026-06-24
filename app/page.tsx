@@ -1798,6 +1798,7 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-500 text-sm">© 2026 Realestic. All rights reserved.</p>
             <div className="flex items-center gap-6 text-sm text-gray-500">
+              <Link href="/about" className="hover:text-brand-600 transition-colors">About</Link>
               <Link href="/privacy" className="hover:text-brand-600 transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-brand-600 transition-colors">Terms</Link>
               <Link href="/contact" className="hover:text-brand-600 transition-colors">Contact</Link>

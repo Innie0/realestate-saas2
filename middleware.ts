@@ -14,6 +14,7 @@ const publicRoutes = [
   '/terms',
   '/pricing',
   '/contact',
+  '/about',
 ];
 
 const publicPathPrefixes = ['/lead/', '/open-house/', '/agent/'];
