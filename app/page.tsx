@@ -1800,7 +1800,7 @@ export default function HomePage() {
             <div className="flex items-center gap-6 text-sm text-gray-500">
               <Link href="/privacy" className="hover:text-brand-600 transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-brand-600 transition-colors">Terms</Link>
-              <a href="#" className="hover:text-brand-600 transition-colors">Contact</a>
+              <Link href="/contact" className="hover:text-brand-600 transition-colors">Contact</Link>
             </div>
           </div>
         </div>

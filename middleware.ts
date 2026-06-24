@@ -13,6 +13,7 @@ const publicRoutes = [
   '/privacy',
   '/terms',
   '/pricing',
+  '/contact',
 ];
 
 const publicPathPrefixes = ['/lead/', '/open-house/', '/agent/'];
@@ -22,6 +23,7 @@ const publicApiPrefixes = [
   '/api/stripe/verify-checkout',
   '/api/stripe/webhook',
   '/api/leads',
+  '/api/contact',
   '/api/cron/',
 ];
 

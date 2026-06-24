@@ -2,6 +2,7 @@
 // Legal document explaining data collection and usage
 
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import LegalPageLayout from '@/components/layout/LegalPageLayout';
 import { Shield } from 'lucide-react';
 
@@ -438,7 +439,7 @@ export default function PrivacyPage() {
                 <li><strong>Update data:</strong> Use your account Settings page</li>
                 <li><strong>Delete account:</strong> Contact us at privacy@realestic.com</li>
                 <li><strong>Data export:</strong> Contact us at privacy@realestic.com</li>
-                <li><strong>Questions:</strong> Email us at support@realestic.com</li>
+                <li><strong>Questions:</strong> Email us at realesticai@gmail.com or use our <Link href="/contact" className="text-brand-600 hover:text-brand-700">contact form</Link></li>
               </ul>
             </section>
 
@@ -519,7 +520,7 @@ export default function PrivacyPage() {
               </p>
               <div className="bg-gray-100 border border-gray-200 rounded-lg p-6 space-y-2">
                 <p className="text-gray-600"><strong>Email:</strong> privacy@realestic.com</p>
-                <p className="text-gray-600"><strong>Support:</strong> support@realestic.com</p>
+                <p className="text-gray-600"><strong>Support:</strong> realesticai@gmail.com</p>
                 <p className="text-gray-600"><strong>Response time:</strong> We aim to respond within 30 days</p>
               </div>
             </section>

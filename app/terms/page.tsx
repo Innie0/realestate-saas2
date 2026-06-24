@@ -267,7 +267,7 @@ export default function TermsPage() {
                 <li>At our sole discretion on a case-by-case basis</li>
               </ul>
               <p className="text-gray-600 leading-relaxed mb-4">
-                To request a refund, contact support@realestic.com with details of your concern.
+                To request a refund, contact realesticai@gmail.com with details of your concern.
               </p>
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Price Changes</h3>
@@ -470,7 +470,7 @@ export default function TermsPage() {
               </p>
               <div className="bg-gray-100 border border-gray-200 rounded-lg p-6 space-y-2">
                 <p className="text-gray-600"><strong>Email:</strong> legal@realestic.com</p>
-                <p className="text-gray-600"><strong>Support:</strong> support@realestic.com</p>
+                <p className="text-gray-600"><strong>Support:</strong> realesticai@gmail.com</p>
               </div>
             </section>
 
