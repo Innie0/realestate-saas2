@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import type { Contract } from '@/types';
 import Button from '@/components/ui/Button';
+import Select from '@/components/ui/Select';
 
 const CONTRACT_TYPES = [
   { value: 'purchase_agreement', label: 'Purchase Agreement' },
@@ -224,20 +225,13 @@ export default function TransactionDocuments({
             />
           </div>
 
-          <div>
-            <label className="block text-xs text-gray-500 mb-1.5">Document type</label>
-            <select
-              value={contractType}
-              onChange={(e) => setContractType(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
-            >
-              {CONTRACT_TYPES.map((t) => (
-                <option key={t.value} value={t.value}>
-                  {t.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Select
+            label="Document type"
+            value={contractType}
+            onChange={setContractType}
+            triggerClassName="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            options={CONTRACT_TYPES.map((t) => ({ value: t.value, label: t.label }))}
+          />
         </div>
 
         {error && (

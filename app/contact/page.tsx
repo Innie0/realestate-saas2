@@ -6,6 +6,7 @@ import { ArrowLeft, Check, Loader2, Mail, MessageSquare } from 'lucide-react';
 import AuthLogo from '@/components/branding/AuthLogo';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import Select from '@/components/ui/Select';
 import { SUPPORT_EMAIL } from '@/lib/support-email';
 
 const TOPICS = [
@@ -117,23 +118,12 @@ export default function ContactPage() {
                 autoComplete="email"
               />
 
-              <div>
-                <label htmlFor="topic" className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Topic
-                </label>
-                <select
-                  id="topic"
-                  value={topic}
-                  onChange={(e) => setTopic(e.target.value as typeof topic)}
-                  className="field-select w-full"
-                >
-                  {TOPICS.map(({ value, label }) => (
-                    <option key={value} value={value}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <Select
+                label="Topic"
+                value={topic}
+                onChange={(value) => setTopic(value as typeof topic)}
+                options={TOPICS.map(({ value, label }) => ({ value, label }))}
+              />
 
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1.5">

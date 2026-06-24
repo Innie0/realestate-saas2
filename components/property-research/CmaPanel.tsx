@@ -10,6 +10,7 @@ import {
   type SubjectProperty,
 } from '@/lib/cma';
 import { useToast } from '@/components/providers/ToastProvider';
+import Select from '@/components/ui/Select';
 import {
   BarChart2, Loader2, AlertCircle, Home, DollarSign,
   TrendingUp, BedDouble, Bath, Ruler, MapPin, Sparkles,
@@ -367,11 +368,12 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="block text-xs text-gray-500 mb-1">Condition</label>
-              <select value={subject.condition} onChange={(e) => updateSubject('condition', e.target.value as ConditionLevel)} className={inputClass}>
-                {CONDITION_OPTIONS.map((c) => (
-                  <option key={c.value} value={c.value}>{c.label}</option>
-                ))}
-              </select>
+              <Select
+                value={subject.condition}
+                onChange={(value) => updateSubject('condition', value as ConditionLevel)}
+                triggerClassName={inputClass}
+                options={CONDITION_OPTIONS.map((c) => ({ value: c.value, label: c.label }))}
+              />
               {!manualFields.has('condition') && (
                 <AutoDetectHint source={subjectEnrichment?.condition} />
               )}
@@ -402,11 +404,12 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block text-xs text-gray-500 mb-1">Property Type</label>
-            <select value={propertyType} onChange={(e) => setPropertyType(e.target.value)} className={inputClass}>
-              {PROPERTY_TYPES.map((pt) => (
-                <option key={pt.value} value={pt.value}>{pt.label}</option>
-              ))}
-            </select>
+            <Select
+              value={propertyType}
+              onChange={setPropertyType}
+              triggerClassName={inputClass}
+              options={PROPERTY_TYPES.map((pt) => ({ value: pt.value, label: pt.label }))}
+            />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>

@@ -8,6 +8,7 @@ import DashboardPage from '@/components/layout/DashboardPage';
 import PageToolbar from '@/components/layout/PageToolbar';
 import Button from '@/components/ui/Button';
 import SearchInput from '@/components/ui/SearchInput';
+import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
 import ProjectCard from '@/components/ProjectCard';
 import { Plus, FolderKanban } from 'lucide-react';
@@ -107,17 +108,18 @@ export default function ProjectsPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <select
-            data-tour="projects-filter"
-            className="field-select sm:min-w-[160px]"
+          <Select
             value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-          >
-            <option value="all">All status</option>
-            <option value="draft">Draft</option>
-            <option value="in_progress">In progress</option>
-            <option value="completed">Completed</option>
-          </select>
+            onChange={setFilterStatus}
+            className="sm:min-w-[160px]"
+            data-tour="projects-filter"
+            options={[
+              { value: 'all', label: 'All status' },
+              { value: 'draft', label: 'Draft' },
+              { value: 'in_progress', label: 'In progress' },
+              { value: 'completed', label: 'Completed' },
+            ]}
+          />
         </div>
       </PageToolbar>
 

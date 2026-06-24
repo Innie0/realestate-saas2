@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
+import Select from '@/components/ui/Select';
 import Card from '@/components/ui/Card';
 import { Upload, Palette, Type, Save, X } from 'lucide-react';
 import { useToast } from '@/components/providers/ToastProvider';
@@ -292,44 +293,24 @@ export default function BrandKitPage() {
 
             <div className="space-y-4">
               {/* Font family selector */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Font Family
-                </label>
-                <select
-                  className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  value={brandKit.font_family}
-                  onChange={(e) =>
-                    setBrandKit({ ...brandKit, font_family: e.target.value })
-                  }
-                >
-                  {fontOptions.map((font) => (
-                    <option key={font} value={font}>
-                      {font}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <Select
+                label="Font Family"
+                value={brandKit.font_family}
+                onChange={(font_family) => setBrandKit({ ...brandKit, font_family })}
+                options={fontOptions.map((font) => ({ value: font, label: font }))}
+              />
 
-              {/* Font weight selector */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Font Weight
-                </label>
-                <select
-                  className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  value={brandKit.font_weight}
-                  onChange={(e) =>
-                    setBrandKit({ ...brandKit, font_weight: parseInt(e.target.value) })
-                  }
-                >
-                  {fontWeightOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <Select
+                label="Font Weight"
+                value={String(brandKit.font_weight)}
+                onChange={(value) =>
+                  setBrandKit({ ...brandKit, font_weight: parseInt(value, 10) })
+                }
+                options={fontWeightOptions.map((option) => ({
+                  value: String(option.value),
+                  label: option.label,
+                }))}
+              />
 
               {/* Font preview */}
               <div className="mt-4 p-6 bg-gray-50 rounded-lg">

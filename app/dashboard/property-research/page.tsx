@@ -6,6 +6,7 @@ import DashboardPage from '@/components/layout/DashboardPage';
 import Tabs from '@/components/ui/Tabs';
 import Surface from '@/components/ui/Surface';
 import Button from '@/components/ui/Button';
+import Select from '@/components/ui/Select';
 import { useApi } from '@/lib/swr';
 import { CmaPanel, type CmaAnalysisResult } from '@/components/property-research/CmaPanel';
 import { OwnerContactPanel, type LookupResponse } from '@/components/property-research/OwnerContactPanel';
@@ -259,11 +260,17 @@ function PropertyResearchContent() {
                 <input type="text" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Austin" className="w-full px-3 py-2.5 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">State *</label>
-                <select value={state} onChange={(e) => setState(e.target.value)} className="field-select w-full bg-gray-50">
-                  <option value="">Select state</option>
-                  {US_STATES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-                </select>
+                <Select
+                  label="State *"
+                  value={state}
+                  onChange={setState}
+                  placeholder="Select state"
+                  triggerClassName="w-full bg-gray-50"
+                  options={[
+                    { value: '', label: 'Select state' },
+                    ...US_STATES.map((s) => ({ value: s.value, label: s.label })),
+                  ]}
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">ZIP</label>

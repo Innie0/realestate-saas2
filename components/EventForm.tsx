@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import Button from './ui/Button';
+import Select from './ui/Select';
 import { CalendarEvent } from '@/types';
 import { useToast } from '@/components/providers/ToastProvider';
 
@@ -76,24 +77,24 @@ export default function EventForm({
         />
       </div>
 
-      {/* Event Type */}
-      <div>
-        <label htmlFor="event_type" className="block text-sm font-medium text-gray-600 mb-1">
-          Event Type
-        </label>
-        <select
-          id="event_type"
-          value={formData.event_type}
-          onChange={(e) => setFormData({ ...formData, event_type: e.target.value as 'showing' | 'open_house' | 'meeting' | 'other' })}
-          style={{ backgroundColor: 'white' }}
-          className="w-full px-3 py-2 text-gray-900 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
-        >
-          <option value="showing">Property Showing</option>
-          <option value="open_house">Open House</option>
-          <option value="meeting">Meeting</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
+      <Select
+        id="event_type"
+        label="Event Type"
+        value={formData.event_type}
+        onChange={(event_type) =>
+          setFormData({
+            ...formData,
+            event_type: event_type as 'showing' | 'open_house' | 'meeting' | 'other',
+          })
+        }
+        triggerClassName="w-full px-3 py-2 text-gray-900 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+        options={[
+          { value: 'showing', label: 'Property Showing' },
+          { value: 'open_house', label: 'Open House' },
+          { value: 'meeting', label: 'Meeting' },
+          { value: 'other', label: 'Other' },
+        ]}
+      />
 
       {/* Start Time */}
       <div>

@@ -15,6 +15,7 @@ import Card from '@/components/ui/Card';
 import DashboardPage from '@/components/layout/DashboardPage';
 import PageToolbar from '@/components/layout/PageToolbar';
 import SearchInput from '@/components/ui/SearchInput';
+import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
 import TransactionStatusBadge from '@/components/transactions/TransactionStatusBadge';
 import TransactionTimeline from '@/components/TransactionTimeline';
@@ -113,20 +114,21 @@ export default function TransactionsPage() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <select
+          <Select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="field-select sm:min-w-[180px]"
-          >
-            <option value="open">In progress</option>
-            <option value="all">All deals</option>
-            <option value="active">Active</option>
-            <option value="pending">Pending</option>
-            <option value="under_contract">Under contract</option>
-            <option value="closed">Closed</option>
-            <option value="cancelled">Cancelled</option>
-            <option value="expired">Expired</option>
-          </select>
+            onChange={setStatusFilter}
+            className="sm:min-w-[180px]"
+            options={[
+              { value: 'open', label: 'In progress' },
+              { value: 'all', label: 'All deals' },
+              { value: 'active', label: 'Active' },
+              { value: 'pending', label: 'Pending' },
+              { value: 'under_contract', label: 'Under contract' },
+              { value: 'closed', label: 'Closed' },
+              { value: 'cancelled', label: 'Cancelled' },
+              { value: 'expired', label: 'Expired' },
+            ]}
+          />
         </div>
         <Link href="/dashboard/transactions/new" className="w-full sm:w-auto shrink-0">
           <Button className="w-full sm:w-auto">

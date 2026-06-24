@@ -13,6 +13,7 @@ import {
   Bell, CheckCircle2, Clock, AlertTriangle
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
+import Select from '@/components/ui/Select';
 import Card from '@/components/ui/Card';
 import Modal from '@/components/ui/Modal';
 import Tabs from '@/components/ui/Tabs';
@@ -271,23 +272,19 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
           </div>
 
           <div className="sm:max-w-xs">
-            <label htmlFor="deal-status" className="block text-sm font-medium text-gray-900 mb-1">
-              Deal status
-            </label>
-            <select
+            <Select
               id="deal-status"
               key={transaction.status}
+              label="Deal status"
               value={transaction.status}
               disabled={isUpdatingStatus || isEditing}
-              onChange={(e) => handleStatusChange(e.target.value as TransactionStatus)}
-              className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-50"
-            >
-              {TRANSACTION_STATUSES.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              onChange={(value) => handleStatusChange(value as TransactionStatus)}
+              triggerClassName="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-50"
+              options={TRANSACTION_STATUSES.map((option) => ({
+                value: option.value,
+                label: option.label,
+              }))}
+            />
           </div>
 
           {error && (

@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import Select from '@/components/ui/Select';
 import Surface from '@/components/ui/Surface';
 import { useToast } from '@/components/providers/ToastProvider';
 
@@ -148,23 +149,19 @@ export default function NewProjectPage() {
                 </p>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
-                  Property Type
-                </label>
-                <select
-                  className="block w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
-                  value={propertyType}
-                  onChange={(e) => setPropertyType(e.target.value)}
-                  required
-                >
-                  <option value="house">House</option>
-                  <option value="apartment">Apartment</option>
-                  <option value="condo">Condo</option>
-                  <option value="land">Land</option>
-                  <option value="commercial">Commercial</option>
-                </select>
-              </div>
+              <Select
+                label="Property Type"
+                value={propertyType}
+                onChange={setPropertyType}
+                required
+                options={[
+                  { value: 'house', label: 'House' },
+                  { value: 'apartment', label: 'Apartment' },
+                  { value: 'condo', label: 'Condo' },
+                  { value: 'land', label: 'Land' },
+                  { value: 'commercial', label: 'Commercial' },
+                ]}
+              />
             </div>
           </Surface>
 

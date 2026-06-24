@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import Select from '@/components/ui/Select';
 import { Transaction } from '@/types';
 import { TRANSACTION_STATUSES } from '@/lib/transaction-status';
 import { revalidateTransactionsCache } from '@/lib/swr';
@@ -193,17 +194,15 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
           <p className="text-xs text-gray-500 mb-3">
             Set to Closed or Cancelled when the deal is done — it will leave your in-progress list.
           </p>
-          <select
+          <Select
             value={status}
-            onChange={(e) => setStatus(e.target.value as typeof status)}
-            className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
-          >
-            {TRANSACTION_STATUSES.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+            onChange={(value) => setStatus(value as typeof status)}
+            triggerClassName="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            options={TRANSACTION_STATUSES.map((option) => ({
+              value: option.value,
+              label: option.label,
+            }))}
+          />
         </div>
       )}
 
@@ -259,22 +258,19 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Property Type
-            </label>
-            <select
-              value={propertyType}
-              onChange={(e) => setPropertyType(e.target.value as any)}
-              className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
-            >
-              <option value="house">House</option>
-              <option value="apartment">Apartment</option>
-              <option value="condo">Condo</option>
-              <option value="land">Land</option>
-              <option value="commercial">Commercial</option>
-            </select>
-          </div>
+          <Select
+            label="Property Type"
+            value={propertyType}
+            onChange={(value) => setPropertyType(value as typeof propertyType)}
+            triggerClassName="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            options={[
+              { value: 'house', label: 'House' },
+              { value: 'apartment', label: 'Apartment' },
+              { value: 'condo', label: 'Condo' },
+              { value: 'land', label: 'Land' },
+              { value: 'commercial', label: 'Commercial' },
+            ]}
+          />
         </div>
       )}
 

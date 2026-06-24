@@ -12,6 +12,7 @@ import {
 import { TransactionChecklistItem } from '@/types';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import Select from '@/components/ui/Select';
 
 interface TransactionChecklistProps {
   transactionId: string;
@@ -268,20 +269,16 @@ export default function TransactionChecklist({
           />
           
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">
-                Category
-              </label>
-              <select
-                value={newItemCategory}
-                onChange={(e) => setNewItemCategory(e.target.value as any)}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm bg-gray-100 text-gray-900"
-              >
-                {Object.entries(categoryInfo).map(([key, info]) => (
-                  <option key={key} value={key}>{info.label}</option>
-                ))}
-              </select>
-            </div>
+            <Select
+              label="Category"
+              value={newItemCategory}
+              onChange={(value) => setNewItemCategory(value as typeof newItemCategory)}
+              triggerClassName="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm bg-gray-100 text-gray-900"
+              options={Object.entries(categoryInfo).map(([key, info]) => ({
+                value: key,
+                label: info.label,
+              }))}
+            />
             <Input
               label="Due Date (optional)"
               type="date"

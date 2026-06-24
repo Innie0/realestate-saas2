@@ -9,6 +9,7 @@ import Button from '@/components/ui/Button';
 import DashboardPage from '@/components/layout/DashboardPage';
 import PageToolbar from '@/components/layout/PageToolbar';
 import SearchInput from '@/components/ui/SearchInput';
+import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
 import { Plus, X, Users } from 'lucide-react';
 import { useTour } from '@/hooks/useTour';
@@ -189,17 +190,18 @@ export default function ClientsPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <select
-            data-tour="clients-filter"
+          <Select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="field-select sm:min-w-[140px]"
-          >
-            <option value="all">All clients</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-            <option value="archived">Archived</option>
-          </select>
+            onChange={setStatusFilter}
+            className="sm:min-w-[140px]"
+            data-tour="clients-filter"
+            options={[
+              { value: 'all', label: 'All clients' },
+              { value: 'active', label: 'Active' },
+              { value: 'inactive', label: 'Inactive' },
+              { value: 'archived', label: 'Archived' },
+            ]}
+          />
         </div>
       </PageToolbar>
 

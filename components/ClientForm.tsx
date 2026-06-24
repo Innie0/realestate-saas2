@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Client } from '@/types';
 import Button from './ui/Button';
+import Select from './ui/Select';
 
 interface ClientFormProps {
   client?: Client;
@@ -113,22 +114,20 @@ export default function ClientForm({ client, onSubmit, onCancel, isLoading }: Cl
 
       {/* Status field (only for editing) */}
       {client && (
-        <div>
-          <label htmlFor="status" className="block text-sm font-medium text-gray-600 mb-1">
-            Status
-          </label>
-          <select
-            id="status"
-            value={formData.status}
-            onChange={(e) => setFormData({ ...formData, status: e.target.value as 'active' | 'inactive' | 'archived' })}
-            style={fieldStyle}
-            className={fieldClass}
-          >
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-            <option value="archived">Archived</option>
-          </select>
-        </div>
+        <Select
+          id="status"
+          label="Status"
+          value={formData.status}
+          onChange={(status) =>
+            setFormData({ ...formData, status: status as 'active' | 'inactive' | 'archived' })
+          }
+          triggerClassName={fieldClass}
+          options={[
+            { value: 'active', label: 'Active' },
+            { value: 'inactive', label: 'Inactive' },
+            { value: 'archived', label: 'Archived' },
+          ]}
+        />
       )}
 
       {/* Form actions */}
