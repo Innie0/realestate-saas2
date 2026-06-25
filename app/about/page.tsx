@@ -7,7 +7,10 @@ import { SUPPORT_EMAIL } from '@/lib/support-email';
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'Meet Ali Ali and learn why Realestic was built — simple tools for real estate agents who want to save time and win more business.',
+    'Meet Ali Ali and learn why Realestic AI was built — simple tools for real estate agents who want to save time and win more business.',
+  alternates: {
+    canonical: '/about',
+  },
   robots: { index: true, follow: true },
 };
 

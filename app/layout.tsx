@@ -3,6 +3,8 @@
 
 import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
+import { GlobalStructuredData } from '@/components/seo/StructuredData';
+import { SITE_DESCRIPTION, SITE_NAME, SITE_NAME_ALT, SITE_TAGLINE, SITE_URL } from '@/lib/site-config';
 import './globals.css';
 
 const jakarta = Plus_Jakarta_Sans({
@@ -11,54 +13,61 @@ const jakarta = Plus_Jakarta_Sans({
   display: 'swap',
 });
 
+const googleSiteVerification = process.env.GOOGLE_SITE_VERIFICATION;
+
 /**
  * Metadata for the application
  * This appears in browser tabs and search results
  */
 export const metadata: Metadata = {
   title: {
-    default: 'Realestic – AI-Powered Tools for Real Estate Agents',
-    template: '%s | Realestic',
+    default: `${SITE_NAME_ALT} – ${SITE_TAGLINE}`,
+    template: `%s | ${SITE_NAME}`,
   },
-  description: 'Realestic helps real estate agents write listing descriptions with AI, manage clients, track transactions, and schedule showings — all in one place. Save hours every week.',
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME_ALT,
   keywords: [
+    'Realestic',
+    'Realestic AI',
+    'realestic.ai',
     'real estate agent tools',
     'AI listing description generator',
     'property listing software',
     'real estate CRM',
+    'real estate lead capture',
     'real estate transaction management',
     'MLS listing description',
     'real estate marketing tools',
     'property showing scheduler',
     'real estate agent software',
   ],
-  authors: [{ name: 'Realestic' }],
-  creator: 'Realestic',
-  metadataBase: new URL('https://realestic.ai'),
+  authors: [{ name: 'Ali Ali', url: `${SITE_URL}/about` }],
+  creator: SITE_NAME,
+  metadataBase: new URL(SITE_URL),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://realestic.ai',
-    siteName: 'Realestic',
-    title: 'Realestic – AI-Powered Tools for Real Estate Agents',
-    description: 'Write listing descriptions in seconds, manage clients, track transactions, and schedule showings. The all-in-one platform built for real estate agents.',
+    url: SITE_URL,
+    siteName: SITE_NAME_ALT,
+    title: `${SITE_NAME_ALT} – ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
     images: [
       {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Realestic – AI-Powered Real Estate Tools',
+        url: '/logo-wordmark.png',
+        width: 800,
+        height: 240,
+        alt: `${SITE_NAME_ALT} – ${SITE_TAGLINE}`,
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Realestic – AI-Powered Tools for Real Estate Agents',
-    description: 'Write listing descriptions in seconds, manage clients, track transactions, and schedule showings.',
-    images: ['/og-image.png'],
+    title: `${SITE_NAME_ALT} – ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+    images: ['/logo-wordmark.png'],
   },
   icons: {
     icon: '/favicon.png',
@@ -75,6 +84,13 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  ...(googleSiteVerification
+    ? {
+        verification: {
+          google: googleSiteVerification,
+        },
+      }
+    : {}),
 };
 
 /**
@@ -89,9 +105,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${jakarta.variable} font-sans antialiased`}>
+        <GlobalStructuredData />
         {children}
       </body>
     </html>
   );
 }
-
