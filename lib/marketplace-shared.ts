@@ -123,8 +123,16 @@ export function parseMarketplaceSearchParams(
   };
 }
 
+export function hasMarketplaceSearchQuery(
+  params: Record<string, string | string[] | undefined>
+): boolean {
+  const value = params.search;
+  return value === '1' || value === 'true';
+}
+
 export function buildMarketplaceSearchUrl(filters: MarketplaceFilters): string {
   const params = new URLSearchParams();
+  params.set('search', '1');
   if (filters.location) params.set('location', filters.location);
   if (filters.type) params.set('type', filters.type);
   if (filters.minPrice != null) params.set('minPrice', String(filters.minPrice));
@@ -132,6 +140,5 @@ export function buildMarketplaceSearchUrl(filters: MarketplaceFilters): string {
   if (filters.beds != null) params.set('beds', String(filters.beds));
   if (filters.baths != null) params.set('baths', String(filters.baths));
   if (filters.sort && filters.sort !== 'newest') params.set('sort', filters.sort);
-  const query = params.toString();
-  return query ? `/?${query}` : '/';
+  return `/?${params.toString()}`;
 }
