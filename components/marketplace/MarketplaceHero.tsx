@@ -19,7 +19,7 @@ export default function MarketplaceHero({ initialFilters, compact = false }: Mar
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
               backgroundImage:
-                'linear-gradient(to bottom, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.94) 55%, rgba(255,255,255,1) 100%), url(/demo-house.png)',
+                'linear-gradient(to bottom, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.94) 55%, rgba(255,255,255,1) 100%), url(/marketplace/hero-bg.jpg)',
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-white" />

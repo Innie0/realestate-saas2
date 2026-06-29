@@ -12,21 +12,21 @@ const CATEGORY_CARDS = [
     title: 'Homes for Sale',
     description:
       'Browse houses, condos, and apartments. Save your search, view photos, and contact the listing agent directly.',
-    image: '/demo-house.png',
+    image: '/marketplace/card-homes.jpg',
     type: undefined,
   },
   {
     title: 'Land & Lots',
     description:
       'Find vacant land and development opportunities. Filter by location and explore listings on Realestic.',
-    image: '/demo-house.png',
+    image: '/marketplace/card-land.jpg',
     type: 'land' as const,
   },
   {
     title: 'Commercial',
     description:
       'View commercial properties for sale. Connect with agents and request more information from each listing page.',
-    image: '/demo-house.png',
+    image: '/marketplace/card-commercial.jpg',
     type: 'commercial' as const,
   },
 ];
