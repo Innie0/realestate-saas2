@@ -1,3 +1,4 @@
+import { unstable_cache } from 'next/cache';
 import { createAdminClient } from '@/lib/supabase-admin';
 import { formatListingAddress, normalizeProjectImages } from '@/lib/listing-utils';
 import type { MarketplaceListing } from '@/lib/marketplace-shared';
@@ -10,6 +11,9 @@ type ProjectRow = Pick<
 
 function parseMarketplaceListing(row: ProjectRow): MarketplaceListing {
   const info = (row.property_info || {}) as PropertyInfo;
+  const images = row.images;
+  const thumb = normalizeProjectImages(images)[0] ?? null;
+
   return {
     id: row.id,
     title: row.title,
@@ -19,7 +23,7 @@ function parseMarketplaceListing(row: ProjectRow): MarketplaceListing {
     zipCode: info.zip_code?.trim() || null,
     price: typeof info.price === 'number' && info.price > 0 ? info.price : null,
     propertyType: row.property_type ?? null,
-    thumb: normalizeProjectImages(row.images)[0] ?? null,
+    thumb,
     beds: typeof info.bedrooms === 'number' ? info.bedrooms : null,
     baths: typeof info.bathrooms === 'number' ? info.bathrooms : null,
     squareFeet: typeof info.square_feet === 'number' ? info.square_feet : null,
@@ -27,7 +31,7 @@ function parseMarketplaceListing(row: ProjectRow): MarketplaceListing {
   };
 }
 
-export async function getPublishedMarketplaceListings(): Promise<MarketplaceListing[]> {
+async function fetchPublishedListingRows(): Promise<ProjectRow[]> {
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from('projects')
@@ -36,6 +40,16 @@ export async function getPublishedMarketplaceListings(): Promise<MarketplaceList
     .order('published_at', { ascending: false });
 
   if (error || !data) return [];
+  return data as ProjectRow[];
+}
 
-  return (data as ProjectRow[]).map(parseMarketplaceListing);
+const getCachedPublishedListingRows = unstable_cache(
+  fetchPublishedListingRows,
+  ['marketplace-published-listings-v1'],
+  { revalidate: 60, tags: ['marketplace-listings'] }
+);
+
+export async function getPublishedMarketplaceListings(): Promise<MarketplaceListing[]> {
+  const rows = await getCachedPublishedListingRows();
+  return rows.map(parseMarketplaceListing);
 }

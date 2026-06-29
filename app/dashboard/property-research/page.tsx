@@ -82,6 +82,7 @@ function PropertyResearchContent() {
   const [showHistory, setShowHistory] = useState(false);
   const [lookupUsage, setLookupUsage] = useState<{ current: number; limit: number } | null>(null);
   const [cmaUsage, setCmaUsage] = useState<{ current: number; limit: number } | null>(null);
+  const [lookupLoading, setLookupLoading] = useState(false);
 
   const { response: usageResponse, mutate: mutateUsage } = useApi('/api/usage');
 
@@ -281,9 +282,9 @@ function PropertyResearchContent() {
               Demo: 123 W Main Street, Austin, TX — sample owner + CMA (no real PII).
             </p>
             <div className="flex flex-wrap items-center gap-3">
-              <Button type="button" onClick={handleResearchAddress} disabled={!street.trim() || !state} className="inline-flex items-center gap-2">
-                <Search className="w-4 h-4" />
-                Research address
+              <Button type="button" onClick={handleResearchAddress} disabled={!street.trim() || !state || lookupLoading} className="inline-flex items-center gap-2">
+                {lookupLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                {lookupLoading ? 'Researching…' : 'Research address'}
               </Button>
               {(street || city || state || zip) && (
                 <button type="button" onClick={clearForm} className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-500 hover:text-gray-900 transition-colors">
@@ -293,6 +294,19 @@ function PropertyResearchContent() {
             </div>
           </div>
         </Surface>
+
+        {lookupLoading && (
+          <div className="flex items-start gap-3 rounded-xl border border-brand-100 bg-brand-50 px-4 py-3 text-sm text-brand-900">
+            <Loader2 className="w-4 h-4 animate-spin shrink-0 mt-0.5" />
+            <div>
+              <p className="font-medium">Researching this address…</p>
+              <p className="text-brand-800/80 mt-0.5">
+                Fetching county records and owner contact data. First lookup usually takes 5–10
+                seconds; repeat searches of the same address are much faster.
+              </p>
+            </div>
+          </div>
+        )}
 
         <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
@@ -316,6 +330,7 @@ function PropertyResearchContent() {
             zip={zip}
             lookupTrigger={lookupTrigger}
             onComplete={handleLookupComplete}
+            onLoadingChange={setLookupLoading}
           />
         </div>
 

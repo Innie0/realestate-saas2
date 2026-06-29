@@ -23,15 +23,17 @@ async function getPublishedListing(id: string) {
 
   if (error || !project) return null;
 
-  const { data: authData } = await supabase.auth.admin.getUserById(project.user_id);
+  const [{ data: authData }, { data: settings }] = await Promise.all([
+    supabase.auth.admin.getUserById(project.user_id),
+    supabase
+      .from('agent_settings')
+      .select('profile_phone, profile_email, profile_photo_url, profile_headline')
+      .eq('user_id', project.user_id)
+      .maybeSingle(),
+  ]);
+
   const user = authData?.user;
   if (!user) return null;
-
-  const { data: settings } = await supabase
-    .from('agent_settings')
-    .select('profile_phone, profile_email, profile_photo_url, profile_headline')
-    .eq('user_id', project.user_id)
-    .maybeSingle();
 
   const agentName =
     (typeof user.user_metadata?.full_name === 'string' && user.user_metadata.full_name) ||

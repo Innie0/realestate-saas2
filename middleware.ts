@@ -48,19 +48,19 @@ function requiresSubscription(pathname: string): boolean {
 }
 
 export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
   const pathname = req.nextUrl.pathname;
 
-  const supabase = createMiddlewareClient<Database>({ req, res });
-  const { data: { session } } = await supabase.auth.getSession();
-
   if (isPublicPath(pathname)) {
-    return res;
+    return NextResponse.next();
   }
 
   if (pathname.startsWith('/api/') && isPublicApi(pathname)) {
-    return res;
+    return NextResponse.next();
   }
+
+  const res = NextResponse.next();
+  const supabase = createMiddlewareClient<Database>({ req, res });
+  const { data: { session } } = await supabase.auth.getSession();
 
   if (!session?.user) {
     if (pathname.startsWith('/dashboard')) {

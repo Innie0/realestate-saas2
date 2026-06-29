@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search } from 'lucide-react';
+import { Loader2, Search } from 'lucide-react';
 import Select from '@/components/ui/Select';
 import {
   MARKETPLACE_PROPERTY_TYPES,
@@ -20,6 +20,7 @@ export default function MarketplaceSearchBar({
   compact = false,
 }: MarketplaceSearchBarProps) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [propertyType, setPropertyType] = useState(initialFilters.type ?? '');
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -36,7 +37,9 @@ export default function MarketplaceSearchBar({
       sort: initialFilters.sort,
     };
 
-    router.push(buildMarketplaceSearchUrl(filters));
+    startTransition(() => {
+      router.push(buildMarketplaceSearchUrl(filters));
+    });
   };
 
   return (
@@ -141,9 +144,20 @@ export default function MarketplaceSearchBar({
         <p className="text-xs text-gray-500">More filters — price, beds, and baths.</p>
         <button
           type="submit"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-600 transition-colors"
+          disabled={isPending}
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-600 disabled:bg-brand-400 transition-colors"
         >
-          Search
+          {isPending ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Searching…
+            </>
+          ) : (
+            <>
+              <Search className="w-4 h-4" />
+              Search
+            </>
+          )}
         </button>
       </div>
     </form>

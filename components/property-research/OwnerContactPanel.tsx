@@ -136,6 +136,7 @@ export interface OwnerContactPanelProps {
   zip: string;
   lookupTrigger?: number;
   onComplete?: (data: LookupResponse | null) => void;
+  onLoadingChange?: (loading: boolean) => void;
 }
 
 export function OwnerContactPanel({
@@ -145,6 +146,7 @@ export function OwnerContactPanel({
   zip,
   lookupTrigger = 0,
   onComplete,
+  onLoadingChange,
 }: OwnerContactPanelProps) {
   const [results, setResults] = useState<LookupResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -247,6 +249,10 @@ export function OwnerContactPanel({
   }, [street, city, state, zip]);
 
   useEffect(() => {
+    onLoadingChange?.(isLoading);
+  }, [isLoading, onLoadingChange]);
+
+  useEffect(() => {
     if (lookupTrigger <= 0 || lookupTrigger === lastTriggerRef.current) return;
     lastTriggerRef.current = lookupTrigger;
     runLookup();
@@ -264,7 +270,7 @@ export function OwnerContactPanel({
       {isLoading && (
         <div className="flex items-center justify-center gap-2 py-12 text-gray-500">
           <Loader2 className="w-5 h-5 animate-spin" />
-          Looking up owner and property records…
+          Pulling property records and owner contact info — usually 5–10 seconds on first lookup.
         </div>
       )}
 

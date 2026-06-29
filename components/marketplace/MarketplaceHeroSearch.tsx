@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search } from 'lucide-react';
+import { Loader2, Search } from 'lucide-react';
 import {
   MARKETPLACE_PROPERTY_TYPES,
   buildMarketplaceSearchUrl,
@@ -15,6 +15,7 @@ interface MarketplaceHeroSearchProps {
 
 export default function MarketplaceHeroSearch({ initialFilters }: MarketplaceHeroSearchProps) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [propertyType, setPropertyType] = useState(initialFilters.type ?? '');
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -23,17 +24,19 @@ export default function MarketplaceHeroSearch({ initialFilters }: MarketplaceHer
     const location = String(form.get('location') || '').trim() || undefined;
     const type = String(form.get('type') || '') || undefined;
 
-    router.push(
-      buildMarketplaceSearchUrl({
-        location,
-        type,
-        minPrice: initialFilters.minPrice,
-        maxPrice: initialFilters.maxPrice,
-        beds: initialFilters.beds,
-        baths: initialFilters.baths,
-        sort: initialFilters.sort,
-      })
-    );
+    startTransition(() => {
+      router.push(
+        buildMarketplaceSearchUrl({
+          location,
+          type,
+          minPrice: initialFilters.minPrice,
+          maxPrice: initialFilters.maxPrice,
+          beds: initialFilters.beds,
+          baths: initialFilters.baths,
+          sort: initialFilters.sort,
+        })
+      );
+    });
   };
 
   return (
@@ -48,7 +51,8 @@ export default function MarketplaceHeroSearch({ initialFilters }: MarketplaceHer
             name="type"
             value={propertyType}
             onChange={(e) => setPropertyType(e.target.value)}
-            className="w-full h-full min-h-[52px] px-4 py-3.5 text-sm font-medium text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500/30 appearance-none cursor-pointer"
+            disabled={isPending}
+            className="w-full h-full min-h-[52px] px-4 py-3.5 text-sm font-medium text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500/30 appearance-none cursor-pointer disabled:opacity-60"
           >
             {MARKETPLACE_PROPERTY_TYPES.map(({ value, label }) => (
               <option key={value || 'all'} value={value}>
@@ -68,14 +72,25 @@ export default function MarketplaceHeroSearch({ initialFilters }: MarketplaceHer
             type="text"
             defaultValue={initialFilters.location ?? ''}
             placeholder="Enter city, state, zip, or address"
-            className="flex-1 min-w-0 px-4 sm:px-5 py-3.5 text-sm sm:text-base text-gray-900 placeholder-gray-400 focus:outline-none"
+            disabled={isPending}
+            className="flex-1 min-w-0 px-4 sm:px-5 py-3.5 text-sm sm:text-base text-gray-900 placeholder-gray-400 focus:outline-none disabled:opacity-60"
           />
           <button
             type="submit"
-            className="shrink-0 px-6 sm:px-8 py-3.5 bg-brand-500 hover:bg-brand-600 text-white text-sm sm:text-base font-semibold transition-colors"
+            disabled={isPending}
+            className="shrink-0 px-6 sm:px-8 py-3.5 bg-brand-500 hover:bg-brand-600 disabled:bg-brand-400 text-white text-sm sm:text-base font-semibold transition-colors inline-flex items-center justify-center gap-2 min-w-[5.5rem]"
           >
-            <span className="hidden sm:inline">Search</span>
-            <Search className="w-5 h-5 sm:hidden" aria-hidden />
+            {isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" aria-hidden />
+                <span className="hidden sm:inline">Searching</span>
+              </>
+            ) : (
+              <>
+                <span className="hidden sm:inline">Search</span>
+                <Search className="w-5 h-5 sm:hidden" aria-hidden />
+              </>
+            )}
           </button>
         </div>
       </div>
