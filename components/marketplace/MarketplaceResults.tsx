@@ -10,7 +10,7 @@ import {
   type MarketplaceFilters,
   type MarketplaceListing,
   type MarketplaceSort,
-} from '@/lib/marketplace-listings';
+} from '@/lib/marketplace-shared';
 
 interface MarketplaceResultsProps {
   listings: MarketplaceListing[];

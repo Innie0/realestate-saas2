@@ -8,7 +8,7 @@ import {
   MARKETPLACE_PROPERTY_TYPES,
   buildMarketplaceSearchUrl,
   type MarketplaceFilters,
-} from '@/lib/marketplace-listings';
+} from '@/lib/marketplace-shared';
 
 interface MarketplaceSearchBarProps {
   initialFilters: MarketplaceFilters;

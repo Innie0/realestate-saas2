@@ -6,9 +6,9 @@ import MarketplaceResults from '@/components/marketplace/MarketplaceResults';
 import MarketplaceFooter from '@/components/marketplace/MarketplaceFooter';
 import {
   filterMarketplaceListings,
-  getPublishedMarketplaceListings,
   parseMarketplaceSearchParams,
-} from '@/lib/marketplace-listings';
+} from '@/lib/marketplace-shared';
+import { getPublishedMarketplaceListings } from '@/lib/marketplace-listings';
 import { SITE_NAME_ALT, SITE_URL } from '@/lib/site-config';
 
 export const metadata: Metadata = {

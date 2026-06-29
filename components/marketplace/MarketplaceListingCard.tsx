@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, Bath, Bed, Square } from 'lucide-react';
 import { formatListingPrice } from '@/lib/listing-utils';
-import type { MarketplaceListing } from '@/lib/marketplace-listings';
+import type { MarketplaceListing } from '@/lib/marketplace-shared';
 
 const PROPERTY_TYPE_LABELS: Record<string, string> = {
   house: 'House',
