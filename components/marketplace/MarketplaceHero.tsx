@@ -33,7 +33,7 @@ export default function MarketplaceHero({ initialFilters, compact = false }: Mar
               <span className="border-b-2 border-gray-900 pb-1">For Sale</span>
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 tracking-tight mb-8 sm:mb-10">
-              Your next home starts here
+              Find properties for sale
             </h1>
           </>
         )}

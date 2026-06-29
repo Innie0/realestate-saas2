@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     siteName: SITE_NAME_ALT,
     title: `Properties for Sale | ${SITE_NAME_ALT}`,
     description:
-      'Search properties for sale by location and type. Your next home starts here on Realestic.',
+      'Search properties for sale by location and type. Find properties for sale on Realestic.',
     images: [
       {
         url: '/logo-wordmark.png',
