@@ -1327,10 +1327,17 @@ export default function HomePageClient() {
               className="flex items-center absolute left-1/2 -translate-x-1/2 sm:left-6 sm:translate-x-0 lg:left-8"
               whileHover={{ scale: 1.02 }}
             >
-              <Image src="/logo-wordmark.png" alt="Realestic" width={800} height={240} priority className="h-32 w-auto object-contain" />
+              <Link href="/">
+                <Image src="/logo-wordmark.png" alt="Realestic" width={800} height={240} priority className="h-32 w-auto object-contain" />
+              </Link>
             </motion.div>
             <div className="flex-1" />
             <div className="hidden sm:flex items-center gap-4">
+              <Link href="/">
+                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="px-5 py-2.5 text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors">
+                  Browse Properties
+                </motion.button>
+              </Link>
               <Link href="/auth/login">
                 <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="px-5 py-2.5 text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors">
                   Sign In
@@ -1756,6 +1763,7 @@ export default function HomePageClient() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-500 text-sm">© 2026 Realestic. All rights reserved.</p>
             <div className="flex items-center gap-6 text-sm text-gray-500">
+              <Link href="/" className="hover:text-brand-600 transition-colors">Browse Properties</Link>
               <Link href="/about" className="hover:text-brand-600 transition-colors">About</Link>
               <Link href="/privacy" className="hover:text-brand-600 transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-brand-600 transition-colors">Terms</Link>

@@ -4,7 +4,7 @@
 import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { GlobalStructuredData } from '@/components/seo/StructuredData';
-import { SITE_DESCRIPTION, SITE_NAME, SITE_NAME_ALT, SITE_TAGLINE, SITE_URL } from '@/lib/site-config';
+import { SITE_NAME, SITE_NAME_ALT, SITE_URL } from '@/lib/site-config';
 import './globals.css';
 
 const jakarta = Plus_Jakarta_Sans({
@@ -21,10 +21,11 @@ const googleSiteVerification = process.env.GOOGLE_SITE_VERIFICATION;
  */
 export const metadata: Metadata = {
   title: {
-    default: `${SITE_NAME_ALT} – ${SITE_TAGLINE}`,
+    default: `Properties for Sale | ${SITE_NAME_ALT}`,
     template: `%s | ${SITE_NAME}`,
   },
-  description: SITE_DESCRIPTION,
+  description:
+    'Browse homes and properties for sale on Realestic. Search by location, property type, and price — no account required.',
   applicationName: SITE_NAME_ALT,
   keywords: [
     'Realestic',
@@ -52,21 +53,23 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: SITE_URL,
     siteName: SITE_NAME_ALT,
-    title: `${SITE_NAME_ALT} – ${SITE_TAGLINE}`,
-    description: SITE_DESCRIPTION,
+    title: `Properties for Sale | ${SITE_NAME_ALT}`,
+    description:
+      'Browse homes and properties for sale on Realestic. Search by location, property type, and price.',
     images: [
       {
         url: '/logo-wordmark.png',
         width: 800,
         height: 240,
-        alt: `${SITE_NAME_ALT} – ${SITE_TAGLINE}`,
+        alt: `${SITE_NAME_ALT} – Properties for Sale`,
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${SITE_NAME_ALT} – ${SITE_TAGLINE}`,
-    description: SITE_DESCRIPTION,
+    title: `Properties for Sale | ${SITE_NAME_ALT}`,
+    description:
+      'Browse homes and properties for sale on Realestic. Search by location, property type, and price.',
     images: ['/logo-wordmark.png'],
   },
   icons: {

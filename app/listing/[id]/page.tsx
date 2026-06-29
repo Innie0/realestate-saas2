@@ -137,7 +137,10 @@ export default async function PublicListingPage({ params }: PageProps) {
         </div>
       </div>
 
-      <div className="border-t border-gray-200 py-6 text-center">
+      <div className="border-t border-gray-200 py-6 text-center space-y-2">
+        <Link href="/" className="text-sm text-brand-600 hover:text-brand-700 font-medium">
+          Browse more properties
+        </Link>
         <p className="text-xs text-gray-500">Powered by Realestic</p>
       </div>
     </div>

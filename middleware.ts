@@ -15,9 +15,10 @@ const publicRoutes = [
   '/pricing',
   '/contact',
   '/about',
+  '/for-agents',
 ];
 
-const publicPathPrefixes = ['/lead/', '/open-house/', '/agent/'];
+const publicPathPrefixes = ['/lead/', '/open-house/', '/agent/', '/listing/'];
 
 const publicApiPrefixes = [
   '/api/stripe/checkout',
