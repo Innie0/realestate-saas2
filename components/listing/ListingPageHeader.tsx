@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import WordmarkLogo from '@/components/branding/WordmarkLogo';
-import { listingBackLabel } from '@/lib/public-listing';
+import { listingBackLabel } from '@/lib/public-listing-shared';
 
 interface ListingPageHeaderProps {
   returnTo?: string;

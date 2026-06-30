@@ -13,7 +13,7 @@ import {
   ZoomIn,
 } from 'lucide-react';
 import type { Project } from '@/types';
-import type { PublicListingAgent } from '@/lib/public-listing';
+import type { PublicListingAgent } from '@/lib/public-listing-shared';
 import ListingAgentCard from '@/components/listing/ListingAgentCard';
 import {
   formatListingPrice,

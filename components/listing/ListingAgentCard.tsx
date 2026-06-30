@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
-import type { PublicListingAgent } from '@/lib/public-listing';
+import type { PublicListingAgent } from '@/lib/public-listing-shared';
 
 interface ListingAgentCardProps {
   agent: PublicListingAgent;

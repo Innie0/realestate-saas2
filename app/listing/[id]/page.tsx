@@ -5,8 +5,8 @@ import LeadCaptureForm from '@/components/LeadCaptureForm';
 import ListingPageHeader from '@/components/listing/ListingPageHeader';
 import {
   getPublicListing,
-  parseListingReturnTo,
 } from '@/lib/public-listing';
+import { parseListingReturnTo } from '@/lib/public-listing-shared';
 import {
   formatListingAddress,
   formatListingPrice,
