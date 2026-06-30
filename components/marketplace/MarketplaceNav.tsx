@@ -1,13 +1,13 @@
 import Link from 'next/link';
-import AuthLogo from '@/components/branding/AuthLogo';
+import WordmarkLogo from '@/components/branding/WordmarkLogo';
 
 export default function MarketplaceNav() {
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-14 sm:h-16 items-center justify-between gap-4">
+        <div className="flex h-28 items-center justify-between gap-4">
           <div className="flex items-center gap-6 sm:gap-8 min-w-0">
-            <AuthLogo className="h-10 sm:h-12 w-auto" centered={false} />
+            <WordmarkLogo />
             <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-700">
               <Link href="/" className="hover:text-brand-600 transition-colors">
                 For Sale
