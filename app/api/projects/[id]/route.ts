@@ -1,6 +1,7 @@
 // @ts-nocheck
 // Individual project API route - GET, PUT, DELETE
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { createClient } from '@/lib/supabase-server';
 
 /**
@@ -127,6 +128,10 @@ export async function PUT(
         { success: false, error: 'Failed to update project' },
         { status: 500 }
       );
+    }
+
+    if (body.published !== undefined) {
+      revalidateTag('marketplace-listings');
     }
 
     return NextResponse.json({

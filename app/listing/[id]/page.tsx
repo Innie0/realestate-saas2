@@ -116,6 +116,7 @@ export default async function PublicListingPage({ params, searchParams }: PagePr
             variant="listing"
             source="listing_page"
             listingAddress={listingAddress}
+            projectId={project.id}
           />
         </div>
       </div>

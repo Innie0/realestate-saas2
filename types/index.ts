@@ -164,6 +164,7 @@ export interface Client {
   phone?: string; // Client's phone number
   status: 'active' | 'inactive' | 'archived'; // Client status
   source?: 'manual' | 'lead_form' | 'open_house' | 'listing_page'; // How the client was added
+  project_id?: string | null; // Listing inquiry source project
   in_crm?: boolean; // false = leads inbox only until agent adds to CRM
   lead_type?: 'buyer' | 'seller' | 'renter' | 'browsing' | null; // What a lead is interested in
   message?: string | null; // Message left by a lead via the public form

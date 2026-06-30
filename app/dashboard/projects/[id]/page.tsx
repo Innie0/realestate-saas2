@@ -20,6 +20,8 @@ import {
 import { Project, AIGeneratedContent } from '@/types';
 import { useToast } from '@/components/providers/ToastProvider';
 import { uploadListingImageToStorage } from '@/lib/listing-image-upload';
+import { getListingPublishReadiness } from '@/lib/listing-publish';
+import ListingPublishPanel from '@/components/projects/ListingPublishPanel';
 
 // Tone types for description variations
 type DescriptionTone = 'professional' | 'casual' | 'luxury';
@@ -108,6 +110,16 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
   const handleTogglePublish = async () => {
     if (!project) return;
+
+    const turningOn = !project.published;
+    if (turningOn) {
+      const { ready, missingLabels } = getListingPublishReadiness(project);
+      if (!ready) {
+        toast.error(`Complete before publishing: ${missingLabels.join(', ')}`);
+        return;
+      }
+    }
+
     setIsPublishing(true);
     try {
       const nextPublished = !project.published;
@@ -121,6 +133,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         throw new Error(result.error || 'Failed to update listing');
       }
       setProject({ ...project, ...result.data });
+      if (nextPublished) {
+        toast.success('Listing is live on Realestic');
+      } else {
+        toast.success('Listing removed from marketplace');
+      }
     } catch (err) {
       console.error(err);
       toast.error('Could not update publish status. Try again.');
@@ -1326,72 +1343,14 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       actions={headerActions}
     >
         {/* Publish listing */}
-        <Card className="mb-6 border border-gray-200">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-start gap-3">
-              <div className="p-2 rounded-lg bg-brand-500/10 text-brand-600">
-                <Globe className="w-5 h-5" />
-              </div>
-              <div>
-                <h2 className="text-base font-semibold text-gray-900">Publish listing page</h2>
-                <p className="text-sm text-gray-500 mt-1 max-w-xl">
-                  Share a public link with photos, price, and description. Leads from the page go to your inbox.
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-2 shrink-0">
-              <button
-                type="button"
-                onClick={handleTogglePublish}
-                disabled={isPublishing}
-                className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${
-                  project.published ? 'bg-brand-500' : 'bg-gray-300'
-                } ${isPublishing ? 'opacity-60 cursor-not-allowed' : ''}`}
-                aria-pressed={!!project.published}
-                aria-label="Publish listing"
-              >
-                <span
-                  className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
-                    project.published ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-              <span className="text-sm font-medium text-gray-700">
-                {project.published ? 'Published' : 'Draft'}
-              </span>
-            </div>
-          </div>
-
-          {project.published && (
-            <div className="mt-4 pt-4 border-t border-gray-200 flex flex-col sm:flex-row gap-2">
-              <div className="flex-1 flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-600 truncate">
-                <Link2 className="w-4 h-4 shrink-0 text-gray-400" />
-                <span className="truncate">{publicListingUrl}</span>
-              </div>
-              <Button variant="outline" size="sm" onClick={handleCopyListingLink}>
-                {linkCopied ? (
-                  <>
-                    <Check className="w-4 h-4 mr-1" />
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4 mr-1" />
-                    Copy link
-                  </>
-                )}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => window.open(`/listing/${project.id}`, '_blank')}
-              >
-                <ExternalLink className="w-4 h-4 mr-1" />
-                View live
-              </Button>
-            </div>
-          )}
-        </Card>
+        <ListingPublishPanel
+          project={project}
+          isPublishing={isPublishing}
+          linkCopied={linkCopied}
+          publicListingUrl={publicListingUrl}
+          onTogglePublish={handleTogglePublish}
+          onCopyLink={handleCopyListingLink}
+        />
 
         {/* Tab navigation */}
         <div className="border-b border-gray-200 mb-6">

@@ -33,6 +33,12 @@ export async function GET(request: NextRequest) {
       .from('clients')
       .select(`
         *,
+        projects:project_id (
+          id,
+          title,
+          property_info,
+          published
+        ),
         client_notes(id, note, created_at),
         reminders(id, is_completed, reminder_date)
       `)

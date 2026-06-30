@@ -12,6 +12,8 @@ interface LeadCaptureFormProps {
   source?: 'lead_form' | 'listing_page';
   /** Pre-fill interest message with listing address */
   listingAddress?: string;
+  /** Published listing project (listing inquiries) */
+  projectId?: string;
   /** Default lead type selection (full form only) */
   defaultLeadType?: string;
 }
@@ -59,6 +61,7 @@ export default function LeadCaptureForm({
   variant = 'full',
   source = 'lead_form',
   listingAddress,
+  projectId,
   defaultLeadType = '',
 }: LeadCaptureFormProps) {
   const isListingForm = variant === 'listing' || source === 'listing_page';
@@ -111,7 +114,7 @@ export default function LeadCaptureForm({
       const response = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ agentId, source, listingAddress, ...formData }),
+        body: JSON.stringify({ agentId, source, listingAddress, projectId, ...formData }),
       });
       const result = await response.json();
       if (result.success) {

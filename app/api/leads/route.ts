@@ -26,7 +26,7 @@ const VALID_LEAD_TYPES = ['buyer', 'seller', 'renter', 'browsing'];
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { agentId, name, email, phone, leadType, timeline, budget, area, message, source, listingAddress } = body;
+    const { agentId, name, email, phone, leadType, timeline, budget, area, message, source, listingAddress, projectId } = body;
 
     // --- Validation -------------------------------------------------------
     if (!agentId || !UUID_REGEX.test(agentId)) {
@@ -82,6 +82,8 @@ export async function POST(request: NextRequest) {
     const cleanArea = typeof area === 'string' ? area.trim().slice(0, 200) : '';
     const cleanListingAddress =
       typeof listingAddress === 'string' ? listingAddress.trim().slice(0, 300) : '';
+    const cleanProjectId =
+      typeof projectId === 'string' && UUID_REGEX.test(projectId) ? projectId : null;
 
     const supabase = createAdminClient();
 
@@ -99,6 +101,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    let linkedProjectId: string | null = null;
+    if (cleanProjectId && leadSource === 'listing_page') {
+      const { data: listingProject } = await supabase
+        .from('projects')
+        .select('id')
+        .eq('id', cleanProjectId)
+        .eq('user_id', agentId)
+        .eq('published', true)
+        .maybeSingle();
+
+      if (listingProject) {
+        linkedProjectId = listingProject.id;
+      }
+    }
+
     // --- Create the lead --------------------------------------------------
     const { data: client, error: insertError } = await supabase
       .from('clients')
@@ -112,6 +129,7 @@ export async function POST(request: NextRequest) {
         in_crm: false,
         lead_type: cleanLeadType,
         message: cleanMessage || null,
+        project_id: linkedProjectId,
       })
       .select()
       .single();

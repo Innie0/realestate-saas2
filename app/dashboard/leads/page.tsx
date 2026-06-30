@@ -34,6 +34,13 @@ interface Lead {
   lead_type?: string;
   message?: string;
   source?: string;
+  project_id?: string | null;
+  projects?: {
+    id: string;
+    title: string;
+    property_info?: { address?: string; city?: string; state?: string; zip_code?: string };
+    published?: boolean;
+  } | null;
   created_at: string;
   status: string;
   followup_active?: boolean;
@@ -139,6 +146,10 @@ function LeadCard({
   const listingLine = lead.source === 'listing_page' && msg.includes('interested in')
     ? msg.replace(/^I'm interested in\s*/i, '')
     : null;
+  const linkedProject = lead.projects && !Array.isArray(lead.projects) ? lead.projects : null;
+  const listingDisplay = linkedProject
+    ? [linkedProject.property_info?.address, linkedProject.title].find(Boolean) || listingLine
+    : listingLine;
 
   return (
     <div className="rounded-2xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)] p-4 hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-200">
@@ -166,18 +177,38 @@ function LeadCard({
         </div>
       </div>
 
-      {(openHouseLine || listingLine) && (
+      {(openHouseLine || listingDisplay) && (
         <div className="mb-3 flex items-start gap-2 rounded-lg bg-brand-500/5 border border-brand-500/15 px-3 py-2">
           {openHouseLine ? (
             <DoorOpen className="w-3.5 h-3.5 text-brand-600 mt-0.5 shrink-0" />
           ) : (
             <MapPin className="w-3.5 h-3.5 text-brand-600 mt-0.5 shrink-0" />
           )}
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-brand-600">
               {openHouseLine ? 'Open house' : 'Listing inquiry'}
             </p>
-            <p className="text-xs text-gray-700 mt-0.5 break-words">{openHouseLine || listingLine}</p>
+            <p className="text-xs text-gray-700 mt-0.5 break-words">{openHouseLine || listingDisplay}</p>
+            {linkedProject && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                <Link
+                  href={`/dashboard/projects/${linkedProject.id}`}
+                  className="text-xs font-medium text-brand-600 hover:text-brand-700"
+                >
+                  View project
+                </Link>
+                {linkedProject.published && (
+                  <Link
+                    href={`/listing/${linkedProject.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-medium text-gray-600 hover:text-gray-900"
+                  >
+                    Public listing
+                  </Link>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
