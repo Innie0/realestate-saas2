@@ -70,14 +70,18 @@ const QUICK_LINKS = [
 
 function ContinueSection({
   loading,
+  recentProjects,
   continueItem,
 }: {
   loading: boolean;
+  recentProjects: Project[];
   continueItem:
     | { type: 'project'; item: Project }
     | { type: 'transaction'; item: RecentTransaction }
     | null;
 }) {
+  const projectCards = recentProjects.slice(0, 3);
+
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
@@ -94,29 +98,34 @@ function ContinueSection({
       </div>
 
       {loading ? (
-        <Surface padding="sm" className="flex items-center gap-4 animate-pulse min-h-[4.5rem]">
-          <div className="p-2.5 rounded-xl bg-gray-100 h-10 w-10 shrink-0" />
-          <div className="flex-1 space-y-2">
-            <div className="h-4 bg-gray-100 rounded-lg w-48 max-w-full" />
-            <div className="h-3 bg-gray-100 rounded-lg w-20" />
-          </div>
-        </Surface>
-      ) : continueItem ? (
         <div className="space-y-2">
-          {continueItem.type === 'project' ? (
-            <Link href={`/dashboard/projects/${continueItem.item.id}`}>
+          {[0, 1].map((i) => (
+            <Surface key={i} padding="sm" className="flex items-center gap-4 animate-pulse min-h-[4.5rem]">
+              <div className="p-2.5 rounded-xl bg-gray-100 h-10 w-10 shrink-0" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-gray-100 rounded-lg w-48 max-w-full" />
+                <div className="h-3 bg-gray-100 rounded-lg w-20" />
+              </div>
+            </Surface>
+          ))}
+        </div>
+      ) : projectCards.length > 0 ? (
+        <div className="space-y-2">
+          {projectCards.map((project) => (
+            <Link key={project.id} href={`/dashboard/projects/${project.id}`}>
               <Surface padding="sm" hover className="flex items-center gap-4 group">
                 <div className="p-2.5 rounded-xl bg-brand-50 text-brand-600">
                   <FolderKanban className="w-5 h-5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-body font-medium text-gray-900 truncate">{continueItem.item.title}</p>
-                  <p className="text-caption text-gray-500 capitalize">{continueItem.item.status.replace('_', ' ')}</p>
+                  <p className="text-body font-medium text-gray-900 truncate">{project.title}</p>
+                  <p className="text-caption text-gray-500 capitalize">{project.status.replace('_', ' ')}</p>
                 </div>
                 <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors shrink-0" />
               </Surface>
             </Link>
-          ) : (
+          ))}
+          {continueItem?.type === 'transaction' && (
             <Link href={`/dashboard/transactions/${continueItem.item.id}`}>
               <Surface padding="sm" hover className="flex items-center gap-4 group">
                 <div className="p-2.5 rounded-xl bg-gray-100 text-gray-600">
@@ -131,6 +140,19 @@ function ContinueSection({
             </Link>
           )}
         </div>
+      ) : continueItem?.type === 'transaction' ? (
+        <Link href={`/dashboard/transactions/${continueItem.item.id}`}>
+          <Surface padding="sm" hover className="flex items-center gap-4 group">
+            <div className="p-2.5 rounded-xl bg-gray-100 text-gray-600">
+              <FileText className="w-5 h-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-body font-medium text-gray-900 truncate">{continueItem.item.property_address}</p>
+              <p className="text-caption text-gray-500 capitalize">{continueItem.item.status.replace('_', ' ')}</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors shrink-0" />
+          </Surface>
+        </Link>
       ) : (
         <Surface padding="md" className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -290,10 +312,10 @@ export default function DashboardPage() {
     allTransactions.length === 0;
 
   return (
-    <div className="min-h-screen">
+    <div>
       <Header title={getGreeting()} subtitle={`${formatToday()} · ${focusMessage}`} />
 
-      <PageShell className="space-y-8">
+      <PageShell className="space-y-6">
         {showOnboarding && (
           <GettingStartedPanel
             variant={showWelcome ? 'welcome' : 'empty'}
@@ -346,14 +368,23 @@ export default function DashboardPage() {
           </Link>
         ) : null}
 
-        {/* Today layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6 items-start">
-          <div className="lg:col-span-2 space-y-6" data-tour="notifications">
+        {/* Today layout — main column + sticky sidebar (avoids empty grid row gap) */}
+        <div className="flex flex-col lg:flex-row lg:items-start gap-5 lg:gap-6">
+          <div className="flex-1 min-w-0 space-y-5" data-tour="notifications">
             <NotificationsPanel embedded />
-            <ContinueSection loading={continueLoading} continueItem={continueItem} />
+            <ContinueSection
+              loading={continueLoading}
+              recentProjects={recentProjects}
+              continueItem={continueItem}
+            />
+            {usage ? (
+              <PlanUsagePanel usage={usage} plan={plan} />
+            ) : usageLoading ? (
+              <PlanUsagePanelSkeleton />
+            ) : null}
           </div>
 
-          <div className="space-y-5">
+          <aside className="w-full lg:w-72 xl:w-80 shrink-0 space-y-5 lg:sticky lg:top-6">
             <MarketplaceSummaryPanel />
             <Surface padding="md">
               <p className="text-label mb-3">Quick actions</p>
@@ -372,14 +403,8 @@ export default function DashboardPage() {
                 ))}
               </div>
             </Surface>
-          </div>
+          </aside>
         </div>
-
-        {usage ? (
-          <PlanUsagePanel usage={usage} plan={plan} />
-        ) : usageLoading ? (
-          <PlanUsagePanelSkeleton />
-        ) : null}
       </PageShell>
     </div>
   );
