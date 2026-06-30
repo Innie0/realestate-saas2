@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, Search } from 'lucide-react';
+import Select from '@/components/ui/Select';
 import {
   MARKETPLACE_PROPERTY_TYPES,
   buildMarketplaceSearchUrl,
@@ -41,25 +42,19 @@ export default function MarketplaceHeroSearch({ initialFilters }: MarketplaceHer
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto">
-      <div className="flex flex-col sm:flex-row bg-white rounded-xl shadow-[0_8px_40px_rgba(0,0,0,0.12)] overflow-hidden border border-gray-200/80">
-        <div className="relative sm:w-44 shrink-0 border-b sm:border-b-0 sm:border-r border-gray-200">
-          <label htmlFor="hero-type" className="sr-only">
-            Property type
-          </label>
-          <select
+      <div className="flex flex-col sm:flex-row bg-white rounded-xl shadow-[0_8px_40px_rgba(0,0,0,0.12)] border border-gray-200/80">
+        <div className="relative z-30 sm:w-44 shrink-0 border-b sm:border-b-0 sm:border-r border-gray-200 sm:rounded-l-xl">
+          <Select
             id="hero-type"
             name="type"
             value={propertyType}
-            onChange={(e) => setPropertyType(e.target.value)}
+            onChange={setPropertyType}
             disabled={isPending}
-            className="w-full h-full min-h-[52px] px-4 py-3.5 text-sm font-medium text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500/30 appearance-none cursor-pointer disabled:opacity-60"
-          >
-            {MARKETPLACE_PROPERTY_TYPES.map(({ value, label }) => (
-              <option key={value || 'all'} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
+            options={MARKETPLACE_PROPERTY_TYPES.map(({ value, label }) => ({ value, label }))}
+            className="h-full"
+            triggerClassName="min-h-[52px] h-full w-full rounded-none border-0 shadow-none px-4 py-3.5 font-medium text-gray-800 bg-white focus:ring-2 focus:ring-inset focus:ring-brand-500/30 hover:shadow-none"
+            triggerProps={{ 'aria-label': 'Property type' }}
+          />
         </div>
 
         <div className="flex-1 flex min-w-0">
