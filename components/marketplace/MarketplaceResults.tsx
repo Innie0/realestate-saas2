@@ -104,7 +104,11 @@ export default function MarketplaceResults({
 
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {listings.map((listing) => (
-          <MarketplaceListingCard key={listing.id} listing={listing} />
+          <MarketplaceListingCard
+            key={listing.id}
+            listing={listing}
+            returnTo={buildMarketplaceSearchUrl(filters)}
+          />
         ))}
       </div>
     </div>

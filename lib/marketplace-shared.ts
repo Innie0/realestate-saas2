@@ -142,3 +142,9 @@ export function buildMarketplaceSearchUrl(filters: MarketplaceFilters): string {
   if (filters.sort && filters.sort !== 'newest') params.set('sort', filters.sort);
   return `/?${params.toString()}`;
 }
+
+export function buildListingDetailUrl(listingId: string, returnTo?: string): string {
+  const base = `/listing/${listingId}`;
+  if (!returnTo || returnTo === '/') return base;
+  return `${base}?returnTo=${encodeURIComponent(returnTo)}`;
+}

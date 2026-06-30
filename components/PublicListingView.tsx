@@ -13,6 +13,8 @@ import {
   ZoomIn,
 } from 'lucide-react';
 import type { Project } from '@/types';
+import type { PublicListingAgent } from '@/lib/public-listing';
+import ListingAgentCard from '@/components/listing/ListingAgentCard';
 import {
   formatListingPrice,
   getListingDescription,
@@ -21,9 +23,10 @@ import {
 
 interface PublicListingViewProps {
   project: Pick<Project, 'title' | 'property_info' | 'images' | 'ai_content' | 'description'>;
+  agent: PublicListingAgent;
 }
 
-export default function PublicListingView({ project }: PublicListingViewProps) {
+export default function PublicListingView({ project, agent }: PublicListingViewProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const imageUrls = normalizeProjectImages(project.images);
@@ -234,6 +237,8 @@ export default function PublicListingView({ project }: PublicListingViewProps) {
             )}
           </div>
         </div>
+
+        <ListingAgentCard agent={agent} />
 
         <div>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">About this home</h2>
