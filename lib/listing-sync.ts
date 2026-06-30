@@ -2,7 +2,10 @@ import { revalidateTag } from 'next/cache';
 import {
   fetchRentcastActiveListing,
   fetchRentcastInactiveListing,
+  fetchRentcastProperty,
   isRentcastConfigured,
+  type RentcastPropertyRecord,
+  type RentcastSaleListing,
 } from '@/lib/rentcast-listings';
 import type { PropertyInfo } from '@/types';
 
@@ -10,7 +13,7 @@ export type ListingStatus = 'active' | 'sold' | 'off_market' | 'unknown';
 
 export type ListingSyncAction =
   | 'unchanged'
-  | 'price_updated'
+  | 'listing_updated'
   | 'marked_sold'
   | 'marked_off_market'
   | 'needs_review'
@@ -24,6 +27,7 @@ export type ListingSyncResult = {
   message?: string;
   previousPrice?: number | null;
   newPrice?: number | null;
+  updatedFields?: string[];
 };
 
 type SyncableProject = {
@@ -49,6 +53,81 @@ function addressParts(info: PropertyInfo | null | undefined) {
   const state = info?.state?.trim() || '';
   const zip = info?.zip_code?.trim() || '';
   return { street, city, state, zip };
+}
+
+function positiveNumber(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : null;
+}
+
+function bedsBathsNumber(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : null;
+}
+
+function numbersEqual(a: number | null | undefined, b: number | null | undefined): boolean {
+  if (a == null && b == null) return true;
+  if (a == null || b == null) return false;
+  return Math.abs(a - b) < 0.01;
+}
+
+function pickRentcastDetails(
+  listing: RentcastSaleListing,
+  property: RentcastPropertyRecord | null
+): {
+  price: number | null;
+  bedrooms: number | null;
+  bathrooms: number | null;
+  squareFeet: number | null;
+} {
+  return {
+    price: positiveNumber(listing.price),
+    bedrooms: bedsBathsNumber(listing.bedrooms) ?? bedsBathsNumber(property?.bedrooms),
+    bathrooms: bedsBathsNumber(listing.bathrooms) ?? bedsBathsNumber(property?.bathrooms),
+    squareFeet:
+      positiveNumber(listing.squareFootage) ?? positiveNumber(property?.squareFootage),
+  };
+}
+
+function applyRentcastDetails(
+  info: PropertyInfo,
+  details: ReturnType<typeof pickRentcastDetails>
+): { nextInfo: PropertyInfo; updatedFields: string[] } {
+  const nextInfo: PropertyInfo = { ...info };
+  const updatedFields: string[] = [];
+
+  if (details.price != null && !numbersEqual(info.price, details.price)) {
+    nextInfo.price = details.price;
+    updatedFields.push('price');
+  }
+
+  if (details.bedrooms != null && !numbersEqual(info.bedrooms, details.bedrooms)) {
+    nextInfo.bedrooms = Math.round(details.bedrooms);
+    updatedFields.push('bedrooms');
+  }
+
+  if (details.bathrooms != null && !numbersEqual(info.bathrooms, details.bathrooms)) {
+    nextInfo.bathrooms = details.bathrooms;
+    updatedFields.push('bathrooms');
+  }
+
+  if (details.squareFeet != null && !numbersEqual(info.square_feet, details.squareFeet)) {
+    nextInfo.square_feet = Math.round(details.squareFeet);
+    updatedFields.push('square feet');
+  }
+
+  return { nextInfo, updatedFields };
+}
+
+function formatSyncUpdateMessage(updatedFields: string[], newPrice: number | null): string {
+  if (updatedFields.length === 0) return 'Still active on Rentcast';
+
+  const parts = updatedFields.map((field) => {
+    if (field === 'price' && newPrice != null) {
+      return `price → $${newPrice.toLocaleString()}`;
+    }
+    return field;
+  });
+
+  return `Updated ${parts.join(', ')}`;
 }
 
 export async function syncProjectListing(
@@ -86,15 +165,17 @@ export async function syncProjectListing(
     const active = await fetchRentcastActiveListing(street, city, state, zip);
 
     if (active) {
-      const rentcastPrice =
-        typeof active.price === 'number' && active.price > 0 ? active.price : null;
-      const priceChanged =
-        rentcastPrice != null && rentcastPrice !== previousPrice;
+      const listingMissingDetails =
+        active.bedrooms == null ||
+        active.bathrooms == null ||
+        active.squareFootage == null;
 
-      const nextInfo: PropertyInfo = { ...info };
-      if (rentcastPrice != null) {
-        nextInfo.price = rentcastPrice;
-      }
+      const property = listingMissingDetails
+        ? await fetchRentcastProperty(street, city, state, zip)
+        : null;
+
+      const details = pickRentcastDetails(active, property);
+      const { nextInfo, updatedFields } = applyRentcastDetails(info, details);
 
       const { error } = await supabase
         .from('projects')
@@ -110,13 +191,16 @@ export async function syncProjectListing(
         return { ...base, action: 'error', message: error.message };
       }
 
-      if (priceChanged) {
+      if (updatedFields.length > 0) {
+        const newPrice =
+          details.price != null && updatedFields.includes('price') ? details.price : null;
         return {
           ...base,
-          action: 'price_updated',
-          previousPrice,
-          newPrice: rentcastPrice,
-          message: `Price updated to $${rentcastPrice!.toLocaleString()}`,
+          action: 'listing_updated',
+          previousPrice: updatedFields.includes('price') ? previousPrice : undefined,
+          newPrice,
+          updatedFields,
+          message: formatSyncUpdateMessage(updatedFields, details.price),
         };
       }
 
@@ -201,7 +285,7 @@ export async function syncPublishedProjects(
     const result = await syncProjectListing(supabase, project);
     results.push(result);
     if (
-      result.action === 'price_updated' ||
+      result.action === 'listing_updated' ||
       result.action === 'marked_sold' ||
       result.action === 'marked_off_market'
     ) {
@@ -221,7 +305,7 @@ export async function syncPublishedProjects(
 export function summarizeSyncResults(results: ListingSyncResult[]) {
   return {
     total: results.length,
-    priceUpdated: results.filter((r) => r.action === 'price_updated').length,
+    listingUpdated: results.filter((r) => r.action === 'listing_updated').length,
     sold: results.filter((r) => r.action === 'marked_sold').length,
     offMarket: results.filter((r) => r.action === 'marked_off_market').length,
     needsReview: results.filter((r) => r.action === 'needs_review').length,

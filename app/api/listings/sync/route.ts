@@ -85,7 +85,7 @@ export async function POST(request: Request) {
 
     const summary = summarizeSyncResults(results);
     const parts: string[] = [];
-    if (summary.priceUpdated) parts.push(`${summary.priceUpdated} price update(s)`);
+    if (summary.listingUpdated) parts.push(`${summary.listingUpdated} listing update(s)`);
     if (summary.sold) parts.push(`${summary.sold} sold`);
     if (summary.offMarket) parts.push(`${summary.offMarket} off market`);
     if (summary.needsReview) parts.push(`${summary.needsReview} need review`);

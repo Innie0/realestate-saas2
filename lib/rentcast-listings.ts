@@ -3,9 +3,18 @@ const RENTCAST_BASE = 'https://api.rentcast.io/v1';
 export type RentcastSaleListing = {
   formattedAddress?: string;
   price?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  squareFootage?: number;
   status?: string;
   removedDate?: string | null;
   lastSeenDate?: string | null;
+};
+
+export type RentcastPropertyRecord = {
+  bedrooms?: number;
+  bathrooms?: number;
+  squareFootage?: number;
 };
 
 function getRentcastKey() {
@@ -63,6 +72,33 @@ export async function fetchRentcastInactiveListing(
 ): Promise<RentcastSaleListing | null> {
   const fullAddress = buildRentcastAddress(street, city, state, zip);
   return fetchRentcastSaleListing(fullAddress, 'Inactive');
+}
+
+/** County/property record — fallback when listing omits beds/baths/sq ft. */
+export async function fetchRentcastProperty(
+  street: string,
+  city: string,
+  state: string,
+  zip: string
+): Promise<RentcastPropertyRecord | null> {
+  const key = getRentcastKey();
+  if (!key) return null;
+
+  const fullAddress = buildRentcastAddress(street, city, state, zip);
+
+  try {
+    const params = new URLSearchParams({ address: fullAddress, limit: '1' });
+    const res = await fetch(`${RENTCAST_BASE}/properties?${params}`, {
+      headers: { 'X-Api-Key': key, Accept: 'application/json' },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) return null;
+    const record = data[0] as RentcastPropertyRecord;
+    return record;
+  } catch {
+    return null;
+  }
 }
 
 export function isRentcastConfigured(): boolean {
