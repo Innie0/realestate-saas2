@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import AuthLogo from '@/components/branding/AuthLogo';
 
 export default function MarketplaceNav() {
   return (
@@ -7,16 +7,7 @@ export default function MarketplaceNav() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-14 sm:h-16 items-center justify-between gap-4">
           <div className="flex items-center gap-6 sm:gap-8 min-w-0">
-            <Link href="/" className="flex items-center shrink-0">
-              <Image
-                src="/logo-wordmark.png"
-                alt="Realestic"
-                width={800}
-                height={240}
-                priority
-                className="h-8 sm:h-9 w-auto object-contain"
-              />
-            </Link>
+            <AuthLogo className="h-10 sm:h-12 w-auto" centered={false} />
             <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-700">
               <Link href="/" className="hover:text-brand-600 transition-colors">
                 For Sale

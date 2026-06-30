@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import AuthLogo from '@/components/branding/AuthLogo';
 import { ArrowLeft, LucideIcon } from 'lucide-react';
 
 interface LegalPageLayoutProps {
@@ -29,14 +29,7 @@ export default function LegalPageLayout({
               <ArrowLeft className="w-4 h-4" />
               Back to Home
             </Link>
-            <Image
-              src="/logo.png"
-              alt="Realestic"
-              width={140}
-              height={42}
-              priority
-              className="h-8 w-auto"
-            />
+            <AuthLogo className="h-10 sm:h-11 w-auto" centered={false} />
           </div>
         </div>
       </header>

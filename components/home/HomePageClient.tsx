@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import AuthLogo from '@/components/branding/AuthLogo';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import {
   Home, TrendingUp, Shield, Sparkles, Users, Calendar, ArrowRight,
@@ -1322,14 +1323,12 @@ export default function HomePageClient() {
         className="relative z-50 border-b border-gray-200 backdrop-blur-md bg-[#F5F5F5]/20"
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="flex h-28 items-center justify-center sm:justify-between">
+          <div className="flex h-14 sm:h-16 items-center justify-center sm:justify-between">
             <motion.div
               className="flex items-center absolute left-1/2 -translate-x-1/2 sm:left-6 sm:translate-x-0 lg:left-8"
               whileHover={{ scale: 1.02 }}
             >
-              <Link href="/">
-                <Image src="/logo-wordmark.png" alt="Realestic" width={800} height={240} priority className="h-32 w-auto object-contain" />
-              </Link>
+              <AuthLogo className="h-10 sm:h-12 w-auto" centered={false} />
             </motion.div>
             <div className="flex-1" />
             <div className="hidden sm:flex items-center gap-4">
