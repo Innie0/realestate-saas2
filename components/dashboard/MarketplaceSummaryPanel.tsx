@@ -1,15 +1,18 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import Surface from '@/components/ui/Surface';
 import Button from '@/components/ui/Button';
 import { useApi } from '@/lib/swr';
-import { ArrowRight, Globe, Inbox, MapPin, Plus } from 'lucide-react';
+import { useToast } from '@/components/providers/ToastProvider';
+import { ArrowRight, Globe, Inbox, Loader2, MapPin, Plus, RefreshCw } from 'lucide-react';
 
 interface MarketplaceSummary {
   publishedCount: number;
   draftCount: number;
   draftReadyToPublish: number;
+  needsReviewCount: number;
   recentPublished: {
     id: string;
     title: string;
@@ -33,7 +36,29 @@ function timeAgo(dateStr: string): string {
 }
 
 export default function MarketplaceSummaryPanel() {
-  const { data, isLoading } = useApi<MarketplaceSummary>('/api/dashboard/marketplace-summary');
+  const { data, isLoading, mutate } = useApi<MarketplaceSummary>(
+    '/api/dashboard/marketplace-summary'
+  );
+  const toast = useToast();
+  const [syncing, setSyncing] = useState(false);
+
+  const handleSync = async () => {
+    setSyncing(true);
+    try {
+      const res = await fetch('/api/listings/sync', { method: 'POST' });
+      const json = await res.json();
+      if (!json.success) {
+        toast.error(json.error || 'Sync failed');
+        return;
+      }
+      toast.success(json.data?.message || 'Listings synced');
+      await mutate();
+    } catch {
+      toast.error('Sync failed');
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   if (isLoading && !data) {
     return (
@@ -95,7 +120,7 @@ export default function MarketplaceSummaryPanel() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 mb-4">
+      <div className="grid grid-cols-2 gap-3 mb-3">
         <div className="rounded-xl border border-gray-200 bg-gray-50/80 px-3 py-2.5">
           <p className="text-2xl font-bold text-gray-900">{data.publishedCount}</p>
           <p className="text-xs text-gray-500">Live listings</p>
@@ -105,6 +130,30 @@ export default function MarketplaceSummaryPanel() {
           <p className="text-xs text-gray-500">Recent inquiries</p>
         </div>
       </div>
+
+      {data.publishedCount > 0 && (
+        <Button
+          size="sm"
+          variant="outline"
+          className="w-full mb-4"
+          onClick={handleSync}
+          disabled={syncing}
+        >
+          {syncing ? (
+            <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+          ) : (
+            <RefreshCw className="w-4 h-4 mr-1.5" />
+          )}
+          Sync prices &amp; sold status
+        </Button>
+      )}
+
+      {data.needsReviewCount > 0 && (
+        <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-4">
+          {data.needsReviewCount} listing{data.needsReviewCount === 1 ? '' : 's'} need a manual
+          review after sync.
+        </p>
+      )}
 
       {data.recentListingInquiries.length > 0 && (
         <div className="mb-4">

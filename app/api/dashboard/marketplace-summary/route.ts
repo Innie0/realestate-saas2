@@ -19,7 +19,7 @@ export async function GET() {
       await Promise.all([
         supabase
           .from('projects')
-          .select('id, title, property_info, published, published_at, updated_at')
+          .select('id, title, property_info, published, published_at, updated_at, listing_status, last_synced_at')
           .eq('user_id', user.id)
           .order('updated_at', { ascending: false }),
         supabase
@@ -59,6 +59,9 @@ export async function GET() {
 
     const published = (projects || []).filter((p) => p.published);
     const drafts = (projects || []).filter((p) => !p.published);
+    const needsReviewCount = (projects || []).filter(
+      (p) => p.published && p.listing_status === 'unknown'
+    ).length;
 
     const recentPublished = published.slice(0, 4).map((p) => {
       const info = (p.property_info || {}) as {
@@ -98,6 +101,7 @@ export async function GET() {
       data: {
         publishedCount: published.length,
         draftCount: drafts.length,
+        needsReviewCount,
         recentPublished,
         recentListingInquiries,
         draftReadyToPublish: drafts.filter((p) => {

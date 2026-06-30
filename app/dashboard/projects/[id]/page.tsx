@@ -99,6 +99,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
   // Publish listing
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isSyncingListing, setIsSyncingListing] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
 
   const publicListingUrl =
@@ -143,6 +144,42 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       toast.error('Could not update publish status. Try again.');
     } finally {
       setIsPublishing(false);
+    }
+  };
+
+  const handleSyncListing = async () => {
+    if (!project) return;
+
+    setIsSyncingListing(true);
+    try {
+      const response = await fetch('/api/listings/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId: project.id }),
+      });
+      const result = await response.json();
+      if (!result.success) {
+        toast.error(result.error || 'Sync failed');
+        return;
+      }
+
+      toast.success(result.data?.message || 'Listing synced');
+
+      const refresh = await fetch(`/api/projects/${project.id}`);
+      const refreshed = await refresh.json();
+      if (refreshed.success && refreshed.data) {
+        setProject({
+          ...refreshed.data,
+          images: refreshed.data.images || [],
+          property_info: refreshed.data.property_info || {},
+          ai_content: refreshed.data.ai_content || null,
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Could not sync listing. Try again.');
+    } finally {
+      setIsSyncingListing(false);
     }
   };
 
@@ -1346,10 +1383,12 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         <ListingPublishPanel
           project={project}
           isPublishing={isPublishing}
+          isSyncing={isSyncingListing}
           linkCopied={linkCopied}
           publicListingUrl={publicListingUrl}
           onTogglePublish={handleTogglePublish}
           onCopyLink={handleCopyListingLink}
+          onSync={handleSyncListing}
         />
 
         {/* Tab navigation */}

@@ -28,6 +28,8 @@ export interface Project {
   status: 'draft' | 'in_progress' | 'completed'; // Project status
   published?: boolean; // Public listing page enabled
   published_at?: string | null; // When the listing was published
+  listing_status?: 'active' | 'sold' | 'off_market' | 'unknown' | null;
+  last_synced_at?: string | null;
   created_at: string; // When the project was created
   updated_at: string; // When the project was last updated
 }

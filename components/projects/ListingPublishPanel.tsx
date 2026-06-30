@@ -10,6 +10,8 @@ import {
   ExternalLink,
   Globe,
   Link2,
+  Loader2,
+  RefreshCw,
   Search,
   Circle,
 } from 'lucide-react';
@@ -17,22 +19,44 @@ import {
 interface ListingPublishPanelProps {
   project: Project;
   isPublishing: boolean;
+  isSyncing?: boolean;
   linkCopied: boolean;
   publicListingUrl: string;
   onTogglePublish: () => void;
   onCopyLink: () => void;
+  onSync?: () => void;
 }
 
 export default function ListingPublishPanel({
   project,
   isPublishing,
+  isSyncing = false,
   linkCopied,
   publicListingUrl,
   onTogglePublish,
   onCopyLink,
+  onSync,
 }: ListingPublishPanelProps) {
   const { checks, ready } = getListingPublishReadiness(project);
   const marketplaceSearchUrl = '/?search=1';
+
+  const statusLabel =
+    project.listing_status === 'sold'
+      ? 'Sold (removed from marketplace)'
+      : project.listing_status === 'off_market'
+        ? 'Off market'
+        : project.published
+          ? 'Live on Realestic'
+          : 'Draft';
+
+  const lastSynced = project.last_synced_at
+    ? new Date(project.last_synced_at).toLocaleString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+      })
+    : null;
 
   return (
     <Card className="mb-6 border border-gray-200">
@@ -71,11 +95,18 @@ export default function ListingPublishPanel({
               }`}
             />
           </button>
-          <span className="text-sm font-medium text-gray-700">
-            {project.published ? 'Live on Realestic' : 'Draft'}
-          </span>
+          <span className="text-sm font-medium text-gray-700">{statusLabel}</span>
         </div>
       </div>
+
+      {(lastSynced || project.listing_status === 'unknown') && (
+        <p className="text-xs text-gray-500 mt-3">
+          {lastSynced ? `Last Rentcast sync: ${lastSynced}` : 'Not synced yet'}
+          {project.listing_status === 'unknown' && project.published && (
+            <span className="text-amber-700"> · Needs manual review</span>
+          )}
+        </p>
+      )}
 
       <div className="mt-4 pt-4 border-t border-gray-200">
         <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3">
@@ -123,6 +154,16 @@ export default function ListingPublishPanel({
           >
             <Search className="w-4 h-4 mr-1" />
             View on marketplace
+          </Button>
+        )}
+        {onSync && (
+          <Button variant="outline" size="sm" onClick={onSync} disabled={isSyncing}>
+            {isSyncing ? (
+              <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+            ) : (
+              <RefreshCw className="w-4 h-4 mr-1" />
+            )}
+            Sync with Rentcast
           </Button>
         )}
       </div>
