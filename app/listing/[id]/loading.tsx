@@ -9,8 +9,10 @@ export default function ListingLoading() {
       </div>
       <div className="max-w-3xl mx-auto px-4 py-6 sm:py-8 space-y-8">
         <div className="rounded-xl bg-white border border-gray-200 overflow-hidden">
-          <div className="bg-gray-200 aspect-[16/9] md:aspect-[21/9]" />
-          <div className="p-6 md:p-8 space-y-5">
+          <div className="p-4 sm:p-5">
+            <div className="rounded-xl bg-gray-200 aspect-[4/3]" />
+          </div>
+          <div className="px-6 md:px-8 pb-6 md:pb-8 space-y-5">
             <div className="h-9 w-44 bg-gray-200 rounded" />
             <div className="flex gap-5 py-4 border-y border-gray-100">
               <div className="h-5 w-16 bg-gray-100 rounded" />

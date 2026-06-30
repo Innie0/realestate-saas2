@@ -67,66 +67,68 @@ export default function PublicListingView({ project, agent }: PublicListingViewP
 
   return (
     <div className="rounded-xl shadow-sm overflow-hidden border border-gray-200 bg-white">
-      <div className="relative bg-gray-100">
-        {imageUrls.length > 0 ? (
-          <>
-            <button
-              type="button"
-              onClick={() => openLightbox()}
-              className="group relative block w-full aspect-[16/9] md:aspect-[21/9] cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
-              aria-label="View full-size photo"
-            >
-              <img
-                src={imageUrls[currentImageIndex]}
-                alt="Property"
-                className="w-full h-full object-cover"
-                decoding="async"
-                fetchPriority="high"
-                sizes="(max-width: 768px) 100vw, 768px"
-              />
-              <span className="absolute bottom-3 left-3 flex items-center gap-1.5 px-2.5 py-1 bg-black/60 text-white text-xs rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                <ZoomIn className="w-3.5 h-3.5" />
-                Click to enlarge
-              </span>
-            </button>
-            {imageUrls.length > 1 && (
-              <>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    prevImage();
-                  }}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-black/60 rounded-full text-white hover:bg-black/80 transition-colors"
-                  aria-label="Previous photo"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    nextImage();
-                  }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-black/60 rounded-full text-white hover:bg-black/80 transition-colors"
-                  aria-label="Next photo"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-                <div className="absolute bottom-3 right-3 px-3 py-1 bg-black/60 text-white text-xs rounded-full">
-                  {currentImageIndex + 1} / {imageUrls.length}
-                </div>
-              </>
-            )}
-          </>
-        ) : (
-          <div className="aspect-[16/9] flex items-center justify-center bg-gray-200">
-            <div className="text-center text-gray-500">
-              <Home className="w-12 h-12 mx-auto mb-2 opacity-60" />
-              <p className="text-sm">No photos yet</p>
+      <div className="p-4 sm:p-5">
+        <div className="relative rounded-xl overflow-hidden bg-gray-100">
+          {imageUrls.length > 0 ? (
+            <>
+              <button
+                type="button"
+                onClick={() => openLightbox()}
+                className="group relative block w-full aspect-[4/3] cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-inset"
+                aria-label="View full-size photo"
+              >
+                <img
+                  src={imageUrls[currentImageIndex]}
+                  alt="Property"
+                  className="absolute inset-0 h-full w-full object-cover object-center"
+                  decoding="async"
+                  fetchPriority="high"
+                  sizes="(max-width: 768px) 100vw, 720px"
+                />
+                <span className="absolute bottom-3 left-3 flex items-center gap-1.5 px-2.5 py-1 bg-black/60 text-white text-xs rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                  <ZoomIn className="w-3.5 h-3.5" />
+                  Click to enlarge
+                </span>
+              </button>
+              {imageUrls.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      prevImage();
+                    }}
+                    className="absolute left-3 top-1/2 z-10 -translate-y-1/2 p-2 bg-black/60 rounded-full text-white hover:bg-black/80 transition-colors"
+                    aria-label="Previous photo"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      nextImage();
+                    }}
+                    className="absolute right-3 top-1/2 z-10 -translate-y-1/2 p-2 bg-black/60 rounded-full text-white hover:bg-black/80 transition-colors"
+                    aria-label="Next photo"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                  <div className="absolute bottom-3 right-3 z-10 px-3 py-1 bg-black/60 text-white text-xs rounded-full">
+                    {currentImageIndex + 1} / {imageUrls.length}
+                  </div>
+                </>
+              )}
+            </>
+          ) : (
+            <div className="aspect-[4/3] flex items-center justify-center bg-gray-200">
+              <div className="text-center text-gray-500">
+                <Home className="w-12 h-12 mx-auto mb-2 opacity-60" />
+                <p className="text-sm">No photos yet</p>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Full-screen photo lightbox */}
