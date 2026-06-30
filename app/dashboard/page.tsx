@@ -25,7 +25,6 @@ import { Project } from '@/types';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
 import { isSameAddress } from '@/lib/comp-filters';
-import { isOpenTransactionStatus, type TransactionStatus } from '@/lib/transaction-status';
 
 interface RecentClient {
   id: string;
@@ -68,20 +67,95 @@ const QUICK_LINKS = [
   { href: '/dashboard/clients', label: 'Clients', icon: FolderKanban, tour: 'manage-clients' },
 ] as const;
 
+type ContinueListItem =
+  | {
+      key: string;
+      kind: 'project';
+      href: string;
+      title: string;
+      subtitle: string;
+    }
+  | {
+      key: string;
+      kind: 'transaction';
+      href: string;
+      title: string;
+      subtitle: string;
+    };
+
+function projectAddressLabel(project: Project): string {
+  const info = project.property_info;
+  if (info?.address?.trim()) {
+    return [info.address, info.city, info.state, info.zip_code].filter(Boolean).join(', ');
+  }
+  return project.title;
+}
+
+function buildContinueListItems(
+  recentProjects: Project[],
+  allTransactions: RecentTransaction[],
+): ContinueListItem[] {
+  const items: ContinueListItem[] = [];
+
+  const matchesExistingAddress = (address: string) =>
+    items.some((item) => isSameAddress(item.title, address));
+
+  const projectMatchesExisting = (project: Project) => {
+    const label = projectAddressLabel(project);
+    return (
+      matchesExistingAddress(label) ||
+      matchesExistingAddress(project.title) ||
+      items.some(
+        (item) =>
+          item.kind === 'project' &&
+          (isSameAddress(item.title, label) || isSameAddress(item.title, project.title)),
+      )
+    );
+  };
+
+  for (const project of recentProjects) {
+    if (projectMatchesExisting(project)) continue;
+
+    items.push({
+      key: `project:${project.id}`,
+      kind: 'project',
+      href: `/dashboard/projects/${project.id}`,
+      title: project.title,
+      subtitle: project.status.replace('_', ' '),
+    });
+
+    if (items.length >= 3) return items;
+  }
+
+  for (const tx of allTransactions) {
+    const duplicatesProject = recentProjects.some(
+      (project) =>
+        isSameAddress(projectAddressLabel(project), tx.property_address) ||
+        isSameAddress(project.title, tx.property_address),
+    );
+    if (duplicatesProject || matchesExistingAddress(tx.property_address)) continue;
+
+    items.push({
+      key: `transaction:${tx.id}`,
+      kind: 'transaction',
+      href: `/dashboard/transactions/${tx.id}`,
+      title: tx.property_address,
+      subtitle: tx.status.replace('_', ' '),
+    });
+
+    if (items.length >= 3) break;
+  }
+
+  return items;
+}
+
 function ContinueSection({
   loading,
-  recentProjects,
-  continueItem,
+  items,
 }: {
   loading: boolean;
-  recentProjects: Project[];
-  continueItem:
-    | { type: 'project'; item: Project }
-    | { type: 'transaction'; item: RecentTransaction }
-    | null;
+  items: ContinueListItem[];
 }) {
-  const projectCards = recentProjects.slice(0, 3);
-
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
@@ -109,50 +183,33 @@ function ContinueSection({
             </Surface>
           ))}
         </div>
-      ) : projectCards.length > 0 ? (
+      ) : items.length > 0 ? (
         <div className="space-y-2">
-          {projectCards.map((project) => (
-            <Link key={project.id} href={`/dashboard/projects/${project.id}`}>
+          {items.map((item) => (
+            <Link key={item.key} href={item.href}>
               <Surface padding="sm" hover className="flex items-center gap-4 group">
-                <div className="p-2.5 rounded-xl bg-brand-50 text-brand-600">
-                  <FolderKanban className="w-5 h-5" />
+                <div
+                  className={`p-2.5 rounded-xl shrink-0 ${
+                    item.kind === 'project'
+                      ? 'bg-brand-50 text-brand-600'
+                      : 'bg-gray-100 text-gray-600'
+                  }`}
+                >
+                  {item.kind === 'project' ? (
+                    <FolderKanban className="w-5 h-5" />
+                  ) : (
+                    <FileText className="w-5 h-5" />
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-body font-medium text-gray-900 truncate">{project.title}</p>
-                  <p className="text-caption text-gray-500 capitalize">{project.status.replace('_', ' ')}</p>
+                  <p className="text-body font-medium text-gray-900 truncate">{item.title}</p>
+                  <p className="text-caption text-gray-500 capitalize">{item.subtitle}</p>
                 </div>
                 <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors shrink-0" />
               </Surface>
             </Link>
           ))}
-          {continueItem?.type === 'transaction' && (
-            <Link href={`/dashboard/transactions/${continueItem.item.id}`}>
-              <Surface padding="sm" hover className="flex items-center gap-4 group">
-                <div className="p-2.5 rounded-xl bg-gray-100 text-gray-600">
-                  <FileText className="w-5 h-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-body font-medium text-gray-900 truncate">{continueItem.item.property_address}</p>
-                  <p className="text-caption text-gray-500 capitalize">{continueItem.item.status.replace('_', ' ')}</p>
-                </div>
-                <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors shrink-0" />
-              </Surface>
-            </Link>
-          )}
         </div>
-      ) : continueItem?.type === 'transaction' ? (
-        <Link href={`/dashboard/transactions/${continueItem.item.id}`}>
-          <Surface padding="sm" hover className="flex items-center gap-4 group">
-            <div className="p-2.5 rounded-xl bg-gray-100 text-gray-600">
-              <FileText className="w-5 h-5" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-body font-medium text-gray-900 truncate">{continueItem.item.property_address}</p>
-              <p className="text-caption text-gray-500 capitalize">{continueItem.item.status.replace('_', ' ')}</p>
-            </div>
-            <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors shrink-0" />
-          </Surface>
-        </Link>
       ) : (
         <Surface padding="md" className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -211,29 +268,10 @@ export default function DashboardPage() {
   const showPriorityBanner = hotLeadCount > 0 || inboxLeads.length > 0;
   const priorityBannerLoading = leadsLoading && inboxLeads.length === 0;
 
-  const continueItem = useMemo(() => {
-    const latestProject = recentProjects[0];
-    const latestTx =
-      allTransactions.find((tx) => isOpenTransactionStatus(tx.status as TransactionStatus)) ??
-      allTransactions[0];
-
-    if (!latestProject && !latestTx) return null;
-    if (!latestTx) return { type: 'project' as const, item: latestProject };
-    if (!latestProject) return { type: 'transaction' as const, item: latestTx };
-
-    const sameProperty = isSameAddress(latestProject.title, latestTx.property_address);
-    if (sameProperty) {
-      return isOpenTransactionStatus(latestTx.status as TransactionStatus)
-        ? { type: 'transaction' as const, item: latestTx }
-        : { type: 'project' as const, item: latestProject };
-    }
-
-    const projectTime = new Date(latestProject.updated_at || latestProject.created_at).getTime();
-    const txTime = new Date(latestTx.updated_at).getTime();
-    return txTime > projectTime
-      ? { type: 'transaction' as const, item: latestTx }
-      : { type: 'project' as const, item: latestProject };
-  }, [recentProjects, allTransactions]);
+  const continueListItems = useMemo(
+    () => buildContinueListItems(recentProjects, allTransactions),
+    [recentProjects, allTransactions],
+  );
 
   const continueLoading =
     (projectsLoading || transactionsLoading) && recentProjects.length === 0 && allTransactions.length === 0;
@@ -372,11 +410,7 @@ export default function DashboardPage() {
         <div className="flex flex-col lg:flex-row lg:items-start gap-5 lg:gap-6">
           <div className="flex-1 min-w-0 space-y-5" data-tour="notifications">
             <NotificationsPanel embedded />
-            <ContinueSection
-              loading={continueLoading}
-              recentProjects={recentProjects}
-              continueItem={continueItem}
-            />
+            <ContinueSection loading={continueLoading} items={continueListItems} />
             {usage ? (
               <PlanUsagePanel usage={usage} plan={plan} />
             ) : usageLoading ? (
