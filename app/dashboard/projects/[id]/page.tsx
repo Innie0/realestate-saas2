@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { Project, AIGeneratedContent } from '@/types';
 import { useToast } from '@/components/providers/ToastProvider';
+import { uploadListingImageToStorage } from '@/lib/listing-image-upload';
 
 // Tone types for description variations
 type DescriptionTone = 'professional' | 'casual' | 'luxury';
@@ -335,13 +336,12 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   }, [project, hasUnsavedChanges, isLoading, editedDescription]);
 
   /**
-   * Handle image upload
-   * Converts images to optimized base64 with compression
+   * Handle image upload — high-res files to Supabase Storage (not base64 in DB).
    */
   const handleImageUpload = () => {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = 'image/*';
+    input.accept = 'image/jpeg,image/jpg,image/png,image/webp,image/*';
     input.multiple = true;
     
     input.onchange = async (e: Event) => {
@@ -355,24 +355,24 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       try {
         const uploadedImageUrls: string[] = [];
         
-        // Process each image
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
-          
-          if (file.size > 5 * 1024 * 1024) {
-            toast.error(`${file.name} is too large. Maximum file size is 5MB.`);
-            continue;
-          }
 
-          // Compress and convert to base64
-          const compressedUrl = await compressImage(file);
-          uploadedImageUrls.push(compressedUrl);
+          try {
+            const url = await uploadListingImageToStorage(file, project!.id);
+            uploadedImageUrls.push(url);
+          } catch (err) {
+            const message = err instanceof Error ? err.message : 'Upload failed';
+            toast.error(`${file.name}: ${message}`);
+          }
         }
 
-        // Update project with new image URLs and save to database immediately
+        if (uploadedImageUrls.length === 0) {
+          return;
+        }
+
         const updatedImages = [...(project?.images || []), ...uploadedImageUrls];
         
-        // Save directly to database
         const response = await fetch(`/api/projects/${project!.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -384,11 +384,15 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         const result = await response.json();
 
         if (result.success) {
-          // Update local state with saved data
           setProject(prev => prev ? {
             ...prev,
             images: updatedImages,
           } : null);
+          toast.success(
+            uploadedImageUrls.length === 1
+              ? 'Photo uploaded'
+              : `${uploadedImageUrls.length} photos uploaded`
+          );
         } else {
           throw new Error(result.error || 'Failed to save images');
         }
@@ -401,48 +405,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     };
     
     input.click();
-  };
-
-  /**
-   * Compress image to reduce size before storing
-   */
-  const compressImage = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          // Create canvas for compression
-          const canvas = document.createElement('canvas');
-          let width = img.width;
-          let height = img.height;
-          
-          // Resize if too large (max 1200px width)
-          const maxWidth = 1200;
-          if (width > maxWidth) {
-            height = (height * maxWidth) / width;
-            width = maxWidth;
-          }
-          
-          canvas.width = width;
-          canvas.height = height;
-          
-          const ctx = canvas.getContext('2d');
-          ctx!.drawImage(img, 0, 0, width, height);
-          
-          // Convert to base64 with compression (0.7 quality for JPEG)
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
-          resolve(compressedBase64);
-        };
-        
-        img.onerror = reject;
-        img.src = e.target?.result as string;
-      };
-      
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
   };
 
   /**

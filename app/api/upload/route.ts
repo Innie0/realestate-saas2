@@ -49,17 +49,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
+    // Validate file size (10MB max — high-res listing photos)
+    if (file.size > 10 * 1024 * 1024) {
       return NextResponse.json(
-        { success: false, error: 'File size must be less than 5MB' },
+        { success: false, error: 'File size must be less than 10MB' },
         { status: 400 }
       );
     }
 
-    // Generate unique filename
+    // Generate unique filename (preserve processed extension)
     const timestamp = Date.now();
-    const fileExt = file.name.split('.').pop();
+    const rawExt = file.name.split('.').pop()?.toLowerCase();
+    const fileExt =
+      rawExt && ['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(rawExt)
+        ? rawExt === 'jpeg'
+          ? 'jpg'
+          : rawExt
+        : file.type === 'image/webp'
+          ? 'webp'
+          : file.type === 'image/png'
+            ? 'png'
+            : 'jpg';
     const fileName = `${user.id}/${projectId}/${timestamp}.${fileExt}`;
 
     // Convert File to ArrayBuffer then to Buffer for Supabase

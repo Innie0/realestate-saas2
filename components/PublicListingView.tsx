@@ -80,6 +80,9 @@ export default function PublicListingView({ project, agent }: PublicListingViewP
                 src={imageUrls[currentImageIndex]}
                 alt="Property"
                 className="w-full h-full object-cover"
+                decoding="async"
+                fetchPriority="high"
+                sizes="(max-width: 768px) 100vw, 768px"
               />
               <span className="absolute bottom-3 left-3 flex items-center gap-1.5 px-2.5 py-1 bg-black/60 text-white text-xs rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                 <ZoomIn className="w-3.5 h-3.5" />
@@ -152,6 +155,7 @@ export default function PublicListingView({ project, agent }: PublicListingViewP
               src={imageUrls[currentImageIndex]}
               alt={`Property photo ${currentImageIndex + 1}`}
               className="w-full h-full object-contain rounded-lg"
+              decoding="async"
             />
 
             {imageUrls.length > 1 && (
