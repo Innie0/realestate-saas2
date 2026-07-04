@@ -34,6 +34,70 @@ const STATUS_TABS: { id: StatusTab; label: string; apiStatus: string }[] = [
   { id: 'closed', label: 'Closed', apiStatus: 'archived' },
 ];
 
+function getEmptyStateCopy(
+  tab: StatusTab,
+  totalCount: number,
+  hasSearch: boolean
+): { title: string; description: string; showCreateButton: boolean; showViewAll: boolean } {
+  if (hasSearch) {
+    const searchTitles: Record<StatusTab, string> = {
+      all: 'No clients match your search',
+      lead: 'No leads match your search',
+      active: 'No active clients match your search',
+      closed: 'No closed clients match your search',
+    };
+    return {
+      title: searchTitles[tab],
+      description: 'Try a different name, email, or phone number.',
+      showCreateButton: false,
+      showViewAll: false,
+    };
+  }
+
+  if (tab === 'lead') {
+    return {
+      title: 'No leads yet',
+      description:
+        totalCount > 0
+          ? 'You have clients in your CRM, but none are in the Lead stage.'
+          : 'Add your first client to start tracking notes, reminders, and transactions.',
+      showCreateButton: totalCount === 0,
+      showViewAll: totalCount > 0,
+    };
+  }
+
+  if (tab === 'active') {
+    return {
+      title: 'No active clients yet',
+      description:
+        totalCount > 0
+          ? 'You have clients in your CRM, but none are marked active.'
+          : 'Add your first client to start tracking notes, reminders, and transactions.',
+      showCreateButton: totalCount === 0,
+      showViewAll: totalCount > 0,
+    };
+  }
+
+  if (tab === 'closed') {
+    return {
+      title: 'No closed clients yet',
+      description:
+        totalCount > 0
+          ? 'When you archive a client, they will appear here.'
+          : 'Add your first client to start tracking notes, reminders, and transactions.',
+      showCreateButton: totalCount === 0,
+      showViewAll: totalCount > 0,
+    };
+  }
+
+  return {
+    title: 'No clients yet',
+    description: 'Add your first client to start tracking notes, reminders, and transactions.',
+    showCreateButton: true,
+    showViewAll: false,
+  };
+}
+
 export default function ClientsPage() {
   const toast = useToast();
   useTour({
@@ -202,6 +266,11 @@ export default function ClientsPage() {
   const showingFrom = sortedClients.length === 0 ? 0 : (safePage - 1) * PAGE_SIZE + 1;
   const showingTo = Math.min(safePage * PAGE_SIZE, sortedClients.length);
 
+  const emptyState = useMemo(
+    () => getEmptyStateCopy(statusTab, totalCount, Boolean(searchQuery.trim())),
+    [statusTab, totalCount, searchQuery]
+  );
+
   return (
     <DashboardPage
       title="Clients"
@@ -323,13 +392,19 @@ export default function ClientsPage() {
       ) : sortedClients.length === 0 ? (
         <EmptyState
           icon={Users}
-          title="No clients yet"
-          description="Add your first client to start tracking notes, reminders, and transactions."
+          title={emptyState.title}
+          description={emptyState.description}
           action={
-            <Button variant="primary" size="md" onClick={() => setShowCreateForm(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Create Your First Client
-            </Button>
+            emptyState.showCreateButton ? (
+              <Button variant="primary" size="md" onClick={() => setShowCreateForm(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Create Your First Client
+              </Button>
+            ) : emptyState.showViewAll ? (
+              <Button variant="outline" size="md" onClick={() => setStatusTab('all')}>
+                View all clients
+              </Button>
+            ) : undefined
           }
         />
       ) : viewMode === 'list' ? (
