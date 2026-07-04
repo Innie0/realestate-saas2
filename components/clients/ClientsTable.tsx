@@ -46,9 +46,10 @@ export default function ClientsTable({ clients }: ClientsTableProps) {
                   <td className="px-4 sm:px-5 py-4">
                     <Link href={`/dashboard/clients/${client.id}`} className="flex items-center gap-3 min-w-0 group">
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 ${getClientAvatarClass(client.name)}`}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 ring-1 ring-black/5 ${getClientAvatarClass(client.name)}`}
+                        aria-hidden
                       >
-                        {getClientInitials(client.name)}
+                        {getClientInitials(client.name) || '?'}
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-gray-900 truncate group-hover:text-brand-700 transition-colors">
@@ -66,9 +67,12 @@ export default function ClientsTable({ clients }: ClientsTableProps) {
                   </td>
                   <td className="px-4 sm:px-5 py-4">
                     <span
-                      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${stageStyle.className}`}
+                      className={`inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-xs font-medium ${stageStyle.className}`}
                     >
-                      <span className={`w-1.5 h-1.5 rounded-full ${stageStyle.dotClassName}`} />
+                      <span
+                        className={`w-2 h-2 rounded-full shrink-0 ${stageStyle.dotClassName}`}
+                        aria-hidden
+                      />
                       {stageStyle.label}
                     </span>
                   </td>

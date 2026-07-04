@@ -237,7 +237,7 @@ export default function ClientsPage() {
                   className={clsx(
                     'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
                     statusTab === tab.id
-                      ? 'bg-[#1B4332] text-white shadow-sm'
+                      ? 'bg-brand-500 text-white shadow-sm'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   )}
                 >
