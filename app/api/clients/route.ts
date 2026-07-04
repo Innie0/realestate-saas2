@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
           published
         ),
         client_notes(id, note, created_at),
-        reminders(id, is_completed, reminder_date)
+        reminders(id, title, is_completed, reminder_date)
       `)
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
@@ -96,12 +96,34 @@ export async function GET(request: NextRequest) {
         !r.is_completed && new Date(r.reminder_date) >= new Date()
       ).length;
 
+      // Next incomplete reminder (earliest due)
+      const incompleteReminders = reminders
+        .filter((r: { is_completed: boolean }) => !r.is_completed)
+        .sort(
+          (a: { reminder_date: string }, b: { reminder_date: string }) =>
+            new Date(a.reminder_date).getTime() - new Date(b.reminder_date).getTime()
+        );
+      const nextReminderRow = incompleteReminders[0] || null;
+      const nextReminder = nextReminderRow
+        ? {
+            id: nextReminderRow.id,
+            title: nextReminderRow.title,
+            reminder_date: nextReminderRow.reminder_date,
+            is_overdue: new Date(nextReminderRow.reminder_date) < new Date(),
+          }
+        : null;
+
+      const lastContactAt =
+        latestNote?.created_at || client.updated_at || client.created_at;
+
       return {
         ...client,
         latest_note: latestNote,
         all_notes: sortedNotes, // Include all notes for carousel
         notes_count: notes.length,
         upcoming_reminders_count: upcomingReminders,
+        next_reminder: nextReminder,
+        last_contact_at: lastContactAt,
       };
     }) || [];
 

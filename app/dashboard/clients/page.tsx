@@ -4,21 +4,36 @@ import { useState, useEffect, useMemo } from 'react';
 import { Client } from '@/types';
 import ClientCard from '@/components/ClientCard';
 import ClientForm from '@/components/ClientForm';
+import ClientsTable from '@/components/clients/ClientsTable';
 import ReminderForm from '@/components/ReminderForm';
 import Button from '@/components/ui/Button';
 import DashboardPage from '@/components/layout/DashboardPage';
-import PageToolbar from '@/components/layout/PageToolbar';
 import SearchInput from '@/components/ui/SearchInput';
 import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
-import { Plus, X, Users } from 'lucide-react';
+import { Plus, X, Users, LayoutGrid, List } from 'lucide-react';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
 import { useToast } from '@/components/providers/ToastProvider';
+import {
+  type ClientListRow,
+  type ClientSortKey,
+  countNeedsAttention,
+  sortClients,
+} from '@/lib/client-crm-display';
+import clsx from 'clsx';
 
-/**
- * Clients page - CRM client management
- */
+const PAGE_SIZE = 10;
+
+type StatusTab = 'all' | 'lead' | 'active' | 'closed';
+
+const STATUS_TABS: { id: StatusTab; label: string; apiStatus: string }[] = [
+  { id: 'all', label: 'All', apiStatus: 'all' },
+  { id: 'lead', label: 'Lead', apiStatus: 'inactive' },
+  { id: 'active', label: 'Active', apiStatus: 'active' },
+  { id: 'closed', label: 'Closed', apiStatus: 'archived' },
+];
+
 export default function ClientsPage() {
   const toast = useToast();
   useTour({
@@ -27,24 +42,24 @@ export default function ClientsPage() {
       {
         element: '[data-tour="clients-search"]',
         popover: {
-          title: '🔍 Search Your CRM',
-          description: 'Quickly find any client by name or email. Results update as you type.',
+          title: 'Search your CRM',
+          description: 'Find clients by name, email, or phone.',
           side: 'bottom',
         },
       },
       {
         element: '[data-tour="clients-filter"]',
         popover: {
-          title: '📂 Filter by Status',
-          description: 'View active clients, archived ones, or your full list. Keep your CRM clean by archiving closed deals.',
+          title: 'Filter by stage',
+          description: 'View leads, active clients, or closed deals.',
           side: 'bottom',
         },
       },
       {
         element: '[data-tour="clients-add"]',
         popover: {
-          title: '➕ Add a Client',
-          description: 'Manually add a client directly to your CRM. Leads from your form or open house sign-in go to the Leads inbox instead.',
+          title: 'Add a client',
+          description: 'Manually add someone to your CRM.',
           side: 'bottom',
         },
       },
@@ -52,32 +67,54 @@ export default function ClientsPage() {
   });
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('active');
+  const [statusTab, setStatusTab] = useState<StatusTab>('all');
+  const [sortKey, setSortKey] = useState<ClientSortKey>('followup');
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  const [page, setPage] = useState(1);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
+  const activeTab = STATUS_TABS.find((t) => t.id === statusTab)!;
+
   const clientsUrl = useMemo(() => {
     const params = new URLSearchParams();
     if (searchQuery) params.append('search', searchQuery);
-    if (statusFilter) params.append('status', statusFilter);
-    const qs = params.toString();
-    return `/api/clients${qs ? `?${qs}` : ''}`;
-  }, [searchQuery, statusFilter]);
+    params.append('status', activeTab.apiStatus);
+    return `/api/clients?${params.toString()}`;
+  }, [searchQuery, activeTab.apiStatus]);
 
-  const { data: clients = [], isLoading, mutate } = useApi<Client[]>(clientsUrl);
+  const { data: clients = [], isLoading, mutate } = useApi<ClientListRow[]>(clientsUrl);
+  const { data: allClients = [] } = useApi<ClientListRow[]>('/api/clients?status=all');
 
-  // Quick add modals
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [showReminderModal, setShowReminderModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [noteText, setNoteText] = useState('');
 
-  // Set page title
   useEffect(() => {
     document.title = 'Clients - Realestic';
   }, []);
 
-  const handleCreateClient = async (data: any) => {
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery, statusTab, sortKey]);
+
+  const sortedClients = useMemo(() => sortClients(clients, sortKey), [clients, sortKey]);
+  const totalPages = Math.max(1, Math.ceil(sortedClients.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const pagedClients = sortedClients.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
+  const totalCount = allClients.length;
+  const attentionCount = countNeedsAttention(allClients);
+
+  const subtitle =
+    totalCount > 0
+      ? attentionCount > 0
+        ? `Manage relationships and follow-ups · ${attentionCount} need attention`
+        : `Manage relationships and follow-ups · ${totalCount} client${totalCount === 1 ? '' : 's'}`
+      : 'Manage relationships and follow-ups';
+
+  const handleCreateClient = async (data: { name: string; email?: string; phone?: string }) => {
     setIsSubmitting(true);
     try {
       const response = await fetch('/api/clients', {
@@ -85,9 +122,7 @@ export default function ClientsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-
       const result = await response.json();
-
       if (result.success) {
         setShowCreateForm(false);
         mutate();
@@ -103,7 +138,7 @@ export default function ClientsPage() {
     }
   };
 
-  const handleAddNote = async (client: Client) => {
+  const handleAddNote = (client: Client) => {
     setSelectedClient(client);
     setNoteText('');
     setShowNoteModal(true);
@@ -116,7 +151,6 @@ export default function ClientsPage() {
 
   const submitNote = async () => {
     if (!selectedClient || !noteText.trim()) return;
-
     setIsSubmitting(true);
     try {
       const response = await fetch(`/api/clients/${selectedClient.id}/notes`, {
@@ -124,14 +158,11 @@ export default function ClientsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ note: noteText }),
       });
-
       const result = await response.json();
-
       if (result.success) {
         setShowNoteModal(false);
         setNoteText('');
         setSelectedClient(null);
-        // Refresh clients list to show the new note
         mutate();
       } else {
         toast.error(result.error || 'Failed to add note');
@@ -144,7 +175,7 @@ export default function ClientsPage() {
     }
   };
 
-  const submitReminder = async (data: any) => {
+  const submitReminder = async (data: Record<string, unknown>) => {
     setIsSubmitting(true);
     try {
       const response = await fetch('/api/reminders', {
@@ -152,13 +183,10 @@ export default function ClientsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-
       const result = await response.json();
-
       if (result.success) {
         setShowReminderModal(false);
         setSelectedClient(null);
-        // Refresh clients list to show the new reminder count
         mutate();
       } else {
         toast.error(result.error || 'Failed to create reminder');
@@ -171,10 +199,13 @@ export default function ClientsPage() {
     }
   };
 
+  const showingFrom = sortedClients.length === 0 ? 0 : (safePage - 1) * PAGE_SIZE + 1;
+  const showingTo = Math.min(safePage * PAGE_SIZE, sortedClients.length);
+
   return (
     <DashboardPage
       title="Clients"
-      subtitle="Manage your client relationships and follow-ups"
+      subtitle={subtitle}
       actions={
         <Button data-tour="clients-add" onClick={() => setShowCreateForm(true)} size="sm">
           <Plus className="w-4 h-4 mr-2" />
@@ -182,28 +213,78 @@ export default function ClientsPage() {
         </Button>
       }
     >
-      <PageToolbar meta={clients.length > 0 ? `${clients.length} client${clients.length === 1 ? '' : 's'}` : undefined}>
-        <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full">
+      {/* Toolbar */}
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-3">
           <SearchInput
             data-tour="clients-search"
-            placeholder="Search clients..."
+            placeholder="Search name, email, phone…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            containerClassName="lg:max-w-md"
           />
-          <Select
-            value={statusFilter}
-            onChange={setStatusFilter}
-            className="sm:min-w-[140px]"
-            data-tour="clients-filter"
-            options={[
-              { value: 'all', label: 'All clients' },
-              { value: 'active', label: 'Active' },
-              { value: 'inactive', label: 'Inactive' },
-              { value: 'archived', label: 'Archived' },
-            ]}
-          />
+
+          <div className="flex flex-wrap items-center gap-2 lg:ml-auto">
+            <div
+              data-tour="clients-filter"
+              className="inline-flex rounded-xl border border-gray-200 bg-white p-1"
+            >
+              {STATUS_TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setStatusTab(tab.id)}
+                  className={clsx(
+                    'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
+                    statusTab === tab.id
+                      ? 'bg-[#1B4332] text-white shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  )}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            <Select
+              value={sortKey}
+              onChange={(value) => setSortKey(value as ClientSortKey)}
+              className="w-[148px]"
+              triggerClassName="py-2 text-sm"
+              options={[
+                { value: 'followup', label: 'Sort: Follow-up' },
+                { value: 'name', label: 'Sort: Name' },
+                { value: 'last_contact', label: 'Sort: Last contact' },
+              ]}
+            />
+
+            <div className="inline-flex rounded-xl border border-gray-200 bg-white p-1">
+              <button
+                type="button"
+                onClick={() => setViewMode('list')}
+                className={clsx(
+                  'p-2 rounded-lg transition-colors',
+                  viewMode === 'list' ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-600'
+                )}
+                aria-label="List view"
+              >
+                <List className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={clsx(
+                  'p-2 rounded-lg transition-colors',
+                  viewMode === 'grid' ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-600'
+                )}
+                aria-label="Grid view"
+              >
+                <LayoutGrid className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         </div>
-      </PageToolbar>
+      </div>
 
       {showCreateForm && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -226,18 +307,20 @@ export default function ClientsPage() {
         </div>
       )}
 
-      {/* Clients grid */}
       {isLoading && clients.length === 0 ? (
-        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="animate-pulse rounded-lg border border-gray-200 p-6 shadow bg-white">
-              <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-              <div className="h-3 bg-gray-200 rounded mb-2"></div>
-              <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+        <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden animate-pulse">
+          <div className="h-12 bg-gray-50 border-b border-gray-100" />
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-16 border-b border-gray-100 px-5 flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-gray-100" />
+              <div className="flex-1 space-y-2">
+                <div className="h-3 bg-gray-100 rounded w-40" />
+                <div className="h-2.5 bg-gray-100 rounded w-28" />
+              </div>
             </div>
           ))}
         </div>
-      ) : clients.length === 0 ? (
+      ) : sortedClients.length === 0 ? (
         <EmptyState
           icon={Users}
           title="No clients yet"
@@ -249,20 +332,76 @@ export default function ClientsPage() {
             </Button>
           }
         />
+      ) : viewMode === 'list' ? (
+        <>
+          <ClientsTable clients={pagedClients} />
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm text-gray-500">
+            <p>
+              Showing {showingFrom}–{showingTo} of {sortedClients.length} client
+              {sortedClients.length === 1 ? '' : 's'}
+              {statusTab !== 'all' || searchQuery
+                ? ` (${totalCount} total)`
+                : null}
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={safePage <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+              >
+                Prev
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={safePage >= totalPages}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </>
       ) : (
-        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {clients.map((client) => (
-            <ClientCard
-              key={client.id}
-              client={client}
-              onAddNote={() => handleAddNote(client)}
-              onAddReminder={() => handleAddReminder(client)}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            {pagedClients.map((client) => (
+              <ClientCard
+                key={client.id}
+                client={client}
+                onAddNote={() => handleAddNote(client)}
+                onAddReminder={() => handleAddReminder(client)}
+              />
+            ))}
+          </div>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm text-gray-500">
+            <p>
+              Showing {showingFrom}–{showingTo} of {sortedClients.length} client
+              {sortedClients.length === 1 ? '' : 's'}
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={safePage <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+              >
+                Prev
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={safePage >= totalPages}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </>
       )}
 
-      {/* Quick Add Note Modal */}
       {showNoteModal && selectedClient && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="rounded-2xl shadow-xl p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto bg-white">
@@ -307,7 +446,6 @@ export default function ClientsPage() {
         </div>
       )}
 
-      {/* Quick Add Reminder Modal */}
       {showReminderModal && selectedClient && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="rounded-2xl shadow-xl p-6 max-w-md w-full bg-white">
@@ -334,9 +472,3 @@ export default function ClientsPage() {
     </DashboardPage>
   );
 }
-
-
-
-
-
-
