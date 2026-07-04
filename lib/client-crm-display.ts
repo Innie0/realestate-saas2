@@ -199,6 +199,35 @@ export function countNeedsAttention(clients: ClientListRow[]): number {
   return clients.filter((c) => c.next_reminder?.is_overdue).length;
 }
 
+export type ClientStatusTab = 'all' | 'lead' | 'active' | 'closed';
+
+const TAB_STATUS_MAP: Record<ClientStatusTab, string | null> = {
+  all: null,
+  lead: 'inactive',
+  active: 'active',
+  closed: 'archived',
+};
+
+export function filterClientsByStatusTab(
+  clients: ClientListRow[],
+  tab: ClientStatusTab
+): ClientListRow[] {
+  const status = TAB_STATUS_MAP[tab];
+  if (!status) return clients;
+  return clients.filter((c) => c.status === status);
+}
+
+export function filterClientsBySearch(clients: ClientListRow[], query: string): ClientListRow[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return clients;
+  return clients.filter(
+    (c) =>
+      c.name?.toLowerCase().includes(q) ||
+      c.email?.toLowerCase().includes(q) ||
+      c.phone?.toLowerCase().includes(q)
+  );
+}
+
 const AVATAR_PALETTES = [
   'bg-emerald-800 text-white',
   'bg-stone-600 text-white',

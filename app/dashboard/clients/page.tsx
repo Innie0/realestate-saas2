@@ -18,29 +18,30 @@ import { useToast } from '@/components/providers/ToastProvider';
 import {
   type ClientListRow,
   type ClientSortKey,
+  type ClientStatusTab,
   countNeedsAttention,
+  filterClientsBySearch,
+  filterClientsByStatusTab,
   sortClients,
 } from '@/lib/client-crm-display';
 import clsx from 'clsx';
 
 const PAGE_SIZE = 10;
 
-type StatusTab = 'all' | 'lead' | 'active' | 'closed';
-
-const STATUS_TABS: { id: StatusTab; label: string; apiStatus: string }[] = [
-  { id: 'all', label: 'All', apiStatus: 'all' },
-  { id: 'lead', label: 'Lead', apiStatus: 'inactive' },
-  { id: 'active', label: 'Active', apiStatus: 'active' },
-  { id: 'closed', label: 'Closed', apiStatus: 'archived' },
+const STATUS_TABS: { id: ClientStatusTab; label: string }[] = [
+  { id: 'all', label: 'All' },
+  { id: 'lead', label: 'Lead' },
+  { id: 'active', label: 'Active' },
+  { id: 'closed', label: 'Closed' },
 ];
 
 function getEmptyStateCopy(
-  tab: StatusTab,
+  tab: ClientStatusTab,
   totalCount: number,
   hasSearch: boolean
 ): { title: string; description: string; showCreateButton: boolean; showViewAll: boolean } {
   if (hasSearch) {
-    const searchTitles: Record<StatusTab, string> = {
+    const searchTitles: Record<ClientStatusTab, string> = {
       all: 'No clients match your search',
       lead: 'No leads match your search',
       active: 'No active clients match your search',
@@ -131,24 +132,25 @@ export default function ClientsPage() {
   });
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusTab, setStatusTab] = useState<StatusTab>('all');
+  const [statusTab, setStatusTab] = useState<ClientStatusTab>('all');
   const [sortKey, setSortKey] = useState<ClientSortKey>('followup');
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [page, setPage] = useState(1);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const activeTab = STATUS_TABS.find((t) => t.id === statusTab)!;
+  const { data: allClients = [], isLoading, mutate } = useApi<ClientListRow[]>(
+    '/api/clients?status=all'
+  );
 
-  const clientsUrl = useMemo(() => {
-    const params = new URLSearchParams();
-    if (searchQuery) params.append('search', searchQuery);
-    params.append('status', activeTab.apiStatus);
-    return `/api/clients?${params.toString()}`;
-  }, [searchQuery, activeTab.apiStatus]);
-
-  const { data: clients = [], isLoading, mutate } = useApi<ClientListRow[]>(clientsUrl);
-  const { data: allClients = [] } = useApi<ClientListRow[]>('/api/clients?status=all');
+  const filteredClients = useMemo(
+    () =>
+      filterClientsBySearch(
+        filterClientsByStatusTab(allClients, statusTab),
+        searchQuery
+      ),
+    [allClients, statusTab, searchQuery]
+  );
 
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [showReminderModal, setShowReminderModal] = useState(false);
@@ -163,7 +165,10 @@ export default function ClientsPage() {
     setPage(1);
   }, [searchQuery, statusTab, sortKey]);
 
-  const sortedClients = useMemo(() => sortClients(clients, sortKey), [clients, sortKey]);
+  const sortedClients = useMemo(
+    () => sortClients(filteredClients, sortKey),
+    [filteredClients, sortKey]
+  );
   const totalPages = Math.max(1, Math.ceil(sortedClients.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
   const pagedClients = sortedClients.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
@@ -376,7 +381,7 @@ export default function ClientsPage() {
         </div>
       )}
 
-      {isLoading && clients.length === 0 ? (
+      {isLoading && allClients.length === 0 ? (
         <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden animate-pulse">
           <div className="h-12 bg-gray-50 border-b border-gray-100" />
           {[1, 2, 3, 4, 5].map((i) => (

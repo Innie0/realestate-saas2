@@ -11,7 +11,7 @@ const ROUTE_PREFETCH_APIS: Record<string, string[]> = {
   ],
   '/dashboard/projects': ['/api/projects'],
   '/dashboard/transactions': ['/api/transactions?status=open', '/api/transactions'],
-  '/dashboard/clients': ['/api/clients?status=active'],
+  '/dashboard/clients': ['/api/clients?status=all'],
   '/dashboard/leads': [
     '/api/clients?status=all&view=inbox',
     '/api/usage',
