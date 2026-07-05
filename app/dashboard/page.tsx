@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import PageShell from '@/components/layout/PageShell';
+import PageTransition from '@/components/motion/PageTransition';
 import Surface from '@/components/ui/Surface';
 import Button from '@/components/ui/Button';
 import NotificationsPanel from '@/components/NotificationsPanel';
@@ -354,6 +355,7 @@ export default function DashboardPage() {
       <Header title={getGreeting()} subtitle={`${formatToday()} · ${focusMessage}`} />
 
       <PageShell className="space-y-6">
+        <PageTransition>
         {showOnboarding && (
           <GettingStartedPanel
             variant={showWelcome ? 'welcome' : 'empty'}

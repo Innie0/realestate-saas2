@@ -1,6 +1,8 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import clsx from 'clsx';
+import { useMotionReduced } from '@/lib/motion';
 
 export interface TabItem<T extends string = string> {
   id: T;
@@ -23,12 +25,11 @@ export default function Tabs<T extends string>({
   className,
   hideLabelsOnMobile = false,
 }: TabsProps<T>) {
+  const reduced = useMotionReduced();
+
   return (
     <div
-      className={clsx(
-        'flex gap-0.5 p-1 bg-gray-100/80 rounded-xl',
-        className
-      )}
+      className={clsx('flex gap-0.5 p-1 bg-gray-100/80 rounded-xl', className)}
       role="tablist"
     >
       {tabs.map(({ id, label, icon: Icon }) => {
@@ -41,14 +42,29 @@ export default function Tabs<T extends string>({
             aria-selected={active}
             onClick={() => onChange(id)}
             className={clsx(
-              'flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150',
-              active
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-800 hover:bg-white/50'
+              'relative flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-150',
+              active ? 'text-gray-900' : 'text-gray-500 hover:text-gray-800'
             )}
           >
-            {Icon && <Icon className="w-4 h-4 flex-shrink-0" />}
-            <span className={hideLabelsOnMobile ? 'hidden sm:inline' : undefined}>{label}</span>
+            {active && !reduced && (
+              <motion.span
+                layoutId="tabs-active-pill"
+                className="absolute inset-0 rounded-lg bg-white shadow-sm"
+                transition={{ type: 'spring', stiffness: 500, damping: 38 }}
+              />
+            )}
+            {active && reduced && (
+              <span className="absolute inset-0 rounded-lg bg-white shadow-sm" />
+            )}
+            {Icon && <Icon className="relative z-10 w-4 h-4 flex-shrink-0" />}
+            <span
+              className={clsx(
+                'relative z-10',
+                hideLabelsOnMobile ? 'hidden sm:inline' : undefined
+              )}
+            >
+              {label}
+            </span>
           </button>
         );
       })}

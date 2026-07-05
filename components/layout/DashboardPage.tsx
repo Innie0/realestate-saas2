@@ -1,5 +1,6 @@
 import Header from '@/components/layout/Header';
 import PageShell from '@/components/layout/PageShell';
+import PageTransition from '@/components/motion/PageTransition';
 import clsx from 'clsx';
 
 interface DashboardPageProps {
@@ -9,7 +10,14 @@ interface DashboardPageProps {
   children: React.ReactNode;
   size?: 'default' | 'narrow' | 'medium';
   className?: string;
+  /** Subtle background atmosphere for tool-style pages */
+  ambient?: 'default' | 'tool';
 }
+
+const ambientClasses = {
+  default: '',
+  tool: 'dashboard-ambient-tool',
+} as const;
 
 export default function DashboardPage({
   title,
@@ -18,12 +26,13 @@ export default function DashboardPage({
   children,
   size = 'default',
   className,
+  ambient = 'default',
 }: DashboardPageProps) {
   return (
-    <div className="min-h-screen">
+    <div className={clsx('min-h-screen relative', ambientClasses[ambient])}>
       <Header title={title} subtitle={subtitle} actions={actions} />
-      <PageShell size={size} className={clsx('space-y-5', className)}>
-        {children}
+      <PageShell size={size} className={clsx('space-y-5 relative z-[1]', className)}>
+        <PageTransition>{children}</PageTransition>
       </PageShell>
     </div>
   );

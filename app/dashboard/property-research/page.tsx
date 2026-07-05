@@ -1,12 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useState, Suspense, useRef } from 'react';
+import { useCallback, useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { motion } from 'framer-motion';
 import DashboardPage from '@/components/layout/DashboardPage';
 import Tabs from '@/components/ui/Tabs';
 import Surface from '@/components/ui/Surface';
 import Button from '@/components/ui/Button';
 import Select from '@/components/ui/Select';
+import AnimatedTabPanels from '@/components/motion/AnimatedTabPanels';
 import { useApi } from '@/lib/swr';
 import { CmaPanel, type CmaAnalysisResult } from '@/components/property-research/CmaPanel';
 import { OwnerContactPanel, type LookupResponse } from '@/components/property-research/OwnerContactPanel';
@@ -18,7 +20,7 @@ import {
   lookupLocalCacheKey,
 } from '@/lib/research-local-cache';
 import {
-  Search, MapPin, Loader2, History, ChevronDown, Trash2, X,
+  Search, MapPin, Loader2, History, Trash2, X,
   User, BarChart2, LayoutGrid,
 } from 'lucide-react';
 
@@ -79,7 +81,6 @@ function PropertyResearchContent() {
   const [lookupData, setLookupData] = useState<LookupResponse | null>(null);
   const [cmaResult, setCmaResult] = useState<CmaAnalysisResult | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
-  const [showHistory, setShowHistory] = useState(false);
   const [lookupUsage, setLookupUsage] = useState<{ current: number; limit: number } | null>(null);
   const [cmaUsage, setCmaUsage] = useState<{ current: number; limit: number } | null>(null);
   const [lookupLoading, setLookupLoading] = useState(false);
@@ -163,7 +164,6 @@ function PropertyResearchContent() {
     setCity(entry.city);
     setState(entry.state);
     setZip(entry.zip);
-    setShowHistory(false);
     setActiveTab('overview');
 
     const addressKey = normalizeAddressKey({
@@ -189,7 +189,13 @@ function PropertyResearchContent() {
     setCmaResult(null);
   };
 
+  const clearHistory = () => {
+    setHistory([]);
+    localStorage.removeItem(HISTORY_KEY);
+  };
+
   const firstPerson = lookupData?.found && lookupData.results?.[0] ? lookupData.results[0] : null;
+  const hasResults = Boolean(firstPerson || cmaResult);
 
   const formatUsage = (usage: { current: number; limit: number } | null) => {
     if (!usage) return '—';
@@ -206,151 +212,239 @@ function PropertyResearchContent() {
     <DashboardPage
       title="Property Research"
       subtitle={usageMeta ?? 'Look up owners, property details, and run comp-based CMA'}
-      size="medium"
+      size="default"
+      ambient="tool"
     >
-        {history.length > 0 && (
+      {/* Hero search */}
+      <Surface padding="lg" className="border-brand-100/60">
+        <div className="space-y-4">
           <div>
-            <button
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Street address *</label>
+            <div className="relative">
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-500/70" />
+              <input
+                type="text"
+                value={street}
+                onChange={(e) => setStreet(e.target.value)}
+                placeholder="e.g. 123 W Main Street"
+                className="w-full pl-11 pr-4 py-3 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/25 text-[15px]"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">City</label>
+              <input
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="Austin"
+                className="w-full px-3 py-2.5 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/25"
+              />
+            </div>
+            <div>
+              <Select
+                label="State *"
+                value={state}
+                onChange={setState}
+                placeholder="Select state"
+                triggerClassName="w-full bg-gray-50"
+                options={[
+                  { value: '', label: 'Select state' },
+                  ...US_STATES.map((s) => ({ value: s.value, label: s.label })),
+                ]}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">ZIP</label>
+              <input
+                type="text"
+                value={zip}
+                onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
+                placeholder="93291"
+                className="w-full px-3 py-2.5 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/25"
+              />
+            </div>
+          </div>
+          <p className="text-xs text-gray-500">
+            Demo: 123 W Main Street, Austin, TX — sample owner + CMA (no real PII).
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
               type="button"
-              onClick={() => setShowHistory((v) => !v)}
-              className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 transition-colors mb-3"
+              onClick={handleResearchAddress}
+              disabled={!street.trim() || !state || lookupLoading}
+              className="inline-flex items-center gap-2"
             >
-              <History className="w-4 h-4" />
-              Recent ({history.length})
-              <ChevronDown className={`w-4 h-4 transition-transform ${showHistory ? 'rotate-180' : ''}`} />
-            </button>
-            {showHistory && (
-              <Surface padding="none" className="overflow-hidden mb-4">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                  <span className="text-xs font-medium text-gray-500">Recent addresses</span>
-                  <button type="button" onClick={() => { setHistory([]); localStorage.removeItem(HISTORY_KEY); setShowHistory(false); }} className="text-xs text-gray-500 hover:text-red-600 flex items-center gap-1">
-                    <Trash2 className="w-3.5 h-3.5" /> Clear
-                  </button>
-                </div>
-                <div className="divide-y divide-gray-100">
-                  {history.map((entry) => (
-                    <button key={entry.id} type="button" onClick={() => loadHistory(entry)} className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors">
-                      <p className="text-sm text-gray-900 truncate">{entry.label}</p>
-                      <p className="text-xs text-gray-500">{new Date(entry.lookedUpAt).toLocaleDateString()}</p>
-                    </button>
-                  ))}
-                </div>
-              </Surface>
+              {lookupLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+              {lookupLoading ? 'Researching…' : 'Research address'}
+            </Button>
+            {(street || city || state || zip) && (
+              <button
+                type="button"
+                onClick={clearForm}
+                className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+              >
+                <X className="w-4 h-4" /> Clear
+              </button>
             )}
           </div>
-        )}
+        </div>
+      </Surface>
 
-        <Surface sticky padding="md">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Street address *</label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  value={street}
-                  onChange={(e) => setStreet(e.target.value)}
-                  placeholder="e.g. 123 W Main Street"
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
-                />
+      <div className="grid grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)] gap-5">
+        {/* Context rail */}
+        <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
+          <Surface padding="sm">
+            <p className="text-label mb-3">Usage this month</p>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500">Lookups</span>
+                <span className="font-medium text-gray-900">{formatUsage(lookupUsage)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500">CMA runs</span>
+                <span className="font-medium text-gray-900">{formatUsage(cmaUsage)}</span>
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">City</label>
-                <input type="text" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Austin" className="w-full px-3 py-2.5 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
-              </div>
-              <div>
-                <Select
-                  label="State *"
-                  value={state}
-                  onChange={setState}
-                  placeholder="Select state"
-                  triggerClassName="w-full bg-gray-50"
-                  options={[
-                    { value: '', label: 'Select state' },
-                    ...US_STATES.map((s) => ({ value: s.value, label: s.label })),
-                  ]}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">ZIP</label>
-                <input type="text" value={zip} onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder="93291" className="w-full px-3 py-2.5 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
-              </div>
-            </div>
-            <p className="text-xs text-gray-500">
-              Demo: 123 W Main Street, Austin, TX — sample owner + CMA (no real PII).
-            </p>
-            <div className="flex flex-wrap items-center gap-3">
-              <Button type="button" onClick={handleResearchAddress} disabled={!street.trim() || !state || lookupLoading} className="inline-flex items-center gap-2">
-                {lookupLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-                {lookupLoading ? 'Researching…' : 'Research address'}
-              </Button>
-              {(street || city || state || zip) && (
-                <button type="button" onClick={clearForm} className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-500 hover:text-gray-900 transition-colors">
-                  <X className="w-4 h-4" /> Clear
+          </Surface>
+
+          <Surface padding="none" className="overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+              <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <History className="w-3.5 h-3.5" />
+                Recent
+              </span>
+              {history.length > 0 && (
+                <button
+                  type="button"
+                  onClick={clearHistory}
+                  className="text-xs text-gray-500 hover:text-red-600 flex items-center gap-1 transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5" /> Clear
                 </button>
               )}
             </div>
-          </div>
-        </Surface>
+            {history.length === 0 ? (
+              <p className="px-4 py-6 text-xs text-gray-400 text-center">Searched addresses appear here</p>
+            ) : (
+              <div className="divide-y divide-gray-100 max-h-64 overflow-y-auto">
+                {history.map((entry) => (
+                  <button
+                    key={entry.id}
+                    type="button"
+                    onClick={() => loadHistory(entry)}
+                    className="w-full text-left px-4 py-3 hover:bg-brand-50/50 transition-colors"
+                  >
+                    <p className="text-sm text-gray-900 truncate">{entry.label}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {new Date(entry.lookedUpAt).toLocaleDateString()}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            )}
+          </Surface>
+        </aside>
 
-        {lookupLoading && (
-          <div className="flex items-start gap-3 rounded-xl border border-brand-100 bg-brand-50 px-4 py-3 text-sm text-brand-900">
-            <Loader2 className="w-4 h-4 animate-spin shrink-0 mt-0.5" />
-            <div>
-              <p className="font-medium">Researching this address…</p>
-              <p className="text-brand-800/80 mt-0.5">
-                Fetching county records and owner contact data. First lookup usually takes 5–10
-                seconds; repeat searches of the same address are much faster.
-              </p>
-            </div>
-          </div>
-        )}
+        {/* Results canvas */}
+        <div className="space-y-4 min-w-0">
+          {lookupLoading && (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-start gap-3 rounded-xl border border-brand-100 bg-brand-50 px-4 py-3 text-sm text-brand-900"
+            >
+              <Loader2 className="w-4 h-4 animate-spin shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Researching this address…</p>
+                <p className="text-brand-800/80 mt-0.5">
+                  Fetching county records and owner contact data. First lookup usually takes 5–10
+                  seconds; repeat searches of the same address are much faster.
+                </p>
+              </div>
+            </motion.div>
+          )}
 
-        <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
+          {hasResults && addressLabel && (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm"
+            >
+              <p className="text-label mb-0.5">Current property</p>
+              <p className="text-sm font-semibold text-gray-900 truncate">{addressLabel}</p>
+            </motion.div>
+          )}
 
-        {/* Tab content — keep mounted to avoid re-triggering lookups on tab switch */}
-        <div className={activeTab === 'overview' ? '' : 'hidden'}>
-          <PropertyOverviewCard
-            addressLabel={addressLabel || 'No address entered'}
-            person={firstPerson}
-            cmaResult={cmaResult}
-            hasLookup={!!firstPerson}
-            onLookUpOwner={() => { setActiveTab('owner'); if (!firstPerson) handleLookUp(); }}
-            onRunCma={() => { setActiveTab('cma'); if (!cmaResult) handleRunCma(); }}
+          <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
+
+          <AnimatedTabPanels
+            activeTab={activeTab}
+            panels={[
+              {
+                id: 'overview',
+                content: (
+                  <PropertyOverviewCard
+                    addressLabel={addressLabel || 'No address entered'}
+                    person={firstPerson}
+                    cmaResult={cmaResult}
+                    hasLookup={!!firstPerson}
+                    onLookUpOwner={() => {
+                      setActiveTab('owner');
+                      if (!firstPerson) handleLookUp();
+                    }}
+                    onRunCma={() => {
+                      setActiveTab('cma');
+                      if (!cmaResult) handleRunCma();
+                    }}
+                  />
+                ),
+              },
+              {
+                id: 'owner',
+                content: (
+                  <OwnerContactPanel
+                    street={street}
+                    city={city}
+                    state={state}
+                    zip={zip}
+                    lookupTrigger={lookupTrigger}
+                    onComplete={handleLookupComplete}
+                    onLoadingChange={setLookupLoading}
+                  />
+                ),
+              },
+              {
+                id: 'cma',
+                content: (
+                  <CmaPanel
+                    street={street}
+                    city={city}
+                    state={state}
+                    zip={zip}
+                    runTrigger={cmaTrigger}
+                    onComplete={handleCmaComplete}
+                  />
+                ),
+              },
+            ]}
           />
         </div>
-
-        <div className={activeTab === 'owner' ? '' : 'hidden'}>
-          <OwnerContactPanel
-            street={street}
-            city={city}
-            state={state}
-            zip={zip}
-            lookupTrigger={lookupTrigger}
-            onComplete={handleLookupComplete}
-            onLoadingChange={setLookupLoading}
-          />
-        </div>
-
-        <div className={activeTab === 'cma' ? '' : 'hidden'}>
-          <CmaPanel
-            street={street}
-            city={city}
-            state={state}
-            zip={zip}
-            runTrigger={cmaTrigger}
-            onComplete={handleCmaComplete}
-          />
-        </div>
+      </div>
     </DashboardPage>
   );
 }
 
 export default function PropertyResearchPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-gray-400" /></div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+        </div>
+      }
+    >
       <PropertyResearchContent />
     </Suspense>
   );

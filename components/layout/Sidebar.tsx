@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, FolderKanban, Calendar, User, LogOut, Users, FileText,
@@ -74,23 +75,31 @@ function NavLink({
       onFocus={() => onPrefetch(item.href)}
       title={isCollapsed ? item.name : undefined}
       className={clsx(
-        'group relative flex items-center rounded-lg text-sm font-medium transition-all duration-200',
+        'group relative flex items-center rounded-lg text-sm font-medium transition-colors duration-200',
         isCollapsed ? 'justify-center px-2 py-2.5' : 'gap-3 px-3 py-2.5',
-        active
-          ? 'bg-brand-50 text-brand-700'
-          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+        active ? 'text-brand-700' : 'text-gray-600 hover:text-gray-900'
       )}
     >
+      {active && (
+        <motion.span
+          layoutId="sidebar-active-pill"
+          className="absolute inset-0 rounded-lg bg-brand-50"
+          transition={{ type: 'spring', stiffness: 500, damping: 38 }}
+        />
+      )}
+      {!active && (
+        <span className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 group-hover:bg-gray-50 transition-opacity" />
+      )}
       <Icon
         className={clsx(
-          'h-[18px] w-[18px] flex-shrink-0',
+          'relative z-10 h-[18px] w-[18px] flex-shrink-0',
           active ? 'text-brand-600' : 'text-gray-400 group-hover:text-gray-600'
         )}
         strokeWidth={1.75}
       />
       <span
         className={clsx(
-          'transition-all duration-300 whitespace-nowrap',
+          'relative z-10 transition-all duration-300 whitespace-nowrap',
           isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'
         )}
       >
@@ -263,15 +272,22 @@ export default function Sidebar() {
             onClick={closeMobile}
             title={isCollapsed ? 'Account' : undefined}
             className={clsx(
-              'flex items-center rounded-lg text-sm font-medium transition-colors',
+              'relative flex items-center rounded-lg text-sm font-medium transition-colors',
               isCollapsed ? 'justify-center px-2 py-2.5' : 'gap-3 px-3 py-2.5',
               pathname.startsWith('/dashboard/account')
-                ? 'bg-brand-50 text-brand-700'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                ? 'text-brand-700'
+                : 'text-gray-600 hover:text-gray-900'
             )}
           >
-            <User className="h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.75} />
-            {!isCollapsed && <span>Account</span>}
+            {pathname.startsWith('/dashboard/account') && (
+              <motion.span
+                layoutId="sidebar-active-pill"
+                className="absolute inset-0 rounded-lg bg-brand-50"
+                transition={{ type: 'spring', stiffness: 500, damping: 38 }}
+              />
+            )}
+            <User className="relative z-10 h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.75} />
+            {!isCollapsed && <span className="relative z-10">Account</span>}
           </Link>
           <button
             type="button"
