@@ -441,6 +441,7 @@ export default function DashboardPage() {
             </Surface>
           </aside>
         </div>
+        </PageTransition>
       </PageShell>
     </div>
   );
