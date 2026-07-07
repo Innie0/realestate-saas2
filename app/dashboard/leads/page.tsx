@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
 import DashboardPage from '@/components/layout/DashboardPage';
-import Badge from '@/components/ui/Badge';
 import Tabs from '@/components/ui/Tabs';
 import Surface from '@/components/ui/Surface';
 import EmptyState from '@/components/ui/EmptyState';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
+import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
 import { supabase } from '@/lib/supabase';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
@@ -19,9 +20,10 @@ import { formatFollowupScheduleHuman, type FollowupSettings } from '@/lib/follow
 import { QRCodeCanvas } from 'qrcode.react';
 import {
   Inbox, Link2, Copy, Check, Download, Phone, Mail,
-  Home, Building2, KeyRound, Search, Flame, Thermometer,
-  Snowflake, ArrowRight, Users, Clock, Lock, MailCheck,
+  Home, Building2, KeyRound, Search, Flame,
+  ArrowRight, Users, Lock, MailCheck,
   Loader2, DoorOpen, Megaphone, Zap, UserPlus, MailX, MapPin, Sparkles, UserCheck,
+  ChevronDown,
 } from 'lucide-react';
 
 type LeadsTab = 'inbox' | 'capture' | 'automations';
@@ -96,46 +98,29 @@ const SOURCE_LABELS: Record<string, string> = {
   listing_page: 'Listing page',
 };
 
-function TempBadge({ temp }: { temp: 'hot' | 'warm' | 'cold' }) {
-  const config = {
-    hot: { variant: 'hot' as const, icon: Flame, label: 'Hot' },
-    warm: { variant: 'warm' as const, icon: Thermometer, label: 'Warm' },
-    cold: { variant: 'cold' as const, icon: Snowflake, label: 'Cold' },
-  }[temp];
-  return (
-    <Badge variant={config.variant} icon={config.icon}>
-      {config.label}
-    </Badge>
-  );
+const TEMP_DOT: Record<'hot' | 'warm' | 'cold', string> = {
+  hot: 'bg-red-500',
+  warm: 'bg-amber-500',
+  cold: 'bg-gray-300',
+};
+
+const TEMP_LABEL: Record<'hot' | 'warm' | 'cold', string> = {
+  hot: 'Hot',
+  warm: 'Warm',
+  cold: 'Cold',
+};
+
+function leadInitials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2) || '?';
 }
 
-function LeadCard({
-  lead,
-  autoFollowupEnabled,
-  followupScheduleText,
-  onAddToCrm,
-  addingId,
-  onMarkContacted,
-  markingContactedId,
-  stoppedIds,
-  onContactLead,
-}: {
-  lead: Lead;
-  autoFollowupEnabled: boolean;
-  followupScheduleText: string;
-  onAddToCrm: (id: string) => void;
-  addingId: string | null;
-  onMarkContacted: (id: string) => void;
-  markingContactedId: string | null;
-  stoppedIds: Set<string>;
-  onContactLead: (lead: Lead, type: 'email' | 'phone') => void;
-}) {
-  const temp = getLeadTemp(lead);
-  const isAdding = addingId === lead.id;
-  const isMarkingContacted = markingContactedId === lead.id;
-  const followupActive = leadHasActiveFollowup(lead, autoFollowupEnabled, stoppedIds);
-  const emailsStopped = stoppedIds.has(lead.id);
-  const TypeIcon = lead.lead_type ? LEAD_TYPE_ICONS[lead.lead_type] : null;
+function parseLeadDetail(lead: Lead) {
   const msg = lead.message || '';
   const infoLines = msg.split('\n').filter(l =>
     l.startsWith('Timeline:') || l.startsWith('Budget:') || l.startsWith('Area:')
@@ -151,177 +136,285 @@ function LeadCard({
     ? [linkedProject.property_info?.address, linkedProject.title].find(Boolean) || listingLine
     : listingLine;
 
+  return { infoLines, openHouseLine, listingDisplay, linkedProject };
+}
+
+function getLeadSummaryLine(lead: Lead): string {
+  const { infoLines, openHouseLine, listingDisplay } = parseLeadDetail(lead);
+  if (openHouseLine) return `Open house · ${openHouseLine}`;
+  if (listingDisplay) return `Re: ${listingDisplay}`;
+  if (infoLines.length > 0) return infoLines.join(' · ');
+  if (lead.lead_type && LEAD_TYPE_LABELS[lead.lead_type]) return LEAD_TYPE_LABELS[lead.lead_type];
+  if (lead.source && SOURCE_LABELS[lead.source]) return SOURCE_LABELS[lead.source];
+  return lead.email || lead.phone || 'New lead';
+}
+
+function LeadRow({
+  lead,
+  expanded,
+  onToggle,
+  autoFollowupEnabled,
+  followupScheduleText,
+  onAddToCrm,
+  addingId,
+  onMarkContacted,
+  markingContactedId,
+  stoppedIds,
+  onContactLead,
+}: {
+  lead: Lead;
+  expanded: boolean;
+  onToggle: () => void;
+  autoFollowupEnabled: boolean;
+  followupScheduleText: string;
+  onAddToCrm: (id: string) => void;
+  addingId: string | null;
+  onMarkContacted: (id: string) => void;
+  markingContactedId: string | null;
+  stoppedIds: Set<string>;
+  onContactLead: (lead: Lead, type: 'email' | 'phone') => void;
+}) {
+  const temp = getLeadTemp(lead);
+  const isAdding = addingId === lead.id;
+  const isMarkingContacted = markingContactedId === lead.id;
+  const followupActive = leadHasActiveFollowup(lead, autoFollowupEnabled, stoppedIds);
+  const emailsStopped = stoppedIds.has(lead.id);
+  const { infoLines, openHouseLine, listingDisplay, linkedProject } = parseLeadDetail(lead);
+
+  const stopPropagation = (e: React.MouseEvent) => e.stopPropagation();
+
   return (
-    <div className="rounded-2xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)] p-4 hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-200">
-      <div className="flex items-start justify-between gap-3 mb-3">
+    <div
+      className={`group rounded-xl bg-white border transition-colors ${
+        temp === 'hot' ? 'border-red-100' : 'border-gray-200'
+      } ${expanded ? 'shadow-sm' : 'hover:border-gray-300'}`}
+    >
+      <div
+        onClick={onToggle}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === 'Enter' && onToggle()}
+        className="flex items-center gap-3 px-3.5 py-3 cursor-pointer"
+      >
+        <div className="relative shrink-0">
+          <div className="w-9 h-9 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-xs font-semibold">
+            {leadInitials(lead.name)}
+          </div>
+          <span
+            className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ring-2 ring-white ${TEMP_DOT[temp]}`}
+            title={TEMP_LABEL[temp]}
+          />
+        </div>
+
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="font-semibold text-gray-900 text-sm">{lead.name}</h3>
-            <TempBadge temp={temp} />
-            {lead.source && SOURCE_LABELS[lead.source] && (
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-50 text-gray-500 border border-gray-200">
-                {SOURCE_LABELS[lead.source]}
-              </span>
-            )}
-            {TypeIcon && lead.lead_type && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-gray-50 text-gray-500 border border-gray-200">
-                <TypeIcon className="w-3 h-3" />
-                {LEAD_TYPE_LABELS[lead.lead_type]}
+          <div className="flex items-center gap-2">
+            <p className="text-[13px] font-semibold text-gray-900 truncate">{lead.name}</p>
+            {temp === 'hot' && (
+              <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-red-600 shrink-0">
+                <Flame className="w-3 h-3" /> Hot
               </span>
             )}
           </div>
-          <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-            <Clock className="w-3 h-3" />
-            {timeAgo(lead.created_at)}
-          </p>
+          <p className="text-xs text-gray-500 truncate mt-0.5">{getLeadSummaryLine(lead)}</p>
         </div>
-      </div>
 
-      {(openHouseLine || listingDisplay) && (
-        <div className="mb-3 flex items-start gap-2 rounded-lg bg-brand-500/5 border border-brand-500/15 px-3 py-2">
-          {openHouseLine ? (
-            <DoorOpen className="w-3.5 h-3.5 text-brand-600 mt-0.5 shrink-0" />
-          ) : (
-            <MapPin className="w-3.5 h-3.5 text-brand-600 mt-0.5 shrink-0" />
+        <div className="hidden sm:flex items-center gap-1 shrink-0" onClick={stopPropagation}>
+          {lead.phone && (
+            <button
+              type="button"
+              onClick={() => onContactLead(lead, 'phone')}
+              className="p-1.5 rounded-md text-gray-400 hover:text-brand-600 hover:bg-gray-50 transition-colors"
+              title={lead.phone}
+            >
+              <Phone className="w-3.5 h-3.5" />
+            </button>
           )}
-          <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-brand-600">
-              {openHouseLine ? 'Open house' : 'Listing inquiry'}
-            </p>
-            <p className="text-xs text-gray-700 mt-0.5 break-words">{openHouseLine || listingDisplay}</p>
-            {linkedProject && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                <Link
-                  href={`/dashboard/projects/${linkedProject.id}`}
-                  className="text-xs font-medium text-brand-600 hover:text-brand-700"
-                >
-                  View project
-                </Link>
-                {linkedProject.published && (
-                  <Link
-                    href={`/listing/${linkedProject.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs font-medium text-gray-600 hover:text-gray-900"
-                  >
-                    Public listing
-                  </Link>
-                )}
-              </div>
-            )}
-          </div>
+          {lead.email && (
+            <button
+              type="button"
+              onClick={() => onContactLead(lead, 'email')}
+              className="p-1.5 rounded-md text-gray-400 hover:text-brand-600 hover:bg-gray-50 transition-colors"
+              title={lead.email}
+            >
+              <Mail className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
-      )}
 
-      {followupActive && (
-        <div className="mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2">
-          <p className="text-xs text-amber-800">
-            Auto follow-up is scheduled ({followupScheduleText}).
-          </p>
-          <button
-            type="button"
-            onClick={() => onMarkContacted(lead.id)}
-            disabled={isMarkingContacted}
-            className="shrink-0 inline-flex items-center justify-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg bg-white text-amber-900 border border-amber-200 hover:bg-amber-100 transition-colors disabled:opacity-60"
-          >
-            {isMarkingContacted ? (
-              <Loader2 className="w-3 h-3 animate-spin" />
-            ) : (
-              <UserCheck className="w-3 h-3" />
-            )}
-            Mark contacted
-          </button>
-        </div>
-      )}
+        <span className="hidden md:block text-xs text-gray-400 shrink-0 w-16 text-right">
+          {timeAgo(lead.created_at)}
+        </span>
 
-      {!followupActive && emailsStopped && lead.email && autoFollowupEnabled && (
-        <p className="mb-3 text-xs text-gray-500 flex items-center gap-1.5">
-          <MailX className="w-3.5 h-3.5" />
-          Auto follow-up stopped for this lead
-        </p>
-      )}
-
-      <div className="flex flex-wrap gap-3 mb-3">
-        {lead.email && (
-          <button
-            type="button"
-            onClick={() => onContactLead(lead, 'email')}
-            className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-brand-600 transition-colors"
-          >
-            <Mail className="w-3.5 h-3.5" />
-            {lead.email}
-          </button>
-        )}
-        {lead.phone && (
-          <button
-            type="button"
-            onClick={() => onContactLead(lead, 'phone')}
-            className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-brand-600 transition-colors"
-          >
-            <Phone className="w-3.5 h-3.5" />
-            {lead.phone}
-          </button>
-        )}
-      </div>
-
-      {infoLines.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-3">
-          {infoLines.map((line, i) => (
-            <span key={i} className="text-xs bg-gray-50 border border-gray-200 text-gray-500 px-2 py-0.5 rounded-lg">
-              {line}
-            </span>
-          ))}
-        </div>
-      )}
-
-      <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100">
         <button
           type="button"
-          onClick={() => onAddToCrm(lead.id)}
+          onClick={(e) => {
+            stopPropagation(e);
+            onAddToCrm(lead.id);
+          }}
           disabled={isAdding}
-          className="flex-1 min-w-[8rem] flex items-center justify-center gap-1.5 text-xs font-medium py-1.5 rounded-lg bg-white text-gray-900 hover:bg-gray-100 transition-colors disabled:opacity-60"
+          className="shrink-0 inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition-colors disabled:opacity-60"
         >
-          {isAdding ? (
-            <><Loader2 className="w-3 h-3 animate-spin" /> Adding…</>
-          ) : (
-            <><UserPlus className="w-3 h-3" /> Add to CRM</>
-          )}
+          {isAdding ? <Loader2 className="w-3 h-3 animate-spin" /> : <UserPlus className="w-3 h-3" />}
+          <span className="hidden sm:inline">Add to CRM</span>
         </button>
-        {lead.phone && (
-          <button
-            type="button"
-            onClick={() => onContactLead(lead, 'phone')}
-            className="flex items-center justify-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-600 border border-gray-200 transition-colors"
-          >
-            <Phone className="w-3 h-3" /> Call
-          </button>
-        )}
-        {lead.email && (
-          <button
-            type="button"
-            onClick={() => onContactLead(lead, 'email')}
-            className="flex items-center justify-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-600 border border-gray-200 transition-colors"
-          >
-            <Mail className="w-3 h-3" /> Email
-          </button>
-        )}
-        {followupActive && (
-          <button
-            type="button"
-            onClick={() => onMarkContacted(lead.id)}
-            disabled={isMarkingContacted}
-            title="Stop automated follow-up emails"
-            className="flex items-center justify-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border bg-gray-50 hover:bg-red-50 text-gray-500 hover:text-red-600 border-gray-200 hover:border-red-200 transition-colors disabled:opacity-60"
-          >
-            {isMarkingContacted ? (
-              <Loader2 className="w-3 h-3 animate-spin" />
-            ) : (
-              <MailX className="w-3 h-3" />
-            )}
-            Stop emails
-          </button>
-        )}
+
+        <ChevronDown
+          className={`w-4 h-4 text-gray-300 shrink-0 transition-transform ${expanded ? 'rotate-180' : ''}`}
+        />
       </div>
+
+      <AnimatePresence initial={false}>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="px-3.5 pb-3.5 pt-0.5 border-t border-gray-100 ml-12 space-y-3">
+              {(openHouseLine || listingDisplay) && (
+                <div className="flex items-start gap-2 rounded-lg bg-brand-500/5 border border-brand-500/15 px-3 py-2">
+                  {openHouseLine ? (
+                    <DoorOpen className="w-3.5 h-3.5 text-brand-600 mt-0.5 shrink-0" />
+                  ) : (
+                    <MapPin className="w-3.5 h-3.5 text-brand-600 mt-0.5 shrink-0" />
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] font-semibold uppercase tracking-wide text-brand-600">
+                      {openHouseLine ? 'Open house' : 'Listing inquiry'}
+                    </p>
+                    <p className="text-xs text-gray-700 mt-0.5 break-words">{openHouseLine || listingDisplay}</p>
+                    {linkedProject && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        <Link
+                          href={`/dashboard/projects/${linkedProject.id}`}
+                          className="text-xs font-medium text-brand-600 hover:text-brand-700"
+                        >
+                          View project
+                        </Link>
+                        {linkedProject.published && (
+                          <Link
+                            href={`/listing/${linkedProject.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs font-medium text-gray-600 hover:text-gray-900"
+                          >
+                            Public listing
+                          </Link>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {followupActive && (
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2">
+                  <p className="text-xs text-amber-800">
+                    Auto follow-up is scheduled ({followupScheduleText}).
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => onMarkContacted(lead.id)}
+                    disabled={isMarkingContacted}
+                    className="shrink-0 inline-flex items-center justify-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg bg-white text-amber-900 border border-amber-200 hover:bg-amber-100 transition-colors disabled:opacity-60"
+                  >
+                    {isMarkingContacted ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <UserCheck className="w-3 h-3" />
+                    )}
+                    Mark contacted
+                  </button>
+                </div>
+              )}
+
+              {!followupActive && emailsStopped && lead.email && autoFollowupEnabled && (
+                <p className="text-xs text-gray-500 flex items-center gap-1.5">
+                  <MailX className="w-3.5 h-3.5" />
+                  Auto follow-up stopped for this lead
+                </p>
+              )}
+
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-500">
+                {lead.email && (
+                  <button
+                    type="button"
+                    onClick={() => onContactLead(lead, 'email')}
+                    className="flex items-center gap-1.5 hover:text-brand-600 transition-colors"
+                  >
+                    <Mail className="w-3.5 h-3.5" />
+                    {lead.email}
+                  </button>
+                )}
+                {lead.phone && (
+                  <button
+                    type="button"
+                    onClick={() => onContactLead(lead, 'phone')}
+                    className="flex items-center gap-1.5 hover:text-brand-600 transition-colors"
+                  >
+                    <Phone className="w-3.5 h-3.5" />
+                    {lead.phone}
+                  </button>
+                )}
+                {lead.source && SOURCE_LABELS[lead.source] && (
+                  <span className="px-2 py-0.5 rounded-full bg-gray-50 border border-gray-200">
+                    {SOURCE_LABELS[lead.source]}
+                  </span>
+                )}
+              </div>
+
+              {infoLines.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {infoLines.map((line, i) => (
+                    <span key={i} className="text-xs bg-gray-50 border border-gray-200 text-gray-500 px-2 py-0.5 rounded-lg">
+                      {line}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-2 pt-1">
+                {lead.phone && (
+                  <button
+                    type="button"
+                    onClick={() => onContactLead(lead, 'phone')}
+                    className="flex items-center justify-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-600 border border-gray-200 transition-colors"
+                  >
+                    <Phone className="w-3 h-3" /> Call
+                  </button>
+                )}
+                {lead.email && (
+                  <button
+                    type="button"
+                    onClick={() => onContactLead(lead, 'email')}
+                    className="flex items-center justify-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-600 border border-gray-200 transition-colors"
+                  >
+                    <Mail className="w-3 h-3" /> Email
+                  </button>
+                )}
+                {followupActive && (
+                  <button
+                    type="button"
+                    onClick={() => onMarkContacted(lead.id)}
+                    disabled={isMarkingContacted}
+                    title="Stop automated follow-up emails"
+                    className="flex items-center justify-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border bg-gray-50 hover:bg-red-50 text-gray-500 hover:text-red-600 border-gray-200 hover:border-red-200 transition-colors disabled:opacity-60"
+                  >
+                    {isMarkingContacted ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <MailX className="w-3 h-3" />
+                    )}
+                    Stop emails
+                  </button>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -386,6 +479,7 @@ export default function LeadsPage() {
   const [leadFormUrl, setLeadFormUrl] = useState('');
   const [copied, setCopied] = useState(false);
   const [filter, setFilter] = useState<'all' | 'hot' | 'warm' | 'cold'>('all');
+  const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
   const [addingToCrmId, setAddingToCrmId] = useState<string | null>(null);
   const [markingContactedId, setMarkingContactedId] = useState<string | null>(null);
   const [stoppedFollowupIds, setStoppedFollowupIds] = useState<Set<string>>(new Set());
@@ -535,7 +629,7 @@ export default function LeadsPage() {
     <DashboardPage
       title="Leads"
       subtitle={`${leads.length} in inbox · ${hotLeads.length} hot · ${thisWeek.length} this week`}
-      size="narrow"
+      size="medium"
     >
         <div data-tour="leads-tabs">
           <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} hideLabelsOnMobile />
@@ -591,22 +685,27 @@ export default function LeadsPage() {
                   }
                 />
               ) : (
-                <div className="space-y-3">
+                <StaggerList className="space-y-2">
                   {filteredLeads.map(lead => (
-                    <LeadCard
-                      key={lead.id}
-                      lead={lead}
-                      autoFollowupEnabled={autoFollowup}
-                      followupScheduleText={followupScheduleText}
-                      onAddToCrm={handleAddToCrm}
-                      addingId={addingToCrmId}
-                      onMarkContacted={handleMarkContacted}
-                      markingContactedId={markingContactedId}
-                      stoppedIds={stoppedFollowupIds}
-                      onContactLead={handleContactLead}
-                    />
+                    <StaggerItem key={lead.id}>
+                      <LeadRow
+                        lead={lead}
+                        expanded={expandedLeadId === lead.id}
+                        onToggle={() =>
+                          setExpandedLeadId((current) => (current === lead.id ? null : lead.id))
+                        }
+                        autoFollowupEnabled={autoFollowup}
+                        followupScheduleText={followupScheduleText}
+                        onAddToCrm={handleAddToCrm}
+                        addingId={addingToCrmId}
+                        onMarkContacted={handleMarkContacted}
+                        markingContactedId={markingContactedId}
+                        stoppedIds={stoppedFollowupIds}
+                        onContactLead={handleContactLead}
+                      />
+                    </StaggerItem>
                   ))}
-                </div>
+                </StaggerList>
               )}
             </div>
           </div>
