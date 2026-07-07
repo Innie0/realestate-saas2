@@ -75,24 +75,24 @@ function NavLink({
       onFocus={() => onPrefetch(item.href)}
       title={isCollapsed ? item.name : undefined}
       className={clsx(
-        'group relative flex items-center rounded-lg text-sm font-medium transition-colors duration-200',
-        isCollapsed ? 'justify-center px-2 py-2.5' : 'gap-3 px-3 py-2.5',
+        'group relative flex items-center rounded-md text-[13px] font-medium transition-colors duration-150',
+        isCollapsed ? 'justify-center px-2 py-2' : 'gap-2.5 px-2.5 py-[7px]',
         active ? 'text-brand-700' : 'text-gray-600 hover:text-gray-900'
       )}
     >
       {active && (
         <motion.span
           layoutId="sidebar-active-pill"
-          className="absolute inset-0 rounded-lg bg-brand-50"
+          className="absolute inset-0 rounded-md bg-brand-50"
           transition={{ type: 'spring', stiffness: 500, damping: 38 }}
         />
       )}
       {!active && (
-        <span className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 group-hover:bg-gray-50 transition-opacity" />
+        <span className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100 group-hover:bg-gray-100/70 transition-opacity" />
       )}
       <Icon
         className={clsx(
-          'relative z-10 h-[18px] w-[18px] flex-shrink-0',
+          'relative z-10 h-[16px] w-[16px] flex-shrink-0',
           active ? 'text-brand-600' : 'text-gray-400 group-hover:text-gray-600'
         )}
         strokeWidth={1.75}
@@ -106,7 +106,7 @@ function NavLink({
         {item.name}
       </span>
       {isCollapsed && (
-        <div className="absolute left-full ml-3 px-3 py-2 bg-white text-gray-900 text-sm font-medium rounded-lg shadow-lg whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none transition-all duration-200 z-50 border border-gray-200">
+        <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-md whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none transition-all duration-150 z-50">
           {item.name}
         </div>
       )}
@@ -185,15 +185,15 @@ export default function Sidebar() {
 
       <div
         className={clsx(
-          'fixed top-0 h-screen flex flex-col bg-white z-50 border-r border-gray-200',
+          'fixed top-0 h-screen flex flex-col bg-[#FAFAF9] z-50 border-r border-gray-200/80',
           'lg:translate-x-0 lg:relative',
-          isCollapsed ? 'lg:w-[72px]' : 'lg:w-64',
+          isCollapsed ? 'lg:w-[56px]' : 'lg:w-[212px]',
           'w-60',
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
-        style={{ transition: 'width 0.3s ease, transform 0.3s ease' }}
+        style={{ transition: 'width 0.2s ease, transform 0.2s ease' }}
       >
-        <div className="hidden lg:flex h-16 shrink-0 items-center justify-center border-b border-gray-200 bg-white overflow-visible px-2">
+        <div className="hidden lg:flex h-14 shrink-0 items-center border-b border-gray-200/80 overflow-visible px-3">
           {isCollapsed ? (
             <Image
               src="/logo-collapsed.png"
@@ -201,7 +201,7 @@ export default function Sidebar() {
               width={128}
               height={128}
               priority
-              className="h-10 w-10 object-contain scale-[1.45] origin-center"
+              className="h-7 w-7 object-contain mx-auto"
             />
           ) : (
             <Image
@@ -210,7 +210,7 @@ export default function Sidebar() {
               width={640}
               height={192}
               priority
-              className="h-12 w-auto max-w-[240px] object-contain scale-[2.25] origin-center"
+              className="h-7 w-auto max-w-[150px] object-contain object-left"
             />
           )}
         </div>
@@ -219,18 +219,18 @@ export default function Sidebar() {
 
         <nav
           className={clsx(
-            'flex-1 overflow-y-auto overflow-x-hidden py-4',
-            isCollapsed ? 'px-2' : 'px-3'
+            'flex-1 overflow-y-auto overflow-x-hidden py-3',
+            isCollapsed ? 'px-2' : 'px-2.5'
           )}
         >
           {navGroups.map((group) => (
-            <div key={group.label} className={clsx('mb-5 last:mb-2', isCollapsed && 'mb-3')}>
+            <div key={group.label} className={clsx('mb-4 last:mb-2', isCollapsed && 'mb-3')}>
               {!isCollapsed && (
-                <p className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                <p className="px-2.5 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
                   {group.label}
                 </p>
               )}
-              <div className="space-y-0.5">
+              <div className="space-y-px">
                 {group.items.map((item) => (
                   <NavLink
                     key={item.href}
@@ -246,13 +246,48 @@ export default function Sidebar() {
           ))}
         </nav>
 
-        <div className="hidden lg:block border-t border-gray-200 p-2">
+        <div className="border-t border-gray-200/80 p-2 space-y-px">
+          <Link
+            href="/dashboard/account"
+            onClick={closeMobile}
+            title={isCollapsed ? 'Account' : undefined}
+            className={clsx(
+              'relative flex items-center rounded-md text-[13px] font-medium transition-colors',
+              isCollapsed ? 'justify-center px-2 py-2' : 'gap-2.5 px-2.5 py-[7px]',
+              pathname.startsWith('/dashboard/account')
+                ? 'text-brand-700'
+                : 'text-gray-600 hover:text-gray-900'
+            )}
+          >
+            {pathname.startsWith('/dashboard/account') && (
+              <motion.span
+                layoutId="sidebar-active-pill"
+                className="absolute inset-0 rounded-md bg-brand-50"
+                transition={{ type: 'spring', stiffness: 500, damping: 38 }}
+              />
+            )}
+            <User className="relative z-10 h-[16px] w-[16px] flex-shrink-0" strokeWidth={1.75} />
+            {!isCollapsed && <span className="relative z-10">Account</span>}
+          </Link>
+          <button
+            type="button"
+            onClick={() => setShowSignOutModal(true)}
+            disabled={isSigningOut}
+            title={isCollapsed ? 'Sign out' : undefined}
+            className={clsx(
+              'flex w-full items-center rounded-md text-[13px] font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors disabled:opacity-50',
+              isCollapsed ? 'justify-center px-2 py-2' : 'gap-2.5 px-2.5 py-[7px]'
+            )}
+          >
+            <LogOut className="h-[16px] w-[16px] flex-shrink-0" strokeWidth={1.75} />
+            {!isCollapsed && <span>Sign out</span>}
+          </button>
           <button
             type="button"
             onClick={toggleCollapsed}
             className={clsx(
-              'flex w-full items-center rounded-lg py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors',
-              isCollapsed ? 'justify-center px-2' : 'gap-2 px-3'
+              'hidden lg:flex w-full items-center rounded-md py-[7px] text-[13px] text-gray-400 hover:bg-gray-100/70 hover:text-gray-700 transition-colors',
+              isCollapsed ? 'justify-center px-2' : 'gap-2.5 px-2.5'
             )}
           >
             {isCollapsed ? (
@@ -263,44 +298,6 @@ export default function Sidebar() {
                 <span>Collapse</span>
               </>
             )}
-          </button>
-        </div>
-
-        <div className="border-t border-gray-200 p-2 space-y-0.5">
-          <Link
-            href="/dashboard/account"
-            onClick={closeMobile}
-            title={isCollapsed ? 'Account' : undefined}
-            className={clsx(
-              'relative flex items-center rounded-lg text-sm font-medium transition-colors',
-              isCollapsed ? 'justify-center px-2 py-2.5' : 'gap-3 px-3 py-2.5',
-              pathname.startsWith('/dashboard/account')
-                ? 'text-brand-700'
-                : 'text-gray-600 hover:text-gray-900'
-            )}
-          >
-            {pathname.startsWith('/dashboard/account') && (
-              <motion.span
-                layoutId="sidebar-active-pill"
-                className="absolute inset-0 rounded-lg bg-brand-50"
-                transition={{ type: 'spring', stiffness: 500, damping: 38 }}
-              />
-            )}
-            <User className="relative z-10 h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.75} />
-            {!isCollapsed && <span className="relative z-10">Account</span>}
-          </Link>
-          <button
-            type="button"
-            onClick={() => setShowSignOutModal(true)}
-            disabled={isSigningOut}
-            title={isCollapsed ? 'Sign out' : undefined}
-            className={clsx(
-              'flex w-full items-center rounded-lg text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors disabled:opacity-50',
-              isCollapsed ? 'justify-center px-2 py-2.5' : 'gap-3 px-3 py-2.5'
-            )}
-          >
-            <LogOut className="h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.75} />
-            {!isCollapsed && <span>Sign out</span>}
           </button>
         </div>
       </div>

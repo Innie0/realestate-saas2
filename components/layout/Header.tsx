@@ -198,12 +198,12 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
   };
   return (
     <header className="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b border-gray-100">
-      <div className="px-4 sm:px-6 py-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="px-4 sm:px-6 py-3.5">
+        <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0 flex-1">
-            <h1 className="text-title sm:text-display-sm font-semibold tracking-tight text-gray-900 truncate">{title}</h1>
+            <h1 className="text-[15px] sm:text-title font-semibold tracking-tight text-gray-900 truncate">{title}</h1>
             {subtitle && (
-              <p className="text-caption sm:text-body text-gray-500 mt-1 truncate">{subtitle}</p>
+              <p className="text-caption text-gray-500 mt-0.5 truncate">{subtitle}</p>
             )}
           </div>
 
@@ -335,13 +335,13 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
           </div>
 
           {/* User profile section */}
-          <div className="flex items-center gap-3 ml-4">
-            <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 text-sm font-medium border border-gray-300">
+          <div className="flex items-center gap-2.5 ml-3">
+            <div className="h-7 w-7 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 text-xs font-medium border border-gray-300">
               {userName ? userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
             </div>
             <div className="hidden md:block">
-              <p className="text-sm font-medium text-gray-900">{userName}</p>
-              <p className="text-xs text-gray-500">{userEmail}</p>
+              <p className="text-sm font-medium text-gray-900 leading-tight">{userName}</p>
+              <p className="text-xs text-gray-500 leading-tight">{userEmail}</p>
             </div>
           </div>
             </div>
