@@ -6,6 +6,7 @@
 // executes inside the same authenticated request as the chat message.
 
 import { checkUsageLimit, incrementUsage, usageLimitError } from '@/lib/usage';
+import { syncCalendarEventToGoogle } from '@/lib/google-calendar';
 
 /**
  * Tool definitions passed to OpenAI's `tools` param on chat.completions.create.
@@ -82,7 +83,7 @@ export const assistantTools = [
     function: {
       name: 'create_calendar_event',
       description:
-        'Create a calendar event (showing, open house, meeting, etc). Note: this does not sync to a connected Google Calendar automatically.',
+        'Create a calendar event (showing, open house, meeting, etc). Automatically syncs to a connected Google Calendar, if any.',
       parameters: {
         type: 'object',
         properties: {
@@ -327,9 +328,22 @@ async function createCalendarEventTool(supabase, userId: string, args: Record<st
 
   await incrementUsage(supabase, userId, 'calendar_events');
 
+  const syncResult = await syncCalendarEventToGoogle(supabase, userId, {
+    id: event.id,
+    title,
+    description: args.description ? String(args.description) : null,
+    start_time: start.toISOString(),
+    end_time: end.toISOString(),
+    location: args.location ? String(args.location) : null,
+  });
+
+  const syncNote = syncResult.synced
+    ? ' Synced to your connected Google Calendar.'
+    : '';
+
   return {
     ok: true,
-    message: `Added "${event.title}" to your calendar on ${new Date(event.start_time).toLocaleString()}. Note: this does not sync automatically to Google Calendar — use the Sync button on the Calendar page for that.`,
+    message: `Added "${event.title}" to your calendar on ${new Date(event.start_time).toLocaleString()}.${syncNote}`,
     event_id: event.id,
     dashboard_url: `/dashboard/calendar`,
   };

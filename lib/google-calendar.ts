@@ -247,6 +247,98 @@ export async function createGoogleCalendarEvent(
 }
 
 /**
+ * Push a newly created calendar_events row out to any connected Google
+ * Calendar(s) for the user, refreshing the access token first if needed.
+ * Shared by the calendar events API route and the AI assistant's
+ * create_calendar_event tool so both stay in sync automatically.
+ *
+ * Never throws — sync failures are logged and swallowed so they never
+ * block the caller's primary flow (saving the event to our own DB).
+ */
+export async function syncCalendarEventToGoogle(
+  supabase: any,
+  userId: string,
+  event: {
+    id: string;
+    title: string;
+    description?: string | null;
+    start_time: string;
+    end_time: string;
+    location?: string | null;
+    attendees?: string[] | null;
+  }
+): Promise<{ synced: boolean; error?: string }> {
+  try {
+    const { data: connections } = await supabase
+      .from('calendar_connections')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('is_active', true);
+
+    if (!connections || connections.length === 0) {
+      return { synced: false };
+    }
+
+    let syncedAny = false;
+    let lastError: string | undefined;
+
+    for (const connection of connections) {
+      if (connection.provider !== 'google') continue;
+
+      let accessToken = connection.access_token;
+
+      if (connection.token_expiry) {
+        const expiryDate = new Date(connection.token_expiry);
+        const now = new Date();
+
+        if (expiryDate.getTime() - now.getTime() < 5 * 60 * 1000) {
+          const refreshResult = await refreshGoogleToken(connection.refresh_token || '');
+          if (refreshResult.success) {
+            accessToken = refreshResult.access_token;
+            await supabase
+              .from('calendar_connections')
+              .update({
+                access_token: accessToken,
+                token_expiry: refreshResult.expiry_date
+                  ? new Date(refreshResult.expiry_date).toISOString()
+                  : new Date().toISOString(),
+              })
+              .eq('id', connection.id);
+          } else {
+            lastError = refreshResult.error;
+            continue;
+          }
+        }
+      }
+
+      const googleResult = await createGoogleCalendarEvent(accessToken, {
+        title: event.title,
+        description: event.description || undefined,
+        start_time: event.start_time,
+        end_time: event.end_time,
+        location: event.location || undefined,
+        attendees: event.attendees || undefined,
+      });
+
+      if (googleResult.success) {
+        await supabase
+          .from('calendar_events')
+          .update({ google_event_id: googleResult.event_id })
+          .eq('id', event.id);
+        syncedAny = true;
+      } else {
+        lastError = googleResult.error;
+      }
+    }
+
+    return { synced: syncedAny, error: syncedAny ? undefined : lastError };
+  } catch (error: any) {
+    console.error('⚠️ Failed to sync event to Google Calendar:', error.message);
+    return { synced: false, error: error.message };
+  }
+}
+
+/**
  * Delete event from Google Calendar
  * @param accessToken - User's access token
  * @param eventId - Event ID to delete
