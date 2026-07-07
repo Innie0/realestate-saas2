@@ -19,8 +19,20 @@ import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
 import TransactionStatusBadge from '@/components/transactions/TransactionStatusBadge';
 import TransactionTimeline from '@/components/TransactionTimeline';
+import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
 import { TransactionWithDetails } from '@/types';
 import { useApi } from '@/lib/swr';
+import clsx from 'clsx';
+
+function closingUrgency(transaction: TransactionWithDetails): 'overdue' | 'today' | 'soon' | null {
+  if (['closed', 'cancelled', 'expired'].includes(transaction.status)) return null;
+  if (!transaction.closing_date) return null;
+  const daysToClosing = transaction.days_to_closing ?? 0;
+  if (daysToClosing < 0) return 'overdue';
+  if (daysToClosing === 0) return 'today';
+  if (daysToClosing <= 7) return 'soon';
+  return null;
+}
 
 export default function TransactionsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -171,61 +183,76 @@ export default function TransactionsPage() {
           }
         />
       ) : (
-        <div className="space-y-3">
-          {filteredTransactions.map((transaction) => (
-            <Link key={transaction.id} href={`/dashboard/transactions/${transaction.id}`}>
-              <Card hover className="cursor-pointer">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-1">
-                      <h3 className="text-base font-semibold text-gray-900 truncate">
-                        {transaction.property_address}
-                      </h3>
-                    </div>
-                    {(transaction.property_city || transaction.property_state) && (
-                      <p className="text-sm text-gray-500 truncate mb-4">
-                        {[transaction.property_city, transaction.property_state, transaction.property_zip]
-                          .filter(Boolean)
-                          .join(', ')}
-                      </p>
+        <StaggerList className="space-y-3">
+          {filteredTransactions.map((transaction) => {
+            const urgency = closingUrgency(transaction);
+            return (
+              <StaggerItem key={transaction.id}>
+                <Link href={`/dashboard/transactions/${transaction.id}`}>
+                  <Card
+                    hover
+                    className={clsx(
+                      'cursor-pointer border-l-4',
+                      urgency === 'overdue' || urgency === 'today'
+                        ? 'border-l-amber-400'
+                        : urgency === 'soon'
+                        ? 'border-l-brand-300'
+                        : 'border-l-transparent'
                     )}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-1">
+                          <h3 className="text-base font-semibold text-gray-900 truncate">
+                            {transaction.property_address}
+                          </h3>
+                        </div>
+                        {(transaction.property_city || transaction.property_state) && (
+                          <p className="text-sm text-gray-500 truncate mb-4">
+                            {[transaction.property_city, transaction.property_state, transaction.property_zip]
+                              .filter(Boolean)
+                              .join(', ')}
+                          </p>
+                        )}
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div>
-                        <p className="text-xs text-gray-500 mb-0.5">Price</p>
-                        <p className="text-sm font-medium text-gray-900">{formatCurrency(transaction.offer_price)}</p>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          <div>
+                            <p className="text-xs text-gray-500 mb-0.5">Price</p>
+                            <p className="text-sm font-medium text-gray-900">{formatCurrency(transaction.offer_price)}</p>
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-xs text-gray-500 mb-0.5">Buyer</p>
+                            <p className="text-sm font-medium text-gray-900 truncate">{transaction.buyer_name}</p>
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-xs text-gray-500 mb-0.5">Seller</p>
+                            <p className="text-sm font-medium text-gray-900 truncate">{transaction.seller_name}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500 mb-0.5">Tasks</p>
+                            <p className="text-sm font-medium text-gray-900">
+                              {transaction.completed_items_count}/{transaction.total_items_count}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="mt-4 pt-4 border-t border-gray-100 hidden md:block">
+                          <TransactionTimeline transaction={transaction} compact />
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <p className="text-xs text-gray-500 mb-0.5">Buyer</p>
-                        <p className="text-sm font-medium text-gray-900 truncate">{transaction.buyer_name}</p>
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs text-gray-500 mb-0.5">Seller</p>
-                        <p className="text-sm font-medium text-gray-900 truncate">{transaction.seller_name}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500 mb-0.5">Tasks</p>
-                        <p className="text-sm font-medium text-gray-900">
-                          {transaction.completed_items_count}/{transaction.total_items_count}
-                        </p>
+
+                      <div className="flex flex-col items-end shrink-0 gap-2">
+                        <TransactionStatusBadge status={transaction.status} />
+                        {getClosingIndicator(transaction)}
+                        <ChevronRight className="w-4 h-4 text-gray-300 mt-2" />
                       </div>
                     </div>
-
-                    <div className="mt-4 pt-4 border-t border-gray-100 hidden md:block">
-                      <TransactionTimeline transaction={transaction} compact />
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col items-end shrink-0 gap-2">
-                    <TransactionStatusBadge status={transaction.status} />
-                    {getClosingIndicator(transaction)}
-                    <ChevronRight className="w-4 h-4 text-gray-300 mt-2" />
-                  </div>
-                </div>
-              </Card>
-            </Link>
-          ))}
-        </div>
+                  </Card>
+                </Link>
+              </StaggerItem>
+            );
+          })}
+        </StaggerList>
       )}
     </DashboardPage>
   );
