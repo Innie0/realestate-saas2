@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { Client } from '@/types';
 import ClientCard from '@/components/ClientCard';
 import ClientForm from '@/components/ClientForm';
@@ -11,7 +12,8 @@ import DashboardPage from '@/components/layout/DashboardPage';
 import SearchInput from '@/components/ui/SearchInput';
 import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
-import { Plus, X, Users, LayoutGrid, List } from 'lucide-react';
+import Modal from '@/components/ui/Modal';
+import { Plus, Users, LayoutGrid, List } from 'lucide-react';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
 import { useToast } from '@/components/providers/ToastProvider';
@@ -301,7 +303,7 @@ export default function ClientsPage() {
           <div className="flex flex-wrap items-center gap-2 lg:ml-auto">
             <div
               data-tour="clients-filter"
-              className="inline-flex rounded-xl border border-gray-200 bg-white p-1"
+              className="relative inline-flex rounded-lg border border-gray-200 bg-white p-0.5"
             >
               {STATUS_TABS.map((tab) => (
                 <button
@@ -309,12 +311,17 @@ export default function ClientsPage() {
                   type="button"
                   onClick={() => setStatusTab(tab.id)}
                   className={clsx(
-                    'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
-                    statusTab === tab.id
-                      ? 'bg-brand-500 text-white shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    'relative px-3 py-1.5 rounded-md text-[13px] font-medium transition-colors z-10',
+                    statusTab === tab.id ? 'text-white' : 'text-gray-600 hover:text-gray-900'
                   )}
                 >
+                  {statusTab === tab.id && (
+                    <motion.span
+                      layoutId="clients-status-pill"
+                      className="absolute inset-0 rounded-md bg-brand-500 -z-10"
+                      transition={{ type: 'spring', stiffness: 500, damping: 38 }}
+                    />
+                  )}
                   {tab.label}
                 </button>
               ))}
@@ -332,12 +339,12 @@ export default function ClientsPage() {
               ]}
             />
 
-            <div className="inline-flex rounded-xl border border-gray-200 bg-white p-1">
+            <div className="inline-flex rounded-lg border border-gray-200 bg-white p-0.5">
               <button
                 type="button"
                 onClick={() => setViewMode('list')}
                 className={clsx(
-                  'p-2 rounded-lg transition-colors',
+                  'p-1.5 rounded-md transition-colors',
                   viewMode === 'list' ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-600'
                 )}
                 aria-label="List view"
@@ -348,7 +355,7 @@ export default function ClientsPage() {
                 type="button"
                 onClick={() => setViewMode('grid')}
                 className={clsx(
-                  'p-2 rounded-lg transition-colors',
+                  'p-1.5 rounded-md transition-colors',
                   viewMode === 'grid' ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-600'
                 )}
                 aria-label="Grid view"
@@ -360,26 +367,13 @@ export default function ClientsPage() {
         </div>
       </div>
 
-      {showCreateForm && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="rounded-2xl shadow-xl p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto bg-white">
-            <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
-              <h2 className="text-lg font-semibold text-gray-900">New Client</h2>
-              <button
-                onClick={() => setShowCreateForm(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <ClientForm
-              onSubmit={handleCreateClient}
-              onCancel={() => setShowCreateForm(false)}
-              isLoading={isSubmitting}
-            />
-          </div>
-        </div>
-      )}
+      <Modal isOpen={showCreateForm} onClose={() => setShowCreateForm(false)} title="New Client" size="sm">
+        <ClientForm
+          onSubmit={handleCreateClient}
+          onCancel={() => setShowCreateForm(false)}
+          isLoading={isSubmitting}
+        />
+      </Modal>
 
       {isLoading && allClients.length === 0 ? (
         <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden animate-pulse">
@@ -482,73 +476,55 @@ export default function ClientsPage() {
         </>
       )}
 
-      {showNoteModal && selectedClient && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="rounded-2xl shadow-xl p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto bg-white">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Add note for {selectedClient.name}
-              </h2>
-              <button
-                onClick={() => setShowNoteModal(false)}
-                className="text-gray-400 hover:text-gray-600 flex-shrink-0 ml-2"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <textarea
-              value={noteText}
-              onChange={(e) => setNoteText(e.target.value)}
-              placeholder="Enter your note..."
-              rows={4}
-              className="w-full px-3 py-2.5 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 mb-4"
-              autoFocus
-            />
-            <div className="flex gap-3">
-              <Button
-                variant="primary"
-                size="md"
-                onClick={submitNote}
-                disabled={isSubmitting || !noteText.trim()}
-              >
-                {isSubmitting ? 'Saving...' : 'Save Note'}
-              </Button>
-              <Button
-                variant="outline"
-                size="md"
-                onClick={() => setShowNoteModal(false)}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
+      <Modal
+        isOpen={showNoteModal && !!selectedClient}
+        onClose={() => setShowNoteModal(false)}
+        title={`Add note for ${selectedClient?.name ?? ''}`}
+        size="sm"
+      >
+        <textarea
+          value={noteText}
+          onChange={(e) => setNoteText(e.target.value)}
+          placeholder="Enter your note..."
+          rows={4}
+          className="w-full px-3 py-2.5 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 mb-4"
+          autoFocus
+        />
+        <div className="flex gap-3">
+          <Button
+            variant="primary"
+            size="md"
+            onClick={submitNote}
+            disabled={isSubmitting || !noteText.trim()}
+          >
+            {isSubmitting ? 'Saving...' : 'Save Note'}
+          </Button>
+          <Button
+            variant="outline"
+            size="md"
+            onClick={() => setShowNoteModal(false)}
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
         </div>
-      )}
+      </Modal>
 
-      {showReminderModal && selectedClient && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="rounded-2xl shadow-xl p-6 max-w-md w-full bg-white">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Add reminder for {selectedClient.name}
-              </h2>
-              <button
-                onClick={() => setShowReminderModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <ReminderForm
-              clientId={selectedClient.id}
-              onSubmit={submitReminder}
-              onCancel={() => setShowReminderModal(false)}
-              isLoading={isSubmitting}
-            />
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={showReminderModal && !!selectedClient}
+        onClose={() => setShowReminderModal(false)}
+        title={`Add reminder for ${selectedClient?.name ?? ''}`}
+        size="sm"
+      >
+        {selectedClient && (
+          <ReminderForm
+            clientId={selectedClient.id}
+            onSubmit={submitReminder}
+            onCancel={() => setShowReminderModal(false)}
+            isLoading={isSubmitting}
+          />
+        )}
+      </Modal>
     </DashboardPage>
   );
 }
