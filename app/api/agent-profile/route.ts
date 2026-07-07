@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { hasProLeadToolsAccess } from '@/lib/subscription';
+import { buildAgentProfilePath } from '@/lib/agent-profile-shared';
 
 const CORE_PROFILE_FIELDS = [
   'profile_enabled',
@@ -80,8 +81,9 @@ export async function GET() {
     }
 
     const fullName = user.user_metadata?.full_name || '';
-    const nameSlug = fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    const profileUrl = nameSlug ? `${process.env.NEXT_PUBLIC_APP_URL || ''}/agent/${nameSlug}--${user.id}` : '';
+    const profileUrl = fullName
+      ? `${process.env.NEXT_PUBLIC_APP_URL || ''}${buildAgentProfilePath(fullName, user.id)}`
+      : '';
 
     return NextResponse.json({
       success: true,

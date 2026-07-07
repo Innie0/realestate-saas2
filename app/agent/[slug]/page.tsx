@@ -1,5 +1,9 @@
+import type { Metadata } from 'next';
 import { createAdminClient } from '@/lib/supabase-admin';
 import { hasProLeadToolsAccess } from '@/lib/subscription';
+import { buildAgentProfilePath } from '@/lib/agent-profile-shared';
+import { AgentProfileStructuredData } from '@/components/seo/StructuredData';
+import { SITE_NAME_ALT, SITE_URL } from '@/lib/site-config';
 import PublicAgentProfileView from '@/components/PublicAgentProfileView';
 
 interface PageProps {
@@ -76,6 +80,48 @@ async function getPublishedListings(userId: string) {
   return data ?? [];
 }
 
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const agent = await getAgentProfile(slug);
+
+  if (!agent) {
+    return {
+      title: 'Agent profile not available',
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const canonicalPath = buildAgentProfilePath(agent.name, agent.id);
+  const pageUrl = `${SITE_URL}${canonicalPath}`;
+  const areasLabel = agent.areas.length > 0 ? agent.areas.slice(0, 3).join(', ') : '';
+  const title = areasLabel
+    ? `${agent.name} — Real Estate Agent in ${areasLabel}`
+    : `${agent.name} — Real Estate Agent`;
+  const description =
+    (agent.headline || agent.bio || '').slice(0, 160) ||
+    `Connect with ${agent.name}${areasLabel ? `, a real estate agent serving ${areasLabel}` : ''} on ${SITE_NAME_ALT}.`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: canonicalPath },
+    openGraph: {
+      type: 'website',
+      url: pageUrl,
+      title,
+      description,
+      siteName: SITE_NAME_ALT,
+      ...(agent.photoUrl ? { images: [{ url: agent.photoUrl, alt: agent.name }] } : {}),
+    },
+    twitter: {
+      card: agent.photoUrl ? 'summary_large_image' : 'summary',
+      title,
+      description,
+      ...(agent.photoUrl ? { images: [agent.photoUrl] } : {}),
+    },
+  };
+}
+
 export default async function AgentProfilePage({ params }: PageProps) {
   const { slug } = await params;
   const agent = await getAgentProfile(slug);
@@ -94,6 +140,12 @@ export default async function AgentProfilePage({ params }: PageProps) {
   }
 
   const listings = await getPublishedListings(agent.id);
+  const canonicalPath = buildAgentProfilePath(agent.name, agent.id);
 
-  return <PublicAgentProfileView agent={agent} listings={listings} />;
+  return (
+    <>
+      <AgentProfileStructuredData agent={agent} url={`${SITE_URL}${canonicalPath}`} />
+      <PublicAgentProfileView agent={agent} listings={listings} />
+    </>
+  );
 }

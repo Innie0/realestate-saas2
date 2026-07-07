@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase-admin';
 import type { PublicListingData } from '@/lib/public-listing-shared';
+import { buildAgentProfilePath } from '@/lib/agent-profile-shared';
 
 export type { PublicListingAgent, PublicListingData } from '@/lib/public-listing-shared';
 
@@ -34,13 +35,7 @@ export async function getPublicListing(id: string): Promise<PublicListingData | 
     (typeof user.user_metadata?.name === 'string' && user.user_metadata.name) ||
     'Agent';
 
-  const nameSlug = agentName
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-  const profilePath = nameSlug
-    ? `/agent/${nameSlug}--${project.user_id}`
-    : `/agent/${project.user_id}`;
+  const profilePath = buildAgentProfilePath(agentName, project.user_id);
 
   return {
     project: project as PublicListingData['project'],

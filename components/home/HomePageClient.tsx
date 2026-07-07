@@ -1760,6 +1760,7 @@ export default function HomePageClient() {
             <p className="text-gray-500 text-sm">© 2026 Realestic. All rights reserved.</p>
             <div className="flex items-center gap-6 text-sm text-gray-500">
               <Link href="/" className="hover:text-brand-600 transition-colors">Browse Properties</Link>
+              <Link href="/agents" className="hover:text-brand-600 transition-colors">Find an Agent</Link>
               <Link href="/about" className="hover:text-brand-600 transition-colors">About</Link>
               <Link href="/privacy" className="hover:text-brand-600 transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-brand-600 transition-colors">Terms</Link>

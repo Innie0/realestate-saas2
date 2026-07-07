@@ -64,6 +64,47 @@ export function GlobalStructuredData() {
   );
 }
 
+interface AgentProfileForStructuredData {
+  name: string;
+  headline?: string;
+  bio?: string;
+  photoUrl?: string;
+  phone?: string;
+  profileEmail?: string;
+  brokerage?: string;
+  areas?: string[];
+}
+
+/**
+ * RealEstateAgent structured data for an agent's public profile page — lets
+ * Google understand the page is a local business/agent listing (rather than
+ * a generic page) and surface richer results for "agents near me" searches.
+ */
+export function AgentProfileStructuredData({
+  agent,
+  url,
+}: {
+  agent: AgentProfileForStructuredData;
+  url: string;
+}) {
+  const raw: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'RealEstateAgent',
+    name: agent.name,
+    url,
+    description: agent.headline || agent.bio || undefined,
+    image: agent.photoUrl || undefined,
+    telephone: agent.phone || undefined,
+    email: agent.profileEmail || undefined,
+    areaServed: agent.areas && agent.areas.length > 0 ? agent.areas : undefined,
+    worksFor: agent.brokerage ? { '@type': 'Organization', name: agent.brokerage } : undefined,
+  };
+
+  const data = Object.fromEntries(Object.entries(raw).filter(([, value]) => value !== undefined));
+
+  return <JsonLd data={data} />;
+}
+
 export function HomeFaqStructuredData() {
   const faqPage = {
     '@context': 'https://schema.org',
