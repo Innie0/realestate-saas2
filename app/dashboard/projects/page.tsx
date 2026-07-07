@@ -11,6 +11,7 @@ import SearchInput from '@/components/ui/SearchInput';
 import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
 import ProjectCard from '@/components/ProjectCard';
+import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
 import { Plus, FolderKanban } from 'lucide-react';
 import { Project } from '@/types';
 import { useTour } from '@/hooks/useTour';
@@ -130,15 +131,16 @@ export default function ProjectsPage() {
           ))}
         </div>
       ) : filteredProjects.length > 0 ? (
-        <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <StaggerList className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {filteredProjects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              onDelete={() => handleDeleteProject(project.id)}
-            />
+            <StaggerItem key={project.id}>
+              <ProjectCard
+                project={project}
+                onDelete={() => handleDeleteProject(project.id)}
+              />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       ) : (
         <EmptyState
           icon={FolderKanban}

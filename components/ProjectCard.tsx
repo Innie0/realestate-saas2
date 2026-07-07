@@ -5,7 +5,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Project } from '@/types';
 import Card from './ui/Card';
-import { Calendar, MapPin, Home, Trash2 } from 'lucide-react';
+import { Calendar, MapPin, Home, Trash2, Globe } from 'lucide-react';
 
 /**
  * ProjectCardProps - Props for the ProjectCard component
@@ -33,11 +33,16 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
     year: 'numeric',
   });
 
-  // Get status badge color
+  // Status badge colors — light theme
   const statusColors = {
-    draft: 'bg-gray-500/20 text-gray-600 border border-gray-400/30',
-    in_progress: 'bg-brand-500/20 text-brand-400 border border-brand-400/30',
-    completed: 'bg-green-500/20 text-green-300 border border-green-400/30',
+    draft: 'bg-gray-100 text-gray-600 border border-gray-200',
+    in_progress: 'bg-brand-50 text-brand-700 border border-brand-200',
+    completed: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+  };
+  const statusLabels = {
+    draft: 'Draft',
+    in_progress: 'In progress',
+    completed: 'Completed',
   };
 
   const handleDelete = (e: React.MouseEvent) => {
@@ -59,6 +64,17 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
             alt={project.title}
             className="h-full w-full object-cover"
           />
+          <div className="absolute top-2 right-2 flex flex-col items-end gap-1.5">
+            <span className={`text-[11px] font-medium px-2 py-1 rounded-full backdrop-blur-sm ${statusColors[project.status]}`}>
+              {statusLabels[project.status]}
+            </span>
+            {project.published && (
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-full bg-white/90 text-gray-700 border border-gray-200 backdrop-blur-sm">
+                <Globe className="w-3 h-3 text-brand-600" />
+                Live
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Project details */}
