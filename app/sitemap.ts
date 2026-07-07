@@ -1,19 +1,31 @@
 import { MetadataRoute } from 'next';
 import { createAdminClient } from '@/lib/supabase-admin';
-import { getPublicAgentDirectory } from '@/lib/agent-directory';
+import { getPublicAgentDirectory, getAllAreaSlugs } from '@/lib/agent-directory';
 
-// Cap how many dynamic (agent/listing) URLs we emit in one sitemap file.
-// A single sitemap should stay well under Google's 50k URL limit — if the
-// directory grows past this, split into a sitemap index instead.
-const MAX_DYNAMIC_URLS = 1000;
+const baseUrl = 'https://realestic.ai';
+
+// Google's hard limit is 50,000 URLs per sitemap file. We stay comfortably
+// under that with a single file for now — if agent/listing counts ever get
+// close to this, split into multiple sitemaps via generateSitemaps()
+// instead of raising this further.
+const MAX_DYNAMIC_URLS = 40000;
 
 // Pulls live agent/listing data, so this must run per-request rather than
 // being frozen at build time (a build environment may not have DB access).
 export const dynamic = 'force-dynamic';
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://realestic.ai';
+async function getPublishedListings() {
+  const supabase = createAdminClient();
+  const { data } = await supabase
+    .from('projects')
+    .select('id, published_at')
+    .eq('published', true)
+    .order('published_at', { ascending: false })
+    .limit(MAX_DYNAMIC_URLS);
+  return data || [];
+}
 
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticEntries: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
@@ -68,7 +80,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let dynamicEntries: MetadataRoute.Sitemap = [];
 
   try {
-    const agents = await getPublicAgentDirectory();
+    const [agents, areas, listings] = await Promise.all([
+      getPublicAgentDirectory(),
+      getAllAreaSlugs(),
+      getPublishedListings(),
+    ]);
+
     const agentEntries: MetadataRoute.Sitemap = agents.slice(0, MAX_DYNAMIC_URLS).map((agent) => ({
       url: `${baseUrl}${agent.path}`,
       lastModified: new Date(),
@@ -76,22 +93,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }));
 
-    const supabase = createAdminClient();
-    const { data: listings } = await supabase
-      .from('projects')
-      .select('id, published_at')
-      .eq('published', true)
-      .order('published_at', { ascending: false })
-      .limit(MAX_DYNAMIC_URLS);
+    const areaEntries: MetadataRoute.Sitemap = areas.map((area) => ({
+      url: `${baseUrl}/agents/${area.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.6,
+    }));
 
-    const listingEntries: MetadataRoute.Sitemap = (listings || []).map((listing) => ({
+    const listingEntries: MetadataRoute.Sitemap = listings.map((listing) => ({
       url: `${baseUrl}/listing/${listing.id}`,
       lastModified: listing.published_at ? new Date(listing.published_at) : new Date(),
       changeFrequency: 'weekly',
       priority: 0.6,
     }));
 
-    dynamicEntries = [...agentEntries, ...listingEntries];
+    dynamicEntries = [...agentEntries, ...areaEntries, ...listingEntries];
   } catch (error) {
     console.error('Failed to build dynamic sitemap entries:', error);
   }

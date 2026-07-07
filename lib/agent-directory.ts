@@ -22,6 +22,17 @@ export interface PublicAgentSummary {
 
 const UNASSIGNED_AREA = 'Other areas';
 
+/**
+ * Turn an area name into a URL-safe slug, e.g. "Austin, TX" -> "austin-tx".
+ * Used for both in-page jump links and the dedicated /agents/[area] pages.
+ */
+export function slugifyArea(area: string): string {
+  return area
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 export async function getPublicAgentDirectory(): Promise<PublicAgentSummary[]> {
   const supabase = createAdminClient();
 
@@ -101,4 +112,31 @@ export function groupAgentsByArea(
       return a.localeCompare(b);
     })
     .map(([area, areaAgents]) => ({ area, agents: areaAgents }));
+}
+
+export interface AreaGroup {
+  area: string;
+  agents: PublicAgentSummary[];
+}
+
+/**
+ * Look up a single area group by its URL slug — powers the dedicated
+ * /agents/[area] landing pages (one per service area, e.g. /agents/austin-tx).
+ */
+export async function getAreaGroup(areaSlug: string): Promise<AreaGroup | null> {
+  const agents = await getPublicAgentDirectory();
+  const groups = groupAgentsByArea(agents);
+  return groups.find((group) => slugifyArea(group.area) === areaSlug) || null;
+}
+
+/**
+ * All distinct service areas currently listed, with their URL slugs — used
+ * to list dedicated area pages in the sitemap.
+ */
+export async function getAllAreaSlugs(): Promise<{ area: string; slug: string }[]> {
+  const agents = await getPublicAgentDirectory();
+  const groups = groupAgentsByArea(agents);
+  return groups
+    .filter((group) => group.area !== UNASSIGNED_AREA)
+    .map((group) => ({ area: group.area, slug: slugifyArea(group.area) }));
 }
