@@ -21,6 +21,7 @@ import {
   FolderKanban,
   FileText,
   Calendar,
+  AlertCircle,
 } from 'lucide-react';
 import { Project } from '@/types';
 import { useTour } from '@/hooks/useTour';
@@ -31,6 +32,11 @@ interface RecentClient {
   id: string;
   name: string;
   created_at: string;
+}
+
+interface ReminderRow {
+  id: string;
+  reminder_date: string;
 }
 
 interface RecentTransaction {
@@ -232,6 +238,85 @@ function ContinueSection({
   );
 }
 
+interface UrgentItem {
+  key: string;
+  icon: React.ElementType;
+  iconClass: string;
+  title: string;
+  subtitle: string;
+  href: string;
+}
+
+function UrgentQueue({ items, loading }: { items: UrgentItem[]; loading: boolean }) {
+  if (loading) {
+    return (
+      <Surface padding="md" className="animate-pulse">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-gray-100 h-10 w-10 shrink-0" />
+          <div className="flex-1 space-y-2">
+            <div className="h-4 bg-gray-100 rounded w-56 max-w-full" />
+            <div className="h-3 bg-gray-100 rounded w-72 max-w-full" />
+          </div>
+        </div>
+      </Surface>
+    );
+  }
+
+  if (items.length === 0) return null;
+
+  return (
+    <div className="space-y-2">
+      <p className="text-label">Needs your attention</p>
+      {items.map((item) => {
+        const Icon = item.icon;
+        return (
+          <Link key={item.key} href={item.href}>
+            <Surface
+              padding="md"
+              hover
+              className="flex items-center gap-3 bg-gradient-to-r from-white to-brand-50/30"
+            >
+              <div className={`p-2.5 rounded-xl shrink-0 ${item.iconClass}`}>
+                <Icon className="w-5 h-5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-body font-semibold text-gray-900">{item.title}</p>
+                <p className="text-caption text-gray-500 mt-0.5">{item.subtitle}</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-gray-300 shrink-0" />
+            </Surface>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+function QuickActionsStrip() {
+  return (
+    <div>
+      <p className="text-label mb-2">Quick actions</p>
+      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+        {QUICK_LINKS.map(({ href, label, icon: Icon, ...rest }) => (
+          <Link
+            key={href}
+            href={href}
+            data-tour={'tour' in rest ? rest.tour : undefined}
+            className="group flex flex-col items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-3.5 px-2 text-center hover:border-brand-300 hover:shadow-sm transition-all"
+          >
+            <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center group-hover:bg-brand-50 transition-colors">
+              <Icon className="w-4 h-4 text-gray-500 group-hover:text-brand-600 transition-colors" />
+            </div>
+            <span className="text-[11px] font-medium text-gray-600 group-hover:text-gray-900 leading-tight">
+              {label}
+            </span>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const [showWelcome, setShowWelcome] = useState(false);
   const [showGettingStarted, setShowGettingStarted] = useState(false);
@@ -240,6 +325,7 @@ export default function DashboardPage() {
   const { data: recentProjects = [], isLoading: projectsLoading } = useApi<Project[]>('/api/projects?limit=3');
   const { data: inboxLeads = [], isLoading: leadsLoading } = useApi<RecentClient[]>('/api/clients?status=all&view=inbox');
   const { data: allTransactions = [], isLoading: transactionsLoading } = useApi<RecentTransaction[]>('/api/transactions?limit=3');
+  const { data: activeReminders = [], isLoading: remindersLoading } = useApi<ReminderRow[]>('/api/reminders?include_completed=false');
 
   const usage = usageResponse?.data ?? null;
   const plan = (usageResponse?.plan as 'starter' | 'pro') ?? 'starter';
@@ -253,6 +339,11 @@ export default function DashboardPage() {
     [inboxLeads],
   );
 
+  const overdueReminderCount = useMemo(
+    () => activeReminders.filter((r) => new Date(r.reminder_date).getTime() < Date.now()).length,
+    [activeReminders],
+  );
+
   const focusMessage = useMemo(() => {
     if (leadsLoading && inboxLeads.length === 0) {
       return 'Loading your workspace';
@@ -260,14 +351,51 @@ export default function DashboardPage() {
     if (hotLeadCount > 0) {
       return `${hotLeadCount} hot lead${hotLeadCount === 1 ? '' : 's'} need${hotLeadCount === 1 ? 's' : ''} a response`;
     }
+    if (overdueReminderCount > 0) {
+      return `${overdueReminderCount} follow-up${overdueReminderCount === 1 ? '' : 's'} overdue`;
+    }
     if (inboxLeads.length > 0) {
       return `${inboxLeads.length} lead${inboxLeads.length === 1 ? '' : 's'} waiting in your inbox`;
     }
     return 'Your workspace is clear — start something new';
-  }, [hotLeadCount, inboxLeads.length, leadsLoading]);
+  }, [hotLeadCount, overdueReminderCount, inboxLeads.length, leadsLoading]);
 
-  const showPriorityBanner = hotLeadCount > 0 || inboxLeads.length > 0;
-  const priorityBannerLoading = leadsLoading && inboxLeads.length === 0;
+  const urgentItems = useMemo<UrgentItem[]>(() => {
+    const items: UrgentItem[] = [];
+    if (hotLeadCount > 0) {
+      items.push({
+        key: 'hot-leads',
+        icon: Flame,
+        iconClass: 'bg-red-50 text-red-600',
+        title: `Respond to ${hotLeadCount} hot lead${hotLeadCount === 1 ? '' : 's'}`,
+        subtitle: 'Leads under 48 hours convert best when you reply quickly.',
+        href: '/dashboard/leads',
+      });
+    }
+    if (overdueReminderCount > 0) {
+      items.push({
+        key: 'overdue-followups',
+        icon: AlertCircle,
+        iconClass: 'bg-amber-50 text-amber-600',
+        title: `${overdueReminderCount} overdue follow-up${overdueReminderCount === 1 ? '' : 's'}`,
+        subtitle: 'Clients or reminders waiting on a reply from you.',
+        href: '/dashboard/clients',
+      });
+    }
+    if (items.length === 0 && inboxLeads.length > 0) {
+      items.push({
+        key: 'inbox-leads',
+        icon: Inbox,
+        iconClass: 'bg-gray-100 text-gray-600',
+        title: `Review ${inboxLeads.length} inbox lead${inboxLeads.length === 1 ? '' : 's'}`,
+        subtitle: 'New captures are waiting to be added to your CRM.',
+        href: '/dashboard/leads',
+      });
+    }
+    return items;
+  }, [hotLeadCount, overdueReminderCount, inboxLeads.length]);
+
+  const urgentLoading = (leadsLoading || remindersLoading) && inboxLeads.length === 0 && activeReminders.length === 0;
 
   const continueListItems = useMemo(
     () => buildContinueListItems(recentProjects, allTransactions),
@@ -354,8 +482,8 @@ export default function DashboardPage() {
     <div>
       <Header title={getGreeting()} subtitle={`${formatToday()} · ${focusMessage}`} />
 
-      <PageShell className="space-y-6">
-        <PageTransition>
+      <PageShell>
+        <PageTransition className="space-y-6">
         {showOnboarding && (
           <GettingStartedPanel
             variant={showWelcome ? 'welcome' : 'empty'}
@@ -363,83 +491,28 @@ export default function DashboardPage() {
           />
         )}
 
-        {/* Primary focus */}
-        {priorityBannerLoading ? (
-          <Surface padding="md" className="animate-pulse">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-start gap-3 flex-1">
-                <div className="p-2.5 rounded-xl bg-gray-100 h-10 w-10 shrink-0" />
-                <div className="flex-1 space-y-2">
-                  <div className="h-3 bg-gray-100 rounded w-16" />
-                  <div className="h-5 bg-gray-100 rounded w-56 max-w-full" />
-                  <div className="h-3 bg-gray-100 rounded w-72 max-w-full" />
-                </div>
-              </div>
-              <div className="h-5 bg-gray-100 rounded w-24 shrink-0" />
-            </div>
-          </Surface>
-        ) : showPriorityBanner ? (
-          <Link href="/dashboard/leads">
-            <Surface
-              padding="md"
-              hover
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-white to-brand-50/40"
-            >
-              <div className="flex items-start gap-3">
-                <div className="p-2.5 rounded-xl bg-red-50 text-red-600">
-                  <Flame className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-label mb-1">Priority</p>
-                  <p className="text-title font-semibold text-gray-900">
-                    {hotLeadCount > 0
-                      ? `Respond to ${hotLeadCount} hot lead${hotLeadCount === 1 ? '' : 's'}`
-                      : `Review ${inboxLeads.length} inbox lead${inboxLeads.length === 1 ? '' : 's'}`}
-                  </p>
-                  <p className="text-caption text-gray-500 mt-1">
-                    Leads under 48 hours convert best when you reply quickly.
-                  </p>
-                </div>
-              </div>
-              <span className="inline-flex items-center gap-1.5 text-body font-medium text-brand-600 shrink-0">
-                Open leads <ArrowRight className="w-4 h-4" />
-              </span>
-            </Surface>
-          </Link>
-        ) : null}
+        {/* 1. Urgent — what needs a response right now */}
+        <UrgentQueue items={urgentItems} loading={urgentLoading} />
 
-        {/* Today layout — main column + sticky sidebar (avoids empty grid row gap) */}
-        <div className="flex flex-col lg:flex-row lg:items-start gap-5 lg:gap-6">
-          <div className="flex-1 min-w-0 space-y-5" data-tour="notifications">
-            <NotificationsPanel embedded />
-            <ContinueSection loading={continueLoading} items={continueListItems} />
-            {usage ? (
-              <PlanUsagePanel usage={usage} plan={plan} />
-            ) : usageLoading ? (
-              <PlanUsagePanelSkeleton />
-            ) : null}
-          </div>
+        {/* 2. Quick actions — jump straight into the most common tools */}
+        <QuickActionsStrip />
 
-          <aside className="w-full lg:w-72 xl:w-80 shrink-0 space-y-5 lg:sticky lg:top-6">
-            <MarketplaceSummaryPanel />
-            <Surface padding="md">
-              <p className="text-label mb-3">Quick actions</p>
-              <div className="space-y-1">
-                {QUICK_LINKS.map(({ href, label, icon: Icon, ...rest }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    data-tour={'tour' in rest ? rest.tour : undefined}
-                    className="flex items-center gap-3 px-2 py-2.5 -mx-2 rounded-xl text-body text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors group"
-                  >
-                    <Icon className="w-4 h-4 text-gray-400 group-hover:text-brand-500 transition-colors" />
-                    <span className="flex-1">{label}</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                ))}
-              </div>
-            </Surface>
-          </aside>
+        {/* 3. Continue work */}
+        <ContinueSection loading={continueLoading} items={continueListItems} />
+
+        {/* 4. Today's schedule */}
+        <div data-tour="notifications">
+          <NotificationsPanel embedded />
+        </div>
+
+        {/* 5. Secondary info — plan usage + marketplace activity */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          {usage ? (
+            <PlanUsagePanel usage={usage} plan={plan} layout="sidebar" />
+          ) : usageLoading ? (
+            <PlanUsagePanelSkeleton layout="sidebar" />
+          ) : null}
+          <MarketplaceSummaryPanel />
         </div>
         </PageTransition>
       </PageShell>

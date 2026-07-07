@@ -31,8 +31,8 @@ export default function DashboardPage({
   return (
     <div className={clsx('min-h-screen relative', ambientClasses[ambient])}>
       <Header title={title} subtitle={subtitle} actions={actions} />
-      <PageShell size={size} className={clsx('space-y-5 relative z-[1]', className)}>
-        <PageTransition>{children}</PageTransition>
+      <PageShell size={size} className={clsx('relative z-[1]', className)}>
+        <PageTransition className="space-y-5">{children}</PageTransition>
       </PageShell>
     </div>
   );
