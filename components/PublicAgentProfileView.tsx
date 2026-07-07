@@ -9,6 +9,7 @@ import {
   ExternalLink,
   Home,
   MessageCircle,
+  CalendarClock,
 } from 'lucide-react';
 import LeadCaptureForm from '@/components/LeadCaptureForm';
 import AgentListingsShowcase, { type ShowcaseListing } from '@/components/AgentListingsShowcase';
@@ -41,6 +42,7 @@ interface ListingRow {
 interface PublicAgentProfileViewProps {
   agent: PublicAgentProfile;
   listings: ListingRow[];
+  bookingUrl?: string | null;
 }
 
 function SectionCard({
@@ -88,6 +90,7 @@ function parseListings(listings: ListingRow[]): ShowcaseListing[] {
 export default function PublicAgentProfileView({
   agent,
   listings,
+  bookingUrl,
 }: PublicAgentProfileViewProps) {
   const initials = agent.name
     .split(' ')
@@ -136,6 +139,16 @@ export default function PublicAgentProfileView({
             <img src="/logo.png" alt="Realestic" className="h-8 w-auto" />
           </Link>
           <div className="flex items-center gap-2">
+            {bookingUrl && (
+              <Link
+                href={bookingUrl}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs sm:text-sm font-medium text-gray-700 hover:border-brand-300 hover:text-brand-700 transition-colors"
+              >
+                <CalendarClock className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Book a showing</span>
+                <span className="sm:hidden">Book</span>
+              </Link>
+            )}
             <a
               href="#contact"
               className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs sm:text-sm font-medium text-gray-700 hover:border-brand-300 hover:text-brand-700 transition-colors"
@@ -219,6 +232,15 @@ export default function PublicAgentProfileView({
 
             {hasContact && (
               <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+                {bookingUrl && (
+                  <Link
+                    href={bookingUrl}
+                    className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-800 shadow-sm hover:border-brand-300 hover:text-brand-700 transition-colors"
+                  >
+                    <CalendarClock className="w-4 h-4 text-brand-600" />
+                    Book a showing
+                  </Link>
+                )}
                 {agent.phone && (
                   <a
                     href={`tel:${agent.phone}`}

@@ -23,7 +23,7 @@ import {
   Home, Building2, KeyRound, Search, Flame,
   ArrowRight, Users, Lock, MailCheck,
   Loader2, DoorOpen, Megaphone, Zap, UserPlus, MailX, MapPin, Sparkles, UserCheck,
-  ChevronDown,
+  ChevronDown, CalendarClock,
 } from 'lucide-react';
 
 type LeadsTab = 'inbox' | 'capture' | 'automations';
@@ -462,7 +462,7 @@ export default function LeadsPage() {
   const { data: leads = [], isLoading, mutate: mutateLeads } = useApi<Lead[]>('/api/clients?status=all&view=inbox');
   const { response: usageResponse } = useApi('/api/usage');
   const { response: profileResponse } = useApi('/api/agent-profile');
-  const { data: settingsData, mutate: mutateSettings } = useApi<FollowupSettings & { auto_followup_enabled?: boolean }>('/api/agent-settings');
+  const { data: settingsData, mutate: mutateSettings } = useApi<FollowupSettings & { auto_followup_enabled?: boolean; booking_enabled?: boolean }>('/api/agent-settings');
 
   const isPaidPlan = usageResponse?.hasAccess === true;
   const isProPlan = usageResponse?.hasProLeadTools === true;
@@ -477,6 +477,7 @@ export default function LeadsPage() {
   };
 
   const [leadFormUrl, setLeadFormUrl] = useState('');
+  const [bookingUrl, setBookingUrl] = useState('');
   const [copied, setCopied] = useState(false);
   const [filter, setFilter] = useState<'all' | 'hot' | 'warm' | 'cold'>('all');
   const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
@@ -501,6 +502,7 @@ export default function LeadsPage() {
       const nameSlug = fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       const slug = nameSlug ? `${nameSlug}--${user.id}` : user.id;
       setLeadFormUrl(`${window.location.origin}/lead/${slug}`);
+      setBookingUrl(`${window.location.origin}/book/${slug}`);
     });
   }, []);
 
@@ -799,7 +801,38 @@ export default function LeadsPage() {
               )}
             </Surface>
 
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <button
+                type="button"
+                onClick={() => handleProFeatureClick('/dashboard/leads/booking')}
+                className="rounded-2xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)] p-6 hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-200 group text-left w-full"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                    <CalendarClock className="w-5 h-5 text-gray-900/70" />
+                  </div>
+                  {!isProPlan && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200 text-xs font-medium">
+                      <Sparkles className="w-3 h-3" />
+                      Pro
+                    </span>
+                  )}
+                  {isProPlan && settingsData?.booking_enabled && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-medium">
+                      Live
+                    </span>
+                  )}
+                  <ArrowRight className="w-4 h-4 text-gray-600 ml-auto group-hover:text-brand-600 transition-colors" />
+                </div>
+                <h3 className="text-base font-semibold text-gray-900 mb-1">Booking link</h3>
+                <p className="text-sm text-gray-500">
+                  Share a link so leads can pick an open time and book a showing themselves.
+                </p>
+                {isProPlan && settingsData?.booking_enabled && bookingUrl && (
+                  <p className="text-xs text-gray-600 mt-3 truncate">{bookingUrl}</p>
+                )}
+              </button>
+
               <button
                 type="button"
                 onClick={() => handleProFeatureClick('/dashboard/leads/open-houses')}

@@ -22,3 +22,12 @@ export function buildAgentProfilePath(name: string, userId: string): string {
   const slug = name ? slugifyAgentName(name) : '';
   return slug ? `/agent/${slug}--${userId}` : `/agent/${userId}`;
 }
+
+/**
+ * Build the public booking link path for an agent, e.g. /book/jane-oneil--<uuid>.
+ * Falls back to a bare /book/<uuid> path if the agent has no name on file.
+ */
+export function buildBookingPath(name: string, userId: string): string {
+  const slug = name ? slugifyAgentName(name) : '';
+  return slug ? `/book/${slug}--${userId}` : `/book/${userId}`;
+}

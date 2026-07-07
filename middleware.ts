@@ -19,13 +19,14 @@ const publicRoutes = [
   '/agents',
 ];
 
-const publicPathPrefixes = ['/lead/', '/open-house/', '/agent/', '/listing/', '/agents/'];
+const publicPathPrefixes = ['/lead/', '/open-house/', '/agent/', '/listing/', '/agents/', '/book/'];
 
 const publicApiPrefixes = [
   '/api/stripe/checkout',
   '/api/stripe/verify-checkout',
   '/api/stripe/webhook',
   '/api/leads',
+  '/api/booking/',
   '/api/contact',
   '/api/cron/',
 ];

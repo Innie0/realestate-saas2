@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { createAdminClient } from '@/lib/supabase-admin';
 import { hasProLeadToolsAccess } from '@/lib/subscription';
-import { buildAgentProfilePath } from '@/lib/agent-profile-shared';
+import { buildAgentProfilePath, buildBookingPath } from '@/lib/agent-profile-shared';
 import { AgentProfileStructuredData } from '@/components/seo/StructuredData';
 import { SITE_NAME_ALT, SITE_URL } from '@/lib/site-config';
 import PublicAgentProfileView from '@/components/PublicAgentProfileView';
@@ -64,6 +64,7 @@ async function getAgentProfile(slug: string) {
     license: settings.profile_license || '',
     website: settings.profile_website || '',
     yearsExperience: settings.profile_years_experience ?? null,
+    bookingEnabled: settings.booking_enabled === true,
   };
 }
 
@@ -141,11 +142,12 @@ export default async function AgentProfilePage({ params }: PageProps) {
 
   const listings = await getPublishedListings(agent.id);
   const canonicalPath = buildAgentProfilePath(agent.name, agent.id);
+  const bookingUrl = agent.bookingEnabled ? buildBookingPath(agent.name, agent.id) : null;
 
   return (
     <>
       <AgentProfileStructuredData agent={agent} url={`${SITE_URL}${canonicalPath}`} />
-      <PublicAgentProfileView agent={agent} listings={listings} />
+      <PublicAgentProfileView agent={agent} listings={listings} bookingUrl={bookingUrl} />
     </>
   );
 }

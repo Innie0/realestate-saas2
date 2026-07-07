@@ -131,6 +131,7 @@ export interface CalendarEvent {
   end_time: string; // End date/time (ISO 8601 format)
   location?: string; // Event location
   project_id?: string; // Optional link to a project
+  client_id?: string; // Optional link to a client (e.g. booked via booking link)
   event_type: 'showing' | 'open_house' | 'meeting' | 'other'; // Type of event
   attendees?: string[]; // Email addresses of attendees
   google_event_id?: string; // Google Calendar event ID (if synced)
