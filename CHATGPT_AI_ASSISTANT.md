@@ -35,6 +35,16 @@ The Tasks page has been redesigned with a ChatGPT-like interface that includes c
 - **Enter**: Send message
 - **Shift+Enter**: New line in message
 
+### 🛠️ Actions (Tool-Calling)
+The assistant isn't limited to just talking — it can take real actions in your account when you ask it to:
+- Create a new listing project ("Make a project for 123 Main St, 3 bed 2 bath")
+- Add a client to your CRM ("Add John Smith as a client, john@email.com")
+- Schedule a follow-up reminder for an existing client ("Remind me to follow up with Sarah next Friday")
+- Add a calendar event ("Book a showing at 2pm tomorrow at 456 Oak Ave")
+- Look up existing clients/projects by name to ground its answers
+
+These run through OpenAI function/tool calling (see `lib/ai-tools.ts`), respect the same plan usage limits as the regular dashboard forms, and the assistant will confirm what it did (with a link) in its reply. See `app/api/conversations/route.ts` for the agent loop that executes tool calls and feeds results back to the model.
+
 ## Database Schema
 
 Two new tables have been created:

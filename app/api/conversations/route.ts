@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { openai } from '@/lib/openai';
 import { checkUsageLimit, incrementUsage, usageLimitError } from '@/lib/usage';
+import { assistantTools, executeAssistantTool, ASSISTANT_TOOLS_SYSTEM_NOTE } from '@/lib/ai-tools';
 
 /**
  * GET handler - Retrieve all conversations for the current user
@@ -268,7 +269,8 @@ CRITICAL RESTRICTIONS:
 - If asked about financial matters, remind them to consult a licensed financial advisor
 - You can provide general information about real estate processes, but not financial counsel
 
-If you see financial information in a document, you may extract and summarize it, but do not interpret it or provide advice based on it.`,
+If you see financial information in a document, you may extract and summarize it, but do not interpret it or provide advice based on it.
+${ASSISTANT_TOOLS_SYSTEM_NOTE}`,
         },
       ];
 
@@ -318,14 +320,59 @@ If you see financial information in a document, you may extract and summarize it
         });
       }
 
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-4o',
-        messages,
-        temperature: 0.7,
-        max_tokens: 2000,
-      });
+      // Agent loop: let the model call tools (create project/client/reminder/event,
+      // look up existing records) and feed results back until it produces a final
+      // plain-text reply, or we hit a safety cap on the number of tool rounds.
+      const MAX_TOOL_ROUNDS = 4;
+      let round = 0;
+      let executedAnyTool = false;
 
-      aiOutput = completion.choices[0]?.message?.content || 'Unable to generate response.';
+      while (round < MAX_TOOL_ROUNDS) {
+        const completion = await openai.chat.completions.create({
+          model: 'gpt-4o',
+          messages,
+          temperature: 0.7,
+          max_tokens: 2000,
+          tools: assistantTools,
+          tool_choice: 'auto',
+        });
+
+        const responseMessage = completion.choices[0]?.message;
+        if (!responseMessage) break;
+
+        const toolCalls = responseMessage.tool_calls;
+        if (!toolCalls || toolCalls.length === 0) {
+          aiOutput = responseMessage.content || 'Unable to generate response.';
+          break;
+        }
+
+        // Record the assistant's tool-call request, then execute each tool
+        // and feed the results back so the model can respond to them.
+        messages.push(responseMessage);
+        executedAnyTool = true;
+
+        for (const toolCall of toolCalls) {
+          const result = await executeAssistantTool(
+            supabase,
+            user.id,
+            toolCall.function.name,
+            toolCall.function.arguments
+          );
+          messages.push({
+            role: 'tool',
+            tool_call_id: toolCall.id,
+            content: JSON.stringify(result),
+          });
+        }
+
+        round += 1;
+      }
+
+      if (!aiOutput && executedAnyTool) {
+        aiOutput = 'Done!';
+      } else if (!aiOutput) {
+        aiOutput = 'Unable to generate response.';
+      }
       
       // Strip markdown formatting that OpenAI loves to add
       // Remove **bold** → bold

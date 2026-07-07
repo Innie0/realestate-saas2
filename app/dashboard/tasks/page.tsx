@@ -11,8 +11,8 @@ import { useApi } from '@/lib/swr';
 const STARTER_PROMPTS = [
   'Write a compelling listing description for a 3-bed home',
   'Draft a follow-up email for a buyer who toured yesterday',
-  'Suggest social media captions for a new listing',
-  'Help me prepare talking points for a listing appointment',
+  'Create a project for 123 Main St, 3 bed 2 bath',
+  'Remind me to follow up with a client next Friday',
 ] as const;
 
 function sortConversations(list: Conversation[]): Conversation[] {
