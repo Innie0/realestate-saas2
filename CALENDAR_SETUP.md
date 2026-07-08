@@ -54,8 +54,15 @@ Before you can use the calendar feature, you need to:
    - Name: **RealEstate SaaS Web Client**
    - Authorized redirect URIs: 
      - `http://localhost:3000/api/calendar/google/callback` (for local development)
-     - `https://yourdomain.com/api/calendar/google/callback` (for production)
+     - `https://realestic.ai/api/calendar/google/callback` (production — must match `NEXT_PUBLIC_APP_URL` exactly, no trailing slash)
    - Click **"Create"**
+
+   ⚠️ **Both URIs must be added**, even if you only test locally at first. If the production
+   one is missing, connecting Google Calendar on the live site fails with
+   `Error 400: redirect_uri_mismatch`. The app builds the redirect URI at runtime as
+   `NEXT_PUBLIC_APP_URL + '/api/calendar/google/callback'` (see `lib/google-calendar.ts`), so
+   whatever you add here must exactly match the `NEXT_PUBLIC_APP_URL` value set in your
+   production environment (Vercel → Project Settings → Environment Variables).
 
 5. **Copy your credentials:**
    - Client ID (looks like: `123456789-abc123.apps.googleusercontent.com`)
@@ -318,9 +325,31 @@ npm run dev
 
 **Solution**:
 - Double-check your redirect URI in Google Cloud Console / Azure Portal
-- Make sure it exactly matches: `http://localhost:3000/api/calendar/google/callback` (or outlook)
-- No trailing slashes!
-- Check your `NEXT_PUBLIC_APP_URL` in `.env.local`
+- Make sure it exactly matches: `http://localhost:3000/api/calendar/google/callback` (local) or
+  `https://realestic.ai/api/calendar/google/callback` (production) — no trailing slashes!
+- Check `NEXT_PUBLIC_APP_URL` in `.env.local` (local) and in Vercel's Environment Variables
+  (production). Since it's a `NEXT_PUBLIC_` var it's baked in at build time, so changing it in
+  Vercel requires a redeploy before it takes effect.
+- Click "Error details" on Google's error page — it shows you the exact `redirect_uri` value
+  that was sent, so you can confirm precisely what to add in Google Cloud Console.
+
+### Google Calendar keeps disconnecting on its own
+
+**Problem**: The connection was working, then silently stopped (shows "Not Connected" again
+with no action from you)
+
+**Cause**: If your OAuth consent screen's **Publishing status** is still "Testing" in Google
+Cloud Console, Google issues refresh tokens that expire after **7 days**. When the app next
+tries to refresh an expired token (e.g. syncing a transaction's dates to your calendar), the
+refresh fails and the app automatically marks the connection inactive so you know to
+reconnect (see `syncTransactionToCalendar` in `lib/transaction-calendar-sync.ts`).
+
+**Solution**:
+- Go to **OAuth consent screen** in Google Cloud Console and move Publishing status to
+  "In production" (for calendar scopes this doesn't require full verification — users just see
+  an "unverified app" warning they can click through). This removes the 7-day refresh token
+  expiry.
+- Until then, you'll need to reconnect Google Calendar periodically from the Calendar page.
 
 ### "invalid_client" error
 

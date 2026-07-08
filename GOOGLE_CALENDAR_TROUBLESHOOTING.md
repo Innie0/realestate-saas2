@@ -156,13 +156,27 @@ fetch('/api/calendar/google/connect', { method: 'POST' })
 ## 🐛 Common Errors & Fixes
 
 ### Error: "redirect_uri_mismatch"
-**Cause:** Redirect URI in Google Cloud Console doesn't match
+**Cause:** Redirect URI in Google Cloud Console doesn't match what the app sends. The app
+builds it at runtime as `NEXT_PUBLIC_APP_URL + '/api/calendar/google/callback'`
+(`lib/google-calendar.ts`), so it changes depending on which environment you're in.
 
 **Fix:**
-1. Go to Google Cloud Console → Credentials
-2. Edit your OAuth Client ID
-3. Add exactly: `http://localhost:3000/api/calendar/google/callback`
-4. Save and try again
+1. On Google's error page, click **"Error details"** to see the exact `redirect_uri` value that
+   was actually sent — this tells you precisely what to register.
+2. Go to Google Cloud Console → Credentials → your OAuth Client ID
+3. Add exactly (both are needed):
+   - `http://localhost:3000/api/calendar/google/callback` (local dev)
+   - `https://realestic.ai/api/calendar/google/callback` (production)
+4. Confirm `NEXT_PUBLIC_APP_URL` is set to `https://realestic.ai` in Vercel's Production
+   environment variables (no trailing slash). Since it's a `NEXT_PUBLIC_` var, redeploy after
+   changing it for the new value to take effect.
+5. Save and try again
+
+**Note:** If a connection that was previously working suddenly disconnects on its own (not from
+you clicking Disconnect), it's usually because the OAuth consent screen is still in "Testing"
+publishing status — Google expires refresh tokens after 7 days in that mode, and the app
+automatically marks the connection inactive when a refresh fails. Move Publishing status to
+"In production" in Google Cloud Console to stop this from recurring.
 
 ---
 
