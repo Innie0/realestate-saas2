@@ -61,6 +61,14 @@
     -webkit-text-fill-color: #111827 !important;
     caret-color: #111827;
   }
+
+  /* Unified icon weight inside the app workspace.
+     Only overrides lucide's default (2) — explicit strokeWidth props
+     like 1.5 or 1.25 are set as attributes with other values and are
+     left untouched, so intentional lighter icons keep their weight. */
+  .dashboard-root .lucide[stroke-width='2'] {
+    stroke-width: 1.75;
+  }
 }
 
 /* Custom utility classes */
@@ -88,7 +96,7 @@
 
   /* Dashboard form controls */
   .field-select {
-    @apply px-3 py-2.5 text-sm bg-white rounded-xl text-gray-900 shadow-[0_1px_2px_rgba(0,0,0,0.04)] focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-shadow duration-150;
+    @apply px-3 py-2.5 text-sm bg-white rounded-xl text-gray-900 ring-1 ring-gray-900/[0.06] shadow-surface focus:outline-none focus:ring-2 focus:ring-brand-500/30 transition-shadow duration-150;
   }
 
   /* Legal page typography */

@@ -138,12 +138,12 @@ export default function Select({
 
   const triggerClasses = clsx(
     'flex w-full items-center justify-between gap-2 text-left text-sm transition-shadow duration-150',
-    'rounded-xl border bg-white text-gray-900 shadow-[0_1px_2px_rgba(0,0,0,0.04)]',
-    'focus:outline-none focus:ring-2 focus:ring-brand-500/20',
+    'rounded-xl border bg-white text-gray-900 ring-1 ring-gray-900/[0.06] shadow-surface',
+    'focus:outline-none focus:ring-2 focus:ring-brand-500/30',
     error
       ? 'border-red-300 focus:ring-red-200'
-      : 'border-transparent focus:border-brand-500/30',
-    disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-[0_1px_3px_rgba(0,0,0,0.06)]',
+      : 'border-transparent',
+    disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:ring-gray-900/[0.09]',
     !selectedOption && !value && 'text-gray-400',
     triggerClassName,
   );

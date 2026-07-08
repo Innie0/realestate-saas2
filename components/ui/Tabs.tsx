@@ -49,12 +49,12 @@ export default function Tabs<T extends string>({
             {active && !reduced && (
               <motion.span
                 layoutId="tabs-active-pill"
-                className="absolute inset-0 rounded-lg bg-white shadow-sm"
+                className="absolute inset-0 rounded-lg bg-white ring-1 ring-gray-900/[0.05] shadow-sm"
                 transition={{ type: 'spring', stiffness: 500, damping: 38 }}
               />
             )}
             {active && reduced && (
-              <span className="absolute inset-0 rounded-lg bg-white shadow-sm" />
+              <span className="absolute inset-0 rounded-lg bg-white ring-1 ring-gray-900/[0.05] shadow-sm" />
             )}
             {Icon && <Icon className="relative z-10 w-4 h-4 flex-shrink-0" />}
             <span

@@ -197,7 +197,7 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
     }
   };
   return (
-    <header className="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b border-gray-100">
+    <header className="sticky top-0 z-20 bg-white/85 backdrop-blur-md border-b border-gray-200/70">
       <div className="px-4 sm:px-6 py-3.5">
         <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0 flex-1">
@@ -217,66 +217,70 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
           <div className="relative" ref={notificationRef}>
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-brand-600 transition-colors"
+              className="relative rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors"
               aria-label="Notifications"
             >
-              <Bell className="h-5 w-5" />
+              <Bell className="h-[18px] w-[18px]" />
               {/* Notification badge - shows when there are unread notifications */}
               {notifications.length > 0 && (
-                <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
+                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-brand-500 ring-2 ring-white"></span>
               )}
             </button>
 
             {/* Notifications dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-96 max-h-[32rem] overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-xl">
-                <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between rounded-t-xl">
+              <div className="absolute right-0 mt-2 w-96 max-h-[32rem] overflow-y-auto bg-white ring-1 ring-gray-900/[0.06] rounded-2xl shadow-overlay">
+                <div className="sticky top-0 bg-white border-b border-gray-100 px-5 py-3.5 flex items-center justify-between rounded-t-2xl z-10">
                   <div className="flex items-center gap-2">
-                    <Bell className="w-4 h-4 text-gray-400" />
-                    <h3 className="font-semibold text-gray-900 text-sm">Notifications</h3>
+                    <h3 className="font-semibold tracking-tight text-gray-900 text-sm">Notifications</h3>
                     {notifications.length > 0 && (
-                      <span className="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-0.5 rounded-full border border-gray-200">
+                      <span className="bg-gray-100 text-gray-600 text-[11px] font-medium px-1.5 py-0.5 rounded-md tabular-nums">
                         {notifications.length}
                       </span>
                     )}
                   </div>
                   <button
                     onClick={() => setShowNotifications(false)}
-                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                    className="-m-1 rounded-md p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
                   >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
 
-                <div className="p-2">
+                <div>
                   {loading ? (
-                    <div className="animate-pulse space-y-3 p-3">
+                    <div className="animate-pulse space-y-3 p-5">
                       <div className="h-4 bg-gray-100 rounded w-3/4"></div>
                       <div className="h-3 bg-gray-100 rounded"></div>
                       <div className="h-3 bg-gray-100 rounded w-5/6"></div>
                     </div>
                   ) : notifications.length === 0 ? (
-                    <div className="text-center py-8 text-gray-400">
-                      <Bell className="w-10 h-10 mx-auto mb-3 opacity-30" />
-                      <p className="text-sm text-gray-500">No upcoming events or reminders</p>
-                      <p className="text-xs mt-1 text-gray-400">You're all caught up!</p>
+                    <div className="text-center py-10 px-6">
+                      <div className="relative inline-flex items-center justify-center w-10 h-10 mb-3">
+                        <span className="absolute inset-0 rounded-full bg-gray-50 ring-1 ring-gray-200" aria-hidden />
+                        <Bell className="relative w-4 h-4 text-gray-400" strokeWidth={1.5} />
+                      </div>
+                      <p className="text-sm font-medium text-gray-700">You&apos;re all caught up</p>
+                      <p className="text-xs mt-1 text-gray-400">No events or reminders in the next 7 days</p>
                     </div>
                   ) : (
-                    <div className="space-y-1">
+                    <div className="divide-y divide-gray-100">
                       {notifications.map((item) => (
                         <div
                           key={item.id}
-                          className="p-3 bg-gray-50 rounded-lg border border-gray-100 hover:border-gray-200 hover:bg-gray-100 transition-all"
+                          className="px-5 py-3.5 hover:bg-gray-50/80 transition-colors"
                         >
-                          <div className="flex items-start gap-2">
-                            {item.type === 'reminder' ? (
-                              <Bell className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                            ) : (
-                              <Calendar className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                            )}
+                          <div className="flex items-start gap-3">
+                            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-50 ring-1 ring-gray-200/70">
+                              {item.type === 'reminder' ? (
+                                <Bell className="w-3.5 h-3.5 text-gray-500" strokeWidth={1.75} />
+                              ) : (
+                                <Calendar className="w-3.5 h-3.5 text-gray-500" strokeWidth={1.75} />
+                              )}
+                            </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-start justify-between gap-2">
-                                <h4 className="font-medium text-gray-900 text-sm leading-tight">
+                                <h4 className="font-medium text-gray-900 text-[13px] leading-snug">
                                   {item.title}
                                 </h4>
                                 {item.type === 'reminder' && (
@@ -286,29 +290,29 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
                                       e.stopPropagation();
                                       handleComplete(item.id);
                                     }}
-                                    className="p-1 hover:bg-gray-200 rounded transition-colors flex-shrink-0"
+                                    className="p-1 -m-1 hover:bg-gray-100 rounded-md transition-colors flex-shrink-0"
                                     title="Dismiss"
                                   >
-                                    <X className="w-4 h-4 text-gray-400" />
+                                    <X className="w-3.5 h-3.5 text-gray-400" />
                                   </button>
                                 )}
                               </div>
                               {item.description && (
-                                <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                                <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">
                                   {item.description}
                                 </p>
                               )}
-                              <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
+                              <div className="flex items-center gap-2 mt-1.5 text-[11px] text-gray-500">
                                 <Clock className="w-3 h-3" />
                                 <span>{formatDate(item.date)}</span>
                                 {isToday(item.date) && (
-                                  <span className="bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded border border-gray-200 font-medium">
+                                  <span className="bg-brand-50 text-brand-700 px-1.5 py-px rounded font-medium">
                                     Today
                                   </span>
                                 )}
                               </div>
                               {(item.clientName || item.location) && (
-                                <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-500">
+                                <div className="flex items-center gap-3 mt-1 text-[11px] text-gray-500">
                                   {item.clientName && (
                                     <span className="inline-flex items-center gap-1">
                                       <User className="w-3 h-3" />
@@ -336,12 +340,12 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
 
           {/* User profile section */}
           <div className="flex items-center gap-2.5 ml-3">
-            <div className="h-7 w-7 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 text-xs font-medium border border-gray-300">
+            <div className="h-7 w-7 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-white text-[11px] font-semibold tracking-wide shadow-sm">
               {userName ? userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
             </div>
             <div className="hidden md:block">
-              <p className="text-sm font-medium text-gray-900 leading-tight">{userName}</p>
-              <p className="text-xs text-gray-500 leading-tight">{userEmail}</p>
+              <p className="text-[13px] font-medium text-gray-900 leading-tight">{userName}</p>
+              <p className="text-[11px] text-gray-500 leading-tight">{userEmail}</p>
             </div>
           </div>
             </div>

@@ -26,9 +26,9 @@ export default function Surface({
   return (
     <div
       className={clsx(
-        'rounded-2xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)]',
+        'rounded-2xl bg-white ring-1 ring-gray-900/[0.04] shadow-surface',
         paddingStyles[padding],
-        hover && 'transition-all duration-200 hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.06)]',
+        hover && 'transition-all duration-200 hover:shadow-raised hover:ring-gray-900/[0.07]',
         sticky && 'sticky top-16 z-10 backdrop-blur-sm bg-white/95',
         className,
       )}

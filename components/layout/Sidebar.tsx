@@ -185,7 +185,7 @@ export default function Sidebar() {
 
       <div
         className={clsx(
-          'fixed top-0 h-screen flex flex-col bg-[#FAFAF9] z-50 border-r border-gray-200/80',
+          'fixed top-0 h-screen flex flex-col bg-gray-50 z-50 border-r border-gray-200/80',
           'lg:translate-x-0 lg:relative',
           isCollapsed ? 'lg:w-[56px]' : 'lg:w-[212px]',
           'w-60',

@@ -23,7 +23,7 @@ function HeaderSkeleton() {
 
 function SurfaceSkeleton({ lines = 3 }: { lines?: number }) {
   return (
-    <div className="rounded-2xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)] p-5 sm:p-6 animate-pulse space-y-3">
+    <div className="rounded-2xl bg-white ring-1 ring-gray-900/[0.04] shadow-surface p-5 sm:p-6 animate-pulse space-y-3">
       <div className="h-5 bg-gray-200 rounded w-1/3" />
       {Array.from({ length: lines }).map((_, i) => (
         <div key={i} className="h-10 bg-gray-100 rounded-xl" />
@@ -39,7 +39,7 @@ export default function PageLoadingSkeleton({ variant = 'default' }: { variant?:
       <div className="px-4 sm:px-6 py-6 sm:py-8 mx-auto w-full max-w-7xl space-y-5">
         {variant === 'account' && (
           <>
-            <div className="rounded-2xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)] p-5 sm:p-6 animate-pulse">
+            <div className="rounded-2xl bg-white ring-1 ring-gray-900/[0.04] shadow-surface p-5 sm:p-6 animate-pulse">
               <div className="flex justify-between mb-5">
                 <div className="space-y-2">
                   <div className="h-3 bg-gray-100 rounded w-16" />

@@ -802,85 +802,65 @@ export default function LeadsPage() {
             </Surface>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <button
-                type="button"
-                onClick={() => handleProFeatureClick('/dashboard/leads/booking')}
-                className="rounded-2xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)] p-6 hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-200 group text-left w-full"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                    <CalendarClock className="w-5 h-5 text-gray-900/70" />
+              {[
+                {
+                  href: '/dashboard/leads/booking',
+                  icon: CalendarClock,
+                  title: 'Booking link',
+                  description: 'Share a link so leads can pick an open time and book a showing themselves.',
+                  live: isProPlan && settingsData?.booking_enabled === true,
+                  url: isProPlan && settingsData?.booking_enabled ? bookingUrl : '',
+                },
+                {
+                  href: '/dashboard/leads/open-houses',
+                  icon: DoorOpen,
+                  title: 'Open houses',
+                  description: 'Create a sign-in page and QR code for each open house. Visitors become leads automatically.',
+                  live: false,
+                  url: '',
+                },
+                {
+                  href: '/dashboard/leads/profile',
+                  icon: Users,
+                  title: 'Agent profile',
+                  description: 'Your public landing page with bio, specialties, and a built-in lead form.',
+                  live: false,
+                  url: isProPlan ? profileUrl : '',
+                },
+              ].map(({ href, icon: Icon, title, description, live, url }) => (
+                <button
+                  key={href}
+                  type="button"
+                  onClick={() => handleProFeatureClick(href)}
+                  className="rounded-2xl bg-white ring-1 ring-gray-900/[0.04] shadow-surface p-5 hover:shadow-raised hover:ring-gray-900/[0.07] transition-all duration-200 group text-left w-full flex flex-col"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-50 ring-1 ring-brand-100 text-brand-600 shrink-0">
+                      <Icon className="w-4 h-4" strokeWidth={1.75} />
+                    </div>
+                    {!isProPlan && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-[11px] font-medium">
+                        <Sparkles className="w-3 h-3" />
+                        Pro
+                      </span>
+                    )}
+                    {live && (
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/70 text-[11px] font-medium">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                        Live
+                      </span>
+                    )}
+                    <ArrowRight className="w-4 h-4 text-gray-300 ml-auto group-hover:text-brand-600 group-hover:translate-x-0.5 transition-all" />
                   </div>
-                  {!isProPlan && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200 text-xs font-medium">
-                      <Sparkles className="w-3 h-3" />
-                      Pro
-                    </span>
+                  <h3 className="text-[15px] font-semibold tracking-tight text-gray-900 mb-1">{title}</h3>
+                  <p className="text-caption text-gray-500">{description}</p>
+                  {url && (
+                    <p className="text-[11px] text-gray-400 mt-3 pt-3 border-t border-gray-100 truncate w-full">
+                      {url}
+                    </p>
                   )}
-                  {isProPlan && settingsData?.booking_enabled && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-medium">
-                      Live
-                    </span>
-                  )}
-                  <ArrowRight className="w-4 h-4 text-gray-600 ml-auto group-hover:text-brand-600 transition-colors" />
-                </div>
-                <h3 className="text-base font-semibold text-gray-900 mb-1">Booking link</h3>
-                <p className="text-sm text-gray-500">
-                  Share a link so leads can pick an open time and book a showing themselves.
-                </p>
-                {isProPlan && settingsData?.booking_enabled && bookingUrl && (
-                  <p className="text-xs text-gray-600 mt-3 truncate">{bookingUrl}</p>
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleProFeatureClick('/dashboard/leads/open-houses')}
-                className="rounded-2xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)] p-6 hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-200 group text-left w-full"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                    <DoorOpen className="w-5 h-5 text-gray-900/70" />
-                  </div>
-                  {!isProPlan && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200 text-xs font-medium">
-                      <Sparkles className="w-3 h-3" />
-                      Pro
-                    </span>
-                  )}
-                  <ArrowRight className="w-4 h-4 text-gray-600 ml-auto group-hover:text-brand-600 transition-colors" />
-                </div>
-                <h3 className="text-base font-semibold text-gray-900 mb-1">Open houses</h3>
-                <p className="text-sm text-gray-500">
-                  Create a sign-in page and QR code for each open house. Visitors become leads automatically.
-                </p>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleProFeatureClick('/dashboard/leads/profile')}
-                className="rounded-2xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)] p-6 hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-200 group text-left w-full"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                    <Users className="w-5 h-5 text-gray-900/70" />
-                  </div>
-                  {!isProPlan && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200 text-xs font-medium">
-                      <Sparkles className="w-3 h-3" />
-                      Pro
-                    </span>
-                  )}
-                  <ArrowRight className="w-4 h-4 text-gray-600 ml-auto group-hover:text-brand-600 transition-colors" />
-                </div>
-                <h3 className="text-base font-semibold text-gray-900 mb-1">Agent profile</h3>
-                <p className="text-sm text-gray-500">
-                  Your public landing page with bio, specialties, and a built-in lead form.
-                </p>
-                {isProPlan && profileUrl && (
-                  <p className="text-xs text-gray-600 mt-3 truncate">{profileUrl}</p>
-                )}
-              </button>
+                </button>
+              ))}
             </div>
           </div>
         )}
@@ -895,12 +875,12 @@ export default function LeadsPage() {
             <div className="grid sm:grid-cols-2 gap-4">
               <Surface padding="md">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                    <MailCheck className="w-5 h-5 text-gray-900/70" />
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-50 ring-1 ring-gray-200/70 shrink-0">
+                    <MailCheck className="w-4 h-4 text-gray-500" strokeWidth={1.75} />
                   </div>
-                  <h3 className="text-base font-semibold text-gray-900">Auto follow-up</h3>
+                  <h3 className="text-[15px] font-semibold tracking-tight text-gray-900">Auto follow-up</h3>
                 </div>
-                <p className="text-sm text-gray-500 mb-5">
+                <p className="text-caption text-gray-500 mb-5">
                   Leads with an email get 3 professional follow-ups — right away, then on your schedule. Replies go to your account email (or profile email on Pro).
                 </p>
                 <button
@@ -910,10 +890,10 @@ export default function LeadsPage() {
                     saveSettings({ auto_followup_enabled: next });
                   }}
                   disabled={savingSettings}
-                  className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all border ${
+                  className={`w-full flex items-center justify-center gap-2 h-10 px-4 rounded-lg text-sm font-medium transition-all ${
                     autoFollowup
-                      ? 'bg-white text-gray-900 border-white'
-                      : 'bg-gray-50 text-gray-500 border-gray-200 hover:border-gray-300 hover:text-gray-900'
+                      ? 'bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200'
+                      : 'bg-white text-gray-600 ring-1 ring-inset ring-gray-300/70 hover:ring-gray-400/60 hover:text-gray-900'
                   }`}
                 >
                   {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : autoFollowup ? <Check className="w-4 h-4" /> : <MailCheck className="w-4 h-4" />}
@@ -923,23 +903,23 @@ export default function LeadsPage() {
 
               <Surface padding="md" className="opacity-90">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                    <Phone className="w-5 h-5 text-gray-400" />
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-50 ring-1 ring-gray-200/70 shrink-0">
+                    <Phone className="w-4 h-4 text-gray-400" strokeWidth={1.75} />
                   </div>
                   <div className="flex items-center gap-2 min-w-0 flex-wrap">
-                    <h3 className="text-base font-semibold text-gray-900">SMS alerts</h3>
-                    <span className="shrink-0 px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-medium">
+                    <h3 className="text-[15px] font-semibold tracking-tight text-gray-900">SMS alerts</h3>
+                    <span className="shrink-0 px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-[11px] font-medium">
                       Coming soon
                     </span>
                   </div>
                 </div>
-                <p className="text-sm text-gray-500 mb-5">
+                <p className="text-caption text-gray-500 mb-5">
                   Get a text when a lead submits your form or signs in at an open house. Not available yet — we&apos;ll announce when it launches.
                 </p>
                 <button
                   type="button"
                   disabled
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium border bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
+                  className="w-full flex items-center justify-center gap-2 h-10 px-4 rounded-lg text-sm font-medium bg-gray-50 text-gray-400 ring-1 ring-inset ring-gray-200 cursor-not-allowed"
                 >
                   <Phone className="w-4 h-4" />
                   Not available yet

@@ -18,8 +18,8 @@ export default function SearchInput({
         className={clsx(
           'w-full pl-9 pr-4 py-2.5 text-sm bg-white rounded-xl',
           'text-gray-900 placeholder:text-gray-400',
-          'shadow-[0_1px_2px_rgba(0,0,0,0.04)]',
-          'focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:shadow-[0_0_0_3px_rgba(252,92,3,0.08)]',
+          'ring-1 ring-gray-900/[0.06] shadow-surface',
+          'focus:outline-none focus:ring-2 focus:ring-brand-500/30',
           'transition-shadow duration-150',
           className,
         )}

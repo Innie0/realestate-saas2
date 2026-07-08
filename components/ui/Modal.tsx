@@ -53,7 +53,7 @@ export default function Modal({
       {isOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <motion.div
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm"
+            className="fixed inset-0 bg-gray-950/30 backdrop-blur-[2px]"
             variants={reduced ? undefined : modalBackdrop}
             initial="initial"
             animate="animate"
@@ -63,24 +63,25 @@ export default function Modal({
 
           <div className="flex min-h-full items-center justify-center p-4">
             <motion.div
-              className={`relative w-full ${sizeClasses[size]} rounded-xl border border-gray-200 shadow-2xl max-h-[90vh] overflow-y-auto bg-white`}
+              className={`relative w-full ${sizeClasses[size]} rounded-2xl ring-1 ring-gray-900/[0.06] shadow-overlay max-h-[90vh] overflow-y-auto bg-white`}
               variants={reduced ? undefined : modalContent}
               initial="initial"
               animate="animate"
               exit="exit"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 sticky top-0 z-10 bg-white">
-                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 pr-2">{title}</h3>
+              <div className="flex items-center justify-between px-5 sm:px-6 pt-5 pb-4 border-b border-gray-100 sticky top-0 z-10 bg-white rounded-t-2xl">
+                <h3 className="text-base font-semibold tracking-tight text-gray-900 pr-2">{title}</h3>
                 <button
                   onClick={onClose}
-                  className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+                  aria-label="Close"
+                  className="-m-1.5 rounded-md p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors flex-shrink-0"
                 >
-                  <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                  <X className="w-[18px] h-[18px]" />
                 </button>
               </div>
 
-              <div className="p-4 sm:p-6">{children}</div>
+              <div className="px-5 sm:px-6 py-5">{children}</div>
             </motion.div>
           </div>
         </div>

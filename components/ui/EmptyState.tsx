@@ -22,35 +22,40 @@ export default function EmptyState({
 }: EmptyStateProps) {
   const reduced = useMotionReduced();
 
+  const iconBlock = (
+    <div className="relative inline-flex items-center justify-center w-12 h-12 mb-5">
+      {/* Concentric halo rings give the icon presence without heaviness */}
+      <span className="absolute -inset-4 rounded-full border border-gray-200/40" aria-hidden />
+      <span className="absolute -inset-1.5 rounded-full border border-gray-200/70" aria-hidden />
+      <span className="absolute inset-0 rounded-full bg-white ring-1 ring-gray-200 shadow-surface" aria-hidden />
+      <Icon className="relative w-5 h-5 text-gray-500" strokeWidth={1.5} />
+    </div>
+  );
+
+  const textBlock = (
+    <>
+      <h3 className="text-base font-semibold tracking-tight text-gray-900 mb-1">{title}</h3>
+      {description && (
+        <p className="text-sm text-gray-500 max-w-sm mx-auto mb-5">{description}</p>
+      )}
+      {action}
+    </>
+  );
+
   return (
-    <div className={clsx('text-center py-12 px-4', className)}>
+    <div className={clsx('text-center py-14 px-4', className)}>
       {reduced ? (
         <>
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gray-100 mb-4">
-            <Icon className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
-          </div>
-          <h3 className="text-base font-semibold text-gray-900 mb-1">{title}</h3>
-          {description && (
-            <p className="text-sm text-gray-500 max-w-sm mx-auto mb-5">{description}</p>
-          )}
-          {action}
+          {iconBlock}
+          {textBlock}
         </>
       ) : (
         <>
-          <motion.div
-            className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gray-100 mb-4"
-            initial="initial"
-            animate="animate"
-            variants={emptyStateIcon}
-          >
-            <Icon className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
+          <motion.div initial="initial" animate="animate" variants={emptyStateIcon} className="inline-block">
+            {iconBlock}
           </motion.div>
           <motion.div initial="initial" animate="animate" variants={emptyStateText}>
-            <h3 className="text-base font-semibold text-gray-900 mb-1">{title}</h3>
-            {description && (
-              <p className="text-sm text-gray-500 max-w-sm mx-auto mb-5">{description}</p>
-            )}
-            {action}
+            {textBlock}
           </motion.div>
         </>
       )}

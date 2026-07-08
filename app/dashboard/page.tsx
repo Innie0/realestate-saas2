@@ -2,10 +2,12 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import clsx from 'clsx';
 import Header from '@/components/layout/Header';
 import PageShell from '@/components/layout/PageShell';
 import PageTransition from '@/components/motion/PageTransition';
 import Surface from '@/components/ui/Surface';
+import Sparkline from '@/components/ui/Sparkline';
 import Button from '@/components/ui/Button';
 import NotificationsPanel from '@/components/NotificationsPanel';
 import PlanUsagePanel, { PlanUsagePanelSkeleton } from '@/components/dashboard/PlanUsagePanel';
@@ -44,6 +46,8 @@ interface RecentTransaction {
   property_address: string;
   status: string;
   updated_at: string;
+  offer_price?: number | null;
+  closing_date?: string | null;
 }
 
 interface UsageData {
@@ -195,17 +199,11 @@ function ContinueSection({
           {items.map((item) => (
             <Link key={item.key} href={item.href}>
               <Surface padding="sm" hover className="flex items-center gap-4 group">
-                <div
-                  className={`p-2.5 rounded-xl shrink-0 ${
-                    item.kind === 'project'
-                      ? 'bg-brand-50 text-brand-600'
-                      : 'bg-gray-100 text-gray-600'
-                  }`}
-                >
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-50 ring-1 ring-gray-200/70 shrink-0 text-gray-500 group-hover:text-brand-600 transition-colors">
                   {item.kind === 'project' ? (
-                    <FolderKanban className="w-5 h-5" />
+                    <FolderKanban className="w-4 h-4" strokeWidth={1.75} />
                   ) : (
-                    <FileText className="w-5 h-5" />
+                    <FileText className="w-4 h-4" strokeWidth={1.75} />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -242,6 +240,7 @@ interface UrgentItem {
   key: string;
   icon: React.ElementType;
   iconClass: string;
+  accentClass: string;
   title: string;
   subtitle: string;
   href: string;
@@ -252,7 +251,7 @@ function UrgentQueue({ items, loading }: { items: UrgentItem[]; loading: boolean
     return (
       <Surface padding="md" className="animate-pulse">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-gray-100 h-10 w-10 shrink-0" />
+          <div className="rounded-full bg-gray-100 h-9 w-9 shrink-0" />
           <div className="flex-1 space-y-2">
             <div className="h-4 bg-gray-100 rounded w-56 max-w-full" />
             <div className="h-3 bg-gray-100 rounded w-72 max-w-full" />
@@ -274,10 +273,11 @@ function UrgentQueue({ items, loading }: { items: UrgentItem[]; loading: boolean
             <Surface
               padding="md"
               hover
-              className="flex items-center gap-3 bg-gradient-to-r from-white to-brand-50/30"
+              className="relative overflow-hidden flex items-center gap-3.5"
             >
-              <div className={`p-2.5 rounded-xl shrink-0 ${item.iconClass}`}>
-                <Icon className="w-5 h-5" />
+              <span className={`absolute left-0 inset-y-0 w-[3px] ${item.accentClass}`} aria-hidden />
+              <div className={`flex h-9 w-9 items-center justify-center rounded-full shrink-0 ${item.iconClass}`}>
+                <Icon className="w-4 h-4" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-body font-semibold text-gray-900">{item.title}</p>
@@ -296,18 +296,16 @@ function QuickActionsStrip() {
   return (
     <div>
       <p className="text-label mb-2">Quick actions</p>
-      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
         {QUICK_LINKS.map(({ href, label, icon: Icon, ...rest }) => (
           <Link
             key={href}
             href={href}
             data-tour={'tour' in rest ? rest.tour : undefined}
-            className="group flex flex-col items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-3.5 px-2 text-center hover:border-brand-300 hover:shadow-sm transition-all"
+            className="group flex items-center gap-2.5 rounded-xl bg-white ring-1 ring-gray-900/[0.04] shadow-surface px-3.5 py-3 hover:shadow-raised hover:ring-gray-900/[0.07] transition-all duration-200"
           >
-            <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center group-hover:bg-brand-50 transition-colors">
-              <Icon className="w-4 h-4 text-gray-500 group-hover:text-brand-600 transition-colors" />
-            </div>
-            <span className="text-[11px] font-medium text-gray-600 group-hover:text-gray-900 leading-tight">
+            <Icon className="w-4 h-4 shrink-0 text-gray-400 group-hover:text-brand-600 transition-colors" strokeWidth={1.75} />
+            <span className="text-[13px] font-medium text-gray-700 group-hover:text-gray-900 leading-tight truncate">
               {label}
             </span>
           </Link>
@@ -317,6 +315,81 @@ function QuickActionsStrip() {
   );
 }
 
+/* ── Business pulse — the numbers that matter, at a glance ─────────── */
+
+const compactCurrency = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  notation: 'compact',
+  maximumFractionDigits: 1,
+});
+
+interface MetricCardProps {
+  label: string;
+  value: string;
+  sub: string;
+  subTone?: 'neutral' | 'positive' | 'warning';
+  href: string;
+  series?: number[];
+}
+
+function MetricCard({ label, value, sub, subTone = 'neutral', href, series }: MetricCardProps) {
+  return (
+    <Link href={href} className="block h-full">
+      <Surface padding="sm" hover className="h-full">
+        <p className="text-label">{label}</p>
+        <p className="mt-2 text-2xl font-semibold tracking-tight tabular-nums text-gray-900">
+          {value}
+        </p>
+        <div className="mt-1.5 flex items-end justify-between gap-2 min-h-[28px]">
+          <p
+            className={clsx(
+              'text-caption leading-tight',
+              subTone === 'positive' && 'text-emerald-600',
+              subTone === 'warning' && 'text-amber-600',
+              subTone === 'neutral' && 'text-gray-500',
+            )}
+          >
+            {sub}
+          </p>
+          {series && series.some((v) => v > 0) && (
+            <span className="text-brand-500 shrink-0">
+              <Sparkline data={series} />
+            </span>
+          )}
+        </div>
+      </Surface>
+    </Link>
+  );
+}
+
+function MetricRowSkeleton() {
+  return (
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      {[0, 1, 2, 3].map((i) => (
+        <Surface key={i} padding="sm" className="animate-pulse">
+          <div className="h-3 bg-gray-100 rounded w-20 mb-3" />
+          <div className="h-7 bg-gray-100 rounded w-16 mb-3" />
+          <div className="h-3 bg-gray-100 rounded w-24" />
+        </Surface>
+      ))}
+    </div>
+  );
+}
+
+/** Bucket contact creation dates into trailing 7-day windows (oldest first). */
+function weeklySeries(dates: string[], weeks = 8): number[] {
+  const now = Date.now();
+  const buckets = new Array(weeks).fill(0);
+  for (const date of dates) {
+    const age = now - new Date(date).getTime();
+    if (age < 0) continue;
+    const weekIndex = Math.floor(age / (7 * 24 * 3_600_000));
+    if (weekIndex < weeks) buckets[weeks - 1 - weekIndex] += 1;
+  }
+  return buckets;
+}
+
 export default function DashboardPage() {
   const [showWelcome, setShowWelcome] = useState(false);
   const [showGettingStarted, setShowGettingStarted] = useState(false);
@@ -324,7 +397,8 @@ export default function DashboardPage() {
   const { response: usageResponse, isLoading: usageLoading } = useApi<UsageData>('/api/usage');
   const { data: recentProjects = [], isLoading: projectsLoading } = useApi<Project[]>('/api/projects?limit=3');
   const { data: inboxLeads = [], isLoading: leadsLoading } = useApi<RecentClient[]>('/api/clients?status=all&view=inbox');
-  const { data: allTransactions = [], isLoading: transactionsLoading } = useApi<RecentTransaction[]>('/api/transactions?limit=3');
+  const { data: allContacts = [], isLoading: contactsLoading } = useApi<RecentClient[]>('/api/clients?status=all');
+  const { data: allTransactions = [], isLoading: transactionsLoading } = useApi<RecentTransaction[]>('/api/transactions?status=open');
   const { data: activeReminders = [], isLoading: remindersLoading } = useApi<ReminderRow[]>('/api/reminders?include_completed=false');
 
   const usage = usageResponse?.data ?? null;
@@ -343,6 +417,54 @@ export default function DashboardPage() {
     () => activeReminders.filter((r) => new Date(r.reminder_date).getTime() < Date.now()).length,
     [activeReminders],
   );
+
+  // ── Business pulse metrics ──────────────────────────────────────────
+  const leadSeries = useMemo(
+    () => weeklySeries(allContacts.map((c) => c.created_at)),
+    [allContacts],
+  );
+
+  const { newLeads7d, newLeadsPrior7d } = useMemo(() => {
+    const now = Date.now();
+    const week = 7 * 24 * 3_600_000;
+    let current = 0;
+    let prior = 0;
+    for (const contact of allContacts) {
+      const age = now - new Date(contact.created_at).getTime();
+      if (age < week) current += 1;
+      else if (age < 2 * week) prior += 1;
+    }
+    return { newLeads7d: current, newLeadsPrior7d: prior };
+  }, [allContacts]);
+
+  const { pipelineValue, closingSoonCount } = useMemo(() => {
+    const soonCutoff = Date.now() + 14 * 24 * 3_600_000;
+    let value = 0;
+    let closingSoon = 0;
+    for (const tx of allTransactions) {
+      value += Number(tx.offer_price) || 0;
+      if (tx.closing_date && new Date(tx.closing_date).getTime() <= soonCutoff) {
+        closingSoon += 1;
+      }
+    }
+    return { pipelineValue: value, closingSoonCount: closingSoon };
+  }, [allTransactions]);
+
+  const dueThisWeekCount = useMemo(() => {
+    const weekAhead = Date.now() + 7 * 24 * 3_600_000;
+    return activeReminders.filter((r) => {
+      const t = new Date(r.reminder_date).getTime();
+      return t >= Date.now() && t <= weekAhead;
+    }).length;
+  }, [activeReminders]);
+
+  const metricsLoading =
+    (contactsLoading || transactionsLoading || remindersLoading) &&
+    allContacts.length === 0 &&
+    allTransactions.length === 0 &&
+    activeReminders.length === 0;
+
+  const leadDelta = newLeads7d - newLeadsPrior7d;
 
   const focusMessage = useMemo(() => {
     if (leadsLoading && inboxLeads.length === 0) {
@@ -366,7 +488,8 @@ export default function DashboardPage() {
       items.push({
         key: 'hot-leads',
         icon: Flame,
-        iconClass: 'bg-red-50 text-red-600',
+        iconClass: 'bg-red-50 text-red-600 ring-1 ring-red-100',
+        accentClass: 'bg-red-500',
         title: `Respond to ${hotLeadCount} hot lead${hotLeadCount === 1 ? '' : 's'}`,
         subtitle: 'Leads under 48 hours convert best when you reply quickly.',
         href: '/dashboard/leads',
@@ -376,7 +499,8 @@ export default function DashboardPage() {
       items.push({
         key: 'overdue-followups',
         icon: AlertCircle,
-        iconClass: 'bg-amber-50 text-amber-600',
+        iconClass: 'bg-amber-50 text-amber-600 ring-1 ring-amber-100',
+        accentClass: 'bg-amber-400',
         title: `${overdueReminderCount} overdue follow-up${overdueReminderCount === 1 ? '' : 's'}`,
         subtitle: 'Clients or reminders waiting on a reply from you.',
         href: '/dashboard/clients',
@@ -386,7 +510,8 @@ export default function DashboardPage() {
       items.push({
         key: 'inbox-leads',
         icon: Inbox,
-        iconClass: 'bg-gray-100 text-gray-600',
+        iconClass: 'bg-gray-50 text-gray-600 ring-1 ring-gray-200/70',
+        accentClass: 'bg-gray-300',
         title: `Review ${inboxLeads.length} inbox lead${inboxLeads.length === 1 ? '' : 's'}`,
         subtitle: 'New captures are waiting to be added to your CRM.',
         href: '/dashboard/leads',
@@ -491,10 +616,61 @@ export default function DashboardPage() {
           />
         )}
 
-        {/* 1. Urgent — what needs a response right now */}
+        {/* 1. Business pulse — how the business is actually doing */}
+        {metricsLoading ? (
+          <MetricRowSkeleton />
+        ) : (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <MetricCard
+              label="New leads · 7d"
+              value={String(newLeads7d)}
+              sub={
+                leadDelta > 0
+                  ? `+${leadDelta} vs last week`
+                  : leadDelta < 0
+                    ? `${leadDelta} vs last week`
+                    : 'Same as last week'
+              }
+              subTone={leadDelta > 0 ? 'positive' : 'neutral'}
+              href="/dashboard/leads"
+              series={leadSeries}
+            />
+            <MetricCard
+              label="Hot leads"
+              value={String(hotLeadCount)}
+              sub={hotLeadCount > 0 ? 'Reply within 48h' : 'Inbox handled'}
+              subTone={hotLeadCount > 0 ? 'warning' : 'neutral'}
+              href="/dashboard/leads"
+            />
+            <MetricCard
+              label="Pipeline"
+              value={pipelineValue > 0 ? compactCurrency.format(pipelineValue) : '—'}
+              sub={`${allTransactions.length} open deal${allTransactions.length === 1 ? '' : 's'}${
+                closingSoonCount > 0 ? ` · ${closingSoonCount} closing soon` : ''
+              }`}
+              subTone={closingSoonCount > 0 ? 'warning' : 'neutral'}
+              href="/dashboard/transactions"
+            />
+            <MetricCard
+              label="Follow-ups"
+              value={String(overdueReminderCount + dueThisWeekCount)}
+              sub={
+                overdueReminderCount > 0
+                  ? `${overdueReminderCount} overdue`
+                  : dueThisWeekCount > 0
+                    ? 'Due this week'
+                    : 'All caught up'
+              }
+              subTone={overdueReminderCount > 0 ? 'warning' : 'neutral'}
+              href="/dashboard/clients"
+            />
+          </div>
+        )}
+
+        {/* 2. Urgent — what needs a response right now */}
         <UrgentQueue items={urgentItems} loading={urgentLoading} />
 
-        {/* 2. Quick actions — jump straight into the most common tools */}
+        {/* 3. Quick actions — jump straight into the most common tools */}
         <QuickActionsStrip />
 
         {/* 3. Continue work */}

@@ -29,24 +29,24 @@ export default function Button({
   disabled,
   ...props
 }: ButtonProps) {
-  // Base styles applied to all buttons
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed min-h-[40px] touch-manipulation';
+  // Base styles applied to all buttons — compact, crisp, no bounce
+  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg whitespace-nowrap select-none transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation';
 
   // Variant styles
   const variants = {
-    primary: 'bg-brand-500 text-white hover:bg-brand-600 focus:ring-brand-400/40 shadow-sm',
-    secondary: 'bg-gray-100 text-gray-800 hover:bg-gray-200 focus:ring-gray-300/60',
-    outline: 'border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300 focus:ring-brand-400/30 shadow-sm',
-    'outline-light': 'border border-brand-300 text-brand-700 bg-white hover:bg-brand-50 focus:ring-brand-400/30',
-    white: 'bg-white text-gray-900 hover:bg-gray-50 focus:ring-gray-300/60 shadow-sm',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-400/40 shadow-sm',
+    primary: 'bg-brand-500 text-white hover:bg-brand-600 focus-visible:ring-brand-400/40 shadow-sm shadow-brand-600/10',
+    secondary: 'bg-gray-100 text-gray-800 hover:bg-gray-200 focus-visible:ring-gray-300/60',
+    outline: 'text-gray-700 bg-white ring-1 ring-inset ring-gray-300/70 hover:bg-gray-50 hover:ring-gray-400/60 focus-visible:ring-brand-400/30 shadow-sm',
+    'outline-light': 'text-brand-700 bg-white ring-1 ring-inset ring-brand-300 hover:bg-brand-50 focus-visible:ring-brand-400/30',
+    white: 'bg-white text-gray-900 hover:bg-gray-50 focus-visible:ring-gray-300/60 shadow-sm',
+    danger: 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-400/40 shadow-sm',
   };
 
-  // Size styles - different padding for different sizes
+  // Size styles — fixed control heights keep buttons aligned with inputs
   const sizes = {
-    sm: 'px-3 sm:px-4 py-2 text-sm',
-    md: 'px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base',
-    lg: 'px-6 sm:px-8 py-3 sm:py-4 text-base font-semibold',
+    sm: 'h-8 px-3 text-[13px]',
+    md: 'h-9 px-4 text-sm',
+    lg: 'h-11 px-5 text-[15px] font-semibold',
   };
 
   // Combine all styles using clsx utility

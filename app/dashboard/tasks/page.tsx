@@ -721,7 +721,7 @@ export default function TasksPage() {
                         type="button"
                         onClick={() => handleStarterPrompt(prompt)}
                         disabled={isLoading}
-                        className="text-left text-sm px-4 py-3 rounded-xl bg-white shadow-sm hover:shadow-md text-gray-700 transition-all duration-150 disabled:opacity-50"
+                        className="text-left text-sm px-4 py-3 rounded-xl bg-white ring-1 ring-gray-900/[0.05] shadow-surface hover:shadow-raised hover:ring-gray-900/[0.08] text-gray-700 transition-all duration-150 disabled:opacity-50"
                       >
                         {prompt}
                       </button>
@@ -746,7 +746,7 @@ export default function TasksPage() {
                           className={`rounded-2xl px-4 py-3 ${
                             msg.role === 'user'
                               ? 'bg-brand-500 text-white shadow-sm'
-                              : 'bg-white text-gray-900 shadow-sm'
+                              : 'bg-white text-gray-900 ring-1 ring-gray-900/[0.05] shadow-surface'
                           }`}
                         >
                           {/* Image attachment */}

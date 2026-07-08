@@ -64,11 +64,10 @@ export default function PlanUsagePanel({ usage, plan, className, layout = 'full'
   return (
     <div data-tour="plan-usage" className={className}>
       <Surface padding="md">
-        <div className="flex items-center justify-between gap-3 mb-5">
-          <div>
-            <p className="text-label mb-1">Your plan</p>
-            <p className="text-title font-semibold capitalize">{plan}</p>
-          </div>
+        <div className="flex items-center justify-between gap-3 mb-4">
+          <p className="text-label">
+            Plan usage · <span className="capitalize text-gray-600">{plan}</span>
+          </p>
           {plan !== 'pro' && (
             <Link href="/dashboard/upgrade">
               <Button variant="outline" size="sm">
@@ -88,35 +87,36 @@ export default function PlanUsagePanel({ usage, plan, className, layout = 'full'
             const isNearLimit = !isUnlimited && pct >= 80;
 
             return (
-              <div key={key} className="min-w-0">
-                <div className="flex items-baseline justify-between gap-1 mb-1.5">
-                  <span className="text-caption text-gray-600 truncate">{label}</span>
-                  {period && <span className="text-[0.625rem] text-gray-400 shrink-0">{period}</span>}
-                </div>
-                <p
-                  className={`text-body font-semibold tabular-nums ${
-                    isAtLimit ? 'text-red-600' : isNearLimit ? 'text-amber-600' : 'text-gray-900'
-                  }`}
-                >
-                  {isUnlimited ? (
-                    <span className="text-gray-500 font-normal">∞</span>
-                  ) : (
-                    <>
-                      {item.current}
-                      <span className="text-caption text-gray-400 font-normal">/{item.limit}</span>
-                    </>
-                  )}
-                </p>
-                {!isUnlimited && (
-                  <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mt-2">
-                    <div
-                      className={`h-full rounded-full transition-all ${
-                        isAtLimit ? 'bg-red-500' : isNearLimit ? 'bg-amber-500' : 'bg-brand-500'
+              <div key={key} className={layout === 'sidebar' ? 'min-w-0 flex items-center gap-3' : 'min-w-0'}>
+                <div className={layout === 'sidebar' ? 'flex-1 min-w-0' : ''}>
+                  <div className="flex items-baseline justify-between gap-1 mb-1">
+                    <span className="text-caption text-gray-500 truncate">{label}</span>
+                    <span
+                      className={`text-caption tabular-nums shrink-0 ${
+                        isAtLimit
+                          ? 'text-red-600 font-medium'
+                          : isNearLimit
+                            ? 'text-amber-600 font-medium'
+                            : 'text-gray-600'
                       }`}
-                      style={{ width: `${pct}%` }}
-                    />
+                    >
+                      {isUnlimited ? '∞' : `${item.current}/${item.limit}`}
+                      {period && !isUnlimited && (
+                        <span className="text-gray-400 font-normal"> {period}</span>
+                      )}
+                    </span>
                   </div>
-                )}
+                  {!isUnlimited && (
+                    <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all ${
+                          isAtLimit ? 'bg-red-500' : isNearLimit ? 'bg-amber-500' : 'bg-gray-300'
+                        }`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             );
           })}
