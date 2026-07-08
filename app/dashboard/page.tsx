@@ -799,16 +799,17 @@ export default function DashboardPage() {
           {/* 2. Needs your attention */}
           <NeedsAttention items={attentionItems} loading={attentionLoading} />
 
-          {/* 3. Open deals + right rail */}
+          {/* 3. Open deals + right rail — balanced 2-and-2 so a sparse
+              account doesn't leave a lopsided blank column. */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 space-y-5">
               <OpenDealsTable transactions={allTransactions} loading={transactionsLoading && allTransactions.length === 0} />
+              <ContinuePanel items={continueListItems} loading={continueLoading} />
             </div>
             <div className="space-y-5">
               <div data-tour="notifications">
                 <NotificationsPanel embedded />
               </div>
-              <ContinuePanel items={continueListItems} loading={continueLoading} />
               <QuickActionsPanel />
             </div>
           </div>
