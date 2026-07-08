@@ -30,8 +30,9 @@ export function getTransactionStatusLabel(status: string): string {
 export function getTransactionStatusBadgeVariant(status: string): BadgeVariant {
   switch (status) {
     case 'active':
+      return 'info';
     case 'under_contract':
-      return 'pro';
+      return 'graphite';
     case 'pending':
       return 'warm';
     case 'closed':

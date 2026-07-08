@@ -10,12 +10,12 @@
 /* Theme surfaces as CSS variables so a dark mode can flip them later
    without touching component classes. */
 :root {
-  --canvas: #f1efec;          /* warm off-white app background behind cards */
+  --canvas: #fafafa;          /* app background behind cards */
   --surface: #ffffff;         /* card / panel background */
-  --sidebar: #edeae5;         /* warm light sidebar */
-  --ink: #1c1917;             /* graphite — primary actions, headings */
-  --brand: #1c1917;           /* graphite */
-  --champagne: #a87c43;       /* signature warm accent */
+  --sidebar: #f5f5f4;         /* sidebar background */
+  --ink: #1c1c1a;             /* graphite — primary actions, headings */
+  --brand: #1c1c1a;           /* graphite */
+  --champagne: #a87c43;       /* legacy signature accent (AI/research modules) */
 }
 
 /* Custom base styles */
@@ -156,7 +156,7 @@
   }
 
   .text-label {
-    @apply font-mono text-[0.6875rem] leading-4 font-medium uppercase tracking-wide text-gray-500;
+    @apply font-mono text-[0.6875rem] leading-4 font-medium uppercase tracking-wide text-gray-450;
   }
 
   /* Sparkline draw-in: line traces left→right, area fades up under it. */
@@ -243,13 +243,13 @@
 }
 
 .driver-popover-next-btn {
-  background: #1c1917 !important;
+  background: #1c1c1a !important;
   color: #ffffff !important;
-  border-color: #1c1917 !important;
+  border-color: #1c1c1a !important;
 }
 
 .driver-popover-next-btn:hover {
-  background: #292524 !important;
+  background: #000000 !important;
 }
 
 .driver-popover-arrow-side-left .driver-popover-arrow { border-right-color: #ffffff !important; }

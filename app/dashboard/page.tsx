@@ -3,29 +3,25 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import useSWR from 'swr';
 import clsx from 'clsx';
 import Header from '@/components/layout/Header';
-import PageShell from '@/components/layout/PageShell';
 import PageTransition from '@/components/motion/PageTransition';
 import Surface from '@/components/ui/Surface';
 import Sparkline from '@/components/ui/Sparkline';
 import Button from '@/components/ui/Button';
 import CountUp from '@/components/motion/CountUp';
-import NotificationsPanel from '@/components/NotificationsPanel';
+import { fetchUpcomingItems, type UpcomingItem } from '@/components/NotificationsPanel';
 import PlanUsagePanel, { PlanUsagePanelSkeleton } from '@/components/dashboard/PlanUsagePanel';
 import MarketplaceSummaryPanel from '@/components/dashboard/MarketplaceSummaryPanel';
 import GettingStartedPanel from '@/components/dashboard/GettingStartedPanel';
 import TransactionStatusBadge from '@/components/transactions/TransactionStatusBadge';
 import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
-import {
-  Plus,
-  ArrowRight,
-  FolderKanban,
-  FileText,
-} from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Project } from '@/types';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
+import { getCurrentUser } from '@/lib/supabase';
 import { isSameAddress } from '@/lib/comp-filters';
 
 interface RecentClient {
@@ -173,7 +169,7 @@ function weeklySeries(dates: string[], weeks = 8): number[] {
   return buckets;
 }
 
-/* ── Metric strip — one editorial band, divided into columns ─────────── */
+/* ── Metric strip — one joined surface, hairline dividers ─────────────── */
 
 interface Metric {
   label: string;
@@ -188,30 +184,30 @@ interface Metric {
 
 function MetricStrip({ metrics }: { metrics: Metric[] }) {
   return (
-    <Surface padding="none" className="overflow-hidden">
-      <div className="grid grid-cols-2 lg:grid-cols-4 divide-y divide-gray-100 lg:divide-y-0 lg:divide-x">
+    <Surface flat padding="none" className="overflow-hidden">
+      <div className="grid grid-cols-2 lg:grid-cols-4 divide-y divide-gray-150 lg:divide-y-0 lg:divide-x lg:divide-gray-150">
         {metrics.map((m) => (
           <Link
             key={m.label}
             href={m.href}
-            className="group px-5 py-4 transition-colors hover:bg-gray-50/70"
+            className="group px-5 py-4 transition-colors hover:bg-gray-50"
           >
             <p className="text-label">{m.label}</p>
-            <div className="mt-2 flex items-end justify-between gap-2">
-              <p className="text-[28px] font-semibold tracking-tight tabular-nums text-gray-900 leading-none">
+            <div className="mt-2.5 flex items-end justify-between gap-2">
+              <p className="text-[26px] font-semibold tracking-[-0.02em] tabular-nums text-gray-900 leading-none">
                 {m.placeholder ?? <CountUp value={m.value} format={m.format} />}
               </p>
               {m.series && m.series.some((v) => v > 0) && (
-                <span className="text-champagne-500 shrink-0 -mb-0.5">
-                  <Sparkline data={m.series} />
+                <span className="text-gray-900 shrink-0 -mb-0.5">
+                  <Sparkline data={m.series} width={72} height={26} />
                 </span>
               )}
             </div>
             <p
               className={clsx(
-                'text-caption mt-2 leading-tight',
+                'text-[12px] mt-2 leading-tight',
                 m.subTone === 'positive' && 'text-emerald-600',
-                m.subTone === 'warning' && 'text-amber-600',
+                m.subTone === 'warning' && 'text-amber-700',
                 m.subTone === 'neutral' && 'text-gray-500',
               )}
             >
@@ -226,8 +222,8 @@ function MetricStrip({ metrics }: { metrics: Metric[] }) {
 
 function MetricStripSkeleton() {
   return (
-    <Surface padding="none" className="overflow-hidden">
-      <div className="grid grid-cols-2 lg:grid-cols-4 divide-y divide-gray-100 lg:divide-y-0 lg:divide-x">
+    <Surface flat padding="none" className="overflow-hidden">
+      <div className="grid grid-cols-2 lg:grid-cols-4 divide-y divide-gray-150 lg:divide-y-0 lg:divide-x lg:divide-gray-150">
         {[0, 1, 2, 3].map((i) => (
           <div key={i} className="px-5 py-4 animate-pulse">
             <div className="h-3 bg-gray-100 rounded w-20" />
@@ -245,7 +241,8 @@ function MetricStripSkeleton() {
 interface AttentionItem {
   key: string;
   dotClass: string;
-  title: string;
+  lead: string;
+  rest: string;
   actionLabel: string;
   href: string;
 }
@@ -253,7 +250,7 @@ interface AttentionItem {
 function NeedsAttention({ items, loading }: { items: AttentionItem[]; loading: boolean }) {
   if (loading) {
     return (
-      <Surface padding="md" className="animate-pulse">
+      <Surface flat padding="md" className="animate-pulse">
         <div className="h-3 bg-gray-100 rounded w-40 mb-4" />
         <div className="space-y-3">
           {[0, 1].map((i) => (
@@ -267,25 +264,29 @@ function NeedsAttention({ items, loading }: { items: AttentionItem[]; loading: b
   if (items.length === 0) return null;
 
   return (
-    <Surface padding="none" className="overflow-hidden">
-      <div className="flex items-center justify-between px-5 pt-4 pb-2">
-        <h2 className="text-[13px] font-semibold text-gray-900">Needs your attention</h2>
-        <span className="text-[11px] font-medium text-gray-400 tabular-nums">
-          {items.length} item{items.length === 1 ? '' : 's'}
+    <Surface flat padding="none" className="overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-[11px] border-b border-gray-150">
+        <h2 className="text-[12.5px] font-semibold text-gray-900">Needs your attention</h2>
+        <span className="font-mono text-[10.5px] font-medium text-gray-450 tracking-[0.04em]">
+          {items.length} ITEM{items.length === 1 ? '' : 'S'}
         </span>
       </div>
-      <div className="divide-y divide-gray-100">
-        {items.map((item) => (
+      <div>
+        {items.map((item, i) => (
           <Link
             key={item.key}
             href={item.href}
-            className="group flex items-center gap-3 px-5 py-3 transition-colors hover:bg-gray-50/70"
+            className={clsx(
+              'flex items-center gap-3 px-4 py-[11px] transition-colors hover:bg-gray-50',
+              i < items.length - 1 && 'border-b border-gray-150',
+            )}
           >
-            <span className={clsx('h-2 w-2 rounded-full shrink-0', item.dotClass)} aria-hidden />
-            <p className="flex-1 min-w-0 text-[13px] text-gray-800 truncate">{item.title}</p>
-            <span className="flex items-center gap-1 text-[12px] font-medium text-gray-500 group-hover:text-gray-900 transition-colors shrink-0">
-              {item.actionLabel}
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            <span className={clsx('h-[7px] w-[7px] rounded-full shrink-0', item.dotClass)} aria-hidden />
+            <p className="flex-1 min-w-0 text-[13px] text-gray-900 truncate">
+              <span className="font-semibold">{item.lead}</span> {item.rest}
+            </p>
+            <span className="text-[11.5px] font-medium text-gray-900 shrink-0">
+              {item.actionLabel} →
             </span>
           </Link>
         ))}
@@ -295,6 +296,8 @@ function NeedsAttention({ items, loading }: { items: AttentionItem[]; loading: b
 }
 
 /* ── Open deals table ────────────────────────────────────────────────── */
+
+const DEAL_COL_WIDTHS = ['36.1%', '19.7%', '16.4%', '14.7%', '13.1%'];
 
 function formatClosing(date?: string | null): string {
   if (!date) return '—';
@@ -311,25 +314,25 @@ function OpenDealsTable({
   const deals = transactions.slice(0, 6);
 
   return (
-    <Surface padding="none" className="overflow-hidden">
-      <div className="flex items-center justify-between px-5 pt-4 pb-3">
-        <h2 className="text-[13px] font-semibold text-gray-900">Open deals</h2>
+    <Surface flat padding="none" className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-[11px] border-b border-gray-150">
+        <h2 className="text-[12.5px] font-semibold text-gray-900">Open deals</h2>
         <Link
           href="/dashboard/transactions"
-          className="flex items-center gap-1 text-[12px] font-medium text-gray-500 hover:text-gray-900 transition-colors"
+          className="text-[11.5px] font-medium text-gray-900 hover:opacity-70 transition-opacity"
         >
-          All transactions <ArrowRight className="w-3.5 h-3.5" />
+          All transactions →
         </Link>
       </div>
 
       {loading ? (
-        <div className="px-5 pb-4 space-y-3 animate-pulse">
+        <div className="px-4 py-4 space-y-3 animate-pulse">
           {[0, 1, 2].map((i) => (
             <div key={i} className="h-5 bg-gray-100 rounded" />
           ))}
         </div>
       ) : deals.length === 0 ? (
-        <div className="px-5 pb-6 pt-2 flex items-center justify-between gap-4">
+        <div className="px-4 pb-6 pt-3 flex items-center justify-between gap-4">
           <div>
             <p className="text-body font-medium text-gray-900">No open deals</p>
             <p className="text-caption text-gray-500 mt-0.5">
@@ -345,14 +348,19 @@ function OpenDealsTable({
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[560px] text-left">
+          <table className="w-full min-w-[560px] text-left table-fixed">
+            <colgroup>
+              {DEAL_COL_WIDTHS.map((w, i) => (
+                <col key={i} style={{ width: w }} />
+              ))}
+            </colgroup>
             <thead>
-              <tr className="border-y border-gray-100 bg-gray-50/60">
+              <tr className="border-b border-gray-150 bg-gray-50">
                 {['Property', 'Client', 'Stage', 'Price', 'Closing'].map((h) => (
                   <th
                     key={h}
                     className={clsx(
-                      'px-5 py-2 font-mono text-[10px] font-medium uppercase tracking-wider text-gray-400',
+                      'px-4 py-[7px] font-mono text-[10.5px] font-semibold uppercase tracking-[0.06em] text-gray-450',
                       (h === 'Price' || h === 'Closing') && 'text-right',
                     )}
                   >
@@ -361,33 +369,33 @@ function OpenDealsTable({
                 ))}
               </tr>
             </thead>
-            <StaggerList as="tbody" className="divide-y divide-gray-100">
-              {deals.map((tx) => (
+            <StaggerList as="tbody">
+              {deals.map((tx, i) => (
                 <StaggerItem
                   key={tx.id}
                   as="tr"
-                  className="group transition-colors hover:bg-gray-50/70"
+                  className={clsx(
+                    'group transition-colors hover:bg-gray-50',
+                    i < deals.length - 1 && 'border-b border-gray-150',
+                  )}
                 >
-                  <td className="px-5 py-3 max-w-0">
+                  <td className="px-4 py-[11px] max-w-0">
                     <Link href={`/dashboard/transactions/${tx.id}`} className="block">
-                      <p className="text-[13px] font-medium text-gray-900 truncate group-hover:text-gray-950">
+                      <p className="text-[13px] font-medium text-gray-900 truncate">
                         {tx.property_address}
                       </p>
-                      {tx.property_city && (
-                        <p className="text-[11px] text-gray-400 truncate">{tx.property_city}</p>
-                      )}
                     </Link>
                   </td>
-                  <td className="px-5 py-3 text-[13px] text-gray-600 truncate">
+                  <td className="px-4 py-[11px] text-[12.5px] text-gray-700 truncate">
                     {tx.buyer_name || tx.seller_name || '—'}
                   </td>
-                  <td className="px-5 py-3">
+                  <td className="px-4 py-[11px]">
                     <TransactionStatusBadge status={tx.status} />
                   </td>
-                  <td className="px-5 py-3 text-right font-mono text-[12px] font-semibold text-emerald-700 tabular-nums whitespace-nowrap">
+                  <td className="px-4 py-[11px] text-right font-mono text-[12.5px] font-medium text-gray-900 tabular-nums whitespace-nowrap">
                     {tx.offer_price ? compactCurrency.format(tx.offer_price) : '—'}
                   </td>
-                  <td className="px-5 py-3 text-right font-mono text-[11px] text-gray-500 tabular-nums whitespace-nowrap">
+                  <td className="px-4 py-[11px] text-right text-[12.5px] text-gray-700 whitespace-nowrap">
                     {formatClosing(tx.closing_date)}
                   </td>
                 </StaggerItem>
@@ -400,44 +408,122 @@ function OpenDealsTable({
   );
 }
 
+/* ── Today (right rail) ──────────────────────────────────────────────── */
+
+function timeLabel(dateString: string): string {
+  const d = new Date(dateString);
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+function isPast(dateString: string): boolean {
+  return new Date(dateString).getTime() < Date.now();
+}
+
+function TodayPanel() {
+  const { data: items = [], isLoading } = useSWR<UpcomingItem[]>('dashboard-upcoming', fetchUpcomingItems);
+
+  const todayItems = useMemo(() => {
+    const now = new Date();
+    return items
+      .filter((item) => {
+        const d = new Date(item.date);
+        return (
+          d.getDate() === now.getDate() &&
+          d.getMonth() === now.getMonth() &&
+          d.getFullYear() === now.getFullYear()
+        );
+      })
+      .slice(0, 5);
+  }, [items]);
+
+  return (
+    <Surface flat padding="none" className="overflow-hidden" data-tour="notifications">
+      <div className="flex items-center justify-between px-4 py-[11px] border-b border-gray-150">
+        <h2 className="text-[12.5px] font-semibold text-gray-900">Today</h2>
+        <Link
+          href="/dashboard/calendar"
+          className="text-[11.5px] font-medium text-gray-900 hover:opacity-70 transition-opacity"
+        >
+          Calendar →
+        </Link>
+      </div>
+      {isLoading ? (
+        <div className="px-4 py-3 space-y-3 animate-pulse">
+          {[0, 1].map((i) => (
+            <div key={i} className="h-8 bg-gray-100 rounded" />
+          ))}
+        </div>
+      ) : todayItems.length === 0 ? (
+        <p className="px-4 py-4 text-caption text-gray-500">Nothing scheduled today.</p>
+      ) : (
+        <div className="py-1.5">
+          {todayItems.map((item) => {
+            const overdue = item.type === 'reminder' && isPast(item.date);
+            const isShowing = item.type === 'event' && item.eventType === 'showing';
+            const borderClass = overdue
+              ? 'border-amber-600'
+              : isShowing
+                ? 'border-gray-900'
+                : 'border-gray-300';
+            return (
+              <div key={item.id} className="flex gap-3 px-4 py-[9px] transition-colors hover:bg-gray-50">
+                <span className="w-11 shrink-0 pt-px font-mono text-[11.5px] font-medium text-gray-450">
+                  {timeLabel(item.date)}
+                </span>
+                <div className={clsx('border-l-2 pl-2.5', borderClass)}>
+                  <p className="text-[12.5px] font-medium text-gray-900">{item.title}</p>
+                  {(item.description || item.clientName || item.location) && (
+                    <p className="mt-0.5 text-[11.5px] text-gray-500 truncate">
+                      {item.description || item.clientName || item.location}
+                    </p>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </Surface>
+  );
+}
+
 /* ── Continue (right rail) ───────────────────────────────────────────── */
 
 function ContinuePanel({ items, loading }: { items: ContinueListItem[]; loading: boolean }) {
   return (
-    <Surface padding="none" className="overflow-hidden">
-      <div className="px-5 pt-4 pb-2">
-        <h2 className="text-[13px] font-semibold text-gray-900">Continue</h2>
+    <Surface flat padding="none" className="overflow-hidden">
+      <div className="px-4 py-[11px] border-b border-gray-150">
+        <h2 className="text-[12.5px] font-semibold text-gray-900">Continue</h2>
       </div>
       {loading ? (
-        <div className="px-5 pb-4 space-y-3 animate-pulse">
+        <div className="px-4 py-3 space-y-3 animate-pulse">
           {[0, 1].map((i) => (
             <div key={i} className="h-4 bg-gray-100 rounded" />
           ))}
         </div>
       ) : items.length === 0 ? (
-        <p className="px-5 pb-5 text-caption text-gray-500">
+        <p className="px-4 py-4 text-caption text-gray-500">
           Nothing in progress. Create a listing to get started.
         </p>
       ) : (
-        <div className="divide-y divide-gray-100">
+        <div className="py-1.5">
           {items.map((item) => (
             <Link
               key={item.key}
               href={item.href}
-              className="group flex items-center gap-3 px-5 py-3 transition-colors hover:bg-gray-50/70"
+              className="group flex items-center gap-2.5 px-4 py-[9px] transition-colors hover:bg-gray-50"
             >
-              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-gray-50 ring-1 ring-gray-200/70 text-gray-400 shrink-0 group-hover:text-gray-700 transition-colors">
-                {item.kind === 'project' ? (
-                  <FolderKanban className="w-3.5 h-3.5" strokeWidth={1.75} />
-                ) : (
-                  <FileText className="w-3.5 h-3.5" strokeWidth={1.75} />
+              <span
+                className={clsx(
+                  'h-2 w-2 shrink-0 rounded-[2px] border-[1.5px]',
+                  item.kind === 'project' ? 'border-amber-600' : 'border-gray-900',
                 )}
-              </span>
+              />
               <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-medium text-gray-900 truncate">{item.title}</p>
-                <p className="text-[11px] text-gray-400 capitalize truncate">{item.subtitle}</p>
+                <p className="text-[12.5px] font-medium text-gray-900 truncate">{item.title}</p>
+                <p className="text-[11.5px] text-gray-500 capitalize truncate">{item.subtitle}</p>
               </div>
-              <ArrowRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+              <span className="text-gray-400 group-hover:text-gray-700 transition-colors shrink-0">→</span>
             </Link>
           ))}
         </div>
@@ -450,22 +536,20 @@ function ContinuePanel({ items, loading }: { items: ContinueListItem[]; loading:
 
 function QuickActionsPanel() {
   return (
-    <Surface padding="none" className="overflow-hidden">
-      <div className="px-5 pt-4 pb-2">
-        <h2 className="text-[13px] font-semibold text-gray-900">Quick actions</h2>
+    <Surface flat padding="none" className="overflow-hidden">
+      <div className="px-4 py-[11px] border-b border-gray-150">
+        <h2 className="text-[12.5px] font-semibold text-gray-900">Quick actions</h2>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="py-1.5">
         {QUICK_LINKS.map(({ href, label, shortcut, tour }) => (
           <Link
             key={href}
             href={href}
             data-tour={tour}
-            className="group flex items-center justify-between gap-3 px-5 py-2.5 transition-colors hover:bg-gray-50/70"
+            className="group flex items-center justify-between gap-3 px-4 py-[7px] transition-colors hover:bg-gray-50"
           >
-            <span className="text-[13px] text-gray-700 group-hover:text-gray-900 transition-colors truncate">
-              {label}
-            </span>
-            <kbd className="flex h-5 min-w-[20px] items-center justify-center rounded border border-gray-200 bg-gray-50 px-1 font-mono text-[11px] font-medium text-gray-400 group-hover:border-gray-300 group-hover:text-gray-600 transition-colors shrink-0">
+            <span className="text-[12.5px] text-gray-900 truncate">{label}</span>
+            <kbd className="flex h-5 min-w-[20px] items-center justify-center rounded border border-gray-200 px-1 font-mono text-[10px] font-medium text-gray-450 shrink-0">
               {shortcut}
             </kbd>
           </Link>
@@ -479,6 +563,19 @@ export default function DashboardPage() {
   const router = useRouter();
   const [showWelcome, setShowWelcome] = useState(false);
   const [showGettingStarted, setShowGettingStarted] = useState(false);
+  const [firstName, setFirstName] = useState('');
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { user } = await getCurrentUser();
+        const fullName = user?.user_metadata?.full_name as string | undefined;
+        if (fullName) setFirstName(fullName.split(' ')[0]);
+      } catch {
+        // non-critical — greeting just omits the name
+      }
+    })();
+  }, []);
 
   const { response: usageResponse, isLoading: usageLoading } = useApi<UsageData>('/api/usage');
   const { data: recentProjects = [], isLoading: projectsLoading } = useApi<Project[]>('/api/projects?limit=3');
@@ -608,27 +705,14 @@ export default function DashboardPage() {
     ],
   );
 
-  const focusMessage = useMemo(() => {
-    if (leadsLoading && inboxLeads.length === 0) return 'Loading your workspace';
-    if (hotLeadCount > 0) {
-      return `${hotLeadCount} hot lead${hotLeadCount === 1 ? '' : 's'} need${hotLeadCount === 1 ? 's' : ''} a response`;
-    }
-    if (overdueReminderCount > 0) {
-      return `${overdueReminderCount} follow-up${overdueReminderCount === 1 ? '' : 's'} overdue`;
-    }
-    if (inboxLeads.length > 0) {
-      return `${inboxLeads.length} lead${inboxLeads.length === 1 ? '' : 's'} waiting in your inbox`;
-    }
-    return 'Your workspace is clear — start something new';
-  }, [hotLeadCount, overdueReminderCount, inboxLeads.length, leadsLoading]);
-
   const attentionItems = useMemo<AttentionItem[]>(() => {
     const items: AttentionItem[] = [];
     if (hotLeadCount > 0) {
       items.push({
         key: 'hot-leads',
-        dotClass: 'bg-rose-500',
-        title: `${hotLeadCount} hot lead${hotLeadCount === 1 ? '' : 's'} waiting under 48h`,
+        dotClass: 'bg-rose-600',
+        lead: `${hotLeadCount} hot lead${hotLeadCount === 1 ? '' : 's'}`,
+        rest: 'waiting under 48h in your inbox',
         actionLabel: 'Open inbox',
         href: '/dashboard/leads',
       });
@@ -636,8 +720,9 @@ export default function DashboardPage() {
     if (overdueReminderCount > 0) {
       items.push({
         key: 'overdue-followups',
-        dotClass: 'bg-amber-500',
-        title: `${overdueReminderCount} overdue follow-up${overdueReminderCount === 1 ? '' : 's'}`,
+        dotClass: 'bg-amber-600',
+        lead: `${overdueReminderCount} overdue follow-up${overdueReminderCount === 1 ? '' : 's'}`,
+        rest: 'need a response',
         actionLabel: 'Review',
         href: '/dashboard/clients',
       });
@@ -645,8 +730,9 @@ export default function DashboardPage() {
     if (closingSoonCount > 0) {
       items.push({
         key: 'closing-soon',
-        dotClass: 'bg-champagne-500',
-        title: `${closingSoonCount} deal${closingSoonCount === 1 ? '' : 's'} closing within 2 weeks`,
+        dotClass: 'bg-amber-600',
+        lead: `${closingSoonCount} deal${closingSoonCount === 1 ? '' : 's'}`,
+        rest: 'closing within 2 weeks',
         actionLabel: 'View deals',
         href: '/dashboard/transactions',
       });
@@ -655,7 +741,8 @@ export default function DashboardPage() {
       items.push({
         key: 'inbox-leads',
         dotClass: 'bg-gray-300',
-        title: `${inboxLeads.length} new inbox lead${inboxLeads.length === 1 ? '' : 's'} to review`,
+        lead: `${inboxLeads.length} new inbox lead${inboxLeads.length === 1 ? '' : 's'}`,
+        rest: 'to review',
         actionLabel: 'Open inbox',
         href: '/dashboard/leads',
       });
@@ -721,7 +808,7 @@ export default function DashboardPage() {
         element: '[data-tour="notifications"]',
         popover: {
           title: 'Your schedule',
-          description: 'Reminders and calendar events for the next 7 days show up here.',
+          description: 'Reminders and calendar events for today show up here.',
           side: 'top',
         },
       },
@@ -772,59 +859,61 @@ export default function DashboardPage() {
   return (
     <div>
       <Header
-        title={getGreeting()}
-        subtitle={`${formatToday()} · ${focusMessage}`}
+        inline
+        title={`${getGreeting()}${firstName ? `, ${firstName}` : ''}`}
+        subtitle={formatToday()}
         actions={
-          <Link href="/dashboard/projects/new" data-tour="new-project">
-            <Button size="sm">
-              <Plus className="w-4 h-4 mr-1.5" />
-              New listing
-            </Button>
-          </Link>
+          <>
+            {overdueReminderCount > 0 && (
+              <span className="hidden sm:inline-flex items-center gap-1.5 rounded-[6px] border border-amber-100 bg-amber-50 px-2.5 py-1 text-[12px] font-medium text-amber-700">
+                <span className="h-1.5 w-1.5 rounded-full bg-amber-600" />
+                {overdueReminderCount} follow-up{overdueReminderCount === 1 ? '' : 's'} overdue
+              </span>
+            )}
+            <Link href="/dashboard/projects/new" data-tour="new-project">
+              <Button size="sm" className="gap-2">
+                New listing
+                <span className="rounded bg-white/[0.18] px-1 font-mono text-[10px] font-medium">N</span>
+              </Button>
+            </Link>
+          </>
         }
       />
 
-      <PageShell>
-        <PageTransition className="space-y-5">
-          {showOnboarding && (
-            <GettingStartedPanel
-              variant={showWelcome ? 'welcome' : 'empty'}
-              onDismiss={dismissGettingStarted}
-            />
-          )}
+      <PageTransition className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-7 sm:py-6 space-y-5">
+        {showOnboarding && (
+          <GettingStartedPanel
+            variant={showWelcome ? 'welcome' : 'empty'}
+            onDismiss={dismissGettingStarted}
+          />
+        )}
 
-          {/* 1. Business pulse */}
-          {metricsLoading ? <MetricStripSkeleton /> : <MetricStrip metrics={metrics} />}
+        {/* 1. Metric strip */}
+        {metricsLoading ? <MetricStripSkeleton /> : <MetricStrip metrics={metrics} />}
 
-          {/* 2. Needs your attention */}
-          <NeedsAttention items={attentionItems} loading={attentionLoading} />
-
-          {/* 3. Open deals + right rail — balanced 2-and-2 so a sparse
-              account doesn't leave a lopsided blank column. */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
-            <div className="lg:col-span-2 space-y-5">
-              <OpenDealsTable transactions={allTransactions} loading={transactionsLoading && allTransactions.length === 0} />
-              <ContinuePanel items={continueListItems} loading={continueLoading} />
-            </div>
-            <div className="space-y-5">
-              <div data-tour="notifications">
-                <NotificationsPanel embedded />
-              </div>
-              <QuickActionsPanel />
-            </div>
+        {/* 2. Two-column console layout — left flexible, right rail fixed 340px */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-5 items-start">
+          <div className="flex flex-col gap-5 min-w-0">
+            <NeedsAttention items={attentionItems} loading={attentionLoading} />
+            <OpenDealsTable transactions={allTransactions} loading={transactionsLoading && allTransactions.length === 0} />
           </div>
-
-          {/* 4. Secondary — plan usage + marketplace */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5" data-tour="plan-usage">
-            {usage ? (
-              <PlanUsagePanel usage={usage} plan={plan} layout="sidebar" />
-            ) : usageLoading ? (
-              <PlanUsagePanelSkeleton layout="sidebar" />
-            ) : null}
-            <MarketplaceSummaryPanel />
+          <div className="flex flex-col gap-5 min-w-0">
+            <TodayPanel />
+            <ContinuePanel items={continueListItems} loading={continueLoading} />
+            <QuickActionsPanel />
           </div>
-        </PageTransition>
-      </PageShell>
+        </div>
+
+        {/* 3. Secondary — plan usage + marketplace */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5" data-tour="plan-usage">
+          {usage ? (
+            <PlanUsagePanel usage={usage} plan={plan} layout="sidebar" />
+          ) : usageLoading ? (
+            <PlanUsagePanelSkeleton layout="sidebar" />
+          ) : null}
+          <MarketplaceSummaryPanel />
+        </div>
+      </PageTransition>
     </div>
   );
 }

@@ -5,7 +5,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Bell, Clock, Calendar, X, User, MapPin } from 'lucide-react';
-import { getCurrentUser } from '@/lib/supabase';
 
 /**
  * HeaderProps - Props for the Header component
@@ -14,6 +13,8 @@ interface HeaderProps {
   title: string;
   subtitle?: string;
   actions?: React.ReactNode;
+  /** Baseline-aligned title + subtitle on one line (dashboard home greeting). */
+  inline?: boolean;
 }
 
 interface UpcomingItem {
@@ -31,17 +32,14 @@ interface UpcomingItem {
  * Header component
  * Top bar that shows the current page title and user actions
  */
-export default function Header({ title, subtitle, actions }: HeaderProps) {
-  const [userName, setUserName] = useState('User');
-  const [userEmail, setUserEmail] = useState('');
+export default function Header({ title, subtitle, actions, inline = false }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<UpcomingItem[]>([]);
   const [loading, setLoading] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
 
-  // Load user data on mount
+  // Load upcoming notifications on mount
   useEffect(() => {
-    loadUserData();
     fetchNotifications();
   }, []);
 
@@ -58,18 +56,6 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [showNotifications]);
-
-  const loadUserData = async () => {
-    try {
-      const { user } = await getCurrentUser();
-      if (user) {
-        setUserName(user.user_metadata?.full_name || 'User');
-        setUserEmail(user.email || '');
-      }
-    } catch (error) {
-      console.error('Error loading user data:', error);
-    }
-  };
 
   const fetchNotifications = async () => {
     setLoading(true);
@@ -197,15 +183,24 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
     }
   };
   return (
-    <header className="sticky top-0 z-20 bg-white/85 backdrop-blur-md border-b border-gray-200/70">
-      <div className="px-4 sm:px-6 py-3.5">
-        <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0 flex-1">
-            <h1 className="text-[18px] sm:text-[21px] font-semibold tracking-tight text-gray-900 truncate">{title}</h1>
-            {subtitle && (
-              <p className="text-caption text-gray-500 mt-0.5 truncate">{subtitle}</p>
-            )}
-          </div>
+    <header className="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b border-gray-200">
+      <div className="px-4 sm:px-7 py-2.5 sm:h-[52px] sm:py-0">
+        <div className="flex h-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          {inline ? (
+            <div className="flex min-w-0 flex-1 items-baseline gap-2.5">
+              <h1 className="text-[14px] font-semibold tracking-[-0.01em] text-gray-900 truncate">{title}</h1>
+              {subtitle && (
+                <span className="text-[12.5px] text-gray-500 truncate">{subtitle}</span>
+              )}
+            </div>
+          ) : (
+            <div className="min-w-0 flex-1">
+              <h1 className="text-[18px] sm:text-[21px] font-semibold tracking-tight text-gray-900 truncate">{title}</h1>
+              {subtitle && (
+                <p className="text-caption text-gray-500 mt-0.5 truncate">{subtitle}</p>
+              )}
+            </div>
+          )}
 
           <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
             {actions && (
@@ -223,7 +218,7 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
               <Bell className="h-[18px] w-[18px]" />
               {/* Notification badge - shows when there are unread notifications */}
               {notifications.length > 0 && (
-                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-champagne-500 ring-2 ring-white"></span>
+                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-brand-500 ring-2 ring-white"></span>
               )}
             </button>
 
@@ -306,7 +301,7 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
                                 <Clock className="w-3 h-3" />
                                 <span className="font-mono">{formatDate(item.date)}</span>
                                 {isToday(item.date) && (
-                                  <span className="bg-champagne-50 text-champagne-700 px-1.5 py-px rounded font-medium">
+                                  <span className="bg-brand-100 text-gray-900 px-1.5 py-px rounded font-medium">
                                     Today
                                   </span>
                                 )}
@@ -336,17 +331,6 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
                 </div>
               </div>
             )}
-          </div>
-
-          {/* User profile section */}
-          <div className="flex items-center gap-2.5 ml-3">
-            <div className="h-7 w-7 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-white text-[11px] font-semibold tracking-wide shadow-sm">
-              {userName ? userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
-            </div>
-            <div className="hidden md:block">
-              <p className="text-[13px] font-medium text-gray-900 leading-tight">{userName}</p>
-              <p className="text-[11px] text-gray-500 leading-tight">{userEmail}</p>
-            </div>
           </div>
             </div>
           </div>

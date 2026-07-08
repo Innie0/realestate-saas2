@@ -7,7 +7,7 @@ import { Bell, Clock, Calendar, X, ArrowRight } from 'lucide-react';
 import Surface from './ui/Surface';
 import Card from './ui/Card';
 
-interface UpcomingItem {
+export interface UpcomingItem {
   id: string;
   title: string;
   description?: string;
@@ -18,7 +18,7 @@ interface UpcomingItem {
   eventType?: string;
 }
 
-async function fetchUpcomingItems(): Promise<UpcomingItem[]> {
+export async function fetchUpcomingItems(): Promise<UpcomingItem[]> {
   const now = new Date();
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
   const sevenDaysFromNow = new Date(startOfToday.getTime() + 7 * 24 * 60 * 60 * 1000);

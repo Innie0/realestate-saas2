@@ -1,20 +1,26 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, FolderKanban, Calendar, User, LogOut, Users, FileText,
-  Menu, X, ChevronsLeft, ChevronsRight, Search, Inbox, Sparkles,
+  Menu, X, ChevronsLeft, ChevronsRight, Search, Inbox, Sparkles, ChevronDown,
 } from 'lucide-react';
 import clsx from 'clsx';
-import { signOut } from '@/lib/supabase';
+import { signOut, getCurrentUser } from '@/lib/supabase';
 import { prefetchDashboardRoute } from '@/lib/dashboard-prefetch';
 import { useToast } from '@/components/providers/ToastProvider';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
+import { useApi } from '@/lib/swr';
+
+interface RecentClient {
+  id: string;
+  name: string;
+  created_at: string;
+}
 
 type NavItem = {
   name: string;
@@ -59,12 +65,14 @@ function NavLink({
   isCollapsed,
   onNavigate,
   onPrefetch,
+  count,
 }: {
   item: NavItem;
   active: boolean;
   isCollapsed: boolean;
   onNavigate: () => void;
   onPrefetch: (href: string) => void;
+  count?: number;
 }) {
   const Icon = item.icon;
   return (
@@ -75,43 +83,31 @@ function NavLink({
       onFocus={() => onPrefetch(item.href)}
       title={isCollapsed ? item.name : undefined}
       className={clsx(
-        'group relative flex items-center rounded-md text-[13px] font-medium transition-colors duration-150',
-        isCollapsed ? 'justify-center px-2 py-2' : 'gap-2.5 px-2.5 py-[7px]',
-        active ? 'text-gray-900' : 'text-gray-500 hover:text-gray-900'
+        'group relative flex items-center rounded-md text-[13px] font-medium transition-colors duration-100',
+        isCollapsed ? 'justify-center px-2 py-2' : 'gap-[9px] px-2.5 py-[6px]',
+        active ? 'bg-brand-200 text-gray-900' : 'text-gray-700 hover:bg-brand-100'
       )}
     >
-      {active && (
-        <motion.span
-          layoutId="sidebar-active-pill"
-          className="absolute inset-0 rounded-md bg-white ring-1 ring-gray-900/[0.06] shadow-surface"
-          transition={{ type: 'spring', stiffness: 500, damping: 38 }}
-        />
-      )}
-      {active && !isCollapsed && (
-        <motion.span
-          layoutId="sidebar-active-bar"
-          className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[3px] rounded-full bg-champagne-500"
-          transition={{ type: 'spring', stiffness: 500, damping: 38 }}
-        />
-      )}
-      {!active && (
-        <span className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100 group-hover:bg-gray-900/[0.04] transition-opacity" />
-      )}
       <Icon
         className={clsx(
-          'relative z-10 h-[16px] w-[16px] flex-shrink-0 transition-colors',
-          active ? 'text-gray-900' : 'text-gray-400 group-hover:text-gray-600'
+          'relative z-10 h-[14px] w-[14px] flex-shrink-0',
+          active ? 'text-gray-900' : 'text-gray-700'
         )}
-        strokeWidth={1.75}
+        strokeWidth={1.8}
       />
       <span
         className={clsx(
-          'relative z-10 transition-all duration-300 whitespace-nowrap',
+          'relative z-10 flex-1 transition-all duration-300 whitespace-nowrap',
           isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'
         )}
       >
         {item.name}
       </span>
+      {!isCollapsed && !!count && count > 0 && (
+        <span className="relative z-10 rounded-full bg-brand-500 px-[6px] py-[1px] font-mono text-[10px] font-semibold text-white">
+          {count}
+        </span>
+      )}
       {isCollapsed && (
         <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-gray-900 ring-1 ring-gray-900 text-white text-xs font-medium rounded-md whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none transition-all duration-150 z-50">
           {item.name}
@@ -129,11 +125,43 @@ export default function Sidebar() {
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  const { data: inboxLeads = [] } = useApi<RecentClient[]>('/api/clients?status=all&view=inbox');
 
   useEffect(() => {
     const saved = localStorage.getItem('sidebar-collapsed');
     if (saved !== null) setIsCollapsed(saved === 'true');
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { user } = await getCurrentUser();
+        if (user) {
+          setUserName(user.user_metadata?.full_name || 'User');
+          setUserEmail(user.email || '');
+        }
+      } catch {
+        // non-critical — footer just shows a fallback
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+    if (isUserMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isUserMenuOpen]);
 
   const toggleCollapsed = () => {
     const newState = !isCollapsed;
@@ -163,6 +191,9 @@ export default function Sidebar() {
   };
 
   const closeMobile = () => setIsMobileMenuOpen(false);
+  const initials = userName
+    ? userName.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
+    : 'U';
 
   return (
     <>
@@ -192,15 +223,15 @@ export default function Sidebar() {
 
       <div
         className={clsx(
-          'fixed top-0 h-screen flex flex-col bg-[var(--sidebar)] z-50 border-r border-gray-900/[0.06]',
+          'fixed top-0 h-screen flex flex-col bg-[var(--sidebar)] z-50 border-r border-gray-200',
           'lg:translate-x-0 lg:relative',
-          isCollapsed ? 'lg:w-[56px]' : 'lg:w-[212px]',
+          isCollapsed ? 'lg:w-[56px]' : 'lg:w-[216px]',
           'w-60',
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
         style={{ transition: 'width 0.2s ease, transform 0.2s ease' }}
       >
-        <div className="hidden lg:flex h-14 shrink-0 items-center border-b border-gray-900/[0.06] overflow-visible px-3">
+        <div className="hidden lg:flex h-[52px] shrink-0 items-center gap-2 border-b border-gray-200 overflow-visible px-4">
           {isCollapsed ? (
             <Image
               src="/logo-collapsed.png"
@@ -211,29 +242,43 @@ export default function Sidebar() {
               className="h-7 w-7 object-contain mx-auto"
             />
           ) : (
-            <Image
-              src="/logo-sidebar.png"
-              alt="Realestic"
-              width={640}
-              height={192}
-              priority
-              className="h-7 w-auto max-w-[150px] object-contain object-left"
-            />
+            <>
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-brand-500 text-[11px] font-bold text-white">
+                R
+              </span>
+              <span className="text-[13px] font-semibold tracking-tight text-gray-900">Realestic</span>
+            </>
           )}
         </div>
 
         <div className="lg:hidden h-16 shrink-0" />
 
+        {!isCollapsed && (
+          <div className="hidden lg:block px-2.5 pt-2.5">
+            {/* Visual affordance only — no command palette wired up yet. */}
+            <div
+              className="flex w-full items-center gap-2 rounded-[7px] border border-gray-200 bg-white px-2.5 py-[6px] text-[12.5px] text-gray-500"
+              title="Search — coming soon"
+            >
+              <Search className="h-3 w-3 shrink-0" strokeWidth={2} />
+              <span className="flex-1">Search</span>
+              <span className="rounded border border-gray-200 bg-gray-100 px-1 font-mono text-[10px] font-medium text-gray-450">
+                ⌘K
+              </span>
+            </div>
+          </div>
+        )}
+
         <nav
           className={clsx(
-            'flex-1 overflow-y-auto overflow-x-hidden py-3',
+            'flex-1 overflow-y-auto overflow-x-hidden py-3.5',
             isCollapsed ? 'px-2' : 'px-2.5'
           )}
         >
           {navGroups.map((group) => (
-            <div key={group.label} className={clsx('mb-4 last:mb-2', isCollapsed && 'mb-3')}>
+            <div key={group.label} className={clsx('mb-[18px] last:mb-2', isCollapsed && 'mb-3')}>
               {!isCollapsed && (
-                <p className="px-2.5 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                <p className="px-2.5 mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-gray-450">
                   {group.label}
                 </p>
               )}
@@ -246,6 +291,7 @@ export default function Sidebar() {
                     isCollapsed={isCollapsed}
                     onNavigate={closeMobile}
                     onPrefetch={(href) => prefetchDashboardRoute(href, router)}
+                    count={item.href === '/dashboard/leads' ? inboxLeads.length : undefined}
                   />
                 ))}
               </div>
@@ -253,59 +299,81 @@ export default function Sidebar() {
           ))}
         </nav>
 
-        <div className="border-t border-gray-900/[0.06] p-2 space-y-px">
-          <Link
-            href="/dashboard/account"
-            onClick={closeMobile}
-            title={isCollapsed ? 'Account' : undefined}
-            className={clsx(
-              'relative flex items-center rounded-md text-[13px] font-medium transition-colors',
-              isCollapsed ? 'justify-center px-2 py-2' : 'gap-2.5 px-2.5 py-[7px]',
-              pathname.startsWith('/dashboard/account')
-                ? 'text-gray-900'
-                : 'text-gray-500 hover:text-gray-900'
-            )}
-          >
-            {pathname.startsWith('/dashboard/account') && (
-              <motion.span
-                layoutId="sidebar-active-pill"
-                className="absolute inset-0 rounded-md bg-white ring-1 ring-gray-900/[0.06] shadow-surface"
-                transition={{ type: 'spring', stiffness: 500, damping: 38 }}
-              />
-            )}
-            <User className="relative z-10 h-[16px] w-[16px] flex-shrink-0" strokeWidth={1.75} />
-            {!isCollapsed && <span className="relative z-10">Account</span>}
-          </Link>
+        <div className="relative border-t border-gray-200 p-2.5" ref={userMenuRef}>
+          {isUserMenuOpen && !isCollapsed && (
+            <div className="absolute bottom-full left-2.5 right-2.5 mb-1.5 overflow-hidden rounded-[8px] border border-gray-200 bg-white py-1 shadow-overlay">
+              <Link
+                href="/dashboard/account"
+                onClick={() => {
+                  setIsUserMenuOpen(false);
+                  closeMobile();
+                }}
+                className="flex items-center gap-2.5 px-3 py-[7px] text-[13px] font-medium text-gray-700 hover:bg-gray-50"
+              >
+                <User className="h-[14px] w-[14px]" strokeWidth={1.8} />
+                Account
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsUserMenuOpen(false);
+                  setShowSignOutModal(true);
+                }}
+                disabled={isSigningOut}
+                className="flex w-full items-center gap-2.5 px-3 py-[7px] text-[13px] font-medium text-gray-700 hover:bg-rose-50 hover:text-rose-600 disabled:opacity-50"
+              >
+                <LogOut className="h-[14px] w-[14px]" strokeWidth={1.8} />
+                Sign out
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsUserMenuOpen(false);
+                  toggleCollapsed();
+                }}
+                className="hidden w-full items-center gap-2.5 px-3 py-[7px] text-[13px] font-medium text-gray-700 hover:bg-gray-50 lg:flex"
+              >
+                <ChevronsLeft className="h-[14px] w-[14px]" strokeWidth={1.8} />
+                Collapse sidebar
+              </button>
+            </div>
+          )}
           <button
             type="button"
-            onClick={() => setShowSignOutModal(true)}
-            disabled={isSigningOut}
-            title={isCollapsed ? 'Sign out' : undefined}
+            onClick={() => (isCollapsed ? toggleCollapsed() : setIsUserMenuOpen((v) => !v))}
             className={clsx(
-              'flex w-full items-center rounded-md text-[13px] font-medium text-gray-500 hover:bg-rose-50 hover:text-rose-600 transition-colors disabled:opacity-50',
-              isCollapsed ? 'justify-center px-2 py-2' : 'gap-2.5 px-2.5 py-[7px]'
+              'flex w-full items-center rounded-[7px] transition-colors hover:bg-brand-100',
+              isCollapsed ? 'justify-center py-2' : 'gap-[9px] px-1.5 py-1.5'
             )}
           >
-            <LogOut className="h-[16px] w-[16px] flex-shrink-0" strokeWidth={1.75} />
-            {!isCollapsed && <span>Sign out</span>}
-          </button>
-          <button
-            type="button"
-            onClick={toggleCollapsed}
-            className={clsx(
-              'hidden lg:flex w-full items-center rounded-md py-[7px] text-[13px] text-gray-400 hover:bg-gray-900/[0.04] hover:text-gray-700 transition-colors',
-              isCollapsed ? 'justify-center px-2' : 'gap-2.5 px-2.5'
-            )}
-          >
-            {isCollapsed ? (
-              <ChevronsRight className="h-4 w-4" />
-            ) : (
+            <span
+              className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full text-[10px] font-semibold text-white"
+              style={{ background: 'linear-gradient(135deg, #1c1c1a, #4a4a4e)' }}
+            >
+              {initials}
+            </span>
+            {!isCollapsed && (
               <>
-                <ChevronsLeft className="h-4 w-4" />
-                <span>Collapse</span>
+                <div className="min-w-0 flex-1 text-left">
+                  <p className="truncate text-[12px] font-medium leading-tight text-gray-900">
+                    {userName || 'Your account'}
+                  </p>
+                  <p className="truncate text-[10.5px] leading-tight text-gray-450">{userEmail}</p>
+                </div>
+                <ChevronDown className="h-[13px] w-[13px] shrink-0 text-gray-450" strokeWidth={2} />
               </>
             )}
           </button>
+          {isCollapsed && (
+            <button
+              type="button"
+              onClick={toggleCollapsed}
+              className="mt-1 hidden w-full items-center justify-center rounded-md py-[7px] text-gray-450 hover:bg-brand-100 hover:text-gray-700 lg:flex"
+              title="Expand sidebar"
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </button>
+          )}
         </div>
       </div>
 

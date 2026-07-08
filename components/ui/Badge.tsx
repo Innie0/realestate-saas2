@@ -1,7 +1,16 @@
 import clsx from 'clsx';
 import type { LucideIcon } from 'lucide-react';
 
-export type BadgeVariant = 'default' | 'hot' | 'warm' | 'cold' | 'pro' | 'success' | 'neutral';
+export type BadgeVariant =
+  | 'default'
+  | 'hot'
+  | 'warm'
+  | 'cold'
+  | 'pro'
+  | 'success'
+  | 'neutral'
+  | 'graphite'
+  | 'info';
 
 const variantStyles: Record<BadgeVariant, string> = {
   default: 'bg-gray-100 text-gray-700 border-gray-200',
@@ -11,6 +20,10 @@ const variantStyles: Record<BadgeVariant, string> = {
   pro: 'bg-champagne-50 text-champagne-700 border-champagne-200',
   success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   neutral: 'bg-gray-50 text-gray-600 border-gray-200',
+  // Console system: solid graphite pill, no border (e.g. "Under contract").
+  graphite: 'bg-brand-100 text-gray-900 border-transparent',
+  // Console system: teal "active" pill.
+  info: 'bg-teal-50 text-teal-700 border-teal-200',
 };
 
 interface BadgeProps {
