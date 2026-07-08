@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     // Includes images for thumbnails, but excludes heavy data like ai_content
     let query = supabase
       .from('projects')
-      .select('id, title, description, status, property_type, property_info, images, created_at, updated_at')
+      .select('id, title, description, status, property_type, property_info, images, published, listing_status, created_at, updated_at')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 

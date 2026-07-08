@@ -11,11 +11,15 @@ import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
+import Surface from '@/components/ui/Surface';
+import Badge from '@/components/ui/Badge';
 import Modal from '@/components/ui/Modal';
+import { getTransactionStatusBadgeVariant } from '@/lib/transaction-status';
 import { 
   Upload, Sparkles, Save, Trash2, Image as ImageIcon, Calendar, FileText, 
   Building2, Copy, Check, Edit3, Wand2, Eye, ChevronLeft, ChevronRight,
-  Home, MapPin, Bed, Bath, Square, DollarSign, ExternalLink, X, Globe, Link2
+  Home, MapPin, Bed, Bath, Square, DollarSign, ExternalLink, X, Globe, Link2,
+  ArrowLeft,
 } from 'lucide-react';
 import { Project, AIGeneratedContent } from '@/types';
 import { useToast } from '@/components/providers/ToastProvider';
@@ -300,7 +304,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         const tasksRes = await fetch(`/api/calendar/events?project_id=${projectId}`);
         if (tasksRes.ok) {
           const tasksData = await tasksRes.json();
-          setRelatedTasks(tasksData.events || []);
+          setRelatedTasks(tasksData.data || []);
         }
       } catch (error) {
         console.error('Error fetching tasks:', error);
@@ -1333,11 +1337,15 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
   const headerActions = (
     <>
-      <Button onClick={handleSave} isLoading={isSaving} size="sm">
+      <Button variant="outline" size="sm" onClick={() => router.push('/dashboard/projects')}>
+        <ArrowLeft className="w-4 h-4 mr-2" />
+        Back
+      </Button>
+      <Button variant="outline" onClick={handleSave} isLoading={isSaving} size="sm">
         <Save className="w-4 h-4 mr-2" />
         Save
       </Button>
-      <Button variant="outline" size="sm" onClick={() => setShowPreviewModal(true)}>
+      <Button size="sm" onClick={() => setShowPreviewModal(true)}>
         <Eye className="w-4 h-4 mr-2" />
         Preview
       </Button>
@@ -1393,37 +1401,36 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
         {/* Tab navigation */}
         <div className="border-b border-gray-200 mb-6">
-          <nav className="flex space-x-1">
+          <nav className="flex gap-[26px]">
             {[
-              { id: 'overview', label: 'Overview', icon: Home },
-              { id: 'ai_content', label: 'AI Content', icon: Sparkles },
-              { id: 'linked', label: 'Linked', icon: FileText },
-            ].map(tab => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setProjectTab(tab.id as any)}
-                  className={`flex items-center py-3 px-4 text-sm font-medium rounded-t-lg transition-colors ${
-                    projectTab === tab.id
-                      ? 'bg-gray-100 text-gray-900 border-b-2 border-white'
-                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
-                  }`}
-                >
-                  <Icon className="w-4 h-4 mr-2" />
-                  {tab.label}
-                </button>
-              );
-            })}
+              { id: 'overview', label: 'Overview' },
+              { id: 'ai_content', label: 'AI Content' },
+              { id: 'linked', label: 'Linked' },
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setProjectTab(tab.id as any)}
+                className={`relative py-3 text-[13px] font-medium transition-colors ${
+                  projectTab === tab.id
+                    ? 'text-gray-900'
+                    : 'text-gray-450 hover:text-gray-700'
+                }`}
+              >
+                {tab.label}
+                {projectTab === tab.id && (
+                  <span className="absolute inset-x-0 -bottom-px h-0.5 bg-brand-500" />
+                )}
+              </button>
+            ))}
           </nav>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-5">
           {projectTab === 'overview' && (<>
               {/* Images section */}
-              <Card>
+              <Surface flat className="p-5 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold text-gray-900">Property Images</h2>
+                  <h2 className="text-[15px] font-semibold text-gray-900">Property Images</h2>
                   <Button size="sm" onClick={handleImageUpload} disabled={isUploading}>
                     <Upload className="w-4 h-4 mr-2" />
                     {isUploading ? 'Uploading...' : 'Upload Images'}
@@ -1432,51 +1439,46 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
                 {project.images && project.images.length > 0 ? (
                   <>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {(showAllImages ? project.images : project.images.slice(0, 7)).map((image, index) => {
                       // Handle both old format (object with url) and new format (direct URL string)
                       const imageUrl = typeof image === 'string' ? image : image.url;
                       const imageId = typeof image === 'string' ? image : image.id;
+                      const isFourth = !showAllImages && index === 3 && project.images.length > 7;
                       
                       return (
                         <div key={imageId || index} className="relative group">
                           <img
                             src={imageUrl}
                             alt="Property image"
-                            className="w-full h-40 object-cover rounded-lg"
+                            className="w-full h-[130px] object-cover rounded-lg"
                           />
-                          <div className="absolute inset-0 bg-[#F5F5F5] bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                            <Button 
-                              size="sm" 
-                              variant="danger"
-                              onClick={() => handleDeleteImage(imageUrl)}
+                          {isFourth ? (
+                            <div
+                              className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-black/55 cursor-pointer"
+                              onClick={() => setShowAllImages(true)}
                             >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
+                              <span className="text-white text-lg font-semibold">+{project.images.length - 4}</span>
+                              <span className="text-white text-[12px] font-medium mt-0.5">View All</span>
+                            </div>
+                          ) : (
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                              <Button 
+                                size="sm" 
+                                variant="danger"
+                                onClick={() => handleDeleteImage(imageUrl)}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
-                    {!showAllImages && project.images.length > 7 && (
-                      <div
-                        className="relative group cursor-pointer"
-                        onClick={() => setShowAllImages(true)}
-                      >
-                        <img
-                          src={typeof project.images[7] === 'string' ? project.images[7] : (project.images[7] as any).url}
-                          alt="More images"
-                          className="w-full h-40 object-cover rounded-lg brightness-50"
-                        />
-                        <div className="absolute inset-0 flex flex-col items-center justify-center rounded-lg">
-                          <span className="text-gray-900 text-2xl font-bold">+{project.images.length - 7}</span>
-                          <span className="text-gray-900 text-sm font-medium mt-1">View All</span>
-                        </div>
-                      </div>
-                    )}
                   </div>
                   {showAllImages && (
                     <button
-                      className="mt-3 text-sm text-gray-500 hover:text-brand-600 transition-colors"
+                      className="mt-3 text-[13px] text-gray-500 hover:text-gray-900 transition-colors"
                       onClick={() => setShowAllImages(false)}
                     >
                       Show less
@@ -1484,72 +1486,72 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   )}
                   </>
                 ) : (
-                  <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
-                    <ImageIcon className="w-12 h-12 mx-auto text-gray-500 mb-4" />
-                    <p className="text-gray-600 mb-4">No images uploaded yet</p>
+                  <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
+                    <ImageIcon className="w-10 h-10 mx-auto text-gray-400 mb-3" />
+                    <p className="text-[13.5px] text-gray-600 mb-4">No images uploaded yet</p>
                     <Button onClick={handleImageUpload} disabled={isUploading}>
                       <Upload className="w-4 h-4 mr-2" />
                       Upload Your First Image
                     </Button>
                   </div>
                 )}
-              </Card>
+              </Surface>
 
               {/* Property information */}
-              <Card>
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Property Information</h2>
+              <Surface flat className="p-5 sm:p-6">
+                <h2 className="text-[15px] font-semibold text-gray-900 mb-4">Property Information</h2>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <p className="text-sm text-gray-600">Address</p>
-                    <p className="font-medium text-gray-900">{project.property_info?.address || 'Not specified'}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  <div className="p-3.5 bg-gray-50 rounded-lg">
+                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">Address</p>
+                    <p className="mt-1 text-[14px] font-medium text-gray-900">{project.property_info?.address || 'Not specified'}</p>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <p className="text-sm text-gray-600">City, State</p>
-                    <p className="font-medium text-gray-900">
+                  <div className="p-3.5 bg-gray-50 rounded-lg">
+                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">City, State</p>
+                    <p className="mt-1 text-[14px] font-medium text-gray-900">
                       {project.property_info?.city || 'N/A'}, {project.property_info?.state || 'N/A'}
                     </p>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <p className="text-sm text-gray-600">Property Type</p>
-                    <p className="font-medium text-gray-900 capitalize">{project.property_type || 'N/A'}</p>
+                  <div className="p-3.5 bg-gray-50 rounded-lg">
+                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">Property Type</p>
+                    <p className="mt-1 text-[14px] font-medium text-gray-900 capitalize">{project.property_type || 'N/A'}</p>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <p className="text-sm text-gray-600">Bedrooms</p>
-                    <p className="font-medium text-gray-900">{project.property_info?.bedrooms || 'N/A'}</p>
+                  <div className="p-3.5 bg-gray-50 rounded-lg">
+                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">Bedrooms</p>
+                    <p className="mt-1 text-[14px] font-medium text-gray-900">{project.property_info?.bedrooms || 'N/A'}</p>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <p className="text-sm text-gray-600">Bathrooms</p>
-                    <p className="font-medium text-gray-900">{project.property_info?.bathrooms || 'N/A'}</p>
+                  <div className="p-3.5 bg-gray-50 rounded-lg">
+                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">Bathrooms</p>
+                    <p className="mt-1 text-[14px] font-medium text-gray-900">{project.property_info?.bathrooms || 'N/A'}</p>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <p className="text-sm text-gray-600">Square Feet</p>
-                    <p className="font-medium text-gray-900">
+                  <div className="p-3.5 bg-gray-50 rounded-lg">
+                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">Square Feet</p>
+                    <p className="mt-1 text-[14px] font-medium text-gray-900">
                       {project.property_info?.square_feet?.toLocaleString() || 'N/A'} sq ft
                     </p>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-lg col-span-full md:col-span-1 border border-gray-200">
-                    <p className="text-sm text-gray-500">Listing Price</p>
-                    <p className="font-bold text-gray-900 text-xl">
+                  <div className="p-3.5 bg-gray-50 rounded-lg col-span-full sm:col-span-1">
+                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">Listing Price</p>
+                    <p className="mt-1 text-[15px] font-semibold text-gray-900">
                       {project.property_info?.price 
                         ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(project.property_info.price)
                         : 'Price not set'}
                     </p>
                   </div>
                 </div>
-              </Card>
+              </Surface>
 
           </>)}
 
           {projectTab === 'ai_content' && (<>
               {/* AI-generated content */}
-              <Card>
+              <Surface flat className="p-5 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold text-gray-900">AI-Generated Content</h2>
+                  <h2 className="text-[17px] font-semibold text-gray-900">AI-Generated Content</h2>
                   <Button 
                     onClick={handleGenerateAI} 
                     isLoading={isGenerating}
-                    className="relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                    className="relative overflow-hidden"
                   >
                     <Sparkles className={`w-4 h-4 mr-2 ${isGenerating ? 'animate-pulse' : ''}`} />
                     {isGenerating ? 'Generating Amazing Content...' : (project.ai_content ? 'Regenerate' : 'Generate') + ' Content'}
@@ -1673,14 +1675,14 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                             <button
                               key={version.tone}
                               onClick={() => handleToneChange(version.tone)}
-                              className={`p-4 rounded-lg border-2 text-left transition-all ${
+                              className={`p-4 rounded-lg border text-left transition-all ${
                                 selectedTone === version.tone
-                                  ? 'border-white bg-gray-100'
+                                  ? 'border-gray-900 bg-gray-50'
                                   : 'border-gray-200 hover:border-gray-300'
                               }`}
                             >
-                              <div className="font-medium text-gray-900">{version.label}</div>
-                              <div className="text-sm text-gray-500">{version.description}</div>
+                              <div className="text-[13.5px] font-semibold text-gray-900">{version.label}</div>
+                              <div className="text-[11.5px] text-gray-500 mt-0.5">{version.description}</div>
                             </button>
                           ))}
                         </div>
@@ -1714,8 +1716,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                       </div>
                       
                       <textarea
-                        className={`block w-full rounded-lg border px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 ${
-                          isEditingDescription ? 'border-brand-500/50 bg-gray-100' : 'border-gray-300 bg-gray-50'
+                        className={`block w-full rounded-lg border px-4 py-3 text-[13.5px] leading-[1.7] text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 ${
+                          isEditingDescription ? 'border-brand-500/50 bg-white' : 'border-gray-200 bg-gray-50'
                         }`}
                         rows={8}
                         value={editedDescription}
@@ -1797,7 +1799,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                         {project.ai_content.key_features?.map((feature, index) => (
                           <span 
                             key={index} 
-                            className="group relative px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-600 hover:bg-gray-200 transition-all duration-200 pr-8"
+                            className="group relative px-3 py-1.5 bg-gray-100 rounded-2xl text-[13px] text-gray-700 hover:bg-gray-200 transition-all duration-200 pr-8"
                           >
                             {feature}
                             <button
@@ -1910,145 +1912,142 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     </div>
                   </div>
                 ) : (
-                  <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
-                    <Sparkles className="w-12 h-12 mx-auto text-gray-500 mb-4" />
-                    <p className="text-gray-600 mb-4">No AI content generated yet</p>
-                    <p className="text-sm text-gray-500">
+                  <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
+                    <Sparkles className="w-10 h-10 mx-auto text-gray-400 mb-3" />
+                    <p className="text-[13.5px] text-gray-600 mb-2">No AI content generated yet</p>
+                    <p className="text-[12.5px] text-gray-450">
                       Click the button above to generate compelling marketing content with multiple tone variations
                     </p>
                   </div>
                 )}
-              </Card>
+              </Surface>
           </>)}
 
           {projectTab === 'linked' && (<>
           {/* Tasks & Events Section */}
-          <Card>
+          <Surface flat className="p-5 sm:p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-900 flex items-center">
-                  <Calendar className="w-5 h-5 mr-2 text-gray-900/60" />
-                  Project Tasks & Events
+                <h2 className="text-[15px] font-semibold text-gray-900 flex items-center">
+                  <Calendar className="w-4 h-4 mr-2 text-gray-450" />
+                  Project Tasks &amp; Events
                 </h2>
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => router.push('/dashboard/calendar')}
+                  onClick={() => router.push(`/dashboard/calendar?project_id=${projectId}`)}
                 >
                   Manage in Calendar
                 </Button>
               </div>
               
               {relatedTasks.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   {relatedTasks.map((task) => (
                     <div 
                       key={task.id} 
-                      className="p-4 border border-gray-200 rounded-lg hover:border-brand-300 transition-colors"
+                      className="p-3.5 border border-gray-150 rounded-lg hover:border-gray-300 transition-colors"
                     >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-medium text-gray-900">{task.title}</h3>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-[13.5px] font-medium text-gray-900">{task.title}</h3>
                           {task.description && (
-                            <p className="text-sm text-gray-600 mt-1">{task.description}</p>
+                            <p className="text-[12.5px] text-gray-600 mt-1">{task.description}</p>
                           )}
-                          <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
+                          <div className="flex items-center gap-3 mt-1.5 font-mono text-[11.5px] text-gray-450">
                             <span className="flex items-center gap-1">
                               <Calendar className="w-3 h-3" />
                               {new Date(task.start_time).toLocaleString()}
                             </span>
-                            {task.location && <span>📍 {task.location}</span>}
+                            {task.location && <span>{task.location}</span>}
                           </div>
                         </div>
-                        <span className={`px-2 py-1 text-xs rounded-full ${
-                          task.event_type === 'showing' ? 'bg-brand-500/20 text-brand-500 border border-brand-400/30' :
-                          task.event_type === 'open_house' ? 'bg-green-500/20 text-green-400 border border-green-400/30' :
-                          task.event_type === 'meeting' ? 'bg-brand-500/20 text-brand-500 border border-brand-400/30' :
-                          'bg-gray-100 text-gray-600 border border-gray-200'
-                        }`}>
-                          {task.event_type}
-                        </span>
+                        <Badge variant="graphite">{task.event_type}</Badge>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
-                  <Calendar className="w-12 h-12 mx-auto text-gray-500 mb-4" />
-                  <p className="text-gray-600 mb-4">No tasks linked to this project yet</p>
-                  <Button onClick={() => router.push('/dashboard/calendar')}>
+                <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
+                  <Calendar className="w-10 h-10 mx-auto text-gray-400 mb-3" />
+                  <p className="text-[13.5px] text-gray-500 mb-4">No tasks linked to this project yet</p>
+                  <Button onClick={() => router.push(`/dashboard/calendar?project_id=${projectId}`)}>
                     Go to Calendar
                   </Button>
                 </div>
               )}
-            </Card>
+            </Surface>
 
           {/* Transactions Section */}
-          <Card>
+          <Surface flat className="p-5 sm:p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-900 flex items-center">
-                  <FileText className="w-5 h-5 mr-2 text-gray-900/60" />
+                <h2 className="text-[15px] font-semibold text-gray-900 flex items-center">
+                  <FileText className="w-4 h-4 mr-2 text-gray-450" />
                   Project Transactions
                 </h2>
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => router.push('/dashboard/transactions/new')}
+                  onClick={() => router.push(
+                    `/dashboard/transactions/new?project_id=${projectId}` +
+                    (project.property_info?.address ? `&address=${encodeURIComponent(project.property_info.address)}` : '') +
+                    (project.property_info?.city ? `&city=${encodeURIComponent(project.property_info.city)}` : '') +
+                    (project.property_info?.state ? `&state=${encodeURIComponent(project.property_info.state)}` : '')
+                  )}
                 >
                   New Transaction
                 </Button>
               </div>
               
               {relatedTransactions.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   {relatedTransactions.map((transaction) => (
                     <div 
                       key={transaction.id} 
-                      className="p-4 border border-gray-200 rounded-lg hover:border-brand-300 transition-colors cursor-pointer"
+                      className="p-3.5 border border-gray-150 rounded-lg hover:border-gray-300 transition-colors cursor-pointer"
                       onClick={() => router.push(`/dashboard/transactions/${transaction.id}`)}
                     >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-medium text-gray-900">{transaction.property_address}</h3>
-                          <p className="text-sm text-gray-600 mt-1">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-[13.5px] font-medium text-gray-900">{transaction.property_address}</h3>
+                          <p className="text-[12.5px] text-gray-600 mt-1">
                             Buyer: {transaction.buyer_name}
                           </p>
-                          <div className="flex items-center gap-4 mt-2">
-                            <span className="text-sm font-medium text-brand-600">
+                          <div className="flex items-center gap-3 mt-1.5">
+                            <span className="font-mono text-[12.5px] font-medium text-gray-900">
                               {transaction.offer_price 
                                 ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(transaction.offer_price)
                                 : 'Price not set'}
                             </span>
                             {transaction.closing_date && (
-                              <span className="text-xs text-gray-500">
+                              <span className="font-mono text-[11.5px] text-gray-450">
                                 Closing: {new Date(transaction.closing_date).toLocaleDateString()}
                               </span>
                             )}
                           </div>
                         </div>
-                        <span className={`px-3 py-1 text-xs rounded-full font-medium ${
-                          transaction.status === 'active' ? 'bg-brand-500/20 text-brand-500 border border-brand-400/30' :
-                          transaction.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-400/30' :
-                          transaction.status === 'under_contract' ? 'bg-brand-500/20 text-brand-500 border border-brand-400/30' :
-                          transaction.status === 'closed' ? 'bg-green-500/20 text-green-400 border border-green-400/30' :
-                          'bg-gray-100 text-gray-600 border border-gray-200'
-                        }`}>
+                        <Badge variant={getTransactionStatusBadgeVariant(transaction.status)}>
                           {transaction.status === 'under_contract' ? 'Under Contract' : 
                            transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
-                        </span>
+                        </Badge>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
-                  <FileText className="w-12 h-12 mx-auto text-gray-500 mb-4" />
-                  <p className="text-gray-600 mb-4">No transactions linked to this project yet</p>
-                  <Button onClick={() => router.push('/dashboard/transactions/new')}>
+                <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
+                  <FileText className="w-10 h-10 mx-auto text-gray-400 mb-3" />
+                  <p className="text-[13.5px] text-gray-500 mb-4">No transactions linked to this project yet</p>
+                  <Button onClick={() => router.push(
+                    `/dashboard/transactions/new?project_id=${projectId}` +
+                    (project.property_info?.address ? `&address=${encodeURIComponent(project.property_info.address)}` : '') +
+                    (project.property_info?.city ? `&city=${encodeURIComponent(project.property_info.city)}` : '') +
+                    (project.property_info?.state ? `&state=${encodeURIComponent(project.property_info.state)}` : '')
+                  )}>
                     Create Transaction
                   </Button>
                 </div>
               )}
-            </Card>
+            </Surface>
           </>)}
         </div>
 

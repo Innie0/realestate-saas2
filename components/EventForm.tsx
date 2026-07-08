@@ -53,6 +53,9 @@ export default function EventForm({
       ...formData,
       start_time: startDate.toISOString(),
       end_time: endDate.toISOString(),
+      // Carry through a linked project id (e.g. opened from a project's Linked tab)
+      // without exposing an editable field for it.
+      ...(initialData?.project_id ? { project_id: initialData.project_id } : {}),
     };
 
     await onSubmit(eventData);
@@ -60,6 +63,12 @@ export default function EventForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {initialData?.project_id && (
+        <div className="px-4 py-2.5 rounded-lg bg-teal-50 text-teal-700 text-[13px]">
+          Linked to a listing project — this event will show up on that project&apos;s Linked tab.
+        </div>
+      )}
+
       {/* Event Title */}
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-gray-600 mb-1">

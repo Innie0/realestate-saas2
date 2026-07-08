@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const month = searchParams.get('month');
     const year = searchParams.get('year');
+    const projectId = searchParams.get('project_id');
 
     // Get authenticated user
     const supabase = await createClient();
@@ -46,6 +47,11 @@ export async function GET(request: NextRequest) {
       query = query
         .gte('start_time', startDate)
         .lte('start_time', endDate);
+    }
+
+    // Filter by linked project if provided (e.g. a project's "Linked" tab)
+    if (projectId) {
+      query = query.eq('project_id', projectId);
     }
 
     const { data: events, error } = await query;

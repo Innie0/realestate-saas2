@@ -3,12 +3,19 @@
 
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import TransactionForm from '@/components/TransactionForm';
 
-export default function NewTransactionPage() {
+function NewTransactionPageContent() {
+  const searchParams = useSearchParams();
+  const projectId = searchParams.get('project_id') || undefined;
+  const address = searchParams.get('address') || undefined;
+  const city = searchParams.get('city') || undefined;
+  const state = searchParams.get('state') || undefined;
+
   // Set page title
   React.useEffect(() => {
     document.title = 'New Transaction - Realestic';
@@ -35,9 +42,22 @@ export default function NewTransactionPage() {
 
         {/* Form */}
         <div className="rounded-2xl border border-gray-200 p-6 bg-white">
-          <TransactionForm />
+          <TransactionForm
+            defaultProjectId={projectId}
+            defaultAddress={address}
+            defaultCity={city}
+            defaultState={state}
+          />
         </div>
       </div>
     </div>
+  );
+}
+
+export default function NewTransactionPage() {
+  return (
+    <Suspense fallback={null}>
+      <NewTransactionPageContent />
+    </Suspense>
   );
 }

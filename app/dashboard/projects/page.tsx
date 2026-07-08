@@ -5,7 +5,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import DashboardPage from '@/components/layout/DashboardPage';
-import PageToolbar from '@/components/layout/PageToolbar';
 import Button from '@/components/ui/Button';
 import SearchInput from '@/components/ui/SearchInput';
 import Select from '@/components/ui/Select';
@@ -99,39 +98,40 @@ export default function ProjectsPage() {
         </Link>
       }
     >
-      <PageToolbar
-        meta={`Showing ${filteredProjects.length} of ${projects.length} projects`}
-      >
-        <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full">
-          <SearchInput
-            data-tour="projects-search"
-            placeholder="Search projects..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <Select
-            value={filterStatus}
-            onChange={setFilterStatus}
-            className="sm:min-w-[160px]"
-            data-tour="projects-filter"
-            options={[
-              { value: 'all', label: 'All status' },
-              { value: 'draft', label: 'Draft' },
-              { value: 'in_progress', label: 'In progress' },
-              { value: 'completed', label: 'Completed' },
-            ]}
-          />
-        </div>
-      </PageToolbar>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <SearchInput
+          data-tour="projects-search"
+          placeholder="Search projects…"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          containerClassName="flex-1"
+        />
+        <Select
+          value={filterStatus}
+          onChange={setFilterStatus}
+          className="sm:min-w-[160px]"
+          data-tour="projects-filter"
+          options={[
+            { value: 'all', label: 'All status' },
+            { value: 'draft', label: 'Draft' },
+            { value: 'in_progress', label: 'In progress' },
+            { value: 'completed', label: 'Completed' },
+          ]}
+        />
+      </div>
+
+      <p className="text-[13px] text-gray-450">
+        Showing {filteredProjects.length} of {projects.length} projects
+      </p>
 
       {isLoading && projects.length === 0 ? (
-        <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-[18px] [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="animate-pulse rounded-2xl bg-white shadow-sm p-4 h-64" />
+            <div key={i} className="animate-pulse rounded-xl bg-white border border-gray-200 h-[314px]" />
           ))}
         </div>
       ) : filteredProjects.length > 0 ? (
-        <StaggerList className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <StaggerList className="grid gap-[18px] [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
           {filteredProjects.map((project) => (
             <StaggerItem key={project.id}>
               <ProjectCard

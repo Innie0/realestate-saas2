@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
     // Get query parameters for filtering
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
+    const projectId = searchParams.get('project_id');
     const limit = parseInt(searchParams.get('limit') || '50');
 
     // Build query
@@ -50,6 +51,11 @@ export async function GET(request: NextRequest) {
       } else {
         query = query.eq('status', status);
       }
+    }
+
+    // Filter by linked project if provided (e.g. a project's "Linked" tab)
+    if (projectId) {
+      query = query.eq('project_id', projectId);
     }
 
     const { data: transactions, error } = await query;

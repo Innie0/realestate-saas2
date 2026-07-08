@@ -4,8 +4,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Project } from '@/types';
-import Card from './ui/Card';
-import { Calendar, MapPin, Home, Trash2, Globe } from 'lucide-react';
+import { Calendar, MapPin, Home, Trash2 } from 'lucide-react';
 
 /**
  * ProjectCardProps - Props for the ProjectCard component
@@ -15,16 +14,31 @@ interface ProjectCardProps {
   onDelete?: () => void; // Optional delete callback
 }
 
+// Cycled gradient placeholders for projects without a photo yet — matches
+// the "console" design handoff's soft tan / sage / slate thumbnail treatment.
+const THUMB_GRADIENTS = [
+  'linear-gradient(135deg, #ded2ba 0%, #c4b48f 100%)',
+  'linear-gradient(135deg, #d6ded6 0%, #a9c0af 100%)',
+  'linear-gradient(135deg, #d7dde3 0%, #aebac6 100%)',
+  'linear-gradient(135deg, #e3d9c8 0%, #cdb99a 100%)',
+];
+
+function gradientForId(id: string) {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  return THUMB_GRADIENTS[hash % THUMB_GRADIENTS.length];
+}
+
 /**
  * ProjectCard component
  * Displays a project with thumbnail, title, and key information
  */
 export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
-  // Get the first image as thumbnail, or use placeholder
+  // Get the first image as thumbnail, if one has been uploaded
   const firstImage = project.images && project.images.length > 0 ? project.images[0] : null;
-  const thumbnailUrl = firstImage 
+  const thumbnailUrl = firstImage
     ? (typeof firstImage === 'string' ? firstImage : firstImage.url)
-    : '/placeholder-property.jpg';
+    : null;
 
   // Format the date
   const createdDate = new Date(project.created_at).toLocaleDateString('en-US', {
@@ -33,17 +47,7 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
     year: 'numeric',
   });
 
-  // Status badge colors — light theme
-  const statusColors = {
-    draft: 'bg-gray-100 text-gray-600 border border-gray-200',
-    in_progress: 'bg-amber-50 text-amber-700 border border-amber-200',
-    completed: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-  };
-  const statusLabels = {
-    draft: 'Draft',
-    in_progress: 'In progress',
-    completed: 'Completed',
-  };
+  const isLive = !!project.published;
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent navigation
@@ -54,79 +58,69 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
   };
 
   return (
-    <div className="relative">
-      <Link href={`/dashboard/projects/${project.id}`}>
-        <Card padding="none" hover>
-        {/* Project thumbnail image */}
-        <div className="relative h-48 w-full overflow-hidden rounded-t-xl bg-gray-200">
-          <img
-            src={thumbnailUrl}
-            alt={project.title}
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute top-2 right-2 flex flex-col items-end gap-1.5">
-            <span className={`text-[11px] font-medium px-2 py-1 rounded-full backdrop-blur-sm ${statusColors[project.status]}`}>
-              {statusLabels[project.status]}
-            </span>
-            {project.published && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-full bg-white/90 text-gray-700 border border-gray-200 backdrop-blur-sm">
-                <Globe className="w-3 h-3 text-brand-600" />
-                Live
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Project details */}
-        <div className="p-4">
-          {/* Project title */}
-          <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-1">
-            {project.title}
-          </h3>
-
-          {/* Project description */}
-          {project.description && (
-            <p className="text-sm text-gray-500 mb-3 line-clamp-2">
-              {project.description}
-            </p>
-          )}
-
-          {/* Property information - displayed as icons with text */}
-          <div className="flex flex-wrap gap-3 text-sm text-gray-500 mb-3">
-            {project.property_type && (
-              <div className="flex items-center gap-1">
-                <Home className="w-4 h-4" />
-                <span className="capitalize">{project.property_type}</span>
-              </div>
-            )}
-            {project.property_info?.address && (
-              <div className="flex items-center gap-1">
-                <MapPin className="w-4 h-4" />
-                <span className="line-clamp-1">{project.property_info.city || 'Address'}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Creation date */}
-          <div className="flex items-center gap-1 text-xs text-gray-500">
-            <Calendar className="w-3 h-3" />
-            <span>{createdDate}</span>
-          </div>
-        </div>
-      </Card>
-    </Link>
-
-    {/* Delete button - positioned outside the link */}
-    {onDelete && (
-      <button
-        onClick={handleDelete}
-        className="absolute top-2 left-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-full border-2 border-white shadow-lg transition-colors z-10"
-        title="Delete project"
+    <Link
+      href={`/dashboard/projects/${project.id}`}
+      className="group block rounded-xl bg-white border border-gray-200 hover:border-gray-300 transition-colors overflow-hidden"
+    >
+      {/* Thumbnail */}
+      <div
+        className="relative h-[170px] w-full overflow-hidden"
+        style={!thumbnailUrl ? { background: gradientForId(project.id) } : undefined}
       >
-        <Trash2 className="w-4 h-4" />
-      </button>
-    )}
-  </div>
+        {thumbnailUrl ? (
+          <img src={thumbnailUrl} alt={project.title} className="h-full w-full object-cover" />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Home className="w-10 h-10 text-black/15" strokeWidth={1.25} />
+          </div>
+        )}
+
+        {/* Delete button */}
+        {onDelete && (
+          <button
+            onClick={handleDelete}
+            className="absolute top-2.5 left-2.5 flex h-[30px] w-[30px] items-center justify-center rounded-full text-white transition-colors hover:bg-black/70"
+            style={{ backgroundColor: 'rgba(20,20,20,0.55)' }}
+            title="Delete project"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        )}
+
+        {/* Status pill */}
+        <span
+          className={`absolute top-2.5 right-2.5 rounded-full px-2.5 py-1 text-[11px] font-medium backdrop-blur-sm ${
+            isLive ? 'bg-teal-50/90 text-teal-700' : 'bg-white/85 text-gray-700'
+          }`}
+        >
+          {isLive ? 'Active' : 'Draft'}
+        </span>
+      </div>
+
+      {/* Body */}
+      <div className="p-4">
+        <h3 className="text-[15px] font-semibold text-gray-900 truncate">{project.title}</h3>
+
+        <div className="mt-2 flex flex-wrap items-center gap-3 text-[12.5px] text-gray-600">
+          {project.property_type && (
+            <div className="flex items-center gap-1">
+              <Home className="w-[13px] h-[13px] text-gray-450" />
+              <span className="capitalize">{project.property_type}</span>
+            </div>
+          )}
+          {project.property_info?.city && (
+            <div className="flex items-center gap-1">
+              <MapPin className="w-[13px] h-[13px] text-gray-450" />
+              <span className="line-clamp-1">{project.property_info.city}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-2 flex items-center gap-1 font-mono text-[12px] text-gray-450">
+          <Calendar className="w-3 h-3" />
+          <span>{createdDate}</span>
+        </div>
+      </div>
+    </Link>
   );
 }
-

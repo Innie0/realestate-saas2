@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
 import PageToolbar from '@/components/layout/PageToolbar';
 import Button from '@/components/ui/Button';
@@ -14,13 +15,22 @@ import { useApi } from '@/lib/swr';
 import { mutate as globalMutate } from 'swr';
 import { calendarEventsPrefetchUrl } from '@/lib/dashboard-prefetch';
 
-export default function CalendarPage() {
+function CalendarPageContent() {
+  const searchParams = useSearchParams();
+  const linkedProjectId = searchParams.get('project_id') || undefined;
+
   const [isConnecting, setIsConnecting] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [showEventModal, setShowEventModal] = useState(false);
   const [showConnectionsModal, setShowConnectionsModal] = useState(false);
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
   const [pageMessage, setPageMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // Deep-linked from a project's "Linked" tab — open the create-event modal
+  // pre-associated with that project.
+  React.useEffect(() => {
+    if (linkedProjectId) setShowEventModal(true);
+  }, [linkedProjectId]);
 
   const { data: connectionsData, mutate: mutateConnections } = useApi<
     Array<{ provider: string; is_active?: boolean; email?: string }>
@@ -197,7 +207,12 @@ export default function CalendarPage() {
 
       {showEventModal && (
         <Modal isOpen={showEventModal} onClose={() => setShowEventModal(false)} title="Create New Event">
-          <EventForm onSubmit={handleCreateEvent} onCancel={() => setShowEventModal(false)} isLoading={isCreatingEvent} />
+          <EventForm
+            onSubmit={handleCreateEvent}
+            onCancel={() => setShowEventModal(false)}
+            isLoading={isCreatingEvent}
+            initialData={linkedProjectId ? { project_id: linkedProjectId } : undefined}
+          />
         </Modal>
       )}
 
@@ -246,5 +261,13 @@ export default function CalendarPage() {
         </div>
       </Modal>
     </DashboardPage>
+  );
+}
+
+export default function CalendarPage() {
+  return (
+    <Suspense fallback={null}>
+      <CalendarPageContent />
+    </Suspense>
   );
 }

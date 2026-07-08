@@ -16,9 +16,21 @@ interface TransactionFormProps {
   transaction?: Transaction; // Existing transaction for editing
   onSuccess?: (transaction: Transaction) => void;
   onCancel?: () => void;
+  defaultProjectId?: string; // Link to a listing project (e.g. from Project → Linked tab)
+  defaultAddress?: string;
+  defaultCity?: string;
+  defaultState?: string;
 }
 
-export default function TransactionForm({ transaction, onSuccess, onCancel }: TransactionFormProps) {
+export default function TransactionForm({
+  transaction,
+  onSuccess,
+  onCancel,
+  defaultProjectId,
+  defaultAddress,
+  defaultCity,
+  defaultState,
+}: TransactionFormProps) {
   const router = useRouter();
   const isEditing = !!transaction;
 
@@ -28,9 +40,9 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
   const [activeSection, setActiveSection] = useState<'property' | 'parties' | 'financial' | 'dates'>('property');
 
   // Property info
-  const [propertyAddress, setPropertyAddress] = useState(transaction?.property_address || '');
-  const [propertyCity, setPropertyCity] = useState(transaction?.property_city || '');
-  const [propertyState, setPropertyState] = useState(transaction?.property_state || '');
+  const [propertyAddress, setPropertyAddress] = useState(transaction?.property_address || defaultAddress || '');
+  const [propertyCity, setPropertyCity] = useState(transaction?.property_city || defaultCity || '');
+  const [propertyState, setPropertyState] = useState(transaction?.property_state || defaultState || '');
   const [propertyZip, setPropertyZip] = useState(transaction?.property_zip || '');
   const [propertyType, setPropertyType] = useState(transaction?.property_type || 'house');
 
@@ -139,6 +151,9 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
 
     if (!isEditing) {
       transactionData.status = status;
+      if (defaultProjectId) {
+        transactionData.project_id = defaultProjectId;
+      }
     }
 
     try {
@@ -184,6 +199,12 @@ export default function TransactionForm({ transaction, onSuccess, onCancel }: Tr
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
           {error}
+        </div>
+      )}
+
+      {!isEditing && defaultProjectId && (
+        <div className="px-4 py-2.5 rounded-lg bg-teal-50 text-teal-700 text-[13px]">
+          Linked to a listing project — this transaction will show up on that project&apos;s Linked tab.
         </div>
       )}
 
