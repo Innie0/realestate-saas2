@@ -201,7 +201,7 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
       <div className="px-4 sm:px-6 py-3.5">
         <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0 flex-1">
-            <h1 className="font-serif text-[19px] sm:text-[22px] font-semibold tracking-tight text-gray-900 truncate">{title}</h1>
+            <h1 className="text-[18px] sm:text-[21px] font-semibold tracking-tight text-gray-900 truncate">{title}</h1>
             {subtitle && (
               <p className="text-caption text-gray-500 mt-0.5 truncate">{subtitle}</p>
             )}
@@ -304,7 +304,7 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
                               )}
                               <div className="flex items-center gap-2 mt-1.5 text-[11px] text-gray-500">
                                 <Clock className="w-3 h-3" />
-                                <span>{formatDate(item.date)}</span>
+                                <span className="font-mono">{formatDate(item.date)}</span>
                                 {isToday(item.date) && (
                                   <span className="bg-champagne-50 text-champagne-700 px-1.5 py-px rounded font-medium">
                                     Today

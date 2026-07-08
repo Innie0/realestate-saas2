@@ -274,7 +274,7 @@ export default function NotificationsPanel({ embedded = false, className }: Noti
             )}
             <div className="flex items-center gap-2 mt-1.5 text-caption text-gray-500 flex-wrap">
               <Clock className="w-3 h-3 shrink-0" />
-              <span>{formatWhen(item.date)}</span>
+              <span className="font-mono text-[11px]">{formatWhen(item.date)}</span>
               {item.clientName && <span>· {item.clientName}</span>}
               {item.location && <span className="truncate">· {item.location}</span>}
             </div>

@@ -198,7 +198,7 @@ function MetricStrip({ metrics }: { metrics: Metric[] }) {
           >
             <p className="text-label">{m.label}</p>
             <div className="mt-2 flex items-end justify-between gap-2">
-              <p className="font-serif text-[30px] font-semibold tracking-tight tabular-nums text-gray-900 leading-none">
+              <p className="text-[28px] font-semibold tracking-tight tabular-nums text-gray-900 leading-none">
                 {m.placeholder ?? <CountUp value={m.value} format={m.format} />}
               </p>
               {m.series && m.series.some((v) => v > 0) && (
@@ -352,7 +352,7 @@ function OpenDealsTable({
                   <th
                     key={h}
                     className={clsx(
-                      'px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400',
+                      'px-5 py-2 font-mono text-[10px] font-medium uppercase tracking-wider text-gray-400',
                       (h === 'Price' || h === 'Closing') && 'text-right',
                     )}
                   >
@@ -384,10 +384,10 @@ function OpenDealsTable({
                   <td className="px-5 py-3">
                     <TransactionStatusBadge status={tx.status} />
                   </td>
-                  <td className="px-5 py-3 text-right text-[13px] font-semibold text-emerald-700 tabular-nums whitespace-nowrap">
+                  <td className="px-5 py-3 text-right font-mono text-[12px] font-semibold text-emerald-700 tabular-nums whitespace-nowrap">
                     {tx.offer_price ? compactCurrency.format(tx.offer_price) : '—'}
                   </td>
-                  <td className="px-5 py-3 text-right text-[12px] text-gray-500 tabular-nums whitespace-nowrap">
+                  <td className="px-5 py-3 text-right font-mono text-[11px] text-gray-500 tabular-nums whitespace-nowrap">
                     {formatClosing(tx.closing_date)}
                   </td>
                 </StaggerItem>
@@ -465,7 +465,7 @@ function QuickActionsPanel() {
             <span className="text-[13px] text-gray-700 group-hover:text-gray-900 transition-colors truncate">
               {label}
             </span>
-            <kbd className="flex h-5 min-w-[20px] items-center justify-center rounded border border-gray-200 bg-gray-50 px-1 text-[11px] font-medium text-gray-400 group-hover:border-gray-300 group-hover:text-gray-600 transition-colors shrink-0">
+            <kbd className="flex h-5 min-w-[20px] items-center justify-center rounded border border-gray-200 bg-gray-50 px-1 font-mono text-[11px] font-medium text-gray-400 group-hover:border-gray-300 group-hover:text-gray-600 transition-colors shrink-0">
               {shortcut}
             </kbd>
           </Link>

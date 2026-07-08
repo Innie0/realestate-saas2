@@ -2,23 +2,25 @@
 // This is the main layout file for the Next.js app
 
 import type { Metadata } from 'next';
-import { Plus_Jakarta_Sans, Fraunces } from 'next/font/google';
+import { Instrument_Sans, IBM_Plex_Mono } from 'next/font/google';
 import { GlobalStructuredData } from '@/components/seo/StructuredData';
 import { SITE_NAME, SITE_NAME_ALT, SITE_URL } from '@/lib/site-config';
 import './globals.css';
 
-const jakarta = Plus_Jakarta_Sans({
+// Primary UI typeface — text, labels, headings.
+const instrumentSans = Instrument_Sans({
   subsets: ['latin'],
-  variable: '--font-jakarta',
+  variable: '--font-sans',
   display: 'swap',
 });
 
-// Editorial serif for display moments — page titles and hero numbers.
-const fraunces = Fraunces({
+// Mono for the small structured details — metric labels, timestamps,
+// keyboard-shortcut badges.
+const plexMono = IBM_Plex_Mono({
   subsets: ['latin'],
-  variable: '--font-serif',
+  weight: ['400', '500', '600'],
+  variable: '--font-mono',
   display: 'swap',
-  axes: ['opsz'],
 });
 
 const googleSiteVerification = process.env.GOOGLE_SITE_VERIFICATION;
@@ -115,7 +117,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${jakarta.variable} ${fraunces.variable} font-sans antialiased`}>
+      <body className={`${instrumentSans.variable} ${plexMono.variable} font-sans antialiased`}>
         <GlobalStructuredData />
         {children}
       </body>

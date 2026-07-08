@@ -242,7 +242,7 @@ function LeadRow({
           )}
         </div>
 
-        <span className="hidden md:block text-xs text-gray-400 shrink-0 w-16 text-right">
+        <span className="hidden md:block font-mono text-[11px] text-gray-400 shrink-0 w-16 text-right">
           {timeAgo(lead.created_at)}
         </span>
 
