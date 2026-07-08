@@ -44,7 +44,7 @@ export default function Modal({
   const sizeClasses = {
     sm: 'max-w-sm',
     md: 'max-w-md',
-    lg: 'max-w-2xl',
+    lg: 'max-w-[35rem]',
     xl: 'max-w-4xl',
   };
 

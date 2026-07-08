@@ -4,10 +4,10 @@
 'use client';
 
 import React from 'react';
-import { format, isPast, isToday, isFuture, differenceInDays } from 'date-fns';
+import { format, isPast, isToday, differenceInDays } from 'date-fns';
 import { 
   FileText, Search, Home, DollarSign, FileCheck, Key, 
-  CheckCircle2, Clock, AlertCircle, Calendar 
+  CheckCircle2, Calendar 
 } from 'lucide-react';
 import { Transaction, TransactionTimelineEvent } from '@/types';
 
@@ -20,8 +20,6 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
   // Generate timeline events from transaction dates
   const generateTimelineEvents = (): TransactionTimelineEvent[] => {
     const events: TransactionTimelineEvent[] = [];
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
 
     const addEvent = (
       date: string | undefined,
@@ -96,61 +94,12 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
     }
   };
 
-  // Get status colors with gradients
-  const getStatusColors = (status: TransactionTimelineEvent['status']) => {
-    switch (status) {
-      case 'completed':
-        return {
-          bg: 'bg-green-500/20',
-          border: 'border-green-500',
-          icon: 'text-green-400',
-          line: 'bg-gradient-to-b from-green-500 to-green-600',
-        };
-      case 'today':
-        return {
-          bg: 'bg-brand-500/20',
-          border: 'border-brand-500 shadow-lg shadow-brand-500/20',
-          icon: 'text-brand-500',
-          line: 'bg-gradient-to-b from-brand-500 to-brand-600',
-        };
-      case 'overdue':
-        return {
-          bg: 'bg-red-500/20',
-          border: 'border-red-500',
-          icon: 'text-red-400',
-          line: 'bg-gradient-to-b from-red-500 to-red-600',
-        };
-      case 'upcoming':
-      default:
-        return {
-          bg: 'bg-gray-500/20',
-          border: 'border-gray-600',
-          icon: 'text-gray-500',
-          line: 'bg-gradient-to-b from-gray-600 to-gray-700',
-        };
-    }
-  };
-
-  // Get status indicator
-  const getStatusIndicator = (status: TransactionTimelineEvent['status']) => {
-    switch (status) {
-      case 'completed':
-        return <CheckCircle2 className="w-4 h-4 text-green-400" />;
-      case 'today':
-        return <Clock className="w-4 h-4 text-brand-500 animate-pulse" />;
-      case 'overdue':
-        return <AlertCircle className="w-4 h-4 text-red-400" />;
-      default:
-        return null;
-    }
-  };
-
   if (events.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
-        <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
-        <p>No dates set for this transaction.</p>
-        <p className="text-sm">Add important dates to see the timeline.</p>
+      <div className="text-center py-8 text-gray-450">
+        <Calendar className="w-10 h-10 mx-auto mb-3 opacity-40" />
+        <p className="text-[13.5px] text-gray-700">No dates set for this transaction.</p>
+        <p className="text-[12.5px] mt-1">Add important dates to see the timeline.</p>
       </div>
     );
   }
@@ -162,7 +111,7 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
 
     if (!nextEvent) {
       return (
-        <div className="flex items-center text-sm text-green-400">
+        <div className="flex items-center text-[13px] text-teal-700">
           <CheckCircle2 className="w-4 h-4 mr-1" />
           All milestones completed
         </div>
@@ -172,11 +121,11 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
     const daysUntil = differenceInDays(new Date(nextEvent.date), new Date());
 
     return (
-      <div className="flex items-center text-sm">
-        <span className={`font-medium ${daysUntil <= 3 ? 'text-amber-400' : 'text-gray-900'}`}>
+      <div className="flex items-center text-[13px]">
+        <span className={`font-medium ${daysUntil <= 3 ? 'text-amber-700' : 'text-gray-900'}`}>
           {nextEvent.title}
         </span>
-        <span className="text-gray-500 ml-2">
+        <span className="text-gray-450 ml-2">
           {daysUntil === 0 ? 'Today' : daysUntil === 1 ? 'Tomorrow' : `in ${daysUntil} days`}
         </span>
       </div>
@@ -188,50 +137,46 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
     <div className="relative">
       {events.map((event, index) => {
         const Icon = getEventIcon(event.type);
-        const colors = getStatusColors(event.status);
+        const isComplete = event.status === 'completed';
         const isLast = index === events.length - 1;
 
         return (
-          <div key={event.id + event.date} className="relative flex items-start pb-8">
+          <div key={event.id + event.date} className="relative flex items-start pb-7 last:pb-0">
             {/* Vertical line */}
             {!isLast && (
-              <div 
-                className={`absolute left-5 top-10 w-0.5 h-full ${colors.line} z-0`}
+              <div
+                className="absolute left-[17px] top-[34px] w-px bottom-0 bg-gray-150"
                 style={{ transform: 'translateX(-50%)' }}
               />
             )}
 
             {/* Icon circle */}
-            <div className="relative z-10">
-              {/* Solid background to hide line */}
-              <div className="absolute inset-0 bg-[#F5F5F5] rounded-full" style={{ margin: '-2px' }} />
-              {/* Icon circle */}
-              <div 
-                className={`relative flex items-center justify-center w-10 h-10 rounded-full border-2 ${colors.bg} ${colors.border}`}
-              >
-                <Icon className={`w-5 h-5 ${colors.icon}`} />
-              </div>
+            <div
+              className={`relative z-10 flex items-center justify-center w-[34px] h-[34px] rounded-full shrink-0 ${
+                isComplete ? 'bg-teal-50 text-teal-700' : 'bg-gray-100 text-gray-450'
+              }`}
+            >
+              <Icon className="w-4 h-4" strokeWidth={1.75} />
             </div>
 
             {/* Content */}
-            <div className="ml-4 flex-1">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <h4 className="text-sm font-semibold text-gray-900">{event.title}</h4>
-                  <span className="ml-2">{getStatusIndicator(event.status)}</span>
+            <div className="ml-3.5 flex-1 min-w-0 pt-0.5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h4 className="text-[14.5px] font-semibold text-gray-900">{event.title}</h4>
+                  {event.description && (
+                    <p className="text-[12.5px] text-gray-450 mt-0.5">{event.description}</p>
+                  )}
+                  {event.status === 'upcoming' && (
+                    <p className="text-[12px] text-gray-450 mt-0.5">
+                      {differenceInDays(new Date(event.date), new Date())} days away
+                    </p>
+                  )}
                 </div>
-                <span className={`text-sm ${event.status === 'today' ? 'text-brand-500 font-medium' : 'text-gray-500'}`}>
+                <span className="text-[12.5px] font-medium text-gray-700 shrink-0">
                   {format(new Date(event.date), 'MMM d, yyyy')}
                 </span>
               </div>
-              {event.description && (
-                <p className="mt-1 text-sm text-gray-500">{event.description}</p>
-              )}
-              {event.status === 'upcoming' && (
-                <p className="mt-1 text-xs text-gray-500">
-                  {differenceInDays(new Date(event.date), new Date())} days away
-                </p>
-              )}
             </div>
           </div>
         );

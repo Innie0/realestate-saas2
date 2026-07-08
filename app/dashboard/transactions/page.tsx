@@ -6,33 +6,20 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import {
-  Plus, Building2,
-  Calendar, ChevronRight, AlertCircle,
-  Clock,
+  Plus, Home,
+  Calendar, ArrowRight,
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
+import Surface from '@/components/ui/Surface';
 import DashboardPage from '@/components/layout/DashboardPage';
 import PageToolbar from '@/components/layout/PageToolbar';
 import SearchInput from '@/components/ui/SearchInput';
 import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
 import TransactionStatusBadge from '@/components/transactions/TransactionStatusBadge';
-import TransactionTimeline from '@/components/TransactionTimeline';
 import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
 import { TransactionWithDetails } from '@/types';
 import { useApi } from '@/lib/swr';
-import clsx from 'clsx';
-
-function closingUrgency(transaction: TransactionWithDetails): 'overdue' | 'today' | 'soon' | null {
-  if (['closed', 'cancelled', 'expired'].includes(transaction.status)) return null;
-  if (!transaction.closing_date) return null;
-  const daysToClosing = transaction.days_to_closing ?? 0;
-  if (daysToClosing < 0) return 'overdue';
-  if (daysToClosing === 0) return 'today';
-  if (daysToClosing <= 7) return 'soon';
-  return null;
-}
 
 export default function TransactionsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -71,48 +58,15 @@ export default function TransactionsPage() {
       maximumFractionDigits: 0,
     }).format(amount);
 
-  const getClosingIndicator = (transaction: TransactionWithDetails) => {
-    if (transaction.status === 'closed' || transaction.status === 'cancelled' || transaction.status === 'expired') {
-      return null;
-    }
+  const closingCopy = (transaction: TransactionWithDetails) => {
+    if (['closed', 'cancelled', 'expired'].includes(transaction.status)) return null;
+    if (!transaction.closing_date || transaction.days_to_closing == null) return null;
 
-    if (!transaction.closing_date) return null;
-
-    const daysToClosing = transaction.days_to_closing ?? 0;
-
-    if (daysToClosing < 0) {
-      return (
-        <span className="flex items-center text-xs text-amber-700">
-          <AlertCircle className="w-3 h-3 mr-1" />
-          {Math.abs(daysToClosing)}d past closing
-        </span>
-      );
-    }
-
-    if (daysToClosing === 0) {
-      return (
-        <span className="flex items-center text-xs text-rose-600 font-medium">
-          <Clock className="w-3 h-3 mr-1 animate-pulse" />
-          Closing today
-        </span>
-      );
-    }
-
-    if (daysToClosing <= 7) {
-      return (
-        <span className="flex items-center text-xs text-amber-700">
-          <AlertCircle className="w-3 h-3 mr-1" />
-          {daysToClosing} days to closing
-        </span>
-      );
-    }
-
-    return (
-      <span className="flex items-center text-xs text-gray-500">
-        <Calendar className="w-3 h-3 mr-1" />
-        {daysToClosing} days to closing
-      </span>
-    );
+    const days = transaction.days_to_closing;
+    if (days < 0) return `${Math.abs(days)}d past closing`;
+    if (days === 0) return 'today';
+    if (days === 1) return 'tomorrow';
+    return `in ${days} days`;
   };
 
   return (
@@ -159,12 +113,12 @@ export default function TransactionsPage() {
       {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-28 rounded-2xl bg-white shadow-sm animate-pulse" />
+            <div key={i} className="h-[168px] rounded-[10px] bg-white border border-gray-200 animate-pulse" />
           ))}
         </div>
       ) : filteredTransactions.length === 0 ? (
         <EmptyState
-          icon={Building2}
+          icon={Home}
           title={searchTerm || statusFilter !== 'all' ? 'No matching transactions' : 'No transactions yet'}
           description={
             searchTerm || statusFilter !== 'open'
@@ -185,72 +139,74 @@ export default function TransactionsPage() {
       ) : (
         <StaggerList className="space-y-3">
           {filteredTransactions.map((transaction) => {
-            const urgency = closingUrgency(transaction);
+            const closing = closingCopy(transaction);
             return (
               <StaggerItem key={transaction.id}>
-                <Link href={`/dashboard/transactions/${transaction.id}`}>
-                  <Card
-                    hover
-                    className={clsx(
-                      'cursor-pointer border-l-4',
-                      urgency === 'overdue' || urgency === 'today'
-                        ? 'border-l-amber-400'
-                        : urgency === 'soon'
-                        ? 'border-l-brand-300'
-                        : 'border-l-transparent'
-                    )}
+                <Link href={`/dashboard/transactions/${transaction.id}`} className="block">
+                  <Surface
+                    flat
+                    className="cursor-pointer p-5 sm:p-[22px] transition-colors hover:border-gray-300"
                   >
                     <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-1">
-                          <span className="hidden sm:flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 ring-1 ring-emerald-200/60 text-emerald-600">
-                            <Building2 className="w-4 h-4" strokeWidth={1.75} />
-                          </span>
-                          <h3 className="text-base font-semibold text-gray-900 truncate">
+                      <div className="flex items-start gap-3 min-w-0 flex-1">
+                        <span className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[10px] bg-teal-50 text-teal-700">
+                          <Home className="w-[18px] h-[18px]" strokeWidth={1.75} />
+                        </span>
+                        <div className="min-w-0">
+                          <h3 className="text-[17px] font-semibold text-gray-900 truncate">
                             {transaction.property_address}
                           </h3>
-                        </div>
-                        {(transaction.property_city || transaction.property_state) && (
-                          <p className="text-sm text-gray-500 truncate mb-4 sm:ml-11">
-                            {[transaction.property_city, transaction.property_state, transaction.property_zip]
-                              .filter(Boolean)
-                              .join(', ')}
-                          </p>
-                        )}
-
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                          <div>
-                            <p className="text-xs text-gray-500 mb-0.5">Price</p>
-                            <p className="text-sm font-semibold text-emerald-700 tabular-nums">{formatCurrency(transaction.offer_price)}</p>
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-xs text-gray-500 mb-0.5">Buyer</p>
-                            <p className="text-sm font-medium text-gray-900 truncate">{transaction.buyer_name}</p>
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-xs text-gray-500 mb-0.5">Seller</p>
-                            <p className="text-sm font-medium text-gray-900 truncate">{transaction.seller_name}</p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-gray-500 mb-0.5">Tasks</p>
-                            <p className="text-sm font-medium text-gray-900">
-                              {transaction.completed_items_count}/{transaction.total_items_count}
+                          {(transaction.property_city || transaction.property_state) && (
+                            <p className="text-[13px] text-gray-450 truncate mt-0.5">
+                              {[transaction.property_city, transaction.property_state, transaction.property_zip]
+                                .filter(Boolean)
+                                .join(', ')}
                             </p>
-                          </div>
-                        </div>
-
-                        <div className="mt-4 pt-4 border-t border-gray-100 hidden md:block">
-                          <TransactionTimeline transaction={transaction} compact />
+                          )}
                         </div>
                       </div>
 
-                      <div className="flex flex-col items-end shrink-0 gap-2">
+                      <div className="flex flex-col items-end shrink-0 gap-1.5">
                         <TransactionStatusBadge status={transaction.status} />
-                        {getClosingIndicator(transaction)}
-                        <ChevronRight className="w-4 h-4 text-gray-300 mt-2" />
+                        {closing && (
+                          <span className="flex items-center gap-1 text-[12px] text-gray-450">
+                            <Calendar className="w-3 h-3" />
+                            {transaction.days_to_closing} days to closing
+                          </span>
+                        )}
                       </div>
                     </div>
-                  </Card>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                      <div>
+                        <p className="text-[11.5px] text-gray-450 mb-0.5">Price</p>
+                        <p className="text-[15px] font-semibold text-teal-700 tabular-nums">{formatCurrency(transaction.offer_price)}</p>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[11.5px] text-gray-450 mb-0.5">Buyer</p>
+                        <p className="text-[14px] font-medium text-gray-900 truncate">{transaction.buyer_name}</p>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[11.5px] text-gray-450 mb-0.5">Seller</p>
+                        <p className="text-[14px] font-medium text-gray-900 truncate">{transaction.seller_name}</p>
+                      </div>
+                      <div>
+                        <p className="text-[11.5px] text-gray-450 mb-0.5">Tasks</p>
+                        <p className="text-[14px] font-medium text-gray-900">
+                          {transaction.completed_items_count}/{transaction.total_items_count}
+                        </p>
+                      </div>
+                    </div>
+
+                    {closing && (
+                      <div className="mt-4 pt-4 border-t border-gray-150 flex items-center justify-between">
+                        <p className="text-[13px] text-gray-600">
+                          <span className="font-semibold text-gray-900">Closing</span> {closing}
+                        </p>
+                        <ArrowRight className="w-4 h-4 text-gray-450" />
+                      </div>
+                    )}
+                  </Surface>
                 </Link>
               </StaggerItem>
             );

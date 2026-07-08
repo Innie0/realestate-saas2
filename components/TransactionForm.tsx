@@ -197,22 +197,22 @@ export default function TransactionForm({
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Error message */}
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+        <div className="p-4 bg-rose-50 border border-rose-200 rounded-[10px] text-rose-700 text-[13px]">
           {error}
         </div>
       )}
 
       {!isEditing && defaultProjectId && (
-        <div className="px-4 py-2.5 rounded-lg bg-teal-50 text-teal-700 text-[13px]">
+        <div className="px-4 py-2.5 rounded-[10px] bg-teal-50 text-teal-700 text-[13px]">
           Linked to a listing project — this transaction will show up on that project&apos;s Linked tab.
         </div>
       )}
 
       {/* Deal status — new transactions only (detail page has its own control) */}
       {!isEditing && (
-        <div className="rounded-xl border border-gray-200 bg-gray-50/80 p-4">
-          <label className="block text-sm font-medium text-gray-900 mb-1.5">Deal status</label>
-          <p className="text-xs text-gray-500 mb-3">
+        <div className="rounded-[10px] border border-gray-150 bg-gray-50 p-4">
+          <label className="block text-[13px] font-medium text-gray-900 mb-1.5">Deal status</label>
+          <p className="text-[12.5px] text-gray-450 mb-3">
             Set to Closed or Cancelled when the deal is done — it will leave your in-progress list.
           </p>
           <Select
@@ -228,16 +228,16 @@ export default function TransactionForm({
       )}
 
       {/* Section tabs */}
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg border border-gray-200">
+      <div className="flex gap-0.5 bg-gray-100 p-1 rounded-[10px]">
         {sections.map((section) => (
           <button
             key={section.id}
             type="button"
             onClick={() => setActiveSection(section.id)}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
+            className={`flex-1 py-2 px-3 rounded-lg text-[12.5px] font-medium transition-colors duration-150 ${
               activeSection === section.id
-                ? 'bg-brand-500 text-white shadow-sm'
-                : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                ? 'bg-brand-500 text-white'
+                : 'text-gray-500 hover:text-gray-900'
             }`}
           >
             {section.label}
@@ -248,7 +248,7 @@ export default function TransactionForm({
       {/* Property Section */}
       {activeSection === 'property' && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900">Property Information</h3>
+          <h3 className="text-[15px] font-semibold text-gray-900">Property Information</h3>
           
           <Input
             label="Property Address *"
@@ -300,7 +300,7 @@ export default function TransactionForm({
         <div className="space-y-6">
           {/* Buyer Info */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Buyer Information</h3>
+            <h3 className="text-[15px] font-semibold text-gray-900">Buyer Information</h3>
             
             <Input
               label="Buyer Name *"
@@ -350,8 +350,8 @@ export default function TransactionForm({
           </div>
 
           {/* Seller Info */}
-          <div className="space-y-4 pt-4 border-t border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Seller Information</h3>
+          <div className="space-y-4 pt-4 border-t border-gray-150">
+            <h3 className="text-[15px] font-semibold text-gray-900">Seller Information</h3>
             
             <Input
               label="Seller Name *"
@@ -405,7 +405,7 @@ export default function TransactionForm({
       {/* Financial Section */}
       {activeSection === 'financial' && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900">Financial Information</h3>
+          <h3 className="text-[15px] font-semibold text-gray-900">Financial Information</h3>
           
           <Input
             label="Offer Price *"
@@ -441,7 +441,7 @@ export default function TransactionForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-[13px] font-medium text-gray-600 mb-1">
               Notes
             </label>
             <textarea
@@ -458,8 +458,8 @@ export default function TransactionForm({
       {/* Dates Section */}
       {activeSection === 'dates' && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900">Important Dates</h3>
-          <p className="text-sm text-gray-500">
+          <h3 className="text-[15px] font-semibold text-gray-900">Important Dates</h3>
+          <p className="text-[13px] text-gray-450">
             Set key milestone dates to auto-generate timeline, checklist, and reminders.
           </p>
           
@@ -478,8 +478,8 @@ export default function TransactionForm({
             />
           </div>
 
-          <div className="pt-4 border-t border-gray-200">
-            <h4 className="text-md font-medium text-gray-600 mb-3">Inspection</h4>
+          <div className="pt-4 border-t border-gray-150">
+            <h4 className="text-[13px] font-semibold text-gray-700 mb-3">Inspection</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
                 label="Inspection Date"
@@ -496,8 +496,8 @@ export default function TransactionForm({
             </div>
           </div>
 
-          <div className="pt-4 border-t border-gray-200">
-            <h4 className="text-md font-medium text-gray-600 mb-3">Appraisal</h4>
+          <div className="pt-4 border-t border-gray-150">
+            <h4 className="text-[13px] font-semibold text-gray-700 mb-3">Appraisal</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
                 label="Appraisal Date"
@@ -514,8 +514,8 @@ export default function TransactionForm({
             </div>
           </div>
 
-          <div className="pt-4 border-t border-gray-200">
-            <h4 className="text-md font-medium text-gray-600 mb-3">Financing & Title</h4>
+          <div className="pt-4 border-t border-gray-150">
+            <h4 className="text-[13px] font-semibold text-gray-700 mb-3">Financing & Title</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
                 label="Financing Deadline"
@@ -532,8 +532,8 @@ export default function TransactionForm({
             </div>
           </div>
 
-          <div className="pt-4 border-t border-gray-200">
-            <h4 className="text-md font-medium text-gray-600 mb-3">Closing</h4>
+          <div className="pt-4 border-t border-gray-150">
+            <h4 className="text-[13px] font-semibold text-gray-700 mb-3">Closing</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
                 label="Closing Date"
@@ -553,7 +553,7 @@ export default function TransactionForm({
       )}
 
       {/* Form actions */}
-      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-150">
         {onCancel && (
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancel

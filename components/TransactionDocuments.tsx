@@ -165,7 +165,7 @@ export default function TransactionDocuments({
 
   if (setupError) {
     return (
-      <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+      <div className="rounded-[10px] border border-amber-200 bg-amber-50 p-4 text-[13px] text-amber-900">
         <p className="font-medium flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
           Documents storage needs setup
@@ -178,17 +178,17 @@ export default function TransactionDocuments({
   return (
     <div className="space-y-6">
       {/* Upload */}
-      <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <Upload className="w-4 h-4 text-brand-600" />
+      <div className="rounded-[10px] border border-gray-150 bg-gray-50 p-5">
+        <h3 className="text-[13.5px] font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <Upload className="w-3.5 h-3.5 text-gray-700" />
           Upload document
         </h3>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
-            <label className="block text-xs text-gray-500 mb-1.5">File</label>
+            <label className="block text-[12.5px] text-gray-500 mb-1.5">File</label>
             <div
-              className="border-2 border-dashed border-gray-300 rounded-lg p-5 text-center cursor-pointer hover:border-brand-400 hover:bg-white transition-colors"
+              className="border-2 border-dashed border-gray-200 rounded-[10px] p-5 text-center cursor-pointer hover:border-gray-300 hover:bg-white transition-colors"
               onClick={() => fileInputRef.current?.click()}
             >
               <input
@@ -199,29 +199,29 @@ export default function TransactionDocuments({
                 className="hidden"
               />
               {selectedFile ? (
-                <div className="flex items-center justify-center gap-2 text-sm text-gray-700">
-                  <FileText className="w-4 h-4 text-brand-600" />
+                <div className="flex items-center justify-center gap-2 text-[13px] text-gray-700">
+                  <FileText className="w-4 h-4 text-gray-700" />
                   <span className="font-medium truncate max-w-xs">{selectedFile.name}</span>
-                  <span className="text-gray-500">({formatFileSize(selectedFile.size)})</span>
+                  <span className="text-gray-450">({formatFileSize(selectedFile.size)})</span>
                 </div>
               ) : (
                 <>
-                  <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-sm text-gray-600">Click to choose PDF, Word, or image</p>
-                  <p className="text-xs text-gray-500 mt-1">Max 50MB</p>
+                  <Upload className="w-7 h-7 text-gray-400 mx-auto mb-2" />
+                  <p className="text-[13px] text-gray-600">Click to choose PDF, Word, or image</p>
+                  <p className="text-[11.5px] text-gray-450 mt-1">Max 50MB</p>
                 </>
               )}
             </div>
           </div>
 
           <div>
-            <label className="block text-xs text-gray-500 mb-1.5">Title</label>
+            <label className="block text-[12.5px] text-gray-500 mb-1.5">Title</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Purchase Agreement"
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+              className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-[13px] text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
             />
           </div>
 
@@ -229,13 +229,13 @@ export default function TransactionDocuments({
             label="Document type"
             value={contractType}
             onChange={setContractType}
-            triggerClassName="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            triggerClassName="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-[13px] text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
             options={CONTRACT_TYPES.map((t) => ({ value: t.value, label: t.label }))}
           />
         </div>
 
         {error && (
-          <p className="mt-3 text-sm text-red-600 flex items-center gap-1.5">
+          <p className="mt-3 text-[13px] text-rose-600 flex items-center gap-1.5">
             <AlertCircle className="w-4 h-4 shrink-0" />
             {error}
           </p>
@@ -254,19 +254,19 @@ export default function TransactionDocuments({
 
       {/* List */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">
+        <h3 className="text-[13.5px] font-semibold text-gray-900 mb-3">
           Documents ({documents.length})
         </h3>
 
         {loading ? (
           <div className="flex justify-center py-10">
-            <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
+            <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />
           </div>
         ) : documents.length === 0 ? (
-          <div className="text-center py-10 rounded-lg border border-dashed border-gray-200 bg-gray-50">
-            <FileText className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-            <p className="text-sm text-gray-500">No documents yet</p>
-            <p className="text-xs text-gray-400 mt-1">
+          <div className="text-center py-10 rounded-[10px] border border-dashed border-gray-200 bg-gray-50">
+            <FileText className="w-8 h-8 text-gray-300 mx-auto mb-3" />
+            <p className="text-[13px] text-gray-500">No documents yet</p>
+            <p className="text-[11.5px] text-gray-450 mt-1">
               Upload contracts, disclosures, inspection reports, and more
             </p>
           </div>
@@ -277,14 +277,14 @@ export default function TransactionDocuments({
               return (
                 <div
                   key={doc.id}
-                  className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 bg-white hover:border-gray-300 transition-colors"
+                  className="flex items-center gap-3 p-3 rounded-[10px] border border-gray-150 bg-white hover:border-gray-300 transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-brand-500/10 flex items-center justify-center shrink-0">
-                    <Icon className="w-5 h-5 text-brand-600" />
+                  <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
+                    <Icon className="w-4 h-4 text-gray-700" strokeWidth={1.75} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{doc.title}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">
+                    <p className="text-[13.5px] font-semibold text-gray-900 truncate">{doc.title}</p>
+                    <p className="text-[11.5px] text-gray-450 mt-0.5">
                       {TYPE_LABELS[doc.contract_type] || doc.contract_type}
                       {' · '}
                       {formatFileSize(doc.file_size)}
@@ -297,7 +297,7 @@ export default function TransactionDocuments({
                       type="button"
                       onClick={() => handleDownload(doc)}
                       disabled={downloadingId === doc.id}
-                      className="p-2 rounded-lg text-gray-500 hover:text-brand-600 hover:bg-gray-100 transition-colors disabled:opacity-50"
+                      className="p-2 rounded-lg text-gray-450 hover:text-gray-900 hover:bg-gray-100 transition-colors disabled:opacity-50"
                       title="Download"
                     >
                       {downloadingId === doc.id ? (
@@ -310,7 +310,7 @@ export default function TransactionDocuments({
                       type="button"
                       onClick={() => handleDelete(doc)}
                       disabled={deletingId === doc.id}
-                      className="p-2 rounded-lg text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                      className="p-2 rounded-lg text-gray-450 hover:text-rose-600 hover:bg-rose-50 transition-colors disabled:opacity-50"
                       title="Delete"
                     >
                       {deletingId === doc.id ? (
