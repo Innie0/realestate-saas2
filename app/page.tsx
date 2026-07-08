@@ -64,7 +64,7 @@ export default async function MarketplaceHomePage({ searchParams }: HomePageProp
         <MarketplaceHero initialFilters={filters} compact={showResults} />
 
         {showResults ? (
-          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-10 bg-[#F3F3F2]">
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-10 bg-[#F4F4F5]">
             <div className="mb-8">
               <MarketplaceSearchBar initialFilters={filters} />
             </div>

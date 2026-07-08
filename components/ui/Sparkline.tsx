@@ -60,7 +60,7 @@ export default function Sparkline({
           <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
         </linearGradient>
       </defs>
-      <path d={areaPath} fill={`url(#${gradientId})`} stroke="none" />
+      <path d={areaPath} fill={`url(#${gradientId})`} stroke="none" className="spark-area" />
       <path
         d={linePath}
         fill="none"
@@ -68,12 +68,15 @@ export default function Sparkline({
         strokeWidth={strokeWidth}
         strokeLinecap="round"
         strokeLinejoin="round"
+        pathLength={1}
+        className="spark-line"
       />
       <circle
         cx={points[points.length - 1].x}
         cy={points[points.length - 1].y}
         r={strokeWidth + 0.5}
         fill="currentColor"
+        className="spark-dot"
       />
     </svg>
   );

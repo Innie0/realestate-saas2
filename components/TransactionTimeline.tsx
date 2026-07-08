@@ -173,7 +173,7 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
 
     return (
       <div className="flex items-center text-sm">
-        <span className={`font-medium ${daysUntil <= 3 ? 'text-orange-400' : 'text-gray-900'}`}>
+        <span className={`font-medium ${daysUntil <= 3 ? 'text-amber-400' : 'text-gray-900'}`}>
           {nextEvent.title}
         </span>
         <span className="text-gray-500 ml-2">

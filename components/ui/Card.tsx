@@ -37,7 +37,7 @@ export default function Card({
   };
 
   // Hover effect - adds subtle lift on hover
-  const hoverStyles = hover ? 'transition-all duration-200 hover:shadow-raised hover:ring-gray-900/[0.07] cursor-pointer' : '';
+  const hoverStyles = hover ? 'transition-all duration-200 hover:shadow-raised hover:ring-gray-900/[0.07] hover:-translate-y-px cursor-pointer' : '';
 
   // Combine all styles
   const cardClasses = clsx(

@@ -12,9 +12,9 @@ import { useApi } from '@/lib/swr';
 import { useToast } from '@/components/providers/ToastProvider';
 
 const EVENT_STYLES: Record<string, { dot: string; pill: string }> = {
-  showing: { dot: 'bg-brand-500', pill: 'bg-brand-50 text-brand-700 border-brand-200' },
+  showing: { dot: 'bg-sky-500', pill: 'bg-sky-50 text-sky-700 border-sky-200' },
   open_house: { dot: 'bg-emerald-500', pill: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  meeting: { dot: 'bg-violet-500', pill: 'bg-violet-50 text-violet-700 border-violet-200' },
+  meeting: { dot: 'bg-brand-500', pill: 'bg-brand-50 text-brand-700 border-brand-200' },
   other: { dot: 'bg-gray-400', pill: 'bg-gray-100 text-gray-600 border-gray-200' },
 };
 

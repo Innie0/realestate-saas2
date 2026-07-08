@@ -51,7 +51,7 @@ export default function TransactionChecklist({
     inspection: { label: 'Inspection', color: 'bg-brand-500/20 text-brand-400 border border-brand-500/30' },
     appraisal: { label: 'Appraisal', color: 'bg-brand-500/20 text-brand-400 border border-brand-500/30' },
     financing: { label: 'Financing', color: 'bg-green-500/20 text-green-300 border border-green-500/30' },
-    title: { label: 'Title', color: 'bg-orange-500/20 text-orange-300 border border-orange-500/30' },
+    title: { label: 'Title', color: 'bg-amber-500/20 text-amber-300 border border-amber-500/30' },
     closing: { label: 'Closing', color: 'bg-red-500/20 text-red-300 border border-red-500/30' },
     other: { label: 'Other', color: 'bg-gray-500/20 text-gray-600 border border-gray-500/30' },
   };

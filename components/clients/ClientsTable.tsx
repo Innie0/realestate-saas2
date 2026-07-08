@@ -24,7 +24,7 @@ export default function ClientsTable({ clients }: ClientsTableProps) {
       <div className="overflow-x-auto">
         <table className="w-full min-w-[760px] text-left">
           <thead>
-            <tr className="border-b border-gray-100 bg-[#FAFAF8]">
+            <tr className="border-b border-gray-100 bg-gray-50">
               {['Client', 'Interest', 'Stage', 'Last contact', 'Next follow-up'].map((heading) => (
                 <th
                   key={heading}
@@ -47,7 +47,7 @@ export default function ClientsTable({ clients }: ClientsTableProps) {
                 <StaggerItem
                   key={client.id}
                   as="tr"
-                  className="group hover:bg-gray-50/80 transition-colors hover:shadow-[inset_3px_0_0_0_#fc5c03]"
+                  className="group hover:bg-gray-50/80 transition-colors hover:shadow-[inset_3px_0_0_0_#7c3aed]"
                 >
                   <td className="px-4 sm:px-5 py-4">
                     <Link href={`/dashboard/clients/${client.id}`} className="flex items-center gap-3 min-w-0 group/link">

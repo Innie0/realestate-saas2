@@ -340,7 +340,7 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
 
           {/* User profile section */}
           <div className="flex items-center gap-2.5 ml-3">
-            <div className="h-7 w-7 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-white text-[11px] font-semibold tracking-wide shadow-sm">
+            <div className="h-7 w-7 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white text-[11px] font-semibold tracking-wide shadow-sm">
               {userName ? userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
             </div>
             <div className="hidden md:block">

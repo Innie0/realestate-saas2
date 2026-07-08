@@ -36,7 +36,7 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
   // Status badge colors — light theme
   const statusColors = {
     draft: 'bg-gray-100 text-gray-600 border border-gray-200',
-    in_progress: 'bg-brand-50 text-brand-700 border border-brand-200',
+    in_progress: 'bg-amber-50 text-amber-700 border border-amber-200',
     completed: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
   };
   const statusLabels = {

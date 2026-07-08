@@ -155,8 +155,8 @@ export const STAGE_BADGE: Record<
   },
   under_offer: {
     label: 'Under offer',
-    className: 'bg-orange-50 text-orange-800 border-orange-200',
-    dotClassName: 'bg-orange-500',
+    className: 'bg-sky-50 text-sky-800 border-sky-200',
+    dotClassName: 'bg-sky-500',
   },
   closed: {
     label: 'Closed',

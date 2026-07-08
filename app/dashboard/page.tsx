@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import Header from '@/components/layout/Header';
 import PageShell from '@/components/layout/PageShell';
 import PageTransition from '@/components/motion/PageTransition';
+import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
 import Surface from '@/components/ui/Surface';
 import Sparkline from '@/components/ui/Sparkline';
 import Button from '@/components/ui/Button';
@@ -24,7 +25,12 @@ import {
   FileText,
   Calendar,
   AlertCircle,
+  TrendingUp,
+  CircleDollarSign,
+  BellRing,
 } from 'lucide-react';
+import CountUp from '@/components/motion/CountUp';
+import { ACCENT, type Accent } from '@/lib/accent';
 import { Project } from '@/types';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
@@ -69,14 +75,20 @@ function formatToday() {
   });
 }
 
-const QUICK_LINKS = [
-  { href: '/dashboard/projects/new', label: 'New listing', icon: Plus, tour: 'new-project' },
-  { href: '/dashboard/leads', label: 'Leads inbox', icon: Inbox },
-  { href: '/dashboard/property-research', label: 'Property research', icon: Search },
-  { href: '/dashboard/tasks', label: 'AI assistant', icon: Sparkles },
-  { href: '/dashboard/calendar', label: 'Calendar', icon: Calendar },
-  { href: '/dashboard/clients', label: 'Clients', icon: FolderKanban, tour: 'manage-clients' },
-] as const;
+const QUICK_LINKS: ReadonlyArray<{
+  href: string;
+  label: string;
+  icon: React.ElementType;
+  accent: Accent;
+  tour?: string;
+}> = [
+  { href: '/dashboard/projects/new', label: 'New listing', icon: Plus, accent: 'amber', tour: 'new-project' },
+  { href: '/dashboard/leads', label: 'Leads inbox', icon: Inbox, accent: 'sky' },
+  { href: '/dashboard/property-research', label: 'Property research', icon: Search, accent: 'violet' },
+  { href: '/dashboard/tasks', label: 'AI assistant', icon: Sparkles, accent: 'violet' },
+  { href: '/dashboard/calendar', label: 'Calendar', icon: Calendar, accent: 'rose' },
+  { href: '/dashboard/clients', label: 'Clients', icon: FolderKanban, accent: 'teal', tour: 'manage-clients' },
+];
 
 type ContinueListItem =
   | {
@@ -199,7 +211,12 @@ function ContinueSection({
           {items.map((item) => (
             <Link key={item.key} href={item.href}>
               <Surface padding="sm" hover className="flex items-center gap-4 group">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-50 ring-1 ring-gray-200/70 shrink-0 text-gray-500 group-hover:text-brand-600 transition-colors">
+                <div
+                  className={clsx(
+                    'flex h-9 w-9 items-center justify-center rounded-lg shrink-0 transition-transform duration-200 group-hover:scale-105',
+                    item.kind === 'project' ? ACCENT.amber.chip : ACCENT.emerald.chip,
+                  )}
+                >
                   {item.kind === 'project' ? (
                     <FolderKanban className="w-4 h-4" strokeWidth={1.75} />
                   ) : (
@@ -297,14 +314,21 @@ function QuickActionsStrip() {
     <div>
       <p className="text-label mb-2">Quick actions</p>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-        {QUICK_LINKS.map(({ href, label, icon: Icon, ...rest }) => (
+        {QUICK_LINKS.map(({ href, label, icon: Icon, accent, tour }) => (
           <Link
             key={href}
             href={href}
-            data-tour={'tour' in rest ? rest.tour : undefined}
-            className="group flex items-center gap-2.5 rounded-xl bg-white ring-1 ring-gray-900/[0.04] shadow-surface px-3.5 py-3 hover:shadow-raised hover:ring-gray-900/[0.07] transition-all duration-200"
+            data-tour={tour}
+            className="group flex items-center gap-2.5 rounded-xl bg-white ring-1 ring-gray-900/[0.04] shadow-surface px-3 py-2.5 hover:shadow-raised hover:ring-gray-900/[0.07] hover:-translate-y-px transition-all duration-200"
           >
-            <Icon className="w-4 h-4 shrink-0 text-gray-400 group-hover:text-brand-600 transition-colors" strokeWidth={1.75} />
+            <span
+              className={clsx(
+                'flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-transform duration-200 group-hover:scale-110',
+                ACCENT[accent].chip,
+              )}
+            >
+              <Icon className="w-3.5 h-3.5" strokeWidth={1.75} />
+            </span>
             <span className="text-[13px] font-medium text-gray-700 group-hover:text-gray-900 leading-tight truncate">
               {label}
             </span>
@@ -326,22 +350,59 @@ const compactCurrency = new Intl.NumberFormat('en-US', {
 
 interface MetricCardProps {
   label: string;
-  value: string;
+  value: number;
+  format?: (n: number) => string;
+  /** Static display when the value isn't a plain number (e.g. em dash). */
+  placeholder?: string;
   sub: string;
   subTone?: 'neutral' | 'positive' | 'warning';
   href: string;
   series?: number[];
+  icon: React.ElementType;
+  accent: Accent;
 }
 
-function MetricCard({ label, value, sub, subTone = 'neutral', href, series }: MetricCardProps) {
+const SPARK_TEXT: Record<Accent, string> = {
+  violet: 'text-brand-500',
+  sky: 'text-sky-500',
+  teal: 'text-teal-500',
+  emerald: 'text-emerald-500',
+  amber: 'text-amber-500',
+  rose: 'text-rose-500',
+  gray: 'text-gray-400',
+};
+
+function MetricCard({
+  label,
+  value,
+  format,
+  placeholder,
+  sub,
+  subTone = 'neutral',
+  href,
+  series,
+  icon: Icon,
+  accent,
+}: MetricCardProps) {
   return (
-    <Link href={href} className="block h-full">
-      <Surface padding="sm" hover className="h-full">
-        <p className="text-label">{label}</p>
-        <p className="mt-2 text-2xl font-semibold tracking-tight tabular-nums text-gray-900">
-          {value}
+    <StaggerItem className="h-full">
+    <Link href={href} className="block h-full group">
+      <Surface padding="sm" hover className="h-full relative overflow-hidden">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-label">{label}</p>
+          <span
+            className={clsx(
+              'flex h-6 w-6 items-center justify-center rounded-md transition-transform duration-200 group-hover:scale-110',
+              ACCENT[accent].chip,
+            )}
+          >
+            <Icon className="w-3.5 h-3.5" strokeWidth={1.75} />
+          </span>
+        </div>
+        <p className="mt-1.5 text-[26px] font-semibold tracking-tight tabular-nums text-gray-900 leading-none">
+          {placeholder ?? <CountUp value={value} format={format} />}
         </p>
-        <div className="mt-1.5 flex items-end justify-between gap-2 min-h-[28px]">
+        <div className="mt-2 flex items-end justify-between gap-2 min-h-[28px]">
           <p
             className={clsx(
               'text-caption leading-tight',
@@ -353,13 +414,14 @@ function MetricCard({ label, value, sub, subTone = 'neutral', href, series }: Me
             {sub}
           </p>
           {series && series.some((v) => v > 0) && (
-            <span className="text-brand-500 shrink-0">
+            <span className={clsx('shrink-0', SPARK_TEXT[accent])}>
               <Sparkline data={series} />
             </span>
           )}
         </div>
       </Surface>
     </Link>
+    </StaggerItem>
   );
 }
 
@@ -488,8 +550,8 @@ export default function DashboardPage() {
       items.push({
         key: 'hot-leads',
         icon: Flame,
-        iconClass: 'bg-red-50 text-red-600 ring-1 ring-red-100',
-        accentClass: 'bg-red-500',
+        iconClass: 'bg-rose-50 text-rose-600 ring-1 ring-rose-100',
+        accentClass: 'bg-rose-500',
         title: `Respond to ${hotLeadCount} hot lead${hotLeadCount === 1 ? '' : 's'}`,
         subtitle: 'Leads under 48 hours convert best when you reply quickly.',
         href: '/dashboard/leads',
@@ -620,10 +682,12 @@ export default function DashboardPage() {
         {metricsLoading ? (
           <MetricRowSkeleton />
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <StaggerList className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <MetricCard
               label="New leads · 7d"
-              value={String(newLeads7d)}
+              value={newLeads7d}
+              icon={TrendingUp}
+              accent="sky"
               sub={
                 leadDelta > 0
                   ? `+${leadDelta} vs last week`
@@ -637,14 +701,20 @@ export default function DashboardPage() {
             />
             <MetricCard
               label="Hot leads"
-              value={String(hotLeadCount)}
+              value={hotLeadCount}
+              icon={Flame}
+              accent="rose"
               sub={hotLeadCount > 0 ? 'Reply within 48h' : 'Inbox handled'}
               subTone={hotLeadCount > 0 ? 'warning' : 'neutral'}
               href="/dashboard/leads"
             />
             <MetricCard
               label="Pipeline"
-              value={pipelineValue > 0 ? compactCurrency.format(pipelineValue) : '—'}
+              value={pipelineValue}
+              format={(n) => compactCurrency.format(n)}
+              placeholder={pipelineValue > 0 ? undefined : '—'}
+              icon={CircleDollarSign}
+              accent="emerald"
               sub={`${allTransactions.length} open deal${allTransactions.length === 1 ? '' : 's'}${
                 closingSoonCount > 0 ? ` · ${closingSoonCount} closing soon` : ''
               }`}
@@ -653,7 +723,9 @@ export default function DashboardPage() {
             />
             <MetricCard
               label="Follow-ups"
-              value={String(overdueReminderCount + dueThisWeekCount)}
+              value={overdueReminderCount + dueThisWeekCount}
+              icon={BellRing}
+              accent="amber"
               sub={
                 overdueReminderCount > 0
                   ? `${overdueReminderCount} overdue`
@@ -664,7 +736,7 @@ export default function DashboardPage() {
               subTone={overdueReminderCount > 0 ? 'warning' : 'neutral'}
               href="/dashboard/clients"
             />
-          </div>
+          </StaggerList>
         )}
 
         {/* 2. Urgent — what needs a response right now */}

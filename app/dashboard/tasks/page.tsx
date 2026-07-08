@@ -736,8 +736,8 @@ export default function TasksPage() {
                       className={`flex gap-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                       {msg.role === 'assistant' && (
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 border border-brand-500/20 flex items-center justify-center">
-                          <Sparkles className="w-4 h-4 text-brand-600" />
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 shadow-glow-brand flex items-center justify-center">
+                          <Sparkles className="w-4 h-4 text-white" />
                         </div>
                       )}
                       
@@ -788,8 +788,8 @@ export default function TasksPage() {
                   
                   {isLoading && (
                     <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500/10 border border-brand-500/20 flex items-center justify-center">
-                        <Sparkles className="w-4 h-4 text-brand-600" />
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 shadow-glow-brand flex items-center justify-center">
+                          <Sparkles className="w-4 h-4 text-white" />
                       </div>
                       <div className="flex-1 max-w-2xl">
                         <div className="bg-white rounded-2xl px-4 py-3 shadow-sm">

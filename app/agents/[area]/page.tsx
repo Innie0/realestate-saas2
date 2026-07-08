@@ -73,7 +73,7 @@ export default async function AgentAreaPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F3F3F2]">
+    <div className="min-h-screen bg-[#F4F4F5]">
       <header className="sticky top-0 z-10 bg-[#F5F5F5]/90 backdrop-blur-md border-b border-gray-200/70">
         <div className="mx-auto max-w-5xl px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">

@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase-server';
 import type { CmaPdfBranding, CmaPdfPayload } from '@/lib/cma-pdf-types';
 import { generateCmaPdfBuffer } from '@/lib/cma-pdf-server';
 
-const DEFAULT_PRIMARY = '#fc5c03';
+const DEFAULT_PRIMARY = '#7c3aed';
 const DEFAULT_SECONDARY = '#0369a1';
 
 export const runtime = 'nodejs';

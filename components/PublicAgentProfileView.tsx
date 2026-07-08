@@ -173,7 +173,7 @@ export default function PublicAgentProfileView({
       {/* Hero */}
       <div className="relative overflow-hidden border-b border-gray-200 bg-white">
         <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-brand-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-16 -left-16 w-56 h-56 rounded-full bg-orange-200/30 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-16 -left-16 w-56 h-56 rounded-full bg-brand-200/30 blur-3xl pointer-events-none" />
         <div className="absolute inset-0 bg-gradient-to-b from-brand-500/[0.06] via-white to-white pointer-events-none" />
 
         <div className="relative max-w-5xl mx-auto px-4 py-10 sm:py-16">

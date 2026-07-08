@@ -261,7 +261,7 @@ export function OwnerContactPanel({
   // Get occupancy status badge color
   const getOccupancyColor = (status: string) => {
     if (status.includes('Owner-Occupied')) return 'bg-green-500/20 text-green-400 border-green-500/30';
-    if (status.includes('Absentee') || status.includes('Rental')) return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
+    if (status.includes('Absentee') || status.includes('Rental')) return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
     return 'bg-gray-500/20 text-gray-500 border-gray-500/30';
   };
 
@@ -522,7 +522,7 @@ export function OwnerContactPanel({
                           {person.mailingAddress.formatted || 'Same as property'}
                         </p>
                         {person.occupancyStatus.includes('Absentee') && (
-                          <p className="text-orange-400 text-xs mt-1">
+                          <p className="text-amber-400 text-xs mt-1">
                             Different from property address (likely rental)
                           </p>
                         )}

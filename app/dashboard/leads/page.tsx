@@ -17,6 +17,7 @@ import { useApi } from '@/lib/swr';
 import { useToast } from '@/components/providers/ToastProvider';
 import FollowupTemplatesEditor from '@/components/dashboard/FollowupTemplatesEditor';
 import { formatFollowupScheduleHuman, type FollowupSettings } from '@/lib/followup-emails';
+import { nameAvatarClasses } from '@/lib/accent';
 import { QRCodeCanvas } from 'qrcode.react';
 import {
   Inbox, Link2, Copy, Check, Download, Phone, Mail,
@@ -197,7 +198,7 @@ function LeadRow({
         className="flex items-center gap-3 px-3.5 py-3 cursor-pointer"
       >
         <div className="relative shrink-0">
-          <div className="w-9 h-9 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-xs font-semibold">
+          <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold ${nameAvatarClasses(lead.name)}`}>
             {leadInitials(lead.name)}
           </div>
           <span

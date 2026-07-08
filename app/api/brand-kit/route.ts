@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       id: 'brandkit-1',
       user_id: 'user-123',
       logo_url: '',
-      primary_color: '#fc5c03',
+      primary_color: '#7c3aed',
       secondary_color: '#0369a1',
       accent_color: '#f59e0b',
       font_family: 'Inter',

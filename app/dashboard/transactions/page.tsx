@@ -91,7 +91,7 @@ export default function TransactionsPage() {
 
     if (daysToClosing === 0) {
       return (
-        <span className="flex items-center text-xs text-brand-600 font-medium">
+        <span className="flex items-center text-xs text-rose-600 font-medium">
           <Clock className="w-3 h-3 mr-1 animate-pulse" />
           Closing today
         </span>
@@ -203,12 +203,15 @@ export default function TransactionsPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-1">
+                          <span className="hidden sm:flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 ring-1 ring-emerald-200/60 text-emerald-600">
+                            <Building2 className="w-4 h-4" strokeWidth={1.75} />
+                          </span>
                           <h3 className="text-base font-semibold text-gray-900 truncate">
                             {transaction.property_address}
                           </h3>
                         </div>
                         {(transaction.property_city || transaction.property_state) && (
-                          <p className="text-sm text-gray-500 truncate mb-4">
+                          <p className="text-sm text-gray-500 truncate mb-4 sm:ml-11">
                             {[transaction.property_city, transaction.property_state, transaction.property_zip]
                               .filter(Boolean)
                               .join(', ')}
@@ -218,7 +221,7 @@ export default function TransactionsPage() {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                           <div>
                             <p className="text-xs text-gray-500 mb-0.5">Price</p>
-                            <p className="text-sm font-medium text-gray-900">{formatCurrency(transaction.offer_price)}</p>
+                            <p className="text-sm font-semibold text-emerald-700 tabular-nums">{formatCurrency(transaction.offer_price)}</p>
                           </div>
                           <div className="min-w-0">
                             <p className="text-xs text-gray-500 mb-0.5">Buyer</p>

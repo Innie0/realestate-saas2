@@ -96,7 +96,7 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
 
         {/* Upcoming reminders badge */}
         {client.upcoming_reminders_count !== undefined && client.upcoming_reminders_count > 0 && (
-          <div className="flex items-center gap-1 px-2 py-1 bg-orange-500/20 text-orange-400 rounded-full text-xs font-medium border border-orange-400/30">
+          <div className="flex items-center gap-1 px-2 py-1 bg-amber-500/20 text-amber-400 rounded-full text-xs font-medium border border-amber-400/30">
             <Calendar className="w-3 h-3" />
             <span>{client.upcoming_reminders_count}</span>
           </div>
@@ -158,10 +158,10 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
           </button>
           <button
             onClick={handleAddReminder}
-            className="p-2 hover:bg-orange-500/20 rounded-lg transition-colors group"
+            className="p-2 hover:bg-amber-500/20 rounded-lg transition-colors group"
             title="Add reminder"
           >
-            <Bell className="w-4 h-4 text-gray-500 group-hover:text-orange-400" />
+            <Bell className="w-4 h-4 text-gray-500 group-hover:text-amber-400" />
           </button>
         </div>
       </div>
