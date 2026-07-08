@@ -47,7 +47,7 @@ export default function ClientsTable({ clients }: ClientsTableProps) {
                 <StaggerItem
                   key={client.id}
                   as="tr"
-                  className="group hover:bg-gray-50/80 transition-colors hover:shadow-[inset_3px_0_0_0_#7c3aed]"
+                  className="group hover:bg-gray-50/80 transition-colors hover:shadow-[inset_3px_0_0_0_#a87c43]"
                 >
                   <td className="px-4 sm:px-5 py-4">
                     <Link href={`/dashboard/clients/${client.id}`} className="flex items-center gap-3 min-w-0 group/link">
@@ -58,7 +58,7 @@ export default function ClientsTable({ clients }: ClientsTableProps) {
                         {getClientInitials(client.name) || '?'}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-gray-900 truncate group-hover/link:text-brand-700 transition-colors">
+                        <p className="text-sm font-semibold text-gray-900 truncate group-hover/link:text-gray-950 transition-colors">
                           {client.name}
                         </p>
                         <p className="text-xs text-gray-500 truncate">{client.email || client.phone || '—'}</p>

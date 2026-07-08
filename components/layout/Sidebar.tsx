@@ -77,30 +77,30 @@ function NavLink({
       className={clsx(
         'group relative flex items-center rounded-md text-[13px] font-medium transition-colors duration-150',
         isCollapsed ? 'justify-center px-2 py-2' : 'gap-2.5 px-2.5 py-[7px]',
-        active ? 'text-white' : 'text-zinc-400 hover:text-zinc-100'
+        active ? 'text-gray-900' : 'text-gray-500 hover:text-gray-900'
       )}
     >
       {active && (
         <motion.span
           layoutId="sidebar-active-pill"
-          className="absolute inset-0 rounded-md bg-white/[0.08] ring-1 ring-white/[0.06]"
+          className="absolute inset-0 rounded-md bg-white ring-1 ring-gray-900/[0.06] shadow-surface"
           transition={{ type: 'spring', stiffness: 500, damping: 38 }}
         />
       )}
       {active && !isCollapsed && (
         <motion.span
           layoutId="sidebar-active-bar"
-          className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[3px] rounded-full bg-brand-400"
+          className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[3px] rounded-full bg-champagne-500"
           transition={{ type: 'spring', stiffness: 500, damping: 38 }}
         />
       )}
       {!active && (
-        <span className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100 group-hover:bg-white/[0.05] transition-opacity" />
+        <span className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100 group-hover:bg-gray-900/[0.04] transition-opacity" />
       )}
       <Icon
         className={clsx(
           'relative z-10 h-[16px] w-[16px] flex-shrink-0 transition-colors',
-          active ? 'text-brand-300' : 'text-zinc-500 group-hover:text-zinc-300'
+          active ? 'text-gray-900' : 'text-gray-400 group-hover:text-gray-600'
         )}
         strokeWidth={1.75}
       />
@@ -113,7 +113,7 @@ function NavLink({
         {item.name}
       </span>
       {isCollapsed && (
-        <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-ink-700 ring-1 ring-white/10 text-white text-xs font-medium rounded-md whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none transition-all duration-150 z-50">
+        <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-gray-900 ring-1 ring-gray-900 text-white text-xs font-medium rounded-md whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none transition-all duration-150 z-50">
           {item.name}
         </div>
       )}
@@ -192,7 +192,7 @@ export default function Sidebar() {
 
       <div
         className={clsx(
-          'fixed top-0 h-screen flex flex-col bg-ink z-50',
+          'fixed top-0 h-screen flex flex-col bg-[var(--sidebar)] z-50 border-r border-gray-900/[0.06]',
           'lg:translate-x-0 lg:relative',
           isCollapsed ? 'lg:w-[56px]' : 'lg:w-[212px]',
           'w-60',
@@ -200,10 +200,10 @@ export default function Sidebar() {
         )}
         style={{ transition: 'width 0.2s ease, transform 0.2s ease' }}
       >
-        <div className="hidden lg:flex h-14 shrink-0 items-center border-b border-white/[0.06] overflow-visible px-3">
+        <div className="hidden lg:flex h-14 shrink-0 items-center border-b border-gray-900/[0.06] overflow-visible px-3">
           {isCollapsed ? (
             <Image
-              src="/logo-collapsed-dark.png"
+              src="/logo-collapsed.png"
               alt="Realestic"
               width={128}
               height={128}
@@ -212,7 +212,7 @@ export default function Sidebar() {
             />
           ) : (
             <Image
-              src="/logo-sidebar-dark.png"
+              src="/logo-sidebar.png"
               alt="Realestic"
               width={640}
               height={192}
@@ -233,7 +233,7 @@ export default function Sidebar() {
           {navGroups.map((group) => (
             <div key={group.label} className={clsx('mb-4 last:mb-2', isCollapsed && 'mb-3')}>
               {!isCollapsed && (
-                <p className="px-2.5 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-zinc-600">
+                <p className="px-2.5 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
                   {group.label}
                 </p>
               )}
@@ -253,7 +253,7 @@ export default function Sidebar() {
           ))}
         </nav>
 
-        <div className="border-t border-white/[0.06] p-2 space-y-px">
+        <div className="border-t border-gray-900/[0.06] p-2 space-y-px">
           <Link
             href="/dashboard/account"
             onClick={closeMobile}
@@ -262,14 +262,14 @@ export default function Sidebar() {
               'relative flex items-center rounded-md text-[13px] font-medium transition-colors',
               isCollapsed ? 'justify-center px-2 py-2' : 'gap-2.5 px-2.5 py-[7px]',
               pathname.startsWith('/dashboard/account')
-                ? 'text-white'
-                : 'text-zinc-400 hover:text-zinc-100'
+                ? 'text-gray-900'
+                : 'text-gray-500 hover:text-gray-900'
             )}
           >
             {pathname.startsWith('/dashboard/account') && (
               <motion.span
                 layoutId="sidebar-active-pill"
-                className="absolute inset-0 rounded-md bg-white/[0.08] ring-1 ring-white/[0.06]"
+                className="absolute inset-0 rounded-md bg-white ring-1 ring-gray-900/[0.06] shadow-surface"
                 transition={{ type: 'spring', stiffness: 500, damping: 38 }}
               />
             )}
@@ -282,7 +282,7 @@ export default function Sidebar() {
             disabled={isSigningOut}
             title={isCollapsed ? 'Sign out' : undefined}
             className={clsx(
-              'flex w-full items-center rounded-md text-[13px] font-medium text-zinc-400 hover:bg-red-500/10 hover:text-red-400 transition-colors disabled:opacity-50',
+              'flex w-full items-center rounded-md text-[13px] font-medium text-gray-500 hover:bg-rose-50 hover:text-rose-600 transition-colors disabled:opacity-50',
               isCollapsed ? 'justify-center px-2 py-2' : 'gap-2.5 px-2.5 py-[7px]'
             )}
           >
@@ -293,7 +293,7 @@ export default function Sidebar() {
             type="button"
             onClick={toggleCollapsed}
             className={clsx(
-              'hidden lg:flex w-full items-center rounded-md py-[7px] text-[13px] text-zinc-600 hover:bg-white/[0.05] hover:text-zinc-300 transition-colors',
+              'hidden lg:flex w-full items-center rounded-md py-[7px] text-[13px] text-gray-400 hover:bg-gray-900/[0.04] hover:text-gray-700 transition-colors',
               isCollapsed ? 'justify-center px-2' : 'gap-2.5 px-2.5'
             )}
           >

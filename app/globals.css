@@ -10,10 +10,12 @@
 /* Theme surfaces as CSS variables so a dark mode can flip them later
    without touching component classes. */
 :root {
-  --canvas: #f4f4f5;          /* app background behind cards */
+  --canvas: #f1efec;          /* warm off-white app background behind cards */
   --surface: #ffffff;         /* card / panel background */
-  --ink: #101014;             /* dark shell (sidebar) */
-  --brand: #7c3aed;           /* signal violet */
+  --sidebar: #edeae5;         /* warm light sidebar */
+  --ink: #1c1917;             /* graphite — primary actions, headings */
+  --brand: #1c1917;           /* graphite */
+  --champagne: #a87c43;       /* signature warm accent */
 }
 
 /* Custom base styles */
@@ -189,8 +191,8 @@
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse 90% 60% at 50% -10%, rgba(124, 58, 237, 0.06), transparent 55%),
-      radial-gradient(circle at 100% 0%, rgba(124, 58, 237, 0.04), transparent 40%);
+      radial-gradient(ellipse 90% 60% at 50% -10%, rgba(168, 124, 67, 0.05), transparent 55%),
+      radial-gradient(circle at 100% 0%, rgba(168, 124, 67, 0.03), transparent 40%);
   }
 }
 
@@ -241,13 +243,13 @@
 }
 
 .driver-popover-next-btn {
-  background: #7c3aed !important;
+  background: #1c1917 !important;
   color: #ffffff !important;
-  border-color: #7c3aed !important;
+  border-color: #1c1917 !important;
 }
 
 .driver-popover-next-btn:hover {
-  background: #6d28d9 !important;
+  background: #292524 !important;
 }
 
 .driver-popover-arrow-side-left .driver-popover-arrow { border-right-color: #ffffff !important; }

@@ -8,7 +8,7 @@
 //   rose    → urgent / overdue / calendar
 // Class strings are literal so Tailwind's content scan picks them up.
 
-export type Accent = 'violet' | 'sky' | 'teal' | 'emerald' | 'amber' | 'rose' | 'gray';
+export type Accent = 'champagne' | 'sky' | 'teal' | 'emerald' | 'amber' | 'rose' | 'gray';
 
 interface AccentClasses {
   /** Icon/text color on a light chip. */
@@ -24,12 +24,12 @@ interface AccentClasses {
 }
 
 export const ACCENT: Record<Accent, AccentClasses> = {
-  violet: {
-    text: 'text-brand-600',
-    bg: 'bg-brand-50',
-    ring: 'ring-brand-200/60',
-    solid: 'bg-brand-500',
-    chip: 'bg-brand-50 ring-1 ring-brand-200/60 text-brand-600',
+  champagne: {
+    text: 'text-champagne-600',
+    bg: 'bg-champagne-50',
+    ring: 'ring-champagne-200/60',
+    solid: 'bg-champagne-500',
+    chip: 'bg-champagne-50 ring-1 ring-champagne-200/60 text-champagne-600',
   },
   sky: {
     text: 'text-sky-600',
@@ -77,7 +77,7 @@ export const ACCENT: Record<Accent, AccentClasses> = {
 
 /** Tinted avatar styles (slightly stronger than chips, for initials). */
 export const AVATAR: Record<Accent, string> = {
-  violet: 'bg-brand-100 text-brand-700',
+  champagne: 'bg-champagne-100 text-champagne-700',
   sky: 'bg-sky-100 text-sky-700',
   teal: 'bg-teal-100 text-teal-700',
   emerald: 'bg-emerald-100 text-emerald-700',
@@ -86,7 +86,7 @@ export const AVATAR: Record<Accent, string> = {
   gray: 'bg-gray-100 text-gray-600',
 };
 
-const AVATAR_POOL: Accent[] = ['violet', 'sky', 'teal', 'emerald', 'amber', 'rose'];
+const AVATAR_POOL: Accent[] = ['champagne', 'sky', 'teal', 'emerald', 'amber', 'rose'];
 
 /** Deterministic accent for a person's name — same name, same color. */
 export function nameAccent(name: string): Accent {
@@ -109,6 +109,6 @@ export const MODULE_ACCENT = {
   transactions: 'emerald',
   projects: 'amber',
   calendar: 'rose',
-  ai: 'violet',
-  research: 'violet',
+  ai: 'champagne',
+  research: 'champagne',
 } as const satisfies Record<string, Accent>;

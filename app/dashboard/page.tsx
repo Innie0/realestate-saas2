@@ -1,36 +1,28 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import Header from '@/components/layout/Header';
 import PageShell from '@/components/layout/PageShell';
 import PageTransition from '@/components/motion/PageTransition';
-import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
 import Surface from '@/components/ui/Surface';
 import Sparkline from '@/components/ui/Sparkline';
 import Button from '@/components/ui/Button';
+import CountUp from '@/components/motion/CountUp';
 import NotificationsPanel from '@/components/NotificationsPanel';
 import PlanUsagePanel, { PlanUsagePanelSkeleton } from '@/components/dashboard/PlanUsagePanel';
 import MarketplaceSummaryPanel from '@/components/dashboard/MarketplaceSummaryPanel';
 import GettingStartedPanel from '@/components/dashboard/GettingStartedPanel';
+import TransactionStatusBadge from '@/components/transactions/TransactionStatusBadge';
+import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
 import {
   Plus,
   ArrowRight,
-  Inbox,
-  Flame,
-  Search,
-  Sparkles,
   FolderKanban,
   FileText,
-  Calendar,
-  AlertCircle,
-  TrendingUp,
-  CircleDollarSign,
-  BellRing,
 } from 'lucide-react';
-import CountUp from '@/components/motion/CountUp';
-import { ACCENT, type Accent } from '@/lib/accent';
 import { Project } from '@/types';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
@@ -50,6 +42,9 @@ interface ReminderRow {
 interface RecentTransaction {
   id: string;
   property_address: string;
+  property_city?: string | null;
+  buyer_name?: string | null;
+  seller_name?: string | null;
   status: string;
   updated_at: string;
   offer_price?: number | null;
@@ -78,33 +73,31 @@ function formatToday() {
 const QUICK_LINKS: ReadonlyArray<{
   href: string;
   label: string;
-  icon: React.ElementType;
-  accent: Accent;
+  shortcut: string;
   tour?: string;
 }> = [
-  { href: '/dashboard/projects/new', label: 'New listing', icon: Plus, accent: 'amber', tour: 'new-project' },
-  { href: '/dashboard/leads', label: 'Leads inbox', icon: Inbox, accent: 'sky' },
-  { href: '/dashboard/property-research', label: 'Property research', icon: Search, accent: 'violet' },
-  { href: '/dashboard/tasks', label: 'AI assistant', icon: Sparkles, accent: 'violet' },
-  { href: '/dashboard/calendar', label: 'Calendar', icon: Calendar, accent: 'rose' },
-  { href: '/dashboard/clients', label: 'Clients', icon: FolderKanban, accent: 'teal', tour: 'manage-clients' },
+  { href: '/dashboard/projects/new', label: 'New listing project', shortcut: 'N', tour: 'new-project' },
+  { href: '/dashboard/property-research', label: 'Research an address', shortcut: 'R' },
+  { href: '/dashboard/tasks', label: 'Ask the AI assistant', shortcut: 'A' },
+  { href: '/dashboard/clients', label: 'Add a client', shortcut: 'C', tour: 'manage-clients' },
 ];
 
-type ContinueListItem =
-  | {
-      key: string;
-      kind: 'project';
-      href: string;
-      title: string;
-      subtitle: string;
-    }
-  | {
-      key: string;
-      kind: 'transaction';
-      href: string;
-      title: string;
-      subtitle: string;
-    };
+const compactCurrency = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  notation: 'compact',
+  maximumFractionDigits: 1,
+});
+
+/* ── Continue: pick up where you left off ────────────────────────────── */
+
+type ContinueListItem = {
+  key: string;
+  kind: 'project' | 'transaction';
+  href: string;
+  title: string;
+  subtitle: string;
+};
 
 function projectAddressLabel(project: Project): string {
   const info = project.property_info;
@@ -119,7 +112,6 @@ function buildContinueListItems(
   allTransactions: RecentTransaction[],
 ): ContinueListItem[] {
   const items: ContinueListItem[] = [];
-
   const matchesExistingAddress = (address: string) =>
     items.some((item) => isSameAddress(item.title, address));
 
@@ -138,7 +130,6 @@ function buildContinueListItems(
 
   for (const project of recentProjects) {
     if (projectMatchesExisting(project)) continue;
-
     items.push({
       key: `project:${project.id}`,
       kind: 'project',
@@ -146,7 +137,6 @@ function buildContinueListItems(
       title: project.title,
       subtitle: project.status.replace('_', ' '),
     });
-
     if (items.length >= 3) return items;
   }
 
@@ -157,7 +147,6 @@ function buildContinueListItems(
         isSameAddress(project.title, tx.property_address),
     );
     if (duplicatesProject || matchesExistingAddress(tx.property_address)) continue;
-
     items.push({
       key: `transaction:${tx.id}`,
       kind: 'transaction',
@@ -165,278 +154,10 @@ function buildContinueListItems(
       title: tx.property_address,
       subtitle: tx.status.replace('_', ' '),
     });
-
     if (items.length >= 3) break;
   }
 
   return items;
-}
-
-function ContinueSection({
-  loading,
-  items,
-}: {
-  loading: boolean;
-  items: ContinueListItem[];
-}) {
-  return (
-    <div>
-      <div className="flex items-center justify-between mb-3">
-        <div>
-          <p className="text-label mb-1">Continue</p>
-          <h2 className="text-title font-semibold tracking-tight text-gray-900">Pick up where you left off</h2>
-        </div>
-        <Link
-          href="/dashboard/projects"
-          className="text-caption text-gray-500 hover:text-gray-900 flex items-center gap-1 transition-colors"
-        >
-          All projects <ArrowRight className="w-3.5 h-3.5" />
-        </Link>
-      </div>
-
-      {loading ? (
-        <div className="space-y-2">
-          {[0, 1].map((i) => (
-            <Surface key={i} padding="sm" className="flex items-center gap-4 animate-pulse min-h-[4.5rem]">
-              <div className="p-2.5 rounded-xl bg-gray-100 h-10 w-10 shrink-0" />
-              <div className="flex-1 space-y-2">
-                <div className="h-4 bg-gray-100 rounded-lg w-48 max-w-full" />
-                <div className="h-3 bg-gray-100 rounded-lg w-20" />
-              </div>
-            </Surface>
-          ))}
-        </div>
-      ) : items.length > 0 ? (
-        <div className="space-y-2">
-          {items.map((item) => (
-            <Link key={item.key} href={item.href}>
-              <Surface padding="sm" hover className="flex items-center gap-4 group">
-                <div
-                  className={clsx(
-                    'flex h-9 w-9 items-center justify-center rounded-lg shrink-0 transition-transform duration-200 group-hover:scale-105',
-                    item.kind === 'project' ? ACCENT.amber.chip : ACCENT.emerald.chip,
-                  )}
-                >
-                  {item.kind === 'project' ? (
-                    <FolderKanban className="w-4 h-4" strokeWidth={1.75} />
-                  ) : (
-                    <FileText className="w-4 h-4" strokeWidth={1.75} />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-body font-medium text-gray-900 truncate">{item.title}</p>
-                  <p className="text-caption text-gray-500 capitalize">{item.subtitle}</p>
-                </div>
-                <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-500 transition-colors shrink-0" />
-              </Surface>
-            </Link>
-          ))}
-        </div>
-      ) : (
-        <Surface padding="md" className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <FolderKanban className="w-8 h-8 text-gray-300 shrink-0" />
-            <div>
-              <p className="text-body font-medium text-gray-900">No recent work yet</p>
-              <p className="text-caption text-gray-500 mt-0.5">Create a listing project to get started with AI content.</p>
-            </div>
-          </div>
-          <Link href="/dashboard/projects/new" data-tour="new-project" className="shrink-0">
-            <Button size="sm">
-              <Plus className="w-4 h-4 mr-2" />
-              New listing
-            </Button>
-          </Link>
-        </Surface>
-      )}
-    </div>
-  );
-}
-
-interface UrgentItem {
-  key: string;
-  icon: React.ElementType;
-  iconClass: string;
-  accentClass: string;
-  title: string;
-  subtitle: string;
-  href: string;
-}
-
-function UrgentQueue({ items, loading }: { items: UrgentItem[]; loading: boolean }) {
-  if (loading) {
-    return (
-      <Surface padding="md" className="animate-pulse">
-        <div className="flex items-center gap-3">
-          <div className="rounded-full bg-gray-100 h-9 w-9 shrink-0" />
-          <div className="flex-1 space-y-2">
-            <div className="h-4 bg-gray-100 rounded w-56 max-w-full" />
-            <div className="h-3 bg-gray-100 rounded w-72 max-w-full" />
-          </div>
-        </div>
-      </Surface>
-    );
-  }
-
-  if (items.length === 0) return null;
-
-  return (
-    <div className="space-y-2">
-      <p className="text-label">Needs your attention</p>
-      {items.map((item) => {
-        const Icon = item.icon;
-        return (
-          <Link key={item.key} href={item.href}>
-            <Surface
-              padding="md"
-              hover
-              className="relative overflow-hidden flex items-center gap-3.5"
-            >
-              <span className={`absolute left-0 inset-y-0 w-[3px] ${item.accentClass}`} aria-hidden />
-              <div className={`flex h-9 w-9 items-center justify-center rounded-full shrink-0 ${item.iconClass}`}>
-                <Icon className="w-4 h-4" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-body font-semibold text-gray-900">{item.title}</p>
-                <p className="text-caption text-gray-500 mt-0.5">{item.subtitle}</p>
-              </div>
-              <ArrowRight className="w-4 h-4 text-gray-300 shrink-0" />
-            </Surface>
-          </Link>
-        );
-      })}
-    </div>
-  );
-}
-
-function QuickActionsStrip() {
-  return (
-    <div>
-      <p className="text-label mb-2">Quick actions</p>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-        {QUICK_LINKS.map(({ href, label, icon: Icon, accent, tour }) => (
-          <Link
-            key={href}
-            href={href}
-            data-tour={tour}
-            className="group flex items-center gap-2.5 rounded-xl bg-white ring-1 ring-gray-900/[0.04] shadow-surface px-3 py-2.5 hover:shadow-raised hover:ring-gray-900/[0.07] hover:-translate-y-px transition-all duration-200"
-          >
-            <span
-              className={clsx(
-                'flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-transform duration-200 group-hover:scale-110',
-                ACCENT[accent].chip,
-              )}
-            >
-              <Icon className="w-3.5 h-3.5" strokeWidth={1.75} />
-            </span>
-            <span className="text-[13px] font-medium text-gray-700 group-hover:text-gray-900 leading-tight truncate">
-              {label}
-            </span>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ── Business pulse — the numbers that matter, at a glance ─────────── */
-
-const compactCurrency = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  notation: 'compact',
-  maximumFractionDigits: 1,
-});
-
-interface MetricCardProps {
-  label: string;
-  value: number;
-  format?: (n: number) => string;
-  /** Static display when the value isn't a plain number (e.g. em dash). */
-  placeholder?: string;
-  sub: string;
-  subTone?: 'neutral' | 'positive' | 'warning';
-  href: string;
-  series?: number[];
-  icon: React.ElementType;
-  accent: Accent;
-}
-
-const SPARK_TEXT: Record<Accent, string> = {
-  violet: 'text-brand-500',
-  sky: 'text-sky-500',
-  teal: 'text-teal-500',
-  emerald: 'text-emerald-500',
-  amber: 'text-amber-500',
-  rose: 'text-rose-500',
-  gray: 'text-gray-400',
-};
-
-function MetricCard({
-  label,
-  value,
-  format,
-  placeholder,
-  sub,
-  subTone = 'neutral',
-  href,
-  series,
-  icon: Icon,
-  accent,
-}: MetricCardProps) {
-  return (
-    <StaggerItem className="h-full">
-    <Link href={href} className="block h-full group">
-      <Surface padding="sm" hover className="h-full relative overflow-hidden">
-        <div className="flex items-center justify-between gap-2">
-          <p className="text-label">{label}</p>
-          <span
-            className={clsx(
-              'flex h-6 w-6 items-center justify-center rounded-md transition-transform duration-200 group-hover:scale-110',
-              ACCENT[accent].chip,
-            )}
-          >
-            <Icon className="w-3.5 h-3.5" strokeWidth={1.75} />
-          </span>
-        </div>
-        <p className="mt-1.5 text-[26px] font-semibold tracking-tight tabular-nums text-gray-900 leading-none">
-          {placeholder ?? <CountUp value={value} format={format} />}
-        </p>
-        <div className="mt-2 flex items-end justify-between gap-2 min-h-[28px]">
-          <p
-            className={clsx(
-              'text-caption leading-tight',
-              subTone === 'positive' && 'text-emerald-600',
-              subTone === 'warning' && 'text-amber-600',
-              subTone === 'neutral' && 'text-gray-500',
-            )}
-          >
-            {sub}
-          </p>
-          {series && series.some((v) => v > 0) && (
-            <span className={clsx('shrink-0', SPARK_TEXT[accent])}>
-              <Sparkline data={series} />
-            </span>
-          )}
-        </div>
-      </Surface>
-    </Link>
-    </StaggerItem>
-  );
-}
-
-function MetricRowSkeleton() {
-  return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-      {[0, 1, 2, 3].map((i) => (
-        <Surface key={i} padding="sm" className="animate-pulse">
-          <div className="h-3 bg-gray-100 rounded w-20 mb-3" />
-          <div className="h-7 bg-gray-100 rounded w-16 mb-3" />
-          <div className="h-3 bg-gray-100 rounded w-24" />
-        </Surface>
-      ))}
-    </div>
-  );
 }
 
 /** Bucket contact creation dates into trailing 7-day windows (oldest first). */
@@ -452,7 +173,310 @@ function weeklySeries(dates: string[], weeks = 8): number[] {
   return buckets;
 }
 
+/* ── Metric strip — one editorial band, divided into columns ─────────── */
+
+interface Metric {
+  label: string;
+  value: number;
+  format?: (n: number) => string;
+  placeholder?: string;
+  sub: string;
+  subTone: 'neutral' | 'positive' | 'warning';
+  href: string;
+  series?: number[];
+}
+
+function MetricStrip({ metrics }: { metrics: Metric[] }) {
+  return (
+    <Surface padding="none" className="overflow-hidden">
+      <div className="grid grid-cols-2 lg:grid-cols-4 divide-y divide-gray-100 lg:divide-y-0 lg:divide-x">
+        {metrics.map((m) => (
+          <Link
+            key={m.label}
+            href={m.href}
+            className="group px-5 py-4 transition-colors hover:bg-gray-50/70"
+          >
+            <p className="text-label">{m.label}</p>
+            <div className="mt-2 flex items-end justify-between gap-2">
+              <p className="text-[28px] font-semibold tracking-tight tabular-nums text-gray-900 leading-none">
+                {m.placeholder ?? <CountUp value={m.value} format={m.format} />}
+              </p>
+              {m.series && m.series.some((v) => v > 0) && (
+                <span className="text-champagne-500 shrink-0 -mb-0.5">
+                  <Sparkline data={m.series} />
+                </span>
+              )}
+            </div>
+            <p
+              className={clsx(
+                'text-caption mt-2 leading-tight',
+                m.subTone === 'positive' && 'text-emerald-600',
+                m.subTone === 'warning' && 'text-amber-600',
+                m.subTone === 'neutral' && 'text-gray-500',
+              )}
+            >
+              {m.sub}
+            </p>
+          </Link>
+        ))}
+      </div>
+    </Surface>
+  );
+}
+
+function MetricStripSkeleton() {
+  return (
+    <Surface padding="none" className="overflow-hidden">
+      <div className="grid grid-cols-2 lg:grid-cols-4 divide-y divide-gray-100 lg:divide-y-0 lg:divide-x">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="px-5 py-4 animate-pulse">
+            <div className="h-3 bg-gray-100 rounded w-20" />
+            <div className="h-7 bg-gray-100 rounded w-16 mt-3" />
+            <div className="h-3 bg-gray-100 rounded w-24 mt-3" />
+          </div>
+        ))}
+      </div>
+    </Surface>
+  );
+}
+
+/* ── Needs your attention ────────────────────────────────────────────── */
+
+interface AttentionItem {
+  key: string;
+  dotClass: string;
+  title: string;
+  actionLabel: string;
+  href: string;
+}
+
+function NeedsAttention({ items, loading }: { items: AttentionItem[]; loading: boolean }) {
+  if (loading) {
+    return (
+      <Surface padding="md" className="animate-pulse">
+        <div className="h-3 bg-gray-100 rounded w-40 mb-4" />
+        <div className="space-y-3">
+          {[0, 1].map((i) => (
+            <div key={i} className="h-4 bg-gray-100 rounded w-3/4" />
+          ))}
+        </div>
+      </Surface>
+    );
+  }
+
+  if (items.length === 0) return null;
+
+  return (
+    <Surface padding="none" className="overflow-hidden">
+      <div className="flex items-center justify-between px-5 pt-4 pb-2">
+        <h2 className="text-[13px] font-semibold text-gray-900">Needs your attention</h2>
+        <span className="text-[11px] font-medium text-gray-400 tabular-nums">
+          {items.length} item{items.length === 1 ? '' : 's'}
+        </span>
+      </div>
+      <div className="divide-y divide-gray-100">
+        {items.map((item) => (
+          <Link
+            key={item.key}
+            href={item.href}
+            className="group flex items-center gap-3 px-5 py-3 transition-colors hover:bg-gray-50/70"
+          >
+            <span className={clsx('h-2 w-2 rounded-full shrink-0', item.dotClass)} aria-hidden />
+            <p className="flex-1 min-w-0 text-[13px] text-gray-800 truncate">{item.title}</p>
+            <span className="flex items-center gap-1 text-[12px] font-medium text-gray-500 group-hover:text-gray-900 transition-colors shrink-0">
+              {item.actionLabel}
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </span>
+          </Link>
+        ))}
+      </div>
+    </Surface>
+  );
+}
+
+/* ── Open deals table ────────────────────────────────────────────────── */
+
+function formatClosing(date?: string | null): string {
+  if (!date) return '—';
+  return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function OpenDealsTable({
+  transactions,
+  loading,
+}: {
+  transactions: RecentTransaction[];
+  loading: boolean;
+}) {
+  const deals = transactions.slice(0, 6);
+
+  return (
+    <Surface padding="none" className="overflow-hidden">
+      <div className="flex items-center justify-between px-5 pt-4 pb-3">
+        <h2 className="text-[13px] font-semibold text-gray-900">Open deals</h2>
+        <Link
+          href="/dashboard/transactions"
+          className="flex items-center gap-1 text-[12px] font-medium text-gray-500 hover:text-gray-900 transition-colors"
+        >
+          All transactions <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
+      </div>
+
+      {loading ? (
+        <div className="px-5 pb-4 space-y-3 animate-pulse">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-5 bg-gray-100 rounded" />
+          ))}
+        </div>
+      ) : deals.length === 0 ? (
+        <div className="px-5 pb-6 pt-2 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-body font-medium text-gray-900">No open deals</p>
+            <p className="text-caption text-gray-500 mt-0.5">
+              Start a transaction to track milestones and closings.
+            </p>
+          </div>
+          <Link href="/dashboard/transactions/new" className="shrink-0">
+            <Button size="sm">
+              <Plus className="w-4 h-4 mr-1.5" />
+              New deal
+            </Button>
+          </Link>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[560px] text-left">
+            <thead>
+              <tr className="border-y border-gray-100 bg-gray-50/60">
+                {['Property', 'Client', 'Stage', 'Price', 'Closing'].map((h) => (
+                  <th
+                    key={h}
+                    className={clsx(
+                      'px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400',
+                      (h === 'Price' || h === 'Closing') && 'text-right',
+                    )}
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <StaggerList as="tbody" className="divide-y divide-gray-100">
+              {deals.map((tx) => (
+                <StaggerItem
+                  key={tx.id}
+                  as="tr"
+                  className="group transition-colors hover:bg-gray-50/70"
+                >
+                  <td className="px-5 py-3 max-w-0">
+                    <Link href={`/dashboard/transactions/${tx.id}`} className="block">
+                      <p className="text-[13px] font-medium text-gray-900 truncate group-hover:text-gray-950">
+                        {tx.property_address}
+                      </p>
+                      {tx.property_city && (
+                        <p className="text-[11px] text-gray-400 truncate">{tx.property_city}</p>
+                      )}
+                    </Link>
+                  </td>
+                  <td className="px-5 py-3 text-[13px] text-gray-600 truncate">
+                    {tx.buyer_name || tx.seller_name || '—'}
+                  </td>
+                  <td className="px-5 py-3">
+                    <TransactionStatusBadge status={tx.status} />
+                  </td>
+                  <td className="px-5 py-3 text-right text-[13px] font-semibold text-emerald-700 tabular-nums whitespace-nowrap">
+                    {tx.offer_price ? compactCurrency.format(tx.offer_price) : '—'}
+                  </td>
+                  <td className="px-5 py-3 text-right text-[12px] text-gray-500 tabular-nums whitespace-nowrap">
+                    {formatClosing(tx.closing_date)}
+                  </td>
+                </StaggerItem>
+              ))}
+            </StaggerList>
+          </table>
+        </div>
+      )}
+    </Surface>
+  );
+}
+
+/* ── Continue (right rail) ───────────────────────────────────────────── */
+
+function ContinuePanel({ items, loading }: { items: ContinueListItem[]; loading: boolean }) {
+  return (
+    <Surface padding="none" className="overflow-hidden">
+      <div className="px-5 pt-4 pb-2">
+        <h2 className="text-[13px] font-semibold text-gray-900">Continue</h2>
+      </div>
+      {loading ? (
+        <div className="px-5 pb-4 space-y-3 animate-pulse">
+          {[0, 1].map((i) => (
+            <div key={i} className="h-4 bg-gray-100 rounded" />
+          ))}
+        </div>
+      ) : items.length === 0 ? (
+        <p className="px-5 pb-5 text-caption text-gray-500">
+          Nothing in progress. Create a listing to get started.
+        </p>
+      ) : (
+        <div className="divide-y divide-gray-100">
+          {items.map((item) => (
+            <Link
+              key={item.key}
+              href={item.href}
+              className="group flex items-center gap-3 px-5 py-3 transition-colors hover:bg-gray-50/70"
+            >
+              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-gray-50 ring-1 ring-gray-200/70 text-gray-400 shrink-0 group-hover:text-gray-700 transition-colors">
+                {item.kind === 'project' ? (
+                  <FolderKanban className="w-3.5 h-3.5" strokeWidth={1.75} />
+                ) : (
+                  <FileText className="w-3.5 h-3.5" strokeWidth={1.75} />
+                )}
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-medium text-gray-900 truncate">{item.title}</p>
+                <p className="text-[11px] text-gray-400 capitalize truncate">{item.subtitle}</p>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+          ))}
+        </div>
+      )}
+    </Surface>
+  );
+}
+
+/* ── Quick actions with keyboard shortcuts (right rail) ──────────────── */
+
+function QuickActionsPanel() {
+  return (
+    <Surface padding="none" className="overflow-hidden">
+      <div className="px-5 pt-4 pb-2">
+        <h2 className="text-[13px] font-semibold text-gray-900">Quick actions</h2>
+      </div>
+      <div className="divide-y divide-gray-100">
+        {QUICK_LINKS.map(({ href, label, shortcut, tour }) => (
+          <Link
+            key={href}
+            href={href}
+            data-tour={tour}
+            className="group flex items-center justify-between gap-3 px-5 py-2.5 transition-colors hover:bg-gray-50/70"
+          >
+            <span className="text-[13px] text-gray-700 group-hover:text-gray-900 transition-colors truncate">
+              {label}
+            </span>
+            <kbd className="flex h-5 min-w-[20px] items-center justify-center rounded border border-gray-200 bg-gray-50 px-1 text-[11px] font-medium text-gray-400 group-hover:border-gray-300 group-hover:text-gray-600 transition-colors shrink-0">
+              {shortcut}
+            </kbd>
+          </Link>
+        ))}
+      </div>
+    </Surface>
+  );
+}
+
 export default function DashboardPage() {
+  const router = useRouter();
   const [showWelcome, setShowWelcome] = useState(false);
   const [showGettingStarted, setShowGettingStarted] = useState(false);
 
@@ -480,7 +504,6 @@ export default function DashboardPage() {
     [activeReminders],
   );
 
-  // ── Business pulse metrics ──────────────────────────────────────────
   const leadSeries = useMemo(
     () => weeklySeries(allContacts.map((c) => c.created_at)),
     [allContacts],
@@ -528,10 +551,65 @@ export default function DashboardPage() {
 
   const leadDelta = newLeads7d - newLeadsPrior7d;
 
+  const metrics = useMemo<Metric[]>(
+    () => [
+      {
+        label: 'New leads · 7d',
+        value: newLeads7d,
+        sub:
+          leadDelta > 0
+            ? `+${leadDelta} vs last week`
+            : leadDelta < 0
+              ? `${leadDelta} vs last week`
+              : 'Same as last week',
+        subTone: leadDelta > 0 ? 'positive' : 'neutral',
+        href: '/dashboard/leads',
+        series: leadSeries,
+      },
+      {
+        label: 'Hot leads',
+        value: hotLeadCount,
+        sub: hotLeadCount > 0 ? 'Reply within 48h' : 'Inbox handled',
+        subTone: hotLeadCount > 0 ? 'warning' : 'neutral',
+        href: '/dashboard/leads',
+      },
+      {
+        label: 'Pipeline',
+        value: pipelineValue,
+        format: (n) => compactCurrency.format(n),
+        placeholder: pipelineValue > 0 ? undefined : '—',
+        sub: `${allTransactions.length} open${closingSoonCount > 0 ? ` · ${closingSoonCount} closing soon` : ''}`,
+        subTone: closingSoonCount > 0 ? 'warning' : 'neutral',
+        href: '/dashboard/transactions',
+      },
+      {
+        label: 'Follow-ups',
+        value: overdueReminderCount + dueThisWeekCount,
+        sub:
+          overdueReminderCount > 0
+            ? `${overdueReminderCount} overdue`
+            : dueThisWeekCount > 0
+              ? 'Due this week'
+              : 'All caught up',
+        subTone: overdueReminderCount > 0 ? 'warning' : 'neutral',
+        href: '/dashboard/clients',
+      },
+    ],
+    [
+      newLeads7d,
+      leadDelta,
+      leadSeries,
+      hotLeadCount,
+      pipelineValue,
+      allTransactions.length,
+      closingSoonCount,
+      overdueReminderCount,
+      dueThisWeekCount,
+    ],
+  );
+
   const focusMessage = useMemo(() => {
-    if (leadsLoading && inboxLeads.length === 0) {
-      return 'Loading your workspace';
-    }
+    if (leadsLoading && inboxLeads.length === 0) return 'Loading your workspace';
     if (hotLeadCount > 0) {
       return `${hotLeadCount} hot lead${hotLeadCount === 1 ? '' : 's'} need${hotLeadCount === 1 ? 's' : ''} a response`;
     }
@@ -544,45 +622,49 @@ export default function DashboardPage() {
     return 'Your workspace is clear — start something new';
   }, [hotLeadCount, overdueReminderCount, inboxLeads.length, leadsLoading]);
 
-  const urgentItems = useMemo<UrgentItem[]>(() => {
-    const items: UrgentItem[] = [];
+  const attentionItems = useMemo<AttentionItem[]>(() => {
+    const items: AttentionItem[] = [];
     if (hotLeadCount > 0) {
       items.push({
         key: 'hot-leads',
-        icon: Flame,
-        iconClass: 'bg-rose-50 text-rose-600 ring-1 ring-rose-100',
-        accentClass: 'bg-rose-500',
-        title: `Respond to ${hotLeadCount} hot lead${hotLeadCount === 1 ? '' : 's'}`,
-        subtitle: 'Leads under 48 hours convert best when you reply quickly.',
+        dotClass: 'bg-rose-500',
+        title: `${hotLeadCount} hot lead${hotLeadCount === 1 ? '' : 's'} waiting under 48h`,
+        actionLabel: 'Open inbox',
         href: '/dashboard/leads',
       });
     }
     if (overdueReminderCount > 0) {
       items.push({
         key: 'overdue-followups',
-        icon: AlertCircle,
-        iconClass: 'bg-amber-50 text-amber-600 ring-1 ring-amber-100',
-        accentClass: 'bg-amber-400',
+        dotClass: 'bg-amber-500',
         title: `${overdueReminderCount} overdue follow-up${overdueReminderCount === 1 ? '' : 's'}`,
-        subtitle: 'Clients or reminders waiting on a reply from you.',
+        actionLabel: 'Review',
         href: '/dashboard/clients',
+      });
+    }
+    if (closingSoonCount > 0) {
+      items.push({
+        key: 'closing-soon',
+        dotClass: 'bg-champagne-500',
+        title: `${closingSoonCount} deal${closingSoonCount === 1 ? '' : 's'} closing within 2 weeks`,
+        actionLabel: 'View deals',
+        href: '/dashboard/transactions',
       });
     }
     if (items.length === 0 && inboxLeads.length > 0) {
       items.push({
         key: 'inbox-leads',
-        icon: Inbox,
-        iconClass: 'bg-gray-50 text-gray-600 ring-1 ring-gray-200/70',
-        accentClass: 'bg-gray-300',
-        title: `Review ${inboxLeads.length} inbox lead${inboxLeads.length === 1 ? '' : 's'}`,
-        subtitle: 'New captures are waiting to be added to your CRM.',
+        dotClass: 'bg-gray-300',
+        title: `${inboxLeads.length} new inbox lead${inboxLeads.length === 1 ? '' : 's'} to review`,
+        actionLabel: 'Open inbox',
         href: '/dashboard/leads',
       });
     }
     return items;
-  }, [hotLeadCount, overdueReminderCount, inboxLeads.length]);
+  }, [hotLeadCount, overdueReminderCount, closingSoonCount, inboxLeads.length]);
 
-  const urgentLoading = (leadsLoading || remindersLoading) && inboxLeads.length === 0 && activeReminders.length === 0;
+  const attentionLoading =
+    (leadsLoading || remindersLoading) && inboxLeads.length === 0 && activeReminders.length === 0;
 
   const continueListItems = useMemo(
     () => buildContinueListItems(recentProjects, allTransactions),
@@ -591,6 +673,29 @@ export default function DashboardPage() {
 
   const continueLoading =
     (projectsLoading || transactionsLoading) && recentProjects.length === 0 && allTransactions.length === 0;
+
+  // Keyboard shortcuts for quick actions (N / R / A / C).
+  const handleShortcut = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const target = e.target as HTMLElement | null;
+      if (target) {
+        const tag = target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target.isContentEditable) return;
+      }
+      const match = QUICK_LINKS.find((l) => l.shortcut.toLowerCase() === e.key.toLowerCase());
+      if (match) {
+        e.preventDefault();
+        router.push(match.href);
+      }
+    },
+    [router],
+  );
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleShortcut);
+    return () => window.removeEventListener('keydown', handleShortcut);
+  }, [handleShortcut]);
 
   useTour({
     tourKey: 'tour_dashboard',
@@ -640,7 +745,6 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-
     const params = new URLSearchParams(window.location.search);
     if (params.get('welcome') === 'true') {
       setShowWelcome(true);
@@ -667,101 +771,57 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <Header title={getGreeting()} subtitle={`${formatToday()} · ${focusMessage}`} />
+      <Header
+        title={getGreeting()}
+        subtitle={`${formatToday()} · ${focusMessage}`}
+        actions={
+          <Link href="/dashboard/projects/new" data-tour="new-project">
+            <Button size="sm">
+              <Plus className="w-4 h-4 mr-1.5" />
+              New listing
+            </Button>
+          </Link>
+        }
+      />
 
       <PageShell>
-        <PageTransition className="space-y-6">
-        {showOnboarding && (
-          <GettingStartedPanel
-            variant={showWelcome ? 'welcome' : 'empty'}
-            onDismiss={dismissGettingStarted}
-          />
-        )}
-
-        {/* 1. Business pulse — how the business is actually doing */}
-        {metricsLoading ? (
-          <MetricRowSkeleton />
-        ) : (
-          <StaggerList className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <MetricCard
-              label="New leads · 7d"
-              value={newLeads7d}
-              icon={TrendingUp}
-              accent="sky"
-              sub={
-                leadDelta > 0
-                  ? `+${leadDelta} vs last week`
-                  : leadDelta < 0
-                    ? `${leadDelta} vs last week`
-                    : 'Same as last week'
-              }
-              subTone={leadDelta > 0 ? 'positive' : 'neutral'}
-              href="/dashboard/leads"
-              series={leadSeries}
+        <PageTransition className="space-y-5">
+          {showOnboarding && (
+            <GettingStartedPanel
+              variant={showWelcome ? 'welcome' : 'empty'}
+              onDismiss={dismissGettingStarted}
             />
-            <MetricCard
-              label="Hot leads"
-              value={hotLeadCount}
-              icon={Flame}
-              accent="rose"
-              sub={hotLeadCount > 0 ? 'Reply within 48h' : 'Inbox handled'}
-              subTone={hotLeadCount > 0 ? 'warning' : 'neutral'}
-              href="/dashboard/leads"
-            />
-            <MetricCard
-              label="Pipeline"
-              value={pipelineValue}
-              format={(n) => compactCurrency.format(n)}
-              placeholder={pipelineValue > 0 ? undefined : '—'}
-              icon={CircleDollarSign}
-              accent="emerald"
-              sub={`${allTransactions.length} open deal${allTransactions.length === 1 ? '' : 's'}${
-                closingSoonCount > 0 ? ` · ${closingSoonCount} closing soon` : ''
-              }`}
-              subTone={closingSoonCount > 0 ? 'warning' : 'neutral'}
-              href="/dashboard/transactions"
-            />
-            <MetricCard
-              label="Follow-ups"
-              value={overdueReminderCount + dueThisWeekCount}
-              icon={BellRing}
-              accent="amber"
-              sub={
-                overdueReminderCount > 0
-                  ? `${overdueReminderCount} overdue`
-                  : dueThisWeekCount > 0
-                    ? 'Due this week'
-                    : 'All caught up'
-              }
-              subTone={overdueReminderCount > 0 ? 'warning' : 'neutral'}
-              href="/dashboard/clients"
-            />
-          </StaggerList>
-        )}
+          )}
 
-        {/* 2. Urgent — what needs a response right now */}
-        <UrgentQueue items={urgentItems} loading={urgentLoading} />
+          {/* 1. Business pulse */}
+          {metricsLoading ? <MetricStripSkeleton /> : <MetricStrip metrics={metrics} />}
 
-        {/* 3. Quick actions — jump straight into the most common tools */}
-        <QuickActionsStrip />
+          {/* 2. Needs your attention */}
+          <NeedsAttention items={attentionItems} loading={attentionLoading} />
 
-        {/* 3. Continue work */}
-        <ContinueSection loading={continueLoading} items={continueListItems} />
+          {/* 3. Open deals + right rail */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
+            <div className="lg:col-span-2">
+              <OpenDealsTable transactions={allTransactions} loading={transactionsLoading && allTransactions.length === 0} />
+            </div>
+            <div className="space-y-5">
+              <div data-tour="notifications">
+                <NotificationsPanel embedded />
+              </div>
+              <ContinuePanel items={continueListItems} loading={continueLoading} />
+              <QuickActionsPanel />
+            </div>
+          </div>
 
-        {/* 4. Today's schedule */}
-        <div data-tour="notifications">
-          <NotificationsPanel embedded />
-        </div>
-
-        {/* 5. Secondary info — plan usage + marketplace activity */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          {usage ? (
-            <PlanUsagePanel usage={usage} plan={plan} layout="sidebar" />
-          ) : usageLoading ? (
-            <PlanUsagePanelSkeleton layout="sidebar" />
-          ) : null}
-          <MarketplaceSummaryPanel />
-        </div>
+          {/* 4. Secondary — plan usage + marketplace */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5" data-tour="plan-usage">
+            {usage ? (
+              <PlanUsagePanel usage={usage} plan={plan} layout="sidebar" />
+            ) : usageLoading ? (
+              <PlanUsagePanelSkeleton layout="sidebar" />
+            ) : null}
+            <MarketplaceSummaryPanel />
+          </div>
         </PageTransition>
       </PageShell>
     </div>

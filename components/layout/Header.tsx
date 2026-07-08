@@ -223,7 +223,7 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
               <Bell className="h-[18px] w-[18px]" />
               {/* Notification badge - shows when there are unread notifications */}
               {notifications.length > 0 && (
-                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-brand-500 ring-2 ring-white"></span>
+                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-champagne-500 ring-2 ring-white"></span>
               )}
             </button>
 
@@ -306,7 +306,7 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
                                 <Clock className="w-3 h-3" />
                                 <span>{formatDate(item.date)}</span>
                                 {isToday(item.date) && (
-                                  <span className="bg-brand-50 text-brand-700 px-1.5 py-px rounded font-medium">
+                                  <span className="bg-champagne-50 text-champagne-700 px-1.5 py-px rounded font-medium">
                                     Today
                                   </span>
                                 )}
@@ -340,7 +340,7 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
 
           {/* User profile section */}
           <div className="flex items-center gap-2.5 ml-3">
-            <div className="h-7 w-7 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white text-[11px] font-semibold tracking-wide shadow-sm">
+            <div className="h-7 w-7 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-white text-[11px] font-semibold tracking-wide shadow-sm">
               {userName ? userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
             </div>
             <div className="hidden md:block">

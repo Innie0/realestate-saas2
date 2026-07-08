@@ -678,7 +678,7 @@ export default function TasksPage() {
         </div>
 
         {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col bg-[#F5F5F5] min-w-0 relative">
+        <div className="flex-1 flex flex-col bg-[var(--canvas)] min-w-0 relative">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             className="absolute top-3 left-3 z-10 p-2 bg-white hover:bg-gray-50 rounded-lg shadow-sm transition-colors"
@@ -736,7 +736,7 @@ export default function TasksPage() {
                       className={`flex gap-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                       {msg.role === 'assistant' && (
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 shadow-glow-brand flex items-center justify-center">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-champagne-400 to-champagne-600 shadow-surface flex items-center justify-center">
                           <Sparkles className="w-4 h-4 text-white" />
                         </div>
                       )}
@@ -788,7 +788,7 @@ export default function TasksPage() {
                   
                   {isLoading && (
                     <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 shadow-glow-brand flex items-center justify-center">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-champagne-400 to-champagne-600 shadow-surface flex items-center justify-center">
                           <Sparkles className="w-4 h-4 text-white" />
                       </div>
                       <div className="flex-1 max-w-2xl">
@@ -820,7 +820,7 @@ export default function TasksPage() {
           )}
 
           {/* Input Area */}
-          <div className="border-t border-gray-100 p-4 sm:p-6 bg-[#F5F5F5] flex-shrink-0">
+          <div className="border-t border-gray-100 p-4 sm:p-6 bg-[var(--canvas)] flex-shrink-0">
             <div className="max-w-3xl mx-auto">
               <form onSubmit={handleSendMessage} className="space-y-3">
                 {/* Image Preview */}
