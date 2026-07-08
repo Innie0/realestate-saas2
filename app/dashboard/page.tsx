@@ -198,7 +198,7 @@ function MetricStrip({ metrics }: { metrics: Metric[] }) {
           >
             <p className="text-label">{m.label}</p>
             <div className="mt-2 flex items-end justify-between gap-2">
-              <p className="text-[28px] font-semibold tracking-tight tabular-nums text-gray-900 leading-none">
+              <p className="font-serif text-[30px] font-semibold tracking-tight tabular-nums text-gray-900 leading-none">
                 {m.placeholder ?? <CountUp value={m.value} format={m.format} />}
               </p>
               {m.series && m.series.some((v) => v > 0) && (

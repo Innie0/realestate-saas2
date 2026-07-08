@@ -201,7 +201,7 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
       <div className="px-4 sm:px-6 py-3.5">
         <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0 flex-1">
-            <h1 className="text-[15px] sm:text-title font-semibold tracking-tight text-gray-900 truncate">{title}</h1>
+            <h1 className="font-serif text-[19px] sm:text-[22px] font-semibold tracking-tight text-gray-900 truncate">{title}</h1>
             {subtitle && (
               <p className="text-caption text-gray-500 mt-0.5 truncate">{subtitle}</p>
             )}
