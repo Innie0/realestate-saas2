@@ -2,11 +2,11 @@ type PageLoadingVariant = 'default' | 'list' | 'detail' | 'account' | 'dashboard
 
 function HeaderSkeleton() {
   return (
-    <div className="border-b border-gray-100 bg-white/90 px-6 py-5">
-      <div className="flex items-center justify-between gap-4">
-        <div className="space-y-2 animate-pulse min-w-0 flex-1">
-          <div className="h-6 bg-gray-200 rounded w-40 max-w-full" />
-          <div className="h-4 bg-gray-100 rounded w-56 max-w-full" />
+    <div className="border-b border-gray-200 bg-white/90 px-4 sm:px-7 py-2.5 sm:h-[52px] sm:py-0">
+      <div className="flex h-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 flex-1 items-baseline gap-2.5 animate-pulse">
+          <div className="h-3.5 bg-gray-200 rounded w-24 max-w-full" />
+          <div className="h-3 bg-gray-100 rounded w-48 max-w-full hidden sm:block" />
         </div>
         <div className="hidden sm:flex gap-2 animate-pulse">
           <div className="h-9 w-24 bg-gray-100 rounded-lg" />

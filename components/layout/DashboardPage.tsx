@@ -29,7 +29,7 @@ export default function DashboardPage({
   size = 'default',
   className,
   ambient = 'default',
-  inline = false,
+  inline = true,
 }: DashboardPageProps) {
   return (
     <div className={clsx('min-h-screen relative', ambientClasses[ambient])}>
