@@ -4,11 +4,14 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
+import LeadsSectionSwitcher from '@/components/leads/LeadsSectionSwitcher';
 import Button from '@/components/ui/Button';
+import Surface from '@/components/ui/Surface';
+import Switch from '@/components/ui/Switch';
 import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
 import { useToast } from '@/components/providers/ToastProvider';
 import {
-  ArrowLeft, Save, Loader2, User, Copy, Check,
+  ArrowLeft, Save, User, Copy, Check,
   Plus, X, Eye, Award, Globe, Briefcase,
 } from 'lucide-react';
 
@@ -160,7 +163,7 @@ export default function ProfileEditorPage() {
   };
 
   const inputClass =
-    'w-full px-3 py-2.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500';
+    'w-full px-3 py-2.5 rounded-[10px] bg-gray-50 border border-gray-200 text-gray-900 text-[13px] placeholder-gray-450 focus:outline-none focus:border-gray-400';
 
   if (loading || checkingPlan) {
     return <PageLoadingSkeleton variant="account" />;
@@ -178,6 +181,7 @@ export default function ProfileEditorPage() {
       title="Agent profile"
       subtitle="Edit your public profile page"
       size="narrow"
+      inline
       actions={
         <>
           {enabled && profileUrl && (
@@ -185,7 +189,7 @@ export default function ProfileEditorPage() {
               href={profileUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-white text-gray-600 border border-gray-200 hover:text-brand-600 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-white text-gray-600 border border-gray-200 hover:text-gray-900 transition-colors"
             >
               <Eye className="w-3.5 h-3.5" /> Preview
             </a>
@@ -194,58 +198,47 @@ export default function ProfileEditorPage() {
         </>
       }
     >
+      <LeadsSectionSwitcher active="capture" />
+
       <Link
-        href="/dashboard/leads"
-        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-brand-600 transition-colors"
+        href="/dashboard/leads?tab=capture"
+        className="inline-flex items-center gap-1.5 text-[13px] text-gray-450 hover:text-gray-900 transition-colors"
       >
-        <ArrowLeft className="w-4 h-4" /> Back to leads
+        <ArrowLeft className="w-3.5 h-3.5" /> Back to leads
       </Link>
 
-      <div className="mt-5 space-y-5">
+      <div className="space-y-4">
             {saveError && (
-              <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              <div className="rounded-[10px] border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] text-amber-800">
                 {saveError}
               </div>
             )}
             {/* Public profile toggle */}
-            <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+            <Surface flat padding="none" className="p-5">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-900">Public profile</h3>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <h3 className="text-[15px] font-semibold text-gray-900">Public profile</h3>
+                  <p className="text-[12.5px] text-gray-450 mt-0.5">
                     Share your bio, listings, and lead form at your personal URL
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setEnabled(!enabled)}
-                  className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors ${
-                    enabled ? 'bg-brand-500' : 'bg-gray-300'
-                  }`}
-                  aria-pressed={enabled}
-                >
-                  <span
-                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
-                      enabled ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
+                <Switch checked={enabled} onChange={() => setEnabled(!enabled)} label="" />
               </div>
               {enabled && profileUrl && (
-                <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
+                <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-150">
                   <input
                     type="text"
                     readOnly
                     value={profileUrl}
                     onClick={(e) => (e.target as HTMLInputElement).select()}
-                    className="flex-1 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-600 text-xs focus:outline-none cursor-text min-w-0"
+                    className="flex-1 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 font-mono text-gray-600 text-[12px] focus:outline-none cursor-text min-w-0 truncate"
                   />
                   <button
                     type="button"
                     onClick={handleCopy}
-                    className={`flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-medium transition-all border shrink-0 ${
+                    className={`flex items-center gap-1 px-3 py-2 rounded-lg text-[12.5px] font-medium transition-all border shrink-0 ${
                       copied
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        ? 'bg-teal-50 text-teal-700 border-teal-200'
                         : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
                     }`}
                   >
@@ -254,22 +247,22 @@ export default function ProfileEditorPage() {
                   </button>
                 </div>
               )}
-            </div>
+            </Surface>
 
             {/* Basic info */}
-            <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
-              <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                <User className="w-4 h-4 text-brand-600" /> Basic info
+            <Surface flat padding="none" className="p-5 space-y-4">
+              <h3 className="text-[15px] font-semibold text-gray-900 flex items-center gap-2">
+                <User className="w-4 h-4 text-gray-500" strokeWidth={1.8} /> Basic info
               </h3>
               {displayName && (
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1.5">Display name</label>
+                  <label className="block text-[12.5px] text-gray-450 mb-1.5">Display name</label>
                   <input type="text" value={displayName} readOnly className={inputClass + ' bg-gray-100 text-gray-600'} />
-                  <p className="text-[11px] text-gray-500 mt-1">From your account settings</p>
+                  <p className="text-[11.5px] text-gray-450 mt-1">From your account settings</p>
                 </div>
               )}
               <div>
-                <label className="block text-xs text-gray-500 mb-1.5">Headline</label>
+                <label className="block text-[12.5px] text-gray-450 mb-1.5">Headline</label>
                 <input
                   type="text"
                   value={headline}
@@ -279,7 +272,7 @@ export default function ProfileEditorPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1.5">Bio</label>
+                <label className="block text-[12.5px] text-gray-450 mb-1.5">Bio</label>
                 <textarea
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
@@ -287,10 +280,10 @@ export default function ProfileEditorPage() {
                   rows={5}
                   className={inputClass + ' resize-none'}
                 />
-                <p className="text-[11px] text-gray-500 mt-1 text-right">{bio.length} characters</p>
+                <p className="text-[11.5px] text-gray-450 mt-1 text-right">{bio.length} characters</p>
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1.5">Profile photo URL</label>
+                <label className="block text-[12.5px] text-gray-450 mb-1.5">Profile photo URL</label>
                 <input
                   type="url"
                   value={photoUrl}
@@ -308,20 +301,20 @@ export default function ProfileEditorPage() {
                         (e.target as HTMLImageElement).style.display = 'none';
                       }}
                     />
-                    <p className="text-xs text-gray-500">Photo preview</p>
+                    <p className="text-[12.5px] text-gray-450">Photo preview</p>
                   </div>
                 )}
               </div>
-            </div>
+            </Surface>
 
             {/* Professional details */}
-            <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
-              <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                <Briefcase className="w-4 h-4 text-brand-600" /> Professional details
+            <Surface flat padding="none" className="p-5 space-y-4">
+              <h3 className="text-[15px] font-semibold text-gray-900 flex items-center gap-2">
+                <Briefcase className="w-4 h-4 text-gray-500" strokeWidth={1.8} /> Professional details
               </h3>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1.5">Brokerage</label>
+                  <label className="block text-[12.5px] text-gray-450 mb-1.5">Brokerage</label>
                   <input
                     type="text"
                     value={brokerage}
@@ -331,7 +324,7 @@ export default function ProfileEditorPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1.5">License #</label>
+                  <label className="block text-[12.5px] text-gray-450 mb-1.5">License #</label>
                   <input
                     type="text"
                     value={license}
@@ -341,7 +334,7 @@ export default function ProfileEditorPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1.5">Website</label>
+                  <label className="block text-[12.5px] text-gray-450 mb-1.5">Website</label>
                   <input
                     type="url"
                     value={website}
@@ -351,7 +344,7 @@ export default function ProfileEditorPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1.5">Years of experience</label>
+                  <label className="block text-[12.5px] text-gray-450 mb-1.5">Years of experience</label>
                   <input
                     type="number"
                     min={0}
@@ -363,14 +356,14 @@ export default function ProfileEditorPage() {
                   />
                 </div>
               </div>
-            </div>
+            </Surface>
 
             {/* Contact */}
-            <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
-              <h3 className="text-sm font-semibold text-gray-900">Contact info (shown on profile)</h3>
+            <Surface flat padding="none" className="p-5 space-y-4">
+              <h3 className="text-[15px] font-semibold text-gray-900">Contact info (shown on profile)</h3>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1.5">Phone</label>
+                  <label className="block text-[12.5px] text-gray-450 mb-1.5">Phone</label>
                   <input
                     type="tel"
                     value={phone}
@@ -380,7 +373,7 @@ export default function ProfileEditorPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1.5">Email</label>
+                  <label className="block text-[12.5px] text-gray-450 mb-1.5">Email</label>
                   <input
                     type="email"
                     value={email}
@@ -390,24 +383,24 @@ export default function ProfileEditorPage() {
                   />
                 </div>
               </div>
-            </div>
+            </Surface>
 
             {/* Specialties */}
-            <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <Award className="w-4 h-4 text-brand-600" /> Specialties
+            <Surface flat padding="none" className="p-5">
+              <h3 className="text-[15px] font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <Award className="w-4 h-4 text-gray-500" strokeWidth={1.8} /> Specialties
               </h3>
               <div className="flex flex-wrap gap-2 mb-3">
                 {specialties.map((s) => (
                   <span
                     key={s}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-50 border border-gray-200 text-sm text-gray-600"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 text-[13px] text-gray-700"
                   >
                     {s}
                     <button
                       type="button"
                       onClick={() => setSpecialties(specialties.filter((x) => x !== s))}
-                      className="text-gray-400 hover:text-gray-900"
+                      className="text-gray-450 hover:text-gray-900"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -426,29 +419,29 @@ export default function ProfileEditorPage() {
                 <button
                   type="button"
                   onClick={addSpecialty}
-                  className="px-3 py-2 rounded-lg bg-brand-500/10 border border-brand-500/20 text-brand-600 hover:bg-brand-500/15 transition-colors shrink-0"
+                  className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-colors shrink-0"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
               </div>
-            </div>
+            </Surface>
 
             {/* Areas served */}
-            <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <Globe className="w-4 h-4 text-brand-600" /> Areas served
+            <Surface flat padding="none" className="p-5">
+              <h3 className="text-[15px] font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <Globe className="w-4 h-4 text-gray-500" strokeWidth={1.8} /> Areas served
               </h3>
               <div className="flex flex-wrap gap-2 mb-3">
                 {areas.map((a) => (
                   <span
                     key={a}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-50 border border-gray-200 text-sm text-gray-600"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 text-[13px] text-gray-700"
                   >
                     {a}
                     <button
                       type="button"
                       onClick={() => setAreas(areas.filter((x) => x !== a))}
-                      className="text-gray-400 hover:text-gray-900"
+                      className="text-gray-450 hover:text-gray-900"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -467,12 +460,12 @@ export default function ProfileEditorPage() {
                 <button
                   type="button"
                   onClick={addArea}
-                  className="px-3 py-2 rounded-lg bg-brand-500/10 border border-brand-500/20 text-brand-600 hover:bg-brand-500/15 transition-colors shrink-0"
+                  className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-colors shrink-0"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
               </div>
-            </div>
+            </Surface>
       </div>
     </DashboardPage>
   );

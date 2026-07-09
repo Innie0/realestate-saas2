@@ -285,32 +285,32 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
 
   return (
     <>
-      <Surface padding="md" className="space-y-5">
+      <Surface flat padding="none" className="p-5 sm:p-[22px] space-y-5">
         <div>
-          <h3 className="text-base font-semibold text-gray-900">Follow-up schedule</h3>
-          <p className="text-sm text-gray-500 mt-1">
+          <h3 className="text-[15px] font-semibold text-gray-900">Follow-up schedule</h3>
+          <p className="text-[12.5px] text-gray-450 mt-1">
             We wrote professional emails for you. Turn on auto follow-up above — no setup required.
           </p>
           {usingCustomCopy && (
-            <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mt-3">
+            <p className="text-[12.5px] text-amber-800 bg-amber-50 border border-amber-200 rounded-[10px] px-3 py-2 mt-3">
               You&apos;re using custom email wording. Restore defaults anytime if you want the originals back.
             </p>
           )}
         </div>
 
-        <div className="rounded-xl border border-gray-200 divide-y divide-gray-100 overflow-hidden">
+        <div className="rounded-[10px] border border-gray-200 divide-y divide-gray-150 overflow-hidden">
           {([1, 2, 3] as FollowupTemplateSlot[]).map((slot) => {
             const day = slot === 1 ? 0 : slot === 2 ? timingDays.checkin : timingDays.nudge;
             return (
               <div key={slot} className="flex items-center justify-between gap-3 px-4 py-3 bg-white">
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{TIMELINE_LABELS[slot]}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{formatTimingLabel(slot, day)}</p>
+                  <p className="text-[13.5px] font-medium text-gray-900">{TIMELINE_LABELS[slot]}</p>
+                  <p className="text-[12px] text-gray-450 mt-0.5">{formatTimingLabel(slot, day)}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setPreviewSlot(slot)}
-                  className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 hover:text-brand-600 transition-colors"
+                  className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-gray-450 hover:text-gray-900 transition-colors"
                 >
                   <Eye className="w-3.5 h-3.5" />
                   Preview
@@ -322,9 +322,9 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
 
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">Check-in email</label>
+            <label className="block text-[12.5px] font-medium text-gray-600 mb-1.5">Check-in email</label>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500 shrink-0">Send after</span>
+              <span className="text-[13px] text-gray-450 shrink-0">Send after</span>
               <input
                 type="text"
                 inputMode="numeric"
@@ -338,16 +338,16 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                   setNudgeInput(String(nudge));
                   setTimingDays({ checkin, nudge });
                 }}
-                className="w-20 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-brand-500"
+                className="w-20 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-[13px] text-gray-900 focus:outline-none focus:border-gray-400"
                 aria-label="Check-in email days after lead capture"
               />
-              <span className="text-sm text-gray-500">days</span>
+              <span className="text-[13px] text-gray-450">days</span>
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">Final nudge</label>
+            <label className="block text-[12.5px] font-medium text-gray-600 mb-1.5">Final nudge</label>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500 shrink-0">Send after</span>
+              <span className="text-[13px] text-gray-450 shrink-0">Send after</span>
               <input
                 type="text"
                 inputMode="numeric"
@@ -361,19 +361,19 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                   setNudgeInput(String(nudge));
                   setTimingDays({ checkin, nudge });
                 }}
-                className="w-20 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-brand-500"
+                className="w-20 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-[13px] text-gray-900 focus:outline-none focus:border-gray-400"
                 aria-label="Final nudge days after lead capture"
               />
-              <span className="text-sm text-gray-500">days</span>
+              <span className="text-[13px] text-gray-450">days</span>
             </div>
           </div>
         </div>
 
-        <p className="text-xs text-gray-500">
+        <p className="text-[12.5px] text-gray-450">
           Welcome sends right away. Check-in must be at least day 1, and the final nudge must be at least one day after that.
         </p>
 
-        <p className="text-xs text-gray-500">
+        <p className="text-[12.5px] text-gray-450">
           Current schedule: {scheduleSummary}.
         </p>
 
@@ -394,30 +394,30 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
           </Button>
         </div>
 
-        <div className="border-t border-gray-100 pt-4">
+        <div className="border-t border-gray-150 pt-4">
           <button
             type="button"
             onClick={() => setShowAdvanced((current) => !current)}
             className="w-full flex items-center justify-between gap-3 text-left"
           >
             <div className="flex items-center gap-2">
-              <Settings2 className="w-4 h-4 text-gray-400" />
+              <Settings2 className="w-4 h-4 text-gray-450" strokeWidth={1.8} />
               <div>
-                <p className="text-sm font-medium text-gray-900">Customize email wording</p>
-                <p className="text-xs text-gray-500 mt-0.5">Optional — only if you want your own voice</p>
+                <p className="text-[13.5px] font-medium text-gray-900">Customize email wording</p>
+                <p className="text-[12px] text-gray-450 mt-0.5">Optional — only if you want your own voice</p>
               </div>
             </div>
-            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 text-gray-450 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
           </button>
 
           {showAdvanced && (
             <div className="mt-4 space-y-4">
-              <p className="text-xs text-gray-500 rounded-lg bg-gray-50 border border-gray-200 px-3 py-2">
+              <p className="text-[12.5px] text-gray-450 rounded-[10px] bg-gray-50 border border-gray-150 px-3 py-2">
                 Stick to the defaults unless you know what you&apos;re doing. Use preview before saving, and restore defaults if anything looks off.
               </p>
 
-              <div className="rounded-lg bg-gray-50 border border-gray-200 px-3 py-3 space-y-2">
-                <p className="text-xs text-gray-600">
+              <div className="rounded-[10px] bg-gray-50 border border-gray-150 px-3 py-3 space-y-2">
+                <p className="text-[12.5px] text-gray-600">
                   <span className="font-medium text-gray-700">Insert shortcuts</span>
                   {' '}— click in subject or message, then tap to add:
                 </p>
@@ -428,7 +428,7 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                       type="button"
                       onClick={() => insertMergeTag(tag)}
                       title={tag}
-                      className="inline-flex items-center rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 hover:border-brand-300 hover:text-brand-700 transition-colors"
+                      className="inline-flex items-center rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-[12px] font-medium text-gray-700 hover:border-gray-300 hover:bg-gray-50 transition-colors"
                     >
                       {label}
                     </button>
@@ -442,42 +442,42 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                   const isOpen = expandedSlot === definition.slot;
 
                   return (
-                    <div key={definition.slot} className="rounded-xl border border-gray-200 overflow-hidden">
+                    <div key={definition.slot} className="rounded-[10px] border border-gray-200 overflow-hidden">
                       <button
                         type="button"
                         onClick={() => setExpandedSlot(isOpen ? null : definition.slot)}
                         className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-white hover:bg-gray-50 transition-colors text-left"
                       >
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{definition.label}</p>
-                          <p className="text-xs text-gray-500 mt-0.5 truncate max-w-[240px] sm:max-w-md">{draft.subject}</p>
+                          <p className="text-[13.5px] font-medium text-gray-900">{definition.label}</p>
+                          <p className="text-[12px] text-gray-450 mt-0.5 truncate max-w-[240px] sm:max-w-md">{draft.subject}</p>
                         </div>
-                        <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
+                        <ChevronDown className={`w-4 h-4 text-gray-450 transition-transform shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
                       </button>
 
                       {isOpen && (
-                        <div className="px-4 pb-4 pt-1 space-y-3 bg-white border-t border-gray-100">
+                        <div className="px-4 pb-4 pt-1 space-y-3 bg-white border-t border-gray-150">
                           <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1.5">Subject</label>
+                            <label className="block text-[12.5px] font-medium text-gray-600 mb-1.5">Subject</label>
                             <input
                               ref={registerFieldRef(definition.slot, 'subject')}
                               type="text"
                               value={draft.subject}
                               onFocus={() => setActiveField({ slot: definition.slot, field: 'subject' })}
                               onChange={(e) => updateDraft(definition.slot, { subject: e.target.value })}
-                              className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-brand-500"
+                              className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-[13px] text-gray-900 focus:outline-none focus:border-gray-400"
                             />
                           </div>
 
                           <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1.5">Message</label>
+                            <label className="block text-[12.5px] font-medium text-gray-600 mb-1.5">Message</label>
                             <textarea
                               ref={registerFieldRef(definition.slot, 'body')}
                               value={draft.body}
                               onFocus={() => setActiveField({ slot: definition.slot, field: 'body' })}
                               onChange={(e) => updateDraft(definition.slot, { body: e.target.value })}
                               rows={8}
-                              className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-brand-500 resize-y"
+                              className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-[13px] text-gray-900 focus:outline-none focus:border-gray-400 resize-y"
                             />
                           </div>
 
@@ -485,21 +485,21 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                             <button
                               type="button"
                               onClick={() => insertMergeTag('{{first_name}}', { slot: definition.slot, field: 'body' }, true)}
-                              className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600 hover:border-brand-300 hover:text-brand-700 transition-colors"
+                              className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600 hover:border-gray-300 hover:bg-white transition-colors"
                             >
                               + Lead first name
                             </button>
                             <button
                               type="button"
                               onClick={() => insertMergeTag('{{agent_name}}', { slot: definition.slot, field: 'body' }, true)}
-                              className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600 hover:border-brand-300 hover:text-brand-700 transition-colors"
+                              className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600 hover:border-gray-300 hover:bg-white transition-colors"
                             >
                               + Your name
                             </button>
                             <button
                               type="button"
                               onClick={() => insertMergeTag('{{lead_type}}', { slot: definition.slot, field: 'body' }, true)}
-                              className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600 hover:border-brand-300 hover:text-brand-700 transition-colors"
+                              className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600 hover:border-gray-300 hover:bg-white transition-colors"
                             >
                               + Lead type
                             </button>
@@ -509,7 +509,7 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                             <button
                               type="button"
                               onClick={() => setPreviewSlot(definition.slot)}
-                              className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 hover:text-brand-600 transition-colors"
+                              className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-gray-450 hover:text-gray-900 transition-colors"
                             >
                               <Eye className="w-3.5 h-3.5" />
                               Preview
@@ -517,7 +517,7 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                             <button
                               type="button"
                               onClick={() => resetSlot(definition.slot)}
-                              className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 hover:text-gray-900 transition-colors"
+                              className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-gray-450 hover:text-gray-900 transition-colors"
                             >
                               <RotateCcw className="w-3.5 h-3.5" />
                               Reset this email
