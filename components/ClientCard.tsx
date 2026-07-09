@@ -1,10 +1,16 @@
 'use client';
 
 import { Client } from '@/types';
-import { Mail, Phone, User, Calendar, StickyNote, Bell, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Mail, Phone, Calendar, StickyNote, Bell, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import Card from './ui/Card';
+import Surface from './ui/Surface';
+import {
+  STAGE_BADGE,
+  getClientAvatarClass,
+  getClientInitials,
+  getClientStage,
+} from '@/lib/client-crm-display';
 
 interface ClientCardProps {
   client: Client & { 
@@ -24,7 +30,9 @@ interface ClientCardProps {
 export default function ClientCard({ client, onAddNote, onAddReminder }: ClientCardProps) {
   const [currentNoteIndex, setCurrentNoteIndex] = useState(0);
   const notes = client.all_notes || (client.latest_note ? [client.latest_note] : []);
-  
+  const stage = getClientStage(client);
+  const stageStyle = STAGE_BADGE[stage];
+
   const handleAddNote = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent navigation
     e.stopPropagation();
@@ -52,42 +60,38 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
   const currentNote = notes[currentNoteIndex];
 
   return (
-    <Link href={`/dashboard/clients/${client.id}`} className="block">
-      <Card 
-        className="hover:shadow-lg transition-shadow cursor-pointer relative h-full min-h-[260px]"
+    <Link href={`/dashboard/clients/${client.id}`} className="block h-full">
+      <Surface
+        flat
+        className="cursor-pointer relative h-full min-h-[260px] p-5 sm:p-[22px] transition-colors hover:border-gray-300"
       >
         <div className="flex items-start justify-between">
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           {/* Client name */}
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-10 h-10 rounded-full bg-brand-500/20 flex items-center justify-center border border-brand-400/30">
-              <User className="w-5 h-5 text-brand-500" />
+          <div className="flex items-center gap-3 mb-3">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 ${getClientAvatarClass(client.name)}`}>
+              {getClientInitials(client.name) || '?'}
             </div>
-            <div>
-              <h3 className="font-semibold text-lg text-gray-900">{client.name}</h3>
-              <span className={`text-xs px-2 py-1 rounded-full ${
-                client.status === 'active' 
-                  ? 'bg-green-500/20 text-green-400 border border-green-400/30' 
-                  : client.status === 'inactive'
-                  ? 'bg-gray-500/20 text-gray-500 border border-gray-400/30'
-                  : 'bg-red-500/20 text-red-400 border border-red-400/30'
-              }`}>
-                {client.status}
+            <div className="min-w-0">
+              <h3 className="text-[15px] font-semibold text-gray-900 truncate">{client.name}</h3>
+              <span className={`inline-flex items-center gap-1.5 mt-1 px-2 py-0.5 rounded-full text-[11px] font-medium border ${stageStyle.className}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${stageStyle.dotClassName}`} />
+                {stageStyle.label}
               </span>
             </div>
           </div>
 
           {/* Contact information */}
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {client.email && (
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <Mail className="w-4 h-4" />
-                <span>{client.email}</span>
+              <div className="flex items-center gap-2 text-[12.5px] text-gray-700">
+                <Mail className="w-3.5 h-3.5 text-gray-450" />
+                <span className="truncate">{client.email}</span>
               </div>
             )}
             {client.phone && (
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <Phone className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-[12.5px] text-gray-700">
+                <Phone className="w-3.5 h-3.5 text-gray-450" />
                 <span>{client.phone}</span>
               </div>
             )}
@@ -96,7 +100,7 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
 
         {/* Upcoming reminders badge */}
         {client.upcoming_reminders_count !== undefined && client.upcoming_reminders_count > 0 && (
-          <div className="flex items-center gap-1 px-2 py-1 bg-amber-500/20 text-amber-400 rounded-full text-xs font-medium border border-amber-400/30">
+          <div className="flex items-center gap-1 px-2 py-1 bg-amber-50 text-amber-700 rounded-full text-[11px] font-medium shrink-0">
             <Calendar className="w-3 h-3" />
             <span>{client.upcoming_reminders_count}</span>
           </div>
@@ -105,12 +109,12 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
 
       {/* Notes carousel */}
       {notes.length > 0 && currentNote && (
-        <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200 relative">
+        <div className="mt-4 p-3 bg-gray-50 rounded-[10px] border border-gray-150 relative">
           <div className="flex items-start gap-2 mb-1">
-            <StickyNote className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+            <StickyNote className="w-3.5 h-3.5 text-gray-450 mt-0.5 flex-shrink-0" />
             <div className="flex-1 min-w-0 pr-8">
-              <p className="text-sm text-gray-600 line-clamp-2">{currentNote.note}</p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-[12.5px] text-gray-700 line-clamp-2">{currentNote.note}</p>
+              <p className="text-[11px] text-gray-450 mt-1">
                 {new Date(currentNote.created_at).toLocaleDateString()}
                 {notes.length > 1 && (
                   <span className="ml-2">• {currentNoteIndex + 1} of {notes.length}</span>
@@ -127,14 +131,14 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
                 className="p-1 hover:bg-gray-100 rounded transition-colors"
                 title="Previous note"
               >
-                <ChevronLeft className="w-4 h-4 text-gray-500" />
+                <ChevronLeft className="w-4 h-4 text-gray-450" />
               </button>
               <button
                 onClick={handleNextNote}
                 className="p-1 hover:bg-gray-100 rounded transition-colors"
                 title="Next note"
               >
-                <ChevronRight className="w-4 h-4 text-gray-500" />
+                <ChevronRight className="w-4 h-4 text-gray-450" />
               </button>
             </div>
           )}
@@ -142,36 +146,30 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
       )}
 
       {/* Created date and quick actions */}
-      <div className="mt-4 pt-4 border-t border-gray-200 flex items-center justify-between">
-        <p className="text-xs text-gray-500">
+      <div className="mt-4 pt-4 border-t border-gray-150 flex items-center justify-between">
+        <p className="text-[11.5px] text-gray-450">
           Added {new Date(client.created_at).toLocaleDateString()}
         </p>
         
         {/* Quick action buttons */}
-        <div className="flex gap-2">
+        <div className="flex gap-1">
           <button
             onClick={handleAddNote}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
             title="Add note"
           >
-            <StickyNote className="w-4 h-4 text-gray-500 group-hover:text-gray-900" />
+            <StickyNote className="w-4 h-4 text-gray-450 group-hover:text-gray-900" />
           </button>
           <button
             onClick={handleAddReminder}
-            className="p-2 hover:bg-amber-500/20 rounded-lg transition-colors group"
+            className="p-2 hover:bg-amber-50 rounded-lg transition-colors group"
             title="Add reminder"
           >
-            <Bell className="w-4 h-4 text-gray-500 group-hover:text-amber-400" />
+            <Bell className="w-4 h-4 text-gray-450 group-hover:text-amber-700" />
           </button>
         </div>
       </div>
-    </Card>
+      </Surface>
     </Link>
   );
 }
-
-
-
-
-
-

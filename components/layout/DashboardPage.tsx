@@ -12,6 +12,8 @@ interface DashboardPageProps {
   className?: string;
   /** Subtle background atmosphere for tool-style pages */
   ambient?: 'default' | 'tool';
+  /** Baseline-aligned title + subtitle on one line, passed through to Header. */
+  inline?: boolean;
 }
 
 const ambientClasses = {
@@ -27,10 +29,11 @@ export default function DashboardPage({
   size = 'default',
   className,
   ambient = 'default',
+  inline = false,
 }: DashboardPageProps) {
   return (
     <div className={clsx('min-h-screen relative', ambientClasses[ambient])}>
-      <Header title={title} subtitle={subtitle} actions={actions} />
+      <Header title={title} subtitle={subtitle} actions={actions} inline={inline} />
       <PageShell size={size} className={clsx('relative z-[1]', className)}>
         <PageTransition className="space-y-5">{children}</PageTransition>
       </PageShell>

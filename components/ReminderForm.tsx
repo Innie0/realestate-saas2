@@ -4,8 +4,16 @@ import { useState } from 'react';
 import Button from './ui/Button';
 import Input from './ui/Input';
 
+interface ReminderFormInitial {
+  title: string;
+  description?: string;
+  reminder_date: string;
+}
+
 interface ReminderFormProps {
   clientId: string;
+  /** Pass an existing reminder to render the form in edit mode. */
+  initialData?: ReminderFormInitial;
   onSubmit: (data: {
     client_id: string;
     title: string;
@@ -16,15 +24,24 @@ interface ReminderFormProps {
   isLoading?: boolean;
 }
 
+/** Converts an ISO date string into the local `datetime-local` input format. */
+function toDateTimeLocal(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
 /**
  * ReminderForm component
- * Form for creating a new reminder
+ * Form for creating or editing a reminder
  */
-export default function ReminderForm({ clientId, onSubmit, onCancel, isLoading }: ReminderFormProps) {
+export default function ReminderForm({ clientId, initialData, onSubmit, onCancel, isLoading }: ReminderFormProps) {
+  const isEditing = Boolean(initialData);
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    reminder_date: '',
+    title: initialData?.title || '',
+    description: initialData?.description || '',
+    reminder_date: initialData ? toDateTimeLocal(initialData.reminder_date) : '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,7 +56,7 @@ export default function ReminderForm({ clientId, onSubmit, onCancel, isLoading }
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Title field */}
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-600 mb-1">
+        <label htmlFor="title" className="block text-[13px] font-medium text-gray-600 mb-1">
           Title *
         </label>
         <Input
@@ -54,7 +71,7 @@ export default function ReminderForm({ clientId, onSubmit, onCancel, isLoading }
 
       {/* Description field */}
       <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-600 mb-1">
+        <label htmlFor="description" className="block text-[13px] font-medium text-gray-600 mb-1">
           Description
         </label>
         <textarea
@@ -63,13 +80,13 @@ export default function ReminderForm({ clientId, onSubmit, onCancel, isLoading }
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           placeholder="Additional notes..."
           rows={3}
-          className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-brand-500/30 focus:outline-none resize-none"
+          className="w-full px-3 py-2 rounded-[10px] border border-gray-200 bg-white text-[13px] text-gray-900 placeholder-gray-450 focus:ring-2 focus:ring-brand-500/30 focus:outline-none resize-none"
         />
       </div>
 
       {/* Reminder date field */}
       <div>
-        <label htmlFor="reminder_date" className="block text-sm font-medium text-gray-600 mb-1">
+        <label htmlFor="reminder_date" className="block text-[13px] font-medium text-gray-600 mb-1">
           Reminder Date & Time *
         </label>
         <Input
@@ -89,7 +106,7 @@ export default function ReminderForm({ clientId, onSubmit, onCancel, isLoading }
           size="md"
           disabled={isLoading}
         >
-          {isLoading ? 'Creating...' : 'Create Reminder'}
+          {isLoading ? 'Saving...' : isEditing ? 'Save Changes' : 'Create Reminder'}
         </Button>
         <Button
           type="button"
@@ -104,14 +121,3 @@ export default function ReminderForm({ clientId, onSubmit, onCancel, isLoading }
     </form>
   );
 }
-
-
-
-
-
-
-
-
-
-
-

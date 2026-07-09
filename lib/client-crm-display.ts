@@ -106,6 +106,33 @@ export function getClientInterest(client: ClientListRow): { headline: string; su
   };
 }
 
+export interface ClientDetailFields {
+  interestType: string;
+  area: string | null;
+  budget: string | null;
+  timeline: string | null;
+}
+
+/**
+ * Pulls the structured intake fields (Area / Budget / Timeline) out of a client's
+ * latest note or original lead message, for display on the client detail page.
+ */
+export function getClientDetailFields(client: {
+  lead_type?: string | null;
+  message?: string | null;
+  notes?: { note: string }[];
+  latest_note?: { note: string } | null;
+}): ClientDetailFields {
+  const noteText = client.notes?.[0]?.note || client.latest_note?.note || client.message || '';
+  const interestType = client.lead_type ? LEAD_TYPE_LABELS[client.lead_type] || 'Client' : 'Client';
+  const area = readNoteField(noteText, 'Area');
+  const budgetRaw = readNoteField(noteText, 'Budget');
+  const budget = budgetRaw ? BUDGET_LABELS[budgetRaw] || budgetRaw : null;
+  const timeline = readNoteField(noteText, 'Timeline');
+
+  return { interestType, area, budget, timeline };
+}
+
 export function formatLastContact(dateStr: string | null | undefined): string {
   if (!dateStr) return '—';
   const date = new Date(dateStr);
@@ -145,24 +172,31 @@ export const STAGE_BADGE: Record<
 > = {
   lead: {
     label: 'Lead',
-    className: 'bg-amber-50 text-amber-800 border-amber-200',
+    className: 'bg-amber-50 text-amber-700 border-transparent',
     dotClassName: 'bg-amber-500',
   },
   active: {
     label: 'Active',
-    className: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-    dotClassName: 'bg-emerald-500',
+    className: 'bg-teal-50 text-teal-700 border-transparent',
+    dotClassName: 'bg-teal-600',
   },
   under_offer: {
     label: 'Under offer',
-    className: 'bg-sky-50 text-sky-800 border-sky-200',
+    className: 'bg-sky-50 text-sky-700 border-transparent',
     dotClassName: 'bg-sky-500',
   },
   closed: {
     label: 'Closed',
-    className: 'bg-gray-100 text-gray-600 border-gray-200',
+    className: 'bg-gray-150 text-gray-600 border-transparent',
     dotClassName: 'bg-gray-400',
   },
+};
+
+/** Status labels for the raw DB `status` field (distinct from the derived stage above). */
+export const CLIENT_STATUS_LABEL: Record<Client['status'], string> = {
+  active: 'Active',
+  inactive: 'Lead',
+  archived: 'Closed',
 };
 
 export type ClientSortKey = 'followup' | 'name' | 'last_contact';
@@ -229,12 +263,14 @@ export function filterClientsBySearch(clients: ClientListRow[], query: string): 
 }
 
 const AVATAR_PALETTES = [
+  'bg-[#6d5ef5] text-white',
+  'bg-green-900 text-white',
   'bg-emerald-800 text-white',
-  'bg-stone-600 text-white',
   'bg-sky-700 text-white',
-  'bg-violet-700 text-white',
   'bg-rose-700 text-white',
   'bg-amber-700 text-white',
+  'bg-stone-600 text-white',
+  'bg-indigo-700 text-white',
 ];
 
 export function getClientAvatarClass(name: string): string {

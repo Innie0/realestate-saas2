@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import { Client } from '@/types';
 import Button from './ui/Button';
+import Input from './ui/Input';
 import Select from './ui/Select';
+import { CLIENT_STATUS_LABEL } from '@/lib/client-crm-display';
 
 interface ClientFormProps {
   client?: Client;
@@ -58,59 +60,31 @@ export default function ClientForm({ client, onSubmit, onCancel, isLoading }: Cl
     setFormData({ ...formData, phone: formatted });
   };
 
-  const fieldStyle = { backgroundColor: 'white' };
-  const fieldClass = "w-full px-3 py-2 text-gray-900 placeholder-gray-400 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/30";
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Name field */}
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-600 mb-1">
-          Name *
-        </label>
-        <input
-          id="name"
-          type="text"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          placeholder="Enter client name"
-          required
-          style={fieldStyle}
-          className={fieldClass}
-        />
-      </div>
+      <Input
+        label="Name *"
+        value={formData.name}
+        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+        placeholder="Enter client name"
+        required
+      />
 
-      {/* Email field */}
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-600 mb-1">
-          Email
-        </label>
-        <input
-          id="email"
-          type="email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          placeholder="client@example.com"
-          style={fieldStyle}
-          className={fieldClass}
-        />
-      </div>
+      <Input
+        label="Email"
+        type="email"
+        value={formData.email}
+        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+        placeholder="client@example.com"
+      />
 
-      {/* Phone field */}
-      <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-600 mb-1">
-          Phone
-        </label>
-        <input
-          id="phone"
-          type="tel"
-          value={formData.phone}
-          onChange={handlePhoneChange}
-          placeholder="(555) 123-4567"
-          style={fieldStyle}
-          className={fieldClass}
-        />
-      </div>
+      <Input
+        label="Phone"
+        type="tel"
+        value={formData.phone}
+        onChange={handlePhoneChange}
+        placeholder="(555) 123-4567"
+      />
 
       {/* Status field (only for editing) */}
       {client && (
@@ -121,17 +95,17 @@ export default function ClientForm({ client, onSubmit, onCancel, isLoading }: Cl
           onChange={(status) =>
             setFormData({ ...formData, status: status as 'active' | 'inactive' | 'archived' })
           }
-          triggerClassName={fieldClass}
+          triggerClassName="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
           options={[
-            { value: 'active', label: 'Active' },
-            { value: 'inactive', label: 'Inactive' },
-            { value: 'archived', label: 'Archived' },
+            { value: 'active', label: CLIENT_STATUS_LABEL.active },
+            { value: 'inactive', label: CLIENT_STATUS_LABEL.inactive },
+            { value: 'archived', label: CLIENT_STATUS_LABEL.archived },
           ]}
         />
       )}
 
       {/* Form actions */}
-      <div className="flex gap-3 pt-4 border-t border-gray-200">
+      <div className="flex gap-3 pt-4 border-t border-gray-150">
         <Button
           type="submit"
           variant="primary"
@@ -153,5 +127,3 @@ export default function ClientForm({ client, onSubmit, onCancel, isLoading }: Cl
     </form>
   );
 }
-
-

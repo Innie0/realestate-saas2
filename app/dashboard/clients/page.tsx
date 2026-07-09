@@ -303,7 +303,7 @@ export default function ClientsPage() {
           <div className="flex flex-wrap items-center gap-2 lg:ml-auto">
             <div
               data-tour="clients-filter"
-              className="relative inline-flex rounded-lg border border-gray-200 bg-white p-0.5"
+              className="relative inline-flex rounded-lg bg-gray-100 p-1"
             >
               {STATUS_TABS.map((tab) => (
                 <button
@@ -311,14 +311,14 @@ export default function ClientsPage() {
                   type="button"
                   onClick={() => setStatusTab(tab.id)}
                   className={clsx(
-                    'relative px-3 py-1.5 rounded-md text-[13px] font-medium transition-colors z-10',
+                    'relative px-3 py-1.5 rounded-lg text-[12.5px] font-medium transition-colors z-10',
                     statusTab === tab.id ? 'text-white' : 'text-gray-600 hover:text-gray-900'
                   )}
                 >
                   {statusTab === tab.id && (
                     <motion.span
                       layoutId="clients-status-pill"
-                      className="absolute inset-0 rounded-md bg-brand-500 -z-10"
+                      className="absolute inset-0 rounded-lg bg-brand-500 -z-10"
                       transition={{ type: 'spring', stiffness: 500, damping: 38 }}
                     />
                   )}
@@ -330,8 +330,8 @@ export default function ClientsPage() {
             <Select
               value={sortKey}
               onChange={(value) => setSortKey(value as ClientSortKey)}
-              className="w-[148px]"
-              triggerClassName="py-2 text-sm"
+              className="w-[152px]"
+              triggerClassName="py-2 text-[13px]"
               options={[
                 { value: 'followup', label: 'Sort: Follow-up' },
                 { value: 'name', label: 'Sort: Name' },
@@ -339,13 +339,13 @@ export default function ClientsPage() {
               ]}
             />
 
-            <div className="inline-flex rounded-lg border border-gray-200 bg-white p-0.5">
+            <div className="inline-flex rounded-lg bg-gray-100 p-1">
               <button
                 type="button"
                 onClick={() => setViewMode('list')}
                 className={clsx(
                   'p-1.5 rounded-md transition-colors',
-                  viewMode === 'list' ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-600'
+                  viewMode === 'list' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-450 hover:text-gray-700'
                 )}
                 aria-label="List view"
               >
@@ -356,7 +356,7 @@ export default function ClientsPage() {
                 onClick={() => setViewMode('grid')}
                 className={clsx(
                   'p-1.5 rounded-md transition-colors',
-                  viewMode === 'grid' ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-600'
+                  viewMode === 'grid' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-450 hover:text-gray-700'
                 )}
                 aria-label="Grid view"
               >
@@ -367,7 +367,7 @@ export default function ClientsPage() {
         </div>
       </div>
 
-      <Modal isOpen={showCreateForm} onClose={() => setShowCreateForm(false)} title="New Client" size="sm">
+      <Modal isOpen={showCreateForm} onClose={() => setShowCreateForm(false)} title="New Client" size="md">
         <ClientForm
           onSubmit={handleCreateClient}
           onCancel={() => setShowCreateForm(false)}
@@ -376,10 +376,10 @@ export default function ClientsPage() {
       </Modal>
 
       {isLoading && allClients.length === 0 ? (
-        <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden animate-pulse">
-          <div className="h-12 bg-gray-50 border-b border-gray-100" />
+        <div className="rounded-[10px] border border-gray-200 bg-white overflow-hidden animate-pulse">
+          <div className="h-12 bg-gray-50 border-b border-gray-150" />
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-16 border-b border-gray-100 px-5 flex items-center gap-4">
+            <div key={i} className="h-16 border-b border-gray-150 px-5 flex items-center gap-4">
               <div className="w-10 h-10 rounded-full bg-gray-100" />
               <div className="flex-1 space-y-2">
                 <div className="h-3 bg-gray-100 rounded w-40" />
@@ -409,7 +409,7 @@ export default function ClientsPage() {
       ) : viewMode === 'list' ? (
         <>
           <ClientsTable clients={pagedClients} />
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm text-gray-500">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-[13px] text-gray-450">
             <p>
               Showing {showingFrom}–{showingTo} of {sortedClients.length} client
               {sortedClients.length === 1 ? '' : 's'}
@@ -449,7 +449,7 @@ export default function ClientsPage() {
               />
             ))}
           </div>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm text-gray-500">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-[13px] text-gray-450">
             <p>
               Showing {showingFrom}–{showingTo} of {sortedClients.length} client
               {sortedClients.length === 1 ? '' : 's'}
@@ -487,7 +487,7 @@ export default function ClientsPage() {
           onChange={(e) => setNoteText(e.target.value)}
           placeholder="Enter your note..."
           rows={4}
-          className="w-full px-3 py-2.5 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 mb-4"
+          className="w-full px-3 py-2.5 rounded-[10px] border border-gray-200 bg-gray-50 text-[13px] text-gray-900 placeholder:text-gray-450 focus:outline-none focus:ring-2 focus:ring-brand-500/20 mb-4"
           autoFocus
         />
         <div className="flex gap-3">
