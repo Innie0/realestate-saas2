@@ -461,9 +461,9 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         </Modal>
 
         {/* Two-column body */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-5 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-5 items-stretch">
           {/* Notes card */}
-          <Surface flat padding="none" className="p-5 sm:p-[22px]">
+          <Surface flat padding="none" className="p-5 sm:p-[22px] flex flex-col h-full">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <FileText className="w-4 h-4 text-gray-700" />
@@ -503,7 +503,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
               </div>
             )}
 
-            <div className="space-y-3">
+            <div className="space-y-3 flex-1">
               {client.notes && client.notes.length > 0 ? (
                 client.notes.map((note) => (
                   <div key={note.id} className="relative p-3.5 rounded-[10px] bg-gray-50">
@@ -563,8 +563,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           </Surface>
 
           {/* Right rail */}
-          <div className="space-y-5">
-            <Surface flat padding="none" className="p-5 sm:p-[22px]">
+          <div className="flex flex-col gap-5 h-full">
+            <Surface flat padding="none" className="p-5 sm:p-[22px] shrink-0">
               <h2 className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-gray-450 mb-1">
                 Client Details
               </h2>
@@ -577,7 +577,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
               </div>
             </Surface>
 
-            <Surface flat padding="none" className="p-5 sm:p-[22px]">
+            <Surface flat padding="none" className="p-5 sm:p-[22px] flex-1 flex flex-col">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-gray-700" />
@@ -600,7 +600,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 </div>
               )}
 
-              <div className="space-y-3">
+              <div className="space-y-3 flex-1">
                 {reminders.length > 0 ? (
                   reminders.map((reminder) => (
                     <div
