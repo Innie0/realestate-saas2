@@ -36,7 +36,7 @@ import {
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between py-2.5 first:pt-0 last:pb-0">
+    <div className="flex flex-1 items-center justify-between">
       <span className="text-[13px] text-gray-600">{label}</span>
       <span className="text-[13px] font-semibold text-gray-900">{value}</span>
     </div>
@@ -330,11 +330,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           <div className="h-4 bg-gray-100 rounded w-32" />
           <div className="h-[176px] rounded-[10px] bg-white border border-gray-200" />
           <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-5">
-            <div className="h-72 rounded-[10px] bg-white border border-gray-200" />
             <div className="space-y-5">
               <div className="h-40 rounded-[10px] bg-white border border-gray-200" />
               <div className="h-40 rounded-[10px] bg-white border border-gray-200" />
             </div>
+            <div className="h-[336px] rounded-[10px] bg-white border border-gray-200" />
           </div>
         </div>
       </DashboardPage>
@@ -462,122 +462,110 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
         {/* Two-column body */}
         <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-5 items-stretch">
-          {/* Notes card */}
-          <Surface flat padding="none" className="p-5 sm:p-[22px] flex flex-col h-full">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-gray-700" />
-                <h2 className="text-[15px] font-semibold text-gray-900">Notes</h2>
-              </div>
-              <Button variant="outline" size="sm" onClick={() => setShowNoteForm(!showNoteForm)}>
-                <Plus className="w-3.5 h-3.5 mr-1.5" />
-                Add Note
-              </Button>
-            </div>
-
-            {showNoteForm && (
-              <div className="mb-4 p-4 rounded-[10px] border border-gray-150 bg-gray-50">
-                <textarea
-                  value={newNote}
-                  onChange={(e) => setNewNote(e.target.value)}
-                  placeholder="Enter your note..."
-                  rows={3}
-                  autoFocus
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-[13px] text-gray-900 placeholder-gray-450 focus:ring-2 focus:ring-brand-500/30 focus:outline-none resize-none"
-                />
-                <div className="flex gap-2 mt-3">
-                  <Button variant="primary" size="sm" onClick={handleAddNote} disabled={isSubmitting || !newNote.trim()}>
-                    Save Note
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setShowNoteForm(false);
-                      setNewNote('');
-                    }}
-                  >
-                    Cancel
-                  </Button>
+          {/* Left column: Notes + Reminders stacked */}
+          <div className="flex flex-col gap-5">
+            {/* Notes card */}
+            <Surface flat padding="none" className="p-5 sm:p-[22px]">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-gray-700" />
+                  <h2 className="text-[15px] font-semibold text-gray-900">Notes</h2>
                 </div>
+                <Button variant="outline" size="sm" onClick={() => setShowNoteForm(!showNoteForm)}>
+                  <Plus className="w-3.5 h-3.5 mr-1.5" />
+                  Add Note
+                </Button>
               </div>
-            )}
 
-            <div className="space-y-3 flex-1">
-              {client.notes && client.notes.length > 0 ? (
-                client.notes.map((note) => (
-                  <div key={note.id} className="relative p-3.5 rounded-[10px] bg-gray-50">
-                    {editingNoteId === note.id ? (
-                      <div>
-                        <textarea
-                          value={editingNoteContent}
-                          onChange={(e) => setEditingNoteContent(e.target.value)}
-                          rows={3}
-                          autoFocus
-                          className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-[13px] text-gray-900 placeholder-gray-450 focus:ring-2 focus:ring-brand-500/30 focus:outline-none resize-none"
-                        />
-                        <div className="flex gap-2 mt-3">
-                          <Button
-                            variant="primary"
-                            size="sm"
-                            onClick={() => handleUpdateNote(note.id)}
-                            disabled={isSubmitting || !editingNoteContent.trim()}
-                          >
-                            Save
-                          </Button>
-                          <Button variant="outline" size="sm" onClick={handleCancelEditNote} disabled={isSubmitting}>
-                            Cancel
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="absolute top-3 right-3 flex gap-1">
-                          <button
-                            onClick={() => handleEditNote(note.id, note.note)}
-                            className="p-1 rounded-md text-gray-450 hover:text-gray-700 hover:bg-gray-200/70 transition-colors"
-                            title="Edit note"
-                          >
-                            <Pencil className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteNote(note.id)}
-                            className="p-1 rounded-md text-gray-450 hover:text-rose-600 hover:bg-rose-50 transition-colors"
-                            title="Delete note"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                        <p className="text-[13.5px] text-gray-700 whitespace-pre-wrap pr-14">{note.note}</p>
-                        <p className="text-[11.5px] text-gray-450 mt-2">
-                          {new Date(note.created_at).toLocaleString()}
-                        </p>
-                      </>
-                    )}
+              {showNoteForm && (
+                <div className="mb-4 p-4 rounded-[10px] border border-gray-150 bg-gray-50">
+                  <textarea
+                    value={newNote}
+                    onChange={(e) => setNewNote(e.target.value)}
+                    placeholder="Enter your note..."
+                    rows={3}
+                    autoFocus
+                    className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-[13px] text-gray-900 placeholder-gray-450 focus:ring-2 focus:ring-brand-500/30 focus:outline-none resize-none"
+                  />
+                  <div className="flex gap-2 mt-3">
+                    <Button variant="primary" size="sm" onClick={handleAddNote} disabled={isSubmitting || !newNote.trim()}>
+                      Save Note
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setShowNoteForm(false);
+                        setNewNote('');
+                      }}
+                    >
+                      Cancel
+                    </Button>
                   </div>
-                ))
-              ) : (
-                <p className="text-[13px] text-gray-450">No notes yet</p>
+                </div>
               )}
-            </div>
-          </Surface>
 
-          {/* Right rail */}
-          <div className="flex flex-col gap-5 h-full">
-            <Surface flat padding="none" className="p-5 sm:p-[22px] shrink-0">
-              <h2 className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-gray-450 mb-1">
-                Client Details
-              </h2>
-              <div className="divide-y divide-gray-150">
-                <DetailRow label="Type" value={detail.interestType} />
-                <DetailRow label="Status" value={CLIENT_STATUS_LABEL[client.status]} />
-                <DetailRow label="Area" value={detail.area || '—'} />
-                <DetailRow label="Budget" value={detail.budget || '—'} />
-                <DetailRow label="Last contact" value={formatLastContact(lastContactAt)} />
+              <div className="space-y-3">
+                {client.notes && client.notes.length > 0 ? (
+                  client.notes.map((note) => (
+                    <div key={note.id} className="relative p-3.5 rounded-[10px] bg-gray-50">
+                      {editingNoteId === note.id ? (
+                        <div>
+                          <textarea
+                            value={editingNoteContent}
+                            onChange={(e) => setEditingNoteContent(e.target.value)}
+                            rows={3}
+                            autoFocus
+                            className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-[13px] text-gray-900 placeholder-gray-450 focus:ring-2 focus:ring-brand-500/30 focus:outline-none resize-none"
+                          />
+                          <div className="flex gap-2 mt-3">
+                            <Button
+                              variant="primary"
+                              size="sm"
+                              onClick={() => handleUpdateNote(note.id)}
+                              disabled={isSubmitting || !editingNoteContent.trim()}
+                            >
+                              Save
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={handleCancelEditNote} disabled={isSubmitting}>
+                              Cancel
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="absolute top-3 right-3 flex gap-1">
+                            <button
+                              onClick={() => handleEditNote(note.id, note.note)}
+                              className="p-1 rounded-md text-gray-450 hover:text-gray-700 hover:bg-gray-200/70 transition-colors"
+                              title="Edit note"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteNote(note.id)}
+                              className="p-1 rounded-md text-gray-450 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                              title="Delete note"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                          <p className="text-[13.5px] text-gray-700 whitespace-pre-wrap pr-14">{note.note}</p>
+                          <p className="text-[11.5px] text-gray-450 mt-2">
+                            {new Date(note.created_at).toLocaleString()}
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-[13px] text-gray-450">No notes yet</p>
+                )}
               </div>
             </Surface>
 
-            <Surface flat padding="none" className="p-5 sm:p-[22px] flex-1 flex flex-col">
+            {/* Reminders card */}
+            <Surface flat padding="none" className="p-5 sm:p-[22px]">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-gray-700" />
@@ -600,7 +588,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 </div>
               )}
 
-              <div className="space-y-3 flex-1">
+              <div className="space-y-3">
                 {reminders.length > 0 ? (
                   reminders.map((reminder) => (
                     <div
@@ -673,6 +661,20 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
               </div>
             </Surface>
           </div>
+
+          {/* Right rail: Client Details, stretched to match the left column's full height */}
+          <Surface flat padding="none" className="p-5 sm:p-[26px] flex flex-col h-full">
+            <h2 className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-gray-450 mb-1">
+              Client Details
+            </h2>
+            <div className="flex-1 flex flex-col divide-y divide-gray-150">
+              <DetailRow label="Type" value={detail.interestType} />
+              <DetailRow label="Status" value={CLIENT_STATUS_LABEL[client.status]} />
+              <DetailRow label="Area" value={detail.area || '—'} />
+              <DetailRow label="Budget" value={detail.budget || '—'} />
+              <DetailRow label="Last contact" value={formatLastContact(lastContactAt)} />
+            </div>
+          </Surface>
         </div>
       </div>
     </DashboardPage>
