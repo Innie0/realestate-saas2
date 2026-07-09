@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import clsx from 'clsx';
 import Surface from '@/components/ui/Surface';
 import Button from '@/components/ui/Button';
 
@@ -31,8 +32,8 @@ const usageGridClass = (layout: 'full' | 'sidebar') =>
 
 export function PlanUsagePanelSkeleton({ layout = 'full', className }: { layout?: 'full' | 'sidebar'; className?: string }) {
   return (
-    <div data-tour="plan-usage" className={className} aria-hidden>
-      <Surface padding="md">
+    <div data-tour="plan-usage" className={clsx('self-start w-full', className)} aria-hidden>
+      <Surface flat padding="md">
         <div className="flex items-center justify-between gap-3 mb-5 animate-pulse">
           <div className="space-y-2">
             <div className="h-3 bg-gray-100 rounded w-16" />
@@ -62,8 +63,8 @@ export default function PlanUsagePanel({ usage, plan, className, layout = 'full'
   );
 
   return (
-    <div data-tour="plan-usage" className={className}>
-      <Surface padding="md">
+    <div data-tour="plan-usage" className={clsx('self-start w-full', className)}>
+      <Surface flat padding="md">
         <div className="flex items-center justify-between gap-3 mb-4">
           <p className="text-label">
             Plan usage · <span className="capitalize text-gray-600">{plan}</span>

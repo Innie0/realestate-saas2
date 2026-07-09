@@ -16,7 +16,6 @@ import PlanUsagePanel, { PlanUsagePanelSkeleton } from '@/components/dashboard/P
 import MarketplaceSummaryPanel from '@/components/dashboard/MarketplaceSummaryPanel';
 import GettingStartedPanel from '@/components/dashboard/GettingStartedPanel';
 import TransactionStatusBadge from '@/components/transactions/TransactionStatusBadge';
-import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
 import { Plus } from 'lucide-react';
 import { Project } from '@/types';
 import { useTour } from '@/hooks/useTour';
@@ -314,7 +313,7 @@ function OpenDealsTable({
   const deals = transactions.slice(0, 6);
 
   return (
-    <Surface flat padding="none" className="flex flex-1 flex-col overflow-hidden">
+    <Surface flat padding="none" className="overflow-hidden">
       <div className="flex items-center justify-between px-4 py-[11px] border-b border-gray-150">
         <h2 className="text-[12.5px] font-semibold text-gray-900">Open deals</h2>
         <Link
@@ -369,11 +368,10 @@ function OpenDealsTable({
                 ))}
               </tr>
             </thead>
-            <StaggerList as="tbody">
+            <tbody>
               {deals.map((tx, i) => (
-                <StaggerItem
+                <tr
                   key={tx.id}
-                  as="tr"
                   className={clsx(
                     'group transition-colors hover:bg-gray-50',
                     i < deals.length - 1 && 'border-b border-gray-150',
@@ -398,9 +396,9 @@ function OpenDealsTable({
                   <td className="px-4 py-[11px] text-right text-[12.5px] text-gray-700 whitespace-nowrap">
                     {formatClosing(tx.closing_date)}
                   </td>
-                </StaggerItem>
+                </tr>
               ))}
-            </StaggerList>
+            </tbody>
           </table>
         </div>
       )}
@@ -893,11 +891,11 @@ export default function DashboardPage() {
 
         {/* 2. Two-column console layout — left flexible, right rail fixed 340px */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-5 items-start">
-          <div className="flex flex-col gap-5 min-w-0">
+          <div className="flex flex-col gap-5 min-w-0 self-start w-full">
             <NeedsAttention items={attentionItems} loading={attentionLoading} />
             <OpenDealsTable transactions={allTransactions} loading={transactionsLoading && allTransactions.length === 0} />
           </div>
-          <div className="flex flex-col gap-5 min-w-0">
+          <div className="flex flex-col gap-5 min-w-0 self-start w-full">
             <TodayPanel />
             <ContinuePanel items={continueListItems} loading={continueLoading} />
             <QuickActionsPanel />
@@ -905,7 +903,7 @@ export default function DashboardPage() {
         </div>
 
         {/* 3. Secondary — plan usage + marketplace */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5" data-tour="plan-usage">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start" data-tour="plan-usage">
           {usage ? (
             <PlanUsagePanel usage={usage} plan={plan} layout="sidebar" />
           ) : usageLoading ? (

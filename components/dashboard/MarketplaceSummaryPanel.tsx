@@ -62,7 +62,7 @@ export default function MarketplaceSummaryPanel() {
 
   if (isLoading && !data) {
     return (
-      <Surface padding="md" className="animate-pulse space-y-3">
+      <Surface flat padding="md" className="self-start w-full animate-pulse space-y-3">
         <div className="h-4 bg-gray-100 rounded w-40" />
         <div className="h-8 bg-gray-100 rounded w-full" />
         <div className="h-16 bg-gray-100 rounded w-full" />
@@ -79,7 +79,7 @@ export default function MarketplaceSummaryPanel() {
 
   if (!hasActivity) {
     return (
-      <Surface padding="md">
+      <Surface flat padding="md" className="self-start w-full">
         <div className="flex items-start gap-3">
           <div className="p-2 rounded-lg bg-brand-500/10 text-brand-600 shrink-0">
             <Globe className="w-5 h-5" />
@@ -104,7 +104,7 @@ export default function MarketplaceSummaryPanel() {
   }
 
   return (
-    <Surface padding="md">
+    <Surface flat padding="md" className="self-start w-full">
       <div className="flex items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-2">
           <Globe className="w-4 h-4 text-brand-600" />
