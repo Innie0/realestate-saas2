@@ -77,7 +77,8 @@
      Only overrides lucide's default (2) — explicit strokeWidth props
      like 1.5 or 1.25 are set as attributes with other values and are
      left untouched, so intentional lighter icons keep their weight. */
-  .dashboard-root .lucide[stroke-width='2'] {
+  .dashboard-root .lucide[stroke-width='2'],
+  .marketing-root .lucide[stroke-width='2'] {
     stroke-width: 1.75;
   }
 }

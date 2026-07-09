@@ -18,7 +18,7 @@ export default function LegalPageLayout({
   children,
 }: LegalPageLayoutProps) {
   return (
-    <div className="min-h-screen bg-[#F4F4F5]">
+    <div className="marketing-root min-h-screen bg-[#F4F4F5] font-sans">
       <header className="sticky top-0 z-10 bg-[#F5F5F5]/90 backdrop-blur-md">
         <div className="mx-auto max-w-3xl px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
@@ -51,9 +51,9 @@ export default function LegalPageLayout({
               <div>
                 <h1 className="text-3xl font-semibold tracking-tight text-gray-900">{title}</h1>
                 {subtitle ? (
-                  <p className="text-sm text-gray-500 mt-1.5">{subtitle}</p>
+                  <p className="text-[12.5px] text-gray-500 mt-1.5">{subtitle}</p>
                 ) : updated ? (
-                  <p className="text-sm text-gray-500 mt-1.5">Last updated: {updated}</p>
+                  <p className="font-mono text-[11px] text-gray-450 mt-1.5">Last updated: {updated}</p>
                 ) : null}
               </div>
             </div>

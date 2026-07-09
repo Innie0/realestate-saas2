@@ -51,7 +51,7 @@ export default function MarketplaceSearchBar({
     >
       <div className={`grid gap-3 ${compact ? 'sm:grid-cols-2 lg:grid-cols-6' : 'sm:grid-cols-2 lg:grid-cols-6'}`}>
         <div className="lg:col-span-2">
-          <label htmlFor="location" className="block text-xs font-medium text-gray-500 mb-1.5">
+          <label htmlFor="location" className="block text-label mb-1.5">
             Location
           </label>
           <input
@@ -75,7 +75,7 @@ export default function MarketplaceSearchBar({
         </div>
 
         <div>
-          <label htmlFor="minPrice" className="block text-xs font-medium text-gray-500 mb-1.5">
+          <label htmlFor="minPrice" className="block text-label mb-1.5">
             Min price
           </label>
           <input
@@ -91,7 +91,7 @@ export default function MarketplaceSearchBar({
         </div>
 
         <div>
-          <label htmlFor="maxPrice" className="block text-xs font-medium text-gray-500 mb-1.5">
+          <label htmlFor="maxPrice" className="block text-label mb-1.5">
             Max price
           </label>
           <input
@@ -108,7 +108,7 @@ export default function MarketplaceSearchBar({
 
         <div className="grid grid-cols-2 gap-3 sm:col-span-2 lg:col-span-1">
           <div>
-            <label htmlFor="beds" className="block text-xs font-medium text-gray-500 mb-1.5">
+            <label htmlFor="beds" className="block text-label mb-1.5">
               Beds
             </label>
             <input
@@ -123,7 +123,7 @@ export default function MarketplaceSearchBar({
             />
           </div>
           <div>
-            <label htmlFor="baths" className="block text-xs font-medium text-gray-500 mb-1.5">
+            <label htmlFor="baths" className="block text-label mb-1.5">
               Baths
             </label>
             <input

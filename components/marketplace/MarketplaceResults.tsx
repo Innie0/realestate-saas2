@@ -83,7 +83,8 @@ export default function MarketplaceResults({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
         <div>
           <p className="text-sm font-medium text-gray-900">
-            {listings.length} {listings.length === 1 ? 'property' : 'properties'} for sale
+            <span className="font-mono tabular-nums">{listings.length}</span>{' '}
+            {listings.length === 1 ? 'property' : 'properties'} for sale
           </p>
           {hasActiveFilters && (
             <p className="text-xs text-gray-500 mt-1 flex items-center gap-1.5">

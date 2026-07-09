@@ -382,7 +382,7 @@ function CRMDemoMockup() {
     <div ref={ref} className="rounded-2xl bg-white border border-gray-200 p-5 min-h-[280px] sm:aspect-video sm:min-h-0 flex flex-col overflow-hidden">
       <div className="flex items-center gap-2 mb-3 flex-shrink-0">
         <Users className="w-4 h-4 text-gray-500" />
-        <span className="text-xs text-gray-500 font-medium">Client Manager</span>
+        <span className="text-label">Client Manager</span>
         <span className="ml-auto text-xs text-gray-600">{clients.length} clients</span>
       </div>
 
@@ -543,7 +543,7 @@ function CalendarDemoMockup() {
       <div className="flex items-center justify-between mb-3 flex-shrink-0">
         <div className="flex items-center gap-2">
           <Calendar className="w-4 h-4 text-gray-500" />
-          <span className="text-xs text-gray-500 font-medium">April 2026</span>
+          <span className="text-label">April 2026</span>
         </div>
         <AnimatePresence>
           {showSynced && (
@@ -700,7 +700,7 @@ function PropertyLookupDemoMockup() {
     <div ref={ref} className="rounded-2xl bg-white border border-gray-200 p-5 flex flex-col overflow-hidden" style={{ minHeight: '360px' }}>
       <div className="flex items-center gap-2 mb-3 flex-shrink-0">
         <Search className="w-4 h-4 text-gray-500" />
-        <span className="text-xs text-gray-500 font-medium">Property Research</span>
+        <span className="text-label">Property Research</span>
       </div>
 
       <div className="relative flex-shrink-0">
@@ -759,8 +759,8 @@ function PropertyLookupDemoMockup() {
                           className="bg-gray-100 border border-gray-100 rounded-xl p-2 text-center"
                         >
                           <div className="text-base mb-0.5">{d.icon}</div>
-                          <div className="text-xs font-bold text-gray-900">{d.value}</div>
-                          <div className="text-[9px] text-gray-500">{d.label}</div>
+                          <div className="font-mono text-xs font-semibold tabular-nums text-gray-900">{d.value}</div>
+                          <div className="text-label text-[9px] leading-3">{d.label}</div>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -770,12 +770,12 @@ function PropertyLookupDemoMockup() {
                 {visibleDetails >= 3 && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="bg-gray-100 border border-gray-100 rounded-xl p-3 flex items-center justify-between mb-2">
                     <div>
-                      <p className="text-[10px] text-gray-500 mb-0.5">Estimated Value</p>
-                      <p className="text-base font-bold text-gray-900">$1,500,000</p>
+                      <p className="text-label mb-0.5">Estimated Value</p>
+                      <p className="text-base font-mono font-semibold tabular-nums text-gray-900">$1,500,000</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[10px] text-gray-500 mb-0.5">Price / sq ft</p>
-                      <p className="text-sm font-semibold text-gray-900">$429</p>
+                      <p className="text-label mb-0.5">Price / sq ft</p>
+                      <p className="text-sm font-mono font-semibold tabular-nums text-gray-900">$429</p>
                     </div>
                   </motion.div>
                 )}
@@ -783,11 +783,11 @@ function PropertyLookupDemoMockup() {
                 {visibleDetails >= 4 && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="bg-gray-100 border border-gray-100 rounded-xl p-3 flex items-center justify-between">
                     <div>
-                      <p className="text-[10px] text-gray-500 mb-0.5">Owner</p>
+                      <p className="text-label mb-0.5">Owner</p>
                       <p className="text-sm font-semibold text-gray-900">James R. Mitchell</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[10px] text-gray-500 mb-0.5">Phone</p>
+                      <p className="text-label mb-0.5">Phone</p>
                       <p className="text-sm font-semibold text-gray-900">(555) 555-5555</p>
                     </div>
                   </motion.div>
@@ -797,7 +797,7 @@ function PropertyLookupDemoMockup() {
               <div className="flex-1 flex flex-col min-h-0">
                 <div className="flex items-center gap-2 mb-2">
                   <BarChart2 className="w-3.5 h-3.5 text-brand-500" />
-                  <p className="text-[10px] text-gray-500 font-medium">Comparable sales · 0.5 mi · 12 mo</p>
+                  <p className="text-label">Comparable sales · 0.5 mi · 12 mo</p>
                 </div>
                 <div className="space-y-2 flex-1">
                   {comps.map((comp, i) => (
@@ -813,7 +813,7 @@ function PropertyLookupDemoMockup() {
                             <p className="text-xs font-medium text-gray-900 truncate">{comp.address}</p>
                             <p className="text-[10px] text-gray-500">{comp.sqft} sq ft · {comp.distance}</p>
                           </div>
-                          <p className="text-xs font-bold text-gray-900 flex-shrink-0 ml-2">{comp.price}</p>
+                          <p className="font-mono text-xs font-semibold tabular-nums text-gray-900 flex-shrink-0 ml-2">{comp.price}</p>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -827,8 +827,8 @@ function PropertyLookupDemoMockup() {
                       transition={{ duration: 0.4 }}
                       className="mt-3 p-3 rounded-xl bg-brand-50 border border-brand-200"
                     >
-                      <p className="text-[10px] text-brand-700 font-medium mb-0.5">Suggested price range</p>
-                      <p className="text-lg font-bold text-gray-900">$475k – $512k</p>
+                      <p className="text-label text-brand-700 mb-0.5">Suggested price range</p>
+                      <p className="text-lg font-mono font-semibold tabular-nums text-gray-900">$475k – $512k</p>
                       <p className="text-[10px] text-gray-500 mt-0.5">Based on 3 adjusted comps</p>
                     </motion.div>
                   )}
@@ -908,7 +908,7 @@ function LeadFormDemoMockup() {
       {/* Header — shareable link */}
       <div className="flex items-center gap-2 mb-4 flex-shrink-0">
         <Link2 className="w-4 h-4 text-gray-500" />
-        <span className="text-xs text-gray-500 font-medium">Lead Capture Form</span>
+        <span className="text-label">Lead Capture Form</span>
       </div>
 
       {/* Branded URL */}
@@ -1055,7 +1055,7 @@ function LeadsInboxDemoMockup() {
     <div ref={ref} className="rounded-2xl bg-white border border-gray-200 p-5 flex flex-col overflow-hidden" style={{ minHeight: '340px' }}>
       <div className="flex items-center gap-2 mb-4 flex-shrink-0">
         <Inbox className="w-4 h-4 text-gray-500" />
-        <span className="text-xs text-gray-500 font-medium">Leads Inbox</span>
+        <span className="text-label">Leads Inbox</span>
         <span className="ml-auto text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200">3 new</span>
       </div>
 
@@ -1214,7 +1214,7 @@ function OpenHouseDemoMockup() {
 
       <div className="flex items-center gap-2 mb-3 flex-shrink-0">
         <DoorOpen className="w-4 h-4 text-gray-500" />
-        <span className="text-xs text-gray-500 font-medium">Open House Sign-In</span>
+        <span className="text-label">Open House Sign-In</span>
         <span className="ml-auto text-[9px] text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-200 font-medium">Pro</span>
       </div>
 
@@ -1312,7 +1312,7 @@ export default function HomePageClient() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] text-gray-900 overflow-hidden">
+    <div className="marketing-root min-h-screen bg-[#F5F5F5] text-gray-900 overflow-hidden font-sans">
 
 
       {/* ── Nav ────────────────────────────────────────────────────────── */}
@@ -1402,9 +1402,9 @@ export default function HomePageClient() {
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="p-2 bg-brand-500/20 rounded-lg"><Users className="w-5 h-5 text-brand-500" /></div>
-                    <span className="text-sm font-medium text-gray-600">New Leads Today</span>
+                    <span className="text-label">New Leads Today</span>
                   </div>
-                  <div className="text-3xl font-bold text-gray-900">4</div>
+                  <div className="text-[26px] font-semibold tracking-[-0.02em] tabular-nums text-gray-900 leading-none">4</div>
                   <div className="text-sm text-gray-500 mt-1">Via your lead form link</div>
                 </motion.div>
               </motion.div>
@@ -1422,9 +1422,9 @@ export default function HomePageClient() {
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="p-2 bg-brand-500/20 rounded-lg"><Home className="w-5 h-5 text-brand-500" /></div>
-                    <span className="text-sm font-medium text-gray-600">Active Listings</span>
+                    <span className="text-label">Active Listings</span>
                   </div>
-                  <div className="text-3xl font-bold text-gray-900">47</div>
+                  <div className="text-[26px] font-semibold tracking-[-0.02em] tabular-nums text-gray-900 leading-none">47</div>
                   <div className="text-sm text-gray-500 mt-1">Properties</div>
                 </motion.div>
               </motion.div>
@@ -1442,7 +1442,7 @@ export default function HomePageClient() {
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="p-2 bg-brand-500/20 rounded-lg"><Sparkles className="w-5 h-5 text-brand-500" /></div>
-                    <span className="text-sm font-medium text-gray-600">AI Generated</span>
+                    <span className="text-label">AI Generated</span>
                   </div>
                   <p className="text-sm text-gray-500 leading-relaxed">&ldquo;Stunning 4BR home with panoramic views, chef&apos;s kitchen, and resort-style backyard...&rdquo;</p>
                 </motion.div>
@@ -1469,10 +1469,10 @@ export default function HomePageClient() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
               >
-                <div className="text-4xl lg:text-5xl font-bold text-gray-900 mb-2">
+                <div className="text-4xl lg:text-5xl font-semibold tracking-[-0.02em] tabular-nums text-gray-900 mb-2">
                   <CountUp end={stat.value} suffix={stat.suffix} />
                 </div>
-                <p className="text-gray-500 text-sm">{stat.label}</p>
+                <p className="text-label text-center">{stat.label}</p>
               </motion.div>
             ))}
           </div>
@@ -1557,7 +1557,7 @@ export default function HomePageClient() {
               className={`grid lg:grid-cols-2 gap-16 items-center ${feature.flip ? 'lg:flex-row-reverse' : ''}`}
             >
               <div className={feature.flip ? 'lg:order-2' : ''}>
-                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 border border-gray-300 text-xs text-gray-600 mb-6">
+                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 border border-gray-300 text-label mb-6">
                   <feature.icon className="w-3.5 h-3.5" />
                   {feature.tag}
                 </span>
@@ -1662,7 +1662,7 @@ export default function HomePageClient() {
 
                 <div className="mb-6">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                    <span className="text-4xl font-semibold tracking-[-0.02em] tabular-nums font-mono text-gray-900">{plan.price}</span>
                     <span className="text-gray-500 text-sm">/ mo after trial</span>
                   </div>
                   {isAnyAnnualBillingAvailable() && (
@@ -1687,7 +1687,7 @@ export default function HomePageClient() {
                 </Link>
 
                 <div className="border-t border-gray-200 mb-5" />
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">What&apos;s included</p>
+                <p className="text-label mb-4">What&apos;s included</p>
                 <PricingFeatureList plan={plan.plan} />
               </motion.div>
             ))}

@@ -57,7 +57,7 @@ export default async function MarketplaceHomePage({ searchParams }: HomePageProp
   const showResults = hasMarketplaceSearchQuery(params);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="marketing-root min-h-screen bg-white flex flex-col font-sans">
       <MarketplaceNav />
 
       <main className="flex-1">

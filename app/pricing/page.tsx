@@ -83,7 +83,7 @@ export default function PricingPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] relative overflow-hidden">
+    <div className="marketing-root min-h-screen bg-[#F5F5F5] relative overflow-hidden font-sans">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gray-50 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative z-10 mx-auto max-w-7xl pl-3 pr-6 sm:pl-4 lg:pl-6 py-6 flex items-center justify-between">
@@ -176,7 +176,7 @@ export default function PricingPage() {
 
                 <div className="mb-6">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-gray-900">
+                    <span className="text-4xl font-mono font-semibold tracking-[-0.02em] tabular-nums text-gray-900">
                       {getPlanDisplayPrice(plan.slug, billingInterval)}
                     </span>
                     <span className="text-gray-500 text-sm">{getPlanPeriodLabel(billingInterval)}</span>
@@ -204,7 +204,7 @@ export default function PricingPage() {
 
                 <div className="border-t border-gray-200 mb-5" />
 
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">What&apos;s included</p>
+                <p className="text-label mb-4">What&apos;s included</p>
                 <PricingFeatureList plan={plan.slug} icon="check" />
               </div>
             ))}

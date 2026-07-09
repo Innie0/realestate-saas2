@@ -55,7 +55,7 @@ export default function MarketplaceListingCard({
       <div className={featured ? 'p-5 sm:p-6' : 'p-4'}>
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className={`font-bold text-gray-900 ${featured ? 'text-xl sm:text-2xl' : 'text-lg'}`}>
+            <p className={`font-mono font-semibold tabular-nums text-gray-900 ${featured ? 'text-xl sm:text-2xl' : 'text-lg'}`}>
               {formatListingPrice(listing.price)}
             </p>
             <p className={`text-gray-600 mt-1 line-clamp-2 ${featured ? 'text-sm sm:text-base' : 'text-sm'}`}>
