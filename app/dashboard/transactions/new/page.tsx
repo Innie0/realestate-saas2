@@ -15,6 +15,8 @@ function NewTransactionPageContent() {
   const address = searchParams.get('address') || undefined;
   const city = searchParams.get('city') || undefined;
   const state = searchParams.get('state') || undefined;
+  const priceParam = searchParams.get('price');
+  const defaultPrice = priceParam ? Number(priceParam) : undefined;
 
   // Set page title
   React.useEffect(() => {
@@ -47,6 +49,7 @@ function NewTransactionPageContent() {
             defaultAddress={address}
             defaultCity={city}
             defaultState={state}
+            defaultPrice={defaultPrice && defaultPrice > 0 ? defaultPrice : undefined}
           />
         </div>
       </div>

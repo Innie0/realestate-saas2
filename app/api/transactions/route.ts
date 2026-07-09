@@ -7,6 +7,11 @@ import { createClient } from '@/lib/supabase-server';
 import { Transaction } from '@/types';
 import { syncTransactionToCalendar } from '@/lib/transaction-calendar-sync';
 import { checkUsageLimit, incrementUsage, usageLimitError } from '@/lib/usage';
+import {
+  listingPriceFromProject,
+  resolveTransactionOfferPrice,
+  syncProjectListingPriceToTransactions,
+} from '@/lib/project-transaction-sync';
 
 /**
  * GET /api/transactions
@@ -37,6 +42,7 @@ export async function GET(request: NextRequest) {
       .from('transactions')
       .select(`
         *,
+        project:projects(property_info),
         checklist_items:transaction_checklist_items(id, is_completed),
         reminders:transaction_reminders(id, is_sent, is_dismissed, reminder_date)
       `)
@@ -69,25 +75,48 @@ export async function GET(request: NextRequest) {
     }
 
     // Calculate additional fields for each transaction
-    const transactionsWithDetails = transactions?.map(transaction => {
-      const checklistItems = transaction.checklist_items || [];
-      const completedItems = checklistItems.filter((item: any) => item.is_completed).length;
-      
-      // Calculate days to closing
-      let daysToClosing = null;
-      if (transaction.closing_date) {
-        const today = new Date();
-        const closingDate = new Date(transaction.closing_date);
-        daysToClosing = Math.ceil((closingDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-      }
+    const transactionsWithDetails = await Promise.all(
+      (transactions || []).map(async (transaction) => {
+        const checklistItems = transaction.checklist_items || [];
+        const completedItems = checklistItems.filter((item: any) => item.is_completed).length;
 
-      return {
-        ...transaction,
-        completed_items_count: completedItems,
-        total_items_count: checklistItems.length,
-        days_to_closing: daysToClosing,
-      };
-    });
+        let daysToClosing = null;
+        if (transaction.closing_date) {
+          const today = new Date();
+          const closingDate = new Date(transaction.closing_date);
+          daysToClosing = Math.ceil((closingDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        }
+
+        const listingPrice = listingPriceFromProject(transaction.project);
+        const effectiveOfferPrice = resolveTransactionOfferPrice(transaction);
+
+        if (
+          transaction.project_id &&
+          transaction.status === 'active' &&
+          listingPrice != null &&
+          listingPrice !== transaction.offer_price
+        ) {
+          await supabase
+            .from('transactions')
+            .update({
+              offer_price: listingPrice,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', transaction.id)
+            .eq('user_id', user.id);
+        }
+
+        const { project, ...rest } = transaction;
+
+        return {
+          ...rest,
+          offer_price: effectiveOfferPrice,
+          completed_items_count: completedItems,
+          total_items_count: checklistItems.length,
+          days_to_closing: daysToClosing,
+        };
+      }),
+    );
 
     return NextResponse.json({
       success: true,

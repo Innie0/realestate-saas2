@@ -8,6 +8,7 @@ import {
   type RentcastSaleListing,
 } from '@/lib/rentcast-listings';
 import type { PropertyInfo } from '@/types';
+import { syncProjectListingPriceToTransactions } from '@/lib/project-transaction-sync';
 
 export type ListingStatus = 'active' | 'sold' | 'off_market' | 'unknown';
 
@@ -189,6 +190,15 @@ export async function syncProjectListing(
 
       if (error) {
         return { ...base, action: 'error', message: error.message };
+      }
+
+      if (updatedFields.includes('price') && details.price != null && details.price > 0) {
+        await syncProjectListingPriceToTransactions(
+          supabase as unknown as Parameters<typeof syncProjectListingPriceToTransactions>[0],
+          project.user_id,
+          project.id,
+          details.price,
+        );
       }
 
       if (updatedFields.length > 0) {

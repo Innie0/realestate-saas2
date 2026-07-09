@@ -3,6 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidateTag } from 'next/cache';
 import { createClient } from '@/lib/supabase-server';
+import { syncProjectListingPriceToTransactions } from '@/lib/project-transaction-sync';
 
 /**
  * GET /api/projects/[id]
@@ -82,7 +83,7 @@ export async function PUT(
     // Verify ownership
     const { data: existingProject, error: fetchError } = await supabase
       .from('projects')
-      .select('id')
+      .select('id, property_info')
       .eq('id', projectId)
       .eq('user_id', user.id)
       .single();
@@ -128,6 +129,17 @@ export async function PUT(
         { success: false, error: 'Failed to update project' },
         { status: 500 }
       );
+    }
+
+    const previousPrice = existingProject?.property_info?.price;
+    const nextPrice = body.property_info?.price;
+    if (
+      body.property_info !== undefined &&
+      typeof nextPrice === 'number' &&
+      nextPrice > 0 &&
+      nextPrice !== previousPrice
+    ) {
+      await syncProjectListingPriceToTransactions(supabase, user.id, projectId, nextPrice);
     }
 
     if (body.published !== undefined) {

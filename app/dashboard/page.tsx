@@ -77,11 +77,10 @@ const QUICK_LINKS: ReadonlyArray<{
   { href: '/dashboard/clients', label: 'Add a client', shortcut: 'C', tour: 'manage-clients' },
 ];
 
-const compactCurrency = new Intl.NumberFormat('en-US', {
+const currency = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
-  notation: 'compact',
-  maximumFractionDigits: 1,
+  maximumFractionDigits: 0,
 });
 
 /* ── Continue: pick up where you left off ────────────────────────────── */
@@ -391,7 +390,7 @@ function OpenDealsTable({
                     <TransactionStatusBadge status={tx.status} />
                   </td>
                   <td className="px-4 py-[11px] text-right font-mono text-[12.5px] font-medium text-gray-900 tabular-nums whitespace-nowrap">
-                    {tx.offer_price ? compactCurrency.format(tx.offer_price) : '—'}
+                    {tx.offer_price ? currency.format(tx.offer_price) : '—'}
                   </td>
                   <td className="px-4 py-[11px] text-right text-[12.5px] text-gray-700 whitespace-nowrap">
                     {formatClosing(tx.closing_date)}
@@ -671,7 +670,7 @@ export default function DashboardPage() {
       {
         label: 'Pipeline',
         value: pipelineValue,
-        format: (n) => compactCurrency.format(n),
+        format: (n) => currency.format(n),
         placeholder: pipelineValue > 0 ? undefined : '—',
         sub: `${allTransactions.length} open${closingSoonCount > 0 ? ` · ${closingSoonCount} closing soon` : ''}`,
         subTone: closingSoonCount > 0 ? 'warning' : 'neutral',

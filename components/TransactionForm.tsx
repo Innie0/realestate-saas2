@@ -20,6 +20,7 @@ interface TransactionFormProps {
   defaultAddress?: string;
   defaultCity?: string;
   defaultState?: string;
+  defaultPrice?: number;
 }
 
 export default function TransactionForm({
@@ -30,6 +31,7 @@ export default function TransactionForm({
   defaultAddress,
   defaultCity,
   defaultState,
+  defaultPrice,
 }: TransactionFormProps) {
   const router = useRouter();
   const isEditing = !!transaction;
@@ -63,7 +65,10 @@ export default function TransactionForm({
   const [sellerAgentPhone, setSellerAgentPhone] = useState(transaction?.seller_agent_phone || '');
 
   // Financial info
-  const [offerPrice, setOfferPrice] = useState(transaction?.offer_price?.toString() || '');
+  const [offerPrice, setOfferPrice] = useState(
+    transaction?.offer_price?.toString()
+      || (defaultPrice && defaultPrice > 0 ? String(defaultPrice) : ''),
+  );
   const [earnestMoney, setEarnestMoney] = useState(transaction?.earnest_money?.toString() || '');
   const [downPayment, setDownPayment] = useState(transaction?.down_payment?.toString() || '');
   const [loanAmount, setLoanAmount] = useState(transaction?.loan_amount?.toString() || '');

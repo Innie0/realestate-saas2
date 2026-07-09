@@ -1991,7 +1991,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     `/dashboard/transactions/new?project_id=${projectId}` +
                     (project.property_info?.address ? `&address=${encodeURIComponent(project.property_info.address)}` : '') +
                     (project.property_info?.city ? `&city=${encodeURIComponent(project.property_info.city)}` : '') +
-                    (project.property_info?.state ? `&state=${encodeURIComponent(project.property_info.state)}` : '')
+                    (project.property_info?.state ? `&state=${encodeURIComponent(project.property_info.state)}` : '') +
+                    (project.property_info?.price ? `&price=${project.property_info.price}` : '')
                   )}
                 >
                   New Transaction
@@ -2041,7 +2042,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     `/dashboard/transactions/new?project_id=${projectId}` +
                     (project.property_info?.address ? `&address=${encodeURIComponent(project.property_info.address)}` : '') +
                     (project.property_info?.city ? `&city=${encodeURIComponent(project.property_info.city)}` : '') +
-                    (project.property_info?.state ? `&state=${encodeURIComponent(project.property_info.state)}` : '')
+                    (project.property_info?.state ? `&state=${encodeURIComponent(project.property_info.state)}` : '') +
+                    (project.property_info?.price ? `&price=${project.property_info.price}` : '')
                   )}>
                     Create Transaction
                   </Button>
