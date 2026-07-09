@@ -68,3 +68,20 @@ export function cmaLocalCacheKey(
   const years = params.yearsBack ?? 1;
   return `${addressKey}::cma::${pt}::${radius}::${years}`;
 }
+
+/** Return the most recently saved CMA cache entry for an address (any radius/type). */
+export function findLatestCmaCache<T>(addressKey: string): T | null {
+  const store = readStore();
+  const prefix = `${addressKey}::cma::`;
+  const now = Date.now();
+  let best: CacheEntry<T> | null = null;
+
+  for (const [key, entry] of Object.entries(store)) {
+    if (!key.startsWith(prefix)) continue;
+    const typed = entry as CacheEntry<T>;
+    if (now > typed.expiresAt) continue;
+    if (!best || typed.savedAt > best.savedAt) best = typed;
+  }
+
+  return best?.payload ?? null;
+}

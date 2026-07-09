@@ -21,6 +21,7 @@ import { normalizeAddressKey } from '@/lib/property-research-cache';
 import { isDemoMarketingAddress } from '@/lib/demo-property-research';
 import {
   cmaLocalCacheKey,
+  findLatestCmaCache,
   getLocalResearchCache,
   setLocalResearchCache,
 } from '@/lib/research-local-cache';
@@ -134,10 +135,37 @@ export interface CmaPanelProps {
   zip: string;
   /** Increment to trigger a CMA run from the parent */
   runTrigger?: number;
+  /** Parent-held CMA result (e.g. from recent history cache) */
+  initialResult?: CmaAnalysisResult | null;
   onComplete?: (result: CmaAnalysisResult | null) => void;
 }
 
-export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete }: CmaPanelProps) {
+function cmaMatchesFields(
+  data: CmaAnalysisResult,
+  street: string,
+  city: string,
+  state: string,
+  zip: string
+): boolean {
+  const addressKey = normalizeAddressKey({
+    street: street.trim(),
+    city: city.trim(),
+    state,
+    zip: zip.trim(),
+  });
+  const latest = findLatestCmaCache<CmaAnalysisResult>(addressKey);
+  return latest?.queriedAt === data.queriedAt;
+}
+
+export function CmaPanel({
+  street,
+  city,
+  state,
+  zip,
+  runTrigger = 0,
+  initialResult = null,
+  onComplete,
+}: CmaPanelProps) {
   const toast = useToast();
   const [propertyType, setPropertyType] = useState('');
   const [radius, setRadius] = useState(0.5);
@@ -243,6 +271,19 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
         onCompleteRef.current?.(cached);
         return;
       }
+      const latest = findLatestCmaCache<CmaAnalysisResult>(addressKey);
+      if (latest) {
+        setResult(latest);
+        setSubject(latest.subject);
+        setSubjectEnrichment(latest.subjectEnrichment ?? null);
+        setFromCache(true);
+        if (latest.propertyType) setPropertyType(latest.propertyType);
+        setRadius(latest.radius ?? 0.5);
+        setYearsBack(latest.yearsBack ?? 1);
+        setError('');
+        onCompleteRef.current?.(latest);
+        return;
+      }
     }
 
     isRunningRef.current = true;
@@ -283,12 +324,35 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
   }, [street, city, state, zip, propertyType, radius, yearsBack, subject, manualFields]);
 
   useEffect(() => {
-    setSubject(defaultSubject());
-    setSubjectEnrichment(null);
-    setManualFields(new Set());
-    setResult(null);
-    setError('');
-  }, [street, city, state, zip]);
+    if (
+      initialResult &&
+      cmaMatchesFields(initialResult, street, city, state, zip) &&
+      !isRunningRef.current &&
+      !loading
+    ) {
+      setResult(initialResult);
+      setSubject(initialResult.subject);
+      setSubjectEnrichment(initialResult.subjectEnrichment ?? null);
+      setFromCache(true);
+      if (initialResult.propertyType) setPropertyType(initialResult.propertyType);
+      setRadius(initialResult.radius ?? 0.5);
+      setYearsBack(initialResult.yearsBack ?? 1);
+      setError('');
+      setExcludedIds(new Set());
+      setShowAllComps(false);
+      return;
+    }
+    if (!isRunningRef.current && !loading) {
+      setSubject(defaultSubject());
+      setSubjectEnrichment(null);
+      setManualFields(new Set());
+      setResult(null);
+      setFromCache(false);
+      setError('');
+      setExcludedIds(new Set());
+      setShowAllComps(false);
+    }
+  }, [street, city, state, zip, initialResult, loading]);
 
   useEffect(() => {
     if (runTrigger <= 0 || runTrigger === lastTriggerRef.current) return;

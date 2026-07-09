@@ -14,7 +14,7 @@ import { OwnerContactPanel, type LookupResponse } from '@/components/property-re
 import { PropertyOverviewCard } from '@/components/property-research/PropertyOverviewCard';
 import { normalizeAddressKey } from '@/lib/property-research-cache';
 import {
-  cmaLocalCacheKey,
+  findLatestCmaCache,
   getLocalResearchCache,
   lookupLocalCacheKey,
 } from '@/lib/research-local-cache';
@@ -178,11 +178,11 @@ function PropertyResearchContent() {
       zip: entry.zip,
     });
     const cachedLookup = getLocalResearchCache<LookupResponse>(lookupLocalCacheKey(addressKey));
-    const cachedCma = getLocalResearchCache<CmaAnalysisResult>(
-      cmaLocalCacheKey(addressKey, { radius: 0.5, yearsBack: 1 })
-    );
+    const cachedCma = findLatestCmaCache<CmaAnalysisResult>(addressKey);
     setLookupData(cachedLookup);
     setCmaResult(cachedCma);
+    if (cachedLookup) setLookupTrigger((n) => n + 1);
+    if (cachedCma) setCmaTrigger((n) => n + 1);
   };
 
   const clearForm = () => {
@@ -457,6 +457,7 @@ function PropertyResearchContent() {
                         state={state}
                         zip={zip}
                         lookupTrigger={lookupTrigger}
+                        initialData={lookupData}
                         onComplete={handleLookupComplete}
                         onLoadingChange={setLookupLoading}
                       />
@@ -473,6 +474,7 @@ function PropertyResearchContent() {
                         state={state}
                         zip={zip}
                         runTrigger={cmaTrigger}
+                        initialResult={cmaResult}
                         onComplete={handleCmaComplete}
                       />
                     </div>

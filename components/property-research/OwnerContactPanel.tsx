@@ -135,8 +135,32 @@ export interface OwnerContactPanelProps {
   state: string;
   zip: string;
   lookupTrigger?: number;
+  /** Parent-held lookup data (e.g. from recent history cache) */
+  initialData?: LookupResponse | null;
   onComplete?: (data: LookupResponse | null) => void;
   onLoadingChange?: (loading: boolean) => void;
+}
+
+function lookupMatchesFields(
+  data: LookupResponse,
+  street: string,
+  city: string,
+  state: string,
+  zip: string
+): boolean {
+  const current = normalizeAddressKey({
+    street: street.trim(),
+    city: city.trim(),
+    state,
+    zip: zip.trim(),
+  });
+  const searched = normalizeAddressKey({
+    street: data.searchedAddress.street,
+    city: data.searchedAddress.city,
+    state: data.searchedAddress.state,
+    zip: data.searchedAddress.zip,
+  });
+  return current === searched;
 }
 
 export function OwnerContactPanel({
@@ -145,6 +169,7 @@ export function OwnerContactPanel({
   state,
   zip,
   lookupTrigger = 0,
+  initialData = null,
   onComplete,
   onLoadingChange,
 }: OwnerContactPanelProps) {
@@ -257,6 +282,24 @@ export function OwnerContactPanel({
     lastTriggerRef.current = lookupTrigger;
     runLookup();
   }, [lookupTrigger, runLookup]);
+
+  // Hydrate from parent cache when selecting a recent search (no new API call)
+  useEffect(() => {
+    if (isFetchingRef.current || isLoading) return;
+
+    if (initialData && lookupMatchesFields(initialData, street, city, state, zip)) {
+      setResults(initialData);
+      setFromCache(true);
+      setError(null);
+      return;
+    }
+
+    if (results && !lookupMatchesFields(results, street, city, state, zip)) {
+      setResults(null);
+      setFromCache(false);
+      setError(null);
+    }
+  }, [initialData, street, city, state, zip, isLoading, results]);
 
   // Get occupancy status badge color
   const getOccupancyColor = (status: string) => {
