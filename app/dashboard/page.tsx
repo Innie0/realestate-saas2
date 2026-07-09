@@ -22,6 +22,7 @@ import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
 import { getCurrentUser } from '@/lib/supabase';
 import { isSameAddress } from '@/lib/comp-filters';
+import { formatCompactPrice } from '@/lib/format-price';
 
 interface RecentClient {
   id: string;
@@ -76,12 +77,6 @@ const QUICK_LINKS: ReadonlyArray<{
   { href: '/dashboard/tasks', label: 'Ask the AI assistant', shortcut: 'A' },
   { href: '/dashboard/clients', label: 'Add a client', shortcut: 'C', tour: 'manage-clients' },
 ];
-
-const currency = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  maximumFractionDigits: 0,
-});
 
 /* ── Continue: pick up where you left off ────────────────────────────── */
 
@@ -312,8 +307,8 @@ function OpenDealsTable({
   const deals = transactions.slice(0, 6);
 
   return (
-    <Surface flat padding="none" className="overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-[11px] border-b border-gray-150">
+    <Surface flat padding="none" className="flex flex-1 flex-col min-h-0 overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-[11px] border-b border-gray-150 shrink-0">
         <h2 className="text-[12.5px] font-semibold text-gray-900">Open deals</h2>
         <Link
           href="/dashboard/transactions"
@@ -324,13 +319,13 @@ function OpenDealsTable({
       </div>
 
       {loading ? (
-        <div className="px-4 py-4 space-y-3 animate-pulse">
+        <div className="flex-1 px-4 py-4 space-y-3 animate-pulse min-h-0">
           {[0, 1, 2].map((i) => (
             <div key={i} className="h-5 bg-gray-100 rounded" />
           ))}
         </div>
       ) : deals.length === 0 ? (
-        <div className="px-4 pb-6 pt-3 flex items-center justify-between gap-4">
+        <div className="flex-1 px-4 pb-6 pt-3 flex items-start justify-between gap-4 min-h-0">
           <div>
             <p className="text-body font-medium text-gray-900">No open deals</p>
             <p className="text-caption text-gray-500 mt-0.5">
@@ -345,8 +340,9 @@ function OpenDealsTable({
           </Link>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[560px] text-left table-fixed">
+        <div className="flex-1 flex flex-col min-h-0">
+          <div className="overflow-x-auto shrink-0">
+            <table className="w-full min-w-[560px] text-left table-fixed">
             <colgroup>
               {DEAL_COL_WIDTHS.map((w, i) => (
                 <col key={i} style={{ width: w }} />
@@ -390,7 +386,7 @@ function OpenDealsTable({
                     <TransactionStatusBadge status={tx.status} />
                   </td>
                   <td className="px-4 py-[11px] text-right font-mono text-[12.5px] font-medium text-gray-900 tabular-nums whitespace-nowrap">
-                    {tx.offer_price ? currency.format(tx.offer_price) : '—'}
+                    {tx.offer_price ? formatCompactPrice(tx.offer_price) : '—'}
                   </td>
                   <td className="px-4 py-[11px] text-right text-[12.5px] text-gray-700 whitespace-nowrap">
                     {formatClosing(tx.closing_date)}
@@ -399,6 +395,7 @@ function OpenDealsTable({
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </Surface>
@@ -670,7 +667,7 @@ export default function DashboardPage() {
       {
         label: 'Pipeline',
         value: pipelineValue,
-        format: (n) => currency.format(n),
+        format: (n) => formatCompactPrice(n),
         placeholder: pipelineValue > 0 ? undefined : '—',
         sub: `${allTransactions.length} open${closingSoonCount > 0 ? ` · ${closingSoonCount} closing soon` : ''}`,
         subTone: closingSoonCount > 0 ? 'warning' : 'neutral',
@@ -889,12 +886,12 @@ export default function DashboardPage() {
         {metricsLoading ? <MetricStripSkeleton /> : <MetricStrip metrics={metrics} />}
 
         {/* 2. Two-column console layout — left flexible, right rail fixed 340px */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-5 items-start">
-          <div className="flex flex-col gap-5 min-w-0 self-start w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-5 items-stretch">
+          <div className="flex flex-col gap-5 min-w-0 h-full">
             <NeedsAttention items={attentionItems} loading={attentionLoading} />
             <OpenDealsTable transactions={allTransactions} loading={transactionsLoading && allTransactions.length === 0} />
           </div>
-          <div className="flex flex-col gap-5 min-w-0 self-start w-full">
+          <div className="flex flex-col gap-5 min-w-0">
             <TodayPanel />
             <ContinuePanel items={continueListItems} loading={continueLoading} />
             <QuickActionsPanel />
