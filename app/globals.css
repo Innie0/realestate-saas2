@@ -196,60 +196,82 @@
   }
 }
 
-/* ── Driver.js tour — light Realestic theme ───────────────────────────── */
+/* ── Driver.js tour — graphite console theme ────────────────────────────── */
 .driver-popover {
   background: #ffffff !important;
-  border: 1px solid #e5e7eb !important;
-  border-radius: 14px !important;
-  color: #111827 !important;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.12) !important;
-  padding: 20px !important;
+  border: 1px solid #e8e8e6 !important;
+  border-radius: 10px !important;
+  color: #18181b !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08) !important;
+  padding: 16px 18px !important;
   max-width: 300px !important;
+  font-family: inherit !important;
 }
 
 .driver-popover-title {
-  color: #111827 !important;
-  font-size: 15px !important;
-  font-weight: 700 !important;
-  margin-bottom: 6px !important;
+  color: #18181b !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+  margin-bottom: 4px !important;
 }
 
 .driver-popover-description {
-  color: #6b7280 !important;
-  font-size: 13px !important;
-  line-height: 1.55 !important;
+  color: #55554f !important;
+  font-size: 12.5px !important;
+  line-height: 1.5 !important;
 }
 
 .driver-popover-progress-text {
-  color: #9ca3af !important;
-  font-size: 11px !important;
+  color: #a0a09c !important;
+  font-family: ui-monospace, 'IBM Plex Mono', monospace !important;
+  font-size: 10.5px !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
 }
 
 .driver-popover-footer {
-  margin-top: 14px !important;
+  margin-top: 12px !important;
 }
 
 .driver-popover-prev-btn,
 .driver-popover-next-btn,
 .driver-popover-close-btn {
-  background: #f3f4f6 !important;
-  border: 1px solid #e5e7eb !important;
-  color: #374151 !important;
-  border-radius: 8px !important;
+  background: #ffffff !important;
+  border: 1px solid #e8e8e6 !important;
+  color: #55554f !important;
+  border-radius: 7px !important;
   font-size: 12px !important;
-  font-weight: 600 !important;
-  padding: 6px 14px !important;
+  font-weight: 500 !important;
+  padding: 5px 12px !important;
   text-shadow: none !important;
+  transition: background 0.1s ease !important;
+}
+
+.driver-popover-prev-btn:hover,
+.driver-popover-close-btn:hover {
+  background: #fafaf9 !important;
+  color: #18181b !important;
 }
 
 .driver-popover-next-btn {
-  background: #1c1c1a !important;
+  background: #1c1c1e !important;
   color: #ffffff !important;
-  border-color: #1c1c1a !important;
+  border-color: #1c1c1e !important;
 }
 
 .driver-popover-next-btn:hover {
   background: #000000 !important;
+  border-color: #000000 !important;
+}
+
+.driver-active-element,
+.driver-active-element * {
+  pointer-events: none;
+}
+
+.driver-overlay {
+  background: rgba(0, 0, 0, 0.55) !important;
 }
 
 .driver-popover-arrow-side-left .driver-popover-arrow { border-right-color: #ffffff !important; }

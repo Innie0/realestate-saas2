@@ -5,6 +5,7 @@ import DashboardPage from '@/components/layout/DashboardPage';
 import { Sparkles, Send, Loader2, Paperclip, X, Plus, MessageSquare, Trash2, FileText, Pin, Edit3, Check, MoreVertical } from 'lucide-react';
 import { Conversation, ConversationMessage } from '@/types';
 import { useApi } from '@/lib/swr';
+import { useTour } from '@/hooks/useTour';
 import clsx from 'clsx';
 
 const STARTER_PROMPTS = [
@@ -68,6 +69,37 @@ export default function TasksPage() {
   useEffect(() => {
     document.title = 'AI Assistant - Realestic';
   }, []);
+
+  useTour({
+    tourKey: 'tour_ai_assistant',
+    ready: !isLoadingConversations,
+    steps: [
+      {
+        element: '[data-tour="ai-new-chat"]',
+        popover: {
+          title: 'Start a new chat',
+          description: 'Create a fresh conversation anytime. Your past threads stay in the sidebar.',
+          side: 'right',
+        },
+      },
+      {
+        element: '[data-tour="ai-chat"]',
+        popover: {
+          title: 'Ask anything',
+          description: 'Draft listing copy, follow-up emails, or upload a photo or PDF for analysis. Pick a suggestion to seed your message.',
+          side: 'left',
+        },
+      },
+      {
+        element: '[data-tour="ai-input"]',
+        popover: {
+          title: 'Send a message',
+          description: 'Type your question, attach a file with the paperclip, and press Enter to send.',
+          side: 'top',
+        },
+      },
+    ],
+  });
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -487,6 +519,7 @@ export default function TasksPage() {
           <button
             type="button"
             onClick={handleNewConversation}
+            data-tour="ai-new-chat"
             className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-[10px] border border-gray-200 bg-white text-[13px] font-medium text-gray-900 hover:bg-gray-50 transition-colors shrink-0"
           >
             <Plus className="w-4 h-4" />
@@ -639,7 +672,7 @@ export default function TasksPage() {
         </aside>
 
         {/* Main panel */}
-        <div className="flex flex-col border border-gray-200 rounded-[10px] bg-white overflow-hidden min-h-0 min-w-0">
+        <div className="flex flex-col border border-gray-200 rounded-[10px] bg-white overflow-hidden min-h-0 min-w-0" data-tour="ai-chat">
           {/* Messages */}
           <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
             {isLoadingMessages ? (
@@ -769,7 +802,7 @@ export default function TasksPage() {
           )}
 
           {/* Input bar */}
-          <div className="border-t border-gray-200 px-4 sm:px-5 py-3.5 shrink-0 bg-white">
+          <div className="border-t border-gray-200 px-4 sm:px-5 py-3.5 shrink-0 bg-white" data-tour="ai-input">
             <form onSubmit={handleSendMessage} className="space-y-2.5">
               {imagePreview && (
                 <div className="mb-2.5 border border-gray-200 rounded-[10px] p-3 bg-gray-50">

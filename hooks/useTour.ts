@@ -37,10 +37,10 @@ export function useTour({ tourKey, steps, delayMs = 800, ready = true }: UseTour
         smoothScroll: true,
         showProgress: true,
         progressText: '{{current}} of {{total}}',
-        nextBtnText: 'Next →',
-        prevBtnText: '← Back',
-        doneBtnText: 'Got it ✓',
-        overlayColor: 'rgba(0,0,0,0.65)',
+        nextBtnText: 'Next',
+        prevBtnText: 'Back',
+        doneBtnText: 'Got it',
+        overlayColor: 'rgba(0,0,0,0.55)',
         onDestroyed: () => {
           localStorage.setItem(tourKey, '1');
         },

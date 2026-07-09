@@ -42,24 +42,26 @@ export default function GettingStartedPanel({ variant, onDismiss }: GettingStart
       : 'Your workspace is empty. Start with a listing, leads, or property research.';
 
   return (
-    <Surface padding="md" className="relative border-brand-200 bg-gradient-to-r from-white to-brand-50/50">
+    <Surface flat padding="md" className="relative">
       <button
         type="button"
         onClick={onDismiss}
-        className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+        className="absolute top-4 right-4 text-gray-450 hover:text-gray-900 transition-colors"
         aria-label="Dismiss"
       >
-        <X className="w-5 h-5" />
+        <X className="w-4 h-4" />
       </button>
 
       <div className="flex items-start gap-3 pr-8 mb-4">
-        <div className="p-2.5 rounded-xl bg-brand-100 text-brand-700 shrink-0">
-          <Sparkles className="w-5 h-5" />
+        <div className="w-10 h-10 rounded-full bg-[#fdf3e5] flex items-center justify-center shrink-0">
+          <Sparkles className="w-4 h-4 text-[#b8842d]" />
         </div>
         <div>
-          <p className="text-label mb-1">{variant === 'welcome' ? 'Welcome' : 'Getting started'}</p>
-          <h2 className="text-title font-semibold text-gray-900">{title}</h2>
-          <p className="text-caption text-gray-600 mt-1">{subtitle}</p>
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450 mb-1">
+            {variant === 'welcome' ? 'Welcome' : 'Getting started'}
+          </p>
+          <h2 className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">{title}</h2>
+          <p className="text-[12.5px] text-gray-450 mt-1 leading-relaxed">{subtitle}</p>
         </div>
       </div>
 
@@ -68,15 +70,15 @@ export default function GettingStartedPanel({ variant, onDismiss }: GettingStart
           <Link
             key={href}
             href={href}
-            className="flex flex-col gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 hover:border-brand-300 hover:shadow-sm transition-all group"
+            className="flex flex-col gap-2 rounded-[10px] border border-gray-200 bg-gray-50/50 px-4 py-3 hover:bg-gray-50 transition-colors group"
           >
             <div className="flex items-center gap-2">
-              <Icon className="w-4 h-4 text-brand-600" />
-              <span className="text-sm font-medium text-gray-900 group-hover:text-brand-700">{label}</span>
+              <Icon className="w-4 h-4 text-gray-600" strokeWidth={1.75} />
+              <span className="text-[13px] font-medium text-gray-900">{label}</span>
             </div>
-            <p className="text-xs text-gray-500 leading-snug">{description}</p>
-            <span className="inline-flex items-center gap-1 text-xs font-medium text-brand-600 mt-auto">
-              Open <ArrowRight className="w-3 h-3" />
+            <p className="text-[12px] text-gray-450 leading-snug">{description}</p>
+            <span className="inline-flex items-center gap-1 text-[11.5px] font-medium text-gray-900 mt-auto">
+              Open <ArrowRight className="w-3 h-3 opacity-50 group-hover:opacity-100 transition-opacity" />
             </span>
           </Link>
         ))}

@@ -428,15 +428,15 @@ function LeadsPageContent() {
       {
         element: '[data-tour="leads-tabs"]',
         popover: {
-          title: '📬 Leads Hub',
-          description: 'Three sections: Inbox (new leads), Capture (your form & QR code), and Automations (email follow-up).',
+          title: 'Leads hub',
+          description: 'Three sections: Inbox (new leads), Capture (your form and QR code), and Automations (email follow-up).',
           side: 'bottom',
         },
       },
       {
         element: '[data-tour="leads-filter"]',
         popover: {
-          title: '🌡️ Filter by Temperature',
+          title: 'Filter by temperature',
           description: 'Hot leads are fresh (under 48h). Warm leads are within a week. Cold leads are older. Prioritize your hot ones first.',
           side: 'bottom',
         },

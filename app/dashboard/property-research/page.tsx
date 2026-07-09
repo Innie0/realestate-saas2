@@ -9,6 +9,7 @@ import Button from '@/components/ui/Button';
 import Select from '@/components/ui/Select';
 import AnimatedTabPanels from '@/components/motion/AnimatedTabPanels';
 import { useApi } from '@/lib/swr';
+import { useTour } from '@/hooks/useTour';
 import { CmaPanel, type CmaAnalysisResult } from '@/components/property-research/CmaPanel';
 import { OwnerContactPanel, type LookupResponse } from '@/components/property-research/OwnerContactPanel';
 import { PropertyOverviewCard } from '@/components/property-research/PropertyOverviewCard';
@@ -87,6 +88,37 @@ function PropertyResearchContent() {
   const [researchSearched, setResearchSearched] = useState(false);
 
   const { response: usageResponse, mutate: mutateUsage } = useApi('/api/usage');
+
+  useTour({
+    tourKey: 'tour_property_research',
+    ready: !researchSearched,
+    steps: [
+      {
+        element: '[data-tour="research-search"]',
+        popover: {
+          title: 'Research an address',
+          description: 'Enter a street and state to pull owner contact info, property details, and comp-based CMA data.',
+          side: 'bottom',
+        },
+      },
+      {
+        element: '[data-tour="research-history"]',
+        popover: {
+          title: 'Recent lookups',
+          description: 'Previously searched addresses appear here. Click one to reload cached results without using another lookup.',
+          side: 'right',
+        },
+      },
+      {
+        element: '[data-tour="research-tabs"]',
+        popover: {
+          title: 'Overview, owner, and CMA',
+          description: 'After a search, switch between property overview, owner contact records, and market analysis tabs.',
+          side: 'top',
+        },
+      },
+    ],
+  });
 
   useEffect(() => {
     document.title = 'Property Research - Realestic';
@@ -226,7 +258,7 @@ function PropertyResearchContent() {
     >
       {/* Search form — only shown before a search has been run */}
       {!researchSearched && (
-        <Surface flat padding="none" className="p-5 sm:p-6">
+        <Surface flat padding="none" className="p-5 sm:p-6" data-tour="research-search">
           <div className="space-y-4">
             <div>
               <label className="block text-[12.5px] font-medium text-gray-600 mb-1.5">Street address *</label>
@@ -320,7 +352,7 @@ function PropertyResearchContent() {
             </div>
           </Surface>
 
-          <Surface flat padding="none" className="overflow-hidden">
+          <Surface flat padding="none" className="overflow-hidden" data-tour="research-history">
             <div className="flex items-center justify-between px-4 py-3 border-b border-gray-150">
               <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">
                 <History className="w-3.5 h-3.5" />
@@ -399,7 +431,7 @@ function PropertyResearchContent() {
           )}
 
           {/* Tab bar + panel share one bordered card (square join per handoff) */}
-          <div className="rounded-[10px] border border-gray-200 bg-white overflow-hidden">
+          <div className="rounded-[10px] border border-gray-200 bg-white overflow-hidden" data-tour="research-tabs">
             <div
               className="flex items-stretch gap-1 bg-gray-100 p-1 border-b border-gray-150"
               role="tablist"

@@ -25,7 +25,7 @@ export default function ProjectsPage() {
       {
         element: '[data-tour="projects-new"]',
         popover: {
-          title: '🏡 Create a Listing Project',
+          title: 'Create a listing project',
           description: 'Each project is for one property. Enter the address and details, then Realestic generates AI-powered descriptions, social captions, and more.',
           side: 'bottom',
         },
@@ -33,7 +33,7 @@ export default function ProjectsPage() {
       {
         element: '[data-tour="projects-search"]',
         popover: {
-          title: '🔍 Find Your Projects',
+          title: 'Find your projects',
           description: 'Search by address or description to quickly jump to any listing you\'ve worked on.',
           side: 'bottom',
         },
@@ -41,7 +41,7 @@ export default function ProjectsPage() {
       {
         element: '[data-tour="projects-filter"]',
         popover: {
-          title: '📋 Filter by Status',
+          title: 'Filter by status',
           description: 'Keep track of what\'s a draft, in progress, or completed. Great for staying organized when you have multiple active listings.',
           side: 'bottom',
         },
