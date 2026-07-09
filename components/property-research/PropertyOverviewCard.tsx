@@ -83,7 +83,7 @@ export function PropertyOverviewCard({
 
   if (!hasLookup && !cmaResult) {
     return (
-      <div className="rounded-[10px] border border-gray-200 bg-white p-10 text-center">
+      <div className="p-10 text-center">
         <div className="w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
           <Home className="w-5 h-5 text-gray-450" strokeWidth={1.75} />
         </div>
@@ -104,7 +104,7 @@ export function PropertyOverviewCard({
   }
 
   return (
-    <div className="rounded-[10px] border border-gray-200 bg-white overflow-hidden">
+    <div className="overflow-hidden">
       <div className="p-5 border-b border-gray-150 bg-gray-50/50">
         <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450 mb-1">Subject Property</p>
         <h2 className="text-[16px] font-semibold text-gray-900">{addressLabel}</h2>
@@ -130,30 +130,30 @@ export function PropertyOverviewCard({
           </div>
         )}
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-[repeat(4,minmax(0,1fr))] gap-3">
           {details?.bedrooms != null && (
-            <div className="text-center p-3 rounded-[10px] bg-gray-50 border border-gray-150">
+            <div className="text-center p-3 rounded-[10px] bg-[#fafaf9] border border-gray-150 min-w-0">
               <Bed className="w-4 h-4 text-gray-450 mx-auto mb-1" />
               <p className="text-[15px] font-semibold text-gray-900">{details.bedrooms}</p>
               <p className="text-[10.5px] text-gray-450">Beds</p>
             </div>
           )}
           {details?.bathrooms != null && (
-            <div className="text-center p-3 rounded-[10px] bg-gray-50 border border-gray-150">
+            <div className="text-center p-3 rounded-[10px] bg-[#fafaf9] border border-gray-150 min-w-0">
               <Bath className="w-4 h-4 text-gray-450 mx-auto mb-1" />
               <p className="text-[15px] font-semibold text-gray-900">{details.bathrooms}</p>
               <p className="text-[10.5px] text-gray-450">Baths</p>
             </div>
           )}
           {details?.squareFootage != null && (
-            <div className="text-center p-3 rounded-[10px] bg-gray-50 border border-gray-150">
+            <div className="text-center p-3 rounded-[10px] bg-[#fafaf9] border border-gray-150 min-w-0">
               <Ruler className="w-4 h-4 text-gray-450 mx-auto mb-1" />
               <p className="text-[15px] font-semibold text-gray-900">{Number(details.squareFootage).toLocaleString()}</p>
               <p className="text-[10.5px] text-gray-450">Sq Ft</p>
             </div>
           )}
           {details?.assessedValue != null && (
-            <div className="text-center p-3 rounded-[10px] bg-gray-50 border border-gray-150">
+            <div className="text-center p-3 rounded-[10px] bg-[#fafaf9] border border-gray-150 min-w-0">
               <DollarSign className="w-4 h-4 text-gray-450 mx-auto mb-1" />
               <p className="text-[15px] font-semibold text-gray-900">{fmt(details.assessedValue, '$')}</p>
               <p className="text-[10.5px] text-gray-450">Assessed</p>

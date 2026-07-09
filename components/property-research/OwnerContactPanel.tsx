@@ -361,7 +361,7 @@ export function OwnerContactPanel({
                           const fallback = person.propertyDetails?.ownerName;
                           const displayName = isNotFound
                             ? (fallback ? fallback : 'Unknown Owner')
-                            : raw.toLowerCase();
+                            : raw;
                           return (
                             <h3 className={`font-semibold text-lg capitalize ${isNotFound && !fallback ? 'text-gray-500 italic' : 'text-gray-900'}`}>
                               {displayName}
@@ -1072,8 +1072,8 @@ export function OwnerContactPanel({
         )}
 
       {!isLoading && !results && !error && (
-        <p className="text-sm text-gray-500 text-center py-8">
-          Click &quot;Look Up Property&quot; above to find owner contact info and property records.
+        <p className="text-[13px] text-gray-450 text-center py-8">
+          Run a search from the form above to find owner contact info and property records.
         </p>
       )}
     </div>

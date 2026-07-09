@@ -398,77 +398,89 @@ function PropertyResearchContent() {
             </motion.div>
           )}
 
-          <div className="flex items-stretch gap-1 rounded-[10px] bg-gray-100 p-1">
-            {TABS.map(({ id, label, icon: Icon }) => {
-              const isActive = activeTab === id;
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => setActiveTab(id)}
-                  className={clsx(
-                    'flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-[8px] text-[13px] font-medium transition-colors',
-                    isActive ? 'bg-brand-500 text-white' : 'text-gray-600 hover:text-gray-900'
-                  )}
-                >
-                  <Icon className="w-3.5 h-3.5" strokeWidth={1.9} />
-                  {label}
-                </button>
-              );
-            })}
-          </div>
+          {/* Tab bar + panel share one bordered card (square join per handoff) */}
+          <div className="rounded-[10px] border border-gray-200 bg-white overflow-hidden">
+            <div
+              className="flex items-stretch gap-1 bg-gray-100 p-1 border-b border-gray-150"
+              role="tablist"
+            >
+              {TABS.map(({ id, label, icon: Icon }) => {
+                const isActive = activeTab === id;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => setActiveTab(id)}
+                    className={clsx(
+                      'flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-[8px] text-[13px] font-medium transition-colors',
+                      isActive ? 'bg-brand-500 text-white' : 'text-gray-600 hover:text-gray-900'
+                    )}
+                  >
+                    <Icon className="w-3.5 h-3.5" strokeWidth={1.9} />
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
 
-          <AnimatedTabPanels
-            activeTab={activeTab}
-            panels={[
-              {
-                id: 'overview',
-                content: (
-                  <PropertyOverviewCard
-                    addressLabel={addressLabel || 'No address entered'}
-                    person={firstPerson}
-                    cmaResult={cmaResult}
-                    hasLookup={!!firstPerson}
-                    onLookUpOwner={() => {
-                      setActiveTab('owner');
-                      if (!firstPerson) handleLookUp();
-                    }}
-                    onRunCma={() => {
-                      setActiveTab('cma');
-                      if (!cmaResult) handleRunCma();
-                    }}
-                  />
-                ),
-              },
-              {
-                id: 'owner',
-                content: (
-                  <OwnerContactPanel
-                    street={street}
-                    city={city}
-                    state={state}
-                    zip={zip}
-                    lookupTrigger={lookupTrigger}
-                    onComplete={handleLookupComplete}
-                    onLoadingChange={setLookupLoading}
-                  />
-                ),
-              },
-              {
-                id: 'cma',
-                content: (
-                  <CmaPanel
-                    street={street}
-                    city={city}
-                    state={state}
-                    zip={zip}
-                    runTrigger={cmaTrigger}
-                    onComplete={handleCmaComplete}
-                  />
-                ),
-              },
-            ]}
-          />
+            <AnimatedTabPanels
+              activeTab={activeTab}
+              panels={[
+                {
+                  id: 'overview',
+                  content: (
+                    <PropertyOverviewCard
+                      addressLabel={addressLabel || 'No address entered'}
+                      person={firstPerson}
+                      cmaResult={cmaResult}
+                      hasLookup={!!firstPerson}
+                      onLookUpOwner={() => {
+                        setActiveTab('owner');
+                        if (!firstPerson) handleLookUp();
+                      }}
+                      onRunCma={() => {
+                        setActiveTab('cma');
+                        if (!cmaResult) handleRunCma();
+                      }}
+                    />
+                  ),
+                },
+                {
+                  id: 'owner',
+                  content: (
+                    <div className="p-5 sm:p-6">
+                      <OwnerContactPanel
+                        street={street}
+                        city={city}
+                        state={state}
+                        zip={zip}
+                        lookupTrigger={lookupTrigger}
+                        onComplete={handleLookupComplete}
+                        onLoadingChange={setLookupLoading}
+                      />
+                    </div>
+                  ),
+                },
+                {
+                  id: 'cma',
+                  content: (
+                    <div className="p-5 sm:p-6">
+                      <CmaPanel
+                        street={street}
+                        city={city}
+                        state={state}
+                        zip={zip}
+                        runTrigger={cmaTrigger}
+                        onComplete={handleCmaComplete}
+                      />
+                    </div>
+                  ),
+                },
+              ]}
+            />
+          </div>
         </div>
       </div>
     </DashboardPage>

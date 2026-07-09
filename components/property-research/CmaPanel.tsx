@@ -333,7 +333,8 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
 
   return (
     <div className="space-y-4">
-      <div className="bg-white border border-gray-200 rounded-[10px] p-5 space-y-4">
+      {!result && (
+      <div className="border border-gray-150 rounded-[10px] p-5 space-y-4 bg-gray-50/50">
         <div data-tour="ma-subject" className="border border-gray-150 rounded-[10px] p-4 bg-gray-50 space-y-3">
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <p className="text-[14px] font-semibold text-gray-900">Subject Property Details</p>
@@ -442,22 +443,8 @@ export function CmaPanel({ street, city, state, zip, runTrigger = 0, onComplete 
             <><TrendingUp className="w-4 h-4" /> Run Comp-Based Analysis</>
           )}
         </button>
-
-        {result && liveValuation && !loading && (
-          <button
-            type="button"
-            onClick={handleExportPdf}
-            disabled={exportingPdf}
-            className="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 text-[13.5px] font-semibold py-2.5 rounded-[10px] hover:bg-gray-50 hover:border-gray-300 transition-colors disabled:opacity-50"
-          >
-            {exportingPdf ? (
-              <><Loader2 className="w-4 h-4 animate-spin" /> Generating PDF…</>
-            ) : (
-              <><Download className="w-4 h-4" /> Export Seller PDF</>
-            )}
-          </button>
-        )}
       </div>
+      )}
 
       {loading && (
         <div className="space-y-4 animate-pulse">
