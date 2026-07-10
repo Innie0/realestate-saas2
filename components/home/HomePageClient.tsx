@@ -691,9 +691,9 @@ function PropertyLookupDemoMockup() {
   ];
 
   const comps = [
-    { address: '118 W Main St', price: '$498k', sqft: '3,420', distance: '0.2 mi' },
-    { address: '131 Oak Lane', price: '$512k', sqft: '3,680', distance: '0.4 mi' },
-    { address: '99 Elm Court', price: '$475k', sqft: '3,290', distance: '0.5 mi' },
+    { address: '118 W Main St', price: '$498.000', sqft: '3,420', distance: '0.2 mi' },
+    { address: '131 Oak Lane', price: '$512.000', sqft: '3,680', distance: '0.4 mi' },
+    { address: '99 Elm Court', price: '$475.000', sqft: '3,290', distance: '0.5 mi' },
   ];
 
   return (
@@ -759,7 +759,7 @@ function PropertyLookupDemoMockup() {
                           className="bg-gray-100 border border-gray-100 rounded-xl p-2 text-center"
                         >
                           <div className="text-base mb-0.5">{d.icon}</div>
-                          <div className="font-mono text-xs font-semibold tabular-nums text-gray-900">{d.value}</div>
+                          <div className="text-price text-xs">{d.value}</div>
                           <div className="text-label text-[9px] leading-3">{d.label}</div>
                         </motion.div>
                       )}
@@ -771,11 +771,11 @@ function PropertyLookupDemoMockup() {
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="bg-gray-100 border border-gray-100 rounded-xl p-3 flex items-center justify-between mb-2">
                     <div>
                       <p className="text-label mb-0.5">Estimated Value</p>
-                      <p className="text-base font-mono font-semibold tabular-nums text-gray-900">$1,500,000</p>
+                      <p className="text-price text-base">$1.500.000</p>
                     </div>
                     <div className="text-right">
                       <p className="text-label mb-0.5">Price / sq ft</p>
-                      <p className="text-sm font-mono font-semibold tabular-nums text-gray-900">$429</p>
+                      <p className="text-price text-sm">$429</p>
                     </div>
                   </motion.div>
                 )}
@@ -813,7 +813,7 @@ function PropertyLookupDemoMockup() {
                             <p className="text-xs font-medium text-gray-900 truncate">{comp.address}</p>
                             <p className="text-[10px] text-gray-500">{comp.sqft} sq ft · {comp.distance}</p>
                           </div>
-                          <p className="font-mono text-xs font-semibold tabular-nums text-gray-900 flex-shrink-0 ml-2">{comp.price}</p>
+                          <p className="text-price text-xs flex-shrink-0 ml-2">{comp.price}</p>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -828,7 +828,7 @@ function PropertyLookupDemoMockup() {
                       className="mt-3 p-3 rounded-xl bg-brand-50 border border-brand-200"
                     >
                       <p className="text-label text-brand-700 mb-0.5">Suggested price range</p>
-                      <p className="text-lg font-mono font-semibold tabular-nums text-gray-900">$475k – $512k</p>
+                      <p className="text-price text-lg">$475.000 – $512.000</p>
                       <p className="text-[10px] text-gray-500 mt-0.5">Based on 3 adjusted comps</p>
                     </motion.div>
                   )}
@@ -1662,7 +1662,7 @@ export default function HomePageClient() {
 
                 <div className="mb-6">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-semibold tracking-[-0.02em] tabular-nums font-mono text-gray-900">{plan.price}</span>
+                    <span className="text-price text-4xl">{plan.price}</span>
                     <span className="text-gray-500 text-sm">/ mo after trial</span>
                   </div>
                   {isAnyAnnualBillingAvailable() && (

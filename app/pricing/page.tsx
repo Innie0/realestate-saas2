@@ -176,7 +176,7 @@ export default function PricingPage() {
 
                 <div className="mb-6">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-mono font-semibold tracking-[-0.02em] tabular-nums text-gray-900">
+                    <span className="text-price text-4xl">
                       {getPlanDisplayPrice(plan.slug, billingInterval)}
                     </span>
                     <span className="text-gray-500 text-sm">{getPlanPeriodLabel(billingInterval)}</span>

@@ -160,6 +160,11 @@
     @apply font-mono text-[0.6875rem] leading-4 font-medium uppercase tracking-wide text-gray-450;
   }
 
+  /* Dashboard-style currency and metric numbers (Instrument Sans, not mono). */
+  .text-price {
+    @apply font-semibold tracking-[-0.02em] tabular-nums text-gray-900;
+  }
+
   /* Sparkline draw-in: line traces left→right, area fades up under it. */
   .spark-line {
     stroke-dasharray: 1;

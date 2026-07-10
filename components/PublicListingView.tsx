@@ -15,6 +15,7 @@ import {
 import type { Project } from '@/types';
 import type { PublicListingAgent } from '@/lib/public-listing-shared';
 import ListingAgentCard from '@/components/listing/ListingAgentCard';
+import { formatCompactPrice } from '@/lib/format-price';
 import {
   formatListingPrice,
   getListingDescription,
@@ -190,12 +191,12 @@ export default function PublicListingView({ project, agent }: PublicListingViewP
       <div className="p-6 md:p-8">
         <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
           <div>
-            <div className="text-3xl md:text-4xl font-bold text-gray-900">
+            <div className="text-price text-3xl md:text-4xl">
               {formatListingPrice(info.price)}
             </div>
             {info.price && info.square_feet ? (
               <div className="text-sm text-gray-500 mt-1">
-                ${Math.round(info.price / info.square_feet).toLocaleString()}/sq ft
+                {formatCompactPrice(Math.round(info.price / info.square_feet))}/sq ft
               </div>
             ) : null}
           </div>

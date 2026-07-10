@@ -1,3 +1,4 @@
+import { formatCompactPrice } from '@/lib/format-price';
 import type { AIGeneratedContent, Project, PropertyInfo } from '@/types';
 
 export function normalizeProjectImages(
@@ -31,9 +32,5 @@ export function formatListingAddress(info: PropertyInfo | undefined, fallbackTit
 
 export function formatListingPrice(price: number | undefined | null): string {
   if (price == null || price <= 0) return 'Price upon request';
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  }).format(price);
+  return formatCompactPrice(price);
 }
