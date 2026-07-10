@@ -20,6 +20,7 @@ const ROUTE_PREFETCH_APIS: Record<string, string[]> = {
   ],
   '/dashboard/tasks': ['/api/conversations'],
   '/dashboard/property-research': ['/api/usage'],
+  '/dashboard/ads': ['/api/ads/connections', '/api/ads/campaigns?platform=all'],
   '/dashboard/calendar': ['/api/calendar/connections'],
   '/dashboard/account': [],
 };

@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, FolderKanban, Calendar, User, LogOut, Users, FileText,
-  Menu, X, ChevronsLeft, ChevronsRight, Search, Inbox, Sparkles, ChevronDown,
+  Menu, X, ChevronsLeft, ChevronsRight, Search, Inbox, Sparkles, ChevronDown, Megaphone,
 } from 'lucide-react';
 import clsx from 'clsx';
 import { signOut, getCurrentUser } from '@/lib/supabase';
@@ -53,6 +53,7 @@ const navGroups: NavGroup[] = [
     label: 'Tools',
     items: [
       { name: 'Property Research', href: '/dashboard/property-research', icon: Search },
+      { name: 'Ads', href: '/dashboard/ads', icon: Megaphone },
       { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
       { name: 'AI Assistant', href: '/dashboard/tasks', icon: Sparkles },
     ],
