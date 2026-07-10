@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Keep googleapis out of the Turbopack/webpack server bundle — avoids Vercel build failures.
+  serverExternalPackages: ['googleapis'],
   images: {
     remotePatterns: [
       {

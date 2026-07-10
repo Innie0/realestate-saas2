@@ -29,6 +29,10 @@ const publicApiPrefixes = [
   '/api/booking/',
   '/api/contact',
   '/api/cron/',
+  '/api/ads/google/callback',
+  '/api/ads/meta/callback',
+  '/api/calendar/google/callback',
+  '/api/calendar/outlook/callback',
 ];
 
 function isPublicPath(pathname: string): boolean {

@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const authUrl = getGoogleAdsAuthUrl();
+    const authUrl = await getGoogleAdsAuthUrl();
     return NextResponse.json({
       success: true,
       data: { authUrl },
