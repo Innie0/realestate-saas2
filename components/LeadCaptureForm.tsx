@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Check, Home, Building2, KeyRound, Search } from 'lucide-react';
+import { parseAdAttribution } from '@/lib/ads/utm';
 
 interface LeadCaptureFormProps {
   agentId: string;
@@ -64,6 +66,9 @@ export default function LeadCaptureForm({
   projectId,
   defaultLeadType = '',
 }: LeadCaptureFormProps) {
+  const searchParams = useSearchParams();
+  const adAttribution = parseAdAttribution(searchParams.toString());
+
   const isListingForm = variant === 'listing' || source === 'listing_page';
 
   const [formData, setFormData] = useState({
@@ -114,7 +119,15 @@ export default function LeadCaptureForm({
       const response = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ agentId, source, listingAddress, projectId, ...formData }),
+        body: JSON.stringify({
+          agentId,
+          source,
+          listingAddress,
+          projectId: projectId ?? adAttribution.projectId ?? undefined,
+          adSource: adAttribution.adSource,
+          promotionId: adAttribution.promotionId,
+          ...formData,
+        }),
       });
       const result = await response.json();
       if (result.success) {

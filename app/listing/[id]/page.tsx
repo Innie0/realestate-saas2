@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import PublicListingView from '@/components/PublicListingView';
 import LeadCaptureForm from '@/components/LeadCaptureForm';
 import ListingPageHeader from '@/components/listing/ListingPageHeader';
@@ -110,14 +111,16 @@ export default async function PublicListingPage({ params, searchParams }: PagePr
           <p className="text-sm text-gray-500 mb-6">
             Send a message to {agent.name.split(' ')[0]} and they&apos;ll get back to you soon.
           </p>
-          <LeadCaptureForm
-            agentId={agent.id}
-            agentName={agent.name}
-            variant="listing"
-            source="listing_page"
-            listingAddress={listingAddress}
-            projectId={project.id}
-          />
+          <Suspense fallback={<p className="text-sm text-gray-500">Loading form…</p>}>
+            <LeadCaptureForm
+              agentId={agent.id}
+              agentName={agent.name}
+              variant="listing"
+              source="listing_page"
+              listingAddress={listingAddress}
+              projectId={project.id}
+            />
+          </Suspense>
         </div>
       </div>
 

@@ -35,6 +35,7 @@ interface Lead {
   lead_type?: string;
   message?: string;
   source?: string;
+  ad_source?: string | null;
   project_id?: string | null;
   projects?: {
     id: string;
@@ -91,6 +92,16 @@ const LEAD_TYPE_LABELS: Record<string, string> = {
   browsing: 'Just looking',
 };
 
+const AD_SOURCE_LABELS: Record<string, string> = {
+  meta_ad: 'From ad',
+  google_ad: 'From ad',
+};
+
+function getAdSourceLabel(adSource?: string | null): string | null {
+  if (!adSource) return null;
+  return AD_SOURCE_LABELS[adSource] ?? null;
+}
+
 const SOURCE_LABELS: Record<string, string> = {
   lead_form: 'Lead form',
   open_house: 'Open house',
@@ -140,6 +151,7 @@ function parseLeadDetail(lead: Lead) {
 
 function getLeadSummaryLine(lead: Lead): string {
   const { infoLines, openHouseLine, listingDisplay } = parseLeadDetail(lead);
+  if (getAdSourceLabel(lead.ad_source)) return 'From paid ad';
   if (openHouseLine) return `Open house · ${openHouseLine}`;
   if (listingDisplay) return `Re: ${listingDisplay}`;
   if (infoLines.length > 0) return infoLines.join(' · ');
@@ -208,6 +220,11 @@ function LeadRow({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <p className="text-[14px] font-semibold text-gray-900 truncate">{lead.name}</p>
+            {getAdSourceLabel(lead.ad_source) && (
+              <span className="inline-flex items-center gap-0.5 text-[10.5px] font-semibold text-indigo-600 shrink-0">
+                <Sparkles className="w-3 h-3" /> From ad
+              </span>
+            )}
             {temp === 'hot' && (
               <span className="inline-flex items-center gap-0.5 text-[10.5px] font-semibold text-red-600 shrink-0">
                 <Flame className="w-3 h-3" /> Hot
@@ -357,6 +374,11 @@ function LeadRow({
                     <Phone className="w-3.5 h-3.5" />
                     {lead.phone}
                   </button>
+                )}
+                {getAdSourceLabel(lead.ad_source) && (
+                  <span className="px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100">
+                    {getAdSourceLabel(lead.ad_source)}
+                  </span>
                 )}
                 {lead.source && SOURCE_LABELS[lead.source] && (
                   <span className="px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-700">

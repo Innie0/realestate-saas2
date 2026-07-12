@@ -1,3 +1,5 @@
+import type { Project } from '@/types';
+
 export type AdPlatform = 'google' | 'meta';
 
 export type AdCampaignStatus = 'active' | 'paused' | 'ended' | 'draft';
@@ -43,4 +45,27 @@ export interface AdsSummary {
   conversions: number;
   currency: string;
   connectedPlatforms: AdPlatform[];
+}
+
+export type AdPromotionStatus = 'pending' | 'active' | 'paused' | 'ended' | 'failed';
+
+export interface AdPromotion {
+  id: string;
+  project_id: string;
+  platform: AdPlatform;
+  daily_budget_cents: number;
+  duration_days: number;
+  status: AdPromotionStatus;
+  headline: string | null;
+  landing_url: string;
+  created_at: string;
+  meta_campaign_id: string | null;
+  error_message: string | null;
+  projects?: {
+    id: string;
+    title: string;
+    property_info?: { address?: string; city?: string; state?: string; zip_code?: string; price?: number };
+    images?: Project['images'];
+    published?: boolean;
+  } | null;
 }

@@ -26,7 +26,7 @@ const VALID_LEAD_TYPES = ['buyer', 'seller', 'renter', 'browsing'];
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { agentId, name, email, phone, leadType, timeline, budget, area, message, source, listingAddress, projectId } = body;
+    const { agentId, name, email, phone, leadType, timeline, budget, area, message, source, listingAddress, projectId, adSource, promotionId } = body;
 
     // --- Validation -------------------------------------------------------
     if (!agentId || !UUID_REGEX.test(agentId)) {
@@ -84,6 +84,10 @@ export async function POST(request: NextRequest) {
       typeof listingAddress === 'string' ? listingAddress.trim().slice(0, 300) : '';
     const cleanProjectId =
       typeof projectId === 'string' && UUID_REGEX.test(projectId) ? projectId : null;
+    const cleanAdSource =
+      typeof adSource === 'string' && /^(meta|google)_ad$/.test(adSource) ? adSource : null;
+    const cleanPromotionId =
+      typeof promotionId === 'string' && UUID_REGEX.test(promotionId) ? promotionId : null;
 
     const supabase = createAdminClient();
 
@@ -126,6 +130,7 @@ export async function POST(request: NextRequest) {
         phone: cleanPhone || null,
         status: 'active',
         source: leadSource,
+        ad_source: cleanAdSource,
         in_crm: false,
         lead_type: cleanLeadType,
         message: cleanMessage || null,
@@ -144,6 +149,12 @@ export async function POST(request: NextRequest) {
 
     // --- Store the message as a note (shows in the CRM timeline) ----------
     const noteParts = [
+      cleanAdSource === 'meta_ad'
+        ? 'From Meta ad'
+        : cleanAdSource === 'google_ad'
+          ? 'From Google ad'
+          : null,
+      cleanPromotionId ? `Promotion: ${cleanPromotionId}` : null,
       cleanListingAddress ? `Listing: ${cleanListingAddress}` : null,
       cleanLeadType ? `Interested in: ${cleanLeadType}` : null,
       cleanTimeline ? `Timeline: ${cleanTimeline}` : null,
@@ -167,10 +178,23 @@ export async function POST(request: NextRequest) {
       ? ` (${cleanLeadType.charAt(0).toUpperCase() + cleanLeadType.slice(1)})`
       : '';
 
+    const adLabel =
+      cleanAdSource === 'meta_ad'
+        ? 'Meta ad'
+        : cleanAdSource === 'google_ad'
+          ? 'Google ad'
+          : null;
+
     await supabase.from('reminders').insert({
       client_id: client.id,
       user_id: agentId,
-      title: `New lead: ${cleanName}${leadTypeLabel} — ${leadSource === 'listing_page' ? 'listing inquiry' : 'submitted your lead form'}`,
+      title: `New lead: ${cleanName}${leadTypeLabel} — ${
+        adLabel
+          ? adLabel
+          : leadSource === 'listing_page'
+            ? 'listing inquiry'
+            : 'submitted your lead form'
+      }`,
       description: [
         cleanEmail ? `Email: ${cleanEmail}` : null,
         cleanPhone ? `Phone: ${cleanPhone}` : null,

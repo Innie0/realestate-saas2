@@ -19,7 +19,7 @@ import {
   Upload, Sparkles, Save, Trash2, Image as ImageIcon, Calendar, FileText, 
   Building2, Copy, Check, Edit3, Wand2, Eye, ChevronLeft, ChevronRight,
   Home, MapPin, Bed, Bath, Square, DollarSign, ExternalLink, X, Globe, Link2,
-  ArrowLeft,
+  ArrowLeft, Megaphone,
 } from 'lucide-react';
 import { Project, AIGeneratedContent } from '@/types';
 import { useToast } from '@/components/providers/ToastProvider';
@@ -1349,6 +1349,16 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         <Eye className="w-4 h-4 mr-2" />
         Preview
       </Button>
+      {project.published && (
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => router.push(`/dashboard/ads?promote=${project.id}`)}
+        >
+          <Megaphone className="w-4 h-4 mr-2" />
+          Promote listing
+        </Button>
+      )}
       {autoSaveStatus !== 'idle' && (
         <div
           className={`
