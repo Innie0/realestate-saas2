@@ -54,7 +54,7 @@ function suggestTargeting(adType: string, details: Record<string, string | numbe
   }
 
   return {
-    audience: { preset, radiusMiles, ageMin, ageMax },
+    audience: { preset, radiusMiles, ageMin, ageMax, interests: [] as string[] },
     budget: { dailyAmountCents, durationDays: adType === 'open_house' ? 7 : 14 },
     note,
   };

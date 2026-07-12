@@ -42,6 +42,7 @@ export interface AdDraft {
     radiusMiles: number;
     ageMin: number;
     ageMax: number;
+    interests: string[];
   };
   budget: {
     dailyAmountCents: number;
@@ -49,6 +50,7 @@ export interface AdDraft {
   };
   cta: AdCtaType;
   status: 'draft' | 'ready' | 'published';
+  createdAt: string;
   updatedAt: string;
 }
 
@@ -84,6 +86,7 @@ export function createEmptyDraft(id?: string): AdDraft {
       radiusMiles: 15,
       ageMin: 25,
       ageMax: 65,
+      interests: [],
     },
     budget: {
       dailyAmountCents: 2000,
@@ -91,6 +94,7 @@ export function createEmptyDraft(id?: string): AdDraft {
     },
     cta: 'LEARN_MORE',
     status: 'draft',
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
 }

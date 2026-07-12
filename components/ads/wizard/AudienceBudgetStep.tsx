@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Loader2, Sparkles } from 'lucide-react';
 import Input from '@/components/ui/Input';
 import {
@@ -22,6 +22,7 @@ interface AudienceBudgetStepProps {
 export default function AudienceBudgetStep({ draft, onChange }: AudienceBudgetStepProps) {
   const [suggestionNote, setSuggestionNote] = useState<string | null>(null);
   const [loadingSuggestion, setLoadingSuggestion] = useState(false);
+  const autoSuggested = useRef(false);
 
   const loadSuggestion = async () => {
     if (!draft.adType) return;
@@ -44,6 +45,7 @@ export default function AudienceBudgetStep({ draft, onChange }: AudienceBudgetSt
           radiusMiles: audience.radiusMiles,
           ageMin: audience.ageMin,
           ageMax: audience.ageMax,
+          interests: audience.interests ?? draft.audience.interests,
         },
         budget: {
           dailyAmountCents: budget.dailyAmountCents,
@@ -55,6 +57,13 @@ export default function AudienceBudgetStep({ draft, onChange }: AudienceBudgetSt
       setLoadingSuggestion(false);
     }
   };
+
+  useEffect(() => {
+    if (autoSuggested.current || !draft.adType) return;
+    autoSuggested.current = true;
+    void loadSuggestion();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draft.adType]);
 
   const dailyDollars = draft.budget.dailyAmountCents / 100;
   const total = dailyDollars * draft.budget.durationDays;
@@ -111,6 +120,68 @@ export default function AudienceBudgetStep({ draft, onChange }: AudienceBudgetSt
         </div>
 
         <div className="grid gap-4 sm:grid-cols-3">
+          <div>
+            <label className="text-[12px] font-medium text-gray-600 mb-1.5 block">
+              Radius · {draft.audience.radiusMiles} mi
+            </label>
+            <input
+              type="range"
+              min={5}
+              max={50}
+              value={draft.audience.radiusMiles}
+              onChange={(e) =>
+                onChange({
+                  audience: {
+                    ...draft.audience,
+                    radiusMiles: Number(e.target.value),
+                  },
+                })
+              }
+              className="w-full accent-brand-500"
+            />
+          </div>
+          <div>
+            <label className="text-[12px] font-medium text-gray-600 mb-1.5 block">
+              Age min · {draft.audience.ageMin}
+            </label>
+            <input
+              type="range"
+              min={18}
+              max={65}
+              value={draft.audience.ageMin}
+              onChange={(e) =>
+                onChange({
+                  audience: {
+                    ...draft.audience,
+                    ageMin: Math.min(Number(e.target.value), draft.audience.ageMax),
+                  },
+                })
+              }
+              className="w-full accent-brand-500"
+            />
+          </div>
+          <div>
+            <label className="text-[12px] font-medium text-gray-600 mb-1.5 block">
+              Age max · {draft.audience.ageMax}
+            </label>
+            <input
+              type="range"
+              min={18}
+              max={65}
+              value={draft.audience.ageMax}
+              onChange={(e) =>
+                onChange({
+                  audience: {
+                    ...draft.audience,
+                    ageMax: Math.max(Number(e.target.value), draft.audience.ageMin),
+                  },
+                })
+              }
+              className="w-full accent-brand-500"
+            />
+          </div>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-3 mt-3">
           <Input
             label="Radius (miles)"
             type="number"

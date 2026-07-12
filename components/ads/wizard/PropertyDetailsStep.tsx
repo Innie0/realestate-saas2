@@ -1,7 +1,9 @@
 'use client';
 
+import { useEffect } from 'react';
 import Image from 'next/image';
 import Input from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
 import { useApi } from '@/lib/swr';
 import { formatListingAddress, formatListingPrice, normalizeProjectImages } from '@/lib/listing-utils';
 import { isProjectPromotable } from '@/lib/ads/listing-ad-copy';
@@ -11,7 +13,13 @@ import { listingRequiredForAdType } from '@/lib/ads/ad-draft-types';
 import AdImagePicker from '@/components/ads/wizard/AdImagePicker';
 import type { Project } from '@/types';
 import clsx from 'clsx';
-import { Megaphone } from 'lucide-react';
+import { Megaphone, User } from 'lucide-react';
+
+interface AgentProfilePayload {
+  profile_photo_url?: string | null;
+  profile_bio?: string | null;
+  profile_headline?: string | null;
+}
 
 interface PropertyDetailsStepProps {
   draft: AdDraft;
@@ -20,8 +28,10 @@ interface PropertyDetailsStepProps {
 
 export default function PropertyDetailsStep({ draft, onChange }: PropertyDetailsStepProps) {
   const { data: projects = [], isLoading } = useApi<Project[]>('/api/projects');
+  const { data: profile } = useApi<AgentProfilePayload | null>('/api/agent-profile');
   const fields = getDetailFieldsForAdType(draft.adType);
   const showListingPicker = draft.adType && listingRequiredForAdType(draft.adType);
+  const isAgentBranding = draft.adType === 'agent_branding';
 
   const listingOptions = showListingPicker
     ? projects.filter((p) => isProjectPromotable(p).ok)
@@ -52,6 +62,33 @@ export default function PropertyDetailsStep({ draft, onChange }: PropertyDetails
         bathrooms: info.bathrooms || '',
       },
       images,
+    });
+  };
+
+  useEffect(() => {
+    if (!isAgentBranding || !profile) return;
+    const patch: Partial<AdDraft> = {};
+    const details = { ...draft.propertyDetails };
+    let changed = false;
+    if (!details.bioBlurb && profile.profile_bio) {
+      details.bioBlurb = profile.profile_bio;
+      changed = true;
+    }
+    if (!details.agentTagline && profile.profile_headline) {
+      details.agentTagline = profile.profile_headline;
+      changed = true;
+    }
+    if (changed) patch.propertyDetails = details;
+    if (changed) onChange(patch);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAgentBranding, profile?.profile_bio, profile?.profile_headline]);
+
+  const useProfilePhoto = () => {
+    if (!profile?.profile_photo_url) return;
+    const exists = draft.images.some((i) => i.url === profile.profile_photo_url);
+    if (exists) return;
+    onChange({
+      images: [{ url: profile.profile_photo_url, order: 0 }, ...draft.images.map((img, i) => ({ ...img, order: i + 1 }))],
     });
   };
 
@@ -107,6 +144,32 @@ export default function PropertyDetailsStep({ draft, onChange }: PropertyDetails
         </div>
       )}
 
+      {isAgentBranding && (
+        <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4 space-y-3">
+          <p className="text-label flex items-center gap-1.5">
+            <User className="h-3.5 w-3.5" />
+            Headshot
+          </p>
+          {profile?.profile_photo_url && (
+            <div className="flex items-center gap-3">
+              <div className="relative h-14 w-14 rounded-full overflow-hidden ring-2 ring-white shadow">
+                <Image src={profile.profile_photo_url} alt="" fill className="object-cover" sizes="56px" />
+              </div>
+              <Button variant="outline" size="sm" type="button" onClick={useProfilePhoto}>
+                Use profile photo
+              </Button>
+            </div>
+          )}
+          <AdImagePicker
+            draftId={draft.id}
+            images={draft.images}
+            onChange={(images) => onChange({ images, projectId: null })}
+            label="Headshot & brand images"
+            emptyHint="Upload your headshot or brand photo — drag, drop, or tap."
+          />
+        </div>
+      )}
+
       <div className="grid gap-4 sm:grid-cols-2">
         {fields.map((field) => (
           <div key={field.key} className={field.type === 'textarea' ? 'sm:col-span-2' : ''}>
@@ -141,10 +204,13 @@ export default function PropertyDetailsStep({ draft, onChange }: PropertyDetails
         ))}
       </div>
 
-      <AdImagePicker
-        images={draft.images}
-        onChange={(images) => onChange({ images })}
-      />
+      {!isAgentBranding && (
+        <AdImagePicker
+          draftId={draft.id}
+          images={draft.images}
+          onChange={(images) => onChange({ images })}
+        />
+      )}
     </div>
   );
 }

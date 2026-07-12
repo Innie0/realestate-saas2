@@ -108,12 +108,14 @@ export default function WizardShell({
       case 'type':
         return Boolean(draft.adType);
       case 'details':
-        if (draft.adType && listingRequiredForAdType(draft.adType) && !draft.projectId) {
-          const hasManual =
-            draft.propertyDetails.address || draft.images.length > 0;
-          if (!hasManual) return false;
+        if (draft.images.length === 0) {
+          if (draft.adType && listingRequiredForAdType(draft.adType) && !draft.projectId) {
+            const hasManual = draft.propertyDetails.address;
+            if (!hasManual) return false;
+          }
+          return false;
         }
-        return draft.images.length > 0 || Boolean(draft.projectId);
+        return true;
       case 'copy':
         return true;
       case 'platform':
@@ -180,14 +182,6 @@ export default function WizardShell({
       return;
     }
 
-    if (draft.adType && listingRequiredForAdType(draft.adType) && !draft.projectId) {
-      onMessage?.({
-        type: 'error',
-        text: 'Link a property project to launch this ad type.',
-      });
-      return;
-    }
-
     setLaunching(true);
     onMessage?.(null);
     try {
@@ -196,6 +190,9 @@ export default function WizardShell({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           projectId: draft.projectId,
+          adType: draft.adType,
+          propertyDetails: draft.propertyDetails,
+          images: draft.images,
           dailyBudgetCents: draft.budget.dailyAmountCents,
           durationDays: draft.budget.durationDays,
           headline,

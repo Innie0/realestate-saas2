@@ -44,7 +44,7 @@ function AdsPageContent() {
       setPageMessage({ type: 'success', text: 'Google Ads connected.' });
       void mutateConnections();
     } else if (connected === 'meta') {
-      setPageMessage({ type: 'success', text: 'Meta Ads connected — you can promote a listing now.' });
+      setPageMessage({ type: 'success', text: 'Meta Ads connected — you can create and publish ads now.' });
       void mutateConnections();
     } else if (error) {
       const messages: Record<string, string> = {

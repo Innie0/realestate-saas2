@@ -21,7 +21,7 @@ export default function AICopyAssistStep({ draft, onChange }: AICopyAssistStepPr
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/ai/generate-ad-copy', {
+      const res = await fetch('/api/ai/generate-copy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

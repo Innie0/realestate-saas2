@@ -9,7 +9,9 @@ import {
   isValidDailyBudget,
   isValidDuration,
 } from '@/lib/ads/promotion-options';
+import { resolvePromotionProjectId } from '@/lib/ads/resolve-promotion-project';
 import { buildAdLandingUrl } from '@/lib/ads/utm';
+import type { AdType } from '@/lib/ads/ad-draft-types';
 import { APIResponse } from '@/types';
 
 const VALID_CTAS = new Set(CTA_OPTIONS.map((o) => o.id));
@@ -30,7 +32,6 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const projectId = typeof body.projectId === 'string' ? body.projectId : '';
     const dailyBudgetCents = Number(body.dailyBudgetCents);
     const durationDays = Number(body.durationDays) || 7;
     const headlineOverride = typeof body.headline === 'string' ? body.headline.trim().slice(0, 100) : '';
@@ -41,12 +42,10 @@ export async function POST(request: NextRequest) {
     const callToAction = VALID_CTAS.has(body.callToAction) ? body.callToAction : 'LEARN_MORE';
     const ageMin = Math.min(65, Math.max(18, Number(body.ageMin) || 25));
     const ageMax = Math.min(65, Math.max(ageMin, Number(body.ageMax) || 65));
-
-    if (!projectId) {
-      return NextResponse.json({ success: false, error: 'Select a listing to promote.' } satisfies APIResponse, {
-        status: 400,
-      });
-    }
+    const adType = typeof body.adType === 'string' ? (body.adType as AdType) : null;
+    const propertyDetails =
+      typeof body.propertyDetails === 'object' && body.propertyDetails ? body.propertyDetails : {};
+    const images = Array.isArray(body.images) ? body.images : [];
 
     if (!isValidDailyBudget(dailyBudgetCents)) {
       return NextResponse.json({ success: false, error: 'Invalid daily budget.' } satisfies APIResponse, {
@@ -60,24 +59,42 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    let resolvedProjectId: string;
+    try {
+      const resolved = await resolvePromotionProjectId(supabase, user.id, {
+        projectId: typeof body.projectId === 'string' ? body.projectId : null,
+        adType,
+        propertyDetails,
+        images,
+      });
+      resolvedProjectId = resolved.projectId;
+    } catch (resolveError: any) {
+      return NextResponse.json(
+        { success: false, error: resolveError.message || 'Could not prepare ad.' } satisfies APIResponse,
+        { status: 400 }
+      );
+    }
+
     const { data: project, error: projectError } = await supabase
       .from('projects')
       .select('id, title, description, property_info, images, ai_content')
-      .eq('id', projectId)
+      .eq('id', resolvedProjectId)
       .eq('user_id', user.id)
       .single();
 
     if (projectError || !project) {
-      return NextResponse.json({ success: false, error: 'Listing not found.' } satisfies APIResponse, {
+      return NextResponse.json({ success: false, error: 'Project not found.' } satisfies APIResponse, {
         status: 404,
       });
     }
 
-    const promotable = isProjectPromotable(project);
-    if (!promotable.ok) {
-      return NextResponse.json({ success: false, error: promotable.reason } satisfies APIResponse, {
-        status: 400,
-      });
+    if (!imageUrlOverride) {
+      const promotable = isProjectPromotable(project);
+      if (!promotable.ok) {
+        return NextResponse.json({ success: false, error: promotable.reason } satisfies APIResponse, {
+          status: 400,
+        });
+      }
     }
 
     const defaults = buildListingAdCopy(project);
@@ -86,7 +103,7 @@ export async function POST(request: NextRequest) {
     const imageUrl = imageUrlOverride || defaults.imageUrl;
 
     if (!imageUrl) {
-      return NextResponse.json({ success: false, error: 'Add a listing photo before promoting.' } satisfies APIResponse, {
+      return NextResponse.json({ success: false, error: 'Add a photo before publishing.' } satisfies APIResponse, {
         status: 400,
       });
     }
@@ -209,7 +226,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         data: updated,
-        message: 'Your listing ad is live on Meta. Leads from the ad will appear in your inbox.',
+        message: 'Your ad is live on Meta. Leads from the ad will appear in your inbox.',
       } satisfies APIResponse);
     } catch (metaError: any) {
       const message = metaError?.message || 'Meta rejected the ad. Check your ad account or try again.';
