@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
     }
 
     let linkedProjectId: string | null = null;
-    if (cleanProjectId && leadSource === 'listing_page') {
+    if (cleanProjectId) {
       const { data: listingProject } = await supabase
         .from('projects')
         .select('id')
@@ -119,22 +119,26 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // --- Create the lead --------------------------------------------------
+    const leadInsert: Record<string, unknown> = {
+      user_id: agentId,
+      name: cleanName,
+      email: cleanEmail || null,
+      phone: cleanPhone || null,
+      status: 'active',
+      source: leadSource,
+      ad_source: cleanAdSource,
+      in_crm: false,
+      lead_type: cleanLeadType,
+      message: cleanMessage || null,
+      project_id: linkedProjectId,
+    };
+    if (cleanPromotionId) {
+      leadInsert.ad_promotion_id = cleanPromotionId;
+    }
+
     const { data: client, error: insertError } = await supabase
       .from('clients')
-      .insert({
-        user_id: agentId,
-        name: cleanName,
-        email: cleanEmail || null,
-        phone: cleanPhone || null,
-        status: 'active',
-        source: leadSource,
-        ad_source: cleanAdSource,
-        in_crm: false,
-        lead_type: cleanLeadType,
-        message: cleanMessage || null,
-        project_id: linkedProjectId,
-      })
+      .insert(leadInsert)
       .select()
       .single();
 

@@ -57,6 +57,9 @@ export interface AdPromotion {
   duration_days: number;
   status: AdPromotionStatus;
   headline: string | null;
+  primary_text?: string | null;
+  ad_type?: string | null;
+  meta_ad_id?: string | null;
   landing_url: string;
   created_at: string;
   meta_campaign_id: string | null;
@@ -66,6 +69,5 @@ export interface AdPromotion {
     title: string;
     property_info?: { address?: string; city?: string; state?: string; zip_code?: string; price?: number };
     images?: Project['images'];
-    published?: boolean;
   } | null;
 }

@@ -25,6 +25,8 @@ import {
 } from '@/lib/ads/ad-draft-types';
 import { loadAdDraft, saveAdDraft, clearAdDraft } from '@/lib/ads/ad-draft-storage';
 import { getDefaultCtaForAdType } from '@/lib/ads/ad-type-config';
+import { applyInsightSeeds } from '@/lib/ads/insight-seeds';
+import type { AIInsight } from '@/lib/ads/performance-types';
 import { tabPanelTransition, useMotionReduced } from '@/lib/motion';
 import { useApi } from '@/lib/swr';
 import { isValidDailyBudget, isValidDuration } from '@/lib/ads/promotion-options';
@@ -80,6 +82,10 @@ export default function WizardShell({
   const [previewPlatform, setPreviewPlatform] = useState<AdPreviewPlatform>('facebook');
   const [launching, setLaunching] = useState(false);
   const [draftSavedHint, setDraftSavedHint] = useState(false);
+  const [insightNote, setInsightNote] = useState<string | null>(null);
+  const insightApplied = useRef(false);
+
+  const { data: wizardInsights = [] } = useApi<AIInsight[]>('/api/ads/insights?forWizard=1');
 
   const advertiserName = (profileResponse?.fullName as string | undefined) || 'Your listing';
   const advertiserAvatar = profileResponse?.data?.profile_photo_url ?? null;
@@ -99,6 +105,17 @@ export default function WizardShell({
       if (saveTimer.current) clearTimeout(saveTimer.current);
     };
   }, [draft]);
+
+  useEffect(() => {
+    if (insightApplied.current || wizardInsights.length === 0) return;
+    insightApplied.current = true;
+    setDraft((prev) => {
+      const result = applyInsightSeeds(prev, wizardInsights);
+      if (!result) return prev;
+      setInsightNote(result.note);
+      return { ...prev, ...result.draftPatch, status: 'draft' as const };
+    });
+  }, [wizardInsights]);
 
   const currentIndex = stepIndex(currentStep);
   const stepMeta = WIZARD_STEPS[currentIndex];
@@ -263,7 +280,14 @@ export default function WizardShell({
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[210px_minmax(0,1fr)_minmax(260px,300px)] lg:items-start">
+    <>
+      {insightNote && (
+        <div className="rounded-lg border border-brand-100 bg-brand-50/50 px-4 py-3 text-[12.5px] text-brand-900 mb-4">
+          {insightNote}
+        </div>
+      )}
+
+      <div className="grid gap-6 lg:grid-cols-[210px_minmax(0,1fr)_minmax(260px,300px)] lg:items-start">
       <StepSidebar
         currentStep={currentStep}
         maxStepIndex={maxStepIndex}
@@ -332,5 +356,6 @@ export default function WizardShell({
         />
       )}
     </div>
+    </>
   );
 }

@@ -6,31 +6,64 @@ import DashboardPage from '@/components/layout/DashboardPage';
 import Surface from '@/components/ui/Surface';
 import AdsConnectionsPanel from '@/components/ads/AdsConnectionsPanel';
 import WizardShell from '@/components/ads/wizard/WizardShell';
-import ActivePromotionsPanel from '@/components/ads/ActivePromotionsPanel';
+import PerformanceDashboard from '@/components/ads/PerformanceDashboard';
+import AIInsightsFeed from '@/components/ads/AIInsightsFeed';
+import AdDetailView from '@/components/ads/AdDetailView';
+import OptimizeAdFlow from '@/components/ads/OptimizeAdFlow';
 import { useApi } from '@/lib/swr';
 import type { AdPlatform, AdPlatformConnection, AdPromotion } from '@/lib/ads/types';
+import type { AIInsight, PerformanceDashboardData } from '@/lib/ads/performance-types';
 import clsx from 'clsx';
-import { ChevronDown, Megaphone } from 'lucide-react';
+import { BarChart3, ChevronDown, Megaphone, PenLine } from 'lucide-react';
+
+type AdsTab = 'create' | 'performance';
+
+function performanceUrl(days: number, adType: string) {
+  const params = new URLSearchParams();
+  params.set('days', String(days));
+  if (adType) params.set('adType', adType);
+  const from = new Date();
+  from.setUTCDate(from.getUTCDate() - days);
+  params.set('from', from.toISOString().slice(0, 10));
+  return `/api/ads/performance?${params.toString()}`;
+}
 
 function AdsPageContent() {
   const searchParams = useSearchParams();
   const promoteProjectId = searchParams.get('promote');
+  const initialTab = searchParams.get('tab') === 'performance' ? 'performance' : 'create';
+
+  const [tab, setTab] = useState<AdsTab>(initialTab);
   const [connecting, setConnecting] = useState<AdPlatform | null>(null);
   const [disconnecting, setDisconnecting] = useState<AdPlatform | null>(null);
   const [showAccounts, setShowAccounts] = useState(false);
   const [pageMessage, setPageMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(
     null
   );
+  const [perfDays, setPerfDays] = useState(30);
+  const [perfAdType, setPerfAdType] = useState('');
+  const [selectedAdId, setSelectedAdId] = useState<string | null>(null);
+  const [refreshingInsights, setRefreshingInsights] = useState(false);
+  const [optimizePromotionId, setOptimizePromotionId] = useState<string | null>(null);
+  const [optimizeInsight, setOptimizeInsight] = useState<AIInsight | null>(null);
 
   const { data: connections, mutate: mutateConnections } = useApi<AdPlatformConnection[]>(
     '/api/ads/connections'
   );
 
+  const { mutate: mutatePromotions } = useApi<AdPromotion[]>('/api/ads/promotions');
+
   const {
-    data: promotions = [],
-    isLoading: promotionsLoading,
-    mutate: mutatePromotions,
-  } = useApi<AdPromotion[]>('/api/ads/promotions');
+    data: performance,
+    isLoading: performanceLoading,
+    mutate: mutatePerformance,
+  } = useApi<PerformanceDashboardData>(tab === 'performance' ? performanceUrl(perfDays, perfAdType) : null);
+
+  const {
+    data: insights = [],
+    isLoading: insightsLoading,
+    mutate: mutateInsights,
+  } = useApi<AIInsight[]>(tab === 'performance' ? '/api/ads/insights' : null);
 
   useEffect(() => {
     document.title = 'Ads - Realestic';
@@ -70,6 +103,11 @@ function AdsPageContent() {
   const googleConnected = useMemo(
     () => (connections ?? []).some((c) => c.provider === 'google' && c.is_active),
     [connections]
+  );
+
+  const selectedAd = useMemo(
+    () => performance?.ads.find((a) => a.promotionId === selectedAdId) ?? null,
+    [performance, selectedAdId]
   );
 
   const handleConnect = useCallback(async (provider: AdPlatform) => {
@@ -118,10 +156,41 @@ function AdsPageContent() {
     [mutateConnections]
   );
 
+  const refreshInsights = async () => {
+    setRefreshingInsights(true);
+    try {
+      await fetch('/api/ai/analyze-performance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{}',
+      });
+      await mutateInsights();
+      await mutatePerformance();
+    } finally {
+      setRefreshingInsights(false);
+    }
+  };
+
+  const dismissInsight = async (id: string) => {
+    await fetch(`/api/ads/insights/${id}/dismiss`, { method: 'POST' });
+    void mutateInsights();
+  };
+
+  const openOptimize = (insight: AIInsight) => {
+    const promoId = insight.relatedAdIds[0] ?? null;
+    if (!promoId) return;
+    setOptimizePromotionId(promoId);
+    setOptimizeInsight(insight);
+  };
+
   return (
     <DashboardPage
       title="Ads"
-      subtitle="Create and publish ads in a few guided steps"
+      subtitle={
+        tab === 'create'
+          ? 'Create and publish ads in a few guided steps'
+          : 'Track performance and improve with AI'
+      }
     >
       {pageMessage && (
         <div
@@ -136,17 +205,95 @@ function AdsPageContent() {
         </div>
       )}
 
-      <WizardShell
-        initialProjectId={promoteProjectId}
-        metaConnected={metaConnected}
-        googleConnected={googleConnected}
-        onConnectMeta={() => void handleConnect('meta')}
-        connectingMeta={connecting === 'meta'}
-        onLaunched={() => void mutatePromotions()}
-        onMessage={setPageMessage}
-      />
+      <div className="flex gap-1 p-1 rounded-lg bg-gray-100 w-fit">
+        <button
+          type="button"
+          onClick={() => setTab('create')}
+          className={clsx(
+            'inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-[13px] font-medium transition-colors',
+            tab === 'create' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+          )}
+        >
+          <PenLine className="h-3.5 w-3.5" />
+          Create ad
+        </button>
+        <button
+          type="button"
+          onClick={() => setTab('performance')}
+          className={clsx(
+            'inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-[13px] font-medium transition-colors',
+            tab === 'performance' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+          )}
+        >
+          <BarChart3 className="h-3.5 w-3.5" />
+          Performance
+        </button>
+      </div>
 
-      <ActivePromotionsPanel promotions={promotions} loading={promotionsLoading} />
+      {tab === 'create' ? (
+        <WizardShell
+          initialProjectId={promoteProjectId}
+          metaConnected={metaConnected}
+          googleConnected={googleConnected}
+          onConnectMeta={() => void handleConnect('meta')}
+          connectingMeta={connecting === 'meta'}
+          onLaunched={() => {
+            void mutatePromotions();
+            setTab('performance');
+          }}
+          onMessage={setPageMessage}
+        />
+      ) : (
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,1fr)]">
+          <div className="space-y-5">
+            <PerformanceDashboard
+              data={performance ?? null}
+              loading={performanceLoading}
+              selectedAdId={selectedAdId}
+              onSelectAd={setSelectedAdId}
+              onFilterChange={({ adType, days }) => {
+                setPerfAdType(adType);
+                setPerfDays(days);
+              }}
+            />
+            {selectedAd && (
+              <AdDetailView
+                ad={selectedAd}
+                onClose={() => setSelectedAdId(null)}
+                onOptimize={() => {
+                  setOptimizePromotionId(selectedAd.promotionId);
+                  setOptimizeInsight(null);
+                }}
+              />
+            )}
+          </div>
+          <AIInsightsFeed
+            insights={insights}
+            loading={insightsLoading}
+            refreshing={refreshingInsights}
+            onRefresh={() => void refreshInsights()}
+            onDismiss={(id) => void dismissInsight(id)}
+            onOptimize={openOptimize}
+          />
+        </div>
+      )}
+
+      <OptimizeAdFlow
+        open={Boolean(optimizePromotionId)}
+        promotionId={optimizePromotionId}
+        insight={optimizeInsight}
+        onClose={() => {
+          setOptimizePromotionId(null);
+          setOptimizeInsight(null);
+        }}
+        onApplied={() => {
+          setPageMessage({
+            type: 'success',
+            text: 'Optimized copy saved to your ad draft — switch to Create ad to review and publish.',
+          });
+          setTab('create');
+        }}
+      />
 
       <section>
         <button
@@ -164,8 +311,8 @@ function AdsPageContent() {
           <div className="mt-3 space-y-3">
             <Surface flat padding="md">
               <p className="text-caption text-gray-500 max-w-2xl">
-                Connect Meta to run property ads. Google Ads is optional for viewing existing
-                campaigns — promotion runs on Meta for now.
+                Connect Meta to run ads. Performance syncs daily from Meta Insights; Google reporting
+                syncs when a developer token is configured.
               </p>
             </Surface>
             <AdsConnectionsPanel

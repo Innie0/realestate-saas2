@@ -159,6 +159,7 @@ export async function POST(request: NextRequest) {
         user_id: user.id,
         project_id: project.id,
         platform: 'meta',
+        ad_type: adType,
         daily_budget_cents: dailyBudgetCents,
         duration_days: durationDays,
         status: 'pending',
