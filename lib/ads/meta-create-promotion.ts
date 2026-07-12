@@ -1,3 +1,5 @@
+import type { AdCtaType, AudiencePresetId } from '@/lib/ads/promotion-options';
+
 interface MetaGraphError {
   error?: { message?: string; error_user_msg?: string };
 }
@@ -23,8 +25,13 @@ function actId(accountId: string): string {
   return accountId.startsWith('act_') ? accountId : `act_${accountId}`;
 }
 
-function buildGeoTargeting(zip: string | null) {
-  if (zip && /^\d{5}$/.test(zip)) {
+function buildGeoTargeting(
+  preset: AudiencePresetId,
+  zip: string | null,
+  city: string | null,
+  state: string | null
+) {
+  if (preset === 'near_home' && zip && /^\d{5}$/.test(zip)) {
     return {
       geo_locations: {
         zips: [{ key: `US:${zip}` }],
@@ -32,6 +39,17 @@ function buildGeoTargeting(zip: string | null) {
       },
     };
   }
+
+  if (preset === 'city' && city) {
+    const cityKey = state ? `${city}, ${state}` : city;
+    return {
+      geo_locations: {
+        cities: [{ key: `US:${cityKey}` }],
+        location_types: ['home', 'recent'],
+      },
+    };
+  }
+
   return {
     geo_locations: {
       countries: ['US'],
@@ -51,7 +69,10 @@ export async function createMetaListingPromotion(options: {
   primaryText: string;
   imageUrl: string;
   zip: string | null;
+  city: string | null;
   state: string | null;
+  audiencePreset: AudiencePresetId;
+  callToAction: AdCtaType;
 }): Promise<{ campaignId: string; adSetId: string; adId: string }> {
   const account = actId(options.accountId);
   const endTime = Math.floor(Date.now() / 1000) + options.durationDays * 24 * 60 * 60;
@@ -74,7 +95,7 @@ export async function createMetaListingPromotion(options: {
     bid_strategy: 'LOWEST_COST_WITHOUT_CAP',
     destination_type: 'WEBSITE',
     targeting: {
-      ...buildGeoTargeting(options.zip),
+      ...buildGeoTargeting(options.audiencePreset, options.zip, options.city, options.state),
       age_min: 25,
       age_max: 65,
     },
@@ -92,7 +113,7 @@ export async function createMetaListingPromotion(options: {
         message: options.primaryText,
         name: options.headline,
         picture: options.imageUrl,
-        call_to_action: { type: 'LEARN_MORE' },
+        call_to_action: { type: options.callToAction },
       },
     },
   });

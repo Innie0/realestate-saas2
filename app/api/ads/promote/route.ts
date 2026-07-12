@@ -3,11 +3,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { buildListingAdCopy, getListingPublicUrl, isProjectPromotable } from '@/lib/ads/listing-ad-copy';
 import { createMetaListingPromotion } from '@/lib/ads/meta-create-promotion';
+import {
+  CTA_OPTIONS,
+  AUDIENCE_PRESETS,
+  isValidDailyBudget,
+  isValidDuration,
+} from '@/lib/ads/promotion-options';
 import { buildAdLandingUrl } from '@/lib/ads/utm';
 import { APIResponse } from '@/types';
 
-const BUDGET_OPTIONS = [1000, 1500, 2000, 3000, 5000];
-const DURATION_OPTIONS = [7, 14];
+const VALID_CTAS = new Set(CTA_OPTIONS.map((o) => o.id));
+const VALID_AUDIENCE = new Set(AUDIENCE_PRESETS.map((o) => o.id));
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,6 +33,12 @@ export async function POST(request: NextRequest) {
     const projectId = typeof body.projectId === 'string' ? body.projectId : '';
     const dailyBudgetCents = Number(body.dailyBudgetCents);
     const durationDays = Number(body.durationDays) || 7;
+    const headlineOverride = typeof body.headline === 'string' ? body.headline.trim().slice(0, 100) : '';
+    const primaryTextOverride =
+      typeof body.primaryText === 'string' ? body.primaryText.trim().slice(0, 250) : '';
+    const imageUrlOverride = typeof body.imageUrl === 'string' ? body.imageUrl.trim() : '';
+    const audiencePreset = VALID_AUDIENCE.has(body.audiencePreset) ? body.audiencePreset : 'near_home';
+    const callToAction = VALID_CTAS.has(body.callToAction) ? body.callToAction : 'LEARN_MORE';
 
     if (!projectId) {
       return NextResponse.json({ success: false, error: 'Select a listing to promote.' } satisfies APIResponse, {
@@ -34,13 +46,13 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (!BUDGET_OPTIONS.includes(dailyBudgetCents)) {
+    if (!isValidDailyBudget(dailyBudgetCents)) {
       return NextResponse.json({ success: false, error: 'Invalid daily budget.' } satisfies APIResponse, {
         status: 400,
       });
     }
 
-    if (!DURATION_OPTIONS.includes(durationDays)) {
+    if (!isValidDuration(durationDays)) {
       return NextResponse.json({ success: false, error: 'Invalid campaign duration.' } satisfies APIResponse, {
         status: 400,
       });
@@ -62,6 +74,23 @@ export async function POST(request: NextRequest) {
     const promotable = isProjectPromotable(project);
     if (!promotable.ok) {
       return NextResponse.json({ success: false, error: promotable.reason } satisfies APIResponse, {
+        status: 400,
+      });
+    }
+
+    const defaults = buildListingAdCopy(project);
+    const headline = headlineOverride || defaults.headline;
+    const primaryText = primaryTextOverride || defaults.primaryText;
+    const imageUrl = imageUrlOverride || defaults.imageUrl;
+
+    if (!imageUrl) {
+      return NextResponse.json({ success: false, error: 'Add a listing photo before promoting.' } satisfies APIResponse, {
+        status: 400,
+      });
+    }
+
+    if (!headline || !primaryText) {
+      return NextResponse.json({ success: false, error: 'Headline and message are required.' } satisfies APIResponse, {
         status: 400,
       });
     }
@@ -94,13 +123,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const copy = buildListingAdCopy(project);
-    if (!copy.imageUrl) {
-      return NextResponse.json({ success: false, error: 'Add a listing photo before promoting.' } satisfies APIResponse, {
-        status: 400,
-      });
-    }
-
     const baseLandingUrl = getListingPublicUrl(project.id);
     const promotionId = crypto.randomUUID();
     const landingUrl = buildAdLandingUrl(baseLandingUrl, {
@@ -109,7 +131,7 @@ export async function POST(request: NextRequest) {
       promotionId,
     });
 
-    const campaignName = `Realestic · ${copy.address}`.slice(0, 120);
+    const campaignName = `Realestic · ${defaults.address}`.slice(0, 120);
 
     const { data: promotion, error: insertError } = await supabase
       .from('ad_promotions')
@@ -121,8 +143,8 @@ export async function POST(request: NextRequest) {
         daily_budget_cents: dailyBudgetCents,
         duration_days: durationDays,
         status: 'pending',
-        headline: copy.headline,
-        primary_text: copy.primaryText,
+        headline,
+        primary_text: primaryText,
         landing_url: landingUrl,
       })
       .select(
@@ -148,11 +170,14 @@ export async function POST(request: NextRequest) {
         dailyBudgetCents,
         durationDays,
         landingUrl,
-        headline: copy.headline,
-        primaryText: copy.primaryText,
-        imageUrl: copy.imageUrl,
-        zip: copy.zip,
-        state: copy.state,
+        headline,
+        primaryText,
+        imageUrl,
+        zip: defaults.zip,
+        city: defaults.city,
+        state: defaults.state,
+        audiencePreset,
+        callToAction,
       });
 
       const { data: updated, error: updateError } = await supabase

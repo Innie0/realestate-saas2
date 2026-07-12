@@ -2,6 +2,7 @@
 
 import { ExternalLink, Loader2 } from 'lucide-react';
 import Surface from '@/components/ui/Surface';
+import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
 import { formatListingAddress, normalizeProjectImages } from '@/lib/listing-utils';
 import type { AdPromotion } from '@/lib/ads/types';
 import clsx from 'clsx';
@@ -41,7 +42,7 @@ export default function ActivePromotionsPanel({ promotions, loading }: ActivePro
   return (
     <section>
       <p className="text-label mb-3">Your listing ads</p>
-      <div className="space-y-3">
+      <StaggerList className="space-y-3">
         {promotions.map((promo) => {
           const project = promo.projects && !Array.isArray(promo.projects) ? promo.projects : null;
           const info = project?.property_info || {};
@@ -52,52 +53,54 @@ export default function ActivePromotionsPanel({ promotions, loading }: ActivePro
           const status = STATUS_LABELS[promo.status] ?? STATUS_LABELS.ended;
 
           return (
-            <Surface key={promo.id} flat padding="md">
-              <div className="flex items-start gap-3">
-                <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                  {thumb ? (
-                    <Image src={thumb} alt="" fill className="object-cover" sizes="48px" />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-[11px] text-gray-400">
-                      Ad
-                    </div>
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="text-[13px] font-semibold text-gray-900 truncate">{address}</h3>
-                    <span
-                      className={clsx(
-                        'inline-flex rounded-full border px-2 py-0.5 text-[10.5px] font-medium',
-                        status.className
-                      )}
-                    >
-                      {status.label}
-                    </span>
+            <StaggerItem key={promo.id}>
+              <Surface flat padding="md">
+                <div className="flex items-start gap-3">
+                  <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                    {thumb ? (
+                      <Image src={thumb} alt="" fill className="object-cover" sizes="48px" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-[11px] text-gray-400">
+                        Ad
+                      </div>
+                    )}
                   </div>
-                  <p className="text-caption text-gray-500 mt-1">
-                    {formatDailyBudget(promo.daily_budget_cents)} · {promo.duration_days} days · Meta
-                  </p>
-                  {promo.status === 'failed' && promo.error_message && (
-                    <p className="text-[12px] text-red-600 mt-2">{promo.error_message}</p>
-                  )}
-                  {promo.landing_url && (
-                    <a
-                      href={promo.landing_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-[12px] font-medium text-brand-600 hover:text-brand-700 mt-2"
-                    >
-                      View landing page
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  )}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-[13px] font-semibold text-gray-900 truncate">{address}</h3>
+                      <span
+                        className={clsx(
+                          'inline-flex rounded-full border px-2 py-0.5 text-[10.5px] font-medium',
+                          status.className
+                        )}
+                      >
+                        {status.label}
+                      </span>
+                    </div>
+                    <p className="text-caption text-gray-500 mt-1">
+                      {formatDailyBudget(promo.daily_budget_cents)} · {promo.duration_days} days · Meta
+                    </p>
+                    {promo.status === 'failed' && promo.error_message && (
+                      <p className="text-[12px] text-red-600 mt-2">{promo.error_message}</p>
+                    )}
+                    {promo.landing_url && (
+                      <a
+                        href={promo.landing_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[12px] font-medium text-brand-600 hover:text-brand-700 mt-2"
+                      >
+                        View landing page
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </Surface>
+              </Surface>
+            </StaggerItem>
           );
         })}
-      </div>
+      </StaggerList>
     </section>
   );
 }

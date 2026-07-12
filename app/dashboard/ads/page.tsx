@@ -116,7 +116,7 @@ function AdsPageContent() {
   return (
     <DashboardPage
       title="Ads"
-      subtitle="We run listing ads for you — leads show up in your inbox"
+      subtitle="Design your ad, preview it live, and launch when you're ready"
     >
       {pageMessage && (
         <div
