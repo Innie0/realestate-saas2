@@ -1,0 +1,89 @@
+'use client';
+
+import AdPreviewMockup, { type AdPreviewPlatform } from '@/components/ads/AdPreviewMockup';
+import GooglePreviewCard from '@/components/ads/GooglePreviewCard';
+import Surface from '@/components/ui/Surface';
+import type { AdDraft } from '@/lib/ads/ad-draft-types';
+import { getEffectiveCopy, getPrimaryImage } from '@/lib/ads/ad-draft-types';
+import type { AdPlatform } from '@/lib/ads/types';
+import clsx from 'clsx';
+
+interface AdPreviewPaneProps {
+  draft: AdDraft;
+  advertiserName: string;
+  advertiserAvatar?: string | null;
+  previewPlatform: AdPreviewPlatform;
+  onPreviewPlatformChange: (p: AdPreviewPlatform) => void;
+  className?: string;
+  compact?: boolean;
+}
+
+export default function AdPreviewPane({
+  draft,
+  advertiserName,
+  advertiserAvatar,
+  previewPlatform,
+  onPreviewPlatformChange,
+  className,
+  compact,
+}: AdPreviewPaneProps) {
+  const { headline, body } = getEffectiveCopy(draft);
+  const imageUrl = getPrimaryImage(draft);
+  const showMeta = draft.platforms.includes('meta');
+  const showGoogle = draft.platforms.includes('google');
+
+  if (compact) {
+    return (
+      <Surface flat padding="md" className={className}>
+        <p className="text-label mb-3">Preview</p>
+        {showMeta && (
+          <AdPreviewMockup
+            platform={previewPlatform}
+            onPlatformChange={onPreviewPlatformChange}
+            imageUrl={imageUrl}
+            headline={headline}
+            primaryText={body}
+            cta={draft.cta}
+            advertiserName={advertiserName}
+            advertiserAvatar={advertiserAvatar}
+          />
+        )}
+        {showGoogle && !showMeta && (
+          <GooglePreviewCard headline={headline} description={body} />
+        )}
+      </Surface>
+    );
+  }
+
+  return (
+    <div className={clsx('space-y-4 lg:sticky lg:top-20', className)}>
+      {showMeta && (
+        <AdPreviewMockup
+          platform={previewPlatform}
+          onPlatformChange={onPreviewPlatformChange}
+          imageUrl={imageUrl}
+          headline={headline}
+          primaryText={body}
+          cta={draft.cta}
+          advertiserName={advertiserName}
+          advertiserAvatar={advertiserAvatar}
+          emptyHint={!draft.adType ? 'Choose an ad type to start' : undefined}
+        />
+      )}
+      {showGoogle && (
+        <GooglePreviewCard headline={headline} description={body} />
+      )}
+      {!showMeta && !showGoogle && (
+        <Surface flat padding="md">
+          <p className="text-caption text-gray-500 text-center py-8">
+            Select a platform in step 4 to preview your ad.
+          </p>
+        </Surface>
+      )}
+    </div>
+  );
+}
+
+export function platformLabel(p: AdPlatform): string {
+  return p === 'meta' ? 'Meta' : 'Google';
+}

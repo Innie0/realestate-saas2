@@ -73,6 +73,8 @@ export async function createMetaListingPromotion(options: {
   state: string | null;
   audiencePreset: AudiencePresetId;
   callToAction: AdCtaType;
+  ageMin?: number;
+  ageMax?: number;
 }): Promise<{ campaignId: string; adSetId: string; adId: string }> {
   const account = actId(options.accountId);
   const endTime = Math.floor(Date.now() / 1000) + options.durationDays * 24 * 60 * 60;
@@ -96,8 +98,8 @@ export async function createMetaListingPromotion(options: {
     destination_type: 'WEBSITE',
     targeting: {
       ...buildGeoTargeting(options.audiencePreset, options.zip, options.city, options.state),
-      age_min: 25,
-      age_max: 65,
+      age_min: options.ageMin ?? 25,
+      age_max: options.ageMax ?? 65,
     },
     end_time: endTime,
     status: 'ACTIVE',

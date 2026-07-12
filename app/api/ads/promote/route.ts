@@ -39,6 +39,8 @@ export async function POST(request: NextRequest) {
     const imageUrlOverride = typeof body.imageUrl === 'string' ? body.imageUrl.trim() : '';
     const audiencePreset = VALID_AUDIENCE.has(body.audiencePreset) ? body.audiencePreset : 'near_home';
     const callToAction = VALID_CTAS.has(body.callToAction) ? body.callToAction : 'LEARN_MORE';
+    const ageMin = Math.min(65, Math.max(18, Number(body.ageMin) || 25));
+    const ageMax = Math.min(65, Math.max(ageMin, Number(body.ageMax) || 65));
 
     if (!projectId) {
       return NextResponse.json({ success: false, error: 'Select a listing to promote.' } satisfies APIResponse, {
@@ -178,6 +180,8 @@ export async function POST(request: NextRequest) {
         state: defaults.state,
         audiencePreset,
         callToAction,
+        ageMin,
+        ageMax,
       });
 
       const { data: updated, error: updateError } = await supabase

@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
 import Surface from '@/components/ui/Surface';
 import AdsConnectionsPanel from '@/components/ads/AdsConnectionsPanel';
-import PromoteListingWizard from '@/components/ads/PromoteListingWizard';
+import WizardShell from '@/components/ads/wizard/WizardShell';
 import ActivePromotionsPanel from '@/components/ads/ActivePromotionsPanel';
 import { useApi } from '@/lib/swr';
 import type { AdPlatform, AdPlatformConnection, AdPromotion } from '@/lib/ads/types';
@@ -67,6 +67,11 @@ function AdsPageContent() {
     [connections]
   );
 
+  const googleConnected = useMemo(
+    () => (connections ?? []).some((c) => c.provider === 'google' && c.is_active),
+    [connections]
+  );
+
   const handleConnect = useCallback(async (provider: AdPlatform) => {
     setConnecting(provider);
     setPageMessage(null);
@@ -116,7 +121,7 @@ function AdsPageContent() {
   return (
     <DashboardPage
       title="Ads"
-      subtitle="Design your ad, preview it live, and launch when you're ready"
+      subtitle="Create and publish ads in a few guided steps"
     >
       {pageMessage && (
         <div
@@ -131,9 +136,10 @@ function AdsPageContent() {
         </div>
       )}
 
-      <PromoteListingWizard
+      <WizardShell
         initialProjectId={promoteProjectId}
         metaConnected={metaConnected}
+        googleConnected={googleConnected}
         onConnectMeta={() => void handleConnect('meta')}
         connectingMeta={connecting === 'meta'}
         onLaunched={() => void mutatePromotions()}
