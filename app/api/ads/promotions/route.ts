@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
         `
         id, project_id, platform, daily_budget_cents, duration_days, status,
         headline, landing_url, created_at, meta_campaign_id, error_message,
-        projects:project_id ( id, title, property_info, images, published )
+        projects:project_id ( id, title, property_info, images )
       `
       )
       .eq('user_id', user.id)

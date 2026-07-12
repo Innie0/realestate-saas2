@@ -7,14 +7,10 @@ import {
   Award,
   Building2,
   ExternalLink,
-  Home,
   MessageCircle,
   CalendarClock,
 } from 'lucide-react';
 import LeadCaptureForm from '@/components/LeadCaptureForm';
-import AgentListingsShowcase, { type ShowcaseListing } from '@/components/AgentListingsShowcase';
-import { normalizeProjectImages } from '@/lib/listing-utils';
-import type { Project } from '@/types';
 
 export interface PublicAgentProfile {
   id: string;
@@ -32,16 +28,8 @@ export interface PublicAgentProfile {
   yearsExperience: number | null;
 }
 
-interface ListingRow {
-  id: string;
-  title: string;
-  property_info: Record<string, unknown> | null;
-  images: Project['images'];
-}
-
 interface PublicAgentProfileViewProps {
   agent: PublicAgentProfile;
-  listings: ListingRow[];
   bookingUrl?: string | null;
 }
 
@@ -72,24 +60,8 @@ function SectionCard({
   );
 }
 
-function parseListings(listings: ListingRow[]): ShowcaseListing[] {
-  return listings.map((listing) => {
-    const info = listing.property_info || {};
-    return {
-      id: listing.id,
-      title: listing.title,
-      address: (typeof info.address === 'string' && info.address) || listing.title,
-      price: typeof info.price === 'number' ? info.price : null,
-      thumb: normalizeProjectImages(listing.images)[0] ?? null,
-      beds: typeof info.bedrooms === 'number' ? info.bedrooms : null,
-      baths: typeof info.bathrooms === 'number' ? info.bathrooms : null,
-    };
-  });
-}
-
 export default function PublicAgentProfileView({
   agent,
-  listings,
   bookingUrl,
 }: PublicAgentProfileViewProps) {
   const initials = agent.name
@@ -101,7 +73,6 @@ export default function PublicAgentProfileView({
 
   const firstName = agent.name.split(' ')[0];
   const hasContact = Boolean(agent.phone || agent.profileEmail || agent.website);
-  const showcaseListings = parseListings(listings);
 
   const hasSidebar =
     agent.bio ||
@@ -118,16 +89,13 @@ export default function PublicAgentProfileView({
     : null;
 
   const stats = [
-    listings.length > 0
-      ? { label: `${listings.length} active listing${listings.length === 1 ? '' : 's'}`, icon: Home }
-      : null,
     agent.yearsExperience != null
       ? { label: `${agent.yearsExperience}+ years experience`, icon: Award }
       : null,
     agent.areas.length > 0
       ? { label: `${agent.areas.length} area${agent.areas.length === 1 ? '' : 's'} served`, icon: MapPin }
       : null,
-  ].filter(Boolean) as { label: string; icon: typeof Home }[];
+  ].filter(Boolean) as { label: string; icon: typeof Award }[];
 
   return (
     <div className="min-h-screen bg-[#F5F5F5]">
@@ -362,19 +330,6 @@ export default function PublicAgentProfileView({
           )}
 
           <div className="space-y-6">
-            {listings.length > 0 && (
-              <SectionCard
-                title="Featured listings"
-                subtitle={
-                  listings.length > 2
-                    ? 'Browse available properties — hover to pause the slideshow'
-                    : `${listings.length} propert${listings.length === 1 ? 'y' : 'ies'} available now`
-                }
-              >
-                <AgentListingsShowcase listings={showcaseListings} />
-              </SectionCard>
-            )}
-
             <SectionCard
               id="contact"
               title={`Work with ${firstName}`}

@@ -30,7 +30,7 @@ export default function TermsPage() {
                 <li>Property and transaction management, including per-transaction document storage</li>
                 <li>Client relationship management (CRM) and a separate Leads inbox</li>
                 <li>Public lead capture forms, QR codes, and open house digital sign-in</li>
-                <li>Optional public agent profile pages with published listings</li>
+                <li>Optional public agent profile pages and lead capture forms</li>
                 <li>Automated lead follow-up emails and SMS lead alerts (when enabled)</li>
                 <li>Calendar integration and scheduling (Google Calendar; Outlook where available)</li>
                 <li>AI-powered conversational assistant with conversation memory</li>
@@ -88,7 +88,7 @@ export default function TermsPage() {
                 <li>Share your account with others</li>
                 <li>Use the Service to spam or send unsolicited messages</li>
                 <li>Collect lead information without complying with applicable privacy, email, and telemarketing laws</li>
-                <li>Publish false, misleading, or non-compliant content on your public agent profile or listing pages</li>
+                <li>Publish false, misleading, or non-compliant content on your public agent profile</li>
               </ul>
             </section>
 
@@ -103,7 +103,7 @@ export default function TermsPage() {
                 <li>You will comply with the CAN-SPAM Act, TCPA, state telemarketing laws, and Do Not Call rules when contacting leads</li>
                 <li>Automated follow-up emails are sent only when you enable that feature; you may disable it or cancel sequences for individual leads</li>
                 <li>SMS alerts notify you of new leads; they are not a substitute for obtaining proper consent before you contact prospects</li>
-                <li>Public profile and listing content you publish is your responsibility and must comply with fair housing and advertising laws</li>
+                <li>Public profile content you publish is your responsibility and must comply with fair housing and advertising laws</li>
                 <li>We may disable public links if they are abused, generate spam, or violate these Terms</li>
               </ul>
             </section>
@@ -140,7 +140,7 @@ export default function TermsPage() {
               
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Your Content</h3>
               <p className="text-gray-600 leading-relaxed mb-4">
-                You retain all rights to content you upload, create, or store on the Service ("User Content"), including property listings, client and lead information, transaction documents, public profile content, and all messages sent to our AI Assistant.
+                You retain all rights to content you upload, create, or store on the Service ("User Content"), including property projects, client and lead information, transaction documents, public profile content, and all messages sent to our AI Assistant.
               </p>
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">License to Us</h3>

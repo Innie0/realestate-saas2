@@ -100,7 +100,7 @@ export default function PrivacyPage() {
                 <li>Name, headline, bio, and profile photo</li>
                 <li>Specialties, service areas, brokerage, license number, website, and years of experience</li>
                 <li>Contact phone and email you provide for public display</li>
-                <li>Published listing projects you choose to showcase</li>
+                <li>Property projects you create in your workspace</li>
               </ul>
               <p className="text-gray-600 leading-relaxed mb-4">
                 Your profile is only publicly visible when you turn on the public profile setting. You can disable it at any time from your dashboard.
@@ -132,8 +132,7 @@ export default function PrivacyPage() {
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">9. Other Usage Information</h3>
               <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
-                <li>Property listings and project information you create</li>
-                <li>Published listing pages you enable for public sharing</li>
+                <li>Property projects and listing content you create</li>
                 <li>Client and lead information you add or receive</li>
                 <li>Transactions you manage and related notes</li>
                 <li>Open house events you create</li>

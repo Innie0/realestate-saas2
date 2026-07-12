@@ -14,7 +14,7 @@ interface GooglePreviewCardProps {
 export default function GooglePreviewCard({
   headline,
   description,
-  displayUrl = 'realestic.ai/listing',
+  displayUrl = 'realestic.ai/lead',
   className,
 }: GooglePreviewCardProps) {
   return (

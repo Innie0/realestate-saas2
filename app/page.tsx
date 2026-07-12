@@ -1,29 +1,20 @@
 import type { Metadata } from 'next';
-import { Suspense } from 'react';
-import MarketplaceNav from '@/components/marketplace/MarketplaceNav';
-import MarketplaceHero from '@/components/marketplace/MarketplaceHero';
-import MarketplaceSearchBar from '@/components/marketplace/MarketplaceSearchBar';
-import MarketplaceResultsSection from '@/components/marketplace/MarketplaceResultsSection';
-import MarketplaceResultsSkeleton from '@/components/marketplace/MarketplaceResultsSkeleton';
-import MarketplaceExploreSection from '@/components/marketplace/MarketplaceExploreSection';
-import MarketplaceFooter from '@/components/marketplace/MarketplaceFooter';
-import {
-  hasMarketplaceSearchQuery,
-  parseMarketplaceSearchParams,
-} from '@/lib/marketplace-shared';
-import { SITE_NAME_ALT, SITE_URL } from '@/lib/site-config';
+import HomePageClient from '@/components/home/HomePageClient';
+import { HomeFaqStructuredData } from '@/components/seo/StructuredData';
+import { SITE_DESCRIPTION, SITE_NAME_ALT, SITE_TAGLINE, SITE_URL } from '@/lib/site-config';
 
 export const metadata: Metadata = {
-  title: `Properties for Sale | ${SITE_NAME_ALT}`,
-  description:
-    'Search homes and properties for sale on Realestic. Find listings by location and property type — no account required.',
+  title: `${SITE_NAME_ALT} – ${SITE_TAGLINE}`,
+  description: SITE_DESCRIPTION,
   keywords: [
-    'properties for sale',
-    'homes for sale',
     'Realestic',
     'Realestic AI',
-    'real estate listings',
-    'houses for sale',
+    'realestic.ai',
+    'real estate agent tools',
+    'AI listing description generator',
+    'real estate CRM',
+    'real estate lead capture',
+    'real estate ads',
   ],
   alternates: {
     canonical: '/',
@@ -33,52 +24,30 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: SITE_URL,
     siteName: SITE_NAME_ALT,
-    title: `Properties for Sale | ${SITE_NAME_ALT}`,
-    description:
-      'Search properties for sale by location and type. Find properties for sale on Realestic.',
+    title: `${SITE_NAME_ALT} – ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
     images: [
       {
         url: '/logo-wordmark.png',
         width: 800,
         height: 240,
-        alt: `${SITE_NAME_ALT} — Properties for Sale`,
+        alt: `${SITE_NAME_ALT} – ${SITE_TAGLINE}`,
       },
     ],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${SITE_NAME_ALT} – ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+    images: ['/logo-wordmark.png'],
+  },
 };
 
-interface HomePageProps {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}
-
-export default async function MarketplaceHomePage({ searchParams }: HomePageProps) {
-  const params = await searchParams;
-  const filters = parseMarketplaceSearchParams(params);
-  const showResults = hasMarketplaceSearchQuery(params);
-
+export default function HomePage() {
   return (
-    <div className="marketing-root min-h-screen bg-white flex flex-col font-sans">
-      <MarketplaceNav />
-
-      <main className="flex-1">
-        <MarketplaceHero initialFilters={filters} compact={showResults} />
-
-        {showResults ? (
-          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-10 bg-[#F4F4F5]">
-            <div className="mb-8">
-              <MarketplaceSearchBar initialFilters={filters} />
-            </div>
-
-            <Suspense fallback={<MarketplaceResultsSkeleton />}>
-              <MarketplaceResultsSection filters={filters} />
-            </Suspense>
-          </section>
-        ) : (
-          <MarketplaceExploreSection />
-        )}
-      </main>
-
-      <MarketplaceFooter />
-    </div>
+    <>
+      <HomeFaqStructuredData />
+      <HomePageClient />
+    </>
   );
 }

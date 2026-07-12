@@ -164,7 +164,7 @@ function AdsPageContent() {
           <div className="mt-3 space-y-3">
             <Surface flat padding="md">
               <p className="text-caption text-gray-500 max-w-2xl">
-                Connect Meta to promote listings. Google Ads is optional for viewing existing
+                Connect Meta to run property ads. Google Ads is optional for viewing existing
                 campaigns — promotion runs on Meta for now.
               </p>
             </Surface>

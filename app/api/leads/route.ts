@@ -112,7 +112,6 @@ export async function POST(request: NextRequest) {
         .select('id')
         .eq('id', cleanProjectId)
         .eq('user_id', agentId)
-        .eq('published', true)
         .maybeSingle();
 
       if (listingProject) {

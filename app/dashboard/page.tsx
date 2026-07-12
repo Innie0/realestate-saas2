@@ -13,7 +13,6 @@ import Button from '@/components/ui/Button';
 import CountUp from '@/components/motion/CountUp';
 import { fetchUpcomingItems, type UpcomingItem } from '@/components/NotificationsPanel';
 import PlanUsagePanel, { PlanUsagePanelSkeleton } from '@/components/dashboard/PlanUsagePanel';
-import MarketplaceSummaryPanel from '@/components/dashboard/MarketplaceSummaryPanel';
 import GettingStartedPanel from '@/components/dashboard/GettingStartedPanel';
 import TransactionStatusBadge from '@/components/transactions/TransactionStatusBadge';
 import { Plus } from 'lucide-react';
@@ -898,14 +897,13 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* 3. Secondary — plan usage + marketplace */}
+        {/* 3. Secondary — plan usage */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start" data-tour="plan-usage">
           {usage ? (
             <PlanUsagePanel usage={usage} plan={plan} layout="sidebar" />
           ) : usageLoading ? (
             <PlanUsagePanelSkeleton layout="sidebar" />
           ) : null}
-          <MarketplaceSummaryPanel />
         </div>
       </PageTransition>
     </div>

@@ -25,8 +25,7 @@ export const metadata: Metadata = {
 };
 
 // This queries live agent data, so render per-request rather than freezing
-// the directory at build time (matches how /agent/[slug] and /listing/[id]
-// already work).
+// the directory at build time (matches how /agent/[slug] works).
 export const dynamic = 'force-dynamic';
 
 export default async function AgentDirectoryPage() {

@@ -24,8 +24,6 @@ import {
 import { Project, AIGeneratedContent } from '@/types';
 import { useToast } from '@/components/providers/ToastProvider';
 import { uploadListingImageToStorage } from '@/lib/listing-image-upload';
-import { getListingPublishReadiness } from '@/lib/listing-publish';
-import ListingPublishPanel from '@/components/projects/ListingPublishPanel';
 
 // Tone types for description variations
 type DescriptionTone = 'professional' | 'casual' | 'luxury';
@@ -100,107 +98,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
   // Project detail tab
   const [projectTab, setProjectTab] = useState<'overview' | 'ai_content' | 'linked'>('overview');
-
-  // Publish listing
-  const [isPublishing, setIsPublishing] = useState(false);
-  const [isSyncingListing, setIsSyncingListing] = useState(false);
-  const [linkCopied, setLinkCopied] = useState(false);
-
-  const publicListingUrl =
-    typeof window !== 'undefined' && project
-      ? `${window.location.origin}/listing/${project.id}`
-      : project
-        ? `/listing/${project.id}`
-        : '';
-
-  const handleTogglePublish = async () => {
-    if (!project) return;
-
-    const turningOn = !project.published;
-    if (turningOn) {
-      const { ready, missingLabels } = getListingPublishReadiness(project);
-      if (!ready) {
-        toast.error(`Complete before publishing: ${missingLabels.join(', ')}`);
-        return;
-      }
-    }
-
-    setIsPublishing(true);
-    try {
-      const nextPublished = !project.published;
-      const response = await fetch(`/api/projects/${project.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ published: nextPublished }),
-      });
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to update listing');
-      }
-      setProject({ ...project, ...result.data });
-      if (nextPublished) {
-        toast.success('Listing is live on Realestic');
-      } else {
-        toast.success('Listing removed from marketplace');
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error('Could not update publish status. Try again.');
-    } finally {
-      setIsPublishing(false);
-    }
-  };
-
-  const handleSyncListing = async () => {
-    if (!project) return;
-
-    setIsSyncingListing(true);
-    try {
-      const response = await fetch('/api/listings/sync', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ projectId: project.id }),
-      });
-      const result = await response.json();
-      if (!result.success) {
-        toast.error(result.error || 'Sync failed');
-        return;
-      }
-
-      toast.success(result.data?.message || 'Listing synced');
-
-      const refresh = await fetch(`/api/projects/${project.id}`);
-      const refreshed = await refresh.json();
-      if (refreshed.success && refreshed.data) {
-        setProject({
-          ...refreshed.data,
-          images: refreshed.data.images || [],
-          property_info: refreshed.data.property_info || {},
-          ai_content: refreshed.data.ai_content || null,
-        });
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error('Could not sync listing. Try again.');
-    } finally {
-      setIsSyncingListing(false);
-    }
-  };
-
-  const handleCopyListingLink = async () => {
-    const url =
-      typeof window !== 'undefined'
-        ? `${window.location.origin}/listing/${project?.id}`
-        : '';
-    if (!url) return;
-    try {
-      await navigator.clipboard.writeText(url);
-      setLinkCopied(true);
-      setTimeout(() => setLinkCopied(false), 2000);
-    } catch {
-      toast.error('Could not copy link.');
-    }
-  };
 
   // Load project data from API on mount
   useEffect(() => {
@@ -1349,16 +1246,14 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         <Eye className="w-4 h-4 mr-2" />
         Preview
       </Button>
-      {project.published && (
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => router.push(`/dashboard/ads?promote=${project.id}`)}
-        >
-          <Megaphone className="w-4 h-4 mr-2" />
-          Promote listing
-        </Button>
-      )}
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => router.push(`/dashboard/ads?promote=${project.id}`)}
+      >
+        <Megaphone className="w-4 h-4 mr-2" />
+        Promote
+      </Button>
       {autoSaveStatus !== 'idle' && (
         <div
           className={`
@@ -1397,18 +1292,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       subtitle={project.property_info?.address || 'Project details'}
       actions={headerActions}
     >
-        {/* Publish listing */}
-        <ListingPublishPanel
-          project={project}
-          isPublishing={isPublishing}
-          isSyncing={isSyncingListing}
-          linkCopied={linkCopied}
-          publicListingUrl={publicListingUrl}
-          onTogglePublish={handleTogglePublish}
-          onCopyLink={handleCopyListingLink}
-          onSync={handleSyncListing}
-        />
-
         {/* Tab navigation */}
         <div className="border-b border-gray-200 mb-6">
           <nav className="flex gap-[26px]">

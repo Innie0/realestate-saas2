@@ -25,7 +25,7 @@ import {
 } from '@/lib/ads/ad-draft-types';
 import { loadAdDraft, saveAdDraft, clearAdDraft } from '@/lib/ads/ad-draft-storage';
 import { getDefaultCtaForAdType } from '@/lib/ads/ad-type-config';
-import { EASE_OUT, tabPanelTransition, useMotionReduced } from '@/lib/motion';
+import { tabPanelTransition, useMotionReduced } from '@/lib/motion';
 import { useApi } from '@/lib/swr';
 import { isValidDailyBudget, isValidDuration } from '@/lib/ads/promotion-options';
 
@@ -183,7 +183,7 @@ export default function WizardShell({
     if (draft.adType && listingRequiredForAdType(draft.adType) && !draft.projectId) {
       onMessage?.({
         type: 'error',
-        text: 'Link a published listing to launch this ad type.',
+        text: 'Link a property project to launch this ad type.',
       });
       return;
     }

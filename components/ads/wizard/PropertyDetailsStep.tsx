@@ -59,12 +59,12 @@ export default function PropertyDetailsStep({ draft, onChange }: PropertyDetails
     <div className="space-y-5">
       {showListingPicker && (
         <div>
-          <p className="text-label mb-2">Link a published listing</p>
+          <p className="text-label mb-2">Link a property project</p>
           {isLoading ? (
-            <p className="text-caption text-gray-500">Loading listings…</p>
+            <p className="text-caption text-gray-500">Loading projects…</p>
           ) : listingOptions.length === 0 ? (
             <p className="text-[13px] text-gray-600 rounded-lg border border-dashed border-gray-200 px-4 py-3">
-              Publish a listing with photos first, or fill in details manually below.
+              Add a project with photos and an address first, or fill in details manually below.
             </p>
           ) : (
             <div className="grid gap-2 max-h-40 overflow-y-auto pr-1">

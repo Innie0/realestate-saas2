@@ -3,12 +3,13 @@ import type { Project } from '@/types';
 
 type PromotableProject = Pick<
   Project,
-  'id' | 'title' | 'description' | 'property_info' | 'images' | 'ai_content' | 'published'
+  'id' | 'title' | 'description' | 'property_info' | 'images' | 'ai_content'
 >;
 
-export function getListingPublicUrl(projectId: string): string {
+/** Lead capture page — ad clicks land here with UTM attribution. */
+export function getAgentLeadUrl(agentId: string): string {
   const base = process.env.NEXT_PUBLIC_APP_URL || 'https://realestic.ai';
-  return `${base.replace(/\/$/, '')}/listing/${projectId}`;
+  return `${base.replace(/\/$/, '')}/lead/${agentId}`;
 }
 
 export function buildListingAdCopy(project: PromotableProject) {
@@ -22,11 +23,11 @@ export function buildListingAdCopy(project: PromotableProject) {
   const baths = info.bathrooms ? `${info.bathrooms} bath` : null;
   const specs = [beds, baths].filter(Boolean).join(' · ');
 
-  const headline = specs ? `${address} — ${price}` : `${address} — ${price}`;
+  const headline = `${address} — ${price}`;
   const primaryText =
     description.length > 0
       ? description.slice(0, 180).trim() + (description.length > 180 ? '…' : '')
-      : `Just listed at ${price}. ${specs ? `${specs}. ` : ''}View photos and schedule a showing.`;
+      : `Just listed at ${price}. ${specs ? `${specs}. ` : ''}Get in touch to schedule a showing.`;
 
   return {
     address,
@@ -41,9 +42,6 @@ export function buildListingAdCopy(project: PromotableProject) {
 }
 
 export function isProjectPromotable(project: PromotableProject): { ok: boolean; reason?: string } {
-  if (!project.published) {
-    return { ok: false, reason: 'Publish this listing on Realestic first.' };
-  }
   const images = normalizeProjectImages(project.images);
   if (images.length === 0) {
     return { ok: false, reason: 'Add at least one photo before promoting.' };

@@ -68,19 +68,6 @@ async function getAgentProfile(slug: string) {
   };
 }
 
-async function getPublishedListings(userId: string) {
-  const supabase = createAdminClient();
-  const { data } = await supabase
-    .from('projects')
-    .select('id, title, property_info, images, published_at')
-    .eq('user_id', userId)
-    .eq('published', true)
-    .order('published_at', { ascending: false })
-    .limit(12);
-
-  return data ?? [];
-}
-
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const agent = await getAgentProfile(slug);
@@ -140,14 +127,13 @@ export default async function AgentProfilePage({ params }: PageProps) {
     );
   }
 
-  const listings = await getPublishedListings(agent.id);
   const canonicalPath = buildAgentProfilePath(agent.name, agent.id);
   const bookingUrl = agent.bookingEnabled ? buildBookingPath(agent.name, agent.id) : null;
 
   return (
     <>
       <AgentProfileStructuredData agent={agent} url={`${SITE_URL}${canonicalPath}`} />
-      <PublicAgentProfileView agent={agent} listings={listings} bookingUrl={bookingUrl} />
+      <PublicAgentProfileView agent={agent} bookingUrl={bookingUrl} />
     </>
   );
 }

@@ -1329,9 +1329,9 @@ export default function HomePageClient() {
             </motion.div>
             <div className="flex-1" />
             <div className="hidden sm:flex items-center gap-4">
-              <Link href="/">
+              <Link href="/for-agents">
                 <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="px-5 py-2.5 text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors">
-                  Browse Properties
+                  For Agents
                 </motion.button>
               </Link>
               <Link href="/auth/login">
@@ -1759,7 +1759,7 @@ export default function HomePageClient() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-500 text-sm">© 2026 Realestic. All rights reserved.</p>
             <div className="flex items-center gap-6 text-sm text-gray-500">
-              <Link href="/" className="hover:text-brand-600 transition-colors">Browse Properties</Link>
+              <Link href="/for-agents" className="hover:text-brand-600 transition-colors">For Agents</Link>
               <Link href="/agents" className="hover:text-brand-600 transition-colors">Find an Agent</Link>
               <Link href="/about" className="hover:text-brand-600 transition-colors">About</Link>
               <Link href="/privacy" className="hover:text-brand-600 transition-colors">Privacy</Link>

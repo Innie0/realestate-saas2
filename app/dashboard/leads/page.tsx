@@ -310,16 +310,6 @@ function LeadRow({
                         >
                           View project
                         </Link>
-                        {linkedProject.published && (
-                          <Link
-                            href={`/listing/${linkedProject.id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[12.5px] font-medium text-gray-600 hover:text-gray-900"
-                          >
-                            Public listing
-                          </Link>
-                        )}
                       </div>
                     )}
                   </div>

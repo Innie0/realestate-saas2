@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
-import { buildListingAdCopy, getListingPublicUrl, isProjectPromotable } from '@/lib/ads/listing-ad-copy';
+import { buildListingAdCopy, getAgentLeadUrl, isProjectPromotable } from '@/lib/ads/listing-ad-copy';
 import { createMetaListingPromotion } from '@/lib/ads/meta-create-promotion';
 import {
   CTA_OPTIONS,
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
 
     const { data: project, error: projectError } = await supabase
       .from('projects')
-      .select('id, title, description, property_info, images, ai_content, published')
+      .select('id, title, description, property_info, images, ai_content')
       .eq('id', projectId)
       .eq('user_id', user.id)
       .single();
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const baseLandingUrl = getListingPublicUrl(project.id);
+    const baseLandingUrl = getAgentLeadUrl(user.id);
     const promotionId = crypto.randomUUID();
     const landingUrl = buildAdLandingUrl(baseLandingUrl, {
       platform: 'meta',

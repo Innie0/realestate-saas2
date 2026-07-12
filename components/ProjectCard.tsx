@@ -47,7 +47,18 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
     year: 'numeric',
   });
 
-  const isLive = !!project.published;
+  const statusLabel =
+    project.status === 'completed'
+      ? 'Completed'
+      : project.status === 'in_progress'
+        ? 'In progress'
+        : 'Draft';
+  const statusClass =
+    project.status === 'completed'
+      ? 'bg-teal-50/90 text-teal-700'
+      : project.status === 'in_progress'
+        ? 'bg-amber-50/90 text-amber-800'
+        : 'bg-white/85 text-gray-700';
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent navigation
@@ -89,11 +100,9 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
 
         {/* Status pill */}
         <span
-          className={`absolute top-2.5 right-2.5 rounded-full px-2.5 py-1 text-[11px] font-medium backdrop-blur-sm ${
-            isLive ? 'bg-teal-50/90 text-teal-700' : 'bg-white/85 text-gray-700'
-          }`}
+          className={`absolute top-2.5 right-2.5 rounded-full px-2.5 py-1 text-[11px] font-medium backdrop-blur-sm ${statusClass}`}
         >
-          {isLive ? 'Active' : 'Draft'}
+          {statusLabel}
         </span>
       </div>
 
