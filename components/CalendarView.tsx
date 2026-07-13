@@ -3,7 +3,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Clock, Trash2, CalendarDays } from 'lucide-react';
 import { CalendarEvent } from '@/types';
@@ -33,10 +33,20 @@ function eventStyle(eventType: string) {
  * CalendarView component
  * Monthly calendar grid with events
  */
-export default function CalendarView() {
+export default function CalendarView({
+  highlightEventId,
+  focusDate,
+}: {
+  highlightEventId?: string;
+  focusDate?: Date;
+} = {}) {
   const toast = useToast();
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(focusDate ?? new Date());
   const [deletingEventId, setDeletingEventId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (focusDate) setCurrentDate(focusDate);
+  }, [focusDate]);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -140,7 +150,9 @@ export default function CalendarView() {
             return (
               <div
                 key={event.id}
-                className={`group relative text-[11px] px-1.5 py-1 rounded-md border ${style.pill}`}
+                className={`group relative text-[11px] px-1.5 py-1 rounded-md border ${style.pill} ${
+                  highlightEventId === event.id ? 'ring-2 ring-brand-500 ring-offset-1' : ''
+                }`}
               >
                 <div className="flex items-center gap-1 font-medium truncate pr-4">
                   <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${style.dot}`} />

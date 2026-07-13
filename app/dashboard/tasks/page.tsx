@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
 import { Sparkles, Send, Loader2, Paperclip, X, Plus, MessageSquare, Trash2, FileText, Pin, Edit3, Check, MoreVertical } from 'lucide-react';
 import { Conversation, ConversationMessage } from '@/types';
@@ -24,6 +25,18 @@ function sortConversations(list: Conversation[]): Conversation[] {
 }
 
 export default function TasksPage() {
+  return (
+    <Suspense fallback={null}>
+      <TasksPageContent />
+    </Suspense>
+  );
+}
+
+function TasksPageContent() {
+  const searchParams = useSearchParams();
+  const deepLinkConversation = searchParams.get('conversation');
+  const deepLinkPrompt = searchParams.get('prompt');
+
   const {
     data: conversations = [],
     isLoading: isLoadingConversations,
@@ -69,6 +82,12 @@ export default function TasksPage() {
   useEffect(() => {
     document.title = 'AI Assistant - Realestic';
   }, []);
+
+  useEffect(() => {
+    if (deepLinkPrompt) {
+      setInputMessage(deepLinkPrompt);
+    }
+  }, [deepLinkPrompt]);
 
   useTour({
     tourKey: 'tour_ai_assistant',
@@ -208,6 +227,15 @@ export default function TasksPage() {
       setIsLoadingMessages(true);
     }
   };
+
+  const deepLinkHandledRef = useRef(false);
+  useEffect(() => {
+    if (deepLinkHandledRef.current || !deepLinkConversation || isLoadingConversations) return;
+    if (conversations.some((c) => c.id === deepLinkConversation)) {
+      deepLinkHandledRef.current = true;
+      selectConversation(deepLinkConversation);
+    }
+  }, [deepLinkConversation, conversations, isLoadingConversations]);
 
   // Fetch messages when conversation changes (background refresh if uncached)
   useEffect(() => {

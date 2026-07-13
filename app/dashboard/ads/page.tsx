@@ -31,7 +31,8 @@ function performanceUrl(days: number, adType: string) {
 function AdsPageContent() {
   const searchParams = useSearchParams();
   const promoteProjectId = searchParams.get('promote');
-  const initialTab = searchParams.get('tab') === 'performance' ? 'performance' : 'create';
+  const deepLinkAdId = searchParams.get('ad');
+  const initialTab = searchParams.get('tab') === 'performance' || deepLinkAdId ? 'performance' : 'create';
 
   const [tab, setTab] = useState<AdsTab>(initialTab);
   const [connecting, setConnecting] = useState<AdPlatform | null>(null);
@@ -42,7 +43,7 @@ function AdsPageContent() {
   );
   const [perfDays, setPerfDays] = useState(30);
   const [perfAdType, setPerfAdType] = useState('');
-  const [selectedAdId, setSelectedAdId] = useState<string | null>(null);
+  const [selectedAdId, setSelectedAdId] = useState<string | null>(deepLinkAdId);
   const [refreshingInsights, setRefreshingInsights] = useState(false);
   const [optimizePromotionId, setOptimizePromotionId] = useState<string | null>(null);
   const [optimizeInsight, setOptimizeInsight] = useState<AIInsight | null>(null);
@@ -68,6 +69,13 @@ function AdsPageContent() {
   useEffect(() => {
     document.title = 'Ads - Realestic';
   }, []);
+
+  useEffect(() => {
+    if (deepLinkAdId) {
+      setTab('performance');
+      setSelectedAdId(deepLinkAdId);
+    }
+  }, [deepLinkAdId]);
 
   useEffect(() => {
     const connected = searchParams.get('connected');

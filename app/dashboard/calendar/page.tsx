@@ -18,6 +18,17 @@ import { calendarEventsPrefetchUrl } from '@/lib/dashboard-prefetch';
 function CalendarPageContent() {
   const searchParams = useSearchParams();
   const linkedProjectId = searchParams.get('project_id') || undefined;
+  const highlightEventId = searchParams.get('event') || undefined;
+
+  const { data: allEvents } = useApi<CalendarEvent[]>(
+    highlightEventId ? '/api/calendar/events' : null,
+  );
+
+  const focusDate = React.useMemo(() => {
+    if (!highlightEventId || !allEvents?.length) return undefined;
+    const match = allEvents.find((e) => e.id === highlightEventId);
+    return match ? new Date(match.start_time) : undefined;
+  }, [allEvents, highlightEventId]);
 
   const [isConnecting, setIsConnecting] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -202,7 +213,7 @@ function CalendarPageContent() {
       </PageToolbar>
 
       <Surface padding="md">
-        <CalendarView />
+        <CalendarView highlightEventId={highlightEventId} focusDate={focusDate} />
       </Surface>
 
       {showEventModal && (

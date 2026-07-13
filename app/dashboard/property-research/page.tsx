@@ -14,6 +14,7 @@ import { CmaPanel, type CmaAnalysisResult } from '@/components/property-research
 import { OwnerContactPanel, type LookupResponse } from '@/components/property-research/OwnerContactPanel';
 import { PropertyOverviewCard } from '@/components/property-research/PropertyOverviewCard';
 import { normalizeAddressKey } from '@/lib/property-research-cache';
+import { parseAddressQuery } from '@/lib/search/parse-address';
 import {
   findLatestCmaCache,
   getLocalResearchCache,
@@ -123,6 +124,42 @@ function PropertyResearchContent() {
   useEffect(() => {
     document.title = 'Property Research - Realestic';
   }, []);
+
+  useEffect(() => {
+    const streetParam = searchParams.get('street');
+    const qParam = searchParams.get('q');
+    const auto = searchParams.get('auto') === '1';
+
+    let nextStreet = streetParam ?? '';
+    let nextCity = searchParams.get('city') ?? '';
+    let nextState = searchParams.get('state') ?? '';
+    let nextZip = searchParams.get('zip') ?? '';
+
+    if (!streetParam && qParam) {
+      const parsed = parseAddressQuery(qParam);
+      if (parsed) {
+        nextStreet = parsed.street;
+        nextCity = parsed.city;
+        nextState = parsed.state;
+        nextZip = parsed.zip;
+      } else {
+        nextStreet = qParam;
+      }
+    }
+
+    if (!nextStreet.trim()) return;
+
+    setStreet(nextStreet);
+    setCity(nextCity);
+    setState(nextState);
+    setZip(nextZip);
+
+    if (auto && nextState) {
+      setResearchSearched(true);
+      setActiveTab('overview');
+      setLookupTrigger((n) => n + 1);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     void mutateUsage();

@@ -12,6 +12,7 @@ import clsx from 'clsx';
 import { signOut, getCurrentUser } from '@/lib/supabase';
 import { prefetchDashboardRoute } from '@/lib/dashboard-prefetch';
 import { useToast } from '@/components/providers/ToastProvider';
+import { useCommandPalette } from '@/components/search/CommandPalette';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 import { useApi } from '@/lib/swr';
@@ -122,6 +123,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const toast = useToast();
+  const { open: openCommandPalette } = useCommandPalette();
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -210,6 +212,14 @@ export default function Sidebar() {
           />
         </Link>
         <button
+          type="button"
+          onClick={() => openCommandPalette()}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors lg:hidden"
+          aria-label="Search"
+        >
+          <Search className="w-5 h-5" />
+        </button>
+        <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           aria-label="Toggle menu"
@@ -256,17 +266,17 @@ export default function Sidebar() {
 
         {!isCollapsed && (
           <div className="hidden lg:block px-2.5 pt-2.5">
-            {/* Visual affordance only — no command palette wired up yet. */}
-            <div
-              className="flex w-full items-center gap-2 rounded-[7px] border border-gray-200 bg-white px-2.5 py-[6px] text-[12.5px] text-gray-500"
-              title="Search — coming soon"
+            <button
+              type="button"
+              onClick={() => openCommandPalette()}
+              className="flex w-full items-center gap-2 rounded-[7px] border border-gray-200 bg-white px-2.5 py-[6px] text-[12.5px] text-gray-500 transition-colors hover:border-gray-300 hover:bg-gray-50"
             >
               <Search className="h-3 w-3 shrink-0" strokeWidth={2} />
-              <span className="flex-1">Search</span>
+              <span className="flex-1 text-left">Search</span>
               <span className="rounded border border-gray-200 bg-gray-100 px-1 font-mono text-[10px] font-medium text-gray-450">
                 ⌘K
               </span>
-            </div>
+            </button>
           </div>
         )}
 
