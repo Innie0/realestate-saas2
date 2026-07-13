@@ -3,6 +3,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { exchangeMetaAdsCode, getMetaAccountInfo } from '@/lib/ads/meta-ads-oauth';
 
+function redirectWith(base: URL, params: Record<string, string>) {
+  const url = new URL('/dashboard/ads', base);
+  for (const [key, value] of Object.entries(params)) {
+    url.searchParams.set(key, value);
+  }
+  return NextResponse.redirect(url);
+}
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -10,10 +18,10 @@ export async function GET(request: NextRequest) {
     const error = searchParams.get('error');
 
     if (error) {
-      return NextResponse.redirect(new URL('/dashboard/ads?error=meta_auth_failed', request.url));
+      return redirectWith(request.url, { error: 'meta_auth_failed' });
     }
     if (!code) {
-      return NextResponse.redirect(new URL('/dashboard/ads?error=missing_code', request.url));
+      return redirectWith(request.url, { error: 'missing_code' });
     }
 
     const tokens = await exchangeMetaAdsCode(code);
@@ -24,7 +32,7 @@ export async function GET(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.redirect(new URL('/dashboard/ads?error=not_authenticated', request.url));
+      return redirectWith(request.url, { error: 'not_authenticated' });
     }
 
     const account = await getMetaAccountInfo(tokens.access_token);
@@ -47,12 +55,15 @@ export async function GET(request: NextRequest) {
 
     if (upsertError) {
       console.error('Meta Ads save error:', upsertError);
-      return NextResponse.redirect(new URL('/dashboard/ads?error=save_failed', request.url));
+      return redirectWith(request.url, { error: 'save_failed' });
     }
 
-    return NextResponse.redirect(new URL('/dashboard/ads?connected=meta', request.url));
+    if (account.hasAdAccount) {
+      return redirectWith(request.url, { connected: 'meta', status: 'ready' });
+    }
+    return redirectWith(request.url, { connected: 'meta', status: 'setup_required' });
   } catch (err) {
     console.error('Meta Ads callback error:', err);
-    return NextResponse.redirect(new URL('/dashboard/ads?error=token_exchange_failed', request.url));
+    return redirectWith(request.url, { error: 'token_exchange_failed' });
   }
 }

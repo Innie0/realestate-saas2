@@ -38,7 +38,9 @@ interface AgentProfilePayload {
 interface WizardShellProps {
   initialProjectId?: string | null;
   metaConnected: boolean;
+  metaReady: boolean;
   googleConnected: boolean;
+  googleReady: boolean;
   onConnectMeta: () => void;
   connectingMeta: boolean;
   onLaunched?: () => void;
@@ -52,7 +54,9 @@ function stepIndex(key: WizardStepKey): number {
 export default function WizardShell({
   initialProjectId,
   metaConnected,
+  metaReady,
   googleConnected,
+  googleReady,
   onConnectMeta,
   connectingMeta,
   onLaunched,
@@ -256,7 +260,9 @@ export default function WizardShell({
             draft={draft}
             onChange={patchDraft}
             metaConnected={metaConnected}
+            metaReady={metaReady}
             googleConnected={googleConnected}
+            googleReady={googleReady}
           />
         );
       case 'audience':
@@ -268,7 +274,9 @@ export default function WizardShell({
             advertiserName={advertiserName}
             advertiserAvatar={advertiserAvatar}
             metaConnected={metaConnected}
+            metaReady={metaReady}
             googleConnected={googleConnected}
+            googleReady={googleReady}
             launching={launching}
             onLaunch={() => void handleLaunch()}
             onSaveDraft={handleSaveDraft}

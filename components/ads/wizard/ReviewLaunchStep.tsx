@@ -4,7 +4,7 @@ import { Loader2, Megaphone } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Surface from '@/components/ui/Surface';
 import GooglePreviewCard from '@/components/ads/GooglePreviewCard';
-import AdPreviewMockup, { type AdPreviewPlatform } from '@/components/ads/AdPreviewMockup';
+import AdPreviewMockup from '@/components/ads/AdPreviewMockup';
 import { getAdTypeLabel } from '@/lib/ads/ad-type-config';
 import { getEffectiveCopy, getPrimaryImage, type AdDraft } from '@/lib/ads/ad-draft-types';
 import { getAudienceLabel, getCtaLabel } from '@/lib/ads/promotion-options';
@@ -15,7 +15,9 @@ interface ReviewLaunchStepProps {
   advertiserName: string;
   advertiserAvatar?: string | null;
   metaConnected: boolean;
+  metaReady: boolean;
   googleConnected: boolean;
+  googleReady: boolean;
   launching: boolean;
   onLaunch: () => void;
   onSaveDraft: () => void;
@@ -26,7 +28,9 @@ export default function ReviewLaunchStep({
   advertiserName,
   advertiserAvatar,
   metaConnected,
+  metaReady,
   googleConnected,
+  googleReady,
   launching,
   onLaunch,
   onSaveDraft,
@@ -41,7 +45,7 @@ export default function ReviewLaunchStep({
     !body ||
     !imageUrl ||
     !wantsMeta ||
-    !metaConnected;
+    !metaReady;
 
   return (
     <div className="space-y-5">
@@ -103,12 +107,18 @@ export default function ReviewLaunchStep({
           Connect Meta under Ad accounts to publish to Facebook & Instagram.
         </p>
       )}
+      {wantsMeta && metaConnected && !metaReady && (
+        <p className="text-[12.5px] text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
+          Meta is signed in, but no ad account was found. Expand Ad accounts below, create a Meta ad
+          account with the same login, add billing, then click Check again.
+        </p>
+      )}
       {wantsGoogle && !wantsMeta && (
         <p className="text-[12.5px] text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
           Google-only publishing is coming soon. Include Meta to publish now.
         </p>
       )}
-      {wantsGoogle && wantsMeta && !googleConnected && (
+      {wantsGoogle && wantsMeta && !googleReady && (
         <p className="text-[12.5px] text-gray-600 bg-gray-50 border border-gray-150 rounded-lg px-3 py-2">
           Google will be included when publishing is available. Meta will launch now.
         </p>
@@ -132,7 +142,7 @@ export default function ReviewLaunchStep({
             </>
           )}
         </Button>
-        <Button variant="outline" onClick={onSaveDraft} disabled={launching}>
+        <Button variant="outline" onClick={onSaveDraft}>
           Save draft
         </Button>
       </div>

@@ -71,6 +71,7 @@ export async function getMetaAccountInfo(accessToken: string): Promise<{
   email: string | null;
   accountId: string | null;
   accountName: string | null;
+  hasAdAccount: boolean;
 }> {
   const meRes = await fetch(
     `https://graph.facebook.com/v21.0/me?fields=id,name,email&access_token=${encodeURIComponent(accessToken)}`
@@ -82,13 +83,20 @@ export async function getMetaAccountInfo(accessToken: string): Promise<{
   );
   const adAccounts = (await adAccountsRes.json()) as {
     data?: Array<{ id: string; name?: string; account_id?: string }>;
+    error?: { message?: string };
   };
 
+  if (adAccounts.error) {
+    console.warn('Meta adaccounts fetch:', adAccounts.error.message);
+  }
+
   const first = adAccounts.data?.[0];
+  const accountId = first?.account_id ?? first?.id ?? null;
   return {
     email: me.email ?? null,
-    accountId: first?.account_id ?? first?.id ?? null,
+    accountId,
     accountName: first?.name ?? me.name ?? null,
+    hasAdAccount: Boolean(accountId),
   };
 }
 

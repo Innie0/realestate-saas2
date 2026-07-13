@@ -132,11 +132,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!metaConnection?.access_token || !metaConnection.account_id) {
+    if (!metaConnection?.access_token) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Connect Meta Ads first — we run the campaign on your connected account.',
+          error: 'Connect Meta under Ad accounts before publishing.',
+        } satisfies APIResponse,
+        { status: 400 }
+      );
+    }
+
+    if (!metaConnection.account_id) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            'Meta is signed in but no ad account was found. Create one in Meta Ads Manager with the same login, add billing, then click Check again under Ad accounts.',
         } satisfies APIResponse,
         { status: 400 }
       );

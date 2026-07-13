@@ -11,6 +11,7 @@ import AIInsightsFeed from '@/components/ads/AIInsightsFeed';
 import AdDetailView from '@/components/ads/AdDetailView';
 import OptimizeAdFlow from '@/components/ads/OptimizeAdFlow';
 import { useApi } from '@/lib/swr';
+import { isAdAccountReady } from '@/lib/ads/connection-status';
 import type { AdPlatform, AdPlatformConnection, AdPromotion } from '@/lib/ads/types';
 import type { AIInsight, PerformanceDashboardData } from '@/lib/ads/performance-types';
 import clsx from 'clsx';
@@ -37,6 +38,7 @@ function AdsPageContent() {
   const [tab, setTab] = useState<AdsTab>(initialTab);
   const [connecting, setConnecting] = useState<AdPlatform | null>(null);
   const [disconnecting, setDisconnecting] = useState<AdPlatform | null>(null);
+  const [refreshingConnection, setRefreshingConnection] = useState<AdPlatform | null>(null);
   const [showAccounts, setShowAccounts] = useState(false);
   const [pageMessage, setPageMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(
     null
@@ -79,13 +81,36 @@ function AdsPageContent() {
 
   useEffect(() => {
     const connected = searchParams.get('connected');
+    const status = searchParams.get('status');
     const error = searchParams.get('error');
 
     if (connected === 'google') {
-      setPageMessage({ type: 'success', text: 'Google Ads connected.' });
+      if (status === 'ready') {
+        setPageMessage({ type: 'success', text: 'Google Ads account connected — ready for reporting.' });
+      } else if (status === 'unverified') {
+        setPageMessage({
+          type: 'error',
+          text: 'Google signed in, but we could not verify an ads account. Create one at ads.google.com with this email, then click “Check again” under Ad accounts.',
+        });
+        setShowAccounts(true);
+      } else {
+        setPageMessage({
+          type: 'error',
+          text: 'Google signed in, but no Google Ads account exists on this login yet. Create one at ads.google.com, then click “Check again” under Ad accounts.',
+        });
+        setShowAccounts(true);
+      }
       void mutateConnections();
     } else if (connected === 'meta') {
-      setPageMessage({ type: 'success', text: 'Meta Ads connected — you can create and publish ads now.' });
+      if (status === 'ready') {
+        setPageMessage({ type: 'success', text: 'Meta Ads connected — you can create and publish ads now.' });
+      } else {
+        setPageMessage({
+          type: 'error',
+          text: 'Meta signed in, but no ad account was found. Create one in Meta Ads Manager, add billing, then click “Check again” under Ad accounts.',
+        });
+        setShowAccounts(true);
+      }
       void mutateConnections();
     } else if (error) {
       const messages: Record<string, string> = {
@@ -110,6 +135,16 @@ function AdsPageContent() {
 
   const googleConnected = useMemo(
     () => (connections ?? []).some((c) => c.provider === 'google' && c.is_active),
+    [connections]
+  );
+
+  const metaReady = useMemo(
+    () => isAdAccountReady(connections ?? [], 'meta'),
+    [connections]
+  );
+
+  const googleReady = useMemo(
+    () => isAdAccountReady(connections ?? [], 'google'),
     [connections]
   );
 
@@ -162,6 +197,35 @@ function AdsPageContent() {
       }
     },
     [mutateConnections]
+  );
+
+  const handleRefreshConnection = useCallback(
+    async (provider: AdPlatform) => {
+      setRefreshingConnection(provider);
+      setPageMessage(null);
+      try {
+        const res = await fetch('/api/ads/connections/refresh', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ provider }),
+        });
+        const json = await res.json();
+        if (json.success) {
+          setPageMessage({
+            type: json.status === 'ready' ? 'success' : 'error',
+            text: json.message || 'Connection refreshed.',
+          });
+          void mutateConnections();
+        } else {
+          setPageMessage({ type: 'error', text: json.error || 'Failed to refresh connection.' });
+        }
+      } catch {
+        setPageMessage({ type: 'error', text: 'Failed to refresh connection. Please try again.' });
+      } finally {
+        setRefreshingConnection(null);
+      }
+    },
+    [mutateConnections],
   );
 
   const refreshInsights = async () => {
@@ -242,7 +306,9 @@ function AdsPageContent() {
         <WizardShell
           initialProjectId={promoteProjectId}
           metaConnected={metaConnected}
+          metaReady={metaReady}
           googleConnected={googleConnected}
+          googleReady={googleReady}
           onConnectMeta={() => void handleConnect('meta')}
           connectingMeta={connecting === 'meta'}
           onLaunched={() => {
@@ -319,16 +385,19 @@ function AdsPageContent() {
           <div className="mt-3 space-y-3">
             <Surface flat padding="md">
               <p className="text-caption text-gray-500 max-w-2xl">
-                Connect Meta to run ads. Performance syncs daily from Meta Insights; Google reporting
-                syncs when a developer token is configured.
+                Connect Meta to publish ads on your own ad account. If you only see “Setup required,”
+                create an ad account in Meta Ads Manager with the same login, add billing, then click
+                Check again. Google login is optional and used for reporting when configured.
               </p>
             </Surface>
             <AdsConnectionsPanel
               connections={connections ?? []}
               connecting={connecting}
               disconnecting={disconnecting}
+              refreshing={refreshingConnection}
               onConnect={handleConnect}
               onDisconnect={handleDisconnect}
+              onRefresh={handleRefreshConnection}
             />
           </div>
         )}

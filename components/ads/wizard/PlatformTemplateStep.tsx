@@ -8,14 +8,18 @@ interface PlatformTemplateStepProps {
   draft: AdDraft;
   onChange: (patch: Partial<AdDraft>) => void;
   metaConnected: boolean;
+  metaReady: boolean;
   googleConnected: boolean;
+  googleReady: boolean;
 }
 
 export default function PlatformTemplateStep({
   draft,
   onChange,
   metaConnected,
+  metaReady,
   googleConnected,
+  googleReady,
 }: PlatformTemplateStepProps) {
   const togglePlatform = (platform: AdPlatform) => {
     const has = draft.platforms.includes(platform);
@@ -26,6 +30,18 @@ export default function PlatformTemplateStep({
         : [...draft.platforms, platform],
     });
   };
+
+  const metaHint = metaReady
+    ? 'Facebook & Instagram'
+    : metaConnected
+      ? 'Finish ad account setup'
+      : 'Connect to publish';
+
+  const googleHint = googleReady
+    ? 'Search & display'
+    : googleConnected
+      ? 'No ads account yet'
+      : 'Coming soon';
 
   return (
     <div className="space-y-6">
@@ -43,9 +59,7 @@ export default function PlatformTemplateStep({
             )}
           >
             Meta · Facebook & Instagram
-            {!metaConnected && (
-              <span className="block text-[10px] font-normal text-gray-500 mt-0.5">Connect to publish</span>
-            )}
+            <span className="block text-[10px] font-normal text-gray-500 mt-0.5">{metaHint}</span>
           </button>
           <button
             type="button"
@@ -58,9 +72,7 @@ export default function PlatformTemplateStep({
             )}
           >
             Google Ads
-            <span className="block text-[10px] font-normal text-gray-500 mt-0.5">
-              {googleConnected ? 'Search & display' : 'Connect to publish'}
-            </span>
+            <span className="block text-[10px] font-normal text-gray-500 mt-0.5">{googleHint}</span>
           </button>
         </div>
       </div>
