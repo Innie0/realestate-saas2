@@ -897,12 +897,12 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* 3. Secondary — plan usage */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start" data-tour="plan-usage">
+        {/* 3. Plan usage — full width */}
+        <div data-tour="plan-usage">
           {usage ? (
-            <PlanUsagePanel usage={usage} plan={plan} layout="sidebar" />
+            <PlanUsagePanel usage={usage} plan={plan} layout="full" />
           ) : usageLoading ? (
-            <PlanUsagePanelSkeleton layout="sidebar" />
+            <PlanUsagePanelSkeleton layout="full" />
           ) : null}
         </div>
       </PageTransition>
