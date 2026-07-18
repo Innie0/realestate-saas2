@@ -99,28 +99,25 @@ export default function HeroAssistantPreview() {
   const typedPrompt = useTypewriterPrompts(HERO_PROMPTS);
 
   return (
-    /* Canvas: blurred photo fills the whole area; UI card sits inset off-center (Taito-style) */
-    <div className="relative ml-auto h-[min(680px,78vh)] w-full min-h-[560px] max-w-[960px]">
-      {/* Blurred backdrop — visible in the margin left/top/right of the white frame */}
-      <div
-        className="absolute inset-0 overflow-hidden rounded-[1.75rem] border border-gray-300/70 bg-gray-200/30 shadow-[0_20px_50px_-20px_rgba(24,24,27,0.12)]"
-        aria-hidden
-      >
+    <div className="relative w-full min-w-[640px] min-h-[620px]">
+      {/* Blurred property backdrop — extends past the frame like Taito */}
+      <div className="absolute -inset-3 sm:-inset-4 rounded-[2rem] overflow-hidden" aria-hidden>
         <Image
           src="/demo-house.png"
           alt=""
           fill
-          sizes="(min-width: 1024px) 960px, 100vw"
-          className="object-cover scale-105 blur-[36px] saturate-[0.88]"
+          sizes="800px"
+          className="object-cover scale-110 blur-[32px] saturate-[0.9]"
           priority
         />
-        <div className="absolute inset-0 bg-[#F5F5F5]/30" />
+        <div className="absolute inset-0 bg-[#F5F5F5]/20" />
       </div>
 
-      {/* Product UI — inset from left so blur shows on the left edge; near flush right */}
-      <div className="absolute top-5 bottom-5 left-[11%] right-3 flex flex-col overflow-hidden rounded-2xl border border-gray-300/90 bg-white shadow-[0_16px_48px_-12px_rgba(24,24,27,0.12),0_0_0_1px_rgba(24,24,27,0.04)] ring-1 ring-gray-900/[0.05] sm:top-6 sm:bottom-6 sm:left-[14%] sm:right-4">
+      {/* Product frame — Taito-style outline */}
+      <div className="relative z-10 flex h-[620px] flex-col overflow-hidden rounded-2xl border border-gray-300/90 bg-white shadow-[0_24px_64px_-12px_rgba(24,24,27,0.14),0_0_0_1px_rgba(24,24,27,0.04)] ring-1 ring-gray-900/[0.06]">
         <div className="flex min-h-0 flex-1">
-          <aside className="flex w-[152px] shrink-0 flex-col border-r border-gray-200 bg-[#f5f5f4] py-4 px-2.5 sm:w-[168px]">
+          {/* App sidebar */}
+          <aside className="flex w-[168px] shrink-0 flex-col border-r border-gray-200 bg-[#f5f5f4] py-4 px-2.5">
             <div className="px-1 mb-5">
               <Image
                 src="/logo-sidebar.png"
@@ -161,25 +158,26 @@ export default function HeroAssistantPreview() {
             ))}
           </aside>
 
+          {/* AI Assistant — chat list collapsed; full-width chat panel */}
           <div className="flex min-w-0 flex-1 flex-col bg-[#fafafa]">
             <div className="shrink-0 border-b border-gray-200 px-5 py-3.5">
               <p className="text-[14px] font-semibold text-gray-900">AI Assistant</p>
               <p className="text-[11px] text-gray-600 mt-0.5">0 / 75 AI messages used this month</p>
             </div>
 
-            <div className="flex min-h-0 flex-1 flex-col mx-3 my-3 sm:mx-4 sm:my-4 rounded-xl border border-gray-200 bg-white overflow-hidden">
-              <div className="flex flex-1 flex-col items-center justify-center px-6 py-6 sm:px-8 sm:py-8 text-center">
-                <h3 className="text-[18px] sm:text-[20px] font-semibold tracking-[-0.02em] text-gray-900">
+            <div className="flex min-h-0 flex-1 flex-col mx-4 my-4 rounded-xl border border-gray-200 bg-white overflow-hidden">
+              <div className="flex flex-1 flex-col items-center justify-center px-8 py-8 text-center">
+                <h3 className="text-[20px] font-semibold tracking-[-0.02em] text-gray-900">
                   How can I help you today?
                 </h3>
-                <p className="mt-2 max-w-md text-[12px] sm:text-[13px] leading-relaxed text-gray-600">
+                <p className="mt-2 max-w-md text-[13px] leading-relaxed text-gray-600">
                   Ask about listings, follow-ups, social posts, or upload a photo or PDF for analysis.
                 </p>
-                <div className="mt-6 sm:mt-8 grid w-full max-w-lg grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="mt-8 grid w-full max-w-lg grid-cols-2 gap-2.5">
                   {STARTER_PROMPTS.map((prompt) => (
                     <div
                       key={prompt}
-                      className="rounded-[10px] border border-gray-200 bg-white px-3.5 py-3 text-left text-[11.5px] sm:text-[12px] leading-snug text-gray-700"
+                      className="rounded-[10px] border border-gray-200 bg-white px-3.5 py-3 text-left text-[12px] leading-snug text-gray-700"
                     >
                       {prompt}
                     </div>
@@ -187,9 +185,9 @@ export default function HeroAssistantPreview() {
                 </div>
               </div>
 
-              <div className="shrink-0 border-t border-gray-150 p-3 sm:p-4">
+              <div className="shrink-0 border-t border-gray-150 p-4">
                 <div className="relative min-h-[96px] rounded-xl border border-gray-200 bg-white px-4 pt-3.5 pb-12">
-                  <p className="text-[12.5px] sm:text-[13px] leading-relaxed text-gray-800 whitespace-normal break-words text-left">
+                  <p className="text-[13px] leading-relaxed text-gray-800 whitespace-normal break-words text-left">
                     {typedPrompt}
                     <span className="ml-0.5 inline-block h-[14px] w-px animate-pulse bg-gray-900 align-text-bottom" />
                   </p>
