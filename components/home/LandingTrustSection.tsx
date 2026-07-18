@@ -1,15 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
-import {
-  INTEGRATIONS,
-  PERSONA_CARDS,
-  PERSONA_ICONS,
-  TESTIMONIALS,
-} from '@/lib/landing-showcase';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { INTEGRATIONS, TESTIMONIALS } from '@/lib/landing-showcase';
 import { useMotionReduced } from '@/lib/motion';
 
 export default function LandingTrustSection() {
@@ -89,58 +83,6 @@ export default function LandingTrustSection() {
                 <ArrowRight className="h-4 w-4" strokeWidth={1.8} />
               </button>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Persona cards — Taito-style */}
-      <section className="relative z-10 border-t border-gray-200 bg-[#fafafa] py-24 lg:py-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <motion.div
-            initial={reduced ? false : { opacity: 0, y: 24 }}
-            whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.55 }}
-            className="mb-14 text-center lg:mb-16"
-          >
-            <p className="mb-4 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-600">
-              Built for agents
-            </p>
-            <h2 className="text-3xl font-semibold tracking-tight text-gray-900 sm:text-4xl">
-              However you run your business
-            </h2>
-          </motion.div>
-
-          <div className="grid gap-6 lg:grid-cols-3">
-            {PERSONA_CARDS.map((persona, i) => {
-              const Icon = PERSONA_ICONS[persona.id] ?? ArrowUpRight;
-              return (
-                <motion.div
-                  key={persona.id}
-                  initial={reduced ? false : { opacity: 0, y: 24 }}
-                  whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-40px' }}
-                  transition={{ duration: 0.5, delay: i * 0.08 }}
-                  className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-7 transition-colors hover:border-gray-300"
-                >
-                  <p className="mb-4 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-600">
-                    {persona.label}
-                  </p>
-                  <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-gray-200 bg-[#fafafa] text-gray-900">
-                    <Icon className="h-5 w-5" strokeWidth={1.7} />
-                  </div>
-                  <h3 className="text-xl font-semibold tracking-tight text-gray-900">{persona.title}</h3>
-                  <p className="mt-3 flex-1 text-[15px] leading-relaxed text-gray-700">{persona.description}</p>
-                  <Link
-                    href="/for-agents"
-                    className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-gray-900 transition-colors group-hover:text-brand-600"
-                  >
-                    Learn more
-                    <ArrowUpRight className="h-4 w-4" strokeWidth={1.8} />
-                  </Link>
-                </motion.div>
-              );
-            })}
           </div>
         </div>
       </section>
