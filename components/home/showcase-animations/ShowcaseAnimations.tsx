@@ -95,20 +95,17 @@ const LISTING_TONES = ['Luxury', 'Professional', 'Friendly'] as const;
 
 const LISTING_PREVIEW = {
   address: '123 W Main Street',
-  headline: 'Sun-drenched retreat in a walkable neighborhood',
-  body:
-    'Vaulted ceilings, chef\'s kitchen with quartz counters, and a private backyard oasis with mature oaks. Minutes from downtown with top-rated schools nearby.',
-  closing: 'Move-in ready — schedule your private showing today.',
+  specs: '3 bed · 2 bath · 1,840 sqft',
+  headline: 'Timeless elegance on Main Street',
+  paragraphs: [
+    'Step into a sun-filled open floor plan with soaring ceilings, wide-plank hardwoods, and a chef\'s kitchen appointed with quartz counters, custom cabinetry, and premium stainless appliances.',
+    'The primary suite offers a spa-inspired bath and walk-in closet. Out back, a private patio with mature landscaping creates the perfect setting for evening gatherings.',
+    'Walk to cafés, boutiques, and parks — with top-rated schools minutes away. Meticulously maintained and move-in ready.',
+  ],
 };
 
 /** Photos in → description, then switches to property lookup with owner + sale history */
 function ListingGenerationPhase({ reduced }: { reduced: boolean }) {
-  const photoStyles = [
-    'from-amber-100 via-orange-50 to-amber-200',
-    'from-sky-100 via-blue-50 to-indigo-100',
-    'from-emerald-100 via-green-50 to-teal-100',
-  ];
-
   return (
     <motion.div
       key="listing"
@@ -118,24 +115,32 @@ function ListingGenerationPhase({ reduced }: { reduced: boolean }) {
       transition={{ duration: 0.4, ease }}
       className="space-y-3"
     >
-      <div className="grid grid-cols-3 gap-2">
-        {photoStyles.map((gradient, i) => (
-          <motion.div
-            key={gradient}
-            initial={reduced ? false : { opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.08 + i * 0.1, duration: 0.35, ease }}
-            className={`relative aspect-[4/3] overflow-hidden rounded-lg bg-gradient-to-br ${gradient}`}
-          >
-            <div className="absolute inset-x-2 bottom-2 h-1 rounded-full bg-white/40" />
-          </motion.div>
-        ))}
-      </div>
+      <motion.div
+        initial={reduced ? false : { opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08, duration: 0.35, ease }}
+        className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2"
+      >
+        <div>
+          <p className="text-[9px] font-medium uppercase tracking-wide text-gray-500 sm:text-[10px]">
+            Listing project
+          </p>
+          <p className="text-[11px] font-semibold text-gray-900 sm:text-[12px]">{LISTING_PREVIEW.address}</p>
+        </div>
+        <motion.span
+          initial={reduced ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+          className="rounded-full bg-brand-50 px-2 py-0.5 text-[9px] font-medium text-brand-700 sm:text-[10px]"
+        >
+          Generating…
+        </motion.span>
+      </motion.div>
 
       <motion.div
         initial={reduced ? false : { opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.35, duration: 0.35, ease }}
+        transition={{ delay: 0.18, duration: 0.35, ease }}
         className="flex flex-wrap items-center gap-1.5"
       >
         <span className="flex items-center gap-1 text-[9px] font-medium uppercase tracking-wide text-gray-500 sm:text-[10px]">
@@ -147,7 +152,7 @@ function ListingGenerationPhase({ reduced }: { reduced: boolean }) {
             key={tone}
             initial={reduced ? false : { opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.42 + i * 0.08, duration: 0.25 }}
+            transition={{ delay: 0.24 + i * 0.06, duration: 0.25 }}
             className={`rounded-full px-2 py-0.5 text-[9px] font-medium sm:text-[10px] ${
               tone === 'Luxury'
                 ? 'bg-brand-500 text-white'
@@ -162,49 +167,44 @@ function ListingGenerationPhase({ reduced }: { reduced: boolean }) {
       <motion.div
         initial={reduced ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.55, duration: 0.4 }}
+        transition={{ delay: 0.32, duration: 0.4 }}
         className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm"
       >
         <motion.p
           initial={reduced ? false : { opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.62, duration: 0.35, ease }}
+          transition={{ delay: 0.38, duration: 0.35, ease }}
           className="text-[10px] font-medium text-gray-500 sm:text-[11px]"
         >
-          {LISTING_PREVIEW.address}
+          {LISTING_PREVIEW.specs}
         </motion.p>
         <motion.p
           initial={reduced ? false : { opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.78, duration: 0.35, ease }}
+          transition={{ delay: 0.52, duration: 0.35, ease }}
           className="mt-1.5 text-[12px] font-semibold leading-snug text-gray-900 sm:text-[13px]"
         >
           {LISTING_PREVIEW.headline}
         </motion.p>
-        <motion.p
-          initial={reduced ? false : { opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.95, duration: 0.35, ease }}
-          className="mt-2 text-[11px] leading-relaxed text-gray-700 sm:text-[12px]"
-        >
-          {LISTING_PREVIEW.body}
-        </motion.p>
-        <motion.p
-          initial={reduced ? false : { opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.12, duration: 0.35, ease }}
-          className="mt-2 text-[11px] leading-relaxed text-gray-700 sm:text-[12px]"
-        >
-          {LISTING_PREVIEW.closing}
-        </motion.p>
+        {LISTING_PREVIEW.paragraphs.map((paragraph, i) => (
+          <motion.p
+            key={paragraph.slice(0, 24)}
+            initial={reduced ? false : { opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.66 + i * 0.16, duration: 0.35, ease }}
+            className="mt-2 text-[11px] leading-relaxed text-gray-700 sm:text-[12px]"
+          >
+            {paragraph}
+          </motion.p>
+        ))}
         <motion.div
           initial={reduced ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.28, duration: 0.3 }}
+          transition={{ delay: 1.15, duration: 0.3 }}
           className="mt-3 flex items-center justify-between border-t border-gray-100 pt-2.5"
         >
           <span className="text-[10px] font-medium text-brand-600 sm:text-[11px]">MLS-ready · Luxury tone</span>
-          <span className="text-[9px] text-gray-500 sm:text-[10px]">248 words</span>
+          <span className="text-[9px] text-gray-500 sm:text-[10px]">186 words</span>
         </motion.div>
       </motion.div>
     </motion.div>
@@ -268,7 +268,7 @@ function PropertyLookupPhase({ reduced }: { reduced: boolean }) {
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-medium uppercase tracking-wide text-gray-500">Owner</p>
-            <p className="text-[12px] font-semibold text-gray-900 sm:text-[13px]">Michael & Sarah Chen</p>
+            <p className="text-[12px] font-semibold text-gray-900 sm:text-[13px]">John Doe</p>
             <p className="mt-0.5 text-[10px] text-gray-600 sm:text-[11px]">Mailing address on file · High match confidence</p>
             <div className="mt-2 space-y-1">
               <motion.div
@@ -278,7 +278,7 @@ function PropertyLookupPhase({ reduced }: { reduced: boolean }) {
                 className="flex items-center gap-1.5 text-[10px] text-gray-800 sm:text-[11px]"
               >
                 <Phone className="h-3 w-3 shrink-0 text-gray-500" strokeWidth={2} />
-                <span className="font-medium">(512) 555-0147</span>
+                <span className="font-medium">(555) 555-5555</span>
                 <span className="rounded-full bg-emerald-50 px-1.5 py-px text-[8px] font-semibold text-emerald-700">
                   Mobile
                 </span>
@@ -290,7 +290,7 @@ function PropertyLookupPhase({ reduced }: { reduced: boolean }) {
                 className="flex items-center gap-1.5 text-[10px] text-gray-800 sm:text-[11px]"
               >
                 <Mail className="h-3 w-3 shrink-0 text-gray-500" strokeWidth={2} />
-                <span className="truncate font-medium">m.chen@email.com</span>
+                <span className="truncate font-medium">john.doe@example.com</span>
               </motion.div>
             </div>
           </div>
