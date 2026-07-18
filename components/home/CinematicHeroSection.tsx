@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import LandingNav from '@/components/home/LandingNav';
 import HeroAssistantPreview from '@/components/home/HeroAssistantPreview';
 
@@ -56,13 +56,6 @@ export default function CinematicHeroSection() {
           className="mx-auto flex w-full max-w-7xl flex-1 flex-col items-center px-6 pb-8 pt-10 sm:pt-14 lg:px-8 lg:pb-12"
         >
           <div className="mx-auto max-w-3xl text-center">
-            <motion.div variants={itemVariants} className="mb-6 flex justify-center">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
-                <Sparkles className="h-4 w-4 text-brand-400" />
-                AI-Powered Real Estate Platform
-              </span>
-            </motion.div>
-
             <motion.h1
               variants={itemVariants}
               className="font-display text-4xl font-medium italic leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-7xl"
