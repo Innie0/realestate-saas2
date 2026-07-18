@@ -7,6 +7,7 @@ import { Sparkles, Loader2 } from 'lucide-react';
 import AuthLogo from '@/components/branding/AuthLogo';
 import SubscribeButton from '@/components/SubscribeButton';
 import PricingFeatureList from '@/components/PricingFeatureList';
+import PricingComparisonTable from '@/components/PricingComparisonTable';
 import { supabase } from '@/lib/supabase';
 import { hasRealStripeSubscription, isAdminEmail } from '@/lib/subscription';
 import {
@@ -150,11 +151,11 @@ export default function PricingPage() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 md:items-start gap-6 max-w-3xl mx-auto">
             {PLANS.map((plan) => (
               <div
                 key={plan.slug}
-                className={`relative rounded-2xl p-7 flex flex-col ${
+                className={`relative rounded-2xl p-7 ${
                   plan.popular
                     ? 'bg-white border-2 border-gray-400'
                     : 'bg-white border border-gray-200'
@@ -208,6 +209,10 @@ export default function PricingPage() {
                 <PricingFeatureList plan={plan.slug} icon="check" />
               </div>
             ))}
+          </div>
+
+          <div id="compare" className="mt-14 max-w-3xl mx-auto scroll-mt-24">
+            <PricingComparisonTable />
           </div>
 
           {!isAuthenticated && (

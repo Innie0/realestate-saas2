@@ -41,7 +41,52 @@ export const STARTER_FEATURES = [
   'Email Support',
 ] as const;
 
+export type PricingFeatureGroup = {
+  title: string;
+  items: readonly string[];
+};
+
+/** Compact grouped bullets for pricing cards */
+export const STARTER_FEATURE_GROUPS: PricingFeatureGroup[] = [
+  {
+    title: 'Monthly limits',
+    items: [
+      '20 AI Listing Projects',
+      '20 Property Research Lookups',
+      '5 CMA / Market Analyses',
+      '75 AI Assistant Messages',
+      '20 Transactions · up to 50 Clients',
+    ],
+  },
+  {
+    title: 'Leads & CRM',
+    items: [
+      'Leads Inbox & Hot/Warm/Cold Scoring',
+      'Lead Capture Form & QR Code',
+      'Automated Follow-Up Emails',
+      'Client Manager (CRM)',
+    ],
+  },
+  {
+    title: 'Operations & AI',
+    items: [
+      'Google Calendar & Task Manager',
+      'Transaction Checklists & Documents',
+      'AI Listing Descriptions (3 Tones)',
+      'Email Support',
+    ],
+  },
+];
+
 export const PRO_PLAN_INTRO = 'Everything in Starter, plus:';
+
+/** Short highlights for Pro pricing cards */
+export const PRO_CARD_HIGHLIGHTS = [
+  'Unlimited projects, research, CMA, AI messages, clients & transactions',
+  'Open House QR Sign-In',
+  'Public Agent Profile Page',
+  'Priority Support',
+] as const;
 
 /** Features only on Pro — shown after PRO_PLAN_INTRO on pricing cards. */
 export const PRO_EXCLUSIVE_FEATURES = [

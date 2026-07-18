@@ -1,9 +1,11 @@
-import { Check, CheckCircle } from 'lucide-react';
+import { Check, CheckCircle, Minus } from 'lucide-react';
 import { formatFeatureText } from '@/lib/formatFeatureText';
 import {
-  STARTER_FEATURES,
+  PRO_CARD_HIGHLIGHTS,
   PRO_PLAN_INTRO,
   PRO_EXCLUSIVE_FEATURES,
+  STARTER_FEATURE_GROUPS,
+  STARTER_FEATURES,
   type PlanSlug,
 } from '@/lib/pricing';
 
@@ -11,22 +13,35 @@ type PricingFeatureListProps = {
   plan: PlanSlug;
   icon?: 'check' | 'check-circle';
   className?: string;
+  /** Full flat list (legacy); default is compact grouped cards */
+  variant?: 'compact' | 'full';
 };
+
+function FeatureIcon({
+  icon,
+  iconClass,
+}: {
+  icon: 'check' | 'check-circle';
+  iconClass: string;
+}) {
+  const Icon = icon === 'check' ? Check : CheckCircle;
+  return <Icon className={`h-3.5 w-3.5 ${iconClass} mt-0.5 shrink-0`} strokeWidth={2} />;
+}
 
 export default function PricingFeatureList({
   plan,
   icon = 'check-circle',
-  className = 'space-y-3 flex-1',
+  className = '',
+  variant = 'compact',
 }: PricingFeatureListProps) {
-  const Icon = icon === 'check' ? Check : CheckCircle;
-  const iconClass = icon === 'check' ? 'text-green-400' : 'text-brand-500';
+  const iconClass = icon === 'check' ? 'text-green-500' : 'text-brand-500';
 
-  if (plan === 'starter') {
+  if (variant === 'full' && plan === 'starter') {
     return (
-      <ul className={className}>
+      <ul className={`space-y-2 ${className}`}>
         {STARTER_FEATURES.map((feature) => (
-          <li key={feature} className="flex items-start gap-3">
-            <Icon className={`w-4 h-4 ${iconClass} flex-shrink-0 mt-0.5`} />
+          <li key={feature} className="flex items-start gap-2.5">
+            <FeatureIcon icon={icon} iconClass={iconClass} />
             <span className="text-sm text-gray-600">{feature}</span>
           </li>
         ))}
@@ -34,19 +49,57 @@ export default function PricingFeatureList({
     );
   }
 
+  if (variant === 'full' && plan === 'pro') {
+    return (
+      <ul className={`space-y-2 ${className}`}>
+        <li className="flex items-start gap-2.5">
+          <FeatureIcon icon={icon} iconClass={iconClass} />
+          <span className="text-sm text-gray-600">7-day free trial</span>
+        </li>
+        <li className="pt-0.5">
+          <span className="text-sm font-semibold text-gray-900">{PRO_PLAN_INTRO}</span>
+        </li>
+        {PRO_EXCLUSIVE_FEATURES.map((feature) => (
+          <li key={feature} className="flex items-start gap-2.5">
+            <FeatureIcon icon={icon} iconClass={iconClass} />
+            <span className="text-sm text-gray-600">{formatFeatureText(feature)}</span>
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  if (plan === 'starter') {
+    return (
+      <div className={`space-y-4 ${className}`}>
+        {STARTER_FEATURE_GROUPS.map((group) => (
+          <div key={group.title}>
+            <p className="mb-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-500">
+              {group.title}
+            </p>
+            <ul className="space-y-1.5">
+              {group.items.map((item) => (
+                <li key={item} className="flex items-start gap-2">
+                  <FeatureIcon icon={icon} iconClass={iconClass} />
+                  <span className="text-[13px] leading-snug text-gray-600">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <ul className={className}>
-      <li className="flex items-start gap-3">
-        <Icon className={`w-4 h-4 ${iconClass} flex-shrink-0 mt-0.5`} />
-        <span className="text-sm text-gray-600">7-day free trial</span>
-      </li>
-      <li className="pt-0.5">
+    <ul className={`space-y-2 ${className}`}>
+      <li className="pb-0.5">
         <span className="text-sm font-semibold text-gray-900">{PRO_PLAN_INTRO}</span>
       </li>
-      {PRO_EXCLUSIVE_FEATURES.map((feature) => (
-        <li key={feature} className="flex items-start gap-3">
-          <Icon className={`w-4 h-4 ${iconClass} flex-shrink-0 mt-0.5`} />
-          <span className="text-sm text-gray-600">{formatFeatureText(feature)}</span>
+      {PRO_CARD_HIGHLIGHTS.map((feature) => (
+        <li key={feature} className="flex items-start gap-2">
+          <FeatureIcon icon={icon} iconClass={iconClass} />
+          <span className="text-[13px] leading-snug text-gray-600">{formatFeatureText(feature)}</span>
         </li>
       ))}
     </ul>

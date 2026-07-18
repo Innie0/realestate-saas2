@@ -156,7 +156,7 @@ export default function HomePageClient() {
             <p className="text-gray-700 text-lg">Start free. No credit card setup fees. Cancel anytime.</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 md:items-start gap-6 max-w-3xl mx-auto">
             {[
               {
                 name: 'Starter',
@@ -179,7 +179,7 @@ export default function HomePageClient() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: i * 0.15 }}
-                className={`relative rounded-2xl p-7 flex flex-col ${
+                className={`relative rounded-2xl p-7 ${
                   plan.popular
                     ? 'bg-white border-2 border-gray-400'
                     : 'bg-white border border-gray-200'
@@ -231,6 +231,18 @@ export default function HomePageClient() {
               </motion.div>
             ))}
           </div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.35 }}
+            className="mt-8 text-center text-sm text-gray-600"
+          >
+            <Link href="/pricing#compare" className="font-medium text-gray-900 hover:text-brand-600 transition-colors">
+              Compare all features →
+            </Link>
+          </motion.p>
 
           <motion.p
             initial={{ opacity: 0 }}
