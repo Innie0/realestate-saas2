@@ -144,31 +144,17 @@ export default function LandingShowcaseCarousel() {
 
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-center lg:gap-12 xl:gap-16">
           <div className="relative mx-auto w-full max-w-[480px] lg:mx-0 lg:max-w-none">
-            <div className="relative overflow-hidden rounded-[1.75rem] p-5 sm:p-7 lg:p-8">
-              <div className="pointer-events-none absolute inset-0" aria-hidden>
-                <Image
-                  src="/landing/hero-mountains.jpg"
-                  alt=""
-                  fill
-                  className="object-cover object-center scale-110 blur-2xl saturate-[0.9]"
-                  sizes="520px"
-                />
-                <div className="absolute inset-0 bg-gradient-to-br from-black/30 via-black/20 to-black/35" />
-              </div>
-
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={slide.id}
-                  initial={reduced ? false : { opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={reduced ? undefined : { opacity: 0, scale: 0.99 }}
-                  transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-                  className="relative z-10"
-                >
-                  <ShowcaseAnimation id={slide.animationId} reduced={reduced} />
-                </motion.div>
-              </AnimatePresence>
-            </div>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={slide.id}
+                initial={reduced ? false : { opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={reduced ? undefined : { opacity: 0, scale: 0.99 }}
+                transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+              >
+                <ShowcaseAnimation id={slide.animationId} reduced={reduced} />
+              </motion.div>
+            </AnimatePresence>
           </div>
 
           <ShowcaseSlideRail active={active} onSelect={setActive} reduced={reduced} />

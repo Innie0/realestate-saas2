@@ -1,284 +1,356 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 const ease = [0.25, 0.1, 0.25, 1] as const;
 
+function floatTransition(duration: number, delay = 0) {
+  return {
+    duration,
+    repeat: Infinity,
+    ease: 'easeInOut' as const,
+    delay,
+  };
+}
+
+/** Dark blurred canvas — Solidroad-style */
 export function ShowcaseAnimationFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-300/80 bg-white shadow-[0_24px_56px_-20px_rgba(24,24,27,0.18),0_0_0_1px_rgba(24,24,27,0.04)] ring-1 ring-gray-900/[0.05]">
-      <div className="relative aspect-[4/3] w-full bg-[#fafafa] p-5 sm:aspect-[16/11] sm:p-6">
-        {children}
+    <div className="overflow-hidden rounded-2xl border border-white/10 shadow-[0_24px_56px_-20px_rgba(0,0,0,0.45)] ring-1 ring-white/10">
+      <div className="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[16/11]">
+        <Image
+          src="/landing/hero-mountains.jpg"
+          alt=""
+          fill
+          className="object-cover object-center scale-110 saturate-[1.15]"
+          sizes="520px"
+          aria-hidden
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/75 via-violet-900/55 to-orange-900/45" />
+        <div className="absolute inset-0 backdrop-blur-[14px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(255,255,255,0.12),transparent_55%)]" />
+        <div className="relative h-full w-full p-4 sm:p-5">{children}</div>
       </div>
     </div>
   );
 }
 
-function LoopShell({ reduced, children }: { reduced: boolean; children: React.ReactNode }) {
+function Avatar({ initials, tone }: { initials: string; tone: string }) {
+  return (
+    <span
+      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold text-white sm:h-9 sm:w-9 sm:text-[11px] ${tone}`}
+    >
+      {initials}
+    </span>
+  );
+}
+
+function ScoreBadge({ label, variant }: { label: string; variant: 'hot' | 'warm' | 'cold' | 'neutral' }) {
+  const styles = {
+    hot: 'bg-rose-400/90 text-white',
+    warm: 'bg-amber-400/90 text-white',
+    cold: 'bg-white/25 text-white/90',
+    neutral: 'bg-white/90 text-gray-900',
+  };
+  return (
+    <span
+      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold sm:h-9 sm:w-9 sm:text-[11px] ${styles[variant]}`}
+    >
+      {label}
+    </span>
+  );
+}
+
+function FloatingPill({
+  reduced,
+  className,
+  children,
+  drift,
+}: {
+  reduced: boolean;
+  className?: string;
+  children: React.ReactNode;
+  drift: { y: number[]; x: number[]; duration: number; delay?: number };
+}) {
   if (reduced) {
-    return <div className="flex h-full flex-col justify-center">{children}</div>;
+    return (
+      <div className={`absolute ${className ?? ''}`}>{children}</div>
+    );
   }
   return (
     <motion.div
-      className="flex h-full flex-col justify-center"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.4 }}
+      className={`absolute ${className ?? ''}`}
+      animate={{ y: drift.y, x: drift.x }}
+      transition={floatTransition(drift.duration, drift.delay)}
     >
       {children}
     </motion.div>
   );
 }
 
-/** AI chat: prompt → reply → action chips */
+function CenterStatusPill({
+  reduced,
+  label,
+  progress,
+}: {
+  reduced: boolean;
+  label: string;
+  progress?: boolean;
+}) {
+  return (
+    <motion.div
+      initial={reduced ? false : { opacity: 0, scale: 0.94 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.45, ease }}
+      className="absolute left-1/2 top-1/2 z-20 w-[min(88%,14rem)] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/20 bg-white/95 px-4 py-3 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.5)] backdrop-blur-md sm:w-[min(78%,15rem)]"
+    >
+      <p className="text-center text-[12px] font-semibold text-gray-900 sm:text-[13px]">{label}</p>
+      {progress ? (
+        <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-gray-200">
+          {reduced ? (
+            <div className="h-full w-[68%] rounded-full bg-brand-500" />
+          ) : (
+            <motion.div
+              className="h-full rounded-full bg-gradient-to-r from-brand-400 to-brand-600"
+              animate={{ width: ['18%', '88%', '18%'] }}
+              transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          )}
+        </div>
+      ) : null}
+    </motion.div>
+  );
+}
+
+function GlassScoreCard({
+  name,
+  initials,
+  tone,
+  score,
+  scoreVariant,
+}: {
+  name: string;
+  initials: string;
+  tone: string;
+  score: string;
+  scoreVariant: 'hot' | 'warm' | 'cold' | 'neutral';
+}) {
+  return (
+    <div className="flex items-center gap-2.5 rounded-full border border-white/25 bg-white/15 py-1.5 pl-1.5 pr-3 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.35)] backdrop-blur-md sm:gap-3 sm:pr-3.5">
+      <Avatar initials={initials} tone={tone} />
+      <span className="whitespace-nowrap text-[11px] font-medium text-white sm:text-[12px]">{name}</span>
+      <ScoreBadge label={score} variant={scoreVariant} />
+    </div>
+  );
+}
+
+function StackedModule({
+  index,
+  title,
+  subtitle,
+  active,
+  reduced,
+}: {
+  index: string;
+  title: string;
+  subtitle: string;
+  active: boolean;
+  reduced: boolean;
+}) {
+  return (
+    <motion.div
+      layout={!reduced}
+      animate={{
+        scale: active ? 1 : 0.94,
+        opacity: active ? 1 : 0.55,
+      }}
+      transition={{ duration: 0.45, ease }}
+      className={`flex w-full max-w-[15rem] items-center gap-3 rounded-2xl border px-3 py-2.5 sm:max-w-[16rem] sm:px-4 sm:py-3 ${
+        active
+          ? 'border-white/30 bg-white/95 shadow-[0_16px_40px_-16px_rgba(0,0,0,0.45)]'
+          : 'border-white/15 bg-white/10 backdrop-blur-md'
+      }`}
+    >
+      <span
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[11px] font-bold sm:h-10 sm:w-10 sm:text-[12px] ${
+          active ? 'bg-brand-100 text-brand-700' : 'bg-white/15 text-white/80'
+        }`}
+      >
+        {index}
+      </span>
+      <div className="min-w-0">
+        <p
+          className={`truncate text-[12px] font-semibold sm:text-[13px] ${
+            active ? 'text-gray-900' : 'text-white/90'
+          }`}
+        >
+          {title}
+        </p>
+        <p className={`truncate text-[10px] sm:text-[11px] ${active ? 'text-gray-500' : 'text-white/55'}`}>
+          {subtitle}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
+/** Floating AI command pills + center processing */
 export function AskOnceAnimation({ reduced }: { reduced: boolean }) {
   return (
     <ShowcaseAnimationFrame>
-      <LoopShell reduced={reduced}>
-        <div className="space-y-3">
-          <motion.div
-            initial={reduced ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.4, ease }}
-            className="ml-auto max-w-[85%] rounded-2xl rounded-tr-md bg-gray-900 px-3.5 py-2.5 text-[12px] leading-snug text-white sm:text-[13px]"
-          >
-            Draft a listing for 123 Oak St and pull comps
-          </motion.div>
+      <div className="relative h-full w-full">
+        <FloatingPill
+          reduced={reduced}
+          className="left-[4%] top-[10%] sm:left-[6%] sm:top-[12%]"
+          drift={{ y: [0, -10, 0], x: [0, 6, 0], duration: 5.2, delay: 0 }}
+        >
+          <GlassScoreCard
+            name="Draft listing"
+            initials="DL"
+            tone="bg-violet-500"
+            score="AI"
+            scoreVariant="neutral"
+          />
+        </FloatingPill>
 
-          <motion.div
-            initial={reduced ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 0.45, ease }}
-            className="max-w-[90%] rounded-2xl rounded-tl-md border border-gray-200 bg-white px-3.5 py-2.5 shadow-sm"
-          >
-            <p className="text-[11px] font-medium text-brand-600 sm:text-[12px]">Oikaro</p>
-            <p className="mt-1 text-[12px] leading-snug text-gray-700 sm:text-[13px]">
-              MLS-ready description drafted. 4 comps found — suggested range $485k–$512k.
-            </p>
-          </motion.div>
+        <FloatingPill
+          reduced={reduced}
+          className="right-[2%] top-[18%] sm:right-[5%]"
+          drift={{ y: [0, 8, 0], x: [0, -5, 0], duration: 4.6, delay: 0.4 }}
+        >
+          <GlassScoreCard
+            name="Pull comps"
+            initials="PC"
+            tone="bg-sky-500"
+            score="3"
+            scoreVariant="neutral"
+          />
+        </FloatingPill>
 
-          <motion.div
-            initial={reduced ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.6, duration: 0.35 }}
-            className="flex flex-wrap gap-2 pt-1"
-          >
-            {['Create project', 'Schedule follow-up', 'Add to CRM'].map((chip, i) => (
-              <motion.span
-                key={chip}
-                initial={reduced ? false : { opacity: 0, scale: 0.92 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1.7 + i * 0.12, duration: 0.3 }}
-                className="rounded-full border border-gray-300 bg-white px-2.5 py-1 text-[10px] font-medium text-gray-700 sm:text-[11px]"
-              >
-                {chip}
-              </motion.span>
-            ))}
-          </motion.div>
-        </div>
-      </LoopShell>
+        <FloatingPill
+          reduced={reduced}
+          className="bottom-[16%] left-[8%] sm:bottom-[18%]"
+          drift={{ y: [0, -7, 0], x: [0, 8, 0], duration: 5.8, delay: 0.8 }}
+        >
+          <GlassScoreCard
+            name="Schedule follow-up"
+            initials="SF"
+            tone="bg-emerald-500"
+            score="✓"
+            scoreVariant="neutral"
+          />
+        </FloatingPill>
+
+        <CenterStatusPill reduced={reduced} label="Processing request" progress />
+      </div>
     </ShowcaseAnimationFrame>
   );
 }
 
-/** Photos in → description → comps */
+/** Floating listing + comp pills */
 export function WinListingAnimation({ reduced }: { reduced: boolean }) {
   return (
     <ShowcaseAnimationFrame>
-      <LoopShell reduced={reduced}>
-        <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-2">
-            {[0, 1, 2].map((i) => (
-              <motion.div
-                key={i}
-                initial={reduced ? false : { opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 + i * 0.15, duration: 0.35, ease }}
-                className="aspect-[4/3] rounded-lg bg-gradient-to-br from-gray-200 to-gray-300"
-              />
-            ))}
-          </div>
+      <div className="relative h-full w-full">
+        <FloatingPill
+          reduced={reduced}
+          className="left-[3%] top-[14%]"
+          drift={{ y: [0, -9, 0], x: [0, 5, 0], duration: 4.8 }}
+        >
+          <GlassScoreCard name="123 Oak St" initials="OK" tone="bg-orange-500" score="4" scoreVariant="neutral" />
+        </FloatingPill>
 
-          <motion.div
-            initial={reduced ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7, duration: 0.4 }}
-            className="space-y-1.5 rounded-xl border border-gray-200 bg-white p-3"
-          >
-            {[100, 92, 78, 65].map((w, i) => (
-              <motion.div
-                key={i}
-                initial={reduced ? false : { width: 0, opacity: 0 }}
-                animate={{ width: `${w}%`, opacity: 1 }}
-                transition={{ delay: 0.85 + i * 0.12, duration: 0.35, ease }}
-                className="h-2 rounded-full bg-gray-200"
-              />
-            ))}
-            <motion.p
-              initial={reduced ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.35, duration: 0.3 }}
-              className="pt-1 text-[10px] font-medium text-brand-600 sm:text-[11px]"
-            >
-              MLS-ready · Luxury tone
-            </motion.p>
-          </motion.div>
+        <FloatingPill
+          reduced={reduced}
+          className="right-[0%] top-[22%] sm:right-[3%]"
+          drift={{ y: [0, 7, 0], x: [0, -6, 0], duration: 5.4, delay: 0.3 }}
+        >
+          <GlassScoreCard name="$495k comp" initials="C1" tone="bg-indigo-500" score="A" scoreVariant="neutral" />
+        </FloatingPill>
 
-          <motion.div
-            initial={reduced ? false : { opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.5, duration: 0.4, ease }}
-            className="flex gap-2"
-          >
-            {['$478k', '$495k', '$512k'].map((price) => (
-              <div
-                key={price}
-                className="flex-1 rounded-lg border border-gray-200 bg-white px-2 py-2 text-center"
-              >
-                <p className="text-[10px] text-gray-500">Comp</p>
-                <p className="text-[12px] font-semibold text-gray-900">{price}</p>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </LoopShell>
+        <FloatingPill
+          reduced={reduced}
+          className="bottom-[14%] right-[6%]"
+          drift={{ y: [0, -6, 0], x: [0, 4, 0], duration: 5, delay: 0.6 }}
+        >
+          <GlassScoreCard name="Luxury tone" initials="LT" tone="bg-rose-500" score="✦" scoreVariant="neutral" />
+        </FloatingPill>
+
+        <CenterStatusPill reduced={reduced} label="Generating MLS copy" progress />
+      </div>
     </ShowcaseAnimationFrame>
   );
 }
 
-/** Leads arrive scored → move to CRM */
+/** Lead scoring — Solidroad review-style floating cards */
 export function NeverLoseLeadAnimation({ reduced }: { reduced: boolean }) {
-  const leads = [
-    { name: 'Sarah M.', score: 'Hot', color: 'bg-red-100 text-red-700 border-red-200' },
-    { name: 'James R.', score: 'Warm', color: 'bg-amber-100 text-amber-700 border-amber-200' },
-    { name: 'Alex T.', score: 'Cold', color: 'bg-gray-100 text-gray-600 border-gray-200' },
+  return (
+    <ShowcaseAnimationFrame>
+      <div className="relative h-full w-full">
+        <FloatingPill
+          reduced={reduced}
+          className="left-[2%] top-[12%] sm:left-[5%]"
+          drift={{ y: [0, -11, 0], x: [0, 7, 0], duration: 5.1 }}
+        >
+          <GlassScoreCard name="Sarah M." initials="SM" tone="bg-rose-500" score="92" scoreVariant="hot" />
+        </FloatingPill>
+
+        <FloatingPill
+          reduced={reduced}
+          className="right-[0%] top-[20%] sm:right-[4%]"
+          drift={{ y: [0, 9, 0], x: [0, -5, 0], duration: 4.7, delay: 0.5 }}
+        >
+          <GlassScoreCard name="James R." initials="JR" tone="bg-amber-500" score="74" scoreVariant="warm" />
+        </FloatingPill>
+
+        <FloatingPill
+          reduced={reduced}
+          className="bottom-[12%] left-[10%]"
+          drift={{ y: [0, -8, 0], x: [0, 6, 0], duration: 5.5, delay: 0.2 }}
+        >
+          <GlassScoreCard name="Alex T." initials="AT" tone="bg-slate-500" score="41" scoreVariant="cold" />
+        </FloatingPill>
+
+        <CenterStatusPill reduced={reduced} label="Scoring leads" progress />
+      </div>
+    </ShowcaseAnimationFrame>
+  );
+}
+
+/** Stacked deal modules — Solidroad training-stack style */
+export function CloseConfidenceAnimation({ reduced }: { reduced: boolean }) {
+  const modules = [
+    { index: '01', title: 'Offer accepted', subtitle: '742 Maple Ave' },
+    { index: '02', title: 'Inspection scheduled', subtitle: 'Due Thursday' },
+    { index: '03', title: 'Closing checklist', subtitle: 'Apr 18' },
   ];
 
-  return (
-    <ShowcaseAnimationFrame>
-      <LoopShell reduced={reduced}>
-        <div className="space-y-2.5">
-          {leads.map((lead, i) => (
-            <motion.div
-              key={lead.name}
-              initial={reduced ? false : { opacity: 0, x: 24 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 + i * 0.25, duration: 0.4, ease }}
-              className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-3 py-2.5 shadow-sm"
-            >
-              <div>
-                <p className="text-[12px] font-semibold text-gray-900 sm:text-[13px]">{lead.name}</p>
-                <p className="text-[10px] text-gray-500">Open house · 2BR condo</p>
-              </div>
-              <span
-                className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${lead.color}`}
-              >
-                {lead.score}
-              </span>
-            </motion.div>
-          ))}
+  const [activeIndex, setActiveIndex] = useState(1);
 
-          <motion.div
-            initial={reduced ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2, duration: 0.4, ease }}
-            className="mt-3 flex items-center gap-2 rounded-xl border border-dashed border-brand-300 bg-brand-50/80 px-3 py-2"
-          >
-            <motion.div
-              initial={reduced ? false : { x: -8, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 1.45, duration: 0.35 }}
-              className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-500 text-[10px] font-bold text-white"
-            >
-              ✓
-            </motion.div>
-            <p className="text-[11px] font-medium text-gray-800 sm:text-[12px]">
-              Hot lead added to CRM — follow-up scheduled
-            </p>
-          </motion.div>
-        </div>
-      </LoopShell>
-    </ShowcaseAnimationFrame>
-  );
-}
-
-/** Checklist → calendar → pipeline */
-export function CloseConfidenceAnimation({ reduced }: { reduced: boolean }) {
-  const tasks = ['Offer accepted', 'Inspection scheduled', 'Appraisal ordered'];
+  useEffect(() => {
+    if (reduced) return;
+    const timer = setInterval(() => {
+      setActiveIndex((i) => (i + 1) % modules.length);
+    }, 2800);
+    return () => clearInterval(timer);
+  }, [reduced, modules.length]);
 
   return (
     <ShowcaseAnimationFrame>
-      <LoopShell reduced={reduced}>
-        <div className="space-y-4">
-          <div className="rounded-xl border border-gray-200 bg-white p-3">
-            <p className="mb-2.5 text-[11px] font-semibold text-gray-900 sm:text-[12px]">
-              742 Maple Ave · Closing Apr 18
-            </p>
-            <ul className="space-y-2">
-              {tasks.map((task, i) => (
-                <motion.li
-                  key={task}
-                  initial={reduced ? false : { opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 + i * 0.2, duration: 0.35, ease }}
-                  className="flex items-center gap-2 text-[11px] text-gray-700 sm:text-[12px]"
-                >
-                  <motion.span
-                    initial={reduced ? false : { scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.35 + i * 0.2, type: 'spring', stiffness: 420, damping: 22 }}
-                    className="flex h-4 w-4 items-center justify-center rounded-full bg-brand-500 text-[9px] text-white"
-                  >
-                    ✓
-                  </motion.span>
-                  {task}
-                </motion.li>
-              ))}
-            </ul>
-          </div>
-
-          <motion.div
-            initial={reduced ? false : { opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.95, duration: 0.4, ease }}
-            className="rounded-xl border border-gray-200 bg-white p-3"
-          >
-            <p className="text-[10px] font-medium uppercase tracking-wide text-gray-500">This week</p>
-            <div className="mt-2 flex gap-1.5">
-              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((day, i) => (
-                <div
-                  key={day}
-                  className={`flex-1 rounded-md py-2 text-center text-[10px] ${
-                    i === 2 ? 'bg-brand-500 font-semibold text-white' : 'bg-gray-100 text-gray-600'
-                  }`}
-                >
-                  {day}
-                </div>
-              ))}
-            </div>
-            <p className="mt-2 text-[11px] text-gray-600">Showing · 742 Maple Ave · 2:00 PM</p>
-          </motion.div>
-
-          <motion.div
-            initial={reduced ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.3, duration: 0.4 }}
-          >
-            <div className="mb-1 flex justify-between text-[10px] text-gray-600">
-              <span>Pipeline</span>
-              <span className="font-medium text-gray-900">3 active deals</span>
-            </div>
-            <div className="h-2 overflow-hidden rounded-full bg-gray-200">
-              <motion.div
-                initial={reduced ? false : { width: 0 }}
-                animate={{ width: '72%' }}
-                transition={{ delay: 1.45, duration: 0.6, ease }}
-                className="h-full rounded-full bg-brand-500"
-              />
-            </div>
-          </motion.div>
-        </div>
-      </LoopShell>
+      <div className="flex h-full flex-col items-center justify-center gap-2.5 sm:gap-3">
+        {modules.map((mod, i) => (
+          <StackedModule
+            key={mod.index}
+            index={mod.index}
+            title={mod.title}
+            subtitle={mod.subtitle}
+            active={i === activeIndex}
+            reduced={reduced}
+          />
+        ))}
+      </div>
     </ShowcaseAnimationFrame>
   );
 }
