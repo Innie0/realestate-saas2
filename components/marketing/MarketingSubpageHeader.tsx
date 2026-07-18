@@ -1,11 +1,18 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import ProductsMegaMenu from '@/components/marketing/ProductsMegaMenu';
 
 export default function MarketingSubpageHeader() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-gray-200 bg-[#F5F5F5]/95 backdrop-blur-md">
+    <header
+      className={`sticky top-0 z-[60] border-b border-gray-200 transition-[background-color] duration-300 ${
+        menuOpen ? 'bg-[#F5F5F5]' : 'bg-[#F5F5F5]/95 backdrop-blur-md'
+      }`}
+    >
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 sm:h-24 lg:px-8">
         <Link
           href="/"
@@ -14,7 +21,7 @@ export default function MarketingSubpageHeader() {
           Oikaro
         </Link>
         <div className="flex items-center gap-3 sm:gap-4">
-          <ProductsMegaMenu onSolidBackground />
+          <ProductsMegaMenu onSolidBackground onOpenChange={setMenuOpen} />
           <Link
             href="/pricing"
             className="hidden text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 sm:inline"
