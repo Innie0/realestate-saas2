@@ -1,61 +1,103 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 /**
- * Solidroad-style top overscroll — a short white frost strip that only
- * appears while rubber-banding at the page top. No large backdrop-blur
- * layer over the hero (that smudged the mountains last time).
+ * Top overscroll frost — only visible while rubber-banding at page top.
+ * Opacity scales with pull strength (Solidroad-style), not a binary pop-in.
  */
 export default function OverscrollTopVeil() {
-  const [overscrolling, setOverscrolling] = useState(false);
+  const [visual, setVisual] = useState({ opacity: 0, height: 0 });
+  const pullRef = useRef(0);
+  const touchingRef = useRef(false);
+  const touchStartYRef = useRef(0);
 
   useEffect(() => {
-    let resetTimer: ReturnType<typeof setTimeout> | undefined;
-    let touchStartY = 0;
+    let raf = 0;
 
-    const activate = () => {
-      setOverscrolling(true);
-      if (resetTimer) clearTimeout(resetTimer);
-      resetTimer = setTimeout(() => setOverscrolling(false), 320);
+    const tick = () => {
+      if (!touchingRef.current && window.scrollY <= 2) {
+        pullRef.current *= 0.82;
+      } else if (window.scrollY > 2) {
+        pullRef.current = 0;
+      }
+
+      const pull = pullRef.current;
+      setVisual({
+        opacity: pull,
+        height: pull > 0.005 ? 6 + pull * 22 : 0,
+      });
+
+      raf = requestAnimationFrame(tick);
+    };
+
+    raf = requestAnimationFrame(tick);
+
+    const addPull = (delta: number) => {
+      if (window.scrollY > 2) return;
+      pullRef.current = Math.min(1, pullRef.current + delta);
     };
 
     const onWheel = (e: WheelEvent) => {
-      if (window.scrollY <= 0 && e.deltaY < 0) activate();
+      if (window.scrollY > 2) return;
+      if (e.deltaY < 0) {
+        addPull(Math.min(0.14, Math.abs(e.deltaY) / 100));
+      } else {
+        pullRef.current *= 0.55;
+      }
     };
 
     const onTouchStart = (e: TouchEvent) => {
-      touchStartY = e.touches[0]?.clientY ?? 0;
+      touchingRef.current = true;
+      touchStartYRef.current = e.touches[0]?.clientY ?? 0;
     };
 
     const onTouchMove = (e: TouchEvent) => {
-      const y = e.touches[0]?.clientY ?? touchStartY;
-      if (window.scrollY <= 0 && y > touchStartY + 8) activate();
+      if (window.scrollY > 2) return;
+      const y = e.touches[0]?.clientY ?? touchStartYRef.current;
+      const delta = y - touchStartYRef.current;
+      if (delta > 0) {
+        addPull(Math.min(0.2, delta / 180));
+      }
+    };
+
+    const onTouchEnd = () => {
+      touchingRef.current = false;
     };
 
     window.addEventListener('wheel', onWheel, { passive: true });
     window.addEventListener('touchstart', onTouchStart, { passive: true });
     window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', onTouchEnd, { passive: true });
 
     return () => {
-      if (resetTimer) clearTimeout(resetTimer);
+      cancelAnimationFrame(raf);
       window.removeEventListener('wheel', onWheel);
       window.removeEventListener('touchstart', onTouchStart);
       window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchcancel', onTouchEnd);
     };
   }, []);
-
-  if (!overscrolling) return null;
 
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed inset-x-0 top-0 z-40 h-24"
+      className="pointer-events-none fixed inset-x-0 top-0 z-40 overflow-hidden"
+      style={{
+        height: visual.height,
+        opacity: visual.opacity,
+        visibility: visual.opacity < 0.02 ? 'hidden' : 'visible',
+      }}
     >
-      {/* Thin frost at the very top edge */}
-      <div className="absolute inset-x-0 top-0 h-6 bg-[#F5F5F5]/95 backdrop-blur-sm" />
-      {/* Soft white fade — no backdrop-blur on the large area */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#F5F5F5] via-[#F5F5F5]/75 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#F5F5F5] via-[#F5F5F5]/60 to-transparent" />
+      {visual.opacity > 0.15 ? (
+        <div
+          className="absolute inset-x-0 top-0 backdrop-blur-[5px]"
+          style={{ height: Math.min(10, visual.height * 0.45), opacity: visual.opacity * 0.7 }}
+        />
+      ) : null}
     </div>
   );
 }
