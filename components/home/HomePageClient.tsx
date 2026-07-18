@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import CinematicHeroSection from '@/components/home/CinematicHeroSection';
 import LandingShowcaseCarousel from '@/components/home/LandingShowcaseCarousel';
 import LandingPlatformSection from '@/components/home/LandingPlatformSection';
 import LandingTrustSection from '@/components/home/LandingTrustSection';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, ArrowRight, ChevronDown, Star } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import PricingFeatureList from '@/components/PricingFeatureList';
@@ -19,32 +19,6 @@ import {
   isAnyAnnualBillingAvailable,
 } from '@/lib/pricing';
 import { MARKETING_FAQ_ITEMS } from '@/lib/marketing-faq';
-
-// ─── CountUp Component ────────────────────────────────────────────────────────
-
-function CountUp({ end, suffix = '', duration = 2 }: { end: number; suffix?: string; duration?: number }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (!inView) return;
-    let start = 0;
-    const step = end / (duration * 60);
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= end) {
-        setCount(end);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
-    }, 1000 / 60);
-    return () => clearInterval(timer);
-  }, [inView, end, duration]);
-
-  return <span ref={ref}>{count}{suffix}</span>;
-}
 
 // ─── FAQ Item ─────────────────────────────────────────────────────────────────
 
@@ -149,33 +123,6 @@ export default function HomePageClient() {
 
 
       <CinematicHeroSection />
-
-      {/* ── Stats Bar ──────────────────────────────────────────────────── */}
-      <section className="relative z-10 border-y border-gray-200 bg-gray-50 backdrop-blur-sm py-12">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {[
-              { value: 10, suffix: 'x', label: 'Faster Listing Descriptions' },
-              { value: 5, suffix: '+', label: 'Hours Saved Per Week' },
-              { value: 10, suffix: '+', label: 'More Leads' },
-              { value: 100, suffix: '%', label: 'Built for Real Estate' },
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-              >
-                <div className="text-4xl lg:text-5xl font-semibold tracking-[-0.02em] tabular-nums text-gray-900 mb-2">
-                  <CountUp end={stat.value} suffix={stat.suffix} />
-                </div>
-                <p className="text-label text-center">{stat.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       <LandingShowcaseCarousel />
       <LandingPlatformSection />

@@ -98,13 +98,23 @@ function useTypewriterPrompts(prompts: readonly string[]) {
 type HeroAssistantPreviewProps = {
   /** When false, skip the blurred house backdrop (cinematic hero provides its own). */
   showBackdrop?: boolean;
+  /** Taller frame for cinematic hero bleed-into-next-section layout. */
+  cinematic?: boolean;
 };
 
-export default function HeroAssistantPreview({ showBackdrop = true }: HeroAssistantPreviewProps) {
+export default function HeroAssistantPreview({
+  showBackdrop = true,
+  cinematic = false,
+}: HeroAssistantPreviewProps) {
   const typedPrompt = useTypewriterPrompts(HERO_PROMPTS);
+  const frameHeight = cinematic ? 'h-[680px] lg:h-[720px]' : 'h-[560px] lg:h-[580px]';
 
   return (
-    <div className="relative mx-auto w-full min-h-[560px] max-w-[820px] lg:min-w-0">
+    <div
+      className={`relative mx-auto w-full max-w-[820px] lg:min-w-0 ${
+        cinematic ? 'min-h-[680px] lg:min-h-[720px]' : 'min-h-[560px]'
+      }`}
+    >
       {showBackdrop ? (
         <div className="absolute -inset-3 sm:-inset-4 rounded-[2rem] overflow-hidden" aria-hidden>
           <Image
@@ -119,7 +129,7 @@ export default function HeroAssistantPreview({ showBackdrop = true }: HeroAssist
         </div>
       ) : null}
 
-      <div className="relative z-10 flex h-[560px] flex-col overflow-hidden rounded-2xl border border-white/30 bg-white shadow-[0_32px_80px_-20px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.15)] ring-1 ring-white/10 lg:h-[580px]">
+      <div className={`relative z-10 flex flex-col overflow-hidden rounded-2xl border border-white/30 bg-white shadow-[0_32px_80px_-20px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.15)] ring-1 ring-white/10 ${frameHeight}`}>
         <div className="flex min-h-0 flex-1">
           {/* App sidebar */}
           <aside className="flex w-[168px] shrink-0 flex-col border-r border-gray-200 bg-[#f5f5f4] py-4 px-2.5">

@@ -63,7 +63,7 @@ export default function LandingShowcaseCarousel() {
   }, [goNext, goPrev]);
 
   return (
-    <section className="relative z-10 overflow-hidden border-t border-gray-200 py-24 lg:py-32">
+    <section className="relative z-30 -mt-20 overflow-hidden bg-[#F5F5F5] py-24 sm:-mt-24 lg:py-32">
       {/* Soft blurred backdrop */}
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         <Image

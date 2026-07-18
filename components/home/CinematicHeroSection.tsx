@@ -29,10 +29,10 @@ export default function CinematicHeroSection() {
   const heroRef = useRef<HTMLElement>(null);
 
   return (
-    <section ref={heroRef} className="relative min-h-[100svh] overflow-hidden">
+    <section ref={heroRef} className="relative overflow-hidden bg-[#F5F5F5]">
       <LandingNav heroRef={heroRef} />
 
-      {/* Mountain landscape — peaks visible on the sides, valley in the center */}
+      {/* Mountain landscape — full section height */}
       <div className="absolute inset-0" aria-hidden>
         <Image
           src="/landing/hero-mountains.jpg"
@@ -42,18 +42,17 @@ export default function CinematicHeroSection() {
           sizes="100vw"
           className="object-cover object-center scale-[1.02]"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-[#F5F5F5]" />
-        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#F5F5F5] via-[#F5F5F5]/80 to-transparent" />
-        {/* Side vignette — draws focus to the center product frame */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_72%_58%_at_50%_42%,transparent_0%,rgba(0,0,0,0.35)_100%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/20 to-[#F5F5F5]/40" />
+        <div className="absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-[#F5F5F5] via-[#F5F5F5]/70 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_72%_48%_at_50%_38%,transparent_0%,rgba(0,0,0,0.3)_100%)]" />
       </div>
 
-      <div className="relative z-10 flex min-h-[100svh] flex-col pt-20 sm:pt-24">
+      <div className="relative z-10 flex flex-col pt-20 sm:pt-24">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="mx-auto flex w-full max-w-7xl flex-1 flex-col items-center px-6 pb-8 pt-10 sm:pt-14 lg:px-8 lg:pb-12"
+          className="mx-auto flex w-full max-w-7xl flex-col items-center px-6 pt-10 sm:pt-14 lg:px-8"
         >
           <div className="mx-auto max-w-3xl text-center">
             <motion.div variants={itemVariants} className="mb-6 flex justify-center">
@@ -106,13 +105,13 @@ export default function CinematicHeroSection() {
             </motion.div>
           </div>
 
-          {/* Product UI nestled in the mountain valley */}
+          {/* Product UI — extends down until clipped by the section fade */}
           <motion.div
             variants={itemVariants}
-            className="relative mt-12 w-full max-w-[820px] lg:mt-14 xl:max-w-[880px]"
+            className="relative mt-12 w-full max-w-[900px] translate-y-4 sm:mt-14 sm:translate-y-8 lg:translate-y-10 xl:max-w-[920px]"
           >
             <div className="hidden lg:block">
-              <HeroAssistantPreview showBackdrop={false} />
+              <HeroAssistantPreview showBackdrop={false} cinematic />
             </div>
             <div className="lg:hidden">
               <div className="overflow-hidden rounded-2xl border border-white/25 bg-white/95 shadow-[0_32px_80px_-24px_rgba(0,0,0,0.45)] ring-1 ring-white/20">
@@ -130,6 +129,15 @@ export default function CinematicHeroSection() {
             </div>
           </motion.div>
         </motion.div>
+      </div>
+
+      {/* Bottom fade + blur — product dissolves into continuous white space */}
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-44 sm:h-52"
+        aria-hidden
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-[#F5F5F5] from-[35%] via-[#F5F5F5]/92 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-[#F5F5F5]/80 backdrop-blur-md [mask-image:linear-gradient(to_top,black_40%,transparent)]" />
       </div>
     </section>
   );
