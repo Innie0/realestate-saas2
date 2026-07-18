@@ -724,9 +724,6 @@ function TasksPageContent() {
               </div>
             ) : showEmptyState ? (
               <div className="flex flex-col items-center justify-center h-full px-6 py-10 text-center">
-                <div className="w-14 h-14 rounded-full bg-[#fdf3e5] flex items-center justify-center mb-5">
-                  <Sparkles className="w-6 h-6 text-[#b8842d]" />
-                </div>
                 <h2 className="text-[22px] font-semibold tracking-[-0.02em] text-gray-900">
                   How can I help you today?
                 </h2>
