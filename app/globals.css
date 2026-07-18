@@ -24,6 +24,12 @@
     @apply bg-[var(--canvas)] text-gray-900 antialiased;
   }
 
+  /* Landing page — white canvas shows through on rubber-band overscroll at top */
+  html:has(.marketing-root),
+  html:has(.marketing-root) body {
+    background-color: #f5f5f5;
+  }
+
   h1 {
     @apply tracking-tight;
   }
