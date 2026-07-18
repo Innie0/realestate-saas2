@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useTopOverscrollPull } from '@/lib/use-top-overscroll-pull';
 
 type LandingNavProps = {
   heroRef: React.RefObject<HTMLElement | null>;
@@ -10,6 +11,8 @@ type LandingNavProps = {
 
 export default function LandingNav({ heroRef }: LandingNavProps) {
   const [solid, setSolid] = useState(false);
+  const onHero = !solid;
+  const pull = useTopOverscrollPull(onHero);
 
   useEffect(() => {
     const hero = heroRef.current;
@@ -17,7 +20,6 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
 
     const update = () => {
       const { bottom } = hero.getBoundingClientRect();
-      // Switch once the hero clears the nav bar (~96px tall)
       setSolid(bottom <= 96);
     };
 
@@ -30,16 +32,31 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
     };
   }, [heroRef]);
 
+  const blurPx = Math.round(pull * 22);
+  const frostBg = `rgba(255, 255, 255, ${pull * 0.32})`;
+  const frostFilter = pull > 0.02 ? `blur(${blurPx}px) saturate(1.15)` : undefined;
+
   return (
     <motion.nav
       initial={{ opacity: 0, y: -12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.05 }}
-      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow] duration-300 ease-out ${
+      className={`fixed inset-x-0 top-0 z-50 ${
         solid
-          ? 'border-b border-gray-200 bg-[#F5F5F5]/95 shadow-sm backdrop-blur-md'
-          : 'border-b border-transparent bg-transparent'
+          ? 'border-b border-gray-200 bg-[#F5F5F5]/95 shadow-sm backdrop-blur-md transition-[background-color,border-color,box-shadow] duration-300 ease-out'
+          : 'border-b border-transparent'
       }`}
+      style={
+        onHero
+          ? {
+              backgroundColor: pull > 0.01 ? frostBg : 'transparent',
+              backdropFilter: frostFilter,
+              WebkitBackdropFilter: frostFilter,
+              boxShadow:
+                pull > 0.04 ? `inset 0 1px 0 rgba(255,255,255,${pull * 0.45})` : undefined,
+            }
+          : undefined
+      }
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex h-20 sm:h-24 items-center justify-between">

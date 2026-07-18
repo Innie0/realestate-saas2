@@ -32,8 +32,8 @@ export default function CinematicHeroSection() {
     <section ref={heroRef} className="relative min-h-[100svh] overflow-hidden">
       <LandingNav heroRef={heroRef} />
 
-      {/* Mountain landscape — peaks visible on the sides, valley in the center */}
-      <div className="absolute inset-0" aria-hidden>
+      {/* Mountain landscape */}
+      <div className="absolute inset-0 z-0" aria-hidden>
         <Image
           src="/landing/hero-mountains.jpg"
           alt=""
@@ -42,9 +42,8 @@ export default function CinematicHeroSection() {
           sizes="100vw"
           className="object-cover object-center scale-[1.02]"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-[#F5F5F5]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/22 to-[#F5F5F5]/90" />
         <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#F5F5F5] via-[#F5F5F5]/80 to-transparent" />
-        {/* Side vignette — draws focus to the center product frame */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_72%_58%_at_50%_42%,transparent_0%,rgba(0,0,0,0.35)_100%)]" />
       </div>
 
