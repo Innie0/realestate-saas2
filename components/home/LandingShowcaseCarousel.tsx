@@ -1,10 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ArrowRight, ArrowRight as CtaArrow } from 'lucide-react';
+import { ArrowRight as CtaArrow } from 'lucide-react';
 import { SHOWCASE_NARRATIVE, SHOWCASE_SLIDES } from '@/lib/landing-showcase';
 import { useMotionReduced } from '@/lib/motion';
 
@@ -128,25 +128,7 @@ function ShowcaseSlideRail({
 export default function LandingShowcaseCarousel() {
   const reduced = useMotionReduced();
   const [active, setActive] = useState(0);
-  const total = SHOWCASE_SLIDES.length;
   const slide = SHOWCASE_SLIDES[active];
-
-  const goNext = useCallback(() => {
-    setActive((i) => (i + 1) % total);
-  }, [total]);
-
-  const goPrev = useCallback(() => {
-    setActive((i) => (i - 1 + total) % total);
-  }, [total]);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') goPrev();
-      if (e.key === 'ArrowRight') goNext();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [goNext, goPrev]);
 
   return (
     <section className="relative z-10 overflow-hidden border-t border-gray-200 py-24 lg:py-32">
@@ -210,33 +192,6 @@ export default function LandingShowcaseCarousel() {
 
           {/* Right rail — all 4 slides visible */}
           <ShowcaseSlideRail active={active} onSelect={setActive} reduced={reduced} />
-        </div>
-
-        {/* Pagination */}
-        <div className="mx-auto mt-12 flex max-w-6xl items-center justify-center gap-6 lg:mt-14">
-          <button
-            type="button"
-            onClick={goPrev}
-            aria-label="Previous slide"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-900 transition-colors hover:border-gray-400 hover:bg-gray-50"
-          >
-            <ArrowLeft className="h-4 w-4" strokeWidth={1.8} />
-          </button>
-
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-sm tabular-nums text-gray-900">{active + 1}</span>
-            <span className="text-gray-400">/</span>
-            <span className="font-mono text-sm tabular-nums text-gray-500">{total}</span>
-          </div>
-
-          <button
-            type="button"
-            onClick={goNext}
-            aria-label="Next slide"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-900 transition-colors hover:border-gray-400 hover:bg-gray-50"
-          >
-            <ArrowRight className="h-4 w-4" strokeWidth={1.8} />
-          </button>
         </div>
       </div>
     </section>
