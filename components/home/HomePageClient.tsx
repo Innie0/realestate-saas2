@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import CinematicHeroSection from '@/components/home/CinematicHeroSection';
-import LandingFeatureSections from '@/components/home/LandingFeatureSections';
+import LandingShowcaseCarousel from '@/components/home/LandingShowcaseCarousel';
+import LandingPlatformSection from '@/components/home/LandingPlatformSection';
+import LandingTrustSection from '@/components/home/LandingTrustSection';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { Sparkles, ArrowRight, ChevronDown, Star } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
@@ -175,7 +177,9 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      <LandingFeatureSections />
+      <LandingShowcaseCarousel />
+      <LandingPlatformSection />
+      <LandingTrustSection />
 
       {/* ── FAQ ────────────────────────────────────────────────────────── */}
       <section className="relative z-10 py-24 lg:py-32 border-t border-gray-200">

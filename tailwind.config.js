@@ -135,6 +135,15 @@ module.exports = {
         // emerald, rose, sky: rely on Tailwind's built-in defaults (no
         // override needed — this key is intentionally omitted).
       },
+      keyframes: {
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+      },
+      animation: {
+        marquee: 'marquee 40s linear infinite',
+      },
     },
   },
   plugins: [],
