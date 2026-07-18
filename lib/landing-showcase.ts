@@ -72,7 +72,7 @@ export const SHOWCASE_SLIDES: ShowcaseSlide[] = [
     eyebrow: 'Listings & Research',
     headline: 'Go from photos to MLS-ready copy in seconds.',
     description:
-      'Generate listing descriptions in multiple tones, then pull property data and a CMA for any address — without switching tabs or tools.',
+      'Generate listing descriptions in multiple tones, then look up any address for owner contact, property details, and full sale history — without switching tabs or tools.',
     animationId: 'win-listing',
     productsHref: '/products#projects',
     tools: ['Listing Projects', 'Property Research'],

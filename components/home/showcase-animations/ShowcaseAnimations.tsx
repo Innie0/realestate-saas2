@@ -1,13 +1,23 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, User, History } from 'lucide-react';
 
 const ease = [0.25, 0.1, 0.25, 1] as const;
 
-export function ShowcaseAnimationFrame({ children }: { children: React.ReactNode }) {
+export function ShowcaseAnimationFrame({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-300/80 bg-white shadow-[0_24px_56px_-20px_rgba(24,24,27,0.18),0_0_0_1px_rgba(24,24,27,0.04)] ring-1 ring-gray-900/[0.05]">
-      <div className="relative aspect-[4/3] w-full bg-[#fafafa] p-5 sm:aspect-[16/11] sm:p-6">
+      <div
+        className={`relative w-full bg-[#fafafa] p-5 sm:p-6 ${className ?? 'aspect-[4/3] sm:aspect-[16/11]'}`}
+      >
         {children}
       </div>
     </div>
@@ -81,66 +91,194 @@ export function AskOnceAnimation({ reduced }: { reduced: boolean }) {
   );
 }
 
-/** Photos in → description → comps */
-export function WinListingAnimation({ reduced }: { reduced: boolean }) {
+/** Photos in → description, then switches to property lookup with owner + sale history */
+function ListingGenerationPhase({ reduced }: { reduced: boolean }) {
   return (
-    <ShowcaseAnimationFrame>
-      <LoopShell reduced={reduced}>
-        <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-2">
-            {[0, 1, 2].map((i) => (
-              <motion.div
-                key={i}
-                initial={reduced ? false : { opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 + i * 0.15, duration: 0.35, ease }}
-                className="aspect-[4/3] rounded-lg bg-gradient-to-br from-gray-200 to-gray-300"
-              />
-            ))}
-          </div>
-
+    <motion.div
+      key="listing"
+      initial={reduced ? false : { opacity: 0, x: -12 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={reduced ? undefined : { opacity: 0, x: 12 }}
+      transition={{ duration: 0.4, ease }}
+      className="space-y-4"
+    >
+      <div className="grid grid-cols-3 gap-2">
+        {[0, 1, 2].map((i) => (
           <motion.div
-            initial={reduced ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7, duration: 0.4 }}
-            className="space-y-1.5 rounded-xl border border-gray-200 bg-white p-3"
-          >
-            {[100, 92, 78, 65].map((w, i) => (
-              <motion.div
-                key={i}
-                initial={reduced ? false : { width: 0, opacity: 0 }}
-                animate={{ width: `${w}%`, opacity: 1 }}
-                transition={{ delay: 0.85 + i * 0.12, duration: 0.35, ease }}
-                className="h-2 rounded-full bg-gray-200"
-              />
-            ))}
-            <motion.p
-              initial={reduced ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.35, duration: 0.3 }}
-              className="pt-1 text-[10px] font-medium text-brand-600 sm:text-[11px]"
-            >
-              MLS-ready · Luxury tone
-            </motion.p>
-          </motion.div>
-
-          <motion.div
-            initial={reduced ? false : { opacity: 0, y: 6 }}
+            key={i}
+            initial={reduced ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.5, duration: 0.4, ease }}
-            className="flex gap-2"
-          >
-            {['$478k', '$495k', '$512k'].map((price) => (
-              <div
-                key={price}
-                className="flex-1 rounded-lg border border-gray-200 bg-white px-2 py-2 text-center"
-              >
-                <p className="text-[10px] text-gray-500">Comp</p>
-                <p className="text-[12px] font-semibold text-gray-900">{price}</p>
-              </div>
-            ))}
-          </motion.div>
+            transition={{ delay: 0.1 + i * 0.12, duration: 0.35, ease }}
+            className="aspect-[4/3] rounded-lg bg-gradient-to-br from-gray-200 to-gray-300"
+          />
+        ))}
+      </div>
+
+      <motion.div
+        initial={reduced ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.45, duration: 0.4 }}
+        className="space-y-1.5 rounded-xl border border-gray-200 bg-white p-3"
+      >
+        {[100, 92, 78, 65].map((w, i) => (
+          <motion.div
+            key={i}
+            initial={reduced ? false : { width: 0, opacity: 0 }}
+            animate={{ width: `${w}%`, opacity: 1 }}
+            transition={{ delay: 0.55 + i * 0.1, duration: 0.35, ease }}
+            className="h-2 rounded-full bg-gray-200"
+          />
+        ))}
+        <motion.p
+          initial={reduced ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.95, duration: 0.3 }}
+          className="pt-1 text-[10px] font-medium text-brand-600 sm:text-[11px]"
+        >
+          MLS-ready · Luxury tone
+        </motion.p>
+      </motion.div>
+
+      <motion.div
+        initial={reduced ? false : { opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.05, duration: 0.35, ease }}
+        className="rounded-lg border border-dashed border-brand-200 bg-brand-50/60 px-3 py-2 text-center"
+      >
+        <p className="text-[10px] font-medium text-brand-700 sm:text-[11px]">Listing description generated</p>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function PropertyLookupPhase({ reduced }: { reduced: boolean }) {
+  const saleHistory = [
+    { date: 'Mar 2019', price: '$485,000', note: 'Arms-length sale' },
+    { date: 'Jun 2014', price: '$412,000', note: 'Resale' },
+  ];
+
+  return (
+    <motion.div
+      key="research"
+      initial={reduced ? false : { opacity: 0, x: 12 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={reduced ? undefined : { opacity: 0, x: -12 }}
+      transition={{ duration: 0.4, ease }}
+      className="space-y-3"
+    >
+      <motion.div
+        initial={reduced ? false : { opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.35, ease }}
+        className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2.5 shadow-sm"
+      >
+        <Search className="h-3.5 w-3.5 shrink-0 text-gray-500" strokeWidth={2} />
+        <p className="text-[11px] font-medium text-gray-900 sm:text-[12px]">742 Oak Street, Austin TX</p>
+      </motion.div>
+
+      <motion.div
+        initial={reduced ? false : { opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25, duration: 0.35, ease }}
+        className="rounded-xl border border-gray-200 bg-white p-3"
+      >
+        <p className="text-[11px] font-semibold text-gray-900 sm:text-[12px]">742 Oak Street</p>
+        <p className="mt-1 text-[10px] text-gray-600 sm:text-[11px]">3 bed · 2 bath · 1,840 sqft · Built 2004</p>
+        <div className="mt-2.5 flex flex-wrap gap-1.5">
+          {['Single family', 'Owner-occupied', 'Travis County'].map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-[9px] font-medium text-gray-600 sm:text-[10px]"
+            >
+              {tag}
+            </span>
+          ))}
         </div>
+      </motion.div>
+
+      <motion.div
+        initial={reduced ? false : { opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.45, duration: 0.35, ease }}
+        className="flex items-start gap-2.5 rounded-xl border border-gray-200 bg-white p-3"
+      >
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-700">
+          <User className="h-3.5 w-3.5" strokeWidth={2} />
+        </div>
+        <div className="min-w-0">
+          <p className="text-[10px] font-medium uppercase tracking-wide text-gray-500">Owner</p>
+          <p className="text-[12px] font-semibold text-gray-900 sm:text-[13px]">Michael & Sarah Chen</p>
+          <p className="mt-0.5 text-[10px] text-gray-600 sm:text-[11px]">Mailing address on file · High match confidence</p>
+        </div>
+      </motion.div>
+
+      <motion.div
+        initial={reduced ? false : { opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.65, duration: 0.35, ease }}
+        className="rounded-xl border border-gray-200 bg-white p-3"
+      >
+        <div className="mb-2 flex items-center gap-1.5">
+          <History className="h-3 w-3 text-gray-500" strokeWidth={2} />
+          <p className="text-[10px] font-medium uppercase tracking-wide text-gray-500 sm:text-[11px]">
+            Sale history
+          </p>
+        </div>
+        <ul className="space-y-2">
+          {saleHistory.map((sale, i) => (
+            <motion.li
+              key={sale.date}
+              initial={reduced ? false : { opacity: 0, x: -6 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.75 + i * 0.12, duration: 0.3, ease }}
+              className="flex items-center justify-between gap-2 border-b border-gray-100 pb-2 last:border-0 last:pb-0"
+            >
+              <div>
+                <p className="text-[11px] font-medium text-gray-900 sm:text-[12px]">{sale.date}</p>
+                <p className="text-[10px] text-gray-500">{sale.note}</p>
+              </div>
+              <p className="text-[11px] font-semibold text-gray-900 sm:text-[12px]">{sale.price}</p>
+            </motion.li>
+          ))}
+        </ul>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+export function WinListingAnimation({ reduced }: { reduced: boolean }) {
+  const [phase, setPhase] = useState<'listing' | 'research'>(reduced ? 'research' : 'listing');
+
+  useEffect(() => {
+    if (reduced) return;
+
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    const scheduleNext = (current: 'listing' | 'research') => {
+      const delay = current === 'listing' ? 3400 : 4200;
+      timeoutId = setTimeout(() => {
+        const next = current === 'listing' ? 'research' : 'listing';
+        setPhase(next);
+        scheduleNext(next);
+      }, delay);
+    };
+
+    setPhase('listing');
+    scheduleNext('listing');
+
+    return () => clearTimeout(timeoutId);
+  }, [reduced]);
+
+  return (
+    <ShowcaseAnimationFrame className="min-h-[300px] sm:min-h-[320px]">
+      <LoopShell reduced={reduced}>
+        <AnimatePresence mode="wait" initial={false}>
+          {phase === 'listing' ? (
+            <ListingGenerationPhase reduced={reduced} key="listing-phase" />
+          ) : (
+            <PropertyLookupPhase reduced={reduced} key="research-phase" />
+          )}
+        </AnimatePresence>
       </LoopShell>
     </ShowcaseAnimationFrame>
   );
