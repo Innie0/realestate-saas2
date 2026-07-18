@@ -1,11 +1,9 @@
 'use client';
 
-import { useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import LandingNav from '@/components/home/LandingNav';
 import HeroAssistantPreview from '@/components/home/HeroAssistantPreview';
 
 const containerVariants = {
@@ -25,13 +23,13 @@ const itemVariants = {
   },
 };
 
-export default function CinematicHeroSection() {
-  const heroRef = useRef<HTMLElement>(null);
+type CinematicHeroSectionProps = {
+  sectionRef: React.RefObject<HTMLElement | null>;
+};
 
+export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectionProps) {
   return (
-    <section ref={heroRef} className="relative min-h-[100svh] overflow-hidden">
-      <LandingNav heroRef={heroRef} />
-
+    <section ref={sectionRef as React.RefObject<HTMLElement>} className="relative min-h-[100svh] overflow-hidden">
       {/* Mountain landscape — peaks visible on the sides, valley in the center */}
       <div className="absolute inset-0" aria-hidden>
         <Image

@@ -7,19 +7,31 @@ import ProductsMegaMenu from '@/components/marketing/ProductsMegaMenu';
 
 type LandingNavProps = {
   heroRef: React.RefObject<HTMLElement | null>;
+  darkBandRef: React.RefObject<HTMLElement | null>;
 };
 
-export default function LandingNav({ heroRef }: LandingNavProps) {
-  const [solid, setSolid] = useState(false);
+export default function LandingNav({ heroRef, darkBandRef }: LandingNavProps) {
+  const [inHero, setInHero] = useState(true);
+  const [inDarkBand, setInDarkBand] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const hero = heroRef.current;
-    if (!hero) return;
-
     const update = () => {
-      const { bottom } = hero.getBoundingClientRect();
-      setSolid(bottom <= 96);
+      const hero = heroRef.current;
+      const dark = darkBandRef.current;
+      const navThreshold = 96;
+
+      if (hero) {
+        const { bottom } = hero.getBoundingClientRect();
+        setInHero(bottom > navThreshold);
+      }
+
+      if (dark) {
+        const { top, bottom } = dark.getBoundingClientRect();
+        setInDarkBand(top <= navThreshold && bottom > navThreshold);
+      } else {
+        setInDarkBand(false);
+      }
     };
 
     update();
@@ -29,9 +41,11 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
       window.removeEventListener('scroll', update);
       window.removeEventListener('resize', update);
     };
-  }, [heroRef]);
+  }, [heroRef, darkBandRef]);
 
-  const showOpaqueBar = solid && !menuOpen;
+  const lightNavText = inHero || inDarkBand;
+  const showOpaqueBar = !inHero && !inDarkBand && !menuOpen;
+  const onSolidBackground = !lightNavText;
 
   return (
     <motion.nav
@@ -41,7 +55,9 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
       className={`fixed inset-x-0 top-0 z-[60] transition-[background-color,border-color,box-shadow] duration-300 ease-out ${
         showOpaqueBar
           ? 'border-b border-gray-200 bg-[#F5F5F5] shadow-sm'
-          : 'border-b border-transparent bg-transparent'
+          : inDarkBand
+            ? 'border-b border-white/10 bg-black/20 backdrop-blur-md'
+            : 'border-b border-transparent bg-transparent'
       }`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -50,20 +66,20 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
             <Link
               href="/"
               className={`truncate font-mono text-[1.15rem] font-semibold tracking-[-0.04em] transition-colors duration-300 sm:text-[1.35rem] md:text-[1.5rem] ${
-                solid ? 'text-gray-900' : 'text-white'
+                lightNavText ? 'text-white' : 'text-gray-900'
               }`}
             >
               Oikaro
             </Link>
           </motion.div>
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 md:gap-3">
-            <ProductsMegaMenu onSolidBackground={solid} onOpenChange={setMenuOpen} />
+            <ProductsMegaMenu onSolidBackground={onSolidBackground} onOpenChange={setMenuOpen} />
             <Link href="/auth/login" className="hidden md:block">
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
                 className={`whitespace-nowrap px-3 py-2 text-sm font-medium transition-colors duration-300 md:px-4 md:py-2.5 ${
-                  solid ? 'text-gray-600 hover:text-brand-600' : 'text-white hover:text-white/80'
+                  lightNavText ? 'text-white hover:text-white/80' : 'text-gray-600 hover:text-brand-600'
                 }`}
               >
                 Sign In
@@ -76,9 +92,9 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
                 className={`whitespace-nowrap px-3 py-2 text-xs font-medium rounded-lg transition-all duration-300 sm:px-4 sm:py-2.5 sm:text-sm ${
                   showOpaqueBar
                     ? 'bg-brand-500 text-white hover:bg-brand-600 shadow-[0_0_30px_rgba(252,92,3,0.25)]'
-                    : solid
-                      ? 'bg-brand-500 text-white hover:bg-brand-600'
-                      : 'border border-white/70 bg-white/10 text-white hover:bg-white/20'
+                    : lightNavText
+                      ? 'border border-white/70 bg-white/10 text-white hover:bg-white/20'
+                      : 'bg-brand-500 text-white hover:bg-brand-600'
                 }`}
               >
                 <span className="sm:hidden">Start</span>

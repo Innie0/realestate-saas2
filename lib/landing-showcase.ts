@@ -44,6 +44,7 @@ export type Testimonial = {
   id: string;
   quote: string;
   name: string;
+  initials: string;
   role: string;
   metric: string;
   metricLabel: string;
@@ -150,6 +151,7 @@ export const TESTIMONIALS: Testimonial[] = [
     quote:
       'I finally stopped juggling five different tools. Listings, leads, and follow-ups all live in one place — and the AI actually saves me hours every week.',
     name: 'Sarah M.',
+    initials: 'SM',
     role: 'Listing Agent, Austin TX',
     metric: '5+',
     metricLabel: 'Hours saved per week',
@@ -159,6 +161,7 @@ export const TESTIMONIALS: Testimonial[] = [
     quote:
       'Open house sign-in alone changed how I work. Every visitor becomes a scored lead in my inbox before I leave the property.',
     name: 'James R.',
+    initials: 'JR',
     role: 'Buyer\'s Agent, Denver CO',
     metric: '10+',
     metricLabel: 'More leads captured',
@@ -168,6 +171,7 @@ export const TESTIMONIALS: Testimonial[] = [
     quote:
       'Property research and CMA used to take an hour. Now I pull comps and a price range in one search while I\'m still on the call.',
     name: 'Maria L.',
+    initials: 'ML',
     role: 'Team Lead, Miami FL',
     metric: '10x',
     metricLabel: 'Faster listing prep',
@@ -175,10 +179,10 @@ export const TESTIMONIALS: Testimonial[] = [
 ];
 
 export const INTEGRATIONS = [
-  { name: 'Google Calendar', description: 'Sync showings and deadlines' },
-  { name: 'Google Ads', description: 'Launch campaigns from listings' },
-  { name: 'Meta Ads', description: 'Facebook & Instagram ads' },
-  { name: 'Lead forms', description: 'Branded capture links' },
+  { id: 'google-calendar', name: 'Google Calendar', description: 'Sync showings and deadlines to your calendar' },
+  { id: 'google-ads', name: 'Google Ads', description: 'Launch search campaigns from your listings' },
+  { id: 'meta-ads', name: 'Meta Ads', description: 'Run Facebook and Instagram ads in minutes' },
+  { id: 'lead-forms', name: 'Lead forms', description: 'Branded capture links for bio and cards' },
 ] as const;
 
 export const PERSONA_ICONS: Record<string, LucideIcon> = {

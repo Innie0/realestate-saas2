@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import CinematicHeroSection from '@/components/home/CinematicHeroSection';
+import LandingNav from '@/components/home/LandingNav';
 import LandingShowcaseCarousel from '@/components/home/LandingShowcaseCarousel';
 import LandingPlatformStrip from '@/components/home/LandingPlatformStrip';
 import LandingTrustSection from '@/components/home/LandingTrustSection';
@@ -92,6 +93,8 @@ function FAQAccordion() {
 
 export default function HomePageClient() {
   const router = useRouter();
+  const heroRef = useRef<HTMLElement>(null);
+  const darkBandRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
@@ -121,11 +124,13 @@ export default function HomePageClient() {
   return (
     <div className="marketing-root min-h-screen bg-[#F5F5F5] text-gray-900 overflow-x-hidden font-sans">
 
-      <CinematicHeroSection />
+      <LandingNav heroRef={heroRef} darkBandRef={darkBandRef} />
+
+      <CinematicHeroSection sectionRef={heroRef} />
 
       <LandingShowcaseCarousel />
       <LandingPlatformStrip />
-      <LandingTrustSection />
+      <LandingTrustSection ref={darkBandRef} />
 
       {/* ── FAQ ────────────────────────────────────────────────────────── */}
       <section className="relative z-10 py-24 lg:py-32 border-t border-gray-200">
