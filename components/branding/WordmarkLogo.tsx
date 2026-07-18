@@ -7,7 +7,7 @@ interface WordmarkLogoProps {
 
 /** Oikaro wordmark for the marketing landing page. */
 export default function WordmarkLogo({
-  className = 'h-12 sm:h-14 w-auto object-contain',
+  className = 'h-10 sm:h-12 w-auto object-contain',
 }: WordmarkLogoProps) {
   return (
     <Link href="/" className="inline-flex shrink-0 items-center">
