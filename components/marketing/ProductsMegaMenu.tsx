@@ -97,7 +97,7 @@ export default function ProductsMegaMenu({
   const triggerClass = open
     ? onSolidBackground
       ? `${triggerBase} bg-gray-900 text-white shadow-sm`
-      : `${triggerBase} bg-white/15 text-white ring-1 ring-white/25`
+      : `${triggerBase} bg-white/20 text-white`
     : onSolidBackground
       ? `${triggerBase} text-gray-600 hover:bg-gray-100 hover:text-gray-900`
       : `${triggerBase} text-white hover:bg-white/10`;
@@ -110,15 +110,15 @@ export default function ProductsMegaMenu({
               <>
                 <motion.button
                   key="products-menu-backdrop"
-              type="button"
-              aria-label="Close products menu"
-              initial={reduced ? false : { opacity: 0 }}
-              animate={reduced ? undefined : { opacity: 1 }}
-              exit={reduced ? undefined : { opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="fixed inset-x-0 bottom-0 top-20 z-[55] bg-black/20 backdrop-blur-xl sm:top-24"
-              onClick={handleClose}
-            />
+                  type="button"
+                  aria-label="Close products menu"
+                  initial={reduced ? false : { opacity: 0 }}
+                  animate={reduced ? undefined : { opacity: 1 }}
+                  exit={reduced ? undefined : { opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="fixed inset-0 z-[55] bg-black/10 backdrop-blur-xl"
+                  onClick={handleClose}
+                />
 
             <div
               key="products-menu-shell"
