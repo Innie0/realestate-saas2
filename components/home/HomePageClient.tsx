@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import CinematicHeroSection from '@/components/home/CinematicHeroSection';
 import LandingShowcaseCarousel from '@/components/home/LandingShowcaseCarousel';
-import LandingPlatformSection from '@/components/home/LandingPlatformSection';
+import LandingPlatformStrip from '@/components/home/LandingPlatformStrip';
 import LandingTrustSection from '@/components/home/LandingTrustSection';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, ArrowRight, ChevronDown, Star } from 'lucide-react';
@@ -124,7 +124,7 @@ export default function HomePageClient() {
       <CinematicHeroSection />
 
       <LandingShowcaseCarousel />
-      <LandingPlatformSection />
+      <LandingPlatformStrip />
       <LandingTrustSection />
 
       {/* ── FAQ ────────────────────────────────────────────────────────── */}
@@ -298,6 +298,7 @@ export default function HomePageClient() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-700 text-sm">© 2026 Oikaro. All rights reserved.</p>
             <div className="flex items-center gap-6 text-sm text-gray-700">
+              <Link href="/products" className="hover:text-brand-600 transition-colors">Products</Link>
               <Link href="/for-agents" className="hover:text-brand-600 transition-colors">For Agents</Link>
               <Link href="/agents" className="hover:text-brand-600 transition-colors">Find an Agent</Link>
               <Link href="/about" className="hover:text-brand-600 transition-colors">About</Link>

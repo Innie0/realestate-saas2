@@ -55,6 +55,19 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
           </motion.div>
           <div className="flex-1" />
           <div className="flex items-center gap-3 sm:gap-4">
+            <Link href="/products">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+                className={`hidden px-4 py-2.5 text-sm font-medium transition-colors duration-300 sm:inline ${
+                  solid
+                    ? 'text-gray-600 hover:text-brand-600'
+                    : 'text-white hover:text-white/80'
+                }`}
+              >
+                Products
+              </motion.button>
+            </Link>
             <Link href="/auth/login">
               <motion.button
                 whileHover={{ scale: 1.05 }}
