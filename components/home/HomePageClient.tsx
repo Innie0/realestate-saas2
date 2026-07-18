@@ -119,7 +119,7 @@ export default function HomePageClient() {
   }, [router]);
 
   return (
-    <div className="marketing-root min-h-screen bg-[#F5F5F5] text-gray-900 overflow-x-hidden font-sans">
+    <div className="marketing-root min-h-screen bg-[#F5F5F5] text-gray-900 overflow-hidden font-sans">
 
       <CinematicHeroSection />
 

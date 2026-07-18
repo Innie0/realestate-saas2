@@ -24,15 +24,6 @@
     @apply bg-[var(--canvas)] text-gray-900 antialiased;
   }
 
-  /* Landing page — dark canvas for rubber-band overscroll at top; body stays page gray */
-  html:has(.marketing-root) {
-    background-color: #2a323e;
-  }
-
-  html:has(.marketing-root) body {
-    background-color: #f5f5f5;
-  }
-
   h1 {
     @apply tracking-tight;
   }
