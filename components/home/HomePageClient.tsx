@@ -1324,7 +1324,7 @@ export default function HomePageClient() {
         className="relative z-50 border-b border-gray-200 backdrop-blur-md bg-[#F5F5F5]/20"
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="flex h-28 items-center justify-between">
+          <div className="flex h-20 sm:h-24 items-center justify-between">
             <motion.div className="flex items-center shrink-0" whileHover={{ scale: 1.02 }}>
               <WordmarkLogo />
             </motion.div>
