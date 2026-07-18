@@ -5,12 +5,9 @@ interface WordmarkLogoProps {
   className?: string;
 }
 
-/**
- * Oikaro wordmark for the marketing landing page.
- * Source asset is white on black — invert + multiply removes the dark matte on light headers.
- */
+/** Oikaro wordmark for the marketing landing page. */
 export default function WordmarkLogo({
-  className = 'h-10 sm:h-11 w-auto object-contain invert mix-blend-multiply',
+  className = 'h-9 sm:h-10 w-auto object-contain',
 }: WordmarkLogoProps) {
   return (
     <Link href="/" className="inline-flex shrink-0 items-center">
