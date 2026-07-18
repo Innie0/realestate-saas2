@@ -26,11 +26,11 @@ const itemVariants = {
 };
 
 export default function CinematicHeroSection() {
-  const navSentinelRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
 
   return (
-    <section className="relative min-h-[100svh] overflow-hidden">
-      <LandingNav scrollSentinelRef={navSentinelRef} />
+    <section ref={heroRef} className="relative min-h-[100svh] overflow-hidden">
+      <LandingNav heroRef={heroRef} />
 
       {/* Mountain landscape — peaks visible on the sides, valley in the center */}
       <div className="absolute inset-0" aria-hidden>
@@ -130,9 +130,6 @@ export default function CinematicHeroSection() {
             </div>
           </motion.div>
         </motion.div>
-
-        {/* Nav scroll sentinel — when this leaves the viewport, header goes solid */}
-        <div ref={navSentinelRef} className="pointer-events-none absolute bottom-0 h-px w-full" aria-hidden />
       </div>
     </section>
   );
