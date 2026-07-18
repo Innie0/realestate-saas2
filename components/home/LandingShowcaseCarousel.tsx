@@ -140,12 +140,6 @@ export default function LandingShowcaseCarousel() {
   }, [total]);
 
   useEffect(() => {
-    if (reduced) return;
-    const timer = window.setInterval(goNext, 8000);
-    return () => window.clearInterval(timer);
-  }, [goNext, reduced]);
-
-  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') goPrev();
       if (e.key === 'ArrowRight') goNext();
