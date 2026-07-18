@@ -3,14 +3,14 @@ import Image from 'next/image';
 
 interface WordmarkLogoProps {
   className?: string;
-  /** White wordmark asset — invert for light marketing backgrounds. */
-  inverted?: boolean;
 }
 
-/** Oikaro wordmark for the marketing landing page. */
+/**
+ * Oikaro wordmark for the marketing landing page.
+ * Source asset is white on black — invert + multiply removes the dark matte on light headers.
+ */
 export default function WordmarkLogo({
-  className = 'h-10 sm:h-11 w-auto object-contain',
-  inverted = true,
+  className = 'h-10 sm:h-11 w-auto object-contain invert mix-blend-multiply',
 }: WordmarkLogoProps) {
   return (
     <Link href="/" className="inline-flex shrink-0 items-center">
@@ -20,7 +20,7 @@ export default function WordmarkLogo({
         width={1024}
         height={512}
         priority
-        className={`${className}${inverted ? ' invert' : ''}`}
+        className={className}
       />
     </Link>
   );
