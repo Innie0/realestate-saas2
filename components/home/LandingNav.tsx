@@ -44,26 +44,25 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
           : 'border-b border-transparent bg-transparent'
       }`}
     >
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="flex h-20 sm:h-24 items-center justify-between">
-          <motion.div className="flex shrink-0 items-center" whileHover={{ scale: 1.02 }}>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 sm:h-20 md:h-24 items-center justify-between gap-2 min-w-0">
+          <motion.div className="flex min-w-0 shrink-0 items-center" whileHover={{ scale: 1.02 }}>
             <Link
               href="/"
-              className={`font-mono text-[1.35rem] font-semibold tracking-[-0.04em] transition-colors duration-300 sm:text-[1.5rem] ${
+              className={`truncate font-mono text-[1.15rem] font-semibold tracking-[-0.04em] transition-colors duration-300 sm:text-[1.35rem] md:text-[1.5rem] ${
                 solid ? 'text-gray-900' : 'text-white'
               }`}
             >
               Oikaro
             </Link>
           </motion.div>
-          <div className="flex-1" />
-          <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 md:gap-3">
             <ProductsMegaMenu onSolidBackground={solid} onOpenChange={setMenuOpen} />
-            <Link href="/auth/login">
+            <Link href="/auth/login" className="hidden md:block">
               <motion.button
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
-                className={`px-4 sm:px-5 py-2.5 text-sm font-medium transition-colors duration-300 ${
+                className={`whitespace-nowrap px-3 py-2 text-sm font-medium transition-colors duration-300 md:px-4 md:py-2.5 ${
                   solid ? 'text-gray-600 hover:text-brand-600' : 'text-white hover:text-white/80'
                 }`}
               >
@@ -72,9 +71,9 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
             </Link>
             <Link href="/auth/signup">
               <motion.button
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
-                className={`px-4 sm:px-5 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 ${
+                className={`whitespace-nowrap px-3 py-2 text-xs font-medium rounded-lg transition-all duration-300 sm:px-4 sm:py-2.5 sm:text-sm ${
                   showOpaqueBar
                     ? 'bg-brand-500 text-white hover:bg-brand-600 shadow-[0_0_30px_rgba(252,92,3,0.25)]'
                     : solid
@@ -82,7 +81,8 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
                       : 'border border-white/70 bg-white/10 text-white hover:bg-white/20'
                 }`}
               >
-                Get Started
+                <span className="sm:hidden">Start</span>
+                <span className="hidden sm:inline">Get Started</span>
               </motion.button>
             </Link>
           </div>

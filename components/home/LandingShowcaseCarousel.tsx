@@ -114,7 +114,7 @@ export default function LandingShowcaseCarousel() {
   const slide = SHOWCASE_SLIDES[active];
 
   return (
-    <section className="relative z-10 overflow-hidden border-t border-gray-200 py-24 lg:py-32">
+    <section className="relative z-10 overflow-hidden border-t border-gray-200 py-16 sm:py-24 lg:py-32">
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         <Image
           src="/landing/hero-mountains.jpg"
@@ -125,7 +125,7 @@ export default function LandingShowcaseCarousel() {
         />
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={reduced ? false : { opacity: 0, y: 28 }}
           whileInView={reduced ? undefined : { opacity: 1, y: 0 }}

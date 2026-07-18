@@ -91,7 +91,7 @@ export default function ProductsMegaMenu({
   useEffect(() => () => clearCloseTimer(), []);
 
   const triggerBase =
-    'group inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-all duration-300';
+    'group inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-300 sm:gap-1.5 sm:px-4 sm:py-2 sm:text-sm';
 
   const triggerClass = open
     ? onSolidBackground
@@ -121,7 +121,7 @@ export default function ProductsMegaMenu({
 
             <div
               key="products-menu-shell"
-              className="pointer-events-none fixed inset-x-0 top-20 z-[56] flex justify-center px-3 sm:top-24 sm:px-6"
+              className="pointer-events-none fixed inset-x-0 top-16 z-[56] flex justify-center px-3 sm:top-20 md:top-24 sm:px-6"
             >
               <motion.div
                 ref={panelRef}

@@ -48,17 +48,17 @@ export default function CinematicHeroSection() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_72%_58%_at_50%_42%,transparent_0%,rgba(0,0,0,0.35)_100%)]" />
       </div>
 
-      <div className="relative z-10 flex min-h-[100svh] flex-col pt-20 sm:pt-24">
+      <div className="relative z-10 flex min-h-[100svh] flex-col pt-16 sm:pt-20 md:pt-24">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="mx-auto flex w-full max-w-7xl flex-1 flex-col items-center px-6 pb-8 pt-10 sm:pt-14 lg:px-8 lg:pb-12"
+          className="mx-auto flex w-full min-w-0 max-w-7xl flex-1 flex-col items-center px-4 pb-8 pt-8 sm:px-6 sm:pt-14 lg:px-8 lg:pb-12"
         >
           <div className="mx-auto max-w-3xl text-center">
             <motion.h1
               variants={itemVariants}
-              className="font-display text-4xl font-medium italic leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-7xl"
+              className="font-display text-3xl font-medium italic leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-7xl"
             >
               Work Smarter
               <br />
@@ -102,25 +102,9 @@ export default function CinematicHeroSection() {
           {/* Product UI nestled in the mountain valley */}
           <motion.div
             variants={itemVariants}
-            className="relative mt-12 w-full max-w-[820px] lg:mt-14 xl:max-w-[880px]"
+            className="relative mt-10 w-full min-w-0 max-w-[820px] sm:mt-12 lg:mt-14 xl:max-w-[880px]"
           >
-            <div className="hidden lg:block">
-              <HeroAssistantPreview showBackdrop={false} />
-            </div>
-            <div className="lg:hidden">
-              <div className="overflow-hidden rounded-2xl border border-white/25 bg-white/95 shadow-[0_32px_80px_-24px_rgba(0,0,0,0.45)] ring-1 ring-white/20">
-                <div className="relative aspect-[16/10] w-full">
-                  <Image
-                    src="/landing/hero-assistant.png"
-                    alt="Oikaro AI Assistant"
-                    fill
-                    className="object-cover object-top"
-                    sizes="100vw"
-                    priority
-                  />
-                </div>
-              </div>
-            </div>
+            <HeroAssistantPreview showBackdrop={false} />
           </motion.div>
         </motion.div>
       </div>

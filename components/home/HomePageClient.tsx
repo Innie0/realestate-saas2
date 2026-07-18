@@ -119,7 +119,7 @@ export default function HomePageClient() {
   }, [router]);
 
   return (
-    <div className="marketing-root min-h-screen bg-[#F5F5F5] text-gray-900 overflow-hidden font-sans">
+    <div className="marketing-root min-h-screen bg-[#F5F5F5] text-gray-900 overflow-x-hidden font-sans">
 
       <CinematicHeroSection />
 
@@ -131,7 +131,7 @@ export default function HomePageClient() {
       <section className="relative z-10 py-24 lg:py-32 border-t border-gray-200">
         <div className="mx-auto max-w-3xl px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Frequently asked questions</h2>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Frequently asked questions</h2>
             <p className="text-gray-700 text-lg">Everything you need to know about Oikaro.</p>
           </motion.div>
           <FAQAccordion />
@@ -152,7 +152,7 @@ export default function HomePageClient() {
               <Star className="w-4 h-4 text-brand-500" />
               7-Day Free Trial on Every Plan
             </span>
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Simple, transparent pricing</h2>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Simple, transparent pricing</h2>
             <p className="text-gray-700 text-lg">Start free. No credit card setup fees. Cancel anytime.</p>
           </motion.div>
 
@@ -269,7 +269,7 @@ export default function HomePageClient() {
               <Star className="w-4 h-4 text-brand-500" />
               7-Day Free Trial
             </div>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
               Stop wasting time.<br />
               <span className="bg-gradient-to-r from-brand-600 via-brand-500 to-brand-400 bg-clip-text text-transparent">
                 Start closing more deals.
@@ -309,7 +309,7 @@ export default function HomePageClient() {
         <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-700 text-sm">© 2026 Oikaro. All rights reserved.</p>
-            <div className="flex items-center gap-6 text-sm text-gray-700">
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-700">
               <Link href="/products" className="hover:text-brand-600 transition-colors">Products</Link>
               <Link href="/for-agents" className="hover:text-brand-600 transition-colors">For Agents</Link>
               <Link href="/agents" className="hover:text-brand-600 transition-colors">Find an Agent</Link>
