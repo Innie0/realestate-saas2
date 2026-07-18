@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
-import { Sparkles, Send, Loader2, Paperclip, X, Plus, MessageSquare, Trash2, FileText, Pin, Edit3, Check, MoreVertical } from 'lucide-react';
+import { Sparkles, Send, Loader2, Paperclip, X, Plus, MessageSquare, Trash2, FileText, Pin, Edit3, Check, MoreVertical, PanelLeft, PanelLeftClose } from 'lucide-react';
 import { Conversation, ConversationMessage } from '@/types';
 import { useApi } from '@/lib/swr';
 import { useTour } from '@/hooks/useTour';
@@ -15,6 +15,8 @@ const STARTER_PROMPTS = [
   'Create a project for 123 Main St, 3 bed 2 bath',
   'Remind me to follow up with a client next Friday',
 ] as const;
+
+const AI_THREAD_SIDEBAR_KEY = 'oikaro-ai-thread-sidebar';
 
 function sortConversations(list: Conversation[]): Conversation[] {
   return [...list].sort((a, b) => {
@@ -65,6 +67,26 @@ function TasksPageContent() {
   
   // Menu state
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
+  const [threadSidebarOpen, setThreadSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(AI_THREAD_SIDEBAR_KEY);
+      if (stored === 'open') setThreadSidebarOpen(true);
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const setThreadSidebar = useCallback((open: boolean) => {
+    setThreadSidebarOpen(open);
+    try {
+      localStorage.setItem(AI_THREAD_SIDEBAR_KEY, open ? 'open' : 'collapsed');
+    } catch {
+      // ignore
+    }
+  }, []);
   
   // Ref for auto-scrolling
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -541,9 +563,27 @@ function TasksPageContent() {
 
   return (
     <DashboardPage title="AI Assistant" subtitle={usageSubtitle} inline className="!pb-4">
-      <div className="grid grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)] gap-4 h-[calc(100dvh-7.5rem)] min-h-[560px]">
-        {/* Thread sidebar */}
+      <div
+        className={clsx(
+          'grid gap-4 h-[calc(100dvh-7.5rem)] min-h-[560px]',
+          threadSidebarOpen ? 'grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)]' : 'grid-cols-1',
+        )}
+      >
+        {/* Thread sidebar — collapsible */}
+        {threadSidebarOpen && (
         <aside className="flex flex-col min-h-0">
+          <div className="flex items-center justify-between gap-2 mb-2 shrink-0">
+            <span className="text-[12px] font-medium text-gray-600">Chats</span>
+            <button
+              type="button"
+              onClick={() => setThreadSidebar(false)}
+              className="p-1.5 rounded-[8px] text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+              aria-label="Hide chat list"
+              title="Hide chat list"
+            >
+              <PanelLeftClose className="w-4 h-4" />
+            </button>
+          </div>
           <button
             type="button"
             onClick={handleNewConversation}
@@ -698,9 +738,33 @@ function TasksPageContent() {
             )}
           </div>
         </aside>
+        )}
 
         {/* Main panel */}
-        <div className="flex flex-col border border-gray-200 rounded-[10px] bg-white overflow-hidden min-h-0 min-w-0" data-tour="ai-chat">
+        <div className="flex flex-col min-h-0 min-w-0">
+          {!threadSidebarOpen && (
+            <div className="flex items-center gap-2 mb-3 shrink-0">
+              <button
+                type="button"
+                onClick={() => setThreadSidebar(true)}
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-[10px] border border-gray-200 bg-white text-[13px] font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                aria-label="Show chat list"
+              >
+                <PanelLeft className="w-4 h-4" />
+                Chats
+              </button>
+              <button
+                type="button"
+                onClick={handleNewConversation}
+                data-tour="ai-new-chat"
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-[10px] border border-gray-200 bg-white text-[13px] font-medium text-gray-900 hover:bg-gray-50 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                New Chat
+              </button>
+            </div>
+          )}
+        <div className="flex flex-col flex-1 border border-gray-200 rounded-[10px] bg-white overflow-hidden min-h-0 min-w-0" data-tour="ai-chat">
           {/* Messages */}
           <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
             {isLoadingMessages ? (
@@ -911,6 +975,7 @@ function TasksPageContent() {
               </p>
             </form>
           </div>
+        </div>
         </div>
       </div>
     </DashboardPage>

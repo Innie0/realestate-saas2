@@ -1331,9 +1331,15 @@ export default function HomePageClient() {
       </motion.nav>
 
       {/* ── Hero ───────────────────────────────────────────────────────── */}
-      <section className="relative z-10 mx-auto max-w-7xl px-6 pt-20 pb-32 lg:px-8 lg:pt-32 lg:pb-40">
-        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid lg:grid-cols-2 gap-16 items-center">
-          <div>
+      <section className="relative z-10 overflow-x-clip pt-20 pb-24 lg:pt-32 lg:pb-28">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="grid lg:grid-cols-[minmax(0,42%)_minmax(0,58%)] gap-12 xl:gap-16 items-center"
+          >
+          <div className="relative z-10 max-w-xl lg:max-w-none">
             <motion.div variants={itemVariants} className="mb-6">
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 border border-gray-300 text-sm text-gray-600 backdrop-blur-sm">
                 <Sparkles className="w-4 h-4 text-brand-500" />
@@ -1370,10 +1376,14 @@ export default function HomePageClient() {
             </motion.div>
           </div>
 
-          <motion.div variants={itemVariants} className="hidden lg:block relative">
+          <motion.div
+            variants={itemVariants}
+            className="hidden lg:block relative min-w-0 pl-4 xl:pl-8 -mr-6 xl:-mr-16 2xl:-mr-24 translate-x-6 xl:translate-x-10"
+          >
             <HeroAssistantPreview />
           </motion.div>
         </motion.div>
+        </div>
       </section>
 
       {/* ── Stats Bar ──────────────────────────────────────────────────── */}
