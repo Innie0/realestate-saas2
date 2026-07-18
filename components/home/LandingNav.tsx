@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import ProductsMegaMenu from '@/components/marketing/ProductsMegaMenu';
 
 type LandingNavProps = {
   heroRef: React.RefObject<HTMLElement | null>;
@@ -10,6 +11,7 @@ type LandingNavProps = {
 
 export default function LandingNav({ heroRef }: LandingNavProps) {
   const [solid, setSolid] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const hero = heroRef.current;
@@ -30,13 +32,15 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
     };
   }, [heroRef]);
 
+  const onSolidBackground = solid || menuOpen;
+
   return (
     <motion.nav
       initial={{ opacity: 0, y: -12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.05 }}
       className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow] duration-300 ease-out ${
-        solid
+        onSolidBackground
           ? 'border-b border-gray-200 bg-[#F5F5F5]/95 shadow-sm backdrop-blur-md'
           : 'border-b border-transparent bg-transparent'
       }`}
@@ -47,7 +51,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
             <Link
               href="/"
               className={`font-mono text-[1.35rem] font-semibold tracking-[-0.04em] transition-colors duration-300 sm:text-[1.5rem] ${
-                solid ? 'text-gray-900' : 'text-white'
+                onSolidBackground ? 'text-gray-900' : 'text-white'
               }`}
             >
               Oikaro
@@ -55,25 +59,13 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
           </motion.div>
           <div className="flex-1" />
           <div className="flex items-center gap-3 sm:gap-4">
-            <Link href="/products">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className={`hidden px-4 py-2.5 text-sm font-medium transition-colors duration-300 sm:inline ${
-                  solid
-                    ? 'text-gray-600 hover:text-brand-600'
-                    : 'text-white hover:text-white/80'
-                }`}
-              >
-                Products
-              </motion.button>
-            </Link>
+            <ProductsMegaMenu onSolidBackground={onSolidBackground} onOpenChange={setMenuOpen} />
             <Link href="/auth/login">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
                 className={`px-4 sm:px-5 py-2.5 text-sm font-medium transition-colors duration-300 ${
-                  solid
+                  onSolidBackground
                     ? 'text-gray-600 hover:text-brand-600'
                     : 'text-white hover:text-white/80'
                 }`}
@@ -86,7 +78,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
                 className={`px-4 sm:px-5 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 ${
-                  solid
+                  onSolidBackground
                     ? 'bg-brand-500 text-white hover:bg-brand-600 shadow-[0_0_30px_rgba(252,92,3,0.25)]'
                     : 'border border-white/70 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20'
                 }`}

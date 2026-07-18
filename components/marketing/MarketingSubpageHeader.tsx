@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import ProductsMegaMenu from '@/components/marketing/ProductsMegaMenu';
 
 export default function MarketingSubpageHeader() {
   return (
@@ -11,12 +14,7 @@ export default function MarketingSubpageHeader() {
           Oikaro
         </Link>
         <div className="flex items-center gap-3 sm:gap-4">
-          <Link
-            href="/products"
-            className="hidden text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 sm:inline"
-          >
-            Products
-          </Link>
+          <ProductsMegaMenu onSolidBackground />
           <Link
             href="/pricing"
             className="hidden text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 sm:inline"
