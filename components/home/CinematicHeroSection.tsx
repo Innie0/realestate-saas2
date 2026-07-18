@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import HeroAssistantPreview from '@/components/home/HeroAssistantPreview';
@@ -29,21 +28,10 @@ type CinematicHeroSectionProps = {
 
 export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectionProps) {
   return (
-    <section ref={sectionRef as React.RefObject<HTMLElement>} className="relative min-h-[100svh] overflow-hidden">
-      {/* Mountain landscape — peaks visible on the sides, valley in the center */}
-      <div className="absolute inset-0" aria-hidden>
-        <Image
-          src="/landing/hero-mountains.jpg"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center scale-[1.02]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-[#F5F5F5]" />
-        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#F5F5F5] via-[#F5F5F5]/80 to-transparent" />
-        {/* Side vignette — draws focus to the center product frame */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_72%_58%_at_50%_42%,transparent_0%,rgba(0,0,0,0.35)_100%)]" />
+    <section ref={sectionRef as React.RefObject<HTMLElement>} className="relative min-h-[100svh] overflow-hidden bg-[#0a0a0a]">
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_35%,rgba(252,92,3,0.08),transparent_65%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#F5F5F5] to-transparent sm:h-48" />
       </div>
 
       <div className="relative z-10 flex min-h-[100svh] flex-col pt-16 sm:pt-20 md:pt-24">
@@ -97,7 +85,7 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
             </motion.div>
           </div>
 
-          {/* Product UI nestled in the mountain valley */}
+          {/* Product UI */}
           <motion.div
             variants={itemVariants}
             className="relative mt-10 w-full min-w-0 max-w-[820px] sm:mt-12 lg:mt-14 xl:max-w-[880px]"

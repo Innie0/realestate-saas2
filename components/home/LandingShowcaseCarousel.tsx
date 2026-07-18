@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight as CtaArrow } from 'lucide-react';
@@ -114,17 +113,7 @@ export default function LandingShowcaseCarousel() {
   const slide = SHOWCASE_SLIDES[active];
 
   return (
-    <section className="relative z-10 overflow-hidden border-t border-gray-200 py-16 sm:py-24 lg:py-32">
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <Image
-          src="/landing/hero-mountains.jpg"
-          alt=""
-          fill
-          className="object-cover object-center scale-105 opacity-[0.12] blur-3xl"
-          sizes="100vw"
-        />
-      </div>
-
+    <section className="relative z-10 overflow-hidden border-t border-gray-200 bg-[#F5F5F5] py-16 sm:py-24 lg:py-32">
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={reduced ? false : { opacity: 0, y: 28 }}
@@ -144,16 +133,9 @@ export default function LandingShowcaseCarousel() {
 
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-center lg:gap-12 xl:gap-16">
           <div className="relative mx-auto w-full max-w-[480px] lg:mx-0 lg:max-w-none">
-            <div className="relative overflow-hidden rounded-[1.75rem] p-5 sm:p-7 lg:p-8">
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-gray-800 bg-[#0a0a0a] p-5 shadow-[0_32px_80px_-24px_rgba(0,0,0,0.45)] sm:p-7 lg:p-8">
               <div className="pointer-events-none absolute inset-0" aria-hidden>
-                <Image
-                  src="/landing/hero-mountains.jpg"
-                  alt=""
-                  fill
-                  className="object-cover object-center scale-110 blur-2xl saturate-[0.9]"
-                  sizes="520px"
-                />
-                <div className="absolute inset-0 bg-gradient-to-br from-black/30 via-black/20 to-black/35" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_45%,rgba(252,92,3,0.07),transparent_70%)]" />
               </div>
 
               <AnimatePresence mode="wait" initial={false}>
