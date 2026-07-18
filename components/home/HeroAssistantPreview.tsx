@@ -95,26 +95,31 @@ function useTypewriterPrompts(prompts: readonly string[]) {
   return text;
 }
 
-export default function HeroAssistantPreview() {
+type HeroAssistantPreviewProps = {
+  /** When false, skip the blurred house backdrop (cinematic hero provides its own). */
+  showBackdrop?: boolean;
+};
+
+export default function HeroAssistantPreview({ showBackdrop = true }: HeroAssistantPreviewProps) {
   const typedPrompt = useTypewriterPrompts(HERO_PROMPTS);
 
   return (
-    <div className="relative w-full min-w-[640px] min-h-[620px]">
-      {/* Blurred property backdrop — extends past the frame like Taito */}
-      <div className="absolute -inset-3 sm:-inset-4 rounded-[2rem] overflow-hidden" aria-hidden>
-        <Image
-          src="/demo-house.png"
-          alt=""
-          fill
-          sizes="800px"
-          className="object-cover scale-110 blur-[32px] saturate-[0.9]"
-          priority
-        />
-        <div className="absolute inset-0 bg-[#F5F5F5]/20" />
-      </div>
+    <div className="relative mx-auto w-full min-h-[560px] max-w-[820px] lg:min-w-0">
+      {showBackdrop ? (
+        <div className="absolute -inset-3 sm:-inset-4 rounded-[2rem] overflow-hidden" aria-hidden>
+          <Image
+            src="/demo-house.png"
+            alt=""
+            fill
+            sizes="800px"
+            className="object-cover scale-110 blur-[32px] saturate-[0.9]"
+            priority
+          />
+          <div className="absolute inset-0 bg-[#F5F5F5]/20" />
+        </div>
+      ) : null}
 
-      {/* Product frame — Taito-style outline */}
-      <div className="relative z-10 flex h-[620px] flex-col overflow-hidden rounded-2xl border border-gray-300/90 bg-white shadow-[0_24px_64px_-12px_rgba(24,24,27,0.14),0_0_0_1px_rgba(24,24,27,0.04)] ring-1 ring-gray-900/[0.06]">
+      <div className="relative z-10 flex h-[560px] flex-col overflow-hidden rounded-2xl border border-white/30 bg-white shadow-[0_32px_80px_-20px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.15)] ring-1 ring-white/10 lg:h-[580px]">
         <div className="flex min-h-0 flex-1">
           {/* App sidebar */}
           <aside className="flex w-[168px] shrink-0 flex-col border-r border-gray-200 bg-[#f5f5f4] py-4 px-2.5">

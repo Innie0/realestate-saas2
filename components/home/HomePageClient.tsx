@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import WordmarkLogo from '@/components/branding/WordmarkLogo';
-import HeroAssistantPreview from '@/components/home/HeroAssistantPreview';
+import CinematicHeroSection from '@/components/home/CinematicHeroSection';
 import LandingFeatureSections from '@/components/home/LandingFeatureSections';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { Sparkles, ArrowRight, ChevronDown, Star } from 'lucide-react';
@@ -18,25 +17,6 @@ import {
   isAnyAnnualBillingAvailable,
 } from '@/lib/pricing';
 import { MARKETING_FAQ_ITEMS } from '@/lib/marketing-faq';
-
-// ─── Animation Variants ───────────────────────────────────────────────────────
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: 'easeOut' as const },
-  },
-};
 
 // ─── CountUp Component ────────────────────────────────────────────────────────
 
@@ -166,90 +146,7 @@ export default function HomePageClient() {
     <div className="marketing-root min-h-screen bg-[#F5F5F5] text-gray-900 overflow-hidden font-sans">
 
 
-      {/* ── Nav ────────────────────────────────────────────────────────── */}
-      <motion.nav
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.1 }}
-        className="relative z-50 border-b border-gray-200 backdrop-blur-md bg-[#F5F5F5]/20"
-      >
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="flex h-20 sm:h-24 items-center justify-between">
-            <motion.div className="flex items-center shrink-0" whileHover={{ scale: 1.02 }}>
-              <WordmarkLogo className="h-8 sm:h-10 w-auto object-contain" />
-            </motion.div>
-            <div className="flex-1" />
-            <div className="hidden sm:flex items-center gap-4">
-              <Link href="/auth/login">
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="px-5 py-2.5 text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors">
-                  Sign In
-                </motion.button>
-              </Link>
-              <Link href="/auth/signup">
-                <motion.button whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(252,92,3,0.25)' }} whileTap={{ scale: 0.98 }} className="px-5 py-2.5 text-sm font-medium bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors">
-                  Get Started
-                </motion.button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </motion.nav>
-
-      {/* ── Hero ───────────────────────────────────────────────────────── */}
-      <section className="relative z-10 overflow-x-clip pt-20 pb-24 lg:pt-32 lg:pb-28">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid lg:grid-cols-[minmax(0,42%)_minmax(0,58%)] gap-12 xl:gap-16 items-center"
-          >
-          <div className="relative z-10 max-w-xl lg:max-w-none">
-            <motion.div variants={itemVariants} className="mb-6">
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 border border-gray-300 text-sm text-gray-600 backdrop-blur-sm">
-                <Sparkles className="w-4 h-4 text-brand-500" />
-                AI-Powered Real Estate Platform
-              </span>
-            </motion.div>
-
-            <motion.h1
-              variants={itemVariants}
-              className="font-display text-4xl sm:text-5xl lg:text-7xl font-medium italic tracking-tight leading-[1.08] text-gray-900"
-            >
-              Work Smarter
-              <br />
-              Close Faster
-            </motion.h1>
-
-            <motion.p variants={itemVariants} className="mt-6 sm:mt-8 text-base sm:text-lg text-gray-700 leading-relaxed max-w-xl">
-              Transform your workflow as a real estate agent with intelligent tools designed for you.
-              Manage leads, schedule showings, and close more deals with our AI-powered platform.
-            </motion.p>
-
-            <motion.div variants={itemVariants} className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-              <Link href="/auth/signup" className="w-full sm:w-auto">
-                <motion.button whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255,255,255,0.3)' }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto group px-8 py-4 text-base font-semibold bg-brand-500 text-white rounded-xl hover:bg-brand-600 transition-all flex items-center justify-center gap-2">
-                  Get Started
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </motion.button>
-              </Link>
-              <Link href="/auth/login" className="w-full sm:w-auto">
-                <motion.button whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto px-8 py-4 text-base font-semibold text-gray-900 border border-gray-400 rounded-xl backdrop-blur-sm transition-all">
-                  Sign In
-                </motion.button>
-              </Link>
-            </motion.div>
-          </div>
-
-          <motion.div
-            variants={itemVariants}
-            className="hidden lg:block relative min-w-0 pl-4 xl:pl-8 -mr-6 xl:-mr-16 2xl:-mr-24 translate-x-6 xl:translate-x-10"
-          >
-            <HeroAssistantPreview />
-          </motion.div>
-        </motion.div>
-        </div>
-      </section>
+      <CinematicHeroSection />
 
       {/* ── Stats Bar ──────────────────────────────────────────────────── */}
       <section className="relative z-10 border-y border-gray-200 bg-gray-50 backdrop-blur-sm py-12">
