@@ -185,29 +185,33 @@ export default function LandingShowcaseCarousel() {
 
         {/* Solidroad split: visual left, all slides listed right */}
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-center lg:gap-12 xl:gap-16">
-          {/* Screenshot — smaller than before */}
+          {/* Screenshot — blurred hero mountains backdrop (Solidroad-style) */}
           <div className="relative mx-auto w-full max-w-[480px] lg:mx-0 lg:max-w-none">
-            <div className="pointer-events-none absolute -inset-4 rounded-[1.75rem] overflow-hidden sm:-inset-5" aria-hidden>
-              <Image
-                src="/demo-house.png"
-                alt=""
-                fill
-                className="object-cover scale-110 blur-[36px] saturate-[0.85] opacity-50"
-                sizes="520px"
-              />
-            </div>
+            <div className="relative overflow-hidden rounded-[1.75rem] p-5 sm:p-7 lg:p-8">
+              <div className="pointer-events-none absolute inset-0" aria-hidden>
+                <Image
+                  src="/landing/hero-mountains.jpg"
+                  alt=""
+                  fill
+                  className="object-cover object-center scale-110 blur-2xl saturate-[0.9]"
+                  sizes="520px"
+                />
+                <div className="absolute inset-0 bg-gradient-to-br from-black/30 via-black/20 to-black/35" />
+              </div>
 
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={slide.id}
-                initial={reduced ? false : { opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={reduced ? undefined : { opacity: 0, scale: 0.99 }}
-                transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-              >
-                <ShowcaseScreenshot src={slide.imageSrc} alt={slide.imageAlt} />
-              </motion.div>
-            </AnimatePresence>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={slide.id}
+                  initial={reduced ? false : { opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={reduced ? undefined : { opacity: 0, scale: 0.99 }}
+                  transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="relative z-10"
+                >
+                  <ShowcaseScreenshot src={slide.imageSrc} alt={slide.imageAlt} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* Right rail — all 4 slides visible */}
