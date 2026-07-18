@@ -11,6 +11,7 @@ type LandingNavProps = {
 
 export default function LandingNav({ heroRef }: LandingNavProps) {
   const [solid, setSolid] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const hero = heroRef.current;
@@ -35,13 +36,18 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
       initial={{ opacity: 0, y: -12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.05 }}
-      className={`fixed inset-x-0 top-0 z-[60] transition-[background-color,border-color,box-shadow] duration-300 ease-out ${
+      className={`fixed inset-x-0 top-0 isolate z-[60] transition-[background-color,border-color,box-shadow] duration-300 ease-out ${
         solid
           ? 'border-b border-gray-200 bg-[#F5F5F5] shadow-sm'
           : 'border-b border-transparent bg-transparent'
       }`}
     >
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      {/* Blocks blur bleed while matching the hero's top gradient (from-black/55) */}
+      {menuOpen && !solid ? (
+        <div className="pointer-events-none absolute inset-0 bg-black/55" aria-hidden />
+      ) : null}
+
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex h-20 sm:h-24 items-center justify-between">
           <motion.div className="flex shrink-0 items-center" whileHover={{ scale: 1.02 }}>
             <Link
@@ -55,7 +61,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
           </motion.div>
           <div className="flex-1" />
           <div className="flex items-center gap-3 sm:gap-4">
-            <ProductsMegaMenu onSolidBackground={solid} />
+            <ProductsMegaMenu onSolidBackground={solid} onOpenChange={setMenuOpen} />
             <Link href="/auth/login">
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -74,7 +80,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
                 className={`px-4 sm:px-5 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 ${
                   solid
                     ? 'bg-brand-500 text-white hover:bg-brand-600 shadow-[0_0_30px_rgba(252,92,3,0.25)]'
-                    : 'border border-white/70 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20'
+                    : 'border border-white/70 bg-white/10 text-white hover:bg-white/20'
                 }`}
               >
                 Get Started
