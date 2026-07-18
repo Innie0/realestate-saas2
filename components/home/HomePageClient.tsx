@@ -1358,11 +1358,11 @@ export default function HomePageClient() {
 
             <motion.h1
               variants={itemVariants}
-              className="text-4xl sm:text-5xl lg:text-7xl font-semibold tracking-tight leading-[1.08]"
+              className="font-display text-4xl sm:text-5xl lg:text-7xl font-medium italic tracking-tight leading-[1.08] text-gray-900"
             >
-              <span className="bg-gradient-to-r from-brand-600 via-brand-500 to-brand-400 bg-clip-text text-transparent">Work Smarter</span>
+              Work Smarter
               <br />
-              <span className="text-gray-900">Close Faster</span>
+              Close Faster
             </motion.h1>
 
             <motion.p variants={itemVariants} className="mt-6 sm:mt-8 text-base sm:text-lg text-gray-700 leading-relaxed max-w-xl">
