@@ -7,3 +7,7 @@ export const SITE_DESCRIPTION =
 
 /** Public-facing domain without protocol (for ad previews, mock URLs). */
 export const SITE_DOMAIN = 'oikaro.ai';
+
+/** Primary UI typeface — used in transactional HTML emails and brand defaults. */
+export const SITE_FONT_FAMILY = 'Geist Sans';
+export const SITE_FONT_STACK = `'${SITE_FONT_FAMILY}', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;

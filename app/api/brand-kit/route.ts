@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       primary_color: '#7c3aed',
       secondary_color: '#0369a1',
       accent_color: '#f59e0b',
-      font_family: 'Inter',
+      font_family: 'Geist Sans',
       font_weight: 400,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),

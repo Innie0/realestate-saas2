@@ -20,6 +20,7 @@ import {
   type BookingAvailabilitySettings,
 } from '@/lib/booking-availability';
 import { formatDateLabel, formatTimeInZone } from '@/lib/timezone';
+import { SITE_FONT_STACK } from '@/lib/site-config';
 import { SUPPORT_FROM } from '@/lib/support-email';
 
 const UUID_REGEX =
@@ -259,7 +260,7 @@ export async function POST(
           to: cleanEmail,
           subject: `Showing confirmed with ${agent.name} — ${dateLabel} at ${timeLabel}`,
           html: `
-            <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:480px;margin:0 auto;">
+            <div style="font-family:${SITE_FONT_STACK};max-width:480px;margin:0 auto;">
               <h2 style="color:#111827;">You're all set, ${cleanName.split(' ')[0]}!</h2>
               <p style="color:#374151;font-size:15px;line-height:1.6;">
                 Your showing with <strong>${agent.name}</strong> is confirmed for:

@@ -1358,7 +1358,7 @@ export default function HomePageClient() {
 
             <motion.h1
               variants={itemVariants}
-              className="font-display text-4xl sm:text-5xl lg:text-7xl font-medium italic tracking-tight leading-[1.08]"
+              className="text-4xl sm:text-5xl lg:text-7xl font-semibold tracking-tight leading-[1.08]"
             >
               <span className="bg-gradient-to-r from-brand-600 via-brand-500 to-brand-400 bg-clip-text text-transparent">Work Smarter</span>
               <br />

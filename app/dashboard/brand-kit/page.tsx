@@ -30,7 +30,7 @@ export default function BrandKitPage() {
     primary_color: '#7c3aed',
     secondary_color: '#0369a1',
     accent_color: '#f59e0b',
-    font_family: 'Inter',
+    font_family: 'Geist Sans',
     font_weight: 400,
   });
 
@@ -64,6 +64,7 @@ export default function BrandKitPage() {
 
   // Font options
   const fontOptions = [
+    'Geist Sans',
     'Inter',
     'Roboto',
     'Open Sans',

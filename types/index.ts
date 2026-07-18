@@ -112,7 +112,7 @@ export interface BrandKit {
   primary_color: string; // Primary brand color (hex code)
   secondary_color?: string; // Secondary brand color (hex code)
   accent_color?: string; // Accent color (hex code)
-  font_family: string; // Font family name (e.g., "Inter", "Roboto")
+  font_family: string; // Font family name (e.g., "Geist Sans", "Inter")
   font_style?: 'normal' | 'italic'; // Font style
   font_weight?: number; // Font weight (e.g., 400, 600, 700)
   created_at: string; // When the brand kit was created

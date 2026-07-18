@@ -2,17 +2,11 @@
 // This is the main layout file for the Next.js app
 
 import type { Metadata } from 'next';
-import { EB_Garamond, Instrument_Sans, IBM_Plex_Mono } from 'next/font/google';
+import { GeistSans } from 'geist/font/sans';
+import { IBM_Plex_Mono } from 'next/font/google';
 import { GlobalStructuredData } from '@/components/seo/StructuredData';
 import { SITE_NAME, SITE_NAME_ALT, SITE_DESCRIPTION, SITE_DOMAIN, SITE_URL } from '@/lib/site-config';
 import './globals.css';
-
-// Primary UI typeface — text, labels, headings.
-const instrumentSans = Instrument_Sans({
-  subsets: ['latin'],
-  variable: '--font-sans',
-  display: 'swap',
-});
 
 // Mono for the small structured details — metric labels, timestamps,
 // keyboard-shortcut badges.
@@ -20,15 +14,6 @@ const plexMono = IBM_Plex_Mono({
   subsets: ['latin'],
   weight: ['400', '500', '600'],
   variable: '--font-mono',
-  display: 'swap',
-});
-
-// Display serif for marketing hero headlines (landing page).
-const ebGaramond = EB_Garamond({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  style: ['normal', 'italic'],
-  variable: '--font-display',
   display: 'swap',
 });
 
@@ -121,8 +106,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${instrumentSans.variable} ${plexMono.variable} ${ebGaramond.variable} font-sans antialiased`}>
+    <html lang="en" className={GeistSans.variable}>
+      <body className={`${GeistSans.className} ${plexMono.variable} font-sans antialiased`}>
         <GlobalStructuredData />
         {children}
       </body>

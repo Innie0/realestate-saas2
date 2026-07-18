@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendEmail } from '@/lib/resend';
+import { SITE_FONT_STACK } from '@/lib/site-config';
 import { SUPPORT_FROM, getSupportEmail } from '@/lib/support-email';
 
 const TOPICS = ['general', 'sales', 'support', 'billing'] as const;
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
       reply_to: cleanEmail,
       subject,
       html: `
-        <div style="font-family: system-ui, sans-serif; line-height: 1.5; color: #111;">
+        <div style="font-family: ${SITE_FONT_STACK}; line-height: 1.5; color: #111;">
           <p style="margin: 0 0 16px;"><strong>New contact form submission</strong></p>
           <p style="margin: 0 0 8px;"><strong>Topic:</strong> ${escapeHtml(topicLabel)}</p>
           <p style="margin: 0 0 8px;"><strong>Name:</strong> ${escapeHtml(cleanName)}</p>

@@ -1,5 +1,6 @@
 import { formatReplyToHeader } from '@/lib/agent-reply-email';
 import type { OutboundEmail } from '@/lib/resend';
+import { SITE_FONT_STACK } from '@/lib/site-config';
 import { SUPPORT_FROM } from '@/lib/support-email';
 
 const FROM_EMAIL = SUPPORT_FROM;
@@ -190,7 +191,7 @@ function baseHtml(body: string, agentName: string): string {
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<body style="margin:0;padding:0;background:#f9fafb;font-family:${SITE_FONT_STACK};">
   <div style="max-width:520px;margin:40px auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;">
     <div style="padding:32px 28px;">
       ${body}

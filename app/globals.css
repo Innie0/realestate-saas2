@@ -22,7 +22,6 @@
 @layer base {
   body {
     @apply bg-[var(--canvas)] text-gray-900 antialiased;
-    font-feature-settings: 'ss01' on, 'cv01' on;
   }
 
   h1 {
@@ -160,7 +159,7 @@
     @apply font-mono text-[0.6875rem] leading-4 font-medium uppercase tracking-wide text-gray-450;
   }
 
-  /* Dashboard-style currency and metric numbers (Instrument Sans, not mono). */
+  /* Dashboard-style currency and metric numbers (Geist Sans, not mono). */
   .text-price {
     @apply font-semibold tracking-[-0.02em] tabular-nums text-gray-900;
   }
