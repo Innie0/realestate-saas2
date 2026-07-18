@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle } from 'lucide-react';
 import MarketingSubpageHeader from '@/components/marketing/MarketingSubpageHeader';
 import MarketingSubpageFooter from '@/components/marketing/MarketingSubpageFooter';
-import ProductScreenshotFrame from '@/components/home/ProductScreenshotFrame';
+import ProductMediaPanel from '@/components/home/ProductMediaPanel';
 import { LANDING_FEATURES, type LandingFeature } from '@/lib/landing-features';
 import { PRODUCT_CATEGORIES } from '@/lib/product-categories';
 import { useMotionReduced } from '@/lib/motion';
@@ -61,7 +61,7 @@ function ProductFeatureRow({ feature, index }: { feature: LandingFeature; index:
         <p className="mb-8 max-w-lg text-base leading-relaxed text-gray-700 sm:text-lg">
           {feature.description}
         </p>
-        <ul className="space-y-3">
+        <ul className="mb-10 space-y-3">
           {feature.highlights.map((highlight, j) => (
             <motion.li
               key={highlight}
@@ -76,16 +76,29 @@ function ProductFeatureRow({ feature, index }: { feature: LandingFeature; index:
             </motion.li>
           ))}
         </ul>
+
+        <div>
+          <p className="mb-4 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-500">
+            How it works
+          </p>
+          <ol className="space-y-4">
+            {feature.howItWorks.map((step, stepIndex) => (
+              <li key={step.title} className="flex gap-4">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-900 text-[12px] font-semibold text-white">
+                  {stepIndex + 1}
+                </span>
+                <div>
+                  <p className="text-[15px] font-semibold text-gray-900">{step.title}</p>
+                  <p className="mt-0.5 text-[14px] leading-relaxed text-gray-600">{step.description}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
       </motion.div>
 
       <div className={flipped ? 'lg:order-1' : ''}>
-        <ProductScreenshotFrame
-          src={feature.imageSrc}
-          alt={feature.imageAlt}
-          label={feature.tag}
-          animationDelay={0.08}
-          priority={index === 0}
-        />
+        <ProductMediaPanel feature={feature} priority={index === 0} />
       </div>
     </article>
   );

@@ -21,8 +21,8 @@ export type ShowcaseSlide = {
   eyebrow: string;
   headline: string;
   description: string;
-  imageSrc: string;
-  imageAlt: string;
+  animationId: 'ask-once' | 'win-listing' | 'never-lose-lead' | 'close-confidence';
+  productsHref: string;
   tools: string[];
 };
 
@@ -63,8 +63,8 @@ export const SHOWCASE_SLIDES: ShowcaseSlide[] = [
     headline: 'Ask once. Listings, follow-ups, and research — done.',
     description:
       'Draft copy, look up comps, schedule reminders, and analyze photos or PDFs in natural language. Your whole workflow, one chat away.',
-    imageSrc: '/landing/ai-assistant.png',
-    imageAlt: 'Oikaro AI Assistant',
+    animationId: 'ask-once',
+    productsHref: '/products#ai-assistant',
     tools: ['AI Assistant'],
   },
   {
@@ -73,8 +73,8 @@ export const SHOWCASE_SLIDES: ShowcaseSlide[] = [
     headline: 'Go from photos to MLS-ready copy in seconds.',
     description:
       'Generate listing descriptions in multiple tones, then pull property data and a CMA for any address — without switching tabs or tools.',
-    imageSrc: '/landing/projects.png',
-    imageAlt: 'Oikaro listing projects and property research',
+    animationId: 'win-listing',
+    productsHref: '/products#projects',
     tools: ['Listing Projects', 'Property Research'],
   },
   {
@@ -83,8 +83,8 @@ export const SHOWCASE_SLIDES: ShowcaseSlide[] = [
     headline: 'Know exactly who to call first.',
     description:
       'Every form submission and open house sign-in lands in your inbox — scored Hot, Warm, or Cold — and syncs straight into your CRM.',
-    imageSrc: '/landing/leads-inbox.png',
-    imageAlt: 'Oikaro leads inbox and CRM',
+    animationId: 'never-lose-lead',
+    productsHref: '/products#leads-inbox',
     tools: ['Leads Inbox', 'Lead Capture', 'Open Houses', 'CRM'],
   },
   {
@@ -93,8 +93,8 @@ export const SHOWCASE_SLIDES: ShowcaseSlide[] = [
     headline: 'Track every deal from offer to close.',
     description:
       'Checklists, calendar sync, ad campaigns, and a dashboard that shows your pipeline at a glance — so nothing slips before closing day.',
-    imageSrc: '/landing/transactions.png',
-    imageAlt: 'Oikaro transactions, calendar, and ads',
+    animationId: 'close-confidence',
+    productsHref: '/products#transactions',
     tools: ['Transactions', 'Calendar', 'Ads', 'Dashboard'],
   },
 ];

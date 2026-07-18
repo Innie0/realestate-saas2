@@ -6,32 +6,8 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight as CtaArrow } from 'lucide-react';
 import { SHOWCASE_NARRATIVE, SHOWCASE_SLIDES } from '@/lib/landing-showcase';
+import { ShowcaseAnimation } from '@/components/home/showcase-animations/ShowcaseAnimations';
 import { useMotionReduced } from '@/lib/motion';
-
-function ShowcaseScreenshot({ src, alt }: { src: string; alt: string }) {
-  const [failed, setFailed] = useState(false);
-
-  return (
-    <div className="overflow-hidden rounded-2xl border border-gray-300/80 bg-white shadow-[0_24px_56px_-20px_rgba(24,24,27,0.18),0_0_0_1px_rgba(24,24,27,0.04)] ring-1 ring-gray-900/[0.05]">
-      <div className="relative aspect-[4/3] w-full bg-gray-100 sm:aspect-[16/11]">
-        {!failed ? (
-          <Image
-            src={src}
-            alt={alt}
-            fill
-            className="object-cover object-top"
-            sizes="(min-width: 1024px) 480px, 90vw"
-            onError={() => setFailed(true)}
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#fafafa] px-6 text-center">
-            <p className="text-sm text-gray-600">{alt}</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 function ShowcaseSlideRail({
   active,
@@ -55,7 +31,6 @@ function ShowcaseSlideRail({
             aria-current={isActive ? 'true' : undefined}
           >
             <div className="flex gap-4 sm:gap-5">
-              {/* Solidroad-style progress line */}
               <div className="flex shrink-0 justify-center pt-1.5">
                 <div
                   className={`rounded-full transition-all duration-300 ${
@@ -107,12 +82,20 @@ function ShowcaseSlideRail({
                           </span>
                         ))}
                       </div>
-                      <Link href="/auth/signup" className="mt-5 inline-block">
-                        <span className="group/btn inline-flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-600">
-                          Get Started
-                          <CtaArrow className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5" />
-                        </span>
-                      </Link>
+                      <div className="mt-5 flex flex-wrap items-center gap-4">
+                        <Link href="/auth/signup">
+                          <span className="group/btn inline-flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-600">
+                            Get Started
+                            <CtaArrow className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5" />
+                          </span>
+                        </Link>
+                        <Link
+                          href={item.productsHref}
+                          className="text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
+                        >
+                          See how it works →
+                        </Link>
+                      </div>
                     </motion.div>
                   ) : null}
                 </AnimatePresence>
@@ -159,9 +142,7 @@ export default function LandingShowcaseCarousel() {
           <p className="mt-5 text-lg leading-relaxed text-gray-700">{SHOWCASE_NARRATIVE.subheadline}</p>
         </motion.div>
 
-        {/* Solidroad split: visual left, all slides listed right */}
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-center lg:gap-12 xl:gap-16">
-          {/* Screenshot — blurred hero mountains backdrop (Solidroad-style) */}
           <div className="relative mx-auto w-full max-w-[480px] lg:mx-0 lg:max-w-none">
             <div className="relative overflow-hidden rounded-[1.75rem] p-5 sm:p-7 lg:p-8">
               <div className="pointer-events-none absolute inset-0" aria-hidden>
@@ -184,13 +165,12 @@ export default function LandingShowcaseCarousel() {
                   transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
                   className="relative z-10"
                 >
-                  <ShowcaseScreenshot src={slide.imageSrc} alt={slide.imageAlt} />
+                  <ShowcaseAnimation id={slide.animationId} reduced={reduced} />
                 </motion.div>
               </AnimatePresence>
             </div>
           </div>
 
-          {/* Right rail — all 4 slides visible */}
           <ShowcaseSlideRail active={active} onSelect={setActive} reduced={reduced} />
         </div>
       </div>
