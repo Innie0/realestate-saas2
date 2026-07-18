@@ -300,13 +300,13 @@ function PropertyResearchContent() {
             <div>
               <label className="block text-[12.5px] font-medium text-gray-600 mb-1.5">Street address *</label>
               <div className="relative">
-                <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-450" />
+                <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
                 <input
                   type="text"
                   value={street}
                   onChange={(e) => setStreet(e.target.value)}
                   placeholder="e.g. 123 W Main Street"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-[10px] border border-gray-200 bg-gray-50 text-gray-900 placeholder:text-gray-450 focus:outline-none focus:border-gray-400 text-[14px]"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-[10px] border border-gray-200 bg-gray-50 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:border-gray-400 text-[14px]"
                 />
               </div>
             </div>
@@ -318,7 +318,7 @@ function PropertyResearchContent() {
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   placeholder="Austin"
-                  className="w-full px-3 py-2.5 rounded-[10px] border border-gray-200 bg-gray-50 text-gray-900 placeholder:text-gray-450 focus:outline-none focus:border-gray-400 text-[13px]"
+                  className="w-full px-3 py-2.5 rounded-[10px] border border-gray-200 bg-gray-50 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:border-gray-400 text-[13px]"
                 />
               </div>
               <div>
@@ -341,11 +341,11 @@ function PropertyResearchContent() {
                   value={zip}
                   onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
                   placeholder="93291"
-                  className="w-full px-3 py-2.5 rounded-[10px] border border-gray-200 bg-gray-50 text-gray-900 placeholder:text-gray-450 focus:outline-none focus:border-gray-400 text-[13px]"
+                  className="w-full px-3 py-2.5 rounded-[10px] border border-gray-200 bg-gray-50 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:border-gray-400 text-[13px]"
                 />
               </div>
             </div>
-            <p className="text-[12px] text-gray-450">
+            <p className="text-[12px] text-gray-600">
               Demo: 123 W Main Street, Austin, TX — sample owner + CMA (no real PII).
             </p>
             <div className="flex flex-wrap items-center gap-3">
@@ -362,7 +362,7 @@ function PropertyResearchContent() {
                 <button
                   type="button"
                   onClick={clearForm}
-                  className="flex items-center gap-1.5 px-3 py-2 text-[13px] text-gray-450 hover:text-gray-900 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-2 text-[13px] text-gray-600 hover:text-gray-900 transition-colors"
                 >
                   <X className="w-4 h-4" /> Clear
                 </button>
@@ -376,14 +376,14 @@ function PropertyResearchContent() {
         {/* Context rail */}
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <Surface flat padding="none" className="p-4">
-            <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450 mb-3">Usage this month</p>
+            <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600 mb-3">Usage this month</p>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[13px] text-gray-450">Lookups</span>
+                <span className="text-[13px] text-gray-600">Lookups</span>
                 <span className="text-[13px] font-medium text-gray-900">{formatUsage(lookupUsage)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[13px] text-gray-450">CMA runs</span>
+                <span className="text-[13px] text-gray-600">CMA runs</span>
                 <span className="text-[13px] font-medium text-gray-900">{formatUsage(cmaUsage)}</span>
               </div>
             </div>
@@ -391,7 +391,7 @@ function PropertyResearchContent() {
 
           <Surface flat padding="none" className="overflow-hidden" data-tour="research-history">
             <div className="flex items-center justify-between px-4 py-3 border-b border-gray-150">
-              <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">
+              <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600">
                 <History className="w-3.5 h-3.5" />
                 Recent
               </span>
@@ -399,14 +399,14 @@ function PropertyResearchContent() {
                 <button
                   type="button"
                   onClick={clearHistory}
-                  className="text-[12px] text-gray-450 hover:text-rose-600 flex items-center gap-1 transition-colors"
+                  className="text-[12px] text-gray-600 hover:text-rose-600 flex items-center gap-1 transition-colors"
                 >
                   <Trash2 className="w-3.5 h-3.5" /> Clear
                 </button>
               )}
             </div>
             {history.length === 0 ? (
-              <p className="px-4 py-6 text-[12.5px] text-gray-450 text-center">Searched addresses appear here</p>
+              <p className="px-4 py-6 text-[12.5px] text-gray-600 text-center">Searched addresses appear here</p>
             ) : (
               <div className="divide-y divide-gray-150 max-h-64 overflow-y-auto">
                 {history.map((entry) => (
@@ -417,7 +417,7 @@ function PropertyResearchContent() {
                     className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors"
                   >
                     <p className="text-[13px] text-gray-900 truncate">{entry.label}</p>
-                    <p className="text-[11.5px] text-gray-450 mt-0.5">
+                    <p className="text-[11.5px] text-gray-600 mt-0.5">
                       {new Date(entry.lookedUpAt).toLocaleDateString()}
                     </p>
                   </button>
@@ -435,10 +435,10 @@ function PropertyResearchContent() {
               animate={{ opacity: 1, y: 0 }}
               className="flex items-start gap-3 rounded-[10px] border border-gray-200 bg-gray-50 px-4 py-3 text-[13px] text-gray-700"
             >
-              <Loader2 className="w-4 h-4 animate-spin shrink-0 mt-0.5 text-gray-500" />
+              <Loader2 className="w-4 h-4 animate-spin shrink-0 mt-0.5 text-gray-700" />
               <div>
                 <p className="font-medium text-gray-900">Researching this address…</p>
-                <p className="text-gray-450 mt-0.5">
+                <p className="text-gray-600 mt-0.5">
                   Fetching county records and owner contact data. First lookup usually takes 5–10
                   seconds; repeat searches of the same address are much faster.
                 </p>
@@ -453,13 +453,13 @@ function PropertyResearchContent() {
               className="flex items-center justify-between gap-3 rounded-[10px] border border-gray-200 bg-white px-4 py-3"
             >
               <div>
-                <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450 mb-0.5">Current property</p>
+                <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600 mb-0.5">Current property</p>
                 <p className="text-[15px] font-semibold text-gray-900 truncate">{addressLabel}</p>
               </div>
               <button
                 type="button"
                 onClick={handleSearchAnother}
-                className="shrink-0 flex items-center gap-1.5 text-[12.5px] font-medium text-gray-450 hover:text-gray-900 transition-colors"
+                className="shrink-0 flex items-center gap-1.5 text-[12.5px] font-medium text-gray-600 hover:text-gray-900 transition-colors"
               >
                 <Pencil className="w-3.5 h-3.5" />
                 Search another

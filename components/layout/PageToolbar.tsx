@@ -13,7 +13,7 @@ export default function PageToolbar({ children, className, meta }: PageToolbarPr
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {children}
       </div>
-      {meta && <p className="text-xs text-gray-500">{meta}</p>}
+      {meta && <p className="text-xs text-gray-700">{meta}</p>}
     </div>
   );
 }

@@ -156,7 +156,7 @@ export default function TransactionChecklist({
       <div className="bg-gray-50 rounded-[10px] p-4 border border-gray-150">
         <div className="flex items-center justify-between mb-2">
           <span className="text-[13px] font-medium text-gray-900">Overall Progress</span>
-          <span className="text-[12.5px] text-gray-450">
+          <span className="text-[12.5px] text-gray-600">
             {completedCount} of {totalCount} completed ({progressPercent}%)
           </span>
         </div>
@@ -187,14 +187,14 @@ export default function TransactionChecklist({
                 <span className={`px-2 py-1 rounded-full text-[11px] font-medium ${info.color}`}>
                   {info.label}
                 </span>
-                <span className="ml-3 text-[12.5px] text-gray-450">
+                <span className="ml-3 text-[12.5px] text-gray-600">
                   {categoryCompleted}/{categoryItems.length} completed
                 </span>
               </div>
               {isExpanded ? (
-                <ChevronUp className="w-4 h-4 text-gray-450" />
+                <ChevronUp className="w-4 h-4 text-gray-600" />
               ) : (
-                <ChevronDown className="w-4 h-4 text-gray-450" />
+                <ChevronDown className="w-4 h-4 text-gray-600" />
               )}
             </button>
 
@@ -222,12 +222,12 @@ export default function TransactionChecklist({
                     {/* Item content */}
                     <div className="flex-1 min-w-0">
                       <p className={`text-[13.5px] font-medium ${
-                        item.is_completed ? 'text-gray-450 line-through' : 'text-gray-900'
+                        item.is_completed ? 'text-gray-600 line-through' : 'text-gray-900'
                       }`}>
                         {item.title}
                       </p>
                       {item.due_date && (
-                        <p className="flex items-center text-[11.5px] text-gray-450 mt-0.5">
+                        <p className="flex items-center text-[11.5px] text-gray-600 mt-0.5">
                           <Calendar className="w-3 h-3 mr-1" />
                           Due: {format(new Date(item.due_date), 'MMM d, yyyy')}
                         </p>
@@ -306,7 +306,7 @@ export default function TransactionChecklist({
       ) : (
         <button
           onClick={() => setIsAdding(true)}
-          className="w-full flex items-center justify-center p-3 border-2 border-dashed border-gray-200 rounded-[10px] text-gray-450 hover:border-gray-300 hover:text-gray-700 transition-colors"
+          className="w-full flex items-center justify-center p-3 border-2 border-dashed border-gray-200 rounded-[10px] text-gray-600 hover:border-gray-300 hover:text-gray-700 transition-colors"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Custom Task

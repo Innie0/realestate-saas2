@@ -305,7 +305,7 @@ export default function WizardShell({
       <Surface flat padding="md" className="min-w-0">
         <div className="flex items-center justify-between gap-3 mb-5">
           <div>
-            <p className="text-[11px] font-mono text-gray-450 uppercase tracking-wide">
+            <p className="text-[11px] font-mono text-gray-600 uppercase tracking-wide">
               Step {currentIndex + 1} of {WIZARD_STEPS.length}
             </p>
             <h2 className="text-[15px] font-semibold text-gray-900 mt-0.5">{stepMeta.label}</h2>

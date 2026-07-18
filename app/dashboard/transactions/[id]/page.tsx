@@ -218,7 +218,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
         <PageShell size="narrow" className="py-12 text-center">
           <AlertTriangle className="w-12 h-12 mx-auto text-red-500 mb-4" />
           <h2 className="text-lg font-medium text-gray-900 mb-2">Error Loading Transaction</h2>
-          <p className="text-gray-500 mb-4">{error || 'Transaction not found'}</p>
+          <p className="text-gray-700 mb-4">{error || 'Transaction not found'}</p>
           <Link href="/dashboard/transactions">
             <Button variant="outline">Back to Transactions</Button>
           </Link>
@@ -244,14 +244,14 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                 href="/dashboard/transactions"
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors mt-0.5 shrink-0"
               >
-                <ArrowLeft className="w-5 h-5 text-gray-500" />
+                <ArrowLeft className="w-5 h-5 text-gray-700" />
               </Link>
               <div className="min-w-0">
                 <h1 className="text-[22px] font-semibold text-gray-900 truncate">
                   {transaction.property_address}
                 </h1>
                 {(transaction.property_city || transaction.property_state) && (
-                  <p className="text-gray-450 text-[13px] mt-0.5">
+                  <p className="text-gray-600 text-[13px] mt-0.5">
                     {[transaction.property_city, transaction.property_state, transaction.property_zip]
                       .filter(Boolean)
                       .join(', ')}
@@ -339,7 +339,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
                 className={`relative flex items-center gap-1.5 py-3 text-[13px] font-medium whitespace-nowrap transition-colors ${
-                  isActive ? 'text-gray-900' : 'text-gray-450 hover:text-gray-700'
+                  isActive ? 'text-gray-900' : 'text-gray-600 hover:text-gray-700'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -381,7 +381,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                         <Icon className="w-4 h-4 text-gray-900" strokeWidth={1.75} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[11.5px] text-gray-450">{stat.label}</p>
+                        <p className="text-[11.5px] text-gray-600">{stat.label}</p>
                         <p className="text-[17px] font-semibold text-gray-900 truncate">{stat.value}</p>
                       </div>
                     </div>
@@ -393,49 +393,49 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
             {/* Buyer & Seller side by side */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <Surface flat className="p-5 sm:p-[22px]">
-                <h3 className="font-mono text-[11px] uppercase tracking-[0.1em] text-gray-450 mb-3 flex items-center gap-1.5">
+                <h3 className="font-mono text-[11px] uppercase tracking-[0.1em] text-gray-600 mb-3 flex items-center gap-1.5">
                   <User className="w-3.5 h-3.5" /> Buyer
                 </h3>
                 <p className="text-[17px] font-semibold text-gray-900 mb-2">{transaction.buyer_name || '-'}</p>
                 <div className="space-y-1.5">
                   {transaction.buyer_email && (
                     <a href={`mailto:${transaction.buyer_email}`} className="flex items-center gap-2 text-[13px] text-gray-700 hover:text-brand-600 transition-colors">
-                      <Mail className="w-3.5 h-3.5 text-gray-450" /> {transaction.buyer_email}
+                      <Mail className="w-3.5 h-3.5 text-gray-600" /> {transaction.buyer_email}
                     </a>
                   )}
                   {transaction.buyer_phone && (
                     <a href={`tel:${transaction.buyer_phone}`} className="flex items-center gap-2 text-[13px] text-gray-700 hover:text-brand-600 transition-colors">
-                      <Phone className="w-3.5 h-3.5 text-gray-450" /> {transaction.buyer_phone}
+                      <Phone className="w-3.5 h-3.5 text-gray-600" /> {transaction.buyer_phone}
                     </a>
                   )}
                 </div>
                 {transaction.buyer_agent_name && (
                   <div className="pt-3 mt-3 border-t border-gray-150">
-                    <p className="text-[12.5px] text-gray-500">Agent: <span className="font-medium text-gray-900">{transaction.buyer_agent_name}</span></p>
+                    <p className="text-[12.5px] text-gray-700">Agent: <span className="font-medium text-gray-900">{transaction.buyer_agent_name}</span></p>
                   </div>
                 )}
               </Surface>
 
               <Surface flat className="p-5 sm:p-[22px]">
-                <h3 className="font-mono text-[11px] uppercase tracking-[0.1em] text-gray-450 mb-3 flex items-center gap-1.5">
+                <h3 className="font-mono text-[11px] uppercase tracking-[0.1em] text-gray-600 mb-3 flex items-center gap-1.5">
                   <Users className="w-3.5 h-3.5" /> Seller
                 </h3>
                 <p className="text-[17px] font-semibold text-gray-900 mb-2">{transaction.seller_name || '-'}</p>
                 <div className="space-y-1.5">
                   {transaction.seller_email && (
                     <a href={`mailto:${transaction.seller_email}`} className="flex items-center gap-2 text-[13px] text-gray-700 hover:text-brand-600 transition-colors">
-                      <Mail className="w-3.5 h-3.5 text-gray-450" /> {transaction.seller_email}
+                      <Mail className="w-3.5 h-3.5 text-gray-600" /> {transaction.seller_email}
                     </a>
                   )}
                   {transaction.seller_phone && (
                     <a href={`tel:${transaction.seller_phone}`} className="flex items-center gap-2 text-[13px] text-gray-700 hover:text-brand-600 transition-colors">
-                      <Phone className="w-3.5 h-3.5 text-gray-450" /> {transaction.seller_phone}
+                      <Phone className="w-3.5 h-3.5 text-gray-600" /> {transaction.seller_phone}
                     </a>
                   )}
                 </div>
                 {transaction.seller_agent_name && (
                   <div className="pt-3 mt-3 border-t border-gray-150">
-                    <p className="text-[12.5px] text-gray-500">Agent: <span className="font-medium text-gray-900">{transaction.seller_agent_name}</span></p>
+                    <p className="text-[12.5px] text-gray-700">Agent: <span className="font-medium text-gray-900">{transaction.seller_agent_name}</span></p>
                   </div>
                 )}
               </Surface>
@@ -444,7 +444,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
             {/* Notes */}
             {transaction.notes && (
               <Surface flat className="p-5 sm:p-[22px]">
-                <h3 className="font-mono text-[11px] uppercase tracking-[0.1em] text-gray-450 mb-3 flex items-center gap-1.5">
+                <h3 className="font-mono text-[11px] uppercase tracking-[0.1em] text-gray-600 mb-3 flex items-center gap-1.5">
                   <FileText className="w-3.5 h-3.5" /> Notes
                 </h3>
                 <p className="text-gray-700 whitespace-pre-wrap text-[13.5px] leading-relaxed">{transaction.notes}</p>
@@ -474,7 +474,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
         <div className={activeTab === 'documents' ? '' : 'hidden'}>
           <Surface flat className="p-5 sm:p-[22px]">
             <h2 className="text-[15px] font-semibold text-gray-900 mb-1">Deal Documents</h2>
-            <p className="text-[13px] text-gray-450 mb-5">
+            <p className="text-[13px] text-gray-600 mb-5">
               Store contracts, disclosures, inspection reports, and other files for this transaction.
             </p>
             <TransactionDocuments
@@ -504,11 +504,11 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                         </span>
                         <div>
                           <p className="text-[13.5px] font-medium text-gray-700">{reminder.title}</p>
-                          <p className="text-[11.5px] text-gray-450 mt-0.5">{format(new Date(reminder.reminder_date), 'MMM d, yyyy')}</p>
+                          <p className="text-[11.5px] text-gray-600 mt-0.5">{format(new Date(reminder.reminder_date), 'MMM d, yyyy')}</p>
                         </div>
                       </div>
                       {!reminder.is_sent && (
-                        <button onClick={() => dismissReminder(reminder.id)} className="text-[12.5px] text-gray-450 hover:text-gray-900 transition-colors">
+                        <button onClick={() => dismissReminder(reminder.id)} className="text-[12.5px] text-gray-600 hover:text-gray-900 transition-colors">
                           Dismiss
                         </button>
                       )}
@@ -516,7 +516,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                   ))}
               </div>
             ) : (
-              <p className="text-gray-450 text-[13px] text-center py-8">No reminders set</p>
+              <p className="text-gray-600 text-[13px] text-center py-8">No reminders set</p>
             )}
           </Surface>
         )}

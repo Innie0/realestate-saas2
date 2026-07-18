@@ -71,7 +71,7 @@ export default function AgentDirectorySearch({ groups, linkToAreaPages = false }
             <Search className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
           </div>
           <h3 className="text-base font-semibold text-gray-900 mb-1">No agents match &ldquo;{query}&rdquo;</h3>
-          <p className="text-sm text-gray-500 max-w-sm mx-auto">Try a different name, area, or specialty.</p>
+          <p className="text-sm text-gray-700 max-w-sm mx-auto">Try a different name, area, or specialty.</p>
         </div>
       ) : (
         <>

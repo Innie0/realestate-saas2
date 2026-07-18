@@ -15,7 +15,7 @@ const STATUS_STYLES: Record<AdCampaign['status'], string> = {
   active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   paused: 'bg-amber-50 text-amber-800 border-amber-200',
   ended: 'bg-gray-100 text-gray-600 border-gray-200',
-  draft: 'bg-gray-50 text-gray-500 border-gray-200',
+  draft: 'bg-gray-50 text-gray-700 border-gray-200',
 };
 
 function formatNumber(n: number): string {
@@ -41,7 +41,7 @@ export default function AdsCampaignsTable({ campaigns, loading }: AdsCampaignsTa
     return (
       <div className="rounded-[10px] border border-dashed border-gray-200 bg-white px-6 py-14 text-center">
         <p className="text-[13px] font-semibold text-gray-900">No campaigns to show yet</p>
-        <p className="text-caption text-gray-500 mt-2 max-w-md mx-auto">
+        <p className="text-caption text-gray-700 mt-2 max-w-md mx-auto">
           Connect Google Ads or Meta Ads above. Meta campaigns sync automatically; Google Ads live
           sync requires a Google Ads API developer token.
         </p>
@@ -60,7 +60,7 @@ export default function AdsCampaignsTable({ campaigns, loading }: AdsCampaignsTa
                   <th
                     key={heading || 'actions'}
                     className={clsx(
-                      'px-4 py-[9px] font-mono text-[10.5px] font-semibold uppercase tracking-[0.06em] text-gray-450',
+                      'px-4 py-[9px] font-mono text-[10.5px] font-semibold uppercase tracking-[0.06em] text-gray-600',
                       heading === 'Spend' || heading === 'Impressions' || heading === 'Clicks' || heading === 'Leads'
                         ? 'text-right'
                         : ''
@@ -79,7 +79,7 @@ export default function AdsCampaignsTable({ campaigns, loading }: AdsCampaignsTa
                   <p className="text-[13px] font-medium text-gray-900 truncate max-w-[220px]">
                     {campaign.name}
                   </p>
-                  <p className="text-caption text-gray-500 capitalize mt-0.5">{campaign.objective}</p>
+                  <p className="text-caption text-gray-700 capitalize mt-0.5">{campaign.objective}</p>
                 </td>
                 <td className="px-4 py-[11px]">
                   <span className="text-[12.5px] text-gray-700 capitalize">{campaign.platform}</span>

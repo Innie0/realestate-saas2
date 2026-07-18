@@ -190,14 +190,14 @@ export default function Header({ title, subtitle, actions, inline = false }: Hea
             <div className="flex min-w-0 flex-1 items-baseline gap-2.5">
               <h1 className="text-[14px] font-semibold tracking-[-0.01em] text-gray-900 truncate">{title}</h1>
               {subtitle && (
-                <span className="text-[12.5px] text-gray-500 truncate">{subtitle}</span>
+                <span className="text-[12.5px] text-gray-700 truncate">{subtitle}</span>
               )}
             </div>
           ) : (
             <div className="min-w-0 flex-1">
               <h1 className="text-[18px] sm:text-[21px] font-semibold tracking-tight text-gray-900 truncate">{title}</h1>
               {subtitle && (
-                <p className="text-caption text-gray-500 mt-0.5 truncate">{subtitle}</p>
+                <p className="text-caption text-gray-700 mt-0.5 truncate">{subtitle}</p>
               )}
             </div>
           )}
@@ -212,7 +212,7 @@ export default function Header({ title, subtitle, actions, inline = false }: Hea
           <div className="relative" ref={notificationRef}>
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+              className="relative rounded-lg p-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
               aria-label="Notifications"
             >
               <Bell className="h-[18px] w-[18px]" />
@@ -268,9 +268,9 @@ export default function Header({ title, subtitle, actions, inline = false }: Hea
                           <div className="flex items-start gap-3">
                             <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-50 ring-1 ring-gray-200/70">
                               {item.type === 'reminder' ? (
-                                <Bell className="w-3.5 h-3.5 text-gray-500" strokeWidth={1.75} />
+                                <Bell className="w-3.5 h-3.5 text-gray-700" strokeWidth={1.75} />
                               ) : (
-                                <Calendar className="w-3.5 h-3.5 text-gray-500" strokeWidth={1.75} />
+                                <Calendar className="w-3.5 h-3.5 text-gray-700" strokeWidth={1.75} />
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -293,11 +293,11 @@ export default function Header({ title, subtitle, actions, inline = false }: Hea
                                 )}
                               </div>
                               {item.description && (
-                                <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">
+                                <p className="text-xs text-gray-700 mt-0.5 line-clamp-2">
                                   {item.description}
                                 </p>
                               )}
-                              <div className="flex items-center gap-2 mt-1.5 text-[11px] text-gray-500">
+                              <div className="flex items-center gap-2 mt-1.5 text-[11px] text-gray-700">
                                 <Clock className="w-3 h-3" />
                                 <span className="font-mono">{formatDate(item.date)}</span>
                                 {isToday(item.date) && (
@@ -307,7 +307,7 @@ export default function Header({ title, subtitle, actions, inline = false }: Hea
                                 )}
                               </div>
                               {(item.clientName || item.location) && (
-                                <div className="flex items-center gap-3 mt-1 text-[11px] text-gray-500">
+                                <div className="flex items-center gap-3 mt-1 text-[11px] text-gray-700">
                                   {item.clientName && (
                                     <span className="inline-flex items-center gap-1">
                                       <User className="w-3 h-3" />

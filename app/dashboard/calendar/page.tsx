@@ -181,7 +181,7 @@ function CalendarPageContent() {
 
       <PageToolbar>
         {connections.google.connected && (
-          <span className="mr-auto flex items-center gap-1.5 text-xs text-gray-500 order-first sm:order-none w-full sm:w-auto">
+          <span className="mr-auto flex items-center gap-1.5 text-xs text-gray-700 order-first sm:order-none w-full sm:w-auto">
             <span className="w-2 h-2 rounded-full bg-green-500" />
             Synced with {connections.google.email || 'Google Calendar'}
           </span>
@@ -229,7 +229,7 @@ function CalendarPageContent() {
 
       <Modal isOpen={showConnectionsModal} onClose={() => setShowConnectionsModal(false)} title="Calendar Connections">
         <div className="space-y-4">
-          <p className="text-sm text-gray-500">Connect your calendars to sync events automatically.</p>
+          <p className="text-sm text-gray-700">Connect your calendars to sync events automatically.</p>
           <Surface padding="md" className="shadow-none">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -247,10 +247,10 @@ function CalendarPageContent() {
                     {connections.google.connected ? (
                       <>
                         <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                        <p className="text-xs text-gray-500">{connections.google.email}</p>
+                        <p className="text-xs text-gray-700">{connections.google.email}</p>
                       </>
                     ) : (
-                      <p className="text-xs text-gray-500">Not connected</p>
+                      <p className="text-xs text-gray-700">Not connected</p>
                     )}
                   </div>
                 </div>
@@ -266,7 +266,7 @@ function CalendarPageContent() {
               )}
             </div>
           </Surface>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-700">
             Events created here will sync to your connected calendars, and calendar events will appear in your schedule.
           </p>
         </div>

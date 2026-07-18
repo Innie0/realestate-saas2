@@ -269,11 +269,11 @@ export default function Sidebar() {
             <button
               type="button"
               onClick={() => openCommandPalette()}
-              className="flex w-full items-center gap-2 rounded-[7px] border border-gray-200 bg-white px-2.5 py-[6px] text-[12.5px] text-gray-500 transition-colors hover:border-gray-300 hover:bg-gray-50"
+              className="flex w-full items-center gap-2 rounded-[7px] border border-gray-200 bg-white px-2.5 py-[6px] text-[12.5px] text-gray-700 transition-colors hover:border-gray-300 hover:bg-gray-50"
             >
               <Search className="h-3 w-3 shrink-0" strokeWidth={2} />
               <span className="flex-1 text-left">Search</span>
-              <span className="rounded border border-gray-200 bg-gray-100 px-1 font-mono text-[10px] font-medium text-gray-450">
+              <span className="rounded border border-gray-200 bg-gray-100 px-1 font-mono text-[10px] font-medium text-gray-600">
                 ⌘K
               </span>
             </button>
@@ -289,7 +289,7 @@ export default function Sidebar() {
           {navGroups.map((group) => (
             <div key={group.label} className={clsx('mb-[18px] last:mb-2', isCollapsed && 'mb-3')}>
               {!isCollapsed && (
-                <p className="px-2.5 mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-gray-450">
+                <p className="px-2.5 mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-gray-600">
                   {group.label}
                 </p>
               )}
@@ -369,9 +369,9 @@ export default function Sidebar() {
                   <p className="truncate text-[12px] font-medium leading-tight text-gray-900">
                     {userName || 'Your account'}
                   </p>
-                  <p className="truncate text-[10.5px] leading-tight text-gray-450">{userEmail}</p>
+                  <p className="truncate text-[10.5px] leading-tight text-gray-600">{userEmail}</p>
                 </div>
-                <ChevronDown className="h-[13px] w-[13px] shrink-0 text-gray-450" strokeWidth={2} />
+                <ChevronDown className="h-[13px] w-[13px] shrink-0 text-gray-600" strokeWidth={2} />
               </>
             )}
           </button>
@@ -379,7 +379,7 @@ export default function Sidebar() {
             <button
               type="button"
               onClick={toggleCollapsed}
-              className="mt-1 hidden w-full items-center justify-center rounded-md py-[7px] text-gray-450 hover:bg-brand-100 hover:text-gray-700 lg:flex"
+              className="mt-1 hidden w-full items-center justify-center rounded-md py-[7px] text-gray-600 hover:bg-brand-100 hover:text-gray-700 lg:flex"
               title="Expand sidebar"
             >
               <ChevronsRight className="h-4 w-4" />

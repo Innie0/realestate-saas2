@@ -562,7 +562,7 @@ function TasksPageContent() {
                 ))}
               </div>
             ) : sortedConversations.length === 0 ? (
-              <p className="text-[12.5px] text-gray-450 px-2 py-4 text-center">
+              <p className="text-[12.5px] text-gray-600 px-2 py-4 text-center">
                 No chats yet — start a new conversation above.
               </p>
             ) : (
@@ -583,7 +583,7 @@ function TasksPageContent() {
                           {conv.pinned ? (
                             <Pin className="w-4 h-4 text-gray-600 fill-gray-600" />
                           ) : (
-                            <MessageSquare className="w-4 h-4 text-gray-450" />
+                            <MessageSquare className="w-4 h-4 text-gray-600" />
                           )}
                         </div>
                         <div className="flex-1 min-w-0 pr-6">
@@ -630,7 +630,7 @@ function TasksPageContent() {
                               >
                                 {conv.title || 'New conversation'}
                               </p>
-                              <p className="text-[12px] text-gray-450 mt-0.5">
+                              <p className="text-[12px] text-gray-600 mt-0.5">
                                 {formatDate(conv.updated_at)}
                               </p>
                             </>
@@ -646,7 +646,7 @@ function TasksPageContent() {
                               }}
                               className="p-1 hover:bg-gray-200/60 rounded-[6px] transition-all opacity-0 group-hover:opacity-100"
                             >
-                              <MoreVertical className="w-4 h-4 text-gray-450" />
+                              <MoreVertical className="w-4 h-4 text-gray-600" />
                             </button>
                             {openMenuId === conv.id && (
                               <div
@@ -730,7 +730,7 @@ function TasksPageContent() {
                 <h2 className="text-[22px] font-semibold tracking-[-0.02em] text-gray-900">
                   How can I help you today?
                 </h2>
-                <p className="text-[13.5px] text-gray-450 mt-2 max-w-md">
+                <p className="text-[13.5px] text-gray-600 mt-2 max-w-md">
                   Ask about listings, follow-ups, social posts, or upload a photo or PDF for analysis.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full max-w-xl mt-8">
@@ -776,7 +776,7 @@ function TasksPageContent() {
                               className="max-w-xs rounded-[8px] border border-gray-200"
                             />
                             {msg.image_name && (
-                              <p className={clsx('text-xs mt-1 flex items-center gap-1', msg.role === 'user' ? 'text-white/70' : 'text-gray-450')}>
+                              <p className={clsx('text-xs mt-1 flex items-center gap-1', msg.role === 'user' ? 'text-white/70' : 'text-gray-600')}>
                                 <FileText className="w-3 h-3" />
                                 {msg.image_name}
                               </p>
@@ -810,7 +810,7 @@ function TasksPageContent() {
                     <div className="rounded-[10px] px-4 py-3 border border-gray-200 bg-white">
                       <div className="flex items-center gap-2">
                         <Loader2 className="w-4 h-4 animate-spin text-gray-600" />
-                        <span className="text-[13px] text-gray-450">Thinking…</span>
+                        <span className="text-[13px] text-gray-600">Thinking…</span>
                       </div>
                     </div>
                   </div>
@@ -842,10 +842,10 @@ function TasksPageContent() {
                     />
                     <div className="flex-1 min-w-0">
                       <p className="text-[13px] text-gray-700 truncate">{imageName}</p>
-                      <p className="text-[12px] text-gray-450 mt-0.5">Image ready to analyze</p>
+                      <p className="text-[12px] text-gray-600 mt-0.5">Image ready to analyze</p>
                     </div>
                     <button type="button" onClick={handleRemoveImage} className="p-1.5 hover:bg-gray-200 rounded-[8px] transition-colors flex-shrink-0">
-                      <X className="w-4 h-4 text-gray-500" />
+                      <X className="w-4 h-4 text-gray-700" />
                     </button>
                   </div>
                 </div>
@@ -859,10 +859,10 @@ function TasksPageContent() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[13px] text-gray-700 truncate font-medium">{pdfName}</p>
-                      <p className="text-[12px] text-gray-450 mt-0.5">PDF ready — AI will read and analyze this</p>
+                      <p className="text-[12px] text-gray-600 mt-0.5">PDF ready — AI will read and analyze this</p>
                     </div>
                     <button type="button" onClick={handleRemoveImage} className="p-1.5 hover:bg-gray-200 rounded-[8px] transition-colors flex-shrink-0">
-                      <X className="w-4 h-4 text-gray-500" />
+                      <X className="w-4 h-4 text-gray-700" />
                     </button>
                   </div>
                 </div>
@@ -870,7 +870,7 @@ function TasksPageContent() {
 
               <div className="flex items-end gap-2">
                 <label
-                  className="cursor-pointer p-2 text-gray-450 hover:text-gray-700 hover:bg-gray-50 rounded-[8px] transition-colors shrink-0 mb-0.5"
+                  className="cursor-pointer p-2 text-gray-600 hover:text-gray-700 hover:bg-gray-50 rounded-[8px] transition-colors shrink-0 mb-0.5"
                   title="Attach image or PDF"
                 >
                   <Paperclip className="w-[18px] h-[18px]" />
@@ -892,7 +892,7 @@ function TasksPageContent() {
                     }
                   }}
                   placeholder="Type your message… (Shift+Enter for new line)"
-                  className="flex-1 min-h-[42px] max-h-32 bg-white rounded-[10px] border border-gray-200 px-3.5 py-2.5 text-[13.5px] text-gray-900 placeholder:text-gray-450 focus:outline-none focus:border-gray-400 resize-none"
+                  className="flex-1 min-h-[42px] max-h-32 bg-white rounded-[10px] border border-gray-200 px-3.5 py-2.5 text-[13.5px] text-gray-900 placeholder:text-gray-600 focus:outline-none focus:border-gray-400 resize-none"
                   rows={1}
                   disabled={isLoading}
                 />
@@ -909,7 +909,7 @@ function TasksPageContent() {
                 </button>
               </div>
 
-              <p className="text-[11.5px] text-gray-450 text-center pt-1">
+              <p className="text-[11.5px] text-gray-600 text-center pt-1">
                 AI responses are for informational purposes only and do not constitute financial advice.
               </p>
             </form>

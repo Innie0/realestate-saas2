@@ -384,7 +384,7 @@ function AdsPageContent() {
         {showAccounts && (
           <div className="mt-3 space-y-3">
             <Surface flat padding="md">
-              <p className="text-caption text-gray-500 max-w-2xl">
+              <p className="text-caption text-gray-700 max-w-2xl">
                 Connect Meta to publish ads on your own ad account. If you only see “Setup required,”
                 create an ad account in Meta Ads Manager with the same login, add billing, then click
                 Check again. Google login is optional and used for reporting when configured.

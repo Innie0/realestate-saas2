@@ -204,7 +204,7 @@ function SignUpForm() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">Create your account</h1>
-          <p className="mt-2 text-sm sm:text-base text-gray-500">Create your account, then start your 7-day free trial</p>
+          <p className="mt-2 text-sm sm:text-base text-gray-700">Create your account, then start your 7-day free trial</p>
         </div>
 
         {/* Card */}
@@ -237,7 +237,7 @@ function SignUpForm() {
               <div className="w-full border-t border-gray-200" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-3 bg-white text-gray-500">or sign up with email</span>
+              <span className="px-3 bg-white text-gray-700">or sign up with email</span>
             </div>
           </div>
 
@@ -289,7 +289,7 @@ function SignUpForm() {
                 onChange={(e) => setAgreedToTerms(e.target.checked)}
                 className="mt-1 w-4 h-4 rounded border-gray-300 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-brand-500/30 cursor-pointer"
               />
-              <label htmlFor="terms-agreement" className="text-sm text-gray-500 cursor-pointer leading-relaxed">
+              <label htmlFor="terms-agreement" className="text-sm text-gray-700 cursor-pointer leading-relaxed">
                 I agree to the{' '}
                 <Link href="/terms" target="_blank" className="text-gray-900 hover:text-gray-900 underline underline-offset-2 transition-colors">
                   Terms of Service
@@ -318,7 +318,7 @@ function SignUpForm() {
           </form>
 
           {/* Sign in link */}
-          <p className="mt-6 text-center text-sm text-gray-500">
+          <p className="mt-6 text-center text-sm text-gray-700">
             Already have an account?{' '}
             <Link href="/auth/login" className="text-gray-900 hover:text-gray-900 font-medium transition-colors">
               Sign in

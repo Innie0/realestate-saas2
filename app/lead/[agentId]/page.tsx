@@ -75,7 +75,7 @@ export default async function LeadCapturePage({ params }: LeadPageProps) {
             </svg>
           </div>
           <h1 className="text-xl font-semibold text-gray-900 mb-2">Form not available</h1>
-          <p className="text-gray-500 text-sm">This contact link is invalid or has been removed.</p>
+          <p className="text-gray-700 text-sm">This contact link is invalid or has been removed.</p>
         </div>
       </div>
     );
@@ -91,7 +91,7 @@ export default async function LeadCapturePage({ params }: LeadPageProps) {
             </svg>
           </div>
           <h1 className="text-xl font-semibold text-gray-900 mb-2">Form not available</h1>
-          <p className="text-gray-500 text-sm">This contact link is not currently active.</p>
+          <p className="text-gray-700 text-sm">This contact link is not currently active.</p>
         </div>
       </div>
     );
@@ -117,7 +117,7 @@ export default async function LeadCapturePage({ params }: LeadPageProps) {
           <h1 className="text-2xl font-bold text-gray-900 mb-1">
             Get in touch with {agentName}
           </h1>
-          <p className="text-gray-500 text-sm max-w-sm mx-auto">
+          <p className="text-gray-700 text-sm max-w-sm mx-auto">
             Fill out the form below and {agentName.split(' ')[0]} will reach
             out to help you with your real estate needs.
           </p>
@@ -131,7 +131,7 @@ export default async function LeadCapturePage({ params }: LeadPageProps) {
         {/* Footer */}
         <p className="text-center text-xs text-gray-600 mt-6">
           Powered by{' '}
-          <a href={SITE_URL} className="text-gray-500 hover:text-gray-500 transition-colors">
+          <a href={SITE_URL} className="text-gray-700 hover:text-gray-700 transition-colors">
             Oikaro
           </a>
         </p>

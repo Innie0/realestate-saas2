@@ -66,7 +66,7 @@ export default function AICopyAssistStep({ draft, onChange }: AICopyAssistStepPr
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-[13px] font-semibold text-gray-900">AI copy suggestions</p>
-          <p className="text-caption text-gray-500 mt-0.5">
+          <p className="text-caption text-gray-700 mt-0.5">
             Pick a variant, edit it, regenerate, or write your own — nothing is required.
           </p>
         </div>
@@ -115,7 +115,7 @@ export default function AICopyAssistStep({ draft, onChange }: AICopyAssistStepPr
 
       <div className="border-t border-gray-150 pt-5 space-y-4">
         <p className="text-label flex items-center gap-1.5">
-          <RefreshCw className="h-3.5 w-3.5 text-gray-450" />
+          <RefreshCw className="h-3.5 w-3.5 text-gray-600" />
           Your copy
         </p>
         <Input
@@ -133,7 +133,7 @@ export default function AICopyAssistStep({ draft, onChange }: AICopyAssistStepPr
             placeholder="Write your own ad message…"
             className="block w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 resize-none"
           />
-          <p className="text-[11px] text-gray-450 mt-1">{draft.customBody.length}/250</p>
+          <p className="text-[11px] text-gray-600 mt-1">{draft.customBody.length}/250</p>
         </div>
       </div>
     </div>

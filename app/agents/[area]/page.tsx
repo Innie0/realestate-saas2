@@ -57,7 +57,7 @@ export default async function AgentAreaPage({ params }: PageProps) {
       <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center p-6">
         <div className="text-center max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
           <p className="text-gray-900 text-lg font-semibold">Area not found</p>
-          <p className="text-gray-500 text-sm mt-2">
+          <p className="text-gray-700 text-sm mt-2">
             We don&apos;t have any agents listed for that area yet.
           </p>
           <Link
@@ -79,7 +79,7 @@ export default async function AgentAreaPage({ params }: PageProps) {
           <div className="flex h-16 items-center justify-between">
             <Link
               href="/agents"
-              className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+              className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               All Agents
@@ -99,7 +99,7 @@ export default async function AgentAreaPage({ params }: PageProps) {
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-gray-900">
             Real estate agents in {group.area}
           </h1>
-          <p className="text-gray-500 mt-3 leading-relaxed">
+          <p className="text-gray-700 mt-3 leading-relaxed">
             {group.agents.length} agent{group.agents.length === 1 ? '' : 's'} serving {group.area} —
             reach out directly, no lead-selling middleman.
           </p>

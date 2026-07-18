@@ -113,19 +113,19 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
         <div className="mt-2 flex flex-wrap items-center gap-3 text-[12.5px] text-gray-600">
           {project.property_type && (
             <div className="flex items-center gap-1">
-              <Home className="w-[13px] h-[13px] text-gray-450" />
+              <Home className="w-[13px] h-[13px] text-gray-600" />
               <span className="capitalize">{project.property_type}</span>
             </div>
           )}
           {project.property_info?.city && (
             <div className="flex items-center gap-1">
-              <MapPin className="w-[13px] h-[13px] text-gray-450" />
+              <MapPin className="w-[13px] h-[13px] text-gray-600" />
               <span className="line-clamp-1">{project.property_info.city}</span>
             </div>
           )}
         </div>
 
-        <div className="mt-2 flex items-center gap-1 font-mono text-[12px] text-gray-450">
+        <div className="mt-2 flex items-center gap-1 font-mono text-[12px] text-gray-600">
           <Calendar className="w-3 h-3" />
           <span>{createdDate}</span>
         </div>

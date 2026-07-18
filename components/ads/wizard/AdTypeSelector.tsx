@@ -37,7 +37,7 @@ export default function AdTypeSelector({ value, onChange }: AdTypeSelectorProps)
             </div>
             <div className="min-w-0">
               <p className="text-[13px] font-semibold text-gray-900">{option.label}</p>
-              <p className="text-caption text-gray-500 mt-0.5">{option.description}</p>
+              <p className="text-caption text-gray-700 mt-0.5">{option.description}</p>
             </div>
           </button>
         );

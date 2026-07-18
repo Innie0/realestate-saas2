@@ -401,7 +401,7 @@ export default function AccountPage() {
 
             <div className="space-y-3 mb-6">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm text-gray-500">Plan</span>
+                <span className="text-sm text-gray-700">Plan</span>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-50 text-brand-700 text-sm font-medium border border-brand-200">
                   {planName === 'pro' && <Sparkles className="w-3.5 h-3.5" />}
                   {planLabel}
@@ -410,7 +410,7 @@ export default function AccountPage() {
               <p className="text-sm text-gray-600">
                 Status: <span className="font-medium text-gray-900">{statusLabel}</span>
                 {periodDetail && (
-                  <span className="text-gray-500">{periodDetail}</span>
+                  <span className="text-gray-700">{periodDetail}</span>
                 )}
               </p>
               {cancelAtPeriodEnd && formattedPeriodEnd && (
@@ -469,7 +469,7 @@ export default function AccountPage() {
                 </Link>
               )}
             </div>
-            <p className="text-xs text-gray-500 mt-4">
+            <p className="text-xs text-gray-700 mt-4">
               {adminCompAccess
                 ? 'Your admin account uses Starter plan limits with no Stripe subscription required.'
                 : 'Update payment method, view invoices, or cancel your subscription from the billing portal.'}

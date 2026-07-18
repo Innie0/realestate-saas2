@@ -227,18 +227,18 @@ export default function FileUploader({
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1">{progress}%</p>
+              <p className="text-xs text-gray-700 mt-1">{progress}%</p>
             </>
           ) : (
             <>
-              <Upload className="w-10 h-10 text-gray-500 mb-3" />
+              <Upload className="w-10 h-10 text-gray-700 mb-3" />
               <p className="text-sm font-medium text-gray-700 mb-1">
                 {uploadText}
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-700">
                 Drag and drop or click to browse
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-700 mt-1">
                 {accept.split(',').map(t => t.split('/')[1]).join(', ').toUpperCase()} • Max {(maxSize / 1024 / 1024).toFixed(0)}MB
               </p>
             </>
@@ -277,7 +277,7 @@ export default function FileUploader({
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <File className="w-10 h-10 text-gray-500" />
+                    <File className="w-10 h-10 text-gray-700" />
                   )}
                 </div>
 
@@ -286,7 +286,7 @@ export default function FileUploader({
                   <p className="text-xs text-gray-700 truncate" title={file.name}>
                     {file.name}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-700">
                     {(file.size / 1024).toFixed(1)} KB
                   </p>
                 </div>

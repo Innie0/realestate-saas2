@@ -288,7 +288,7 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
       <Surface flat padding="none" className="p-5 sm:p-[22px] space-y-5">
         <div>
           <h3 className="text-[15px] font-semibold text-gray-900">Follow-up schedule</h3>
-          <p className="text-[12.5px] text-gray-450 mt-1">
+          <p className="text-[12.5px] text-gray-600 mt-1">
             We wrote professional emails for you. Turn on auto follow-up above — no setup required.
           </p>
           {usingCustomCopy && (
@@ -305,12 +305,12 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
               <div key={slot} className="flex items-center justify-between gap-3 px-4 py-3 bg-white">
                 <div>
                   <p className="text-[13.5px] font-medium text-gray-900">{TIMELINE_LABELS[slot]}</p>
-                  <p className="text-[12px] text-gray-450 mt-0.5">{formatTimingLabel(slot, day)}</p>
+                  <p className="text-[12px] text-gray-600 mt-0.5">{formatTimingLabel(slot, day)}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setPreviewSlot(slot)}
-                  className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-gray-450 hover:text-gray-900 transition-colors"
+                  className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-gray-600 hover:text-gray-900 transition-colors"
                 >
                   <Eye className="w-3.5 h-3.5" />
                   Preview
@@ -324,7 +324,7 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
           <div>
             <label className="block text-[12.5px] font-medium text-gray-600 mb-1.5">Check-in email</label>
             <div className="flex items-center gap-2">
-              <span className="text-[13px] text-gray-450 shrink-0">Send after</span>
+              <span className="text-[13px] text-gray-600 shrink-0">Send after</span>
               <input
                 type="text"
                 inputMode="numeric"
@@ -341,13 +341,13 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                 className="w-20 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-[13px] text-gray-900 focus:outline-none focus:border-gray-400"
                 aria-label="Check-in email days after lead capture"
               />
-              <span className="text-[13px] text-gray-450">days</span>
+              <span className="text-[13px] text-gray-600">days</span>
             </div>
           </div>
           <div>
             <label className="block text-[12.5px] font-medium text-gray-600 mb-1.5">Final nudge</label>
             <div className="flex items-center gap-2">
-              <span className="text-[13px] text-gray-450 shrink-0">Send after</span>
+              <span className="text-[13px] text-gray-600 shrink-0">Send after</span>
               <input
                 type="text"
                 inputMode="numeric"
@@ -364,16 +364,16 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                 className="w-20 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-[13px] text-gray-900 focus:outline-none focus:border-gray-400"
                 aria-label="Final nudge days after lead capture"
               />
-              <span className="text-[13px] text-gray-450">days</span>
+              <span className="text-[13px] text-gray-600">days</span>
             </div>
           </div>
         </div>
 
-        <p className="text-[12.5px] text-gray-450">
+        <p className="text-[12.5px] text-gray-600">
           Welcome sends right away. Check-in must be at least day 1, and the final nudge must be at least one day after that.
         </p>
 
-        <p className="text-[12.5px] text-gray-450">
+        <p className="text-[12.5px] text-gray-600">
           Current schedule: {scheduleSummary}.
         </p>
 
@@ -401,18 +401,18 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
             className="w-full flex items-center justify-between gap-3 text-left"
           >
             <div className="flex items-center gap-2">
-              <Settings2 className="w-4 h-4 text-gray-450" strokeWidth={1.8} />
+              <Settings2 className="w-4 h-4 text-gray-600" strokeWidth={1.8} />
               <div>
                 <p className="text-[13.5px] font-medium text-gray-900">Customize email wording</p>
-                <p className="text-[12px] text-gray-450 mt-0.5">Optional — only if you want your own voice</p>
+                <p className="text-[12px] text-gray-600 mt-0.5">Optional — only if you want your own voice</p>
               </div>
             </div>
-            <ChevronDown className={`w-4 h-4 text-gray-450 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 text-gray-600 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
           </button>
 
           {showAdvanced && (
             <div className="mt-4 space-y-4">
-              <p className="text-[12.5px] text-gray-450 rounded-[10px] bg-gray-50 border border-gray-150 px-3 py-2">
+              <p className="text-[12.5px] text-gray-600 rounded-[10px] bg-gray-50 border border-gray-150 px-3 py-2">
                 Stick to the defaults unless you know what you&apos;re doing. Use preview before saving, and restore defaults if anything looks off.
               </p>
 
@@ -450,9 +450,9 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                       >
                         <div>
                           <p className="text-[13.5px] font-medium text-gray-900">{definition.label}</p>
-                          <p className="text-[12px] text-gray-450 mt-0.5 truncate max-w-[240px] sm:max-w-md">{draft.subject}</p>
+                          <p className="text-[12px] text-gray-600 mt-0.5 truncate max-w-[240px] sm:max-w-md">{draft.subject}</p>
                         </div>
-                        <ChevronDown className={`w-4 h-4 text-gray-450 transition-transform shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
+                        <ChevronDown className={`w-4 h-4 text-gray-600 transition-transform shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
                       </button>
 
                       {isOpen && (
@@ -509,7 +509,7 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                             <button
                               type="button"
                               onClick={() => setPreviewSlot(definition.slot)}
-                              className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-gray-450 hover:text-gray-900 transition-colors"
+                              className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-gray-600 hover:text-gray-900 transition-colors"
                             >
                               <Eye className="w-3.5 h-3.5" />
                               Preview
@@ -517,7 +517,7 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                             <button
                               type="button"
                               onClick={() => resetSlot(definition.slot)}
-                              className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-gray-450 hover:text-gray-900 transition-colors"
+                              className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-gray-600 hover:text-gray-900 transition-colors"
                             >
                               <RotateCcw className="w-3.5 h-3.5" />
                               Reset this email
@@ -547,15 +547,15 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
       >
         {preview && (
           <div className="space-y-4">
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-700">
               Sample lead: Sarah Johnson · buying · Riverside
             </p>
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-1">Subject</p>
+              <p className="text-xs font-medium text-gray-700 mb-1">Subject</p>
               <p className="text-sm font-medium text-gray-900">{preview.subject}</p>
             </div>
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-1">Message</p>
+              <p className="text-xs font-medium text-gray-700 mb-1">Message</p>
               <pre className="text-sm text-gray-700 whitespace-pre-wrap font-sans leading-relaxed bg-gray-50 border border-gray-200 rounded-xl p-4">
                 {preview.body}
               </pre>

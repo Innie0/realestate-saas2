@@ -210,7 +210,7 @@ export default function CalendarView({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-4 text-xs text-gray-500">
+      <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-4 text-xs text-gray-700">
         {LEGEND.map((item) => (
           <div key={item.key} className="flex items-center gap-1.5">
             <span className={`h-2 w-2 rounded-full ${eventStyle(item.key).dot}`} />
@@ -252,7 +252,7 @@ export default function CalendarView({
       {!isLoading && events.length === 0 && (
         <div className="text-center py-8 text-gray-400">
           <CalendarDays className="w-8 h-8 mx-auto mb-2 opacity-40" />
-          <p className="text-sm text-gray-500">No events scheduled for this month</p>
+          <p className="text-sm text-gray-700">No events scheduled for this month</p>
           <p className="text-xs mt-1">Create your first event or connect a calendar to sync events</p>
         </div>
       )}

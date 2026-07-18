@@ -162,7 +162,7 @@ export default function LoginPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">Welcome back</h1>
-          <p className="mt-2 text-sm sm:text-base text-gray-500">Sign in to your account</p>
+          <p className="mt-2 text-sm sm:text-base text-gray-700">Sign in to your account</p>
         </div>
 
         {/* Card */}
@@ -195,7 +195,7 @@ export default function LoginPage() {
               <div className="w-full border-t border-gray-200" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-3 bg-white text-gray-500">or sign in with email</span>
+              <span className="px-3 bg-white text-gray-700">or sign in with email</span>
             </div>
           </div>
 
@@ -221,7 +221,7 @@ export default function LoginPage() {
 
             {/* Forgot password link */}
             <div className="text-right">
-              <Link href="/auth/forgot-password" className="text-sm text-gray-500 hover:text-brand-600 transition-colors">
+              <Link href="/auth/forgot-password" className="text-sm text-gray-700 hover:text-brand-600 transition-colors">
                 Forgot password?
               </Link>
             </div>
@@ -243,7 +243,7 @@ export default function LoginPage() {
           </form>
 
           {/* Sign up link */}
-          <p className="mt-6 text-center text-sm text-gray-500">
+          <p className="mt-6 text-center text-sm text-gray-700">
             Don't have an account?{' '}
             <Link href="/auth/signup" className="text-gray-900 hover:text-gray-900 font-medium transition-colors">
               Sign up

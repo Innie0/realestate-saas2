@@ -135,8 +135,8 @@ export default function UpgradePage() {
             <Sparkles className="w-8 h-8 text-gray-900/60" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">You&apos;re on Pro</h2>
-          <p className="text-gray-500 mb-6">You already have full access to everything Oikaro offers.</p>
-          <Link href="/dashboard" className="text-sm text-gray-500 hover:text-brand-600 transition-colors flex items-center justify-center gap-1">
+          <p className="text-gray-700 mb-6">You already have full access to everything Oikaro offers.</p>
+          <Link href="/dashboard" className="text-sm text-gray-700 hover:text-brand-600 transition-colors flex items-center justify-center gap-1">
             <ArrowLeft className="w-4 h-4" /> Back to Dashboard
           </Link>
         </div>
@@ -187,11 +187,11 @@ export default function UpgradePage() {
                 const nearLimit = !isUnlimited && pct >= 80;
                 return (
                   <div key={key} className="bg-gray-50 rounded-xl p-3">
-                    <p className="text-xs text-gray-500 mb-1">{label}</p>
+                    <p className="text-xs text-gray-700 mb-1">{label}</p>
                     <p className={`text-lg font-bold ${nearLimit ? 'text-red-400' : 'text-gray-900'}`}>
                       {isUnlimited ? '∞' : item?.current ?? 0}
                       {!isUnlimited && (
-                        <span className="text-xs font-normal text-gray-500">/{item?.limit ?? '—'}</span>
+                        <span className="text-xs font-normal text-gray-700">/{item?.limit ?? '—'}</span>
                       )}
                     </p>
                     {!isUnlimited && (
@@ -219,14 +219,14 @@ export default function UpgradePage() {
             </div>
             <div className="mb-5 mt-2">
               <h3 className="text-xl font-bold text-gray-900 mb-1">Pro</h3>
-              <p className="text-gray-500 text-sm">Everything you need to scale your real estate business</p>
+              <p className="text-gray-700 text-sm">Everything you need to scale your real estate business</p>
             </div>
             <div className="mb-5">
               <div className="flex items-baseline gap-1">
                 <span className="text-4xl font-bold text-gray-900">{getPlanDisplayPrice('pro', 'monthly')}</span>
-                <span className="text-gray-500 text-sm">/ month</span>
+                <span className="text-gray-700 text-sm">/ month</span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-700 mt-1">
                 {isAnyAnnualBillingAvailable()
                   ? `or ${getPlanDisplayPrice('pro', 'annual')}/year on annual billing`
                   : 'Billed monthly after trial'}
@@ -249,7 +249,7 @@ export default function UpgradePage() {
           <div className="min-w-[480px]">
             <div className="grid grid-cols-3 mb-3">
               <div />
-              <div className="text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Starter</div>
+              <div className="text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Starter</div>
               <div className="text-center text-xs font-semibold text-gray-900 uppercase tracking-wider">Pro</div>
             </div>
             {COMPARISON_ROWS.map((row, i) => (
@@ -257,7 +257,7 @@ export default function UpgradePage() {
                 key={i}
                 className={`grid grid-cols-3 py-3 ${i < COMPARISON_ROWS.length - 1 ? 'border-b border-gray-100' : ''}`}
               >
-                <span className="text-sm text-gray-500">{row.label}</span>
+                <span className="text-sm text-gray-700">{row.label}</span>
                 <div className="text-center"><ComparisonCell value={row.starter} /></div>
                 <div className="text-center"><ComparisonCell value={row.pro} /></div>
               </div>
@@ -266,7 +266,7 @@ export default function UpgradePage() {
         </div>
 
         <div className="text-center pb-4">
-          <Link href="/dashboard" className="text-sm text-gray-500 hover:text-brand-600 transition-colors inline-flex items-center gap-1">
+          <Link href="/dashboard" className="text-sm text-gray-700 hover:text-brand-600 transition-colors inline-flex items-center gap-1">
             <ArrowLeft className="w-4 h-4" /> Back to Dashboard
           </Link>
         </div>

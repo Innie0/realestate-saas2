@@ -339,7 +339,7 @@ function CommandPaletteDialog({
 
               <div ref={listRef} className="max-h-[min(420px,50vh)] overflow-y-auto py-2">
                 {flatResults.length === 0 ? (
-                  <div className="px-4 py-8 text-center text-sm text-gray-500">
+                  <div className="px-4 py-8 text-center text-sm text-gray-700">
                     {query.trim().length >= 2 && !loading
                       ? 'No results — try a name, email, address, or page name.'
                       : 'Type to search your workspace, or pick a quick action below.'}
@@ -347,7 +347,7 @@ function CommandPaletteDialog({
                 ) : (
                   groupedResults.map((group) => (
                     <div key={group.kind} className="mb-1">
-                      <p className="px-4 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-gray-450">
+                      <p className="px-4 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-gray-600">
                         {group.label}
                       </p>
                       {group.items.map((item) => {
@@ -384,7 +384,7 @@ function CommandPaletteDialog({
                                 {item.title}
                               </span>
                               {item.subtitle && (
-                                <span className="block truncate text-[11.5px] text-gray-500">
+                                <span className="block truncate text-[11.5px] text-gray-700">
                                   {item.subtitle}
                                 </span>
                               )}
@@ -400,7 +400,7 @@ function CommandPaletteDialog({
                 )}
               </div>
 
-              <div className="flex items-center justify-between border-t border-gray-100 px-4 py-2 text-[11px] text-gray-450">
+              <div className="flex items-center justify-between border-t border-gray-100 px-4 py-2 text-[11px] text-gray-600">
                 <span>↑↓ navigate · ↵ open · esc close</span>
                 <span className="font-mono">⌘K</span>
               </div>

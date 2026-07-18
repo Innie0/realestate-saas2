@@ -28,7 +28,7 @@ export default function EmptyState({
       <span className="absolute -inset-4 rounded-full border border-gray-200/40" aria-hidden />
       <span className="absolute -inset-1.5 rounded-full border border-gray-200/70" aria-hidden />
       <span className="absolute inset-0 rounded-full bg-white ring-1 ring-gray-200 shadow-surface" aria-hidden />
-      <Icon className="relative w-5 h-5 text-gray-500" strokeWidth={1.5} />
+      <Icon className="relative w-5 h-5 text-gray-700" strokeWidth={1.5} />
     </div>
   );
 
@@ -36,7 +36,7 @@ export default function EmptyState({
     <>
       <h3 className="text-base font-semibold tracking-tight text-gray-900 mb-1">{title}</h3>
       {description && (
-        <p className="text-sm text-gray-500 max-w-sm mx-auto mb-5">{description}</p>
+        <p className="text-sm text-gray-700 max-w-sm mx-auto mb-5">{description}</p>
       )}
       {action}
     </>

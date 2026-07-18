@@ -91,9 +91,9 @@ export default function PricingPage() {
         {!isLoading && (
           <div className="text-sm">
             {isAuthenticated ? (
-              <span className="text-gray-500 truncate max-w-[220px] block">✓ {userEmail}</span>
+              <span className="text-gray-700 truncate max-w-[220px] block">✓ {userEmail}</span>
             ) : (
-              <Link href="/auth/signup" className="text-gray-500 hover:text-brand-600 transition-colors">
+              <Link href="/auth/signup" className="text-gray-700 hover:text-brand-600 transition-colors">
                 Sign in to subscribe →
               </Link>
             )}
@@ -117,7 +117,7 @@ export default function PricingPage() {
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 tracking-tight">
               Choose your plan
             </h1>
-            <p className="text-gray-500 text-lg max-w-xl mx-auto">
+            <p className="text-gray-700 text-lg max-w-xl mx-auto">
               Start your free trial today. You won&apos;t be charged until the trial ends.
             </p>
 
@@ -129,7 +129,7 @@ export default function PricingPage() {
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     billingInterval === 'monthly'
                       ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-900'
+                      : 'text-gray-700 hover:text-gray-900'
                   }`}
                 >
                   Monthly
@@ -140,7 +140,7 @@ export default function PricingPage() {
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     billingInterval === 'annual'
                       ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-900'
+                      : 'text-gray-700 hover:text-gray-900'
                   }`}
                 >
                   Annual
@@ -171,7 +171,7 @@ export default function PricingPage() {
 
                 <div className="mb-5">
                   <h3 className="text-xl font-bold text-gray-900 mb-1">{plan.name}</h3>
-                  <p className="text-gray-500 text-sm">{plan.description}</p>
+                  <p className="text-gray-700 text-sm">{plan.description}</p>
                 </div>
 
                 <div className="mb-6">
@@ -179,7 +179,7 @@ export default function PricingPage() {
                     <span className="text-price text-4xl">
                       {getPlanDisplayPrice(plan.slug, billingInterval)}
                     </span>
-                    <span className="text-gray-500 text-sm">{getPlanPeriodLabel(billingInterval)}</span>
+                    <span className="text-gray-700 text-sm">{getPlanPeriodLabel(billingInterval)}</span>
                   </div>
                   {billingInterval === 'annual' && (
                     <p className="text-xs text-brand-600 font-medium mt-2">
@@ -187,7 +187,7 @@ export default function PricingPage() {
                     </p>
                   )}
                   {billingInterval === 'monthly' && showAnnual && (
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-xs text-gray-700 mt-2">
                       or {getPlanDisplayPrice(plan.slug, 'annual')}/year (2 months free)
                     </p>
                   )}
@@ -212,7 +212,7 @@ export default function PricingPage() {
 
           {!isAuthenticated && (
             <div className="mt-8 p-5 bg-gray-50 border border-gray-200 rounded-2xl text-center">
-              <p className="text-gray-500 text-sm mb-4">You need an account to subscribe</p>
+              <p className="text-gray-700 text-sm mb-4">You need an account to subscribe</p>
               <button
                 onClick={() => router.push('/auth/signup')}
                 className="px-6 py-2.5 rounded-xl bg-brand-500 text-white text-sm font-semibold hover:bg-brand-600 transition-colors"

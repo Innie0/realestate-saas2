@@ -144,7 +144,7 @@ export default function NewProjectPage() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-gray-700">
                   💡 Tip: The more detailed your description, the better the AI-generated content will be!
                 </p>
               </div>
@@ -277,7 +277,7 @@ export default function NewProjectPage() {
                 value={features}
                 onChange={(e) => setFeatures(e.target.value)}
               />
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-gray-700">
                 💡 Enter each feature on a new line. Be specific and descriptive!
               </p>
             </div>

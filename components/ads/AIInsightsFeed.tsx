@@ -64,7 +64,7 @@ export default function AIInsightsFeed({
 }: AIInsightsFeedProps) {
   if (loading) {
     return (
-      <div className="flex items-center gap-2 text-caption text-gray-500 py-3">
+      <div className="flex items-center gap-2 text-caption text-gray-700 py-3">
         <Loader2 className="h-4 w-4 animate-spin" />
         Loading insights…
       </div>

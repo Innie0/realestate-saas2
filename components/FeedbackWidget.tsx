@@ -71,7 +71,7 @@ export default function FeedbackWidget() {
             <span className="text-sm font-semibold text-gray-900">Share Feedback</span>
             <button
               onClick={() => setOpen(false)}
-              className="text-gray-500 hover:text-brand-600 transition-colors"
+              className="text-gray-700 hover:text-brand-600 transition-colors"
             >
               <ChevronDown className="w-4 h-4" />
             </button>
@@ -83,7 +83,7 @@ export default function FeedbackWidget() {
                 <Send className="w-5 h-5 text-green-400" />
               </div>
               <p className="text-gray-900 font-medium">Thanks for your feedback!</p>
-              <p className="text-gray-500 text-sm mt-1">We really appreciate it.</p>
+              <p className="text-gray-700 text-sm mt-1">We really appreciate it.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-3">
@@ -97,7 +97,7 @@ export default function FeedbackWidget() {
                     className={`flex-1 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors border ${
                       type === t
                         ? 'bg-gray-100 border-gray-300 text-gray-900'
-                        : 'bg-transparent border-gray-100 text-gray-500 hover:text-gray-900'
+                        : 'bg-transparent border-gray-100 text-gray-700 hover:text-gray-900'
                     }`}
                   >
                     {t === 'bug' ? 'Bug' : t === 'feature' ? 'Feature' : 'General'}

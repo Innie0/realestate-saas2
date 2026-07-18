@@ -49,7 +49,7 @@ export default function OpenHouseSignInForm({ openHouseId }: { openHouseId: stri
           <span className="text-2xl">✓</span>
         </div>
         <h2 className="text-lg font-semibold text-gray-900 mb-2">You&apos;re signed in!</h2>
-        <p className="text-sm text-gray-500">Thanks for visiting. The agent will follow up with you soon.</p>
+        <p className="text-sm text-gray-700">Thanks for visiting. The agent will follow up with you soon.</p>
       </div>
     );
   }

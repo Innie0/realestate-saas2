@@ -157,7 +157,7 @@ export default function LeadCaptureForm({
           <Check className="h-8 w-8 text-gray-900" />
         </div>
         <h2 className="text-xl font-bold text-gray-900 mb-2">You&apos;re all set!</h2>
-        <p className="text-gray-500 text-sm max-w-xs mx-auto">
+        <p className="text-gray-700 text-sm max-w-xs mx-auto">
           {agentName.split(' ')[0]} will review your details and be in touch soon.
         </p>
       </div>
@@ -170,7 +170,7 @@ export default function LeadCaptureForm({
       {/* Name */}
       <div>
         <label htmlFor="name" className={labelClasses}>
-          Full name <span className="text-gray-500">*</span>
+          Full name <span className="text-gray-700">*</span>
         </label>
         <input
           id="name"
@@ -187,7 +187,7 @@ export default function LeadCaptureForm({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label htmlFor="email" className={labelClasses}>
-            Email{isListingForm && <span className="text-gray-500"> *</span>}
+            Email{isListingForm && <span className="text-gray-700"> *</span>}
           </label>
           <input
             id="email"
@@ -201,7 +201,7 @@ export default function LeadCaptureForm({
         </div>
         <div>
           <label htmlFor="phone" className={labelClasses}>
-            Phone{isListingForm && <span className="text-gray-500"> *</span>}
+            Phone{isListingForm && <span className="text-gray-700"> *</span>}
           </label>
           <input
             id="phone"
@@ -237,7 +237,7 @@ export default function LeadCaptureForm({
                 className={`flex flex-col items-center justify-center gap-1.5 rounded-lg border px-2 py-3 text-sm font-medium transition-all ${
                   selected
                     ? 'border-brand-500 bg-brand-500/10 text-brand-800'
-                    : 'border-gray-200 text-gray-500 hover:border-brand-300 hover:text-gray-900'
+                    : 'border-gray-200 text-gray-700 hover:border-brand-300 hover:text-gray-900'
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -262,7 +262,7 @@ export default function LeadCaptureForm({
                 className={`rounded-lg border px-4 py-2 text-sm font-medium transition-all ${
                   selected
                     ? 'border-brand-500 bg-brand-500/10 text-brand-800'
-                    : 'border-gray-200 text-gray-500 hover:border-brand-300 hover:text-gray-900'
+                    : 'border-gray-200 text-gray-700 hover:border-brand-300 hover:text-gray-900'
                 }`}
               >
                 {label}
@@ -289,7 +289,7 @@ export default function LeadCaptureForm({
                   className={`rounded-lg border px-4 py-2 text-sm font-medium transition-all ${
                     selected
                       ? 'border-brand-500 bg-brand-500/10 text-brand-800'
-                      : 'border-gray-200 text-gray-500 hover:border-brand-300 hover:text-gray-900'
+                      : 'border-gray-200 text-gray-700 hover:border-brand-300 hover:text-gray-900'
                   }`}
                 >
                   {label}

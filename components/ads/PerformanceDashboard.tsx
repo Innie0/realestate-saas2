@@ -48,7 +48,7 @@ export default function PerformanceDashboard({
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 text-caption text-gray-500 py-6">
+      <div className="flex items-center gap-2 text-caption text-gray-700 py-6">
         <Loader2 className="h-4 w-4 animate-spin" />
         Loading performance…
       </div>
@@ -105,7 +105,7 @@ export default function PerformanceDashboard({
           },
         ].map((stat) => (
           <Surface key={stat.label} flat padding="md" className="text-center sm:text-left">
-            <p className="text-[10.5px] font-mono uppercase tracking-wide text-gray-450">
+            <p className="text-[10.5px] font-mono uppercase tracking-wide text-gray-600">
               {stat.label}
             </p>
             <p className="text-[15px] font-semibold text-gray-900 tabular-nums mt-0.5">
@@ -124,7 +124,7 @@ export default function PerformanceDashboard({
       ) : (
         <div className="overflow-x-auto rounded-lg border border-gray-200">
           <table className="min-w-full text-[13px]">
-            <thead className="bg-gray-50 text-left text-[11px] font-mono uppercase tracking-wide text-gray-500">
+            <thead className="bg-gray-50 text-left text-[11px] font-mono uppercase tracking-wide text-gray-700">
               <tr>
                 <th className="px-3 py-2.5 font-medium">Ad</th>
                 <th className="px-3 py-2.5 font-medium">Impr.</th>

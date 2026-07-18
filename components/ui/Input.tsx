@@ -68,7 +68,7 @@ export default function Input({
 
       {/* Helper text - only shown if helperText prop is provided and no error */}
       {helperText && !error && (
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-gray-700">
           {helperText}
         </p>
       )}

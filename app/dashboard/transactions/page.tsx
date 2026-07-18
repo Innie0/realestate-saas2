@@ -157,7 +157,7 @@ export default function TransactionsPage() {
                             {transaction.property_address}
                           </h3>
                           {(transaction.property_city || transaction.property_state) && (
-                            <p className="text-[13px] text-gray-450 truncate mt-0.5">
+                            <p className="text-[13px] text-gray-600 truncate mt-0.5">
                               {[transaction.property_city, transaction.property_state, transaction.property_zip]
                                 .filter(Boolean)
                                 .join(', ')}
@@ -169,7 +169,7 @@ export default function TransactionsPage() {
                       <div className="flex flex-col items-end shrink-0 gap-1.5">
                         <TransactionStatusBadge status={transaction.status} />
                         {closing && (
-                          <span className="flex items-center gap-1 text-[12px] text-gray-450">
+                          <span className="flex items-center gap-1 text-[12px] text-gray-600">
                             <Calendar className="w-3 h-3" />
                             {transaction.days_to_closing} days to closing
                           </span>
@@ -179,19 +179,19 @@ export default function TransactionsPage() {
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                       <div>
-                        <p className="text-[11.5px] text-gray-450 mb-0.5">Price</p>
+                        <p className="text-[11.5px] text-gray-600 mb-0.5">Price</p>
                         <p className="text-[15px] font-semibold text-teal-700 tabular-nums">{formatCurrency(transaction.offer_price)}</p>
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[11.5px] text-gray-450 mb-0.5">Buyer</p>
+                        <p className="text-[11.5px] text-gray-600 mb-0.5">Buyer</p>
                         <p className="text-[14px] font-medium text-gray-900 truncate">{transaction.buyer_name}</p>
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[11.5px] text-gray-450 mb-0.5">Seller</p>
+                        <p className="text-[11.5px] text-gray-600 mb-0.5">Seller</p>
                         <p className="text-[14px] font-medium text-gray-900 truncate">{transaction.seller_name}</p>
                       </div>
                       <div>
-                        <p className="text-[11.5px] text-gray-450 mb-0.5">Tasks</p>
+                        <p className="text-[11.5px] text-gray-600 mb-0.5">Tasks</p>
                         <p className="text-[14px] font-medium text-gray-900">
                           {transaction.completed_items_count}/{transaction.total_items_count}
                         </p>
@@ -203,7 +203,7 @@ export default function TransactionsPage() {
                         <p className="text-[13px] text-gray-600">
                           <span className="font-semibold text-gray-900">Closing</span> {closing}
                         </p>
-                        <ArrowRight className="w-4 h-4 text-gray-450" />
+                        <ArrowRight className="w-4 h-4 text-gray-600" />
                       </div>
                     )}
                   </Surface>

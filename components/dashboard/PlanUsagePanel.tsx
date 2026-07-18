@@ -91,7 +91,7 @@ export default function PlanUsagePanel({ usage, plan, className, layout = 'full'
               <div key={key} className={layout === 'sidebar' ? 'min-w-0 flex items-center gap-3' : 'min-w-0'}>
                 <div className={layout === 'sidebar' ? 'flex-1 min-w-0' : ''}>
                   <div className="flex items-baseline justify-between gap-1 mb-1">
-                    <span className="text-caption text-gray-500 truncate">{label}</span>
+                    <span className="text-caption text-gray-700 truncate">{label}</span>
                     <span
                       className={`text-caption tabular-nums shrink-0 ${
                         isAtLimit

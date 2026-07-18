@@ -64,7 +64,7 @@ export default function ContactPage() {
         <div className="mb-6">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-brand-600 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm text-gray-700 hover:text-brand-600 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to home
@@ -75,7 +75,7 @@ export default function ContactPage() {
 
         <div className="text-center mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Contact us</h1>
-          <p className="text-gray-500 mt-2 text-sm sm:text-base">
+          <p className="text-gray-700 mt-2 text-sm sm:text-base">
             Questions about Oikaro? We typically reply within one business day.
           </p>
         </div>
@@ -87,7 +87,7 @@ export default function ContactPage() {
                 <Check className="h-7 w-7 text-brand-600" />
               </div>
               <h2 className="text-lg font-semibold text-gray-900 mb-2">Message sent</h2>
-              <p className="text-sm text-gray-500 mb-6">
+              <p className="text-sm text-gray-700 mb-6">
                 Thanks for reaching out. We&apos;ll get back to you at {email}.
               </p>
               <Link href="/">
@@ -168,7 +168,7 @@ export default function ContactPage() {
           )}
         </div>
 
-        <p className="mt-6 text-center text-xs text-gray-500 flex items-center justify-center gap-1.5">
+        <p className="mt-6 text-center text-xs text-gray-700 flex items-center justify-center gap-1.5">
           <Mail className="w-3.5 h-3.5" />
           Or email us at{' '}
           <a href={`mailto:${SUPPORT_EMAIL}`} className="text-brand-600 hover:text-brand-700 font-medium">

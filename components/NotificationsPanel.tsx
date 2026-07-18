@@ -101,7 +101,7 @@ function ScheduleEmptyState() {
         <Calendar className="w-8 h-8 text-gray-300 shrink-0" />
         <div>
           <p className="text-body text-gray-700 font-medium">Nothing scheduled this week</p>
-          <p className="text-caption text-gray-500 mt-0.5">Add a reminder or event to keep your day on track.</p>
+          <p className="text-caption text-gray-700 mt-0.5">Add a reminder or event to keep your day on track.</p>
         </div>
       </div>
       <Link
@@ -231,7 +231,7 @@ export default function NotificationsPanel({ embedded = false, className }: Noti
         </h2>
       </div>
       {items.length > 0 && (
-        <span className="text-caption text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full">
+        <span className="text-caption text-gray-700 bg-gray-100 px-2.5 py-1 rounded-full">
           {embedded && todayCount > 0 ? `${todayCount} today` : `${items.length} this week`}
         </span>
       )}
@@ -270,9 +270,9 @@ export default function NotificationsPanel({ embedded = false, className }: Noti
               )}
             </div>
             {item.description && (
-              <p className="text-caption text-gray-500 mt-0.5 line-clamp-1">{item.description}</p>
+              <p className="text-caption text-gray-700 mt-0.5 line-clamp-1">{item.description}</p>
             )}
-            <div className="flex items-center gap-2 mt-1.5 text-caption text-gray-500 flex-wrap">
+            <div className="flex items-center gap-2 mt-1.5 text-caption text-gray-700 flex-wrap">
               <Clock className="w-3 h-3 shrink-0" />
               <span className="font-mono text-[11px]">{formatWhen(item.date)}</span>
               {item.clientName && <span>· {item.clientName}</span>}

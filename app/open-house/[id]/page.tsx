@@ -30,7 +30,7 @@ export default async function OpenHouseSignInPage({ params }: PageProps) {
     return (
       <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center p-6">
         <div className="text-center">
-          <p className="text-gray-500 text-lg font-medium">This open house isn&apos;t available.</p>
+          <p className="text-gray-700 text-lg font-medium">This open house isn&apos;t available.</p>
           <p className="text-gray-600 text-sm mt-2">The link may have expired or is invalid.</p>
         </div>
       </div>
@@ -41,7 +41,7 @@ export default async function OpenHouseSignInPage({ params }: PageProps) {
     return (
       <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center p-6">
         <div className="text-center">
-          <p className="text-gray-500 text-lg font-medium">This open house has ended.</p>
+          <p className="text-gray-700 text-lg font-medium">This open house has ended.</p>
           <p className="text-gray-600 text-sm mt-2">Thanks for your interest!</p>
         </div>
       </div>
@@ -60,7 +60,7 @@ export default async function OpenHouseSignInPage({ params }: PageProps) {
             <span className="text-lg">🏠</span>
           </div>
           <h1 className="text-xl font-bold text-gray-900 mb-1">Open House Sign-In</h1>
-          <p className="text-sm text-gray-500">{openHouse.property_address}</p>
+          <p className="text-sm text-gray-700">{openHouse.property_address}</p>
           <p className="text-xs text-gray-600 mt-1">
             {displayDate} · {openHouse.start_time.slice(0, 5)} – {openHouse.end_time.slice(0, 5)}
           </p>

@@ -96,7 +96,7 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
 
   if (events.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-450">
+      <div className="text-center py-8 text-gray-600">
         <Calendar className="w-10 h-10 mx-auto mb-3 opacity-40" />
         <p className="text-[13.5px] text-gray-700">No dates set for this transaction.</p>
         <p className="text-[12.5px] mt-1">Add important dates to see the timeline.</p>
@@ -125,7 +125,7 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
         <span className={`font-medium ${daysUntil <= 3 ? 'text-amber-700' : 'text-gray-900'}`}>
           {nextEvent.title}
         </span>
-        <span className="text-gray-450 ml-2">
+        <span className="text-gray-600 ml-2">
           {daysUntil === 0 ? 'Today' : daysUntil === 1 ? 'Tomorrow' : `in ${daysUntil} days`}
         </span>
       </div>
@@ -153,7 +153,7 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
             {/* Icon circle */}
             <div
               className={`relative z-10 flex items-center justify-center w-[34px] h-[34px] rounded-full shrink-0 ${
-                isComplete ? 'bg-teal-50 text-teal-700' : 'bg-gray-100 text-gray-450'
+                isComplete ? 'bg-teal-50 text-teal-700' : 'bg-gray-100 text-gray-600'
               }`}
             >
               <Icon className="w-4 h-4" strokeWidth={1.75} />
@@ -165,10 +165,10 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
                 <div className="min-w-0">
                   <h4 className="text-[14.5px] font-semibold text-gray-900">{event.title}</h4>
                   {event.description && (
-                    <p className="text-[12.5px] text-gray-450 mt-0.5">{event.description}</p>
+                    <p className="text-[12.5px] text-gray-600 mt-0.5">{event.description}</p>
                   )}
                   {event.status === 'upcoming' && (
-                    <p className="text-[12px] text-gray-450 mt-0.5">
+                    <p className="text-[12px] text-gray-600 mt-0.5">
                       {differenceInDays(new Date(event.date), new Date())} days away
                     </p>
                   )}

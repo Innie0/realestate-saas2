@@ -24,7 +24,7 @@ export default function LegalPageLayout({
           <div className="flex h-16 items-center justify-between">
             <Link
               href="/"
-              className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+              className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Home
@@ -51,15 +51,15 @@ export default function LegalPageLayout({
               <div>
                 <h1 className="text-3xl font-semibold tracking-tight text-gray-900">{title}</h1>
                 {subtitle ? (
-                  <p className="text-[12.5px] text-gray-500 mt-1.5">{subtitle}</p>
+                  <p className="text-[12.5px] text-gray-700 mt-1.5">{subtitle}</p>
                 ) : updated ? (
-                  <p className="font-mono text-[11px] text-gray-450 mt-1.5">Last updated: {updated}</p>
+                  <p className="font-mono text-[11px] text-gray-600 mt-1.5">Last updated: {updated}</p>
                 ) : null}
               </div>
             </div>
           </header>
           <div className="legal-prose">{children}</div>
-          <footer className="mt-12 pt-8 border-t border-gray-100 text-center text-xs text-gray-500">
+          <footer className="mt-12 pt-8 border-t border-gray-100 text-center text-xs text-gray-700">
             <p>© 2026 Oikaro. All rights reserved.</p>
           </footer>
         </article>

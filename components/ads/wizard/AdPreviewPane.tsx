@@ -75,7 +75,7 @@ export default function AdPreviewPane({
       )}
       {!showMeta && !showGoogle && (
         <Surface flat padding="md">
-          <p className="text-caption text-gray-500 text-center py-8">
+          <p className="text-caption text-gray-700 text-center py-8">
             Select a platform in step 4 to preview your ad.
           </p>
         </Surface>

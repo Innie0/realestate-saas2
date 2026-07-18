@@ -120,7 +120,7 @@ export default function ProjectsPage() {
         />
       </div>
 
-      <p className="text-[13px] text-gray-450">
+      <p className="text-[13px] text-gray-600">
         Showing {filteredProjects.length} of {projects.length} projects
       </p>
 

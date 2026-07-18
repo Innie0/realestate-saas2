@@ -121,7 +121,7 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
       <div className="text-center py-12">
         <Calendar className="w-10 h-10 text-gray-300 mx-auto mb-4" />
         <h2 className="text-lg font-semibold text-gray-900 mb-1">No times available</h2>
-        <p className="text-sm text-gray-500 max-w-xs mx-auto">
+        <p className="text-sm text-gray-700 max-w-xs mx-auto">
           {loadError || `${agentName.split(' ')[0]} doesn't have any open slots right now. Please reach out directly.`}
         </p>
       </div>
@@ -140,7 +140,7 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
             {formatDateLabel(selectedSlot.slice(0, 10))} at {formatTimeInZone(selectedSlot, timezone)}
           </p>
         )}
-        <p className="text-gray-500 text-sm max-w-xs mx-auto mt-2">
+        <p className="text-gray-700 text-sm max-w-xs mx-auto mt-2">
           {agentName.split(' ')[0]} has been notified and will see you then.
           {form.email ? ' A confirmation was sent to your email.' : ''}
         </p>
@@ -155,7 +155,7 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
         <button
           type="button"
           onClick={() => setSelectedSlot(null)}
-          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-brand-600 transition-colors mb-5"
+          className="inline-flex items-center gap-1.5 text-sm text-gray-700 hover:text-brand-600 transition-colors mb-5"
         >
           <ChevronLeft className="w-4 h-4" /> Choose a different time
         </button>
@@ -170,7 +170,7 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-2">
-              Full name <span className="text-gray-500">*</span>
+              Full name <span className="text-gray-700">*</span>
             </label>
             <input
               type="text"
@@ -239,7 +239,7 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
   return (
     <div>
       {data?.location && (
-        <div className="mb-5 flex items-center gap-2 text-sm text-gray-500">
+        <div className="mb-5 flex items-center gap-2 text-sm text-gray-700">
           <MapPin className="w-4 h-4 shrink-0 text-brand-600" />
           {data.location}
         </div>
@@ -256,7 +256,7 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
               className={`flex flex-col items-center shrink-0 rounded-lg border px-3.5 py-2.5 text-sm font-medium transition-all min-w-[76px] ${
                 selected
                   ? 'border-brand-500 bg-brand-500/10 text-brand-800'
-                  : 'border-gray-200 text-gray-500 hover:border-brand-300 hover:text-gray-900'
+                  : 'border-gray-200 text-gray-700 hover:border-brand-300 hover:text-gray-900'
               }`}
             >
               <span className="text-xs uppercase tracking-wide">
@@ -283,7 +283,7 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
         </div>
       )}
 
-      <p className="text-center text-xs text-gray-500 mt-6">
+      <p className="text-center text-xs text-gray-700 mt-6">
         Times shown in {timezone.replace('_', ' ').split('/').pop()} time
         {data?.durationMinutes ? ` · ${data.durationMinutes} min` : ''}
       </p>

@@ -28,7 +28,7 @@ function formatDailyBudget(cents: number): string {
 export default function ActivePromotionsPanel({ promotions, loading }: ActivePromotionsPanelProps) {
   if (loading) {
     return (
-      <div className="flex items-center gap-2 text-caption text-gray-500 py-4">
+      <div className="flex items-center gap-2 text-caption text-gray-700 py-4">
         <Loader2 className="h-4 w-4 animate-spin" />
         Loading your ads…
       </div>
@@ -77,7 +77,7 @@ export default function ActivePromotionsPanel({ promotions, loading }: ActivePro
                         {status.label}
                       </span>
                     </div>
-                    <p className="text-caption text-gray-500 mt-1">
+                    <p className="text-caption text-gray-700 mt-1">
                       {formatDailyBudget(promo.daily_budget_cents)} · {promo.duration_days} days · Meta
                     </p>
                     {promo.status === 'failed' && promo.error_message && (

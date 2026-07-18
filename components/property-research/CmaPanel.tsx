@@ -112,7 +112,7 @@ function AutoDetectHint({ source }: { source: SubjectEnrichmentMeta[keyof Subjec
   const label = enrichmentLabel(source);
   if (!label) return null;
   return (
-    <span className="inline-flex items-center gap-1 text-[10.5px] text-gray-450 mt-0.5">
+    <span className="inline-flex items-center gap-1 text-[10.5px] text-gray-600 mt-0.5">
       <Sparkles className="w-3 h-3" />
       Auto: {label}
     </span>
@@ -414,25 +414,25 @@ export function CmaPanel({
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div>
-              <label className="block text-[12.5px] text-gray-450 mb-1">Beds</label>
+              <label className="block text-[12.5px] text-gray-600 mb-1">Beds</label>
               <input type="number" min={0} max={20} value={subject.bedrooms ?? ''} onChange={(e) => updateSubject('bedrooms', e.target.value ? Number(e.target.value) : null)} className={inputClass} />
             </div>
             <div>
-              <label className="block text-[12.5px] text-gray-450 mb-1">Baths</label>
+              <label className="block text-[12.5px] text-gray-600 mb-1">Baths</label>
               <input type="number" min={0} max={20} step={0.5} value={subject.bathrooms ?? ''} onChange={(e) => updateSubject('bathrooms', e.target.value ? Number(e.target.value) : null)} className={inputClass} />
             </div>
             <div>
-              <label className="block text-[12.5px] text-gray-450 mb-1">Sq Ft</label>
+              <label className="block text-[12.5px] text-gray-600 mb-1">Sq Ft</label>
               <input type="number" min={0} value={subject.squareFootage ?? ''} onChange={(e) => updateSubject('squareFootage', e.target.value ? Number(e.target.value) : null)} className={inputClass} />
             </div>
             <div>
-              <label className="block text-[12.5px] text-gray-450 mb-1">Year Built</label>
+              <label className="block text-[12.5px] text-gray-600 mb-1">Year Built</label>
               <input type="number" min={1800} max={2030} value={subject.yearBuilt ?? ''} onChange={(e) => updateSubject('yearBuilt', e.target.value ? Number(e.target.value) : null)} className={inputClass} />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="block text-[12.5px] text-gray-450 mb-1">Condition</label>
+              <label className="block text-[12.5px] text-gray-600 mb-1">Condition</label>
               <Select
                 value={subject.condition}
                 onChange={(value) => updateSubject('condition', value as ConditionLevel)}
@@ -444,7 +444,7 @@ export function CmaPanel({
               )}
             </div>
             <div>
-              <label className="block text-[12.5px] text-gray-450 mb-1">Garage Spaces</label>
+              <label className="block text-[12.5px] text-gray-600 mb-1">Garage Spaces</label>
               <input type="number" min={0} max={10} value={subject.garageSpaces} onChange={(e) => updateSubject('garageSpaces', Number(e.target.value) || 0)} className={inputClass} />
               {!manualFields.has('garageSpaces') && (
                 <AutoDetectHint source={subjectEnrichment?.garageSpaces} />
@@ -460,7 +460,7 @@ export function CmaPanel({
               )}
             </div>
           </div>
-          <p className="text-[12px] text-gray-450 flex items-start gap-1.5">
+          <p className="text-[12px] text-gray-600 flex items-start gap-1.5">
             <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
             Pool and garage come from county/MLS when available. Luxury condition is estimated from price, size, and listing text — verify before sharing with a client.
           </p>
@@ -468,7 +468,7 @@ export function CmaPanel({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="block text-[12.5px] text-gray-450 mb-1">Property Type</label>
+            <label className="block text-[12.5px] text-gray-600 mb-1">Property Type</label>
             <Select
               value={propertyType}
               onChange={setPropertyType}
@@ -478,11 +478,11 @@ export function CmaPanel({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-[12.5px] text-gray-450 mb-2">Radius — {radius} mi</label>
+              <label className="block text-[12.5px] text-gray-600 mb-2">Radius — {radius} mi</label>
               <input type="range" min={0.25} max={2} step={0.25} value={radius} onChange={(e) => setRadius(Number(e.target.value))} className="w-full accent-brand-500" />
             </div>
             <div>
-              <label className="block text-[12.5px] text-gray-450 mb-2">History — {yearsBack} yr{yearsBack !== 1 ? 's' : ''}</label>
+              <label className="block text-[12.5px] text-gray-600 mb-2">History — {yearsBack} yr{yearsBack !== 1 ? 's' : ''}</label>
               <input type="range" min={1} max={5} step={1} value={yearsBack} onChange={(e) => setYearsBack(Number(e.target.value))} className="w-full accent-brand-500" />
             </div>
           </div>
@@ -541,8 +541,8 @@ export function CmaPanel({
             </div>
           )}
           <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div className="flex items-center gap-2 text-[13px] text-gray-500 flex-wrap min-w-0">
-              <MapPin className="w-4 h-4 flex-shrink-0 text-gray-450" />
+            <div className="flex items-center gap-2 text-[13px] text-gray-700 flex-wrap min-w-0">
+              <MapPin className="w-4 h-4 flex-shrink-0 text-gray-600" />
               <span className="font-medium text-gray-900">{result.address}</span>
               {result.propertyType && (
                 <span className="text-[12px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 border border-gray-200">{result.propertyType}</span>
@@ -577,7 +577,7 @@ export function CmaPanel({
           )}
 
           {result.compsFiltered > 0 && (
-            <p className="text-[12.5px] text-gray-450">
+            <p className="text-[12.5px] text-gray-600">
               {result.compsFiltered} invalid listing{result.compsFiltered !== 1 ? 's' : ''} removed from comps.
             </p>
           )}
@@ -589,7 +589,7 @@ export function CmaPanel({
               </div>
               <div>
                 <p className="text-[14px] font-semibold text-gray-900">Suggested List Price</p>
-                <p className="text-[12px] text-gray-450">Based on {liveValuation.compCount} adjusted comp{liveValuation.compCount !== 1 ? 's' : ''}</p>
+                <p className="text-[12px] text-gray-600">Based on {liveValuation.compCount} adjusted comp{liveValuation.compCount !== 1 ? 's' : ''}</p>
               </div>
             </div>
             {liveValuation.suggestedPrice ? (
@@ -598,25 +598,25 @@ export function CmaPanel({
                 <p className="text-[13px] text-gray-600">Range: {fmt(liveValuation.priceLow, '$')} – {fmt(liveValuation.priceHigh, '$')}</p>
               </>
             ) : (
-              <p className="text-gray-450 text-[13px]">Not enough comps. Widen radius or history.</p>
+              <p className="text-gray-600 text-[13px]">Not enough comps. Widen radius or history.</p>
             )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-white border border-gray-200 rounded-[10px] p-5">
-              <p className="text-[12.5px] text-gray-450 mb-2">AVM Reference</p>
+              <p className="text-[12.5px] text-gray-600 mb-2">AVM Reference</p>
               {result.avm?.estimatedValue ? (
                 <p className="text-[22px] font-bold text-gray-700">{fmt(result.avm.estimatedValue, '$')}</p>
               ) : (
-                <p className="text-gray-450 text-[13px]">Not available</p>
+                <p className="text-gray-600 text-[13px]">Not available</p>
               )}
             </div>
             <div className="bg-white border border-gray-200 rounded-[10px] p-5">
-              <p className="text-[12.5px] text-gray-450 mb-2">Rent Estimate</p>
+              <p className="text-[12.5px] text-gray-600 mb-2">Rent Estimate</p>
               {result.rentEstimate?.monthlyRent ? (
-                <p className="text-[22px] font-bold text-gray-900">{fmt(result.rentEstimate.monthlyRent, '$')}<span className="text-[14px] font-normal text-gray-450">/mo</span></p>
+                <p className="text-[22px] font-bold text-gray-900">{fmt(result.rentEstimate.monthlyRent, '$')}<span className="text-[14px] font-normal text-gray-600">/mo</span></p>
               ) : (
-                <p className="text-gray-450 text-[13px]">Not available</p>
+                <p className="text-gray-600 text-[13px]">Not available</p>
               )}
             </div>
           </div>
@@ -624,17 +624,17 @@ export function CmaPanel({
           {result.summary && (
             <div className="bg-white border border-gray-200 rounded-[10px] p-5">
               <div className="flex items-center gap-2 mb-3">
-                <Sparkles className="w-4 h-4 text-gray-500" />
-                <p className="text-[12.5px] text-gray-450 font-medium">Market Summary</p>
+                <Sparkles className="w-4 h-4 text-gray-700" />
+                <p className="text-[12.5px] text-gray-600 font-medium">Market Summary</p>
               </div>
               <p className="text-gray-600 text-[13px] leading-relaxed">{result.summary}</p>
             </div>
           )}
 
           <div className="bg-white border border-gray-200 rounded-[10px] p-5">
-            <p className="text-[12.5px] text-gray-450 font-medium mb-4">Comparable Sales</p>
+            <p className="text-[12.5px] text-gray-600 font-medium mb-4">Comparable Sales</p>
             {activeComps.length === 0 ? (
-              <p className="text-gray-450 text-[13px]">No comps available.</p>
+              <p className="text-gray-600 text-[13px]">No comps available.</p>
             ) : (
               <div className="space-y-3">
                 {visibleComps.map((comp) => {
@@ -649,14 +649,14 @@ export function CmaPanel({
                         <div className="flex items-center gap-2">
                           <div className="text-right">
                             <p className="text-[13px] font-bold text-gray-900">{fmt(comp.price, '$')}</p>
-                            {conditionedAdj && <p className="text-[10.5px] text-gray-450">Adj. {fmt(conditionedAdj, '$')}</p>}
+                            {conditionedAdj && <p className="text-[10.5px] text-gray-600">Adj. {fmt(conditionedAdj, '$')}</p>}
                           </div>
                           <button type="button" onClick={() => setExcludedIds((prev) => new Set([...prev, realIdx]))} className="p-1 text-gray-400 hover:text-rose-500">
                             <X className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </div>
-                      <div className="flex flex-wrap gap-3 text-[12px] text-gray-450">
+                      <div className="flex flex-wrap gap-3 text-[12px] text-gray-600">
                         {comp.bedrooms !== null && <span>{comp.bedrooms} bd</span>}
                         {comp.bathrooms !== null && <span>{comp.bathrooms} ba</span>}
                         {comp.squareFootage !== null && <span>{comp.squareFootage.toLocaleString()} sqft</span>}
@@ -666,7 +666,7 @@ export function CmaPanel({
                   );
                 })}
                 {activeComps.length > 5 && (
-                  <button type="button" onClick={() => setShowAllComps((v) => !v)} className="w-full text-[12.5px] text-gray-500 hover:text-gray-900 py-2 border border-gray-200 rounded-[10px] hover:bg-gray-50 transition-colors">
+                  <button type="button" onClick={() => setShowAllComps((v) => !v)} className="w-full text-[12.5px] text-gray-700 hover:text-gray-900 py-2 border border-gray-200 rounded-[10px] hover:bg-gray-50 transition-colors">
                     {showAllComps ? 'Show fewer' : `Show all ${activeComps.length} comps`}
                   </button>
                 )}
@@ -677,7 +677,7 @@ export function CmaPanel({
       )}
 
       {!result && !loading && (
-        <p className="text-[13px] text-gray-450 text-center py-8">
+        <p className="text-[13px] text-gray-600 text-center py-8">
           Configure subject details above, then run the comp-based analysis.
         </p>
       )}

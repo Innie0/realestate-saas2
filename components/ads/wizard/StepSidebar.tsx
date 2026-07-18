@@ -41,7 +41,7 @@ export default function StepSidebar({ currentStep, maxStepIndex, onStepClick }: 
                   'flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold',
                   isActive && 'bg-brand-500 text-white',
                   isComplete && !isActive && 'bg-emerald-100 text-emerald-700',
-                  !isActive && !isComplete && 'bg-gray-100 text-gray-500'
+                  !isActive && !isComplete && 'bg-gray-100 text-gray-700'
                 )}
               >
                 {isComplete && !isActive ? <Check className="h-3.5 w-3.5" /> : index + 1}

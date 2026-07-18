@@ -217,7 +217,7 @@ export default function TransactionForm({
       {!isEditing && (
         <div className="rounded-[10px] border border-gray-150 bg-gray-50 p-4">
           <label className="block text-[13px] font-medium text-gray-900 mb-1.5">Deal status</label>
-          <p className="text-[12.5px] text-gray-450 mb-3">
+          <p className="text-[12.5px] text-gray-600 mb-3">
             Set to Closed or Cancelled when the deal is done — it will leave your in-progress list.
           </p>
           <Select
@@ -242,7 +242,7 @@ export default function TransactionForm({
             className={`flex-1 py-2 px-3 rounded-lg text-[12.5px] font-medium transition-colors duration-150 ${
               activeSection === section.id
                 ? 'bg-brand-500 text-white'
-                : 'text-gray-500 hover:text-gray-900'
+                : 'text-gray-700 hover:text-gray-900'
             }`}
           >
             {section.label}
@@ -464,7 +464,7 @@ export default function TransactionForm({
       {activeSection === 'dates' && (
         <div className="space-y-4">
           <h3 className="text-[15px] font-semibold text-gray-900">Important Dates</h3>
-          <p className="text-[13px] text-gray-450">
+          <p className="text-[13px] text-gray-600">
             Set key milestone dates to auto-generate timeline, checklist, and reminders.
           </p>
           

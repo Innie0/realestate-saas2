@@ -202,7 +202,7 @@ export default function ProfileEditorPage() {
 
       <Link
         href="/dashboard/leads?tab=capture"
-        className="inline-flex items-center gap-1.5 text-[13px] text-gray-450 hover:text-gray-900 transition-colors"
+        className="inline-flex items-center gap-1.5 text-[13px] text-gray-600 hover:text-gray-900 transition-colors"
       >
         <ArrowLeft className="w-3.5 h-3.5" /> Back to leads
       </Link>
@@ -218,7 +218,7 @@ export default function ProfileEditorPage() {
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <h3 className="text-[15px] font-semibold text-gray-900">Public profile</h3>
-                  <p className="text-[12.5px] text-gray-450 mt-0.5">
+                  <p className="text-[12.5px] text-gray-600 mt-0.5">
                     Share your bio, listings, and lead form at your personal URL
                   </p>
                 </div>
@@ -252,17 +252,17 @@ export default function ProfileEditorPage() {
             {/* Basic info */}
             <Surface flat padding="none" className="p-5 space-y-4">
               <h3 className="text-[15px] font-semibold text-gray-900 flex items-center gap-2">
-                <User className="w-4 h-4 text-gray-500" strokeWidth={1.8} /> Basic info
+                <User className="w-4 h-4 text-gray-700" strokeWidth={1.8} /> Basic info
               </h3>
               {displayName && (
                 <div>
-                  <label className="block text-[12.5px] text-gray-450 mb-1.5">Display name</label>
+                  <label className="block text-[12.5px] text-gray-600 mb-1.5">Display name</label>
                   <input type="text" value={displayName} readOnly className={inputClass + ' bg-gray-100 text-gray-600'} />
-                  <p className="text-[11.5px] text-gray-450 mt-1">From your account settings</p>
+                  <p className="text-[11.5px] text-gray-600 mt-1">From your account settings</p>
                 </div>
               )}
               <div>
-                <label className="block text-[12.5px] text-gray-450 mb-1.5">Headline</label>
+                <label className="block text-[12.5px] text-gray-600 mb-1.5">Headline</label>
                 <input
                   type="text"
                   value={headline}
@@ -272,7 +272,7 @@ export default function ProfileEditorPage() {
                 />
               </div>
               <div>
-                <label className="block text-[12.5px] text-gray-450 mb-1.5">Bio</label>
+                <label className="block text-[12.5px] text-gray-600 mb-1.5">Bio</label>
                 <textarea
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
@@ -280,10 +280,10 @@ export default function ProfileEditorPage() {
                   rows={5}
                   className={inputClass + ' resize-none'}
                 />
-                <p className="text-[11.5px] text-gray-450 mt-1 text-right">{bio.length} characters</p>
+                <p className="text-[11.5px] text-gray-600 mt-1 text-right">{bio.length} characters</p>
               </div>
               <div>
-                <label className="block text-[12.5px] text-gray-450 mb-1.5">Profile photo URL</label>
+                <label className="block text-[12.5px] text-gray-600 mb-1.5">Profile photo URL</label>
                 <input
                   type="url"
                   value={photoUrl}
@@ -301,7 +301,7 @@ export default function ProfileEditorPage() {
                         (e.target as HTMLImageElement).style.display = 'none';
                       }}
                     />
-                    <p className="text-[12.5px] text-gray-450">Photo preview</p>
+                    <p className="text-[12.5px] text-gray-600">Photo preview</p>
                   </div>
                 )}
               </div>
@@ -310,11 +310,11 @@ export default function ProfileEditorPage() {
             {/* Professional details */}
             <Surface flat padding="none" className="p-5 space-y-4">
               <h3 className="text-[15px] font-semibold text-gray-900 flex items-center gap-2">
-                <Briefcase className="w-4 h-4 text-gray-500" strokeWidth={1.8} /> Professional details
+                <Briefcase className="w-4 h-4 text-gray-700" strokeWidth={1.8} /> Professional details
               </h3>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[12.5px] text-gray-450 mb-1.5">Brokerage</label>
+                  <label className="block text-[12.5px] text-gray-600 mb-1.5">Brokerage</label>
                   <input
                     type="text"
                     value={brokerage}
@@ -324,7 +324,7 @@ export default function ProfileEditorPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[12.5px] text-gray-450 mb-1.5">License #</label>
+                  <label className="block text-[12.5px] text-gray-600 mb-1.5">License #</label>
                   <input
                     type="text"
                     value={license}
@@ -334,7 +334,7 @@ export default function ProfileEditorPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[12.5px] text-gray-450 mb-1.5">Website</label>
+                  <label className="block text-[12.5px] text-gray-600 mb-1.5">Website</label>
                   <input
                     type="url"
                     value={website}
@@ -344,7 +344,7 @@ export default function ProfileEditorPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[12.5px] text-gray-450 mb-1.5">Years of experience</label>
+                  <label className="block text-[12.5px] text-gray-600 mb-1.5">Years of experience</label>
                   <input
                     type="number"
                     min={0}
@@ -363,7 +363,7 @@ export default function ProfileEditorPage() {
               <h3 className="text-[15px] font-semibold text-gray-900">Contact info (shown on profile)</h3>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[12.5px] text-gray-450 mb-1.5">Phone</label>
+                  <label className="block text-[12.5px] text-gray-600 mb-1.5">Phone</label>
                   <input
                     type="tel"
                     value={phone}
@@ -373,7 +373,7 @@ export default function ProfileEditorPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[12.5px] text-gray-450 mb-1.5">Email</label>
+                  <label className="block text-[12.5px] text-gray-600 mb-1.5">Email</label>
                   <input
                     type="email"
                     value={email}
@@ -388,7 +388,7 @@ export default function ProfileEditorPage() {
             {/* Specialties */}
             <Surface flat padding="none" className="p-5">
               <h3 className="text-[15px] font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <Award className="w-4 h-4 text-gray-500" strokeWidth={1.8} /> Specialties
+                <Award className="w-4 h-4 text-gray-700" strokeWidth={1.8} /> Specialties
               </h3>
               <div className="flex flex-wrap gap-2 mb-3">
                 {specialties.map((s) => (
@@ -400,7 +400,7 @@ export default function ProfileEditorPage() {
                     <button
                       type="button"
                       onClick={() => setSpecialties(specialties.filter((x) => x !== s))}
-                      className="text-gray-450 hover:text-gray-900"
+                      className="text-gray-600 hover:text-gray-900"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -429,7 +429,7 @@ export default function ProfileEditorPage() {
             {/* Areas served */}
             <Surface flat padding="none" className="p-5">
               <h3 className="text-[15px] font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <Globe className="w-4 h-4 text-gray-500" strokeWidth={1.8} /> Areas served
+                <Globe className="w-4 h-4 text-gray-700" strokeWidth={1.8} /> Areas served
               </h3>
               <div className="flex flex-wrap gap-2 mb-3">
                 {areas.map((a) => (
@@ -441,7 +441,7 @@ export default function ProfileEditorPage() {
                     <button
                       type="button"
                       onClick={() => setAreas(areas.filter((x) => x !== a))}
-                      className="text-gray-450 hover:text-gray-900"
+                      className="text-gray-600 hover:text-gray-900"
                     >
                       <X className="w-3 h-3" />
                     </button>

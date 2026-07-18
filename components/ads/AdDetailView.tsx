@@ -28,7 +28,7 @@ export default function AdDetailView({ ad, onOptimize, onClose }: AdDetailViewPr
         <div>
           <p className="text-label">Ad detail</p>
           <h3 className="text-[15px] font-semibold text-gray-900 mt-0.5">{label}</h3>
-          <p className="text-caption text-gray-500 mt-1">
+          <p className="text-caption text-gray-700 mt-1">
             {ad.adType ? getAdTypeLabel(ad.adType) : 'Ad'} · {ad.platform} · {ad.status}
           </p>
         </div>
@@ -56,7 +56,7 @@ export default function AdDetailView({ ad, onOptimize, onClose }: AdDetailViewPr
           ['Avg frequency', ad.avgFrequency != null ? ad.avgFrequency.toFixed(1) : '—'],
         ].map(([k, v]) => (
           <div key={k}>
-            <dt className="text-gray-500 text-[11px]">{k}</dt>
+            <dt className="text-gray-700 text-[11px]">{k}</dt>
             <dd className="font-medium text-gray-900 tabular-nums">{v}</dd>
           </div>
         ))}
@@ -68,7 +68,7 @@ export default function AdDetailView({ ad, onOptimize, onClose }: AdDetailViewPr
           <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
             {ad.daily.map((day) => (
               <div key={day.date} className="flex items-center gap-2 text-[12px]">
-                <span className="w-20 shrink-0 text-gray-500 tabular-nums">{day.date}</span>
+                <span className="w-20 shrink-0 text-gray-700 tabular-nums">{day.date}</span>
                 <div className="flex-1 h-2 rounded-full bg-gray-100 overflow-hidden">
                   <div
                     className="h-full bg-brand-500/70 rounded-full"
@@ -78,7 +78,7 @@ export default function AdDetailView({ ad, onOptimize, onClose }: AdDetailViewPr
                 <span className="w-16 text-right tabular-nums text-gray-600">
                   {day.clicks} clk
                 </span>
-                <span className="w-14 text-right tabular-nums text-gray-500 hidden sm:inline">
+                <span className="w-14 text-right tabular-nums text-gray-700 hidden sm:inline">
                   {day.frequency != null ? `${Number(day.frequency).toFixed(1)}×` : '—'}
                 </span>
               </div>
@@ -88,7 +88,7 @@ export default function AdDetailView({ ad, onOptimize, onClose }: AdDetailViewPr
       )}
 
       {ad.daily.length === 0 && (
-        <p className={clsx('text-[12.5px] text-gray-500')}>
+        <p className={clsx('text-[12.5px] text-gray-700')}>
           Daily metrics sync overnight after your ad runs. Check back tomorrow or tap Refresh
           insights.
         </p>

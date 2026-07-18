@@ -64,7 +64,7 @@ export default function UpgradeButton({
         <Sparkles className="w-4 h-4 mr-2" />
         {loading ? 'Upgrading...' : 'Upgrade to Pro'}
       </Button>
-      <p className="mt-2 text-xs text-center text-gray-500">
+      <p className="mt-2 text-xs text-center text-gray-700">
         You&apos;ll be charged a prorated amount today. No second free trial.
       </p>
       {error && <p className="mt-2 text-sm text-red-500 text-center">{error}</p>}

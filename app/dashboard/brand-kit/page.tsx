@@ -137,7 +137,7 @@ export default function BrandKitPage() {
             ) : (
               /* Logo upload area */
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                <Upload className="w-12 h-12 mx-auto text-gray-500 mb-4" />
+                <Upload className="w-12 h-12 mx-auto text-gray-700 mb-4" />
                 <p className="text-gray-600 mb-4">
                   No logo uploaded yet
                 </p>
@@ -145,7 +145,7 @@ export default function BrandKitPage() {
                   <Upload className="w-4 h-4 mr-2" />
                   Upload Logo
                 </Button>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-gray-700 mt-2">
                   Recommended: PNG or SVG, max 2MB
                 </p>
               </div>

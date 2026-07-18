@@ -96,10 +96,10 @@ export default function OptimizeAdFlow({
             {insight.message}
           </div>
         )}
-        {metricsNote && <p className="text-caption text-gray-500">{metricsNote}</p>}
+        {metricsNote && <p className="text-caption text-gray-700">{metricsNote}</p>}
 
         {loading && (
-          <div className="flex items-center gap-2 text-gray-500 py-6 justify-center">
+          <div className="flex items-center gap-2 text-gray-700 py-6 justify-center">
             <Loader2 className="h-5 w-5 animate-spin" />
             Generating improved copy…
           </div>
@@ -141,7 +141,7 @@ export default function OptimizeAdFlow({
             Cancel
           </Button>
         </div>
-        <p className="text-[11px] text-gray-450">
+        <p className="text-[11px] text-gray-600">
           Saves copy to your ad wizard draft — review and publish when ready.
         </p>
       </div>

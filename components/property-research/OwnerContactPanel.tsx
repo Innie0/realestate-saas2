@@ -311,7 +311,7 @@ export function OwnerContactPanel({
   return (
     <div className="space-y-6">
       {isLoading && (
-        <div className="flex items-center justify-center gap-2 py-12 text-gray-500">
+        <div className="flex items-center justify-center gap-2 py-12 text-gray-700">
           <Loader2 className="w-5 h-5 animate-spin" />
           Pulling property records and owner contact info — usually 5–10 seconds on first lookup.
         </div>
@@ -368,7 +368,7 @@ export function OwnerContactPanel({
               <h2 className="text-[15px] font-semibold text-gray-900">
                 Results for {results.searchedAddress.street}
               </h2>
-              <span className="text-[12.5px] text-gray-450">
+              <span className="text-[12.5px] text-gray-600">
                 {results.meta?.matchCount || results.results.length} record(s) found
               </span>
             </div>
@@ -390,7 +390,7 @@ export function OwnerContactPanel({
                       const isUnknown = !person.owner.firstName && !person.owner.lastName;
                       const initial = person.owner.firstName?.[0]?.toUpperCase() || person.owner.lastName?.[0]?.toUpperCase();
                       return (
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-[16px] flex-shrink-0 border ${isUnknown ? 'bg-gray-50 border-gray-200 text-gray-450' : 'bg-white border-gray-300 text-gray-900'}`}>
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-[16px] flex-shrink-0 border ${isUnknown ? 'bg-gray-50 border-gray-200 text-gray-600' : 'bg-white border-gray-300 text-gray-900'}`}>
                           {isUnknown ? '?' : initial}
                         </div>
                       );
@@ -406,7 +406,7 @@ export function OwnerContactPanel({
                             ? (fallback ? fallback : 'Unknown Owner')
                             : raw;
                           return (
-                            <h3 className={`font-semibold text-lg capitalize ${isNotFound && !fallback ? 'text-gray-500 italic' : 'text-gray-900'}`}>
+                            <h3 className={`font-semibold text-lg capitalize ${isNotFound && !fallback ? 'text-gray-700 italic' : 'text-gray-900'}`}>
                               {displayName}
                             </h3>
                           );
@@ -456,15 +456,15 @@ export function OwnerContactPanel({
                           {person.occupancyStatus}
                         </span>
                         {person.owner.type && person.owner.type !== 'Unknown' && (
-                          <span className="text-xs text-gray-500">{person.owner.type}</span>
+                          <span className="text-xs text-gray-700">{person.owner.type}</span>
                         )}
                         {person.phoneNumbers.length > 0 && (
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-700">
                             {person.phoneNumbers.length} phone(s)
                           </span>
                         )}
                         {person.emails.length > 0 && (
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-700">
                             {person.emails.length} email(s)
                           </span>
                         )}
@@ -472,9 +472,9 @@ export function OwnerContactPanel({
                     </div>
                   </div>
                   {expandedPersonIndex === index ? (
-                    <ChevronUp className="w-5 h-5 text-gray-500" />
+                    <ChevronUp className="w-5 h-5 text-gray-700" />
                   ) : (
-                    <ChevronDown className="w-5 h-5 text-gray-500" />
+                    <ChevronDown className="w-5 h-5 text-gray-700" />
                   )}
                 </button>
 
@@ -482,7 +482,7 @@ export function OwnerContactPanel({
                 {!person.activeListing && person.recentlySold && (
                   <div className="mx-4 mb-3 flex items-center justify-between gap-3 p-3 bg-gray-50 border border-gray-200 rounded-[10px]">
                     <div className="flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                      <TrendingUp className="w-4 h-4 text-gray-700 flex-shrink-0" />
                       <div>
                         <span className="text-gray-900 font-semibold text-sm">Recently Sold</span>
                         {person.recentlySold.price && (
@@ -492,7 +492,7 @@ export function OwnerContactPanel({
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 text-xs text-gray-500 flex-shrink-0">
+                    <div className="flex items-center gap-3 text-xs text-gray-700 flex-shrink-0">
                       {person.recentlySold.daysOnMarket !== null && (
                         <span className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
@@ -520,7 +520,7 @@ export function OwnerContactPanel({
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 text-xs text-gray-500 flex-shrink-0">
+                    <div className="flex items-center gap-3 text-xs text-gray-700 flex-shrink-0">
                       {person.activeListing.daysOnMarket !== null && (
                         <span className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
@@ -542,14 +542,14 @@ export function OwnerContactPanel({
                       {/* Property Address */}
                       <div className="bg-gray-50 rounded-[10px] p-4">
                         <div className="flex items-center gap-2 mb-2">
-                          <Home className="w-4 h-4 text-gray-450" />
-                          <h4 className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">Property Address</h4>
+                          <Home className="w-4 h-4 text-gray-600" />
+                          <h4 className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600">Property Address</h4>
                         </div>
                         <p className="text-gray-900 text-sm">
                           {person.propertyAddress.formatted || 'N/A'}
                         </p>
                         {person.propertyAddress.county && (
-                          <p className="text-gray-500 text-xs mt-1">
+                          <p className="text-gray-700 text-xs mt-1">
                             County: {person.propertyAddress.county}
                           </p>
                         )}
@@ -558,8 +558,8 @@ export function OwnerContactPanel({
                       {/* Owner Mailing Address */}
                       <div className="bg-gray-50 rounded-[10px] p-4">
                         <div className="flex items-center gap-2 mb-2">
-                          <Mail className="w-4 h-4 text-gray-450" />
-                          <h4 className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">Owner Mailing Address</h4>
+                          <Mail className="w-4 h-4 text-gray-600" />
+                          <h4 className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600">Owner Mailing Address</h4>
                         </div>
                         <p className="text-gray-900 text-sm">
                           {person.mailingAddress.formatted || 'Same as property'}
@@ -576,48 +576,48 @@ export function OwnerContactPanel({
                     {person.propertyDetails && Object.values(person.propertyDetails).some(v => v !== null) && (
                       <div>
                         <div className="flex items-center gap-2 mb-3">
-                          <Home className="w-4 h-4 text-gray-450" />
-                          <h4 className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">Property Details</h4>
+                          <Home className="w-4 h-4 text-gray-600" />
+                          <h4 className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600">Property Details</h4>
                         </div>
                         {/* Key specs row — beds/baths/sqft/year front and center */}
                         {(person.propertyDetails.bedrooms || person.propertyDetails.bathrooms || person.propertyDetails.squareFootage || person.propertyDetails.yearBuilt) && (
                           <div className="flex flex-wrap gap-4 mb-4 p-4 bg-gray-50 rounded-[10px] border border-gray-200">
                             {person.propertyDetails.bedrooms && (
                               <div className="flex items-center gap-2">
-                                <Bed className="w-4 h-4 text-gray-450 flex-shrink-0" />
+                                <Bed className="w-4 h-4 text-gray-600 flex-shrink-0" />
                                 <div>
                                   <p className="text-lg font-bold text-gray-900 leading-none">{person.propertyDetails.bedrooms}</p>
-                                  <p className="text-xs text-gray-500">beds</p>
+                                  <p className="text-xs text-gray-700">beds</p>
                                 </div>
                               </div>
                             )}
                             {person.propertyDetails.bedrooms && person.propertyDetails.bathrooms && <div className="w-px bg-gray-100" />}
                             {person.propertyDetails.bathrooms && (
                               <div className="flex items-center gap-2">
-                                <Bath className="w-4 h-4 text-gray-450 flex-shrink-0" />
+                                <Bath className="w-4 h-4 text-gray-600 flex-shrink-0" />
                                 <div>
                                   <p className="text-lg font-bold text-gray-900 leading-none">{person.propertyDetails.bathrooms}</p>
-                                  <p className="text-xs text-gray-500">baths</p>
+                                  <p className="text-xs text-gray-700">baths</p>
                                 </div>
                               </div>
                             )}
                             {person.propertyDetails.squareFootage && <div className="w-px bg-gray-100" />}
                             {person.propertyDetails.squareFootage && (
                               <div className="flex items-center gap-2">
-                                <Ruler className="w-4 h-4 text-gray-450 flex-shrink-0" />
+                                <Ruler className="w-4 h-4 text-gray-600 flex-shrink-0" />
                                 <div>
                                   <p className="text-lg font-bold text-gray-900 leading-none">{Number(person.propertyDetails.squareFootage).toLocaleString()}</p>
-                                  <p className="text-xs text-gray-500">sq ft</p>
+                                  <p className="text-xs text-gray-700">sq ft</p>
                                 </div>
                               </div>
                             )}
                             {person.propertyDetails.yearBuilt && <div className="w-px bg-gray-100" />}
                             {person.propertyDetails.yearBuilt && (
                               <div className="flex items-center gap-2">
-                                <Calendar className="w-4 h-4 text-gray-450 flex-shrink-0" />
+                                <Calendar className="w-4 h-4 text-gray-600 flex-shrink-0" />
                                 <div>
                                   <p className="text-lg font-bold text-gray-900 leading-none">{person.propertyDetails.yearBuilt}</p>
-                                  <p className="text-xs text-gray-500">built</p>
+                                  <p className="text-xs text-gray-700">built</p>
                                 </div>
                               </div>
                             )}
@@ -628,81 +628,81 @@ export function OwnerContactPanel({
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                           {person.propertyDetails.lotSize && (
                             <div className="bg-gray-50 rounded-[10px] p-3 flex items-start gap-2">
-                              <MapPin className="w-4 h-4 text-gray-450 mt-0.5 flex-shrink-0" />
+                              <MapPin className="w-4 h-4 text-gray-600 mt-0.5 flex-shrink-0" />
                               <div>
-                                <p className="text-xs text-gray-500">Lot Size</p>
+                                <p className="text-xs text-gray-700">Lot Size</p>
                                 <p className="text-gray-900 text-sm font-medium">{person.propertyDetails.lotSize}</p>
                               </div>
                             </div>
                           )}
                           {person.propertyDetails.propertyType && (
                             <div className="bg-gray-50 rounded-[10px] p-3 flex items-start gap-2">
-                              <Building className="w-4 h-4 text-gray-450 mt-0.5 flex-shrink-0" />
+                              <Building className="w-4 h-4 text-gray-600 mt-0.5 flex-shrink-0" />
                               <div>
-                                <p className="text-xs text-gray-500">Property Type</p>
+                                <p className="text-xs text-gray-700">Property Type</p>
                                 <p className="text-gray-900 text-sm font-medium">{person.propertyDetails.propertyType}</p>
                               </div>
                             </div>
                           )}
                           {person.propertyDetails.assessedValue && (
                             <div className="bg-gray-50 rounded-[10px] p-3 flex items-start gap-2">
-                              <DollarSign className="w-4 h-4 text-gray-450 mt-0.5 flex-shrink-0" />
+                              <DollarSign className="w-4 h-4 text-gray-600 mt-0.5 flex-shrink-0" />
                               <div>
-                                <p className="text-xs text-gray-500">Assessed Value</p>
+                                <p className="text-xs text-gray-700">Assessed Value</p>
                                 <p className="text-gray-900 text-sm font-medium">${Number(person.propertyDetails.assessedValue).toLocaleString()}</p>
                               </div>
                             </div>
                           )}
                           {person.propertyDetails.lastSalePrice && (
                             <div className="bg-gray-50 rounded-[10px] p-3 flex items-start gap-2">
-                              <DollarSign className="w-4 h-4 text-gray-450 mt-0.5 flex-shrink-0" />
+                              <DollarSign className="w-4 h-4 text-gray-600 mt-0.5 flex-shrink-0" />
                               <div>
-                                <p className="text-xs text-gray-500">Last Sale Price</p>
+                                <p className="text-xs text-gray-700">Last Sale Price</p>
                                 <p className="text-gray-900 text-sm font-medium">${Number(person.propertyDetails.lastSalePrice).toLocaleString()}</p>
                               </div>
                             </div>
                           )}
                           {person.propertyDetails.lastSaleDate && (
                             <div className="bg-gray-50 rounded-[10px] p-3 flex items-start gap-2">
-                              <Calendar className="w-4 h-4 text-gray-450 mt-0.5 flex-shrink-0" />
+                              <Calendar className="w-4 h-4 text-gray-600 mt-0.5 flex-shrink-0" />
                               <div>
-                                <p className="text-xs text-gray-500">Last Sale Date</p>
+                                <p className="text-xs text-gray-700">Last Sale Date</p>
                                 <p className="text-gray-900 text-sm font-medium">{person.propertyDetails.lastSaleDate}</p>
                               </div>
                             </div>
                           )}
                           {person.propertyDetails.subdivision && (
                             <div className="bg-gray-50 rounded-[10px] p-3 flex items-start gap-2">
-                              <MapPin className="w-4 h-4 text-gray-450 mt-0.5 flex-shrink-0" />
+                              <MapPin className="w-4 h-4 text-gray-600 mt-0.5 flex-shrink-0" />
                               <div>
-                                <p className="text-xs text-gray-500">Subdivision</p>
+                                <p className="text-xs text-gray-700">Subdivision</p>
                                 <p className="text-gray-900 text-sm font-medium">{person.propertyDetails.subdivision}</p>
                               </div>
                             </div>
                           )}
                           {person.propertyDetails.hoaFee && (
                             <div className="bg-gray-50 rounded-[10px] p-3 flex items-start gap-2">
-                              <DollarSign className="w-4 h-4 text-gray-450 mt-0.5 flex-shrink-0" />
+                              <DollarSign className="w-4 h-4 text-gray-600 mt-0.5 flex-shrink-0" />
                               <div>
-                                <p className="text-xs text-gray-500">HOA Fee</p>
+                                <p className="text-xs text-gray-700">HOA Fee</p>
                                 <p className="text-gray-900 text-sm font-medium">${person.propertyDetails.hoaFee}/mo</p>
                               </div>
                             </div>
                           )}
                           {person.propertyDetails.zoning && (
                             <div className="bg-gray-50 rounded-[10px] p-3 flex items-start gap-2">
-                              <FileText className="w-4 h-4 text-gray-450 mt-0.5 flex-shrink-0" />
+                              <FileText className="w-4 h-4 text-gray-600 mt-0.5 flex-shrink-0" />
                               <div>
-                                <p className="text-xs text-gray-500">Zoning</p>
+                                <p className="text-xs text-gray-700">Zoning</p>
                                 <p className="text-gray-900 text-sm font-medium">{person.propertyDetails.zoning}</p>
                               </div>
                             </div>
                           )}
                           {person.propertyDetails.legalDescription && (
                             <div className="bg-gray-50 rounded-[10px] p-3 flex items-start gap-2 col-span-2 sm:col-span-3">
-                              <FileText className="w-4 h-4 text-gray-450 mt-0.5 flex-shrink-0" />
+                              <FileText className="w-4 h-4 text-gray-600 mt-0.5 flex-shrink-0" />
                               <div>
-                                <p className="text-xs text-gray-500">Legal Description</p>
+                                <p className="text-xs text-gray-700">Legal Description</p>
                                 <p className="text-gray-900 text-sm">{person.propertyDetails.legalDescription}</p>
                               </div>
                             </div>
@@ -714,14 +714,14 @@ export function OwnerContactPanel({
                     {/* Phone Numbers Section */}
                     <div>
                       <div className="flex items-center gap-2 mb-3">
-                        <Phone className="w-4 h-4 text-gray-450" />
-                        <h4 className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">
+                        <Phone className="w-4 h-4 text-gray-600" />
+                        <h4 className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600">
                           Phone Numbers ({person.phoneNumbers.length})
                         </h4>
                       </div>
 
                       {person.phoneNumbers.length === 0 ? (
-                        <p className="text-gray-500 text-sm bg-gray-50 rounded-[10px] p-4">
+                        <p className="text-gray-700 text-sm bg-gray-50 rounded-[10px] p-4">
                           No phone numbers found for this person.
                         </p>
                       ) : (
@@ -733,14 +733,14 @@ export function OwnerContactPanel({
                             >
                               <div className="flex items-center gap-3">
                                 <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center">
-                                  <Phone className="w-4 h-4 text-gray-450" />
+                                  <Phone className="w-4 h-4 text-gray-600" />
                                 </div>
                                 <div>
                                   <p className="text-gray-900 font-medium text-sm">
                                     {phone.number}
                                   </p>
                                   <div className="flex items-center gap-2 mt-0.5">
-                                    <span className="text-xs text-gray-500">{phone.type}</span>
+                                    <span className="text-xs text-gray-700">{phone.type}</span>
                                     {phone.carrier !== 'Unknown' && (
                                       <span className="text-xs text-gray-600">{phone.carrier}</span>
                                     )}
@@ -768,7 +768,7 @@ export function OwnerContactPanel({
                                   {copiedText === phone.rawNumber ? (
                                     <Check className="w-4 h-4 text-emerald-600" />
                                   ) : (
-                                    <Copy className="w-4 h-4 text-gray-500" />
+                                    <Copy className="w-4 h-4 text-gray-700" />
                                   )}
                                 </button>
                               </div>
@@ -781,14 +781,14 @@ export function OwnerContactPanel({
                     {/* Emails Section */}
                     <div>
                       <div className="flex items-center gap-2 mb-3">
-                        <Mail className="w-4 h-4 text-gray-450" />
-                        <h4 className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">
+                        <Mail className="w-4 h-4 text-gray-600" />
+                        <h4 className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600">
                           Email Addresses ({person.emails.length})
                         </h4>
                       </div>
 
                       {person.emails.length === 0 ? (
-                        <p className="text-gray-500 text-sm bg-gray-50 rounded-[10px] p-4">
+                        <p className="text-gray-700 text-sm bg-gray-50 rounded-[10px] p-4">
                           No email addresses found for this person.
                         </p>
                       ) : (
@@ -800,7 +800,7 @@ export function OwnerContactPanel({
                             >
                               <div className="flex items-center gap-3">
                                 <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center">
-                                  <Mail className="w-4 h-4 text-gray-450" />
+                                  <Mail className="w-4 h-4 text-gray-600" />
                                 </div>
                                 <p className="text-gray-900 text-sm">{email.email}</p>
                               </div>
@@ -812,7 +812,7 @@ export function OwnerContactPanel({
                                 {copiedText === email.email ? (
                                   <Check className="w-4 h-4 text-emerald-600" />
                                 ) : (
-                                  <Copy className="w-4 h-4 text-gray-500" />
+                                  <Copy className="w-4 h-4 text-gray-700" />
                                 )}
                               </button>
                             </div>
@@ -835,49 +835,49 @@ export function OwnerContactPanel({
                     {person.activeListing && (
                       <div>
                         <div className="flex items-center gap-2 mb-3">
-                          <Tag className="w-4 h-4 text-gray-450" />
-                          <h4 className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">Listing Details</h4>
+                          <Tag className="w-4 h-4 text-gray-600" />
+                          <h4 className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600">Listing Details</h4>
                         </div>
                         <div className="bg-gray-50 border border-gray-200 rounded-[10px] p-4 space-y-3">
                           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             {person.activeListing.price && (
                               <div>
-                                <p className="text-xs text-gray-500">Asking Price</p>
+                                <p className="text-xs text-gray-700">Asking Price</p>
                                 <p className="text-gray-900 font-bold">${person.activeListing.price.toLocaleString()}</p>
                               </div>
                             )}
                             {person.activeListing.daysOnMarket !== null && (
                               <div>
-                                <p className="text-xs text-gray-500">Days on Market</p>
+                                <p className="text-xs text-gray-700">Days on Market</p>
                                 <p className="text-gray-900 font-semibold">{person.activeListing.daysOnMarket} days</p>
                               </div>
                             )}
                             {person.activeListing.listedDate && (
                               <div>
-                                <p className="text-xs text-gray-500">Listed Date</p>
+                                <p className="text-xs text-gray-700">Listed Date</p>
                                 <p className="text-gray-900 font-semibold">{person.activeListing.listedDate}</p>
                               </div>
                             )}
                             {person.activeListing.mlsNumber && (
                               <div>
-                                <p className="text-xs text-gray-500">MLS #</p>
+                                <p className="text-xs text-gray-700">MLS #</p>
                                 <p className="text-gray-900 font-semibold">{person.activeListing.mlsNumber}</p>
                               </div>
                             )}
                           </div>
                           {person.activeListing.listingAgent && (
                             <div className="pt-3 border-t border-gray-200">
-                              <p className="text-xs text-gray-500 mb-1">Listing Agent</p>
+                              <p className="text-xs text-gray-700 mb-1">Listing Agent</p>
                               <p className="text-gray-900 text-sm font-medium">{person.activeListing.listingAgent.name}</p>
                               <div className="flex flex-wrap gap-3 mt-1">
                                 {person.activeListing.listingAgent.phone && (
-                                  <span className="text-xs text-gray-500 flex items-center gap-1">
+                                  <span className="text-xs text-gray-700 flex items-center gap-1">
                                     <Phone className="w-3 h-3" />
                                     {person.activeListing.listingAgent.phone}
                                   </span>
                                 )}
                                 {person.activeListing.listingAgent.email && (
-                                  <span className="text-xs text-gray-500 flex items-center gap-1">
+                                  <span className="text-xs text-gray-700 flex items-center gap-1">
                                     <Mail className="w-3 h-3" />
                                     {person.activeListing.listingAgent.email}
                                   </span>
@@ -887,7 +887,7 @@ export function OwnerContactPanel({
                                     href={person.activeListing.listingAgent.website}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1 hover:underline transition-colors"
+                                    className="text-xs text-gray-700 hover:text-gray-900 flex items-center gap-1 hover:underline transition-colors"
                                   >
                                     <ExternalLink className="w-3 h-3" />
                                     Website
@@ -895,7 +895,7 @@ export function OwnerContactPanel({
                                 )}
                               </div>
                               {person.activeListing.listingOffice?.name && (
-                                <p className="text-xs text-gray-500 mt-1">{person.activeListing.listingOffice.name}</p>
+                                <p className="text-xs text-gray-700 mt-1">{person.activeListing.listingOffice.name}</p>
                               )}
                             </div>
                           )}
@@ -907,49 +907,49 @@ export function OwnerContactPanel({
                     {!person.activeListing && person.recentlySold && (
                       <div>
                         <div className="flex items-center gap-2 mb-3">
-                          <TrendingUp className="w-4 h-4 text-gray-450" />
-                          <h4 className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">Recently Sold (MLS)</h4>
+                          <TrendingUp className="w-4 h-4 text-gray-600" />
+                          <h4 className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600">Recently Sold (MLS)</h4>
                         </div>
                         <div className="bg-gray-50 border border-gray-200 rounded-[10px] p-4 space-y-3">
                           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             {person.recentlySold.price && (
                               <div>
-                                <p className="text-xs text-gray-500">Listed Price</p>
+                                <p className="text-xs text-gray-700">Listed Price</p>
                                 <p className="text-gray-900 font-bold">${person.recentlySold.price.toLocaleString()}</p>
                               </div>
                             )}
                             {person.recentlySold.daysOnMarket !== null && (
                               <div>
-                                <p className="text-xs text-gray-500">Days on Market</p>
+                                <p className="text-xs text-gray-700">Days on Market</p>
                                 <p className="text-gray-900 font-semibold">{person.recentlySold.daysOnMarket} days</p>
                               </div>
                             )}
                             {person.recentlySold.listedDate && (
                               <div>
-                                <p className="text-xs text-gray-500">Listed Date</p>
+                                <p className="text-xs text-gray-700">Listed Date</p>
                                 <p className="text-gray-900 font-semibold">{person.recentlySold.listedDate}</p>
                               </div>
                             )}
                             {person.recentlySold.mlsNumber && (
                               <div>
-                                <p className="text-xs text-gray-500">MLS #</p>
+                                <p className="text-xs text-gray-700">MLS #</p>
                                 <p className="text-gray-900 font-semibold">{person.recentlySold.mlsNumber}</p>
                               </div>
                             )}
                           </div>
                           {person.recentlySold.listingAgent && (
                             <div className="pt-3 border-t border-gray-200">
-                              <p className="text-xs text-gray-500 mb-1">Listing Agent</p>
+                              <p className="text-xs text-gray-700 mb-1">Listing Agent</p>
                               <p className="text-gray-900 text-sm font-medium">{person.recentlySold.listingAgent.name}</p>
                               <div className="flex flex-wrap gap-3 mt-1">
                                 {person.recentlySold.listingAgent.phone && (
-                                  <span className="text-xs text-gray-500 flex items-center gap-1">
+                                  <span className="text-xs text-gray-700 flex items-center gap-1">
                                     <Phone className="w-3 h-3" />
                                     {person.recentlySold.listingAgent.phone}
                                   </span>
                                 )}
                                 {person.recentlySold.listingAgent.email && (
-                                  <span className="text-xs text-gray-500 flex items-center gap-1">
+                                  <span className="text-xs text-gray-700 flex items-center gap-1">
                                     <Mail className="w-3 h-3" />
                                     {person.recentlySold.listingAgent.email}
                                   </span>
@@ -959,7 +959,7 @@ export function OwnerContactPanel({
                                     href={person.recentlySold.listingAgent.website}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1 hover:underline transition-colors"
+                                    className="text-xs text-gray-700 hover:text-gray-900 flex items-center gap-1 hover:underline transition-colors"
                                   >
                                     <ExternalLink className="w-3 h-3" />
                                     Website
@@ -967,7 +967,7 @@ export function OwnerContactPanel({
                                 )}
                               </div>
                               {person.recentlySold.listingOffice?.name && (
-                                <p className="text-xs text-gray-500 mt-1">{person.recentlySold.listingOffice.name}</p>
+                                <p className="text-xs text-gray-700 mt-1">{person.recentlySold.listingOffice.name}</p>
                               )}
                             </div>
                           )}
@@ -989,10 +989,10 @@ export function OwnerContactPanel({
                           {/* Header */}
                           <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-2">
-                              <TrendingUp className="w-4 h-4 text-gray-500" />
+                              <TrendingUp className="w-4 h-4 text-gray-700" />
                               <h4 className="text-sm font-semibold text-gray-900">Price History</h4>
                             </div>
-                            <span className="text-xs text-gray-500">{history.length} recorded sale{history.length !== 1 ? 's' : ''}</span>
+                            <span className="text-xs text-gray-700">{history.length} recorded sale{history.length !== 1 ? 's' : ''}</span>
                           </div>
 
                           {/* Chart + timeline */}
@@ -1000,7 +1000,7 @@ export function OwnerContactPanel({
                             {/* Mini bar chart */}
                             {prices.length > 1 && (
                               <div className="px-4 pt-4 pb-2 border-b border-gray-200">
-                                <p className="text-xs text-gray-500 mb-3">Sale price over time (oldest → newest)</p>
+                                <p className="text-xs text-gray-700 mb-3">Sale price over time (oldest → newest)</p>
                                 <div className="flex items-end gap-1.5 h-16">
                                   {[...history].reverse().map((sale, i) => {
                                     const pct = sale.price && maxPrice > 0 ? (sale.price / maxPrice) * 100 : 0;
@@ -1010,7 +1010,7 @@ export function OwnerContactPanel({
                                         {/* Tooltip */}
                                         <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                                           <div className="bg-gray-100 border border-gray-300 rounded-lg px-2 py-1.5 text-xs text-gray-900 whitespace-nowrap shadow-xl">
-                                            {sale.date && <p className="text-gray-500">{sale.date}</p>}
+                                            {sale.date && <p className="text-gray-700">{sale.date}</p>}
                                             <p className="font-semibold">{sale.price ? `$${sale.price.toLocaleString()}` : 'Unknown'}</p>
                                           </div>
                                         </div>
@@ -1059,7 +1059,7 @@ export function OwnerContactPanel({
                                             </span>
                                           )}
                                         </div>
-                                        <span className="text-xs text-gray-500">Recorded sale</span>
+                                        <span className="text-xs text-gray-700">Recorded sale</span>
                                       </div>
                                     </div>
 
@@ -1115,7 +1115,7 @@ export function OwnerContactPanel({
         )}
 
       {!isLoading && !results && !error && (
-        <p className="text-[13px] text-gray-450 text-center py-8">
+        <p className="text-[13px] text-gray-600 text-center py-8">
           Run a search from the form above to find owner contact info and property records.
         </p>
       )}

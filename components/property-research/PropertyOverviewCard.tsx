@@ -85,10 +85,10 @@ export function PropertyOverviewCard({
     return (
       <div className="p-10 text-center">
         <div className="w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
-          <Home className="w-5 h-5 text-gray-450" strokeWidth={1.75} />
+          <Home className="w-5 h-5 text-gray-600" strokeWidth={1.75} />
         </div>
         <p className="text-[13.5px] font-medium text-gray-900 mb-1">Enter an address above</p>
-        <p className="text-[13px] text-gray-450 mb-6">
+        <p className="text-[13px] text-gray-600 mb-6">
           Look up the owner for prospecting, or run a comp-based CMA for pricing.
         </p>
         <div className="flex flex-wrap justify-center gap-3">
@@ -106,11 +106,11 @@ export function PropertyOverviewCard({
   return (
     <div className="overflow-hidden">
       <div className="p-5 border-b border-gray-150 bg-gray-50/50">
-        <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450 mb-1">Subject Property</p>
+        <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600 mb-1">Subject Property</p>
         <h2 className="text-[16px] font-semibold text-gray-900">{addressLabel}</h2>
         {displayOwner && (
           <p className="text-[13px] text-gray-600 mt-1 flex items-center gap-1.5">
-            <User className="w-3.5 h-3.5 text-gray-450" />
+            <User className="w-3.5 h-3.5 text-gray-600" />
             {displayOwner}
           </p>
         )}
@@ -133,30 +133,30 @@ export function PropertyOverviewCard({
         <div className="grid grid-cols-2 sm:grid-cols-[repeat(4,minmax(0,1fr))] gap-3">
           {details?.bedrooms != null && (
             <div className="text-center p-3 rounded-[10px] bg-[#fafaf9] border border-gray-150 min-w-0">
-              <Bed className="w-4 h-4 text-gray-450 mx-auto mb-1" />
+              <Bed className="w-4 h-4 text-gray-600 mx-auto mb-1" />
               <p className="text-[15px] font-semibold text-gray-900">{details.bedrooms}</p>
-              <p className="text-[10.5px] text-gray-450">Beds</p>
+              <p className="text-[10.5px] text-gray-600">Beds</p>
             </div>
           )}
           {details?.bathrooms != null && (
             <div className="text-center p-3 rounded-[10px] bg-[#fafaf9] border border-gray-150 min-w-0">
-              <Bath className="w-4 h-4 text-gray-450 mx-auto mb-1" />
+              <Bath className="w-4 h-4 text-gray-600 mx-auto mb-1" />
               <p className="text-[15px] font-semibold text-gray-900">{details.bathrooms}</p>
-              <p className="text-[10.5px] text-gray-450">Baths</p>
+              <p className="text-[10.5px] text-gray-600">Baths</p>
             </div>
           )}
           {details?.squareFootage != null && (
             <div className="text-center p-3 rounded-[10px] bg-[#fafaf9] border border-gray-150 min-w-0">
-              <Ruler className="w-4 h-4 text-gray-450 mx-auto mb-1" />
+              <Ruler className="w-4 h-4 text-gray-600 mx-auto mb-1" />
               <p className="text-[15px] font-semibold text-gray-900">{Number(details.squareFootage).toLocaleString()}</p>
-              <p className="text-[10.5px] text-gray-450">Sq Ft</p>
+              <p className="text-[10.5px] text-gray-600">Sq Ft</p>
             </div>
           )}
           {details?.assessedValue != null && (
             <div className="text-center p-3 rounded-[10px] bg-[#fafaf9] border border-gray-150 min-w-0">
-              <DollarSign className="w-4 h-4 text-gray-450 mx-auto mb-1" />
+              <DollarSign className="w-4 h-4 text-gray-600 mx-auto mb-1" />
               <p className="text-[15px] font-semibold text-gray-900">{fmt(details.assessedValue, '$')}</p>
-              <p className="text-[10.5px] text-gray-450">Assessed</p>
+              <p className="text-[10.5px] text-gray-600">Assessed</p>
             </div>
           )}
         </div>
@@ -165,12 +165,12 @@ export function PropertyOverviewCard({
           <div className="p-4 rounded-[10px] border border-gray-200 bg-gray-50">
             <div className="flex items-center gap-2 mb-1">
               <TrendingUp className="w-4 h-4 text-gray-700" />
-              <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">CMA Results</p>
+              <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600">CMA Results</p>
             </div>
             {cmaResult.valuation?.suggestedPrice ? (
               <>
                 <p className="text-[22px] font-bold text-gray-900">{fmt(cmaResult.valuation.suggestedPrice, '$')}</p>
-                <p className="text-[12.5px] text-gray-450 mt-1">
+                <p className="text-[12.5px] text-gray-600 mt-1">
                   Range {fmt(cmaResult.valuation.priceLow, '$')} – {fmt(cmaResult.valuation.priceHigh, '$')}
                 </p>
               </>
@@ -196,7 +196,7 @@ export function PropertyOverviewCard({
         )}
 
         {details?.lastSalePrice != null && (
-          <p className="text-[12.5px] text-gray-450">
+          <p className="text-[12.5px] text-gray-600">
             Last sale: {fmt(details.lastSalePrice, '$')}
             {details.lastSaleDate && ` · ${details.lastSaleDate}`}
           </p>

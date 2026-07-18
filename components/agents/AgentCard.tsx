@@ -33,7 +33,7 @@ export default function AgentCard({ agent }: { agent: PublicAgentSummary }) {
             {agent.name}
           </p>
           {agent.brokerage && (
-            <p className="text-xs text-gray-500 truncate flex items-center gap-1 mt-0.5">
+            <p className="text-xs text-gray-700 truncate flex items-center gap-1 mt-0.5">
               <Building2 className="w-3 h-3" />
               {agent.brokerage}
             </p>

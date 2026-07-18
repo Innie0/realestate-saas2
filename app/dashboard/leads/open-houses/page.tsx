@@ -142,7 +142,7 @@ export default function OpenHousesPage() {
     >
       <LeadsSectionSwitcher active="capture" />
 
-      <Link href="/dashboard/leads?tab=capture" className="inline-flex items-center gap-1.5 text-[13px] text-gray-450 hover:text-gray-900 transition-colors">
+      <Link href="/dashboard/leads?tab=capture" className="inline-flex items-center gap-1.5 text-[13px] text-gray-600 hover:text-gray-900 transition-colors">
         <ArrowLeft className="w-3.5 h-3.5" /> Back to leads
       </Link>
 
@@ -151,27 +151,27 @@ export default function OpenHousesPage() {
         {showCreate && (
           <form onSubmit={handleCreate} className="bg-white border border-gray-200 rounded-[10px] p-5 mb-5 space-y-4">
             <div>
-              <label className="block text-[12.5px] text-gray-450 mb-1.5">Property Address *</label>
+              <label className="block text-[12.5px] text-gray-600 mb-1.5">Property Address *</label>
               <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} required placeholder="123 Main St, City, State" className={inputClass} />
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className="block text-[12.5px] text-gray-450 mb-1.5">Date *</label>
+                <label className="block text-[12.5px] text-gray-600 mb-1.5">Date *</label>
                 <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required className={inputClass} />
               </div>
               <div>
-                <label className="block text-[12.5px] text-gray-450 mb-1.5">Start *</label>
+                <label className="block text-[12.5px] text-gray-600 mb-1.5">Start *</label>
                 <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} required className={inputClass} />
               </div>
               <div>
-                <label className="block text-[12.5px] text-gray-450 mb-1.5">End *</label>
+                <label className="block text-[12.5px] text-gray-600 mb-1.5">End *</label>
                 <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} required className={inputClass} />
               </div>
             </div>
             <div>
-              <label className="block text-[12.5px] text-gray-450 mb-1.5">Open house label (optional)</label>
+              <label className="block text-[12.5px] text-gray-600 mb-1.5">Open house label (optional)</label>
               <input type="text" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. Sunday Open House — 5721 West Prospect Dr" className={inputClass} />
-              <p className="text-[11.5px] text-gray-450 mt-1">Shown in your leads inbox when someone signs in. Leave blank to use the address only.</p>
+              <p className="text-[11.5px] text-gray-600 mt-1">Shown in your leads inbox when someone signs in. Leave blank to use the address only.</p>
             </div>
             <button
               type="submit"
@@ -198,7 +198,7 @@ export default function OpenHousesPage() {
           <Surface flat padding="none" className="p-10 text-center">
             <DoorOpen className="w-9 h-9 text-gray-400 mx-auto mb-3" strokeWidth={1.6} />
             <p className="text-gray-900 font-medium text-[13.5px] mb-1">No open houses yet</p>
-            <p className="text-gray-450 text-[13px]">Create one to get a QR code sign-in page for visitors.</p>
+            <p className="text-gray-600 text-[13px]">Create one to get a QR code sign-in page for visitors.</p>
           </Surface>
         ) : (
           <div className="space-y-3">
@@ -214,13 +214,13 @@ export default function OpenHousesPage() {
                   <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-2">
-                        <MapPin className="w-4 h-4 text-gray-450 flex-shrink-0" strokeWidth={1.8} />
+                        <MapPin className="w-4 h-4 text-gray-600 flex-shrink-0" strokeWidth={1.8} />
                         <h3 className="font-semibold text-gray-900 text-[15px] truncate">{oh.property_address}</h3>
                         {isEnded && (
-                          <span className="text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-450">Ended</span>
+                          <span className="text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">Ended</span>
                         )}
                       </div>
-                      <div className="flex items-center gap-3 text-[12.5px] text-gray-450">
+                      <div className="flex items-center gap-3 text-[12.5px] text-gray-600">
                         <span className="flex items-center gap-1"><CalendarDays className="w-3.5 h-3.5" /> {displayDate}</span>
                         <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {oh.start_time.slice(0, 5)} – {oh.end_time.slice(0, 5)}</span>
                       </div>
@@ -246,7 +246,7 @@ export default function OpenHousesPage() {
                           href={getSignInUrl(oh.id)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 text-[12.5px] text-gray-450 hover:text-gray-900 transition-colors"
+                          className="flex items-center gap-1.5 text-[12.5px] text-gray-600 hover:text-gray-900 transition-colors"
                         >
                           <Link2 className="w-3 h-3" /> Preview
                         </a>

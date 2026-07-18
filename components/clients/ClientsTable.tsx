@@ -28,7 +28,7 @@ export default function ClientsTable({ clients }: ClientsTableProps) {
               {['Client', 'Interest', 'Stage', 'Last contact', 'Next follow-up'].map((heading) => (
                 <th
                   key={heading}
-                  className="px-4 sm:px-5 py-3 font-mono text-[10.5px] font-semibold uppercase tracking-[0.06em] text-gray-450"
+                  className="px-4 sm:px-5 py-3 font-mono text-[10.5px] font-semibold uppercase tracking-[0.06em] text-gray-600"
                 >
                   {heading}
                 </th>
@@ -61,14 +61,14 @@ export default function ClientsTable({ clients }: ClientsTableProps) {
                         <p className="text-[13.5px] font-semibold text-gray-900 truncate group-hover/link:text-gray-950 transition-colors">
                           {client.name}
                         </p>
-                        <p className="text-[12px] text-gray-450 truncate">{client.email || client.phone || '—'}</p>
+                        <p className="text-[12px] text-gray-600 truncate">{client.email || client.phone || '—'}</p>
                       </div>
                     </Link>
                   </td>
                   <td className="px-4 sm:px-5 py-4">
                     <p className="text-[13px] text-gray-900 truncate">{interest.headline}</p>
                     {interest.subline && (
-                      <p className="text-[12px] text-gray-450 truncate mt-0.5">{interest.subline}</p>
+                      <p className="text-[12px] text-gray-600 truncate mt-0.5">{interest.subline}</p>
                     )}
                   </td>
                   <td className="px-4 sm:px-5 py-4">
@@ -81,7 +81,7 @@ export default function ClientsTable({ clients }: ClientsTableProps) {
                   </td>
                   <td className="px-4 sm:px-5 py-4">
                     <span className="inline-flex items-center gap-1.5 text-[13px] text-gray-700">
-                      <Clock className="w-3.5 h-3.5 text-gray-450" />
+                      <Clock className="w-3.5 h-3.5 text-gray-600" />
                       {formatLastContact(client.last_contact_at)}
                     </span>
                   </td>
@@ -92,7 +92,7 @@ export default function ClientsTable({ clients }: ClientsTableProps) {
                           ? 'text-amber-700 font-medium'
                           : followUp.tone === 'upcoming'
                             ? 'text-gray-700'
-                            : 'text-gray-450'
+                            : 'text-gray-600'
                       } ${isOverdue ? 'animate-pulse' : ''}`}
                     >
                       {followUp.text}

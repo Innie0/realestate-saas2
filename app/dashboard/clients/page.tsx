@@ -345,7 +345,7 @@ export default function ClientsPage() {
                 onClick={() => setViewMode('list')}
                 className={clsx(
                   'p-1.5 rounded-md transition-colors',
-                  viewMode === 'list' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-450 hover:text-gray-700'
+                  viewMode === 'list' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-700'
                 )}
                 aria-label="List view"
               >
@@ -356,7 +356,7 @@ export default function ClientsPage() {
                 onClick={() => setViewMode('grid')}
                 className={clsx(
                   'p-1.5 rounded-md transition-colors',
-                  viewMode === 'grid' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-450 hover:text-gray-700'
+                  viewMode === 'grid' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-700'
                 )}
                 aria-label="Grid view"
               >
@@ -409,7 +409,7 @@ export default function ClientsPage() {
       ) : viewMode === 'list' ? (
         <>
           <ClientsTable clients={pagedClients} />
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-[13px] text-gray-450">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-[13px] text-gray-600">
             <p>
               Showing {showingFrom}–{showingTo} of {sortedClients.length} client
               {sortedClients.length === 1 ? '' : 's'}
@@ -449,7 +449,7 @@ export default function ClientsPage() {
               />
             ))}
           </div>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-[13px] text-gray-450">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-[13px] text-gray-600">
             <p>
               Showing {showingFrom}–{showingTo} of {sortedClients.length} client
               {sortedClients.length === 1 ? '' : 's'}
@@ -487,7 +487,7 @@ export default function ClientsPage() {
           onChange={(e) => setNoteText(e.target.value)}
           placeholder="Enter your note..."
           rows={4}
-          className="w-full px-3 py-2.5 rounded-[10px] border border-gray-200 bg-gray-50 text-[13px] text-gray-900 placeholder:text-gray-450 focus:outline-none focus:ring-2 focus:ring-brand-500/20 mb-4"
+          className="w-full px-3 py-2.5 rounded-[10px] border border-gray-200 bg-gray-50 text-[13px] text-gray-900 placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-500/20 mb-4"
           autoFocus
         />
         <div className="flex gap-3">

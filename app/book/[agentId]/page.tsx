@@ -73,7 +73,7 @@ export default async function BookingPage({ params }: BookingPageProps) {
             </svg>
           </div>
           <h1 className="text-xl font-semibold text-gray-900 mb-2">Booking not available</h1>
-          <p className="text-gray-500 text-sm">This booking link is invalid or is no longer accepting appointments.</p>
+          <p className="text-gray-700 text-sm">This booking link is invalid or is no longer accepting appointments.</p>
         </div>
       </div>
     );
@@ -97,7 +97,7 @@ export default async function BookingPage({ params }: BookingPageProps) {
           <h1 className="text-2xl font-bold text-gray-900 mb-1">
             Book a showing with {agentName}
           </h1>
-          <p className="text-gray-500 text-sm max-w-sm mx-auto">
+          <p className="text-gray-700 text-sm max-w-sm mx-auto">
             Pick a time that works for you — you&apos;ll get an instant confirmation.
           </p>
         </div>
@@ -108,7 +108,7 @@ export default async function BookingPage({ params }: BookingPageProps) {
 
         <p className="text-center text-xs text-gray-600 mt-6">
           Powered by{' '}
-          <a href={SITE_URL} className="text-gray-500 hover:text-gray-500 transition-colors">
+          <a href={SITE_URL} className="text-gray-700 hover:text-gray-700 transition-colors">
             Oikaro
           </a>
         </p>

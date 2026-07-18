@@ -53,7 +53,7 @@ function SectionCard({
     >
       <div className="mb-5">
         <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-        {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
+        {subtitle && <p className="text-sm text-gray-700 mt-1">{subtitle}</p>}
       </div>
       {children}
     </section>
@@ -168,7 +168,7 @@ export default function PublicAgentProfileView({
             </p>
 
             {(agent.brokerage || agent.license) && (
-              <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm text-gray-500">
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm text-gray-700">
                 {agent.brokerage && (
                   <span className="inline-flex items-center gap-1.5">
                     <Building2 className="w-4 h-4 text-brand-600" />
@@ -348,7 +348,7 @@ export default function PublicAgentProfileView({
             © {new Date().getFullYear()} {agent.name}
             {agent.brokerage ? ` · ${agent.brokerage}` : ''}
           </p>
-          <Link href="/" className="text-xs text-gray-500 hover:text-brand-600 transition-colors">
+          <Link href="/" className="text-xs text-gray-700 hover:text-brand-600 transition-colors">
             Powered by Oikaro
           </Link>
         </div>

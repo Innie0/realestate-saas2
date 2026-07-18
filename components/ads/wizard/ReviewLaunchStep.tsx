@@ -71,32 +71,32 @@ export default function ReviewLaunchStep({
         <p className="text-label">Summary</p>
         <dl className="grid gap-2 text-[13px]">
           <div className="flex justify-between gap-4">
-            <dt className="text-gray-500">Ad type</dt>
+            <dt className="text-gray-700">Ad type</dt>
             <dd className="font-medium text-gray-900 text-right">
               {draft.adType ? getAdTypeLabel(draft.adType) : '—'}
             </dd>
           </div>
           <div className="flex justify-between gap-4">
-            <dt className="text-gray-500">Platforms</dt>
+            <dt className="text-gray-700">Platforms</dt>
             <dd className="font-medium text-gray-900 text-right">
               {draft.platforms.map(platformLabel).join(' · ') || '—'}
             </dd>
           </div>
           <div className="flex justify-between gap-4">
-            <dt className="text-gray-500">Audience</dt>
+            <dt className="text-gray-700">Audience</dt>
             <dd className="font-medium text-gray-900 text-right">
               {getAudienceLabel(draft.audience.preset)} · {draft.audience.radiusMiles} mi ·{' '}
               {draft.audience.ageMin}–{draft.audience.ageMax}
             </dd>
           </div>
           <div className="flex justify-between gap-4">
-            <dt className="text-gray-500">Budget</dt>
+            <dt className="text-gray-700">Budget</dt>
             <dd className="font-medium text-gray-900 text-right tabular-nums">
               ${draft.budget.dailyAmountCents / 100}/day · {draft.budget.durationDays} days
             </dd>
           </div>
           <div className="flex justify-between gap-4">
-            <dt className="text-gray-500">Button</dt>
+            <dt className="text-gray-700">Button</dt>
             <dd className="font-medium text-gray-900 text-right">{getCtaLabel(draft.cta)}</dd>
           </div>
         </dl>

@@ -187,7 +187,7 @@ export default function BookingSettingsPage() {
 
       <Link
         href="/dashboard/leads?tab=capture"
-        className="inline-flex items-center gap-1.5 text-[13px] text-gray-450 hover:text-gray-900 transition-colors"
+        className="inline-flex items-center gap-1.5 text-[13px] text-gray-600 hover:text-gray-900 transition-colors"
       >
         <ArrowLeft className="w-3.5 h-3.5" /> Back to leads
       </Link>
@@ -198,7 +198,7 @@ export default function BookingSettingsPage() {
           <div className="flex items-center justify-between gap-4">
             <div>
               <h3 className="text-[15px] font-semibold text-gray-900">Accept bookings</h3>
-              <p className="text-[12.5px] text-gray-450 mt-0.5">
+              <p className="text-[12.5px] text-gray-600 mt-0.5">
                 Turn on your public link so leads can self-schedule a showing
               </p>
             </div>
@@ -232,7 +232,7 @@ export default function BookingSettingsPage() {
         {/* Availability */}
         <Surface flat padding="none" className="p-5 space-y-4">
           <h3 className="text-[15px] font-semibold text-gray-900 flex items-center gap-2">
-            <CalendarDays className="w-4 h-4 text-gray-500" strokeWidth={1.8} /> Available days
+            <CalendarDays className="w-4 h-4 text-gray-700" strokeWidth={1.8} /> Available days
           </h3>
           <div className="flex flex-wrap gap-2">
             {WEEKDAYS.map(({ value, short }) => {
@@ -245,7 +245,7 @@ export default function BookingSettingsPage() {
                   className={`w-12 py-2 rounded-lg border text-[12.5px] font-medium transition-all ${
                     selected
                       ? 'border-brand-500 bg-brand-500 text-white'
-                      : 'border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-900'
+                      : 'border-gray-200 text-gray-700 hover:border-gray-300 hover:text-gray-900'
                   }`}
                 >
                   {short}
@@ -256,7 +256,7 @@ export default function BookingSettingsPage() {
 
           <div className="grid sm:grid-cols-2 gap-4 pt-2">
             <div>
-              <label className="block text-[12.5px] text-gray-450 mb-1.5">Start time</label>
+              <label className="block text-[12.5px] text-gray-600 mb-1.5">Start time</label>
               <input
                 type="time"
                 value={startTime}
@@ -265,7 +265,7 @@ export default function BookingSettingsPage() {
               />
             </div>
             <div>
-              <label className="block text-[12.5px] text-gray-450 mb-1.5">End time</label>
+              <label className="block text-[12.5px] text-gray-600 mb-1.5">End time</label>
               <input
                 type="time"
                 value={endTime}
@@ -274,7 +274,7 @@ export default function BookingSettingsPage() {
               />
             </div>
             <div>
-              <label className="block text-[12.5px] text-gray-450 mb-1.5">Timezone</label>
+              <label className="block text-[12.5px] text-gray-600 mb-1.5">Timezone</label>
               <select value={timezone} onChange={(e) => setTimezone(e.target.value)} className={inputClass}>
                 {TIMEZONE_OPTIONS.map((tz) => (
                   <option key={tz.value} value={tz.value}>{tz.label}</option>
@@ -282,7 +282,7 @@ export default function BookingSettingsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-[12.5px] text-gray-450 mb-1.5">Showing length</label>
+              <label className="block text-[12.5px] text-gray-600 mb-1.5">Showing length</label>
               <select value={duration} onChange={(e) => setDuration(Number(e.target.value))} className={inputClass}>
                 {DURATION_OPTIONS.map((d) => (
                   <option key={d} value={d}>{d} minutes</option>
@@ -295,11 +295,11 @@ export default function BookingSettingsPage() {
         {/* Booking rules */}
         <Surface flat padding="none" className="p-5 space-y-4">
           <h3 className="text-[15px] font-semibold text-gray-900 flex items-center gap-2">
-            <Clock className="w-4 h-4 text-gray-500" strokeWidth={1.8} /> Booking rules
+            <Clock className="w-4 h-4 text-gray-700" strokeWidth={1.8} /> Booking rules
           </h3>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[12.5px] text-gray-450 mb-1.5">Minimum notice</label>
+              <label className="block text-[12.5px] text-gray-600 mb-1.5">Minimum notice</label>
               <select value={noticeHours} onChange={(e) => setNoticeHours(Number(e.target.value))} className={inputClass}>
                 <option value={0}>No minimum</option>
                 <option value={1}>1 hour</option>
@@ -309,17 +309,17 @@ export default function BookingSettingsPage() {
                 <option value={24}>1 day</option>
                 <option value={48}>2 days</option>
               </select>
-              <p className="text-[11.5px] text-gray-450 mt-1">How far in advance a lead must book</p>
+              <p className="text-[11.5px] text-gray-600 mt-1">How far in advance a lead must book</p>
             </div>
             <div>
-              <label className="block text-[12.5px] text-gray-450 mb-1.5">Booking window</label>
+              <label className="block text-[12.5px] text-gray-600 mb-1.5">Booking window</label>
               <select value={windowDays} onChange={(e) => setWindowDays(Number(e.target.value))} className={inputClass}>
                 <option value={7}>1 week ahead</option>
                 <option value={14}>2 weeks ahead</option>
                 <option value={30}>1 month ahead</option>
                 <option value={60}>2 months ahead</option>
               </select>
-              <p className="text-[11.5px] text-gray-450 mt-1">How far ahead leads can schedule</p>
+              <p className="text-[11.5px] text-gray-600 mt-1">How far ahead leads can schedule</p>
             </div>
           </div>
         </Surface>
@@ -327,7 +327,7 @@ export default function BookingSettingsPage() {
         {/* Location */}
         <Surface flat padding="none" className="p-5 space-y-4">
           <h3 className="text-[15px] font-semibold text-gray-900 flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-gray-500" strokeWidth={1.8} /> Default location
+            <MapPin className="w-4 h-4 text-gray-700" strokeWidth={1.8} /> Default location
           </h3>
           <input
             type="text"
@@ -336,7 +336,7 @@ export default function BookingSettingsPage() {
             placeholder="e.g. Meet at the property, or your office address"
             className={inputClass}
           />
-          <p className="text-[11.5px] text-gray-450">
+          <p className="text-[11.5px] text-gray-600">
             Shown to leads when booking. You can always update the exact property address later on the calendar event.
           </p>
         </Surface>

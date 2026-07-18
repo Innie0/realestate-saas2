@@ -59,7 +59,7 @@ export default function PlatformTemplateStep({
             )}
           >
             Meta · Facebook & Instagram
-            <span className="block text-[10px] font-normal text-gray-500 mt-0.5">{metaHint}</span>
+            <span className="block text-[10px] font-normal text-gray-700 mt-0.5">{metaHint}</span>
           </button>
           <button
             type="button"
@@ -72,7 +72,7 @@ export default function PlatformTemplateStep({
             )}
           >
             Google Ads
-            <span className="block text-[10px] font-normal text-gray-500 mt-0.5">{googleHint}</span>
+            <span className="block text-[10px] font-normal text-gray-700 mt-0.5">{googleHint}</span>
           </button>
         </div>
       </div>
@@ -93,7 +93,7 @@ export default function PlatformTemplateStep({
               )}
             >
               <p className="text-[13px] font-semibold text-gray-900">{template.label}</p>
-              <p className="text-caption text-gray-500 mt-0.5">{template.description}</p>
+              <p className="text-caption text-gray-700 mt-0.5">{template.description}</p>
             </button>
           ))}
         </div>

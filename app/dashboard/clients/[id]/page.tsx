@@ -356,7 +356,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       <div className="space-y-5">
         <button
           onClick={() => router.push(client.in_crm ? '/dashboard/clients' : '/dashboard/leads')}
-          className="inline-flex items-center gap-1.5 text-[13px] text-gray-450 hover:text-gray-700 transition-colors"
+          className="inline-flex items-center gap-1.5 text-[13px] text-gray-600 hover:text-gray-700 transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           {client.in_crm ? 'Back to Clients' : 'Back to Leads inbox'}
@@ -399,13 +399,13 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-[13px] text-gray-600">
                   {client.email && (
                     <span className="inline-flex items-center gap-1.5">
-                      <Mail className="w-3.5 h-3.5 text-gray-450" />
+                      <Mail className="w-3.5 h-3.5 text-gray-600" />
                       {client.email}
                     </span>
                   )}
                   {client.phone && (
                     <span className="inline-flex items-center gap-1.5">
-                      <Phone className="w-3.5 h-3.5 text-gray-450" />
+                      <Phone className="w-3.5 h-3.5 text-gray-600" />
                       {client.phone}
                     </span>
                   )}
@@ -432,19 +432,19 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-5 border-t border-gray-150">
             <div>
-              <p className="text-[11px] text-gray-450">Interested in</p>
+              <p className="text-[11px] text-gray-600">Interested in</p>
               <p className="mt-1 text-[14px] font-semibold text-gray-900">{detail.interestType}</p>
             </div>
             <div>
-              <p className="text-[11px] text-gray-450">Budget</p>
+              <p className="text-[11px] text-gray-600">Budget</p>
               <p className="mt-1 text-[14px] font-semibold text-gray-900">{detail.budget || '—'}</p>
             </div>
             <div>
-              <p className="text-[11px] text-gray-450">Area</p>
+              <p className="text-[11px] text-gray-600">Area</p>
               <p className="mt-1 text-[14px] font-semibold text-gray-900">{detail.area || '—'}</p>
             </div>
             <div>
-              <p className="text-[11px] text-gray-450">Timeline</p>
+              <p className="text-[11px] text-gray-600">Timeline</p>
               <p className="mt-1 text-[14px] font-semibold text-gray-900">{detail.timeline || '—'}</p>
             </div>
           </div>
@@ -537,21 +537,21 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                           <div className="absolute top-3 right-3 flex gap-1">
                             <button
                               onClick={() => handleEditNote(note.id, note.note)}
-                              className="p-1 rounded-md text-gray-450 hover:text-gray-700 hover:bg-gray-200/70 transition-colors"
+                              className="p-1 rounded-md text-gray-600 hover:text-gray-700 hover:bg-gray-200/70 transition-colors"
                               title="Edit note"
                             >
                               <Pencil className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => handleDeleteNote(note.id)}
-                              className="p-1 rounded-md text-gray-450 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                              className="p-1 rounded-md text-gray-600 hover:text-rose-600 hover:bg-rose-50 transition-colors"
                               title="Delete note"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </div>
                           <p className="text-[13.5px] text-gray-700 whitespace-pre-wrap pr-14">{note.note}</p>
-                          <p className="text-[11.5px] text-gray-450 mt-2">
+                          <p className="text-[11.5px] text-gray-600 mt-2">
                             {new Date(note.created_at).toLocaleString()}
                           </p>
                         </>
@@ -559,7 +559,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                     </div>
                   ))
                 ) : (
-                  <p className="text-[13px] text-gray-450">No notes yet</p>
+                  <p className="text-[13px] text-gray-600">No notes yet</p>
                 )}
               </div>
             </Surface>
@@ -615,7 +615,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                             {!reminder.is_completed && (
                               <button
                                 onClick={() => handleCompleteReminder(reminder.id)}
-                                className="p-1 rounded-md text-gray-450 hover:text-teal-700 hover:bg-teal-50 transition-colors"
+                                className="p-1 rounded-md text-gray-600 hover:text-teal-700 hover:bg-teal-50 transition-colors"
                                 title="Mark as complete"
                               >
                                 <CheckCircle2 className="w-3.5 h-3.5" />
@@ -623,14 +623,14 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                             )}
                             <button
                               onClick={() => setEditingReminderId(reminder.id)}
-                              className="p-1 rounded-md text-gray-450 hover:text-gray-700 hover:bg-gray-200/70 transition-colors"
+                              className="p-1 rounded-md text-gray-600 hover:text-gray-700 hover:bg-gray-200/70 transition-colors"
                               title="Edit reminder"
                             >
                               <Pencil className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => handleDeleteReminder(reminder.id)}
-                              className="p-1 rounded-md text-gray-450 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                              className="p-1 rounded-md text-gray-600 hover:text-rose-600 hover:bg-rose-50 transition-colors"
                               title="Delete reminder"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -643,11 +643,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                             )}
                           </h3>
                           {reminder.description && (
-                            <p className="text-[12.5px] text-gray-500 mt-1 whitespace-pre-wrap pr-20">
+                            <p className="text-[12.5px] text-gray-700 mt-1 whitespace-pre-wrap pr-20">
                               {reminder.description}
                             </p>
                           )}
-                          <div className="flex items-center gap-1.5 text-[11.5px] text-gray-450 mt-2">
+                          <div className="flex items-center gap-1.5 text-[11.5px] text-gray-600 mt-2">
                             <Clock className="w-3 h-3" />
                             <span className="font-mono">{new Date(reminder.reminder_date).toLocaleString()}</span>
                           </div>
@@ -656,7 +656,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                     </div>
                   ))
                 ) : (
-                  <p className="text-[13px] text-gray-450">No reminders yet</p>
+                  <p className="text-[13px] text-gray-600">No reminders yet</p>
                 )}
               </div>
             </Surface>
@@ -664,7 +664,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
           {/* Right rail: Client Details, stretched to match the left column's full height */}
           <Surface flat padding="none" className="p-5 sm:p-[26px] flex flex-col h-full">
-            <h2 className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-gray-450 mb-1">
+            <h2 className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-gray-600 mb-1">
               Client Details
             </h2>
             <div className="flex-1 flex flex-col divide-y divide-gray-150">

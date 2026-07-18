@@ -39,7 +39,7 @@ export default async function AgentDirectoryPage() {
           <div className="flex h-16 items-center justify-between">
             <Link
               href="/"
-              className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+              className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Home
@@ -59,7 +59,7 @@ export default async function AgentDirectoryPage() {
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-gray-900">
             Find a real estate agent near you
           </h1>
-          <p className="text-gray-500 mt-3 leading-relaxed">
+          <p className="text-gray-700 mt-3 leading-relaxed">
             Browse agents by the areas they serve and reach out directly — every profile below is
             actively managed by the agent themselves.
           </p>
@@ -71,7 +71,7 @@ export default async function AgentDirectoryPage() {
               <Users className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
             </div>
             <h3 className="text-base font-semibold text-gray-900 mb-1">No public agent profiles yet</h3>
-            <p className="text-sm text-gray-500 max-w-sm mx-auto">
+            <p className="text-sm text-gray-700 max-w-sm mx-auto">
               Agents who enable their public profile will be listed here, organized by the areas they
               serve.
             </p>

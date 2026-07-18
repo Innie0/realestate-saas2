@@ -114,7 +114,7 @@ function FeatureTile({
         </div>
       </motion.div>
       <h3 className="relative z-10 text-xl font-semibold text-gray-900 mb-3">{title}</h3>
-      <p className="relative z-10 text-gray-500 leading-relaxed group-hover:text-brand-600 transition-colors">{description}</p>
+      <p className="relative z-10 text-gray-700 leading-relaxed group-hover:text-brand-600 transition-colors">{description}</p>
     </motion.div>
   );
 }
@@ -148,7 +148,7 @@ function FAQItem({
       >
         <span className="text-gray-900 font-medium">{question}</span>
         <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
-          <ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0" />
+          <ChevronDown className="w-5 h-5 text-gray-700 flex-shrink-0" />
         </motion.div>
       </button>
       <AnimatePresence initial={false}>
@@ -160,7 +160,7 @@ function FAQItem({
             transition={{ duration: 0.35, ease: 'easeInOut' }}
             className="overflow-hidden"
           >
-            <p className="px-6 pb-5 text-gray-500 leading-relaxed">{answer}</p>
+            <p className="px-6 pb-5 text-gray-700 leading-relaxed">{answer}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -252,8 +252,8 @@ function AIDemoMockup() {
         {phase === 0 && (
           <motion.div key="upload" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="flex-1 flex flex-col">
             <div className="flex items-center gap-2 mb-3">
-              <Upload className="w-4 h-4 text-gray-500" />
-              <span className="text-xs text-gray-500 font-medium">Uploading photo...</span>
+              <Upload className="w-4 h-4 text-gray-700" />
+              <span className="text-xs text-gray-700 font-medium">Uploading photo...</span>
             </div>
             <div className="flex-1 rounded-lg border border-gray-100 relative overflow-hidden">
               <Image src="/demo-house.png" alt="Property" fill className="object-cover opacity-60" />
@@ -271,7 +271,7 @@ function AIDemoMockup() {
               <Loader2 className="w-8 h-8 text-brand-500" />
             </motion.div>
             <p className="text-sm text-gray-900 font-medium">Analyzing with AI...</p>
-            <p className="text-xs text-gray-500 mt-1">Identifying features & style</p>
+            <p className="text-xs text-gray-700 mt-1">Identifying features & style</p>
             <div className="flex gap-1.5 mt-4">
               {[0, 1, 2].map(i => (
                 <motion.div key={i} className="w-1.5 h-1.5 rounded-full bg-brand-500" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.3 }} />
@@ -301,7 +301,7 @@ function AIDemoMockup() {
               <CheckCircle className="w-12 h-12 text-brand-500 mb-3" />
             </motion.div>
             <p className="text-base text-gray-900 font-semibold">Description ready!</p>
-            <p className="text-xs text-gray-500 mt-1">247 words generated in 4.2 seconds</p>
+            <p className="text-xs text-gray-700 mt-1">247 words generated in 4.2 seconds</p>
             <div className="flex gap-2 mt-4">
               <span className="px-3 py-1 rounded-full bg-gray-100 border border-gray-200 text-xs text-gray-600">Copy</span>
               <span className="px-3 py-1 rounded-full bg-gray-100 border border-gray-200 text-xs text-gray-600">Refine</span>
@@ -382,7 +382,7 @@ function CRMDemoMockup() {
   return (
     <div ref={ref} className="rounded-2xl bg-white border border-gray-200 p-5 min-h-[280px] sm:aspect-video sm:min-h-0 flex flex-col overflow-hidden">
       <div className="flex items-center gap-2 mb-3 flex-shrink-0">
-        <Users className="w-4 h-4 text-gray-500" />
+        <Users className="w-4 h-4 text-gray-700" />
         <span className="text-label">Client Manager</span>
         <span className="ml-auto text-xs text-gray-600">{clients.length} clients</span>
       </div>
@@ -440,12 +440,12 @@ function CRMDemoMockup() {
                 </div>
               </div>
 
-              <div className="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Last note</div>
-              <p className="text-xs text-gray-500 leading-relaxed">{clients[selectedClient].note}</p>
+              <div className="text-[10px] text-gray-700 uppercase tracking-wider mt-1">Last note</div>
+              <p className="text-xs text-gray-700 leading-relaxed">{clients[selectedClient].note}</p>
 
               {phase >= 2 && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-                  <div className="text-[10px] text-gray-500 uppercase tracking-wider mt-1">New note</div>
+                  <div className="text-[10px] text-gray-700 uppercase tracking-wider mt-1">New note</div>
                   <div className="bg-white rounded-lg p-2 mt-1 border border-gray-100">
                     <p className="text-xs text-gray-600 leading-relaxed">
                       {typedNote}
@@ -534,7 +534,7 @@ function CalendarDemoMockup() {
             <Bell className="w-4 h-4 text-brand-500 flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-xs text-gray-900 font-semibold">Reminder</p>
-              <p className="text-[10px] text-gray-500 mt-0.5">Showing — Oak Street in 1 hour</p>
+              <p className="text-[10px] text-gray-700 mt-0.5">Showing — Oak Street in 1 hour</p>
             </div>
           </motion.div>
         )}
@@ -543,7 +543,7 @@ function CalendarDemoMockup() {
       {/* Header */}
       <div className="flex items-center justify-between mb-3 flex-shrink-0">
         <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-gray-500" />
+          <Calendar className="w-4 h-4 text-gray-700" />
           <span className="text-label">April 2026</span>
         </div>
         <AnimatePresence>
@@ -576,7 +576,7 @@ function CalendarDemoMockup() {
               key={n}
               className={`relative rounded-lg flex flex-col items-center justify-start pt-1 pb-1 text-[10px] font-medium min-h-0 cursor-pointer transition-colors ${
                 isToday ? 'bg-brand-500 text-white' :
-                hasEvent || isNewEvent ? 'bg-gray-50' : 'hover:bg-gray-50 text-gray-500'
+                hasEvent || isNewEvent ? 'bg-gray-50' : 'hover:bg-gray-50 text-gray-700'
               }`}
             >
               <span className={isToday ? 'text-white' : hasEvent || isNewEvent ? 'text-gray-900' : ''}>{n}</span>
@@ -612,14 +612,14 @@ function CalendarDemoMockup() {
           >
             <Clock className="w-3 h-3 flex-shrink-0" />
             <span className="font-medium">Apr {event.day} · {event.time}</span>
-            <span className="text-gray-500 truncate">— {event.label}</span>
+            <span className="text-gray-700 truncate">— {event.label}</span>
           </motion.div>
         ))}
         {showNewEvent && (
           <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35 }} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-brand-500/50 bg-brand-500/20 text-brand-300 text-[10px]">
             <Clock className="w-3 h-3 flex-shrink-0" />
             <span className="font-medium">Apr 19 · 3:00 PM</span>
-            <span className="text-gray-500 truncate">— New Listing Walkthrough</span>
+            <span className="text-gray-700 truncate">— New Listing Walkthrough</span>
           </motion.div>
         )}
       </div>
@@ -700,13 +700,13 @@ function PropertyLookupDemoMockup() {
   return (
     <div ref={ref} className="rounded-2xl bg-white border border-gray-200 p-5 flex flex-col overflow-hidden" style={{ minHeight: '360px' }}>
       <div className="flex items-center gap-2 mb-3 flex-shrink-0">
-        <Search className="w-4 h-4 text-gray-500" />
+        <Search className="w-4 h-4 text-gray-700" />
         <span className="text-label">Property Research</span>
       </div>
 
       <div className="relative flex-shrink-0">
         <div className="flex items-center gap-2 bg-gray-100 border border-gray-200 rounded-xl px-4 py-2.5">
-          <Search className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
+          <Search className="w-3.5 h-3.5 text-gray-700 flex-shrink-0" />
           <span className="text-sm text-gray-900 flex-1 truncate">
             {typedAddress}
             {phase === 1 && (
@@ -715,7 +715,7 @@ function PropertyLookupDemoMockup() {
           </span>
           {phase >= 2 && phase < 3 && (
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}>
-              <Loader2 className="w-3.5 h-3.5 text-gray-500" />
+              <Loader2 className="w-3.5 h-3.5 text-gray-700" />
             </motion.div>
           )}
           {phase >= 3 && <CheckCircle className="w-3.5 h-3.5 text-brand-500 flex-shrink-0" />}
@@ -734,7 +734,7 @@ function PropertyLookupDemoMockup() {
                   className={`flex-1 text-[10px] font-medium py-1.5 rounded-md transition-colors ${
                     activeTab === tab
                       ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-500'
+                      : 'text-gray-700'
                   }`}
                 >
                   {tab === 'overview' ? 'Overview' : 'Market / CMA'}
@@ -812,7 +812,7 @@ function PropertyLookupDemoMockup() {
                         >
                           <div className="min-w-0">
                             <p className="text-xs font-medium text-gray-900 truncate">{comp.address}</p>
-                            <p className="text-[10px] text-gray-500">{comp.sqft} sq ft · {comp.distance}</p>
+                            <p className="text-[10px] text-gray-700">{comp.sqft} sq ft · {comp.distance}</p>
                           </div>
                           <p className="text-price text-xs flex-shrink-0 ml-2">{comp.price}</p>
                         </motion.div>
@@ -830,7 +830,7 @@ function PropertyLookupDemoMockup() {
                     >
                       <p className="text-label text-brand-700 mb-0.5">Suggested price range</p>
                       <p className="text-price text-lg">$475.000 – $512.000</p>
-                      <p className="text-[10px] text-gray-500 mt-0.5">Based on 3 adjusted comps</p>
+                      <p className="text-[10px] text-gray-700 mt-0.5">Based on 3 adjusted comps</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -900,7 +900,7 @@ function LeadFormDemoMockup() {
             <Bell className="w-4 h-4 text-brand-500 flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-xs text-gray-900 font-semibold">New Lead!</p>
-              <p className="text-[10px] text-gray-500 mt-0.5">Jane Smith · Buying · ASAP · $300k–$500k</p>
+              <p className="text-[10px] text-gray-700 mt-0.5">Jane Smith · Buying · ASAP · $300k–$500k</p>
             </div>
           </motion.div>
         )}
@@ -908,7 +908,7 @@ function LeadFormDemoMockup() {
 
       {/* Header — shareable link */}
       <div className="flex items-center gap-2 mb-4 flex-shrink-0">
-        <Link2 className="w-4 h-4 text-gray-500" />
+        <Link2 className="w-4 h-4 text-gray-700" />
         <span className="text-label">Lead Capture Form</span>
       </div>
 
@@ -921,14 +921,14 @@ function LeadFormDemoMockup() {
       >
         <div className="w-2 h-2 rounded-full bg-brand-500 flex-shrink-0" />
         <span className="text-xs text-gray-600 truncate flex-1">{SITE_DOMAIN}/lead/your-name</span>
-        <span className="text-[10px] text-gray-500 bg-gray-50 border border-gray-200 px-2 py-0.5 rounded">Copy</span>
+        <span className="text-[10px] text-gray-700 bg-gray-50 border border-gray-200 px-2 py-0.5 rounded">Copy</span>
       </motion.div>
 
       {/* Form mockup */}
       <div className="flex-1 bg-gray-100 border border-gray-100 rounded-xl p-4 flex flex-col gap-3">
         {/* Name field */}
         <div>
-          <p className="text-[10px] text-gray-500 mb-1">Full name</p>
+          <p className="text-[10px] text-gray-700 mb-1">Full name</p>
           <div className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-900 min-h-[28px]">
             {typedName}
             {phase === 1 && (
@@ -941,10 +941,10 @@ function LeadFormDemoMockup() {
         <AnimatePresence>
           {phase >= 2 && (
             <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-              <p className="text-[10px] text-gray-500 mb-1">I&apos;m</p>
+              <p className="text-[10px] text-gray-700 mb-1">I&apos;m</p>
               <div className="grid grid-cols-4 gap-1.5">
                 {['Buying', 'Selling', 'Renting', 'Looking'].map((t, idx) => (
-                  <div key={t} className={`text-center text-[10px] py-1.5 rounded-lg border transition-all ${idx === 0 ? 'bg-brand-500 text-white border-brand-500 font-semibold' : 'border-gray-200 text-gray-500'}`}>
+                  <div key={t} className={`text-center text-[10px] py-1.5 rounded-lg border transition-all ${idx === 0 ? 'bg-brand-500 text-white border-brand-500 font-semibold' : 'border-gray-200 text-gray-700'}`}>
                     {t}
                   </div>
                 ))}
@@ -958,16 +958,16 @@ function LeadFormDemoMockup() {
           {showBudget && (
             <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="flex gap-2">
               <div className="flex-1">
-                <p className="text-[10px] text-gray-500 mb-1">Timeline</p>
+                <p className="text-[10px] text-gray-700 mb-1">Timeline</p>
                 <div className="flex gap-1">
                   <span className="text-[9px] px-2 py-1 rounded-lg bg-brand-500 text-white font-semibold border border-brand-500">ASAP</span>
-                  <span className="text-[9px] px-2 py-1 rounded-lg border border-gray-200 text-gray-500">1–3mo</span>
+                  <span className="text-[9px] px-2 py-1 rounded-lg border border-gray-200 text-gray-700">1–3mo</span>
                 </div>
               </div>
               <div className="flex-1">
-                <p className="text-[10px] text-gray-500 mb-1">Budget</p>
+                <p className="text-[10px] text-gray-700 mb-1">Budget</p>
                 <div className="flex gap-1">
-                  <span className="text-[9px] px-2 py-1 rounded-lg border border-gray-200 text-gray-500">Under $300k</span>
+                  <span className="text-[9px] px-2 py-1 rounded-lg border border-gray-200 text-gray-700">Under $300k</span>
                   <span className="text-[9px] px-2 py-1 rounded-lg bg-brand-500 text-white font-semibold border border-brand-500">$300–500k</span>
                 </div>
               </div>
@@ -1055,9 +1055,9 @@ function LeadsInboxDemoMockup() {
   return (
     <div ref={ref} className="rounded-2xl bg-white border border-gray-200 p-5 flex flex-col overflow-hidden" style={{ minHeight: '340px' }}>
       <div className="flex items-center gap-2 mb-4 flex-shrink-0">
-        <Inbox className="w-4 h-4 text-gray-500" />
+        <Inbox className="w-4 h-4 text-gray-700" />
         <span className="text-label">Leads Inbox</span>
-        <span className="ml-auto text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200">3 new</span>
+        <span className="ml-auto text-[10px] text-gray-700 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200">3 new</span>
       </div>
 
       <div className="flex flex-1 gap-3 min-h-0">
@@ -1090,7 +1090,7 @@ function LeadsInboxDemoMockup() {
                             {temp.label}
                           </span>
                         </div>
-                        <p className="text-[9px] text-gray-500 truncate">{lead.source}</p>
+                        <p className="text-[9px] text-gray-700 truncate">{lead.source}</p>
                       </div>
                     </div>
                   </motion.div>
@@ -1110,7 +1110,7 @@ function LeadsInboxDemoMockup() {
               className="flex-1 bg-gray-100 border border-gray-100 rounded-xl p-3 flex flex-col"
             >
               <p className="text-sm font-semibold text-gray-900 mb-1">{inboxLeads[selectedLead].name}</p>
-              <p className="text-[10px] text-gray-500 mb-3">{inboxLeads[selectedLead].detail}</p>
+              <p className="text-[10px] text-gray-700 mb-3">{inboxLeads[selectedLead].detail}</p>
               <div className="flex items-center gap-1.5 text-[10px] text-gray-600 mb-3">
                 <MapPin className="w-3 h-3 text-brand-500" />
                 {inboxLeads[selectedLead].source}
@@ -1207,14 +1207,14 @@ function OpenHouseDemoMockup() {
             <Bell className="w-4 h-4 text-brand-500 flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-xs text-gray-900 font-semibold">Open house sign-in</p>
-              <p className="text-[10px] text-gray-500 mt-0.5">Alex Thompson · 456 Oak Ave · Buying</p>
+              <p className="text-[10px] text-gray-700 mt-0.5">Alex Thompson · 456 Oak Ave · Buying</p>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       <div className="flex items-center gap-2 mb-3 flex-shrink-0">
-        <DoorOpen className="w-4 h-4 text-gray-500" />
+        <DoorOpen className="w-4 h-4 text-gray-700" />
         <span className="text-label">Open House Sign-In</span>
         <span className="ml-auto text-[9px] text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-200 font-medium">Pro</span>
       </div>
@@ -1225,15 +1225,15 @@ function OpenHouseDemoMockup() {
           <div className="w-16 h-16 bg-white border-2 border-gray-300 rounded-lg flex items-center justify-center mb-2">
             <QrCode className="w-10 h-10 text-gray-800" strokeWidth={1.25} />
           </div>
-          <p className="text-[9px] text-gray-500 text-center">Scan to sign in</p>
+          <p className="text-[9px] text-gray-700 text-center">Scan to sign in</p>
           <p className="text-[8px] text-gray-400 text-center mt-1">456 Oak Ave · Sat 1–4pm</p>
         </div>
 
         {/* Phone sign-in form */}
         <div className="flex-1 bg-gray-100 border border-gray-100 rounded-xl p-3 flex flex-col gap-2.5">
-          <p className="text-[10px] text-gray-500 font-medium">Welcome — sign in below</p>
+          <p className="text-[10px] text-gray-700 font-medium">Welcome — sign in below</p>
           <div>
-            <p className="text-[9px] text-gray-500 mb-1">Full name</p>
+            <p className="text-[9px] text-gray-700 mb-1">Full name</p>
             <div className="bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs text-gray-900 min-h-[26px]">
               {typedName}
               {phase === 1 && (
@@ -1244,10 +1244,10 @@ function OpenHouseDemoMockup() {
           <AnimatePresence>
             {phase >= 2 && (
               <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-                <p className="text-[9px] text-gray-500 mb-1">I&apos;m</p>
+                <p className="text-[9px] text-gray-700 mb-1">I&apos;m</p>
                 <div className="grid grid-cols-2 gap-1">
                   <span className="text-[9px] py-1 rounded-md bg-brand-500 text-white text-center font-semibold">Buying</span>
-                  <span className="text-[9px] py-1 rounded-md border border-gray-200 text-gray-500 text-center">Just browsing</span>
+                  <span className="text-[9px] py-1 rounded-md border border-gray-200 text-gray-700 text-center">Just browsing</span>
                 </div>
               </motion.div>
             )}
@@ -1365,7 +1365,7 @@ export default function HomePageClient() {
               <span className="text-gray-900">Close Faster</span>
             </motion.h1>
 
-            <motion.p variants={itemVariants} className="mt-6 sm:mt-8 text-base sm:text-lg text-gray-500 leading-relaxed max-w-xl">
+            <motion.p variants={itemVariants} className="mt-6 sm:mt-8 text-base sm:text-lg text-gray-700 leading-relaxed max-w-xl">
               Transform your workflow as a real estate agent with intelligent tools designed for you.
               Manage leads, schedule showings, and close more deals with our AI-powered platform.
             </motion.p>
@@ -1404,7 +1404,7 @@ export default function HomePageClient() {
                     <span className="text-label">New Leads Today</span>
                   </div>
                   <div className="text-[26px] font-semibold tracking-[-0.02em] tabular-nums text-gray-900 leading-none">4</div>
-                  <div className="text-sm text-gray-500 mt-1">Via your lead form link</div>
+                  <div className="text-sm text-gray-700 mt-1">Via your lead form link</div>
                 </motion.div>
               </motion.div>
 
@@ -1424,7 +1424,7 @@ export default function HomePageClient() {
                     <span className="text-label">Active Listings</span>
                   </div>
                   <div className="text-[26px] font-semibold tracking-[-0.02em] tabular-nums text-gray-900 leading-none">47</div>
-                  <div className="text-sm text-gray-500 mt-1">Properties</div>
+                  <div className="text-sm text-gray-700 mt-1">Properties</div>
                 </motion.div>
               </motion.div>
 
@@ -1443,7 +1443,7 @@ export default function HomePageClient() {
                     <div className="p-2 bg-brand-500/20 rounded-lg"><Sparkles className="w-5 h-5 text-brand-500" /></div>
                     <span className="text-label">AI Generated</span>
                   </div>
-                  <p className="text-sm text-gray-500 leading-relaxed">&ldquo;Stunning 4BR home with panoramic views, chef&apos;s kitchen, and resort-style backyard...&rdquo;</p>
+                  <p className="text-sm text-gray-700 leading-relaxed">&ldquo;Stunning 4BR home with panoramic views, chef&apos;s kitchen, and resort-style backyard...&rdquo;</p>
                 </motion.div>
               </motion.div>
             </div>
@@ -1561,7 +1561,7 @@ export default function HomePageClient() {
                   {feature.tag}
                 </span>
                 <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6 leading-tight">{feature.title}</h3>
-                <p className="text-gray-500 text-lg leading-relaxed mb-8">{feature.description}</p>
+                <p className="text-gray-700 text-lg leading-relaxed mb-8">{feature.description}</p>
                 <ul className="space-y-3">
                   {feature.highlights.map((h, j) => (
                     <motion.li
@@ -1592,7 +1592,7 @@ export default function HomePageClient() {
         <div className="mx-auto max-w-3xl px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-16">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Frequently asked questions</h2>
-            <p className="text-gray-500 text-lg">Everything you need to know about Oikaro.</p>
+            <p className="text-gray-700 text-lg">Everything you need to know about Oikaro.</p>
           </motion.div>
           <FAQAccordion />
         </div>
@@ -1613,7 +1613,7 @@ export default function HomePageClient() {
               7-Day Free Trial on Every Plan
             </span>
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Simple, transparent pricing</h2>
-            <p className="text-gray-500 text-lg">Start free. No credit card setup fees. Cancel anytime.</p>
+            <p className="text-gray-700 text-lg">Start free. No credit card setup fees. Cancel anytime.</p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
@@ -1656,16 +1656,16 @@ export default function HomePageClient() {
 
                 <div className="mb-5">
                   <h3 className="text-xl font-bold text-gray-900 mb-1">{plan.name}</h3>
-                  <p className="text-gray-500 text-sm">{plan.description}</p>
+                  <p className="text-gray-700 text-sm">{plan.description}</p>
                 </div>
 
                 <div className="mb-6">
                   <div className="flex items-baseline gap-2">
                     <span className="text-price text-4xl">{plan.price}</span>
-                    <span className="text-gray-500 text-sm">/ mo after trial</span>
+                    <span className="text-gray-700 text-sm">/ mo after trial</span>
                   </div>
                   {isAnyAnnualBillingAvailable() && (
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-xs text-gray-700 mt-2">
                       or {getPlanDisplayPrice(plan.plan, 'annual')}/year — save 2 months
                     </p>
                   )}
@@ -1723,7 +1723,7 @@ export default function HomePageClient() {
                 Start closing more deals.
               </span>
             </h2>
-            <p className="text-gray-500 text-lg mb-10 max-w-2xl mx-auto">
+            <p className="text-gray-700 text-lg mb-10 max-w-2xl mx-auto">
               Built for real estate agents who want to save hours every week and win more listings.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -1747,7 +1747,7 @@ export default function HomePageClient() {
                 </motion.button>
               </Link>
             </div>
-            <p className="mt-6 text-sm text-gray-500">No setup fees. Cancel anytime.</p>
+            <p className="mt-6 text-sm text-gray-700">No setup fees. Cancel anytime.</p>
           </motion.div>
         </div>
       </section>
@@ -1756,8 +1756,8 @@ export default function HomePageClient() {
       <footer className="relative z-10 border-t border-gray-200 bg-[#F5F5F5]/20 backdrop-blur-sm">
         <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-gray-500 text-sm">© 2026 Oikaro. All rights reserved.</p>
-            <div className="flex items-center gap-6 text-sm text-gray-500">
+            <p className="text-gray-700 text-sm">© 2026 Oikaro. All rights reserved.</p>
+            <div className="flex items-center gap-6 text-sm text-gray-700">
               <Link href="/for-agents" className="hover:text-brand-600 transition-colors">For Agents</Link>
               <Link href="/agents" className="hover:text-brand-600 transition-colors">Find an Agent</Link>
               <Link href="/about" className="hover:text-brand-600 transition-colors">About</Link>

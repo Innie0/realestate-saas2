@@ -231,7 +231,7 @@ function LeadRow({
               </span>
             )}
           </div>
-          <p className="text-[12.5px] text-gray-450 truncate mt-0.5">{getLeadSummaryLine(lead)}</p>
+          <p className="text-[12.5px] text-gray-600 truncate mt-0.5">{getLeadSummaryLine(lead)}</p>
         </div>
 
         <div className="hidden sm:flex items-center gap-1 shrink-0" onClick={stopPropagation}>
@@ -239,7 +239,7 @@ function LeadRow({
             <button
               type="button"
               onClick={() => onContactLead(lead, 'phone')}
-              className="p-1.5 rounded-md text-gray-450 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+              className="p-1.5 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
               title={lead.phone}
             >
               <Phone className="w-3.5 h-3.5" />
@@ -249,7 +249,7 @@ function LeadRow({
             <button
               type="button"
               onClick={() => onContactLead(lead, 'email')}
-              className="p-1.5 rounded-md text-gray-450 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+              className="p-1.5 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
               title={lead.email}
             >
               <Mail className="w-3.5 h-3.5" />
@@ -257,7 +257,7 @@ function LeadRow({
           )}
         </div>
 
-        <span className="hidden md:flex items-center gap-1.5 font-mono text-[11.5px] text-gray-450 shrink-0 w-20 justify-end">
+        <span className="hidden md:flex items-center gap-1.5 font-mono text-[11.5px] text-gray-600 shrink-0 w-20 justify-end">
           <Mail className="w-3 h-3" />
           {timeAgo(lead.created_at)}
         </span>
@@ -293,12 +293,12 @@ function LeadRow({
               {(openHouseLine || listingDisplay) && (
                 <div className="flex items-start gap-2 rounded-[10px] bg-gray-50 border border-gray-150 px-3 py-2">
                   {openHouseLine ? (
-                    <DoorOpen className="w-3.5 h-3.5 text-gray-500 mt-0.5 shrink-0" />
+                    <DoorOpen className="w-3.5 h-3.5 text-gray-700 mt-0.5 shrink-0" />
                   ) : (
-                    <MapPin className="w-3.5 h-3.5 text-gray-500 mt-0.5 shrink-0" />
+                    <MapPin className="w-3.5 h-3.5 text-gray-700 mt-0.5 shrink-0" />
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className="text-[10.5px] font-mono font-semibold uppercase tracking-[0.06em] text-gray-450">
+                    <p className="text-[10.5px] font-mono font-semibold uppercase tracking-[0.06em] text-gray-600">
                       {openHouseLine ? 'Open house' : 'Listing inquiry'}
                     </p>
                     <p className="text-[12.5px] text-gray-700 mt-0.5 break-words">{openHouseLine || listingDisplay}</p>
@@ -338,13 +338,13 @@ function LeadRow({
               )}
 
               {!followupActive && emailsStopped && lead.email && autoFollowupEnabled && (
-                <p className="text-[12.5px] text-gray-450 flex items-center gap-1.5">
+                <p className="text-[12.5px] text-gray-600 flex items-center gap-1.5">
                   <MailX className="w-3.5 h-3.5" />
                   Auto follow-up stopped for this lead
                 </p>
               )}
 
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12.5px] text-gray-500">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12.5px] text-gray-700">
                 {lead.email && (
                   <button
                     type="button"
@@ -380,7 +380,7 @@ function LeadRow({
               {infoLines.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {infoLines.map((line, i) => (
-                    <span key={i} className="text-[12px] bg-gray-50 border border-gray-150 text-gray-500 px-2 py-0.5 rounded-lg">
+                    <span key={i} className="text-[12px] bg-gray-50 border border-gray-150 text-gray-700 px-2 py-0.5 rounded-lg">
                       {line}
                     </span>
                   ))}
@@ -412,7 +412,7 @@ function LeadRow({
                     onClick={() => onMarkContacted(lead.id)}
                     disabled={isMarkingContacted}
                     title="Stop automated follow-up emails"
-                    className="flex items-center justify-center gap-1.5 text-[12.5px] font-medium px-3 py-1.5 rounded-lg border bg-white hover:bg-red-50 text-gray-500 hover:text-red-600 border-gray-200 hover:border-red-200 transition-colors disabled:opacity-60"
+                    className="flex items-center justify-center gap-1.5 text-[12.5px] font-medium px-3 py-1.5 rounded-lg border bg-white hover:bg-red-50 text-gray-700 hover:text-red-600 border-gray-200 hover:border-red-200 transition-colors disabled:opacity-60"
                   >
                     {isMarkingContacted ? (
                       <Loader2 className="w-3 h-3 animate-spin" />
@@ -646,7 +646,7 @@ function LeadsPageContent() {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
                   <h2 className="text-[16px] font-semibold tracking-tight text-gray-900">Inbox</h2>
-                  <p className="text-[13px] text-gray-450 mt-0.5">New captures stay here until you add them to your CRM.</p>
+                  <p className="text-[13px] text-gray-600 mt-0.5">New captures stay here until you add them to your CRM.</p>
                 </div>
                 <div data-tour="leads-filter" className="flex gap-0.5 bg-gray-100 rounded-lg p-1 w-full sm:w-auto">
                   {(['all', 'hot', 'warm', 'cold'] as const).map(f => (
@@ -654,7 +654,7 @@ function LeadsPageContent() {
                       key={f}
                       onClick={() => setFilter(f)}
                       className={`flex-1 sm:flex-none px-3 py-1.5 rounded-md text-[12.5px] font-medium transition-all duration-150 capitalize ${
-                        filter === f ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-450 hover:text-gray-800'
+                        filter === f ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-800'
                       }`}
                     >
                       {f}
@@ -719,17 +719,17 @@ function LeadsPageContent() {
         {/* ─── CAPTURE ───────────────────────────────────────────────────── */}
         {activeTab === 'capture' && (
           <div className="space-y-5">
-            <p className="text-[13.5px] text-gray-450">
+            <p className="text-[13.5px] text-gray-600">
               Tools to collect leads — share your form, run open houses, and publish your profile.
             </p>
 
             {/* Share Lead Form */}
             <Surface flat padding="none" className="p-5 sm:p-[22px]">
               <div className="flex items-center gap-2 mb-2">
-                <Link2 className="w-4 h-4 text-gray-500" strokeWidth={1.8} />
+                <Link2 className="w-4 h-4 text-gray-700" strokeWidth={1.8} />
                 <h3 className="text-[15px] font-semibold text-gray-900">Lead capture form</h3>
               </div>
-              <p className="text-[13px] text-gray-450 mb-5">
+              <p className="text-[13px] text-gray-600 mb-5">
                 Your personal link — add it to your bio, email signature, or business cards.
               </p>
 
@@ -757,7 +757,7 @@ function LeadsPageContent() {
                   </div>
 
                   <div className="border-t border-gray-150 pt-6">
-                    <p className="text-[13px] text-gray-450 mb-4">QR code for yard signs and flyers</p>
+                    <p className="text-[13px] text-gray-600 mb-4">QR code for yard signs and flyers</p>
                     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
                       <div className="p-3 bg-white rounded-[10px] border border-gray-150">
                         <QRCodeCanvas
@@ -781,7 +781,7 @@ function LeadsPageContent() {
                           href={leadFormUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2 text-[13px] text-gray-450 hover:text-gray-900 transition-colors"
+                          className="flex items-center justify-center gap-2 text-[13px] text-gray-600 hover:text-gray-900 transition-colors"
                         >
                           <Link2 className="w-3.5 h-3.5" />
                           Preview form
@@ -793,7 +793,7 @@ function LeadsPageContent() {
               ) : (
                 <div className="flex flex-col items-center py-8 text-center border border-gray-150 rounded-[10px]">
                   <Lock className="w-9 h-9 text-gray-400 mb-3" />
-                  <p className="text-[13px] text-gray-450 mb-4">Available on Starter and Pro plans</p>
+                  <p className="text-[13px] text-gray-600 mb-4">Available on Starter and Pro plans</p>
                   <Link
                     href="/dashboard/upgrade"
                     className="text-[13px] font-medium text-white bg-brand-500 hover:bg-brand-600 px-5 py-2.5 rounded-lg transition-colors"
@@ -856,9 +856,9 @@ function LeadsPageContent() {
                     <ArrowRight className="w-4 h-4 text-gray-400 ml-auto group-hover:text-gray-900 group-hover:translate-x-0.5 transition-all" />
                   </div>
                   <h3 className="text-[15px] font-semibold tracking-tight text-gray-900 mb-1">{title}</h3>
-                  <p className="text-[12.5px] text-gray-450">{description}</p>
+                  <p className="text-[12.5px] text-gray-600">{description}</p>
                   {url && (
-                    <p className="font-mono text-[11px] text-gray-450 mt-3 pt-3 border-t border-gray-150 truncate w-full">
+                    <p className="font-mono text-[11px] text-gray-600 mt-3 pt-3 border-t border-gray-150 truncate w-full">
                       {url}
                     </p>
                   )}
@@ -871,7 +871,7 @@ function LeadsPageContent() {
         {/* ─── AUTOMATIONS ───────────────────────────────────────────────── */}
         {activeTab === 'automations' && (
           <div className="space-y-5">
-            <p className="text-[13.5px] text-gray-450">
+            <p className="text-[13.5px] text-gray-600">
               Set up once — these run automatically when someone becomes a lead.
             </p>
 
@@ -879,11 +879,11 @@ function LeadsPageContent() {
               <Surface flat padding="none" className="p-5 sm:p-[22px]">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-gray-100 shrink-0">
-                    <MailCheck className="w-4 h-4 text-gray-500" strokeWidth={1.8} />
+                    <MailCheck className="w-4 h-4 text-gray-700" strokeWidth={1.8} />
                   </div>
                   <h3 className="text-[15px] font-semibold tracking-tight text-gray-900">Auto follow-up</h3>
                 </div>
-                <p className="text-[12.5px] text-gray-450 mb-5">
+                <p className="text-[12.5px] text-gray-600 mb-5">
                   Leads with an email get 3 professional follow-ups — right away, then on your schedule. Replies go to your account email (or profile email on Pro).
                 </p>
                 <button
@@ -911,12 +911,12 @@ function LeadsPageContent() {
                   </div>
                   <div className="flex items-center gap-2 min-w-0 flex-wrap">
                     <h3 className="text-[15px] font-semibold tracking-tight text-gray-900">SMS alerts</h3>
-                    <span className="shrink-0 px-2 py-0.5 rounded-full bg-gray-100 text-gray-450 text-[11px] font-medium">
+                    <span className="shrink-0 px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-[11px] font-medium">
                       Coming soon
                     </span>
                   </div>
                 </div>
-                <p className="text-[12.5px] text-gray-450 mb-5">
+                <p className="text-[12.5px] text-gray-600 mb-5">
                   Get a text when a lead submits your form or signs in at an open house. Not available yet — we&apos;ll announce when it launches.
                 </p>
                 <button

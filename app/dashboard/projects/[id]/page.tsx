@@ -1306,7 +1306,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 className={`relative py-3 text-[13px] font-medium transition-colors ${
                   projectTab === tab.id
                     ? 'text-gray-900'
-                    : 'text-gray-450 hover:text-gray-700'
+                    : 'text-gray-600 hover:text-gray-700'
                 }`}
               >
                 {tab.label}
@@ -1371,7 +1371,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   </div>
                   {showAllImages && (
                     <button
-                      className="mt-3 text-[13px] text-gray-500 hover:text-gray-900 transition-colors"
+                      className="mt-3 text-[13px] text-gray-700 hover:text-gray-900 transition-colors"
                       onClick={() => setShowAllImages(false)}
                     >
                       Show less
@@ -1396,35 +1396,35 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   <div className="p-3.5 bg-gray-50 rounded-lg">
-                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">Address</p>
+                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600">Address</p>
                     <p className="mt-1 text-[14px] font-medium text-gray-900">{project.property_info?.address || 'Not specified'}</p>
                   </div>
                   <div className="p-3.5 bg-gray-50 rounded-lg">
-                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">City, State</p>
+                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600">City, State</p>
                     <p className="mt-1 text-[14px] font-medium text-gray-900">
                       {project.property_info?.city || 'N/A'}, {project.property_info?.state || 'N/A'}
                     </p>
                   </div>
                   <div className="p-3.5 bg-gray-50 rounded-lg">
-                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">Property Type</p>
+                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600">Property Type</p>
                     <p className="mt-1 text-[14px] font-medium text-gray-900 capitalize">{project.property_type || 'N/A'}</p>
                   </div>
                   <div className="p-3.5 bg-gray-50 rounded-lg">
-                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">Bedrooms</p>
+                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600">Bedrooms</p>
                     <p className="mt-1 text-[14px] font-medium text-gray-900">{project.property_info?.bedrooms || 'N/A'}</p>
                   </div>
                   <div className="p-3.5 bg-gray-50 rounded-lg">
-                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">Bathrooms</p>
+                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600">Bathrooms</p>
                     <p className="mt-1 text-[14px] font-medium text-gray-900">{project.property_info?.bathrooms || 'N/A'}</p>
                   </div>
                   <div className="p-3.5 bg-gray-50 rounded-lg">
-                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">Square Feet</p>
+                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600">Square Feet</p>
                     <p className="mt-1 text-[14px] font-medium text-gray-900">
                       {project.property_info?.square_feet?.toLocaleString() || 'N/A'} sq ft
                     </p>
                   </div>
                   <div className="p-3.5 bg-gray-50 rounded-lg col-span-full sm:col-span-1">
-                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-450">Listing Price</p>
+                    <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600">Listing Price</p>
                     <p className="mt-1 text-[15px] font-semibold text-gray-900">
                       {project.property_info?.price 
                         ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(project.property_info.price)
@@ -1478,7 +1478,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           <h3 className="text-sm font-semibold text-gray-900">
                             {anyStarted ? 'Writing descriptions...' : 'Analyzing property...'}
                           </h3>
-                          <p className="text-xs text-gray-500">Generating 3 tone variations simultaneously</p>
+                          <p className="text-xs text-gray-700">Generating 3 tone variations simultaneously</p>
                         </div>
                       </div>
 
@@ -1495,7 +1495,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                               className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-medium transition-all ${
                                 isActive
                                   ? 'text-gray-900 border-b-2 border-white bg-gray-50'
-                                  : 'text-gray-500 hover:text-gray-900'
+                                  : 'text-gray-700 hover:text-gray-900'
                               }`}
                             >
                               {tabLabels[tone]}
@@ -1575,7 +1575,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                               }`}
                             >
                               <div className="text-[13.5px] font-semibold text-gray-900">{version.label}</div>
-                              <div className="text-[11.5px] text-gray-500 mt-0.5">{version.description}</div>
+                              <div className="text-[11.5px] text-gray-700 mt-0.5">{version.description}</div>
                             </button>
                           ))}
                         </div>
@@ -1808,7 +1808,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
                     <Sparkles className="w-10 h-10 mx-auto text-gray-400 mb-3" />
                     <p className="text-[13.5px] text-gray-600 mb-2">No AI content generated yet</p>
-                    <p className="text-[12.5px] text-gray-450">
+                    <p className="text-[12.5px] text-gray-600">
                       Click the button above to generate compelling marketing content with multiple tone variations
                     </p>
                   </div>
@@ -1821,7 +1821,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           <Surface flat className="p-5 sm:p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[15px] font-semibold text-gray-900 flex items-center">
-                  <Calendar className="w-4 h-4 mr-2 text-gray-450" />
+                  <Calendar className="w-4 h-4 mr-2 text-gray-600" />
                   Project Tasks &amp; Events
                 </h2>
                 <Button 
@@ -1846,7 +1846,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           {task.description && (
                             <p className="text-[12.5px] text-gray-600 mt-1">{task.description}</p>
                           )}
-                          <div className="flex items-center gap-3 mt-1.5 font-mono text-[11.5px] text-gray-450">
+                          <div className="flex items-center gap-3 mt-1.5 font-mono text-[11.5px] text-gray-600">
                             <span className="flex items-center gap-1">
                               <Calendar className="w-3 h-3" />
                               {new Date(task.start_time).toLocaleString()}
@@ -1862,7 +1862,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               ) : (
                 <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
                   <Calendar className="w-10 h-10 mx-auto text-gray-400 mb-3" />
-                  <p className="text-[13.5px] text-gray-500 mb-4">No tasks linked to this project yet</p>
+                  <p className="text-[13.5px] text-gray-700 mb-4">No tasks linked to this project yet</p>
                   <Button onClick={() => router.push(`/dashboard/calendar?project_id=${projectId}`)}>
                     Go to Calendar
                   </Button>
@@ -1874,7 +1874,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           <Surface flat className="p-5 sm:p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[15px] font-semibold text-gray-900 flex items-center">
-                  <FileText className="w-4 h-4 mr-2 text-gray-450" />
+                  <FileText className="w-4 h-4 mr-2 text-gray-600" />
                   Project Transactions
                 </h2>
                 <Button 
@@ -1913,7 +1913,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                                 : 'Price not set'}
                             </span>
                             {transaction.closing_date && (
-                              <span className="font-mono text-[11.5px] text-gray-450">
+                              <span className="font-mono text-[11.5px] text-gray-600">
                                 Closing: {new Date(transaction.closing_date).toLocaleDateString()}
                               </span>
                             )}
@@ -1930,7 +1930,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               ) : (
                 <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
                   <FileText className="w-10 h-10 mx-auto text-gray-400 mb-3" />
-                  <p className="text-[13.5px] text-gray-500 mb-4">No transactions linked to this project yet</p>
+                  <p className="text-[13.5px] text-gray-700 mb-4">No transactions linked to this project yet</p>
                   <Button onClick={() => router.push(
                     `/dashboard/transactions/new?project_id=${projectId}` +
                     (project.property_info?.address ? `&address=${encodeURIComponent(project.property_info.address)}` : '') +
@@ -1968,7 +1968,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   }`}
                 >
                   <div className="font-semibold text-gray-900 mb-1">{version.label}</div>
-                  <div className="text-xs text-gray-500">{version.description}</div>
+                  <div className="text-xs text-gray-700">{version.description}</div>
                 </button>
               ))}
             </div>
@@ -2078,7 +2078,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             <p className="text-gray-600">
               Tell the AI how you'd like to refine the description. For example:
             </p>
-            <ul className="text-sm text-gray-500 list-disc pl-5 space-y-1">
+            <ul className="text-sm text-gray-700 list-disc pl-5 space-y-1">
               <li>"Make it shorter and more concise"</li>
               <li>"Add more details about the kitchen"</li>
               <li>"Emphasize the outdoor space"</li>
@@ -2217,8 +2217,8 @@ function ZillowStylePreview({
         ) : (
           <div className="aspect-[16/9] md:aspect-[21/9] flex items-center justify-center bg-gray-200">
             <div className="text-center">
-              <Home className="w-16 h-16 mx-auto text-gray-500 mb-2" />
-              <p className="text-gray-500">No photos available</p>
+              <Home className="w-16 h-16 mx-auto text-gray-700 mb-2" />
+              <p className="text-gray-700">No photos available</p>
             </div>
           </div>
         )}
@@ -2235,7 +2235,7 @@ function ZillowStylePreview({
                 : 'Price Upon Request'}
             </div>
             {info.price && info.square_feet && (
-              <div className="text-sm text-gray-500 mt-1">
+              <div className="text-sm text-gray-700 mt-1">
                 ${Math.round(info.price / info.square_feet).toLocaleString()}/sq ft
               </div>
             )}
@@ -2274,7 +2274,7 @@ function ZillowStylePreview({
 
         {/* Address */}
         <div className="flex items-start gap-2 mb-6">
-          <MapPin className="w-5 h-5 text-gray-500 mt-0.5 flex-shrink-0" />
+          <MapPin className="w-5 h-5 text-gray-700 mt-0.5 flex-shrink-0" />
           <div>
             <div className="text-lg font-semibold text-gray-900">
               {info.address || project.title}
@@ -2313,19 +2313,19 @@ function ZillowStylePreview({
           <h3 className="text-lg font-semibold text-gray-900 mb-3">Property Details</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-              <div className="text-sm text-gray-500">Type</div>
+              <div className="text-sm text-gray-700">Type</div>
               <div className="font-medium text-gray-900 capitalize">{project.property_type || 'N/A'}</div>
             </div>
             <div>
-              <div className="text-sm text-gray-500">Year Built</div>
+              <div className="text-sm text-gray-700">Year Built</div>
               <div className="font-medium text-gray-900">{info.year_built || 'N/A'}</div>
             </div>
             <div>
-              <div className="text-sm text-gray-500">Lot Size</div>
+              <div className="text-sm text-gray-700">Lot Size</div>
               <div className="font-medium text-gray-900">{info.lot_size || 'N/A'}</div>
             </div>
             <div>
-              <div className="text-sm text-gray-500">ZIP Code</div>
+              <div className="text-sm text-gray-700">ZIP Code</div>
               <div className="font-medium text-gray-900">{info.zip_code || 'N/A'}</div>
             </div>
           </div>

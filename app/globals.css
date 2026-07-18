@@ -152,11 +152,11 @@
   }
 
   .text-muted {
-    @apply text-gray-500 text-[0.8125rem] leading-5;
+    @apply text-gray-700 text-[0.8125rem] leading-5;
   }
 
   .text-label {
-    @apply font-mono text-[0.6875rem] leading-4 font-medium uppercase tracking-wide text-gray-450;
+    @apply font-mono text-[0.6875rem] leading-4 font-medium uppercase tracking-wide text-gray-600;
   }
 
   /* Dashboard-style currency and metric numbers (Geist Sans, not mono). */
@@ -228,7 +228,7 @@
 }
 
 .driver-popover-progress-text {
-  color: #a0a09c !important;
+  color: #78786f !important;
   font-family: ui-monospace, 'IBM Plex Mono', monospace !important;
   font-size: 10.5px !important;
   letter-spacing: 0.04em !important;

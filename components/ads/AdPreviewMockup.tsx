@@ -106,7 +106,7 @@ function FacebookPreview({
           <AdvertiserAvatar name={advertiserName} url={advertiserAvatar} />
           <div className="min-w-0">
             <p className="text-[12px] font-semibold text-gray-900 truncate">{advertiserName}</p>
-            <p className="text-[10px] text-gray-500 flex items-center gap-1">
+            <p className="text-[10px] text-gray-700 flex items-center gap-1">
               Sponsored · <Globe className="h-2.5 w-2.5" />
             </p>
           </div>
@@ -128,7 +128,7 @@ function FacebookPreview({
 
       <div className="px-3 py-2.5 bg-gray-50 border-t border-gray-100 flex items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] text-gray-500 uppercase tracking-wide truncate">{domain}</p>
+          <p className="text-[10px] text-gray-700 uppercase tracking-wide truncate">{domain}</p>
           <motion.p
             key={headline}
             initial={reduced ? false : { opacity: 0.6 }}
@@ -165,7 +165,7 @@ function InstagramPreview({
           <AdvertiserAvatar name={advertiserName} url={advertiserAvatar} />
           <div>
             <p className="text-[12px] font-semibold text-gray-900">{advertiserName}</p>
-            <p className="text-[10px] text-gray-500">Sponsored</p>
+            <p className="text-[10px] text-gray-700">Sponsored</p>
           </div>
         </div>
         <MoreHorizontal className="h-4 w-4 text-gray-400" />
@@ -248,7 +248,7 @@ export default function AdPreviewMockup({
       <div className="flex items-center justify-between gap-3 mb-4">
         <div>
           <p className="text-label">Ad preview</p>
-          <p className="text-caption text-gray-500 mt-0.5">Updates as you edit</p>
+          <p className="text-caption text-gray-700 mt-0.5">Updates as you edit</p>
         </div>
         <div className="inline-flex rounded-lg bg-gray-100 p-0.5">
           {PLATFORM_TABS.map((tab) => (
@@ -260,7 +260,7 @@ export default function AdPreviewMockup({
                 'px-2.5 py-1 rounded-md text-[11.5px] font-medium transition-colors',
                 platform === tab.id
                   ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-800'
+                  : 'text-gray-700 hover:text-gray-800'
               )}
             >
               {tab.label}
@@ -284,10 +284,10 @@ export default function AdPreviewMockup({
       />
 
       {emptyHint && (
-        <p className="text-[12px] text-center text-gray-500 mt-3 px-2">{emptyHint}</p>
+        <p className="text-[12px] text-center text-gray-700 mt-3 px-2">{emptyHint}</p>
       )}
 
-      <p className="text-[11px] text-gray-450 mt-3 text-center">
+      <p className="text-[11px] text-gray-600 mt-3 text-center">
         Approximate preview · actual placement may vary
       </p>
     </Surface>

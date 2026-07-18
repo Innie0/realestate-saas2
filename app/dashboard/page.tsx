@@ -200,7 +200,7 @@ function MetricStrip({ metrics }: { metrics: Metric[] }) {
                 'text-[12px] mt-2 leading-tight',
                 m.subTone === 'positive' && 'text-emerald-600',
                 m.subTone === 'warning' && 'text-amber-700',
-                m.subTone === 'neutral' && 'text-gray-500',
+                m.subTone === 'neutral' && 'text-gray-700',
               )}
             >
               {m.sub}
@@ -259,7 +259,7 @@ function NeedsAttention({ items, loading }: { items: AttentionItem[]; loading: b
     <Surface flat padding="none" className="overflow-hidden">
       <div className="flex items-center justify-between px-4 py-[11px] border-b border-gray-150">
         <h2 className="text-[12.5px] font-semibold text-gray-900">Needs your attention</h2>
-        <span className="font-mono text-[10.5px] font-medium text-gray-450 tracking-[0.04em]">
+        <span className="font-mono text-[10.5px] font-medium text-gray-600 tracking-[0.04em]">
           {items.length} ITEM{items.length === 1 ? '' : 'S'}
         </span>
       </div>
@@ -327,7 +327,7 @@ function OpenDealsTable({
         <div className="flex-1 px-4 pb-6 pt-3 flex items-start justify-between gap-4 min-h-0">
           <div>
             <p className="text-body font-medium text-gray-900">No open deals</p>
-            <p className="text-caption text-gray-500 mt-0.5">
+            <p className="text-caption text-gray-700 mt-0.5">
               Start a transaction to track milestones and closings.
             </p>
           </div>
@@ -353,7 +353,7 @@ function OpenDealsTable({
                   <th
                     key={h}
                     className={clsx(
-                      'px-4 py-[7px] font-mono text-[10.5px] font-semibold uppercase tracking-[0.06em] text-gray-450',
+                      'px-4 py-[7px] font-mono text-[10.5px] font-semibold uppercase tracking-[0.06em] text-gray-600',
                       (h === 'Price' || h === 'Closing') && 'text-right',
                     )}
                   >
@@ -447,7 +447,7 @@ function TodayPanel() {
           ))}
         </div>
       ) : todayItems.length === 0 ? (
-        <p className="px-4 py-4 text-caption text-gray-500">Nothing scheduled today.</p>
+        <p className="px-4 py-4 text-caption text-gray-700">Nothing scheduled today.</p>
       ) : (
         <div className="py-1.5">
           {todayItems.map((item) => {
@@ -460,13 +460,13 @@ function TodayPanel() {
                 : 'border-gray-300';
             return (
               <div key={item.id} className="flex gap-3 px-4 py-[9px] transition-colors hover:bg-gray-50">
-                <span className="w-11 shrink-0 pt-px font-mono text-[11.5px] font-medium text-gray-450">
+                <span className="w-11 shrink-0 pt-px font-mono text-[11.5px] font-medium text-gray-600">
                   {timeLabel(item.date)}
                 </span>
                 <div className={clsx('border-l-2 pl-2.5', borderClass)}>
                   <p className="text-[12.5px] font-medium text-gray-900">{item.title}</p>
                   {(item.description || item.clientName || item.location) && (
-                    <p className="mt-0.5 text-[11.5px] text-gray-500 truncate">
+                    <p className="mt-0.5 text-[11.5px] text-gray-700 truncate">
                       {item.description || item.clientName || item.location}
                     </p>
                   )}
@@ -495,7 +495,7 @@ function ContinuePanel({ items, loading }: { items: ContinueListItem[]; loading:
           ))}
         </div>
       ) : items.length === 0 ? (
-        <p className="px-4 py-4 text-caption text-gray-500">
+        <p className="px-4 py-4 text-caption text-gray-700">
           Nothing in progress. Create a listing to get started.
         </p>
       ) : (
@@ -514,7 +514,7 @@ function ContinuePanel({ items, loading }: { items: ContinueListItem[]; loading:
               />
               <div className="flex-1 min-w-0">
                 <p className="text-[12.5px] font-medium text-gray-900 truncate">{item.title}</p>
-                <p className="text-[11.5px] text-gray-500 capitalize truncate">{item.subtitle}</p>
+                <p className="text-[11.5px] text-gray-700 capitalize truncate">{item.subtitle}</p>
               </div>
               <span className="text-gray-400 group-hover:text-gray-700 transition-colors shrink-0">→</span>
             </Link>
@@ -542,7 +542,7 @@ function QuickActionsPanel() {
             className="group flex items-center justify-between gap-3 px-4 py-[7px] transition-colors hover:bg-gray-50"
           >
             <span className="text-[12.5px] text-gray-900 truncate">{label}</span>
-            <kbd className="flex h-5 min-w-[20px] items-center justify-center rounded border border-gray-200 px-1 font-mono text-[10px] font-medium text-gray-450 shrink-0">
+            <kbd className="flex h-5 min-w-[20px] items-center justify-center rounded border border-gray-200 px-1 font-mono text-[10px] font-medium text-gray-600 shrink-0">
               {shortcut}
             </kbd>
           </Link>

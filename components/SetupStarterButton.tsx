@@ -44,7 +44,7 @@ export default function SetupStarterButton({ className = '' }: SetupStarterButto
         <CreditCard className="w-4 h-4 mr-2" />
         {loading ? 'Opening checkout...' : 'Connect Starter subscription'}
       </Button>
-      <p className="mt-2 text-xs text-center text-gray-500">
+      <p className="mt-2 text-xs text-center text-gray-700">
         One-time setup via Stripe so you can test the upgrade flow. 7-day trial, card required.
       </p>
       {error && <p className="mt-2 text-sm text-red-500 text-center">{error}</p>}

@@ -67,11 +67,11 @@ export const ACCENT: Record<Accent, AccentClasses> = {
     chip: 'bg-rose-50 ring-1 ring-rose-200/60 text-rose-600',
   },
   gray: {
-    text: 'text-gray-500',
+    text: 'text-gray-700',
     bg: 'bg-gray-50',
     ring: 'ring-gray-200/70',
     solid: 'bg-gray-400',
-    chip: 'bg-gray-50 ring-1 ring-gray-200/70 text-gray-500',
+    chip: 'bg-gray-50 ring-1 ring-gray-200/70 text-gray-700',
   },
 };
 

@@ -536,7 +536,7 @@ export default function PrivacyPage() {
             </section>
 
             <div className="border-t border-gray-100 pt-8 mt-8">
-              <p className="text-gray-500 text-sm italic">
+              <p className="text-gray-700 text-sm italic">
                 By using our Service, you acknowledge that you have read and understood this Privacy Policy.
               </p>
             </div>

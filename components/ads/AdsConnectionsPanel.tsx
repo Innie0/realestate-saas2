@@ -61,7 +61,7 @@ function StatusBadge({ status }: { status: AdConnectionStatus }) {
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-[10.5px] font-medium text-gray-500 border border-gray-200">
+    <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-[10.5px] font-medium text-gray-700 border border-gray-200">
       Not connected
     </span>
   );
@@ -119,7 +119,7 @@ export default function AdsConnectionsPanel({
                   <h3 className="text-[13px] font-semibold text-gray-900">{platform.name}</h3>
                   <StatusBadge status={status} />
                 </div>
-                <p className="text-caption text-gray-500 mt-1">{platform.description}</p>
+                <p className="text-caption text-gray-700 mt-1">{platform.description}</p>
                 {conn && (
                   <p className="text-[12px] text-gray-600 mt-2 truncate">
                     {status === 'ready' && conn.account_name
@@ -133,12 +133,12 @@ export default function AdsConnectionsPanel({
                   </p>
                 )}
                 {platform.id === 'meta' && status === 'ready' && (
-                  <p className="text-[11.5px] text-gray-500 mt-2">
+                  <p className="text-[11.5px] text-gray-700 mt-2">
                     Publishing runs on your connected Meta ad account.
                   </p>
                 )}
                 {platform.id === 'google' && status === 'ready' && (
-                  <p className="text-[11.5px] text-gray-500 mt-2">
+                  <p className="text-[11.5px] text-gray-700 mt-2">
                     Google reporting syncs when a developer token is configured. Publishing is Meta-only for now.
                   </p>
                 )}

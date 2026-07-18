@@ -30,13 +30,13 @@ function NewTransactionPageContent() {
         <div className="flex items-center gap-4 pb-6 border-b border-gray-200">
           <Link
             href="/dashboard/transactions"
-            className="p-2 hover:bg-gray-100 rounded-lg transition-all duration-200 text-gray-500 hover:text-gray-900"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-all duration-200 text-gray-700 hover:text-gray-900"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
             <h1 className="text-3xl font-bold text-gray-900">New Transaction</h1>
-            <p className="text-gray-500">
+            <p className="text-gray-700">
               Create a new real estate transaction to track its progress
             </p>
           </div>

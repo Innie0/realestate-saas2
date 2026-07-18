@@ -20,7 +20,7 @@ export default function GooglePreviewCard({
 }: GooglePreviewCardProps) {
   return (
     <div className={clsx('rounded-lg border border-gray-200 bg-white p-4 shadow-sm', className)}>
-      <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-2">Google · Search ad</p>
+      <p className="text-[10px] font-semibold text-gray-700 uppercase tracking-wide mb-2">Google · Search ad</p>
       <p className="text-[11px] text-emerald-700">Ad · {displayUrl}</p>
       <p className="text-[15px] font-medium text-[#1a0dab] mt-0.5 leading-snug line-clamp-2">
         {headline || 'Your headline appears here'}

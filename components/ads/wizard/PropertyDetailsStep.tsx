@@ -98,7 +98,7 @@ export default function PropertyDetailsStep({ draft, onChange }: PropertyDetails
         <div>
           <p className="text-label mb-2">Link a property project</p>
           {isLoading ? (
-            <p className="text-caption text-gray-500">Loading projects…</p>
+            <p className="text-caption text-gray-700">Loading projects…</p>
           ) : listingOptions.length === 0 ? (
             <p className="text-[13px] text-gray-600 rounded-lg border border-dashed border-gray-200 px-4 py-3">
               Add a project with photos and an address first, or fill in details manually below.
@@ -134,7 +134,7 @@ export default function PropertyDetailsStep({ draft, onChange }: PropertyDetails
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-[13px] font-medium text-gray-900 truncate">{address}</p>
-                      <p className="text-[12px] text-gray-500 tabular-nums">{price}</p>
+                      <p className="text-[12px] text-gray-700 tabular-nums">{price}</p>
                     </div>
                   </button>
                 );

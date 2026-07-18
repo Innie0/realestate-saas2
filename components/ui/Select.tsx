@@ -153,7 +153,7 @@ export default function Select({
       {label && (
         <label htmlFor={selectId} className="block text-sm font-medium text-gray-700 mb-1.5">
           {label}
-          {required && <span className="text-gray-500"> *</span>}
+          {required && <span className="text-gray-700"> *</span>}
         </label>
       )}
 
@@ -234,7 +234,7 @@ export default function Select({
       )}
 
       {error && <p className="mt-1.5 text-sm text-red-600">{error}</p>}
-      {!error && helperText && <p className="mt-1.5 text-xs text-gray-500">{helperText}</p>}
+      {!error && helperText && <p className="mt-1.5 text-xs text-gray-700">{helperText}</p>}
     </div>
   );
 }

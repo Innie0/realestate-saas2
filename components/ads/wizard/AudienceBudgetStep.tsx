@@ -114,7 +114,7 @@ export default function AudienceBudgetStep({ draft, onChange }: AudienceBudgetSt
               )}
             >
               <p className="text-[12.5px] font-medium text-gray-900">{preset.label}</p>
-              <p className="text-[11px] text-gray-500 mt-0.5">{preset.description}</p>
+              <p className="text-[11px] text-gray-700 mt-0.5">{preset.description}</p>
             </button>
           ))}
         </div>
@@ -283,7 +283,7 @@ export default function AudienceBudgetStep({ draft, onChange }: AudienceBudgetSt
             ))}
           </div>
         </div>
-        <p className="text-[12px] text-gray-500 mt-2">
+        <p className="text-[12px] text-gray-700 mt-2">
           Estimated spend:{' '}
           <span className="font-medium text-gray-700 tabular-nums">
             ${total.toLocaleString('en-US')}
