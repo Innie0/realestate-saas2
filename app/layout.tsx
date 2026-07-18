@@ -2,7 +2,7 @@
 // This is the main layout file for the Next.js app
 
 import type { Metadata } from 'next';
-import { Instrument_Sans, IBM_Plex_Mono } from 'next/font/google';
+import { EB_Garamond, Instrument_Sans, IBM_Plex_Mono } from 'next/font/google';
 import { GlobalStructuredData } from '@/components/seo/StructuredData';
 import { SITE_NAME, SITE_NAME_ALT, SITE_DESCRIPTION, SITE_DOMAIN, SITE_URL } from '@/lib/site-config';
 import './globals.css';
@@ -20,6 +20,15 @@ const plexMono = IBM_Plex_Mono({
   subsets: ['latin'],
   weight: ['400', '500', '600'],
   variable: '--font-mono',
+  display: 'swap',
+});
+
+// Display serif for marketing hero headlines (landing page).
+const ebGaramond = EB_Garamond({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  variable: '--font-display',
   display: 'swap',
 });
 
@@ -113,7 +122,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${instrumentSans.variable} ${plexMono.variable} font-sans antialiased`}>
+      <body className={`${instrumentSans.variable} ${plexMono.variable} ${ebGaramond.variable} font-sans antialiased`}>
         <GlobalStructuredData />
         {children}
       </body>
