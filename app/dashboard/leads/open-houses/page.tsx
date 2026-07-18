@@ -42,7 +42,7 @@ export default function OpenHousesPage() {
   const [notes, setNotes] = useState('');
 
   useEffect(() => {
-    document.title = 'Open Houses - Realestic';
+    document.title = 'Open Houses - Oikaro';
     const init = async () => {
       try {
         const usageRes = await fetch('/api/usage');

@@ -58,7 +58,7 @@ function CalendarPageContent() {
   }, [connectionsData]);
 
   React.useEffect(() => {
-    document.title = 'Calendar - Realestic';
+    document.title = 'Calendar - Oikaro';
   }, []);
 
   React.useEffect(() => {

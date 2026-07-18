@@ -69,7 +69,7 @@ function AdsPageContent() {
   } = useApi<AIInsight[]>(tab === 'performance' ? '/api/ads/insights' : null);
 
   useEffect(() => {
-    document.title = 'Ads - Realestic';
+    document.title = 'Ads - Oikaro';
   }, []);
 
   useEffect(() => {

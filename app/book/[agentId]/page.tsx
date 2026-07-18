@@ -7,6 +7,7 @@
 import { createAdminClient } from '@/lib/supabase-admin';
 import { hasLeadCaptureAccess } from '@/lib/subscription';
 import BookingScheduler from '@/components/BookingScheduler';
+import { SITE_URL } from '@/lib/site-config';
 
 interface BookingPageProps {
   params: Promise<{ agentId: string }>;
@@ -107,8 +108,8 @@ export default async function BookingPage({ params }: BookingPageProps) {
 
         <p className="text-center text-xs text-gray-600 mt-6">
           Powered by{' '}
-          <a href="https://realestic.ai" className="text-gray-500 hover:text-gray-500 transition-colors">
-            Realestic
+          <a href={SITE_URL} className="text-gray-500 hover:text-gray-500 transition-colors">
+            Oikaro
           </a>
         </p>
       </div>

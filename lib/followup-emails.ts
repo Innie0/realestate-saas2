@@ -1,7 +1,8 @@
 import { formatReplyToHeader } from '@/lib/agent-reply-email';
 import type { OutboundEmail } from '@/lib/resend';
+import { SUPPORT_FROM } from '@/lib/support-email';
 
-const FROM_EMAIL = 'Realestic <noreply@realestic.ai>';
+const FROM_EMAIL = SUPPORT_FROM;
 
 export type FollowupTemplateKey = 'welcome' | 'follow_up_1' | 'follow_up_2';
 
@@ -195,7 +196,7 @@ function baseHtml(body: string, agentName: string): string {
       ${body}
     </div>
     <div style="padding:16px 28px;background:#f9fafb;border-top:1px solid #e5e7eb;text-align:center;">
-      <p style="margin:0;font-size:12px;color:#9ca3af;">Sent on behalf of ${escapeHtml(agentName)} via Realestic</p>
+      <p style="margin:0;font-size:12px;color:#9ca3af;">Sent on behalf of ${escapeHtml(agentName)} via Oikaro</p>
     </div>
   </div>
 </body>

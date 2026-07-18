@@ -497,7 +497,7 @@ function LeadsPageContent() {
   }, [settingsData?.auto_followup_enabled]);
 
   useEffect(() => {
-    document.title = 'Leads - Realestic';
+    document.title = 'Leads - Oikaro';
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) return;
       const fullName: string = user.user_metadata?.full_name || '';

@@ -54,7 +54,7 @@ Before you can use the calendar feature, you need to:
    - Name: **RealEstate SaaS Web Client**
    - Authorized redirect URIs: 
      - `http://localhost:3000/api/calendar/google/callback` (for local development)
-     - `https://realestic.ai/api/calendar/google/callback` (production — must match `NEXT_PUBLIC_APP_URL` exactly, no trailing slash)
+     - `https://oikaro.ai/api/calendar/google/callback` (production — must match `NEXT_PUBLIC_APP_URL` exactly, no trailing slash)
    - Click **"Create"**
 
    ⚠️ **Both URIs must be added**, even if you only test locally at first. If the production
@@ -326,7 +326,7 @@ npm run dev
 **Solution**:
 - Double-check your redirect URI in Google Cloud Console / Azure Portal
 - Make sure it exactly matches: `http://localhost:3000/api/calendar/google/callback` (local) or
-  `https://realestic.ai/api/calendar/google/callback` (production) — no trailing slashes!
+  `https://oikaro.ai/api/calendar/google/callback` (production) — no trailing slashes!
 - Check `NEXT_PUBLIC_APP_URL` in `.env.local` (local) and in Vercel's Environment Variables
   (production). Since it's a `NEXT_PUBLIC_` var it's baked in at build time, so changing it in
   Vercel requires a redeploy before it takes effect.

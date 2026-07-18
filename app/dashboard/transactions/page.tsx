@@ -36,7 +36,7 @@ export default function TransactionsPage() {
   const error = fetchError?.message ?? '';
 
   useEffect(() => {
-    document.title = 'Transactions - Realestic';
+    document.title = 'Transactions - Oikaro';
   }, []);
 
   const filteredTransactions = transactions.filter((transaction) => {

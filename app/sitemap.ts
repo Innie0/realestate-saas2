@@ -1,7 +1,8 @@
 import { MetadataRoute } from 'next';
 import { getPublicAgentDirectory, getAllAreaSlugs } from '@/lib/agent-directory';
+import { SITE_URL } from '@/lib/site-config';
 
-const baseUrl = 'https://realestic.ai';
+const baseUrl = SITE_URL;
 
 const MAX_DYNAMIC_URLS = 40000;
 

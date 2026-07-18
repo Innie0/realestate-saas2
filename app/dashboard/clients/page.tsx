@@ -160,7 +160,7 @@ export default function ClientsPage() {
   const [noteText, setNoteText] = useState('');
 
   useEffect(() => {
-    document.title = 'Clients - Realestic';
+    document.title = 'Clients - Oikaro';
   }, []);
 
   useEffect(() => {

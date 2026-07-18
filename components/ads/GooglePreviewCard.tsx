@@ -2,6 +2,7 @@
 
 import clsx from 'clsx';
 import { getCtaLabel } from '@/lib/ads/promotion-options';
+import { SITE_DOMAIN } from '@/lib/site-config';
 import type { AdCtaType } from '@/lib/ads/promotion-options';
 
 interface GooglePreviewCardProps {
@@ -14,7 +15,7 @@ interface GooglePreviewCardProps {
 export default function GooglePreviewCard({
   headline,
   description,
-  displayUrl = 'realestic.ai/lead',
+  displayUrl = `${SITE_DOMAIN}/lead`,
   className,
 }: GooglePreviewCardProps) {
   return (

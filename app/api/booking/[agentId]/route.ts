@@ -20,6 +20,7 @@ import {
   type BookingAvailabilitySettings,
 } from '@/lib/booking-availability';
 import { formatDateLabel, formatTimeInZone } from '@/lib/timezone';
+import { SUPPORT_FROM } from '@/lib/support-email';
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -254,7 +255,7 @@ export async function POST(
         const dateLabel = formatDateLabel(startDate.toISOString().slice(0, 10));
         const timeLabel = formatTimeInZone(startDate.toISOString(), timezone);
         await sendEmail({
-          from: 'Realestic <noreply@realestic.ai>',
+          from: SUPPORT_FROM,
           to: cleanEmail,
           subject: `Showing confirmed with ${agent.name} — ${dateLabel} at ${timeLabel}`,
           html: `
@@ -267,7 +268,7 @@ export async function POST(
                 ${dateLabel} at ${timeLabel}
               </p>
               ${agent.settings.booking_location ? `<p style="color:#374151;font-size:15px;">Location: ${agent.settings.booking_location}</p>` : ''}
-              <p style="color:#6b7280;font-size:13px;margin-top:24px;">Sent on behalf of ${agent.name} via Realestic</p>
+              <p style="color:#6b7280;font-size:13px;margin-top:24px;">Sent on behalf of ${agent.name} via Oikaro</p>
             </div>
           `,
         });

@@ -27,7 +27,7 @@ export default function LoginPage() {
 
   // Set page title
   React.useEffect(() => {
-    document.title = 'Sign In - Realestic';
+    document.title = 'Sign In - Oikaro';
   }, []);
 
   // Only auto-redirect users who already have an active subscription

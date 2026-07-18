@@ -46,7 +46,7 @@ export default function PricingPage() {
   const showAnnual = isAnyAnnualBillingAvailable();
 
   useEffect(() => {
-    document.title = 'Pricing - Realestic';
+    document.title = 'Pricing - Oikaro';
   }, []);
 
   useEffect(() => {

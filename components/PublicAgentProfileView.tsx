@@ -104,7 +104,7 @@ export default function PublicAgentProfileView({
         <div className="max-w-5xl mx-auto px-4 py-3.5 flex items-center justify-between gap-4">
           <Link href="/" className="inline-flex items-center shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Realestic" className="h-8 w-auto" />
+            <img src="/logo.png" alt="Oikaro" className="h-8 w-auto" />
           </Link>
           <div className="flex items-center gap-2">
             {bookingUrl && (
@@ -349,7 +349,7 @@ export default function PublicAgentProfileView({
             {agent.brokerage ? ` · ${agent.brokerage}` : ''}
           </p>
           <Link href="/" className="text-xs text-gray-500 hover:text-brand-600 transition-colors">
-            Powered by Realestic
+            Powered by Oikaro
           </Link>
         </div>
       </footer>

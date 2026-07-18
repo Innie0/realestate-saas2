@@ -103,8 +103,8 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
 
   useEffect(() => {
     document.title = transaction?.property_address
-      ? `${transaction.property_address} - Realestic`
-      : 'Transaction - Realestic';
+      ? `${transaction.property_address} - Oikaro`
+      : 'Transaction - Oikaro';
   }, [transaction?.property_address]);
 
   useEffect(() => {

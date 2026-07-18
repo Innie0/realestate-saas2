@@ -43,8 +43,8 @@ import {
   type SearchResultKind,
 } from '@/lib/search/types';
 
-const HISTORY_KEY = 'realestic_property_research_history';
-const RECENT_SEARCHES_KEY = 'realestic_command_palette_recent';
+const HISTORY_KEY = 'oikaro_property_research_history';
+const RECENT_SEARCHES_KEY = 'oikaro_command_palette_recent';
 
 interface CommandPaletteContextValue {
   isOpen: boolean;

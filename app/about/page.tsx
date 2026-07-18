@@ -7,7 +7,7 @@ import { SUPPORT_EMAIL } from '@/lib/support-email';
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'Meet Ali Ali and learn why Realestic AI was built — simple tools for real estate agents who want to save time and win more business.',
+    'Meet Ali Ali and learn why Oikaro was built — simple tools for real estate agents who want to save time and win more business.',
   alternates: {
     canonical: '/about',
   },
@@ -17,19 +17,19 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <LegalPageLayout
-      title="About Realestic"
+      title="About Oikaro"
       subtitle="Built for agents, by someone who cares about your day-to-day work."
       icon={HeartHandshake}
     >
       <section className="mb-8">
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">Hi, I&apos;m Ali Ali</h2>
         <p className="text-gray-600 leading-relaxed mb-4">
-          I built Realestic because real estate agents deserve software that actually fits how they
+          I built Oikaro because real estate agents deserve software that actually fits how they
           work — not another bloated CRM that takes weeks to learn and still misses the basics.
         </p>
         <p className="text-gray-600 leading-relaxed mb-4">
           Listing prep, lead follow-up, open houses, CMAs, social content — your week is already
-          full. Realestic is meant to take the repetitive work off your plate so you can spend
+          full. Oikaro is meant to take the repetitive work off your plate so you can spend
           more time with clients and less time fighting your tools.
         </p>
       </section>
@@ -38,7 +38,7 @@ export default function AboutPage() {
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">What we believe</h2>
         <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
           <li>
-            <strong className="text-gray-800">Agents first.</strong> Realestic is for individual
+            <strong className="text-gray-800">Agents first.</strong> Oikaro is for individual
             agents and small teams — not enterprise brokerages with a six-month rollout.
           </li>
           <li>
@@ -59,7 +59,7 @@ export default function AboutPage() {
       <section className="mb-8">
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">How we work with you</h2>
         <p className="text-gray-600 leading-relaxed mb-4">
-          Realestic is a young product, and I&apos;m building it in the open with feedback from
+          Oikaro is a young product, and I&apos;m building it in the open with feedback from
           working agents. If you have an idea, hit a bug, or just want to say hi, reach out — I read
           every message.
         </p>
@@ -79,7 +79,7 @@ export default function AboutPage() {
       <section>
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">Ready to try it?</h2>
         <p className="text-gray-600 leading-relaxed mb-6">
-          Start free and see if Realestic fits your workflow.
+          Start free and see if Oikaro fits your workflow.
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
           <Link

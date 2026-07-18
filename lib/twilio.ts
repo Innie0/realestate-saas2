@@ -33,7 +33,7 @@ export async function sendLeadAlertSMS(
   const contact = leadPhone || leadEmail || '';
   const contactLine = contact ? `\nContact: ${contact}` : '';
 
-  const body = `New lead from Realestic!\n${leadName}${typeLabel} just submitted your ${source}.${contactLine}\n\nRespond quickly — speed wins deals!`;
+  const body = `New lead from Oikaro!\n${leadName}${typeLabel} just submitted your ${source}.${contactLine}\n\nRespond quickly — speed wins deals!`;
 
   const message = await client.messages.create({
     body,

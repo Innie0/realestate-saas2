@@ -50,7 +50,7 @@ export default function BookingSettingsPage() {
   const [location, setLocation] = useState('');
 
   useEffect(() => {
-    document.title = 'Booking Link - Realestic';
+    document.title = 'Booking Link - Oikaro';
     const init = async () => {
       try {
         const usageRes = await fetch('/api/usage');

@@ -12,7 +12,7 @@ import {
 export const ADMIN_EMAIL = 'callon786@outlook.com';
 
 // Free Pro accounts — full Pro access, no subscription required
-const FREE_PRO_EMAILS = ['aliq@theagencyre.com', 'realesticai@gmail.com'];
+const FREE_PRO_EMAILS = ['aliq@theagencyre.com', 'support@oikaro.ai'];
 
 /** @deprecated Use STARTER_MONTHLY_PRICE_ID from lib/pricing */
 export const STARTER_PRICE_ID = STARTER_MONTHLY_PRICE_ID;

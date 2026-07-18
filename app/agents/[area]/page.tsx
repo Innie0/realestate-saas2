@@ -85,7 +85,7 @@ export default async function AgentAreaPage({ params }: PageProps) {
               All Agents
             </Link>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Realestic" className="h-8 w-auto" />
+            <img src="/logo.png" alt="Oikaro" className="h-8 w-auto" />
           </div>
         </div>
       </header>

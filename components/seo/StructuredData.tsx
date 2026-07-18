@@ -1,5 +1,6 @@
 import { MARKETING_FAQ_ITEMS } from '@/lib/marketing-faq';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_NAME_ALT, SITE_TAGLINE, SITE_URL } from '@/lib/site-config';
+import { SUPPORT_EMAIL } from '@/lib/support-email';
 
 function JsonLd({ data }: { data: Record<string, unknown> }) {
   return (
@@ -18,7 +19,7 @@ export function GlobalStructuredData() {
     alternateName: SITE_NAME_ALT,
     url: SITE_URL,
     logo: `${SITE_URL}/logo-wordmark.png`,
-    email: 'realesticai@gmail.com',
+    email: SUPPORT_EMAIL,
     description: SITE_DESCRIPTION,
     founder: {
       '@type': 'Person',

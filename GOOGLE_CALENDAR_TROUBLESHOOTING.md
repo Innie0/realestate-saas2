@@ -166,8 +166,8 @@ builds it at runtime as `NEXT_PUBLIC_APP_URL + '/api/calendar/google/callback'`
 2. Go to Google Cloud Console → Credentials → your OAuth Client ID
 3. Add exactly (both are needed):
    - `http://localhost:3000/api/calendar/google/callback` (local dev)
-   - `https://realestic.ai/api/calendar/google/callback` (production)
-4. Confirm `NEXT_PUBLIC_APP_URL` is set to `https://realestic.ai` in Vercel's Production
+   - `https://oikaro.ai/api/calendar/google/callback` (production)
+4. Confirm `NEXT_PUBLIC_APP_URL` is set to `https://oikaro.ai` in Vercel's Production
    environment variables (no trailing slash). Since it's a `NEXT_PUBLIC_` var, redeploy after
    changing it for the new value to take effect.
 5. Save and try again

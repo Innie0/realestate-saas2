@@ -7,7 +7,7 @@ import { FileText } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
-  description: 'Read the terms and conditions for using Realestic, the AI-powered real estate tools platform.',
+  description: 'Read the terms and conditions for using Oikaro, the AI-powered real estate tools platform.',
   robots: { index: true, follow: true },
 };
 
@@ -17,14 +17,14 @@ export default function TermsPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">Agreement to Terms</h2>
               <p className="text-gray-600 leading-relaxed mb-4">
-                By accessing or using Realestic ("Service", "Platform", "we", "us", or "our"), you agree to be bound by these Terms of Service ("Terms"). If you disagree with any part of these terms, you may not access the Service.
+                By accessing or using Oikaro ("Service", "Platform", "we", "us", or "our"), you agree to be bound by these Terms of Service ("Terms"). If you disagree with any part of these terms, you may not access the Service.
               </p>
             </section>
 
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">Description of Service</h2>
               <p className="text-gray-600 leading-relaxed mb-4">
-                Realestic is a SaaS platform designed for real estate professionals, providing tools for:
+                Oikaro is a SaaS platform designed for real estate professionals, providing tools for:
               </p>
               <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
                 <li>Property and transaction management, including per-transaction document storage</li>
@@ -267,7 +267,7 @@ export default function TermsPage() {
                 <li>At our sole discretion on a case-by-case basis</li>
               </ul>
               <p className="text-gray-600 leading-relaxed mb-4">
-                To request a refund, contact realesticai@gmail.com with details of your concern.
+                To request a refund, contact support@oikaro.ai with details of your concern.
               </p>
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Price Changes</h3>
@@ -297,7 +297,7 @@ export default function TermsPage() {
               
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Our Rights</h3>
               <p className="text-gray-600 leading-relaxed mb-4">
-                The Service, including its design, code, features, and branding (excluding User Content), is owned by Realestic and protected by copyright, trademark, and other intellectual property laws.
+                The Service, including its design, code, features, and branding (excluding User Content), is owned by Oikaro and protected by copyright, trademark, and other intellectual property laws.
               </p>
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Restrictions</h3>
@@ -329,14 +329,14 @@ export default function TermsPage() {
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Property Research Data Accuracy</h3>
               <p className="text-gray-600 leading-relaxed mb-4">
-                <strong className="text-yellow-400">IMPORTANT:</strong> Property research results — including owner names, phone numbers, email addresses, occupancy status, comparable sales, listing data, and property details — are sourced from county public records and third-party databases. This information may be inaccurate, incomplete, or outdated. Realestic does not guarantee the accuracy of any property research result. You agree to:
+                <strong className="text-yellow-400">IMPORTANT:</strong> Property research results — including owner names, phone numbers, email addresses, occupancy status, comparable sales, listing data, and property details — are sourced from county public records and third-party databases. This information may be inaccurate, incomplete, or outdated. Oikaro does not guarantee the accuracy of any property research result. You agree to:
               </p>
               <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
                 <li>Independently verify all property research information before use</li>
                 <li>Use property research data only for lawful purposes</li>
                 <li>Comply with all applicable laws when contacting individuals found through the feature, including the TCPA, CAN-SPAM Act, and Do Not Call regulations</li>
                 <li>Not use the feature to harass, stalk, or harm any individual</li>
-                <li>Not hold Realestic liable for decisions made based on inaccurate research data</li>
+                <li>Not hold Oikaro liable for decisions made based on inaccurate research data</li>
               </ul>
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Professional Advice</h3>
@@ -348,7 +348,7 @@ export default function TermsPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">Limitation of Liability</h2>
               <p className="text-gray-600 leading-relaxed mb-4">
-                TO THE MAXIMUM EXTENT PERMITTED BY LAW, REALESTIC SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS, REVENUE, DATA, OR USE, ARISING OUT OF OR RELATED TO YOUR USE OF THE SERVICE.
+                TO THE MAXIMUM EXTENT PERMITTED BY LAW, OIKARO SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS, REVENUE, DATA, OR USE, ARISING OUT OF OR RELATED TO YOUR USE OF THE SERVICE.
               </p>
               <p className="text-gray-600 leading-relaxed mb-4">
                 OUR TOTAL LIABILITY TO YOU FOR ALL CLAIMS SHALL NOT EXCEED THE AMOUNT YOU PAID US IN THE TWELVE (12) MONTHS PRECEDING THE CLAIM.
@@ -358,7 +358,7 @@ export default function TermsPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">Indemnification</h2>
               <p className="text-gray-600 leading-relaxed mb-4">
-                You agree to indemnify, defend, and hold harmless Realestic, its officers, directors, employees, and agents from any claims, damages, losses, or expenses (including legal fees) arising from:
+                You agree to indemnify, defend, and hold harmless Oikaro, its officers, directors, employees, and agents from any claims, damages, losses, or expenses (including legal fees) arising from:
               </p>
               <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
                 <li>Your use of the Service</li>
@@ -444,7 +444,7 @@ export default function TermsPage() {
               
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Entire Agreement</h3>
               <p className="text-gray-600 leading-relaxed mb-4">
-                These Terms, along with our Privacy Policy, constitute the entire agreement between you and Realestic regarding the Service.
+                These Terms, along with our Privacy Policy, constitute the entire agreement between you and Oikaro regarding the Service.
               </p>
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Severability</h3>
@@ -469,14 +469,14 @@ export default function TermsPage() {
                 If you have questions about these Terms, please contact us:
               </p>
               <div className="bg-gray-100 border border-gray-200 rounded-lg p-6 space-y-2">
-                <p className="text-gray-600"><strong>Email:</strong> legal@realestic.com</p>
-                <p className="text-gray-600"><strong>Support:</strong> realesticai@gmail.com</p>
+                <p className="text-gray-600"><strong>Email:</strong> legal@oikaro.com</p>
+                <p className="text-gray-600"><strong>Support:</strong> support@oikaro.ai</p>
               </div>
             </section>
 
             <div className="border-t border-gray-100 pt-8 mt-8">
               <p className="text-gray-500 text-sm italic">
-                By using Realestic, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
+                By using Oikaro, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
               </p>
             </div>
     </LegalPageLayout>

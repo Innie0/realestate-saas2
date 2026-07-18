@@ -22,6 +22,7 @@ import {
   isAnyAnnualBillingAvailable,
 } from '@/lib/pricing';
 import { MARKETING_FAQ_ITEMS } from '@/lib/marketing-faq';
+import { SITE_DOMAIN } from '@/lib/site-config';
 
 // ─── Animation Variants ───────────────────────────────────────────────────────
 
@@ -919,7 +920,7 @@ function LeadFormDemoMockup() {
         className="flex items-center gap-2 bg-gray-100 border border-gray-200 rounded-xl px-4 py-2.5 mb-4"
       >
         <div className="w-2 h-2 rounded-full bg-brand-500 flex-shrink-0" />
-        <span className="text-xs text-gray-600 truncate flex-1">realestic.ai/lead/your-name</span>
+        <span className="text-xs text-gray-600 truncate flex-1">{SITE_DOMAIN}/lead/your-name</span>
         <span className="text-[10px] text-gray-500 bg-gray-50 border border-gray-200 px-2 py-0.5 rounded">Copy</span>
       </motion.div>
 
@@ -1593,7 +1594,7 @@ export default function HomePageClient() {
         <div className="mx-auto max-w-3xl px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-16">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Frequently asked questions</h2>
-            <p className="text-gray-500 text-lg">Everything you need to know about Realestic.</p>
+            <p className="text-gray-500 text-lg">Everything you need to know about Oikaro.</p>
           </motion.div>
           <FAQAccordion />
         </div>
@@ -1757,7 +1758,7 @@ export default function HomePageClient() {
       <footer className="relative z-10 border-t border-gray-200 bg-[#F5F5F5]/20 backdrop-blur-sm">
         <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-gray-500 text-sm">© 2026 Realestic. All rights reserved.</p>
+            <p className="text-gray-500 text-sm">© 2026 Oikaro. All rights reserved.</p>
             <div className="flex items-center gap-6 text-sm text-gray-500">
               <Link href="/for-agents" className="hover:text-brand-600 transition-colors">For Agents</Link>
               <Link href="/agents" className="hover:text-brand-600 transition-colors">Find an Agent</Link>

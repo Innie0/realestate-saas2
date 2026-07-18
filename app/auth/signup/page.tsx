@@ -39,7 +39,7 @@ function SignUpForm() {
 
   // Set page title
   React.useEffect(() => {
-    document.title = 'Sign Up - Realestic';
+    document.title = 'Sign Up - Oikaro';
   }, []);
 
   // Redirect already-authenticated users

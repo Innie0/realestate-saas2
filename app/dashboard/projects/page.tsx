@@ -26,7 +26,7 @@ export default function ProjectsPage() {
         element: '[data-tour="projects-new"]',
         popover: {
           title: 'Create a listing project',
-          description: 'Each project is for one property. Enter the address and details, then Realestic generates AI-powered descriptions, social captions, and more.',
+          description: 'Each project is for one property. Enter the address and details, then Oikaro generates AI-powered descriptions, social captions, and more.',
           side: 'bottom',
         },
       },
@@ -55,7 +55,7 @@ export default function ProjectsPage() {
   const { data: projects = [], isLoading, mutate } = useApi<Project[]>('/api/projects');
 
   React.useEffect(() => {
-    document.title = 'Projects - Realestic';
+    document.title = 'Projects - Oikaro';
   }, []);
 
   const handleDeleteProject = async (projectId: string) => {

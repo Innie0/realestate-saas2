@@ -31,7 +31,7 @@ export default function LegalPageLayout({
             </Link>
             <Image
               src="/logo.png"
-              alt="Realestic"
+              alt="Oikaro"
               width={140}
               height={42}
               priority
@@ -60,7 +60,7 @@ export default function LegalPageLayout({
           </header>
           <div className="legal-prose">{children}</div>
           <footer className="mt-12 pt-8 border-t border-gray-100 text-center text-xs text-gray-500">
-            <p>© 2026 Realestic. All rights reserved.</p>
+            <p>© 2026 Oikaro. All rights reserved.</p>
           </footer>
         </article>
       </main>

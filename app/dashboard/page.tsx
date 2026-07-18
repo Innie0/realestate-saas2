@@ -820,7 +820,7 @@ export default function DashboardPage() {
   });
 
   useEffect(() => {
-    document.title = 'Today - Realestic';
+    document.title = 'Today - Oikaro';
   }, []);
 
   useEffect(() => {
@@ -831,7 +831,7 @@ export default function DashboardPage() {
       params.delete('welcome');
       const next = params.toString();
       window.history.replaceState({}, '', next ? `/dashboard?${next}` : '/dashboard');
-    } else if (localStorage.getItem('realestic_getting_started_dismissed') !== '1') {
+    } else if (localStorage.getItem('oikaro_getting_started_dismissed') !== '1') {
       setShowGettingStarted(true);
     }
   }, []);
@@ -839,7 +839,7 @@ export default function DashboardPage() {
   const dismissGettingStarted = () => {
     setShowWelcome(false);
     setShowGettingStarted(false);
-    localStorage.setItem('realestic_getting_started_dismissed', '1');
+    localStorage.setItem('oikaro_getting_started_dismissed', '1');
   };
 
   const showOnboarding =

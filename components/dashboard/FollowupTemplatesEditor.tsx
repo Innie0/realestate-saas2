@@ -210,7 +210,7 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
       setNudgeInput('5');
       setDrafts(buildDraftState(null));
       setShowAdvanced(false);
-      toast.success('Restored Realestic default emails');
+      toast.success('Restored Oikaro default emails');
       onSaved();
     } catch {
       toast.error('Could not restore defaults');
@@ -390,7 +390,7 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
             disabled={resetting}
           >
             <RotateCcw className="w-4 h-4" />
-            Restore Realestic defaults
+            Restore Oikaro defaults
           </Button>
         </div>
 

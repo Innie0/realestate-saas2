@@ -65,7 +65,7 @@ export default function UpgradePage() {
   }, []);
 
   useEffect(() => {
-    document.title = 'Upgrade Plan - Realestic';
+    document.title = 'Upgrade Plan - Oikaro';
   }, []);
 
   useEffect(() => {
@@ -135,7 +135,7 @@ export default function UpgradePage() {
             <Sparkles className="w-8 h-8 text-gray-900/60" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">You&apos;re on Pro</h2>
-          <p className="text-gray-500 mb-6">You already have full access to everything Realestic offers.</p>
+          <p className="text-gray-500 mb-6">You already have full access to everything Oikaro offers.</p>
           <Link href="/dashboard" className="text-sm text-gray-500 hover:text-brand-600 transition-colors flex items-center justify-center gap-1">
             <ArrowLeft className="w-4 h-4" /> Back to Dashboard
           </Link>

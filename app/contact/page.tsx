@@ -27,7 +27,7 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
-    document.title = 'Contact - Realestic';
+    document.title = 'Contact - Oikaro';
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,7 +76,7 @@ export default function ContactPage() {
         <div className="text-center mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Contact us</h1>
           <p className="text-gray-500 mt-2 text-sm sm:text-base">
-            Questions about Realestic? We typically reply within one business day.
+            Questions about Oikaro? We typically reply within one business day.
           </p>
         </div>
 

@@ -1,6 +1,6 @@
 'use client';
 
-const STORAGE_KEY = 'realestic_research_cache_v1';
+const STORAGE_KEY = 'oikaro_research_cache_v1';
 const DEFAULT_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 interface CacheEntry<T> {

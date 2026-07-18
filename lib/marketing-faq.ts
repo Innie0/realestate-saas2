@@ -23,7 +23,7 @@ export const MARKETING_FAQ_ITEMS: MarketingFaqItem[] = [
   {
     question: 'How does the AI listing tool work?',
     answer:
-      'Create a listing project, add property details and photos, and Realestic generates a professional description plus social captions in seconds. Choose from three tones and refine the length or focus until it\'s ready to publish. Starter includes 20 projects per month; Pro is unlimited.',
+      'Create a listing project, add property details and photos, and Oikaro generates a professional description plus social captions in seconds. Choose from three tones and refine the length or focus until it\'s ready to publish. Starter includes 20 projects per month; Pro is unlimited.',
   },
   {
     question: 'How do leads and follow-up work?',

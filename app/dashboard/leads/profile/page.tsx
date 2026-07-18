@@ -43,7 +43,7 @@ export default function ProfileEditorPage() {
   const [saveError, setSaveError] = useState('');
 
   useEffect(() => {
-    document.title = 'Agent Profile - Realestic';
+    document.title = 'Agent Profile - Oikaro';
     const init = async () => {
       try {
         const usageRes = await fetch('/api/usage');

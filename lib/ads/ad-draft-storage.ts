@@ -1,6 +1,6 @@
 import type { AdDraft } from '@/lib/ads/ad-draft-types';
 
-const STORAGE_KEY = 'realestic-ad-draft';
+const STORAGE_KEY = 'oikaro-ad-draft';
 
 export function loadAdDraft(): AdDraft | null {
   if (typeof window === 'undefined') return null;

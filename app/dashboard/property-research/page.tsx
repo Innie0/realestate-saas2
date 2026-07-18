@@ -28,7 +28,7 @@ import clsx from 'clsx';
 
 type TabId = 'overview' | 'owner' | 'cma';
 
-const HISTORY_KEY = 'realestic_property_research_history';
+const HISTORY_KEY = 'oikaro_property_research_history';
 const MAX_HISTORY = 10;
 
 interface HistoryEntry {
@@ -122,7 +122,7 @@ function PropertyResearchContent() {
   });
 
   useEffect(() => {
-    document.title = 'Property Research - Realestic';
+    document.title = 'Property Research - Oikaro';
   }, []);
 
   useEffect(() => {

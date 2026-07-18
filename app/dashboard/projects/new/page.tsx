@@ -24,7 +24,7 @@ export default function NewProjectPage() {
 
   // Set page title
   React.useEffect(() => {
-    document.title = 'New Project - Realestic';
+    document.title = 'New Project - Oikaro';
   }, []);
 
   // Form state

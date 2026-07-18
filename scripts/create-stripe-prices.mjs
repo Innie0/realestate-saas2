@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Creates (or reuses) Stripe products/prices for Realestic plans and updates .env.local.
+ * Creates (or reuses) Stripe products/prices for Oikaro plans and updates .env.local.
  *
  * Usage: node --env-file=.env.local scripts/create-stripe-prices.mjs
  */
@@ -24,7 +24,7 @@ const stripe = new Stripe(secret);
 
 const PLANS = [
   {
-    productName: 'Realestic Starter',
+    productName: 'Oikaro Starter',
     productDescription: 'Starter plan — CRM, listings, lead capture, and property tools.',
     prices: [
       { key: 'NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID', amount: 4900, interval: 'month', label: 'Starter monthly ($49)' },
@@ -32,7 +32,7 @@ const PLANS = [
     ],
   },
   {
-    productName: 'Realestic Pro',
+    productName: 'Oikaro Pro',
     productDescription: 'Pro plan — unlimited listings, lookups, AI, and lead tools.',
     prices: [
       { key: 'NEXT_PUBLIC_STRIPE_PRO_PRICE_ID', amount: 9900, interval: 'month', label: 'Pro monthly ($99)' },

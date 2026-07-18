@@ -57,7 +57,7 @@ export default function AccountPage() {
 
   // Set page title
   React.useEffect(() => {
-    document.title = 'Account - Realestic';
+    document.title = 'Account - Oikaro';
   }, []);
 
   React.useEffect(() => {

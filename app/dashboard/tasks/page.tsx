@@ -80,7 +80,7 @@ function TasksPageContent() {
 
   // Set page title
   useEffect(() => {
-    document.title = 'AI Assistant - Realestic';
+    document.title = 'AI Assistant - Oikaro';
   }, []);
 
   useEffect(() => {

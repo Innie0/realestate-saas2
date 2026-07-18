@@ -7,9 +7,9 @@ export const metadata: Metadata = {
   title: `${SITE_NAME_ALT} – ${SITE_TAGLINE}`,
   description: SITE_DESCRIPTION,
   keywords: [
-    'Realestic',
-    'Realestic AI',
-    'realestic.ai',
+    'Oikaro',
+    'Oikaro',
+    'oikaro.ai',
     'real estate agent tools',
     'AI listing description generator',
     'property listing software',

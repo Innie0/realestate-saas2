@@ -12,7 +12,7 @@ export default function CheckoutSuccessClient() {
   const [message, setMessage] = useState('Setting up your account…');
 
   useEffect(() => {
-    document.title = 'Welcome - Realestic';
+    document.title = 'Welcome - Oikaro';
   }, []);
 
   useEffect(() => {

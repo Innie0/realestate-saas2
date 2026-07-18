@@ -21,7 +21,7 @@ export default function BrandKitPage() {
 
   // Set page title
   React.useEffect(() => {
-    document.title = 'Brand Kit - Realestic';
+    document.title = 'Brand Kit - Oikaro';
   }, []);
 
   // Brand kit state (in a real app, this would be fetched from an API)

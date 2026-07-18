@@ -38,7 +38,7 @@ export default function GettingStartedPanel({ variant, onDismiss }: GettingStart
       : 'Get started in 3 steps';
   const subtitle =
     variant === 'welcome'
-      ? 'Pick one action below to see what Realestic can do. You can explore everything during your free trial.'
+      ? 'Pick one action below to see what Oikaro can do. You can explore everything during your free trial.'
       : 'Your workspace is empty. Start with a listing, leads, or property research.';
 
   return (

@@ -20,7 +20,7 @@ function NewTransactionPageContent() {
 
   // Set page title
   React.useEffect(() => {
-    document.title = 'New Transaction - Realestic';
+    document.title = 'New Transaction - Oikaro';
   }, []);
 
   return (

@@ -4,7 +4,7 @@
 import type { Metadata } from 'next';
 import { Instrument_Sans, IBM_Plex_Mono } from 'next/font/google';
 import { GlobalStructuredData } from '@/components/seo/StructuredData';
-import { SITE_NAME, SITE_NAME_ALT, SITE_URL } from '@/lib/site-config';
+import { SITE_NAME, SITE_NAME_ALT, SITE_DESCRIPTION, SITE_DOMAIN, SITE_URL } from '@/lib/site-config';
 import './globals.css';
 
 // Primary UI typeface — text, labels, headings.
@@ -34,13 +34,11 @@ export const metadata: Metadata = {
     default: `Properties for Sale | ${SITE_NAME_ALT}`,
     template: `%s | ${SITE_NAME}`,
   },
-  description:
-    'Browse homes and properties for sale on Realestic. Search by location, property type, and price — no account required.',
+  description: SITE_DESCRIPTION,
   applicationName: SITE_NAME_ALT,
   keywords: [
-    'Realestic',
-    'Realestic AI',
-    'realestic.ai',
+    SITE_NAME,
+    SITE_DOMAIN,
     'real estate agent tools',
     'AI listing description generator',
     'property listing software',
@@ -64,8 +62,7 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: SITE_NAME_ALT,
     title: `Properties for Sale | ${SITE_NAME_ALT}`,
-    description:
-      'Browse homes and properties for sale on Realestic. Search by location, property type, and price.',
+    description: SITE_DESCRIPTION,
     images: [
       {
         url: '/logo-wordmark.png',
@@ -78,8 +75,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: `Properties for Sale | ${SITE_NAME_ALT}`,
-    description:
-      'Browse homes and properties for sale on Realestic. Search by location, property type, and price.',
+    description: SITE_DESCRIPTION,
     images: ['/logo-wordmark.png'],
   },
   icons: {

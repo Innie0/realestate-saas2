@@ -8,6 +8,7 @@ import Surface from '@/components/ui/Surface';
 import { EASE_OUT, useMotionReduced } from '@/lib/motion';
 import type { AdCtaType } from '@/lib/ads/promotion-options';
 import { getCtaLabel } from '@/lib/ads/promotion-options';
+import { SITE_DOMAIN } from '@/lib/site-config';
 import clsx from 'clsx';
 
 export type AdPreviewPlatform = 'facebook' | 'instagram';
@@ -228,7 +229,7 @@ export default function AdPreviewMockup({
   cta,
   advertiserName,
   advertiserAvatar,
-  domain = 'realestic.ai',
+  domain = SITE_DOMAIN,
   className,
   emptyHint,
 }: AdPreviewMockupProps) {

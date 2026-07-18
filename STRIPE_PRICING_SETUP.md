@@ -9,7 +9,7 @@ npm run stripe:setup-prices
 ```
 
 This script will:
-1. Create or reuse **Realestic Starter** and **Realestic Pro** products in Stripe
+1. Create or reuse **Oikaro Starter** and **Oikaro Pro** products in Stripe
 2. Create recurring prices at the amounts below (skips if a matching price already exists)
 3. Write the price IDs into `.env.local`
 

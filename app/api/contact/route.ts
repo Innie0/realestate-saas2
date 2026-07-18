@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     }
 
     const topicLabel = TOPIC_LABELS[cleanTopic];
-    const subject = `[Realestic Contact] ${topicLabel} — ${cleanName}`;
+    const subject = `[Oikaro Contact] ${topicLabel} — ${cleanName}`;
 
     await sendEmail({
       from: SUPPORT_FROM,

@@ -1,4 +1,5 @@
 import { formatListingPrice, formatListingAddress, getListingDescription, normalizeProjectImages } from '@/lib/listing-utils';
+import { SITE_URL } from '@/lib/site-config';
 import type { Project } from '@/types';
 
 type PromotableProject = Pick<
@@ -8,7 +9,7 @@ type PromotableProject = Pick<
 
 /** Lead capture page — ad clicks land here with UTM attribution. */
 export function getAgentLeadUrl(agentId: string): string {
-  const base = process.env.NEXT_PUBLIC_APP_URL || 'https://realestic.ai';
+  const base = process.env.NEXT_PUBLIC_APP_URL || SITE_URL;
   return `${base.replace(/\/$/, '')}/lead/${agentId}`;
 }
 

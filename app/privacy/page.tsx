@@ -8,7 +8,7 @@ import { Shield } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'Learn how Realestic collects, uses, and protects your personal information.',
+  description: 'Learn how Oikaro collects, uses, and protects your personal information.',
   robots: { index: true, follow: true },
 };
 
@@ -18,7 +18,7 @@ export default function PrivacyPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">Introduction</h2>
               <p className="text-gray-600 leading-relaxed mb-4">
-                Welcome to Realestic ("we," "our," or "us"). We respect your privacy and are committed to protecting your personal data. This privacy policy explains how we collect, use, store, and protect your information when you use our real estate SaaS platform (the "Service").
+                Welcome to Oikaro ("we," "our," or "us"). We respect your privacy and are committed to protecting your personal data. This privacy policy explains how we collect, use, store, and protect your information when you use our real estate SaaS platform (the "Service").
               </p>
             </section>
 
@@ -436,9 +436,9 @@ export default function PrivacyPage() {
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">How to Exercise Your Rights</h3>
               <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
                 <li><strong>Update data:</strong> Use your account Settings page</li>
-                <li><strong>Delete account:</strong> Contact us at privacy@realestic.com</li>
-                <li><strong>Data export:</strong> Contact us at privacy@realestic.com</li>
-                <li><strong>Questions:</strong> Email us at realesticai@gmail.com or use our <Link href="/contact" className="text-brand-600 hover:text-brand-700">contact form</Link></li>
+                <li><strong>Delete account:</strong> Contact us at privacy@oikaro.com</li>
+                <li><strong>Data export:</strong> Contact us at privacy@oikaro.com</li>
+                <li><strong>Questions:</strong> Email us at support@oikaro.ai or use our <Link href="/contact" className="text-brand-600 hover:text-brand-700">contact form</Link></li>
               </ul>
             </section>
 
@@ -518,8 +518,8 @@ export default function PrivacyPage() {
                 For privacy-related questions or to exercise your rights:
               </p>
               <div className="bg-gray-100 border border-gray-200 rounded-lg p-6 space-y-2">
-                <p className="text-gray-600"><strong>Email:</strong> privacy@realestic.com</p>
-                <p className="text-gray-600"><strong>Support:</strong> realesticai@gmail.com</p>
+                <p className="text-gray-600"><strong>Email:</strong> privacy@oikaro.com</p>
+                <p className="text-gray-600"><strong>Support:</strong> support@oikaro.ai</p>
                 <p className="text-gray-600"><strong>Response time:</strong> We aim to respond within 30 days</p>
               </div>
             </section>

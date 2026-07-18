@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
       promotionId,
     });
 
-    const campaignName = `Realestic · ${defaults.address}`.slice(0, 120);
+    const campaignName = `Oikaro · ${defaults.address}`.slice(0, 120);
 
     const { data: promotion, error: insertError } = await supabase
       .from('ad_promotions')
