@@ -23,18 +23,26 @@ function ShowcaseChatBar() {
 export function ShowcaseAnimationFrame({
   children,
   className,
+  showChatBar = false,
 }: {
   children: React.ReactNode;
   className?: string;
+  showChatBar?: boolean;
 }) {
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200/90 bg-white shadow-[0_20px_50px_-24px_rgba(24,24,27,0.12)] ring-1 ring-gray-900/[0.04]">
-      <div className={`min-h-0 flex-1 bg-[#fafafa] px-4 pt-4 sm:px-5 sm:pt-5 ${className ?? SHOWCASE_FRAME_CLASS}`}>
+      <div
+        className={`min-h-0 flex-1 bg-[#fafafa] ${
+          showChatBar ? 'px-4 pt-4 sm:px-5 sm:pt-5' : 'p-5 sm:p-6'
+        } ${className ?? SHOWCASE_FRAME_CLASS}`}
+      >
         {children}
       </div>
-      <div className="shrink-0 border-t border-gray-200 bg-white px-4 py-3 sm:px-5 sm:py-3.5">
-        <ShowcaseChatBar />
-      </div>
+      {showChatBar ? (
+        <div className="shrink-0 border-t border-gray-200 bg-white px-4 py-3 sm:px-5 sm:py-3.5">
+          <ShowcaseChatBar />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -46,7 +54,7 @@ function LoopShell({ children }: { reduced: boolean; children: React.ReactNode }
 /** AI chat: prompt → reply → action chips */
 export function AskOnceAnimation({ reduced }: { reduced: boolean }) {
   return (
-    <ShowcaseAnimationFrame>
+    <ShowcaseAnimationFrame showChatBar>
       <LoopShell reduced={reduced}>
         <div className="space-y-3">
           <motion.div
