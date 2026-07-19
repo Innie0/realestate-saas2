@@ -316,8 +316,6 @@ export default function HomePageClient() {
             <p className="text-gray-700 text-sm">© 2026 Oikaro. All rights reserved.</p>
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-700">
               <Link href="/products" className="hover:text-brand-600 transition-colors">Products</Link>
-              <Link href="/for-agents" className="hover:text-brand-600 transition-colors">For Agents</Link>
-              <Link href="/agents" className="hover:text-brand-600 transition-colors">Find an Agent</Link>
               <Link href="/about" className="hover:text-brand-600 transition-colors">About</Link>
               <Link href="/privacy" className="hover:text-brand-600 transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-brand-600 transition-colors">Terms</Link>

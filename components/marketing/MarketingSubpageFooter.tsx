@@ -13,9 +13,6 @@ export default function MarketingSubpageFooter() {
             <Link href="/pricing" className="transition-colors hover:text-brand-600">
               Pricing
             </Link>
-            <Link href="/for-agents" className="transition-colors hover:text-brand-600">
-              For Agents
-            </Link>
             <Link href="/about" className="transition-colors hover:text-brand-600">
               About
             </Link>
