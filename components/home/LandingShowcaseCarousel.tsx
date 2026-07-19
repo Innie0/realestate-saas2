@@ -22,12 +22,9 @@ function ShowcaseSlideRail({
   onSelect: (index: number) => void;
   reduced: boolean;
 }) {
-  const activeSlide = SHOWCASE_SLIDES[active];
-
   return (
-    <div className="flex flex-col lg:justify-center lg:py-2">
+    <div className="flex flex-col gap-1 lg:justify-center lg:py-2">
       <LayoutGroup>
-      <div className="flex flex-col gap-1">
         {SHOWCASE_SLIDES.map((item, i) => {
           const isActive = i === active;
           return (
@@ -39,16 +36,14 @@ function ShowcaseSlideRail({
               aria-current={isActive ? 'true' : undefined}
             >
               <div className="flex gap-4 sm:gap-5">
-                <div className="relative flex w-[3px] shrink-0 justify-center self-stretch pt-1.5">
+                <div className="relative w-px shrink-0 self-stretch bg-gray-200 pt-1">
                   {isActive ? (
                     <motion.div
                       layoutId="showcase-active-indicator"
-                      className="absolute inset-x-0 top-1.5 bottom-0 rounded-full bg-gray-900"
-                      transition={{ type: 'spring', stiffness: 380, damping: 34 }}
+                      className="absolute inset-y-0 left-0 w-px bg-gray-900"
+                      transition={{ type: 'spring', stiffness: 400, damping: 36 }}
                     />
-                  ) : (
-                    <div className="mx-auto mt-1 h-8 w-px rounded-full bg-gray-300 transition-colors group-hover:bg-gray-400" />
-                  )}
+                  ) : null}
                 </div>
 
                 <div className="min-w-0 flex-1 pb-0.5">
@@ -68,45 +63,47 @@ function ShowcaseSlideRail({
                   >
                     {item.headline}
                   </h3>
+
+                  <AnimatePresence initial={false}>
+                    {isActive ? (
+                      <motion.div
+                        key={`${item.id}-details`}
+                        initial={reduced ? false : { opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={reduced ? undefined : { opacity: 0, y: -4 }}
+                        transition={slideTransition}
+                        className="overflow-hidden"
+                      >
+                        <p className="mt-3 max-w-md text-[15px] leading-relaxed text-gray-700">
+                          {item.description}
+                        </p>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {item.tools.map((tool) => (
+                            <span
+                              key={tool}
+                              className="rounded-full border border-gray-300 bg-white px-2.5 py-0.5 text-[10px] font-medium text-gray-600"
+                            >
+                              {tool}
+                            </span>
+                          ))}
+                        </div>
+                        <div className="mt-5">
+                          <Link href="/auth/signup" onClick={(e) => e.stopPropagation()}>
+                            <span className="group/btn inline-flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-600">
+                              Get Started
+                              <CtaArrow className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5" />
+                            </span>
+                          </Link>
+                        </div>
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
                 </div>
               </div>
             </button>
           );
         })}
-      </div>
       </LayoutGroup>
-
-      <div className={`relative mt-4 min-h-[200px] sm:min-h-[210px] lg:mt-6 lg:pl-[calc(0.75rem+3px+1.25rem)]`}>
-        <AnimatePresence initial={false} mode="popLayout">
-          <motion.div
-            key={activeSlide.id}
-            initial={reduced ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduced ? undefined : { opacity: 0, y: -6 }}
-            transition={slideTransition}
-          >
-            <p className="max-w-md text-[15px] leading-relaxed text-gray-700">{activeSlide.description}</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {activeSlide.tools.map((tool) => (
-                <span
-                  key={tool}
-                  className="rounded-full border border-gray-300 bg-white px-2.5 py-0.5 text-[10px] font-medium text-gray-600"
-                >
-                  {tool}
-                </span>
-              ))}
-            </div>
-            <div className="mt-6">
-              <Link href="/auth/signup">
-                <span className="group/btn inline-flex items-center gap-2 rounded-full bg-[#dff756] px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm transition-all hover:bg-[#d4ec4a] hover:shadow-md">
-                  Get Started
-                  <CtaArrow className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
-                </span>
-              </Link>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
     </div>
   );
 }
