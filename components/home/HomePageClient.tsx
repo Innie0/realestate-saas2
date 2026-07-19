@@ -133,7 +133,7 @@ export default function HomePageClient() {
       <LandingTrustSection ref={darkBandRef} />
 
       {/* ── FAQ ────────────────────────────────────────────────────────── */}
-      <section className="relative z-10 py-24 lg:py-32 border-t border-gray-200">
+      <section className="relative z-10 bg-[#F5F5F5] py-24 lg:py-32">
         <div className="mx-auto max-w-3xl px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Frequently asked questions</h2>

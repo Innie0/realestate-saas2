@@ -25,11 +25,18 @@ const LandingTrustSection = forwardRef<HTMLElement>(function LandingTrustSection
     offset: ['start end', 'start 0.3'],
   });
 
+  const { scrollYProgress: exitProgress } = useScroll({
+    target: sectionRef,
+    offset: ['end 0.92', 'end 0.12'],
+  });
+
   const backgroundColor = useTransform(
     scrollYProgress,
     [0, 1],
     reduced ? [DARK_BG, DARK_BG] : [LIGHT_BG, DARK_BG],
   );
+
+  const bottomFadeOpacity = useTransform(exitProgress, [0, 0.18, 1], [0, 1, 1]);
 
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
     setIsDark(reduced ? true : latest > 0.42);
@@ -69,6 +76,26 @@ const LandingTrustSection = forwardRef<HTMLElement>(function LandingTrustSection
       style={{ backgroundColor: reduced ? DARK_BG : backgroundColor }}
       className="relative z-10 border-t border-gray-200 transition-[color] duration-700"
     >
+      {reduced ? (
+        <div
+          aria-hidden
+          style={{
+            background:
+              'linear-gradient(180deg, transparent 0%, #1c1c1c 22%, #4a4a4a 42%, #9a9a9a 62%, #d6d6d6 80%, #F5F5F5 100%)',
+          }}
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-48 sm:h-56"
+        />
+      ) : (
+        <motion.div
+          aria-hidden
+          style={{
+            opacity: bottomFadeOpacity,
+            background:
+              'linear-gradient(180deg, transparent 0%, #1c1c1c 22%, #4a4a4a 42%, #9a9a9a 62%, #d6d6d6 80%, #F5F5F5 100%)',
+          }}
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[min(32vh,280px)] sm:h-[min(34vh,320px)]"
+        />
+      )}
       {/* Testimonials */}
       <div className="py-16 sm:py-24 lg:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -231,7 +258,7 @@ const LandingTrustSection = forwardRef<HTMLElement>(function LandingTrustSection
       </div>
 
       {/* Marquee */}
-      <div className={`overflow-hidden border-t py-10 transition-colors duration-700 ${isDark ? 'border-white/10' : 'border-gray-200'}`}>
+      <div className={`relative z-[2] overflow-hidden border-t py-10 pb-20 transition-colors duration-700 sm:pb-24 ${isDark ? 'border-white/10' : 'border-gray-200'}`}>
         {reduced ? (
           <p className={`mx-auto max-w-3xl px-6 text-center text-lg font-medium tracking-tight transition-colors duration-700 ${isDark ? 'text-white/90' : 'text-gray-800'}`}>
             Agents use Oikaro to win more listings, capture every lead, and close with confidence — all from one AI-powered workspace.
