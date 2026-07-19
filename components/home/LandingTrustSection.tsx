@@ -3,7 +3,7 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { motion, AnimatePresence, useMotionValueEvent, useScroll, useTransform } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { INTEGRATIONS, TESTIMONIALS } from '@/lib/landing-showcase';
+import { INTEGRATIONS, OUTCOME_HIGHLIGHTS } from '@/lib/landing-showcase';
 import { IntegrationLogo } from '@/components/home/IntegrationLogos';
 import { useMotionReduced } from '@/lib/motion';
 
@@ -13,10 +13,10 @@ const DARK_BG = '#0a0a0a';
 const LandingTrustSection = forwardRef<HTMLElement>(function LandingTrustSection(_props, forwardedRef) {
   const reduced = useMotionReduced();
   const sectionRef = useRef<HTMLElement>(null);
-  const [testimonialIndex, setTestimonialIndex] = useState(0);
+  const [highlightIndex, setHighlightIndex] = useState(0);
   const [isDark, setIsDark] = useState(false);
-  const total = TESTIMONIALS.length;
-  const testimonial = TESTIMONIALS[testimonialIndex];
+  const total = OUTCOME_HIGHLIGHTS.length;
+  const highlight = OUTCOME_HIGHLIGHTS[highlightIndex];
 
   useImperativeHandle(forwardedRef, () => sectionRef.current as HTMLElement);
 
@@ -43,11 +43,11 @@ const LandingTrustSection = forwardRef<HTMLElement>(function LandingTrustSection
   });
 
   const goNext = useCallback(() => {
-    setTestimonialIndex((i) => (i + 1) % total);
+    setHighlightIndex((i) => (i + 1) % total);
   }, [total]);
 
   const goPrev = useCallback(() => {
-    setTestimonialIndex((i) => (i - 1 + total) % total);
+    setHighlightIndex((i) => (i - 1 + total) % total);
   }, [total]);
 
   useEffect(() => {
@@ -60,7 +60,6 @@ const LandingTrustSection = forwardRef<HTMLElement>(function LandingTrustSection
   const textSecondary = isDark ? 'text-white/70' : 'text-gray-700';
   const textMuted = isDark ? 'text-white/50' : 'text-gray-600';
   const textEyebrow = isDark ? 'text-white/55' : 'text-gray-600';
-  const divider = isDark ? 'bg-white/20' : 'bg-gray-200';
   const navBtn = isDark
     ? 'border-white/20 bg-white/10 text-white hover:bg-white/15'
     : 'border-gray-300 bg-white text-gray-900 hover:bg-gray-50';
@@ -96,7 +95,7 @@ const LandingTrustSection = forwardRef<HTMLElement>(function LandingTrustSection
           className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[min(32vh,280px)] sm:h-[min(34vh,320px)]"
         />
       )}
-      {/* Testimonials */}
+      {/* Outcome highlights */}
       <div className="py-16 sm:py-24 lg:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-4xl">
@@ -107,76 +106,51 @@ const LandingTrustSection = forwardRef<HTMLElement>(function LandingTrustSection
               transition={{ duration: 0.5 }}
               className={`mb-10 text-center font-mono text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors duration-700 ${textEyebrow}`}
             >
-              Trusted by agents
+              What you get
             </motion.p>
 
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
-                key={testimonial.id}
+                key={highlight.id}
                 initial={reduced ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={reduced ? undefined : { opacity: 0, y: -12 }}
                 transition={{ duration: 0.4 }}
                 className="text-center"
               >
-                <span
-                  className={`pointer-events-none mb-6 block font-display text-5xl leading-none transition-colors duration-700 sm:text-6xl ${
-                    isDark ? 'text-brand-500/40' : 'text-brand-500/25'
-                  }`}
-                  aria-hidden
+                <h2
+                  className={`text-2xl font-semibold leading-snug tracking-tight transition-colors duration-700 sm:text-3xl lg:text-4xl lg:leading-[1.2] ${textPrimary}`}
                 >
-                  &ldquo;
-                </span>
-                <blockquote
-                  className={`text-2xl font-medium leading-snug tracking-tight transition-colors duration-700 sm:text-3xl lg:text-4xl lg:leading-[1.2] ${textPrimary}`}
-                >
-                  {testimonial.quote}
-                </blockquote>
-                <div className="mt-10 flex flex-col items-center gap-6 sm:flex-row sm:justify-center sm:gap-12">
-                  <div className="flex items-center gap-3 sm:text-left">
-                    <div
-                      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors duration-700 ${
-                        isDark ? 'bg-brand-500/20 text-brand-300' : 'bg-brand-100 text-brand-700'
-                      }`}
-                    >
-                      {testimonial.initials}
-                    </div>
-                    <div className="text-left">
-                      <p className={`font-semibold transition-colors duration-700 ${textPrimary}`}>
-                        {testimonial.name}
-                      </p>
-                      <p className={`text-sm transition-colors duration-700 ${textSecondary}`}>
-                        {testimonial.role}
-                      </p>
-                    </div>
-                  </div>
-                  <div className={`hidden h-10 w-px transition-colors duration-700 sm:block ${divider}`} aria-hidden />
-                  <div className="text-center">
-                    <p
-                      className={`text-4xl font-semibold tabular-nums tracking-tight transition-colors duration-700 sm:text-5xl ${textPrimary}`}
-                    >
-                      {testimonial.metric}
-                    </p>
-                    <p
-                      className={`mt-1 font-mono text-[11px] font-medium uppercase tracking-[0.1em] transition-colors duration-700 ${textMuted}`}
-                    >
-                      {testimonial.metricLabel}
-                    </p>
-                  </div>
+                  {highlight.headline}
+                </h2>
+                <p className={`mx-auto mt-5 max-w-2xl text-lg leading-relaxed transition-colors duration-700 ${textSecondary}`}>
+                  {highlight.description}
+                </p>
+                <div className="mt-10 flex flex-col items-center">
+                  <p
+                    className={`text-4xl font-semibold tabular-nums tracking-tight transition-colors duration-700 sm:text-5xl ${textPrimary}`}
+                  >
+                    {highlight.metric}
+                  </p>
+                  <p
+                    className={`mt-1 font-mono text-[11px] font-medium uppercase tracking-[0.1em] transition-colors duration-700 ${textMuted}`}
+                  >
+                    {highlight.metricLabel}
+                  </p>
                 </div>
               </motion.div>
             </AnimatePresence>
 
             <div className="mt-10 flex flex-col items-center gap-5">
               <div className="flex items-center justify-center gap-2">
-                {TESTIMONIALS.map((item, i) => (
+                {OUTCOME_HIGHLIGHTS.map((item, i) => (
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => setTestimonialIndex(i)}
-                    aria-label={`Show testimonial ${i + 1}`}
+                    onClick={() => setHighlightIndex(i)}
+                    aria-label={`Show highlight ${i + 1}`}
                     className={`h-2 rounded-full transition-all duration-300 ${
-                      i === testimonialIndex ? `w-6 ${dotActive}` : `w-2 ${dotInactive}`
+                      i === highlightIndex ? `w-6 ${dotActive}` : `w-2 ${dotInactive}`
                     }`}
                   />
                 ))}
@@ -185,18 +159,18 @@ const LandingTrustSection = forwardRef<HTMLElement>(function LandingTrustSection
                 <button
                   type="button"
                   onClick={goPrev}
-                  aria-label="Previous testimonial"
+                  aria-label="Previous highlight"
                   className={`flex h-10 w-10 items-center justify-center rounded-full border transition-colors duration-700 ${navBtn}`}
                 >
                   <ArrowLeft className="h-4 w-4" strokeWidth={1.8} />
                 </button>
                 <span className={`font-mono text-sm tabular-nums transition-colors duration-700 ${textMuted}`}>
-                  {testimonialIndex + 1} / {total}
+                  {highlightIndex + 1} / {total}
                 </span>
                 <button
                   type="button"
                   onClick={goNext}
-                  aria-label="Next testimonial"
+                  aria-label="Next highlight"
                   className={`flex h-10 w-10 items-center justify-center rounded-full border transition-colors duration-700 ${navBtn}`}
                 >
                   <ArrowRight className="h-4 w-4" strokeWidth={1.8} />

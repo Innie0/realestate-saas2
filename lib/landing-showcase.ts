@@ -40,12 +40,10 @@ export type PersonaCard = {
   description: string;
 };
 
-export type Testimonial = {
+export type OutcomeHighlight = {
   id: string;
-  quote: string;
-  name: string;
-  initials: string;
-  role: string;
+  headline: string;
+  description: string;
   metric: string;
   metricLabel: string;
 };
@@ -145,36 +143,30 @@ export const PERSONA_CARDS: PersonaCard[] = [
   },
 ];
 
-export const TESTIMONIALS: Testimonial[] = [
+export const OUTCOME_HIGHLIGHTS: OutcomeHighlight[] = [
   {
     id: '1',
-    quote:
-      'I finally stopped juggling five different tools. Listings, leads, and follow-ups all live in one place — and the AI actually saves me hours every week.',
-    name: 'Sarah M.',
-    initials: 'SM',
-    role: 'Listing Agent, Austin TX',
-    metric: '5+',
-    metricLabel: 'Hours saved per week',
+    headline: 'MLS-ready listing copy in seconds',
+    description:
+      'Turn photos and notes into professional descriptions in three tones — without switching tabs or rewriting from scratch.',
+    metric: '<10s',
+    metricLabel: 'Average generation time',
   },
   {
     id: '2',
-    quote:
-      'Open house sign-in alone changed how I work. Every visitor becomes a scored lead in my inbox before I leave the property.',
-    name: 'James R.',
-    initials: 'JR',
-    role: 'Buyer\'s Agent, Denver CO',
-    metric: '10+',
-    metricLabel: 'More leads captured',
+    headline: 'Every lead scored before you leave the open house',
+    description:
+      'QR sign-in sends visitors straight to your inbox as Hot, Warm, or Cold — synced to your CRM automatically.',
+    metric: '100%',
+    metricLabel: 'Leads captured digitally',
   },
   {
     id: '3',
-    quote:
-      'Property research and CMA used to take an hour. Now I pull comps and a price range in one search while I\'m still on the call.',
-    name: 'Maria L.',
-    initials: 'ML',
-    role: 'Team Lead, Miami FL',
-    metric: '10x',
-    metricLabel: 'Faster listing prep',
+    headline: 'Property research on the call',
+    description:
+      'Look up any address for owner contact, comps, and sale history in one search — while you\'re still talking to the client.',
+    metric: '1',
+    metricLabel: 'Search for full property data',
   },
 ];
 

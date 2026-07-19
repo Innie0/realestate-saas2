@@ -33,7 +33,7 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
       className="relative min-h-[100svh] overflow-hidden"
       style={{
         background:
-          'linear-gradient(180deg, #0a0a0a 0%, #0a0a0a 38%, #1c1c1c 52%, #4a4a4a 68%, #9a9a9a 82%, #d6d6d6 92%, #F5F5F5 100%)',
+          'linear-gradient(180deg, #0a0a0a 0%, #0a0a0a 50%, #2a2a2a 72%, #F5F5F5 100%)',
       }}
     >
       <div className="relative z-10 flex min-h-[100svh] flex-col pt-16 sm:pt-20 md:pt-24">
@@ -41,56 +41,50 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="mx-auto flex w-full min-w-0 max-w-7xl flex-1 flex-col items-center px-4 pb-16 pt-8 sm:px-6 sm:pb-20 sm:pt-14 lg:px-8 lg:pb-24"
+          className="mx-auto flex w-full min-w-0 max-w-7xl flex-1 flex-col items-center px-4 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-10 lg:px-8 lg:pb-20"
         >
           <div className="mx-auto max-w-3xl text-center">
+            <motion.p
+              variants={itemVariants}
+              className="mb-5 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-white/55 sm:mb-6"
+            >
+              Precision AI for real estate workflows
+            </motion.p>
+
             <motion.h1
               variants={itemVariants}
-              className="font-display text-3xl font-medium italic leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-7xl"
+              className="font-display text-3xl font-medium italic leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl"
             >
-              Work Smarter
+              The AI workspace
               <br />
-              Close Faster
+              for real estate agents
             </motion.h1>
 
             <motion.p
               variants={itemVariants}
-              className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/80 sm:mt-8 sm:text-lg"
+              className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-white/75 sm:mt-6 sm:text-lg"
             >
-              Transform your workflow as a real estate agent with intelligent tools designed for you.
-              Manage leads, schedule showings, and close more deals with our AI-powered platform.
+              Listings, leads, research, and deals — unified in one place. Ask once, and your whole workflow moves forward.
             </motion.p>
 
-            <motion.div
-              variants={itemVariants}
-              className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:mt-10 sm:flex-row sm:items-center sm:gap-4"
-            >
-              <Link href="/auth/signup" className="w-full sm:w-auto">
+            <motion.div variants={itemVariants} className="mt-7 sm:mt-8">
+              <Link href="/auth/signup" className="inline-block w-full sm:w-auto">
                 <motion.button
                   whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255,255,255,0.2)' }}
                   whileTap={{ scale: 0.98 }}
                   className="group flex w-full items-center justify-center gap-2 rounded-xl bg-brand-500 px-8 py-4 text-base font-semibold text-white transition-all hover:bg-brand-600 sm:w-auto"
                 >
-                  Get Started
+                  Start free trial
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </motion.button>
               </Link>
-              <Link href="/auth/login" className="w-full sm:w-auto">
-                <motion.button
-                  whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.12)' }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full rounded-xl border border-white/35 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all sm:w-auto"
-                >
-                  Sign In
-                </motion.button>
-              </Link>
+              <p className="mt-3 text-sm text-white/45">7 days free · No setup fees · Cancel anytime</p>
             </motion.div>
           </div>
 
-          {/* Product UI */}
           <motion.div
             variants={itemVariants}
-            className="relative mt-10 w-full min-w-0 max-w-[820px] sm:mt-12 lg:mt-14 xl:max-w-[880px]"
+            className="relative mt-8 w-full min-w-0 max-w-[820px] sm:mt-10 lg:mt-12 xl:max-w-[880px]"
           >
             <HeroAssistantPreview showBackdrop={false} />
           </motion.div>
