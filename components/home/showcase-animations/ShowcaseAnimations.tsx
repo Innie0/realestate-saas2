@@ -2,27 +2,58 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, User, History, Phone, Mail, Sparkles } from 'lucide-react';
+import { Search, User, History, Phone, Mail, Sparkles, Paperclip, Send } from 'lucide-react';
 
 const ease = [0.25, 0.1, 0.25, 1] as const;
 
 /** Fixed height for all showcase demos — prevents layout jump between slides */
-export const SHOWCASE_FRAME_CLASS =
-  'flex h-full min-h-0 items-center';
+export const SHOWCASE_FRAME_CLASS = 'flex min-h-0 flex-1 flex-col justify-center overflow-y-auto';
+
+function ShowcaseChatBar({
+  placeholder = 'Ask Oikaro anything…',
+  showCursor = false,
+}: {
+  placeholder?: string;
+  showCursor?: boolean;
+}) {
+  return (
+    <div className="relative min-h-[72px] rounded-xl border border-gray-200 bg-white px-3.5 pt-3 pb-10 sm:min-h-[80px] sm:px-4 sm:pt-3.5 sm:pb-11">
+      <p className="text-left text-[12px] leading-relaxed text-gray-500 sm:text-[13px]">
+        {showCursor ? (
+          <span className="text-gray-800">
+            {placeholder}
+            <span className="ml-0.5 inline-block h-[13px] w-px animate-pulse bg-gray-900 align-text-bottom" />
+          </span>
+        ) : (
+          placeholder
+        )}
+      </p>
+      <Paperclip className="absolute bottom-3 left-3.5 h-3.5 w-3.5 text-gray-500 sm:h-4 sm:w-4" strokeWidth={1.8} />
+      <div className="absolute bottom-2.5 right-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-brand-500 text-white sm:bottom-3 sm:h-8 sm:w-8">
+        <Send className="h-3 w-3 sm:h-3.5 sm:w-3.5" strokeWidth={2} />
+      </div>
+    </div>
+  );
+}
 
 export function ShowcaseAnimationFrame({
   children,
   className,
+  chatPlaceholder,
+  chatShowCursor = false,
 }: {
   children: React.ReactNode;
   className?: string;
+  chatPlaceholder?: string;
+  chatShowCursor?: boolean;
 }) {
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200/90 bg-white shadow-[0_20px_50px_-24px_rgba(24,24,27,0.12)] ring-1 ring-gray-900/[0.04]">
-      <div
-        className={`relative w-full flex-1 bg-[#fafafa] p-5 sm:p-6 ${className ?? SHOWCASE_FRAME_CLASS}`}
-      >
+      <div className={`min-h-0 flex-1 bg-[#fafafa] px-4 pt-4 sm:px-5 sm:pt-5 ${className ?? SHOWCASE_FRAME_CLASS}`}>
         {children}
+      </div>
+      <div className="shrink-0 border-t border-gray-200 bg-white px-4 py-3 sm:px-5 sm:py-3.5">
+        <ShowcaseChatBar placeholder={chatPlaceholder} showCursor={chatShowCursor} />
       </div>
     </div>
   );
@@ -35,7 +66,10 @@ function LoopShell({ children }: { reduced: boolean; children: React.ReactNode }
 /** AI chat: prompt → reply → action chips */
 export function AskOnceAnimation({ reduced }: { reduced: boolean }) {
   return (
-    <ShowcaseAnimationFrame>
+    <ShowcaseAnimationFrame
+      chatPlaceholder="Draft a follow-up for my buyer who toured yesterday"
+      chatShowCursor
+    >
       <LoopShell reduced={reduced}>
         <div className="space-y-3">
           <motion.div
@@ -347,7 +381,7 @@ export function WinListingAnimation({ reduced }: { reduced: boolean }) {
   }, [reduced]);
 
   return (
-    <ShowcaseAnimationFrame>
+    <ShowcaseAnimationFrame chatPlaceholder="Look up 123 W Main Street and pull owner info">
       <LoopShell reduced={reduced}>
         <AnimatePresence mode="wait" initial={false}>
           {phase === 'listing' ? (
@@ -370,7 +404,7 @@ export function NeverLoseLeadAnimation({ reduced }: { reduced: boolean }) {
   ];
 
   return (
-    <ShowcaseAnimationFrame>
+    <ShowcaseAnimationFrame chatPlaceholder="Who should I call first from my open house?">
       <LoopShell reduced={reduced}>
         <div className="space-y-2.5">
           {leads.map((lead, i) => (
@@ -422,7 +456,7 @@ export function CloseConfidenceAnimation({ reduced }: { reduced: boolean }) {
   const tasks = ['Offer accepted', 'Inspection scheduled', 'Appraisal ordered'];
 
   return (
-    <ShowcaseAnimationFrame>
+    <ShowcaseAnimationFrame chatPlaceholder="What's on my calendar for closings this week?">
       <LoopShell reduced={reduced}>
         <div className="space-y-4">
           <div className="rounded-xl border border-gray-200 bg-white p-3">
