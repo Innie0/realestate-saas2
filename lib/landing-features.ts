@@ -1,3 +1,7 @@
+/**
+ * Product catalog — one entry per /products/[id] page.
+ * See public/landing/README.md for screenshot & video paths.
+ */
 import type { LucideIcon } from 'lucide-react';
 import {
   Sparkles,
@@ -24,6 +28,12 @@ export type LandingFeature = {
   tag: string;
   title: string;
   description: string;
+  /** One-line teaser on /products grid — defaults to description */
+  cardSummary?: string;
+  /** SEO description for /products/[id] — defaults to description */
+  metaDescription?: string;
+  /** Set false to hide from /products index while you finish the page */
+  published?: boolean;
   highlights: string[];
   howItWorks: HowItWorksStep[];
   /** PNG in public/landing/ — replace with real app screenshots when ready */

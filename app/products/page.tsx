@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import ProductsPageClient from '@/components/products/ProductsPageClient';
+import ProductsIndexClient from '@/components/products/ProductsIndexClient';
 
 export const metadata: Metadata = {
   title: 'Products — Oikaro',
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function ProductsPage() {
-  return <ProductsPageClient />;
+  return <ProductsIndexClient />;
 }

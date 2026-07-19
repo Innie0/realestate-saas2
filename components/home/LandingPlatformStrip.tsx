@@ -31,7 +31,7 @@ export default function LandingPlatformStrip() {
             {PLATFORM_TOOLS.map((tool) => (
               <Link
                 key={tool.id}
-                href={`/products#${tool.id}`}
+                href={`/products/${tool.id}`}
                 className="rounded-full border border-gray-300 bg-[#fafafa] px-3.5 py-1.5 text-[12px] font-medium text-gray-700 transition-colors hover:border-gray-400 hover:bg-white hover:text-gray-900"
               >
                 {tool.name}

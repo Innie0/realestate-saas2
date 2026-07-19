@@ -65,7 +65,7 @@ export const SHOWCASE_SLIDES: ShowcaseSlide[] = [
     description:
       'Draft copy, look up comps, schedule reminders, and analyze photos or PDFs in natural language. Your whole workflow, one chat away.',
     animationId: 'ask-once',
-    productsHref: '/products#ai-assistant',
+    productsHref: '/products/ai-assistant',
     tools: ['AI Assistant'],
   },
   {
@@ -75,7 +75,7 @@ export const SHOWCASE_SLIDES: ShowcaseSlide[] = [
     description:
       'Generate listing descriptions in multiple tones, then look up any address for owner contact, property details, and full sale history — without switching tabs or tools.',
     animationId: 'win-listing',
-    productsHref: '/products#projects',
+    productsHref: '/products/projects',
     tools: ['Listing Projects', 'Property Research'],
   },
   {
@@ -85,7 +85,7 @@ export const SHOWCASE_SLIDES: ShowcaseSlide[] = [
     description:
       'Every form submission and open house sign-in lands in your inbox — scored Hot, Warm, or Cold — and syncs straight into your CRM.',
     animationId: 'never-lose-lead',
-    productsHref: '/products#leads-inbox',
+    productsHref: '/products/leads-inbox',
     tools: ['Leads Inbox', 'Lead Capture', 'Open Houses', 'CRM'],
   },
   {
@@ -95,7 +95,7 @@ export const SHOWCASE_SLIDES: ShowcaseSlide[] = [
     description:
       'Checklists, calendar sync, ad campaigns, and a dashboard that shows your pipeline at a glance — so nothing slips before closing day.',
     animationId: 'close-confidence',
-    productsHref: '/products#transactions',
+    productsHref: '/products/transactions',
     tools: ['Transactions', 'Calendar', 'Ads', 'Dashboard'],
   },
 ];

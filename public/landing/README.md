@@ -1,20 +1,45 @@
-# Landing page screenshots
+# Landing page product media
 
-Replace each PNG with a real app screenshot (recommended: **1440×900**, `object-top` crop).
+Edit product copy in **`lib/landing-features.ts`** (`LANDING_FEATURES` array).  
+Helper docs: **`lib/products.ts`**.
 
-| File | Screen to capture |
-|------|-------------------|
-| `hero-assistant.png` | AI Assistant (optional — hero uses live preview component) |
-| `ai-assistant.png` | AI Assistant empty state |
-| `projects.png` | Listing project / description generator |
-| `property-research.png` | Property research + CMA |
-| `leads-inbox.png` | Leads inbox with scoring |
-| `lead-capture.png` | Public lead form |
-| `clients.png` | Client CRM detail |
-| `transactions.png` | Transaction checklist |
-| `calendar.png` | Calendar month view |
-| `open-houses.png` | Open house QR sign-in |
-| `ads.png` | Ads dashboard or wizard |
-| `dashboard.png` | Main dashboard overview |
+## Screenshots
 
-Keep the same filename — no code changes needed.
+Replace each PNG with a real app screenshot (recommended: **1440×900**, cropped from the top).
+
+| File | Product page |
+|------|----------------|
+| `ai-assistant.png` | `/products/ai-assistant` |
+| `projects.png` | `/products/projects` |
+| `property-research.png` | `/products/property-research` |
+| `leads-inbox.png` | `/products/leads-inbox` |
+| `lead-capture.png` | `/products/lead-capture` |
+| `clients.png` | `/products/clients` |
+| `transactions.png` | `/products/transactions` |
+| `calendar.png` | `/products/calendar` |
+| `open-houses.png` | `/products/open-houses` |
+| `ads.png` | `/products/ads` |
+| `dashboard.png` | `/products/dashboard` |
+| `hero-assistant.png` | Homepage hero (optional) |
+
+Keep the same filename — set `imageSrc` in `LANDING_FEATURES` if you use a different path.
+
+## Videos (optional)
+
+Drop MP4 or WebM in `public/landing/videos/` and set `videoSrc` on that product, e.g.:
+
+```ts
+videoSrc: '/landing/videos/ai-assistant.mp4',
+```
+
+Video replaces the screenshot when the file loads.
+
+## Hide until ready
+
+On any product in `LANDING_FEATURES`:
+
+```ts
+published: false,
+```
+
+It stays reachable at `/products/[id]` but won’t show on `/products`.

@@ -1,5 +1,6 @@
 import { PRODUCT_CATEGORIES } from '@/lib/product-categories';
 import { PLATFORM_TOOLS } from '@/lib/landing-showcase';
+import { getProductHref } from '@/lib/products';
 
 const toolsById = Object.fromEntries(PLATFORM_TOOLS.map((tool) => [tool.id, tool]));
 
@@ -24,6 +25,6 @@ export const PRODUCT_MENU_COLUMNS: ProductMenuColumn[] = PRODUCT_CATEGORIES.map(
       id: tool.id,
       name: tool.name,
       summary: tool.summary,
-      href: `/products#${tool.id}`,
+      href: getProductHref(tool.id),
     })),
 }));
