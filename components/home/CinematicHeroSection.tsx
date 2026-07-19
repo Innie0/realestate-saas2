@@ -28,18 +28,20 @@ type CinematicHeroSectionProps = {
 
 export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectionProps) {
   return (
-    <section ref={sectionRef as React.RefObject<HTMLElement>} className="relative min-h-[100svh] overflow-hidden bg-[#0a0a0a]">
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_35%,rgba(252,92,3,0.08),transparent_65%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#F5F5F5] to-transparent sm:h-48" />
-      </div>
-
+    <section
+      ref={sectionRef as React.RefObject<HTMLElement>}
+      className="relative min-h-[100svh] overflow-hidden"
+      style={{
+        background:
+          'linear-gradient(180deg, #0a0a0a 0%, #0a0a0a 38%, #1c1c1c 52%, #4a4a4a 68%, #9a9a9a 82%, #d6d6d6 92%, #F5F5F5 100%)',
+      }}
+    >
       <div className="relative z-10 flex min-h-[100svh] flex-col pt-16 sm:pt-20 md:pt-24">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="mx-auto flex w-full min-w-0 max-w-7xl flex-1 flex-col items-center px-4 pb-8 pt-8 sm:px-6 sm:pt-14 lg:px-8 lg:pb-12"
+          className="mx-auto flex w-full min-w-0 max-w-7xl flex-1 flex-col items-center px-4 pb-16 pt-8 sm:px-6 sm:pb-20 sm:pt-14 lg:px-8 lg:pb-24"
         >
           <div className="mx-auto max-w-3xl text-center">
             <motion.h1

@@ -113,7 +113,7 @@ export default function LandingShowcaseCarousel() {
   const slide = SHOWCASE_SLIDES[active];
 
   return (
-    <section className="relative z-10 overflow-hidden border-t border-gray-200 bg-[#F5F5F5] py-16 sm:py-24 lg:py-32">
+    <section className="relative z-10 overflow-hidden bg-[#F5F5F5] py-16 sm:py-24 lg:py-32">
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={reduced ? false : { opacity: 0, y: 28 }}
