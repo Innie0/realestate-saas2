@@ -51,10 +51,10 @@ export type Testimonial = {
 };
 
 export const SHOWCASE_NARRATIVE = {
-  eyebrow: 'Precision AI for real estate workflows',
+  eyebrow: 'How it works',
   headline: 'Close the loop from lead to closing',
   subheadline:
-    'Oikaro unifies listings, leads, clients, and deals in one AI-powered workspace — so every conversation, task, and deadline moves your pipeline forward.',
+    'Oikaro unifies listings, leads, clients, and deals in one workspace — so every conversation, task, and deadline moves your pipeline forward.',
 };
 
 export const SHOWCASE_SLIDES: ShowcaseSlide[] = [

@@ -44,27 +44,20 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
           className="mx-auto flex w-full min-w-0 max-w-7xl flex-1 flex-col items-center px-4 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-10 lg:px-8 lg:pb-20"
         >
           <div className="mx-auto max-w-3xl text-center">
-            <motion.p
-              variants={itemVariants}
-              className="mb-5 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-white/55 sm:mb-6"
-            >
-              Precision AI for real estate workflows
-            </motion.p>
-
             <motion.h1
               variants={itemVariants}
               className="font-display text-3xl font-medium italic leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl"
             >
-              The AI workspace
+              Your entire business,
               <br />
-              for real estate agents
+              one workspace
             </motion.h1>
 
             <motion.p
               variants={itemVariants}
               className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-white/75 sm:mt-6 sm:text-lg"
             >
-              Listings, leads, research, and deals — unified in one place. Ask once, and your whole workflow moves forward.
+              Listings, leads, research, and deals — finally in one place. Stop juggling spreadsheets, forms, and five different apps.
             </motion.p>
 
             <motion.div variants={itemVariants} className="mt-7 sm:mt-8">
