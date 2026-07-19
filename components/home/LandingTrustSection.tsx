@@ -10,11 +10,15 @@ import { useMotionReduced } from '@/lib/motion';
 const LIGHT_BG = '#F5F5F5';
 const DARK_BG = '#0a0a0a';
 
+const EXIT_GRADIENT =
+  'linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0) 14%, rgba(12,12,12,0.35) 26%, #181818 36%, #2b2b2b 46%, #454545 55%, #636363 63%, #878787 71%, #ababab 78%, #cacaca 85%, #dedede 91%, #ececec 95%, #F5F5F5 100%)';
+
 const LandingTrustSection = forwardRef<HTMLElement>(function LandingTrustSection(_props, forwardedRef) {
   const reduced = useMotionReduced();
   const sectionRef = useRef<HTMLElement>(null);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const [isDark, setIsDark] = useState(false);
+  const [exitPhase, setExitPhase] = useState(0);
   const total = TESTIMONIALS.length;
   const testimonial = TESTIMONIALS[testimonialIndex];
 
@@ -27,7 +31,7 @@ const LandingTrustSection = forwardRef<HTMLElement>(function LandingTrustSection
 
   const { scrollYProgress: exitProgress } = useScroll({
     target: sectionRef,
-    offset: ['end 0.92', 'end 0.12'],
+    offset: ['end 1.05', 'end -0.08'],
   });
 
   const backgroundColor = useTransform(
@@ -36,10 +40,14 @@ const LandingTrustSection = forwardRef<HTMLElement>(function LandingTrustSection
     reduced ? [DARK_BG, DARK_BG] : [LIGHT_BG, DARK_BG],
   );
 
-  const bottomFadeOpacity = useTransform(exitProgress, [0, 0.18, 1], [0, 1, 1]);
+  const bottomFadeOpacity = useTransform(exitProgress, [0, 0.06, 1], [0, 1, 1]);
 
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
     setIsDark(reduced ? true : latest > 0.42);
+  });
+
+  useMotionValueEvent(exitProgress, 'change', (latest) => {
+    setExitPhase(latest);
   });
 
   const goNext = useCallback(() => {
@@ -69,6 +77,18 @@ const LandingTrustSection = forwardRef<HTMLElement>(function LandingTrustSection
   const cardClass = isDark
     ? 'rounded-2xl border border-white/10 bg-white/[0.06] px-6 py-5 backdrop-blur-sm'
     : 'rounded-2xl border border-gray-200 bg-white px-6 py-5 shadow-sm';
+  const marqueeTextClass =
+    exitPhase > 0.58
+      ? 'text-gray-800'
+      : isDark
+        ? 'text-white/90'
+        : 'text-gray-800';
+  const marqueeBorderClass =
+    exitPhase > 0.35
+      ? 'border-transparent'
+      : isDark
+        ? 'border-white/10'
+        : 'border-gray-200';
 
   return (
     <motion.section
@@ -79,21 +99,17 @@ const LandingTrustSection = forwardRef<HTMLElement>(function LandingTrustSection
       {reduced ? (
         <div
           aria-hidden
-          style={{
-            background:
-              'linear-gradient(180deg, transparent 0%, #1c1c1c 22%, #4a4a4a 42%, #9a9a9a 62%, #d6d6d6 80%, #F5F5F5 100%)',
-          }}
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-48 sm:h-56"
+          style={{ background: EXIT_GRADIENT }}
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[min(72vh,560px)] sm:h-[min(78vh,640px)]"
         />
       ) : (
         <motion.div
           aria-hidden
           style={{
             opacity: bottomFadeOpacity,
-            background:
-              'linear-gradient(180deg, transparent 0%, #1c1c1c 22%, #4a4a4a 42%, #9a9a9a 62%, #d6d6d6 80%, #F5F5F5 100%)',
+            background: EXIT_GRADIENT,
           }}
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[min(32vh,280px)] sm:h-[min(34vh,320px)]"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[min(72vh,560px)] sm:h-[min(78vh,640px)]"
         />
       )}
       {/* Testimonials */}
@@ -258,9 +274,11 @@ const LandingTrustSection = forwardRef<HTMLElement>(function LandingTrustSection
       </div>
 
       {/* Marquee */}
-      <div className={`relative z-[2] overflow-hidden border-t py-10 pb-20 transition-colors duration-700 sm:pb-24 ${isDark ? 'border-white/10' : 'border-gray-200'}`}>
+      <div
+        className={`relative z-[2] overflow-hidden border-t py-10 pb-24 transition-[border-color,color] duration-700 sm:pb-28 ${marqueeBorderClass}`}
+      >
         {reduced ? (
-          <p className={`mx-auto max-w-3xl px-6 text-center text-lg font-medium tracking-tight transition-colors duration-700 ${isDark ? 'text-white/90' : 'text-gray-800'}`}>
+          <p className={`mx-auto max-w-3xl px-6 text-center text-lg font-medium tracking-tight transition-colors duration-700 ${marqueeTextClass}`}>
             Agents use Oikaro to win more listings, capture every lead, and close with confidence — all from one AI-powered workspace.
           </p>
         ) : (
@@ -269,7 +287,7 @@ const LandingTrustSection = forwardRef<HTMLElement>(function LandingTrustSection
               <p
                 key={copy}
                 aria-hidden={copy === 1}
-                className={`mx-8 shrink-0 text-lg font-medium tracking-tight transition-colors duration-700 sm:text-xl ${isDark ? 'text-white/90' : 'text-gray-800'}`}
+                className={`mx-8 shrink-0 text-lg font-medium tracking-tight transition-colors duration-700 sm:text-xl ${marqueeTextClass}`}
               >
                 Agents use Oikaro to win more listings, capture every lead, and close with confidence — all from one AI-powered workspace.&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;
               </p>
@@ -277,6 +295,8 @@ const LandingTrustSection = forwardRef<HTMLElement>(function LandingTrustSection
           </div>
         )}
       </div>
+
+      <div aria-hidden className="relative z-[2] h-10 bg-[#F5F5F5] sm:h-14" />
     </motion.section>
   );
 });
