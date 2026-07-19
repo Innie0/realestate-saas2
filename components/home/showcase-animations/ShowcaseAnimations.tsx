@@ -235,13 +235,13 @@ function PropertyLookupPhase({ reduced }: { reduced: boolean }) {
       animate={{ opacity: 1, x: 0 }}
       exit={reduced ? undefined : { opacity: 0, x: -12 }}
       transition={{ duration: 0.4, ease }}
-      className="space-y-3"
+      className="space-y-2"
     >
       <motion.div
         initial={reduced ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 0.35, ease }}
-        className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2.5 shadow-sm"
+        className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-2.5 py-2 shadow-sm"
       >
         <Search className="h-3.5 w-3.5 shrink-0 text-gray-500" strokeWidth={2} />
         <p className="text-[11px] font-medium text-gray-900 sm:text-[12px]">123 W Main Street</p>
@@ -251,15 +251,15 @@ function PropertyLookupPhase({ reduced }: { reduced: boolean }) {
         initial={reduced ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25, duration: 0.35, ease }}
-        className="rounded-xl border border-gray-200 bg-white p-3"
+        className="rounded-lg border border-gray-200 bg-white p-2.5"
       >
         <p className="text-[11px] font-semibold text-gray-900 sm:text-[12px]">123 W Main Street</p>
-        <p className="mt-1 text-[10px] text-gray-600 sm:text-[11px]">3 bed · 2 bath · 1,840 sqft · Built 2004</p>
-        <div className="mt-2.5 flex flex-wrap gap-1.5">
+        <p className="mt-0.5 text-[10px] text-gray-600 sm:text-[11px]">3 bed · 2 bath · 1,840 sqft · Built 2004</p>
+        <div className="mt-2 flex flex-wrap gap-1">
           {['Single family', 'Owner-occupied', 'Travis County'].map((tag) => (
             <span
               key={tag}
-              className="rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-[9px] font-medium text-gray-600 sm:text-[10px]"
+              className="rounded-full border border-gray-200 bg-gray-50 px-1.5 py-px text-[9px] font-medium text-gray-600 sm:text-[10px]"
             >
               {tag}
             </span>
@@ -271,17 +271,16 @@ function PropertyLookupPhase({ reduced }: { reduced: boolean }) {
         initial={reduced ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.45, duration: 0.35, ease }}
-        className="rounded-xl border border-gray-200 bg-white p-3"
+        className="rounded-lg border border-gray-200 bg-white p-2.5"
       >
-        <div className="flex items-start gap-2.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-700">
-            <User className="h-3.5 w-3.5" strokeWidth={2} />
+        <div className="flex items-start gap-2">
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-700">
+            <User className="h-3 w-3" strokeWidth={2} />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-medium uppercase tracking-wide text-gray-500">Owner</p>
+            <p className="text-[9px] font-medium uppercase tracking-wide text-gray-500">Owner</p>
             <p className="text-[12px] font-semibold text-gray-900 sm:text-[13px]">John Doe</p>
-            <p className="mt-0.5 text-[10px] text-gray-600 sm:text-[11px]">Mailing address on file · High match confidence</p>
-            <div className="mt-2 space-y-1">
+            <div className="mt-1.5 space-y-1">
               <motion.div
                 initial={reduced ? false : { opacity: 0, x: -4 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -312,26 +311,26 @@ function PropertyLookupPhase({ reduced }: { reduced: boolean }) {
         initial={reduced ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.65, duration: 0.35, ease }}
-        className="rounded-xl border border-gray-200 bg-white p-3"
+        className="rounded-lg border border-gray-200 bg-white p-2.5"
       >
-        <div className="mb-2 flex items-center gap-1.5">
+        <div className="mb-1.5 flex items-center gap-1.5">
           <History className="h-3 w-3 text-gray-500" strokeWidth={2} />
           <p className="text-[10px] font-medium uppercase tracking-wide text-gray-500 sm:text-[11px]">
             Sale history
           </p>
         </div>
-        <ul className="space-y-2">
+        <ul className="space-y-1.5">
           {saleHistory.map((sale, i) => (
             <motion.li
               key={sale.date}
               initial={reduced ? false : { opacity: 0, x: -6 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.75 + i * 0.12, duration: 0.3, ease }}
-              className="flex items-center justify-between gap-2 border-b border-gray-100 pb-2 last:border-0 last:pb-0"
+              className="flex items-center justify-between gap-2 border-b border-gray-100 pb-1.5 last:border-0 last:pb-0"
             >
               <div>
                 <p className="text-[11px] font-medium text-gray-900 sm:text-[12px]">{sale.date}</p>
-                <p className="text-[10px] text-gray-500">{sale.note}</p>
+                <p className="text-[9px] text-gray-500 sm:text-[10px]">{sale.note}</p>
               </div>
               <p className="text-[11px] font-semibold text-gray-900 sm:text-[12px]">{sale.price}</p>
             </motion.li>
@@ -366,8 +365,8 @@ export function WinListingAnimation({ reduced }: { reduced: boolean }) {
   }, [reduced]);
 
   return (
-    <ShowcaseAnimationFrame>
-      <LoopShell reduced={reduced}>
+    <ShowcaseAnimationFrame className="flex min-h-0 flex-1 flex-col justify-start overflow-x-hidden overflow-y-auto">
+      <div className="flex w-full flex-col justify-start">
         <AnimatePresence mode="wait" initial={false}>
           {phase === 'listing' ? (
             <ListingGenerationPhase reduced={reduced} key="listing-phase" />
@@ -375,7 +374,7 @@ export function WinListingAnimation({ reduced }: { reduced: boolean }) {
             <PropertyLookupPhase reduced={reduced} key="research-phase" />
           )}
         </AnimatePresence>
-      </LoopShell>
+      </div>
     </ShowcaseAnimationFrame>
   );
 }
