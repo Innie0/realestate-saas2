@@ -267,25 +267,33 @@ export default function HomePageClient() {
 
       {/* ── Footer ─────────────────────────────────────────────────────── */}
       <footer className="relative z-10 border-t border-gray-200 bg-[#F5F5F5]/20 backdrop-blur-sm">
-        <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="text-center md:text-left">
-              <p className="text-gray-700 text-sm">© 2026 Oikaro. All rights reserved.</p>
-              <Link
-                href="/auth/signup"
-                className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors"
-              >
-                Start your free trial
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-700">
+        <div className="mx-auto max-w-7xl px-6 py-16 lg:py-20">
+          <div className="flex flex-col items-center text-center">
+            <Link
+              href="/"
+              className="font-mono text-5xl font-semibold tracking-[-0.04em] text-gray-900 transition-opacity hover:opacity-80 sm:text-6xl lg:text-7xl"
+            >
+              Oikaro
+            </Link>
+
+            <nav className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-gray-700">
               <Link href="/products" className="hover:text-brand-600 transition-colors">Products</Link>
               <Link href="/pricing" className="hover:text-brand-600 transition-colors">Pricing</Link>
               <Link href="/about" className="hover:text-brand-600 transition-colors">About</Link>
               <Link href="/privacy" className="hover:text-brand-600 transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-brand-600 transition-colors">Terms</Link>
               <Link href="/contact" className="hover:text-brand-600 transition-colors">Contact</Link>
+            </nav>
+
+            <div className="mt-10 flex w-full flex-col items-center gap-3 border-t border-gray-200 pt-8 md:flex-row md:justify-between">
+              <p className="text-sm text-gray-700">© 2026 Oikaro. All rights reserved.</p>
+              <Link
+                href="/auth/signup"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors"
+              >
+                Start your free trial
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
           </div>
         </div>
