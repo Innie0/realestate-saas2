@@ -6,6 +6,10 @@ import { Search, User, History, Phone, Mail, Sparkles } from 'lucide-react';
 
 const ease = [0.25, 0.1, 0.25, 1] as const;
 
+/** Fixed height for all showcase demos — prevents layout jump between slides */
+export const SHOWCASE_FRAME_CLASS =
+  'flex h-full min-h-0 items-center';
+
 export function ShowcaseAnimationFrame({
   children,
   className,
@@ -14,9 +18,9 @@ export function ShowcaseAnimationFrame({
   className?: string;
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-300/80 bg-white shadow-[0_24px_56px_-20px_rgba(24,24,27,0.18),0_0_0_1px_rgba(24,24,27,0.04)] ring-1 ring-gray-900/[0.05]">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200/90 bg-white shadow-[0_20px_50px_-24px_rgba(24,24,27,0.12)] ring-1 ring-gray-900/[0.04]">
       <div
-        className={`relative w-full bg-[#fafafa] p-5 sm:p-6 ${className ?? 'aspect-[4/3] sm:aspect-[16/11]'}`}
+        className={`relative w-full flex-1 bg-[#fafafa] p-5 sm:p-6 ${className ?? SHOWCASE_FRAME_CLASS}`}
       >
         {children}
       </div>
@@ -24,20 +28,8 @@ export function ShowcaseAnimationFrame({
   );
 }
 
-function LoopShell({ reduced, children }: { reduced: boolean; children: React.ReactNode }) {
-  if (reduced) {
-    return <div className="flex h-full flex-col justify-center">{children}</div>;
-  }
-  return (
-    <motion.div
-      className="flex h-full flex-col justify-center"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.4 }}
-    >
-      {children}
-    </motion.div>
-  );
+function LoopShell({ children }: { reduced: boolean; children: React.ReactNode }) {
+  return <div className="flex h-full w-full flex-col justify-center">{children}</div>;
 }
 
 /** AI chat: prompt → reply → action chips */
@@ -355,7 +347,7 @@ export function WinListingAnimation({ reduced }: { reduced: boolean }) {
   }, [reduced]);
 
   return (
-    <ShowcaseAnimationFrame className="min-h-[320px] sm:min-h-[360px]">
+    <ShowcaseAnimationFrame>
       <LoopShell reduced={reduced}>
         <AnimatePresence mode="wait" initial={false}>
           {phase === 'listing' ? (

@@ -2,11 +2,16 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { ArrowRight as CtaArrow } from 'lucide-react';
 import { SHOWCASE_NARRATIVE, SHOWCASE_SLIDES } from '@/lib/landing-showcase';
 import { ShowcaseAnimation } from '@/components/home/showcase-animations/ShowcaseAnimations';
 import { useMotionReduced } from '@/lib/motion';
+
+const slideEase = [0.25, 0.1, 0.25, 1] as const;
+const slideTransition = { duration: 0.28, ease: slideEase };
+
+const SHOWCASE_DISPLAY_HEIGHT = 'h-[400px] sm:h-[420px]';
 
 function ShowcaseSlideRail({
   active,
@@ -17,92 +22,97 @@ function ShowcaseSlideRail({
   onSelect: (index: number) => void;
   reduced: boolean;
 }) {
+  const activeSlide = SHOWCASE_SLIDES[active];
+
   return (
-    <div className="flex flex-col gap-1 lg:justify-center lg:py-2">
-      {SHOWCASE_SLIDES.map((item, i) => {
-        const isActive = i === active;
-        return (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => onSelect(i)}
-            className="group w-full text-left rounded-xl px-1 py-4 transition-colors hover:bg-white/50 lg:px-2"
-            aria-current={isActive ? 'true' : undefined}
-          >
-            <div className="flex gap-4 sm:gap-5">
-              <div className="flex shrink-0 justify-center pt-1.5">
-                <div
-                  className={`rounded-full transition-all duration-300 ${
-                    isActive
-                      ? 'h-full min-h-[3.5rem] w-[3px] bg-gray-900'
-                      : 'h-8 w-px bg-gray-300 group-hover:bg-gray-400'
-                  }`}
-                />
-              </div>
-
-              <div className="min-w-0 flex-1 pb-1">
-                <p
-                  className={`font-mono text-[10px] font-semibold uppercase tracking-[0.12em] transition-colors duration-300 ${
-                    isActive ? 'text-gray-600' : 'text-gray-400'
-                  }`}
-                >
-                  {item.eyebrow}
-                </p>
-                <h3
-                  className={`mt-1.5 tracking-tight transition-all duration-300 ${
-                    isActive
-                      ? 'text-xl font-semibold leading-snug text-gray-900 sm:text-2xl'
-                      : 'text-base font-medium leading-snug text-gray-400 group-hover:text-gray-600'
-                  }`}
-                >
-                  {item.headline}
-                </h3>
-
-                <AnimatePresence initial={false}>
+    <div className="flex flex-col lg:justify-center lg:py-2">
+      <LayoutGroup>
+      <div className="flex flex-col gap-1">
+        {SHOWCASE_SLIDES.map((item, i) => {
+          const isActive = i === active;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => onSelect(i)}
+              className="group w-full rounded-xl px-1 py-3 text-left transition-colors hover:bg-white/60 lg:px-2 lg:py-4"
+              aria-current={isActive ? 'true' : undefined}
+            >
+              <div className="flex gap-4 sm:gap-5">
+                <div className="relative flex w-[3px] shrink-0 justify-center self-stretch pt-1.5">
                   {isActive ? (
                     <motion.div
-                      key={item.id}
-                      initial={reduced ? false : { opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={reduced ? undefined : { opacity: 0, height: 0 }}
-                      transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
-                      className="overflow-hidden"
-                    >
-                      <p className="mt-3 max-w-md text-[15px] leading-relaxed text-gray-700">
-                        {item.description}
-                      </p>
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        {item.tools.map((tool) => (
-                          <span
-                            key={tool}
-                            className="rounded-full border border-gray-300 bg-white/90 px-2.5 py-0.5 text-[10px] font-medium text-gray-600"
-                          >
-                            {tool}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="mt-5 flex flex-wrap items-center gap-4">
-                        <Link href="/auth/signup">
-                          <span className="group/btn inline-flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-600">
-                            Get Started
-                            <CtaArrow className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5" />
-                          </span>
-                        </Link>
-                        <Link
-                          href={item.productsHref}
-                          className="text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
-                        >
-                          See how it works →
-                        </Link>
-                      </div>
-                    </motion.div>
-                  ) : null}
-                </AnimatePresence>
+                      layoutId="showcase-active-indicator"
+                      className="absolute inset-x-0 top-1.5 bottom-0 rounded-full bg-gray-900"
+                      transition={{ type: 'spring', stiffness: 380, damping: 34 }}
+                    />
+                  ) : (
+                    <div className="mx-auto mt-1 h-8 w-px rounded-full bg-gray-300 transition-colors group-hover:bg-gray-400" />
+                  )}
+                </div>
+
+                <div className="min-w-0 flex-1 pb-0.5">
+                  <p
+                    className={`font-mono text-[10px] font-semibold uppercase tracking-[0.12em] transition-colors duration-200 ${
+                      isActive ? 'text-gray-600' : 'text-gray-400'
+                    }`}
+                  >
+                    {item.eyebrow}
+                  </p>
+                  <h3
+                    className={`mt-1.5 tracking-tight transition-colors duration-200 ${
+                      isActive
+                        ? 'text-xl font-semibold leading-snug text-gray-900 sm:text-2xl'
+                        : 'text-base font-medium leading-snug text-gray-400 group-hover:text-gray-600'
+                    }`}
+                  >
+                    {item.headline}
+                  </h3>
+                </div>
               </div>
+            </button>
+          );
+        })}
+      </div>
+      </LayoutGroup>
+
+      <div className={`relative mt-4 min-h-[200px] sm:min-h-[210px] lg:mt-6 lg:pl-[calc(0.75rem+3px+1.25rem)]`}>
+        <AnimatePresence initial={false} mode="popLayout">
+          <motion.div
+            key={activeSlide.id}
+            initial={reduced ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduced ? undefined : { opacity: 0, y: -6 }}
+            transition={slideTransition}
+          >
+            <p className="max-w-md text-[15px] leading-relaxed text-gray-700">{activeSlide.description}</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {activeSlide.tools.map((tool) => (
+                <span
+                  key={tool}
+                  className="rounded-full border border-gray-300 bg-white px-2.5 py-0.5 text-[10px] font-medium text-gray-600"
+                >
+                  {tool}
+                </span>
+              ))}
             </div>
-          </button>
-        );
-      })}
+            <div className="mt-5 flex flex-wrap items-center gap-4">
+              <Link href="/auth/signup">
+                <span className="group/btn inline-flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-600">
+                  Get Started
+                  <CtaArrow className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5" />
+                </span>
+              </Link>
+              <Link
+                href={activeSlide.productsHref}
+                className="text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
+              >
+                See how it works →
+              </Link>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
@@ -131,26 +141,20 @@ export default function LandingShowcaseCarousel() {
           <p className="mt-5 text-lg leading-relaxed text-gray-700">{SHOWCASE_NARRATIVE.subheadline}</p>
         </motion.div>
 
-        <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-center lg:gap-12 xl:gap-16">
-          <div className="relative mx-auto w-full max-w-[480px] lg:mx-0 lg:max-w-none">
-            <div className="relative overflow-hidden rounded-[1.75rem] border border-gray-800 bg-[#0a0a0a] p-5 shadow-[0_32px_80px_-24px_rgba(0,0,0,0.45)] sm:p-7 lg:p-8">
-              <div className="pointer-events-none absolute inset-0" aria-hidden>
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_45%,rgba(252,92,3,0.07),transparent_70%)]" />
-              </div>
-
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={slide.id}
-                  initial={reduced ? false : { opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={reduced ? undefined : { opacity: 0, scale: 0.99 }}
-                  transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-                  className="relative z-10"
-                >
-                  <ShowcaseAnimation id={slide.animationId} reduced={reduced} />
-                </motion.div>
-              </AnimatePresence>
-            </div>
+        <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-start lg:gap-12 xl:gap-16">
+          <div className={`relative mx-auto w-full max-w-[520px] ${SHOWCASE_DISPLAY_HEIGHT} lg:mx-0 lg:max-w-none`}>
+            <AnimatePresence initial={false}>
+              <motion.div
+                key={slide.id}
+                initial={reduced ? false : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduced ? undefined : { opacity: 0, y: -10 }}
+                transition={slideTransition}
+                className={`absolute inset-0 ${SHOWCASE_DISPLAY_HEIGHT}`}
+              >
+                <ShowcaseAnimation id={slide.animationId} reduced={reduced} />
+              </motion.div>
+            </AnimatePresence>
           </div>
 
           <ShowcaseSlideRail active={active} onSelect={setActive} reduced={reduced} />
