@@ -6,26 +6,19 @@ import Link from 'next/link';
 import CinematicHeroSection from '@/components/home/CinematicHeroSection';
 import LandingNav from '@/components/home/LandingNav';
 import LandingShowcaseCarousel from '@/components/home/LandingShowcaseCarousel';
-import LandingPersonaSection from '@/components/home/LandingPersonaSection';
 import LandingTrustSection from '@/components/home/LandingTrustSection';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, ArrowRight, ChevronDown, Star, Check } from 'lucide-react';
+import { Sparkles, ArrowRight, ChevronDown, Star } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import PricingFeatureList from '@/components/PricingFeatureList';
 import {
   STARTER_PLAN_DESCRIPTION,
   PRO_PLAN_DESCRIPTION,
-  PRO_CARD_HIGHLIGHTS,
   getPlanDisplayPrice,
   getPricingFootnote,
   isAnyAnnualBillingAvailable,
 } from '@/lib/pricing';
 import { MARKETING_FAQ_ITEMS } from '@/lib/marketing-faq';
-
-const STARTER_TEASER = [
-  '20 listing projects & research lookups / mo',
-  'Leads inbox, CRM & lead capture',
-  'Calendar, tasks & transaction checklists',
-] as const;
 
 // ─── FAQ Item ─────────────────────────────────────────────────────────────────
 
@@ -135,7 +128,6 @@ export default function HomePageClient() {
       <CinematicHeroSection sectionRef={heroRef} />
 
       <LandingShowcaseCarousel />
-      <LandingPersonaSection />
       <LandingTrustSection ref={darkBandRef} />
 
       {/* ── FAQ ────────────────────────────────────────────────────────── */}
@@ -149,7 +141,7 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── Pricing teaser ─────────────────────────────────────────────── */}
+      {/* ── Pricing ────────────────────────────────────────────────────── */}
       <section className="relative z-10 py-24 lg:py-32 border-t border-gray-200">
         <div className="mx-auto max-w-5xl px-6 lg:px-8">
           <motion.div
@@ -175,7 +167,6 @@ export default function HomePageClient() {
                 description: STARTER_PLAN_DESCRIPTION,
                 plan: 'starter' as const,
                 popular: false,
-                highlights: STARTER_TEASER,
               },
               {
                 name: 'Pro',
@@ -183,7 +174,6 @@ export default function HomePageClient() {
                 description: PRO_PLAN_DESCRIPTION,
                 plan: 'pro' as const,
                 popular: true,
-                highlights: PRO_CARD_HIGHLIGHTS,
               },
             ].map((plan, i) => (
               <motion.div
@@ -224,16 +214,7 @@ export default function HomePageClient() {
                   )}
                 </div>
 
-                <ul className="mb-7 space-y-2.5">
-                  {plan.highlights.map((item) => (
-                    <li key={item} className="flex items-start gap-2.5 text-sm text-gray-700">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" strokeWidth={2.5} />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <Link href="/auth/signup">
+                <Link href="/auth/signup" className="mb-7 block">
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
@@ -246,54 +227,66 @@ export default function HomePageClient() {
                     Start Free Trial
                   </motion.button>
                 </Link>
+
+                <div className="border-t border-gray-200 mb-5" />
+                <p className="text-label mb-4">What&apos;s included</p>
+                <PricingFeatureList plan={plan.plan} />
               </motion.div>
             ))}
           </div>
 
-          <motion.div
+          <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.35 }}
-            className="mt-10 flex flex-col items-center gap-4 text-center"
+            className="mt-8 text-center text-sm text-gray-600"
           >
-            <Link href="/pricing#compare" className="text-sm font-medium text-gray-900 hover:text-brand-600 transition-colors">
+            <Link href="/pricing#compare" className="font-medium text-gray-900 hover:text-brand-600 transition-colors">
               Compare all features →
             </Link>
-            <p className="text-gray-600 text-sm">{getPricingFootnote()}</p>
-          </motion.div>
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="text-center text-gray-600 text-sm mt-10"
+          >
+            {getPricingFootnote()}
+          </motion.p>
         </div>
       </section>
 
       {/* ── Footer ─────────────────────────────────────────────────────── */}
       <footer className="relative z-10 border-t border-gray-200 bg-[#F5F5F5]/20 backdrop-blur-sm">
-        <div className="mx-auto max-w-7xl px-6 py-16 lg:py-20">
-          <div className="flex flex-col items-center text-center">
+        <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
+          <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
             <Link
               href="/"
-              className="font-mono text-5xl font-semibold tracking-[-0.04em] text-gray-900 transition-opacity hover:opacity-80 sm:text-6xl lg:text-7xl"
+              className="shrink-0 font-mono text-4xl font-semibold tracking-[-0.04em] text-gray-900 transition-opacity hover:opacity-80 sm:text-5xl lg:text-6xl"
             >
               Oikaro
             </Link>
 
-            <nav className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-gray-700">
-              <Link href="/products" className="hover:text-brand-600 transition-colors">Products</Link>
-              <Link href="/pricing" className="hover:text-brand-600 transition-colors">Pricing</Link>
-              <Link href="/about" className="hover:text-brand-600 transition-colors">About</Link>
-              <Link href="/privacy" className="hover:text-brand-600 transition-colors">Privacy</Link>
-              <Link href="/terms" className="hover:text-brand-600 transition-colors">Terms</Link>
-              <Link href="/contact" className="hover:text-brand-600 transition-colors">Contact</Link>
-            </nav>
-
-            <div className="mt-10 flex w-full flex-col items-center gap-3 border-t border-gray-200 pt-8 md:flex-row md:justify-between">
-              <p className="text-sm text-gray-700">© 2026 Oikaro. All rights reserved.</p>
+            <div className="md:text-right">
+              <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-700 md:justify-end">
+                <Link href="/products" className="hover:text-brand-600 transition-colors">Products</Link>
+                <Link href="/pricing" className="hover:text-brand-600 transition-colors">Pricing</Link>
+                <Link href="/about" className="hover:text-brand-600 transition-colors">About</Link>
+                <Link href="/privacy" className="hover:text-brand-600 transition-colors">Privacy</Link>
+                <Link href="/terms" className="hover:text-brand-600 transition-colors">Terms</Link>
+                <Link href="/contact" className="hover:text-brand-600 transition-colors">Contact</Link>
+              </nav>
               <Link
                 href="/auth/signup"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors"
+                className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors md:justify-end"
               >
                 Start your free trial
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
+              <p className="mt-4 text-sm text-gray-700">© 2026 Oikaro. All rights reserved.</p>
             </div>
           </div>
         </div>
