@@ -93,7 +93,6 @@ function FAQAccordion() {
 export default function HomePageClient() {
   const router = useRouter();
   const heroRef = useRef<HTMLElement>(null);
-  const darkBandRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
@@ -123,12 +122,12 @@ export default function HomePageClient() {
   return (
     <div className="marketing-root min-h-screen bg-[#F5F5F5] text-gray-900 overflow-x-hidden font-sans">
 
-      <LandingNav heroRef={heroRef} darkBandRef={darkBandRef} />
+      <LandingNav heroRef={heroRef} />
 
       <CinematicHeroSection sectionRef={heroRef} />
 
       <LandingShowcaseCarousel />
-      <LandingTrustSection ref={darkBandRef} />
+      <LandingTrustSection />
 
       {/* ── FAQ ────────────────────────────────────────────────────────── */}
       <section className="relative z-10 bg-[#F5F5F5] py-24 lg:py-32">
