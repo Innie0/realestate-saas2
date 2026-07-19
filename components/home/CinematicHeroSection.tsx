@@ -46,7 +46,7 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
           <div className="mx-auto max-w-3xl text-center">
             <motion.h1
               variants={itemVariants}
-              className="font-display text-3xl font-medium italic leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl"
+              className="text-3xl font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl"
             >
               Your entire business,
               <br />
