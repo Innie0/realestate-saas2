@@ -96,18 +96,12 @@ function ShowcaseSlideRail({
                 </span>
               ))}
             </div>
-            <div className="mt-5 flex flex-wrap items-center gap-4">
+            <div className="mt-6">
               <Link href="/auth/signup">
-                <span className="group/btn inline-flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-600">
+                <span className="group/btn inline-flex items-center gap-2 rounded-full bg-[#dff756] px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm transition-all hover:bg-[#d4ec4a] hover:shadow-md">
                   Get Started
-                  <CtaArrow className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5" />
+                  <CtaArrow className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
                 </span>
-              </Link>
-              <Link
-                href={activeSlide.productsHref}
-                className="text-sm font-medium text-gray-600 transition-colors hover:text-brand-600"
-              >
-                See how it works →
               </Link>
             </div>
           </motion.div>
