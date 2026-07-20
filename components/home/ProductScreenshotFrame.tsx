@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import BrowserWindowFrame from '@/components/home/BrowserWindowFrame';
+import { MKT, mktEnterReveal } from '@/lib/marketing-design';
 import { useMotionReduced } from '@/lib/motion';
 
 type ProductScreenshotFrameProps = {
@@ -15,25 +17,19 @@ type ProductScreenshotFrameProps = {
 
 function PlaceholderPanel({ label }: { label: string }) {
   return (
-    <div className="absolute inset-0 flex flex-col bg-[#fafafa]">
-      <div className="flex items-center gap-2 border-b border-gray-200 px-4 py-3">
-        <div className="h-2.5 w-2.5 rounded-full bg-gray-300" />
-        <div className="h-2.5 w-2.5 rounded-full bg-gray-300" />
-        <div className="h-2.5 w-2.5 rounded-full bg-gray-300" />
-        <div className="ml-3 h-2 flex-1 max-w-[140px] rounded bg-gray-200" />
-      </div>
-      <div className="flex flex-1 min-h-0">
-        <div className="w-[22%] border-r border-gray-200 bg-[#f5f5f4] p-3 space-y-2">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-2 rounded bg-gray-200/90" style={{ width: `${55 + (i % 3) * 12}%` }} />
-          ))}
-        </div>
-        <div className="flex flex-1 flex-col items-center justify-center p-8 text-center">
-          <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-gray-500 mb-2">Screenshot</p>
-          <p className="text-sm font-medium text-gray-700 max-w-[220px]">{label}</p>
-          <p className="mt-2 text-[11px] text-gray-500">Replace PNG in public/landing/</p>
-        </div>
-      </div>
+    <div
+      className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center"
+      style={{ backgroundColor: MKT.background }}
+    >
+      <p className="mb-2 text-xs font-medium uppercase tracking-[0.12em]" style={{ color: MKT.textSecondary }}>
+        Screenshot
+      </p>
+      <p className="text-sm font-medium max-w-[220px]" style={{ color: MKT.textPrimary }}>
+        {label}
+      </p>
+      <p className="mt-2 text-[11px]" style={{ color: MKT.muted }}>
+        Replace PNG in public/landing/
+      </p>
     </div>
   );
 }
@@ -50,8 +46,8 @@ export default function ProductScreenshotFrame({
   const displayLabel = label ?? alt;
 
   const frame = (
-    <div className="overflow-hidden rounded-2xl border border-gray-300/90 bg-white shadow-[0_24px_64px_-28px_rgba(24,24,27,0.2),0_0_0_1px_rgba(24,24,27,0.04)] ring-1 ring-gray-900/[0.05]">
-      <div className="relative aspect-[16/10] w-full bg-gray-100">
+    <BrowserWindowFrame>
+      <div className="relative aspect-[16/10] w-full bg-white">
         {!failed ? (
           <Image
             src={src}
@@ -66,7 +62,7 @@ export default function ProductScreenshotFrame({
           <PlaceholderPanel label={displayLabel} />
         )}
       </div>
-    </div>
+    </BrowserWindowFrame>
   );
 
   if (reduced) {
@@ -74,14 +70,7 @@ export default function ProductScreenshotFrame({
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 36, scale: 0.985 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.65, delay: animationDelay, ease: [0.25, 0.1, 0.25, 1] }}
-      whileHover={{ y: -4, transition: { duration: 0.25 } }}
-      className="relative w-full will-change-transform"
-    >
+    <motion.div {...mktEnterReveal(reduced, animationDelay)} className="relative w-full">
       {frame}
     </motion.div>
   );

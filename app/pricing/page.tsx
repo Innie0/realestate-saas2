@@ -3,13 +3,17 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { Sparkles, Loader2 } from 'lucide-react';
-import AuthLogo from '@/components/branding/AuthLogo';
+import MarketingSubpageHeader from '@/components/marketing/MarketingSubpageHeader';
+import MarketingSubpageFooter from '@/components/marketing/MarketingSubpageFooter';
 import SubscribeButton from '@/components/SubscribeButton';
 import PricingFeatureList from '@/components/PricingFeatureList';
 import PricingComparisonTable from '@/components/PricingComparisonTable';
 import { supabase } from '@/lib/supabase';
 import { hasRealStripeSubscription, isAdminEmail } from '@/lib/subscription';
+import { MKT, mktEnterReveal } from '@/lib/marketing-design';
+import { useMotionReduced } from '@/lib/motion';
 import {
   type BillingInterval,
   type PlanSlug,
@@ -40,6 +44,7 @@ const PLANS: { slug: PlanSlug; name: string; description: string; popular: boole
 
 export default function PricingPage() {
   const router = useRouter();
+  const reduced = useMotionReduced();
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState('');
@@ -52,7 +57,9 @@ export default function PricingPage() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
       if (session?.user) {
         setIsAuthenticated(true);
@@ -84,154 +91,200 @@ export default function PricingPage() {
   }, [router]);
 
   return (
-    <div className="marketing-root min-h-screen bg-[#F5F5F5] relative overflow-hidden font-sans">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gray-50 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="relative z-10 mx-auto max-w-7xl pl-3 pr-6 sm:pl-4 lg:pl-6 py-6 flex items-center justify-between">
-        <AuthLogo className="h-14 sm:h-16 w-auto" centered={false} />
-        {!isLoading && (
-          <div className="text-sm">
-            {isAuthenticated ? (
-              <span className="text-gray-700 truncate max-w-[220px] block">✓ {userEmail}</span>
-            ) : (
-              <Link href="/auth/signup" className="text-gray-700 hover:text-brand-600 transition-colors">
-                Sign in to subscribe →
-              </Link>
-            )}
-          </div>
-        )}
-      </div>
+    <div className="marketing-root min-h-screen font-sans" style={{ backgroundColor: MKT.background }}>
+      <MarketingSubpageHeader />
 
       {isLoading && (
         <div className="flex items-center justify-center py-40">
-          <Loader2 className="w-8 h-8 text-gray-900 animate-spin" />
+          <Loader2 className="h-8 w-8 animate-spin" style={{ color: MKT.textPrimary }} />
         </div>
       )}
 
       {!isLoading && (
-        <div className="relative z-10 mx-auto max-w-5xl px-6 pb-24">
-          <div className="text-center pt-12 pb-10">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-100 border border-gray-200 text-xs text-gray-600 mb-6">
-              <Sparkles className="w-3.5 h-3.5" />
-              7-day free trial on every plan
-            </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 tracking-tight">
-              Choose your plan
-            </h1>
-            <p className="text-gray-700 text-lg max-w-xl mx-auto">
-              Start your free trial today. You won&apos;t be charged until the trial ends.
-            </p>
-
-            {showAnnual && (
-              <div className="inline-flex items-center gap-1 p-1 mt-8 bg-gray-100 border border-gray-200 rounded-xl">
-                <button
-                  type="button"
-                  onClick={() => setBillingInterval('monthly')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    billingInterval === 'monthly'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-700 hover:text-gray-900'
-                  }`}
+        <main>
+          <section className="border-b py-16 lg:py-24" style={{ borderColor: MKT.border, backgroundColor: MKT.surface }}>
+            <div className="mx-auto px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
+              <motion.div {...mktEnterReveal(reduced)} className="mx-auto max-w-3xl text-center">
+                <span
+                  className="mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-medium"
+                  style={{ borderColor: MKT.border, color: MKT.textSecondary, backgroundColor: MKT.background }}
                 >
-                  Monthly
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setBillingInterval('annual')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    billingInterval === 'annual'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-700 hover:text-gray-900'
-                  }`}
+                  <Sparkles className="h-3.5 w-3.5" />
+                  7-day free trial on every plan
+                </span>
+                <h1
+                  className="text-4xl font-medium tracking-[-0.02em] sm:text-5xl lg:text-6xl"
+                  style={{ color: MKT.textPrimary }}
                 >
-                  Annual
-                  <span className="ml-1.5 text-xs text-brand-600 font-semibold">Save 2 months</span>
-                </button>
-              </div>
-            )}
-          </div>
+                  Choose your plan
+                </h1>
+                <p className="mx-auto mt-4 max-w-xl text-lg leading-[1.6]" style={{ color: MKT.textSecondary }}>
+                  Start your free trial today. You won&apos;t be charged until the trial ends.
+                </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 md:items-start gap-6 max-w-3xl mx-auto">
-            {PLANS.map((plan) => (
-              <div
-                key={plan.slug}
-                className={`relative rounded-2xl p-7 ${
-                  plan.popular
-                    ? 'bg-white border-2 border-gray-400'
-                    : 'bg-white border border-gray-200'
-                }`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-brand-500 text-white text-xs font-semibold">
-                      <Sparkles className="w-3 h-3" />
-                      Most Popular
-                    </span>
-                  </div>
+                {!isAuthenticated ? (
+                  <p className="mt-6 text-sm" style={{ color: MKT.textSecondary }}>
+                    <Link href="/auth/signup" className="font-medium underline-offset-2 hover:underline" style={{ color: MKT.textPrimary }}>
+                      Sign in to subscribe
+                    </Link>
+                  </p>
+                ) : (
+                  <p className="mt-6 truncate text-sm" style={{ color: MKT.textSecondary }}>
+                    Signed in as {userEmail}
+                  </p>
                 )}
 
-                <div className="mb-5">
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">{plan.name}</h3>
-                  <p className="text-gray-700 text-sm">{plan.description}</p>
-                </div>
-
-                <div className="mb-6">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-price text-4xl">
-                      {getPlanDisplayPrice(plan.slug, billingInterval)}
-                    </span>
-                    <span className="text-gray-700 text-sm">{getPlanPeriodLabel(billingInterval)}</span>
+                {showAnnual && (
+                  <div
+                    className="mt-8 inline-flex items-center gap-1 p-1"
+                    style={{ borderRadius: MKT.radius.card, border: `1px solid ${MKT.border}`, backgroundColor: MKT.background }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setBillingInterval('monthly')}
+                      className="px-4 py-2 text-sm font-medium transition-colors"
+                      style={
+                        billingInterval === 'monthly'
+                          ? { borderRadius: MKT.radius.button, backgroundColor: MKT.surface, color: MKT.textPrimary }
+                          : { color: MKT.textSecondary }
+                      }
+                    >
+                      Monthly
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBillingInterval('annual')}
+                      className="px-4 py-2 text-sm font-medium transition-colors"
+                      style={
+                        billingInterval === 'annual'
+                          ? { borderRadius: MKT.radius.button, backgroundColor: MKT.surface, color: MKT.textPrimary }
+                          : { color: MKT.textSecondary }
+                      }
+                    >
+                      Annual
+                      <span className="ml-1.5 text-xs font-medium" style={{ color: MKT.textPrimary }}>
+                        Save 2 months
+                      </span>
+                    </button>
                   </div>
-                  {billingInterval === 'annual' && (
-                    <p className="text-xs text-brand-600 font-medium mt-2">
-                      Save ${getAnnualSavings(plan.slug)}/year vs paying monthly
-                    </p>
-                  )}
-                  {billingInterval === 'monthly' && showAnnual && (
-                    <p className="text-xs text-gray-700 mt-2">
-                      or {getPlanDisplayPrice(plan.slug, 'annual')}/year (2 months free)
-                    </p>
-                  )}
-                </div>
-
-                <div className="mb-7">
-                  <SubscribeButton
-                    priceId={getStripePriceId(plan.slug, billingInterval)}
-                    planName={plan.name}
-                    planSlug={plan.slug}
-                    className="w-full"
-                  />
-                </div>
-
-                <div className="border-t border-gray-200 mb-5" />
-
-                <p className="text-label mb-4">What&apos;s included</p>
-                <PricingFeatureList plan={plan.slug} icon="check" />
-              </div>
-            ))}
-          </div>
-
-          <div id="compare" className="mt-14 max-w-3xl mx-auto scroll-mt-24">
-            <PricingComparisonTable />
-          </div>
-
-          {!isAuthenticated && (
-            <div className="mt-8 p-5 bg-gray-50 border border-gray-200 rounded-2xl text-center">
-              <p className="text-gray-700 text-sm mb-4">You need an account to subscribe</p>
-              <button
-                onClick={() => router.push('/auth/signup')}
-                className="px-6 py-2.5 rounded-xl bg-brand-500 text-white text-sm font-semibold hover:bg-brand-600 transition-colors"
-              >
-                Create your account
-              </button>
+                )}
+              </motion.div>
             </div>
-          )}
+          </section>
 
-          <p className="text-center text-gray-600 text-sm mt-10">
-            {getPricingFootnote()}
-          </p>
-        </div>
+          <section className="py-16 lg:py-20" style={{ backgroundColor: MKT.background }}>
+            <div className="mx-auto px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
+              <div className="mx-auto grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2 md:items-start">
+                {PLANS.map((plan, i) => (
+                  <motion.div
+                    key={plan.slug}
+                    {...mktEnterReveal(reduced, i * 0.08)}
+                    className="relative p-7"
+                    style={{
+                      borderRadius: MKT.radius.card,
+                      backgroundColor: MKT.surface,
+                      border: plan.popular ? `2px solid ${MKT.textPrimary}` : `1px solid ${MKT.border}`,
+                    }}
+                  >
+                    {plan.popular && (
+                      <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                        <span
+                          className="mkt-cta inline-flex items-center gap-1.5 px-4 py-1 text-xs font-medium"
+                          style={{ borderRadius: MKT.radius.button }}
+                        >
+                          <Sparkles className="h-3 w-3" />
+                          Most Popular
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="mb-5">
+                      <h3 className="text-xl font-medium" style={{ color: MKT.textPrimary }}>
+                        {plan.name}
+                      </h3>
+                      <p className="mt-1 text-sm leading-[1.6]" style={{ color: MKT.textSecondary }}>
+                        {plan.description}
+                      </p>
+                    </div>
+
+                    <div className="mb-6">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-price text-4xl" style={{ color: MKT.textPrimary }}>
+                          {getPlanDisplayPrice(plan.slug, billingInterval)}
+                        </span>
+                        <span className="text-sm" style={{ color: MKT.textSecondary }}>
+                          {getPlanPeriodLabel(billingInterval)}
+                        </span>
+                      </div>
+                      {billingInterval === 'annual' && (
+                        <p className="mt-2 text-xs font-medium" style={{ color: MKT.textSecondary }}>
+                          Save ${getAnnualSavings(plan.slug)}/year vs paying monthly
+                        </p>
+                      )}
+                      {billingInterval === 'monthly' && showAnnual && (
+                        <p className="mt-2 text-xs" style={{ color: MKT.textSecondary }}>
+                          or {getPlanDisplayPrice(plan.slug, 'annual')}/year (2 months free)
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="mb-7">
+                      <SubscribeButton
+                        priceId={getStripePriceId(plan.slug, billingInterval)}
+                        planName={plan.name}
+                        planSlug={plan.slug}
+                        tone="marketing"
+                        variant={plan.popular ? 'primary' : 'secondary'}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div className="mb-5 border-t" style={{ borderColor: MKT.border }} />
+
+                    <p className="mb-4 text-xs font-medium uppercase tracking-[0.12em]" style={{ color: MKT.textSecondary }}>
+                      What&apos;s included
+                    </p>
+                    <PricingFeatureList plan={plan.slug} icon="check" tone="marketing" />
+                  </motion.div>
+                ))}
+              </div>
+
+              <div id="compare" className="mx-auto mt-14 max-w-3xl scroll-mt-24">
+                <PricingComparisonTable />
+              </div>
+
+              {!isAuthenticated && (
+                <div
+                  className="mx-auto mt-8 max-w-3xl p-5 text-center"
+                  style={{
+                    borderRadius: MKT.radius.card,
+                    border: `1px solid ${MKT.border}`,
+                    backgroundColor: MKT.surface,
+                  }}
+                >
+                  <p className="mb-4 text-sm" style={{ color: MKT.textSecondary }}>
+                    You need an account to subscribe
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => router.push('/auth/signup')}
+                    className="mkt-cta px-6 py-2.5 text-sm font-medium transition-opacity hover:opacity-90"
+                    style={{ borderRadius: MKT.radius.button }}
+                  >
+                    Create your account
+                  </button>
+                </div>
+              )}
+
+              <p className="mt-10 text-center text-sm leading-[1.6]" style={{ color: MKT.textSecondary }}>
+                {getPricingFootnote()}
+              </p>
+            </div>
+          </section>
+        </main>
       )}
+
+      {!isLoading && <MarketingSubpageFooter />}
     </div>
   );
 }

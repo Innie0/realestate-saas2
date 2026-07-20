@@ -5,27 +5,29 @@
 'use client';
 
 import { useState } from 'react';
+import { CreditCard, Loader2 } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import { CreditCard } from 'lucide-react';
+import { MKT } from '@/lib/marketing-design';
 
 interface SubscribeButtonProps {
   priceId: string;
   planName?: string;
-  planSlug?: string; // 'starter' | 'pro' — used to redirect unauthenticated users
+  planSlug?: string;
   mode?: 'subscription' | 'payment';
   className?: string;
+  tone?: 'default' | 'marketing';
+  /** Secondary style for non-popular plan on marketing pages */
+  variant?: 'primary' | 'secondary';
 }
 
-/**
- * SubscribeButton Component
- * Creates a Stripe checkout session and redirects to Stripe
- */
-export default function SubscribeButton({ 
-  priceId, 
+export default function SubscribeButton({
+  priceId,
   planName = 'this plan',
   planSlug,
   mode = 'subscription',
   className = '',
+  tone = 'default',
+  variant = 'primary',
 }: SubscribeButtonProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -35,24 +37,15 @@ export default function SubscribeButton({
     setError('');
 
     try {
-      // Create checkout session
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // Ensure cookies are sent
+        credentials: 'include',
         body: JSON.stringify({ priceId, mode }),
       });
 
       const data = await response.json();
 
-      console.log('[Subscribe] Checkout response:', {
-        ok: response.ok,
-        status: response.status,
-        hasUrl: !!data.url,
-        error: data.error,
-      });
-
-      // If not authenticated, redirect to signup with the plan pre-selected
       if (response.status === 401) {
         const slug = planSlug || planName.toLowerCase();
         window.location.href = `/auth/signup?plan=${slug}`;
@@ -63,12 +56,10 @@ export default function SubscribeButton({
         throw new Error(data.error || 'Failed to create checkout session');
       }
 
-      // Redirect to Stripe Checkout using the URL returned from the API
       if (!data.url) {
         throw new Error('No checkout URL returned');
       }
 
-      console.log('[Subscribe] Redirecting to Stripe Checkout...');
       window.location.href = data.url;
     } catch (err: any) {
       console.error('Subscription error:', err);
@@ -78,20 +69,47 @@ export default function SubscribeButton({
     }
   };
 
+  if (tone === 'marketing') {
+    const isPrimary = variant === 'primary';
+    return (
+      <div className={className}>
+        <button
+          type="button"
+          onClick={handleSubscribe}
+          disabled={loading}
+          className={`inline-flex w-full items-center justify-center gap-2 py-3 text-sm font-medium transition-opacity disabled:cursor-not-allowed disabled:opacity-50 ${
+            isPrimary ? 'mkt-cta hover:opacity-90' : ''
+          }`}
+          style={
+            isPrimary
+              ? { borderRadius: MKT.radius.button }
+              : {
+                  borderRadius: MKT.radius.button,
+                  backgroundColor: MKT.background,
+                  color: MKT.textPrimary,
+                  border: `1px solid ${MKT.border}`,
+                }
+          }
+        >
+          {loading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <CreditCard className="h-4 w-4" />
+          )}
+          {loading ? 'Processing...' : `Start 7-day free trial — ${planName}`}
+        </button>
+        {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
+      </div>
+    );
+  }
+
   return (
     <div className={className}>
-      <Button
-        onClick={handleSubscribe}
-        isLoading={loading}
-        disabled={loading}
-        className="w-full"
-      >
+      <Button onClick={handleSubscribe} isLoading={loading} disabled={loading} className="w-full">
         <CreditCard className="w-4 h-4 mr-2" />
         {loading ? 'Processing...' : `Start 7-day free trial — ${planName}`}
       </Button>
-      {error && (
-        <p className="mt-2 text-sm text-red-500">{error}</p>
-      )}
+      {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
     </div>
   );
 }

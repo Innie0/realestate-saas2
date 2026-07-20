@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import MarketingSubpageHeader from '@/components/marketing/MarketingSubpageHeader';
 import MarketingSubpageFooter from '@/components/marketing/MarketingSubpageFooter';
 import ProductMediaPanel from '@/components/home/ProductMediaPanel';
+import ProductScreenshot from '@/components/home/ProductScreenshot';
 import {
   getProductBySlug,
   getProductCardSummary,
@@ -13,6 +14,7 @@ import {
   getProductHref,
   getRelatedProducts,
 } from '@/lib/products';
+import { MKT, mktEnterReveal } from '@/lib/marketing-design';
 import { useMotionReduced } from '@/lib/motion';
 
 type ProductDetailClientProps = {
@@ -25,63 +27,67 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
 
   if (!product) return null;
 
-  const Icon = product.icon;
   const category = getProductCategory(product.id);
   const related = getRelatedProducts(product.id);
 
   return (
-    <div className="marketing-root min-h-screen bg-[#F4F4F5] font-sans">
+    <div className="marketing-root min-h-screen font-sans" style={{ backgroundColor: MKT.background }}>
       <MarketingSubpageHeader />
 
       <main>
-        <section className="border-b border-gray-200 bg-white py-12 lg:py-16">
+        <section className="border-b py-12 lg:py-16" style={{ borderColor: MKT.border, backgroundColor: MKT.surface }}>
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <Link
               href="/products"
-              className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
+              className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-70"
+              style={{ color: MKT.textSecondary }}
             >
               <ArrowLeft className="h-4 w-4" />
               All products
             </Link>
 
-            <motion.div
-              initial={reduced ? false : { opacity: 0, y: 20 }}
-              animate={reduced ? undefined : { opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="max-w-3xl"
-            >
+            <motion.div {...mktEnterReveal(reduced)} className="max-w-3xl">
               {category ? (
-                <p className="mb-3 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-600">
+                <p className="mb-3 text-xs font-medium uppercase tracking-[0.12em]" style={{ color: MKT.textSecondary }}>
                   {category.label}
                 </p>
               ) : null}
-              <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-3 py-1 text-label">
-                <Icon className="h-3.5 w-3.5" strokeWidth={1.8} />
+              <span
+                className="mb-5 inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium uppercase tracking-[0.12em]"
+                style={{ borderColor: MKT.border, color: MKT.textSecondary, backgroundColor: MKT.background }}
+              >
                 {product.tag}
               </span>
-              <h1 className="text-3xl font-semibold leading-tight tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
+              <h1
+                className="text-3xl font-medium leading-tight tracking-[-0.02em] sm:text-4xl lg:text-5xl"
+                style={{ color: MKT.textPrimary }}
+              >
                 {product.title}
               </h1>
-              <p className="mt-5 text-lg leading-relaxed text-gray-700">{product.description}</p>
+              <p className="mt-5 text-lg leading-[1.6]" style={{ color: MKT.textSecondary }}>
+                {product.description}
+              </p>
             </motion.div>
           </div>
         </section>
 
-        <section className="border-b border-gray-200 bg-[#fafafa] py-12 lg:py-16">
+        <section className="border-b py-12 lg:py-16" style={{ borderColor: MKT.border, backgroundColor: MKT.background }}>
           <div className="mx-auto max-w-5xl px-6 lg:px-8">
             <ProductMediaPanel feature={product} priority />
           </div>
         </section>
 
-        <section className="border-b border-gray-200 bg-white py-16 lg:py-20">
+        <section className="border-b py-16 lg:py-20" style={{ borderColor: MKT.border, backgroundColor: MKT.surface }}>
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="grid gap-16 lg:grid-cols-2 lg:gap-20">
               <div>
-                <h2 className="mb-6 text-2xl font-semibold tracking-tight text-gray-900">What you get</h2>
+                <h2 className="mb-6 text-2xl font-medium tracking-[-0.02em]" style={{ color: MKT.textPrimary }}>
+                  What you get
+                </h2>
                 <ul className="space-y-3">
                   {product.highlights.map((highlight) => (
-                    <li key={highlight} className="flex items-start gap-3 text-[15px] text-gray-700">
-                      <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-brand-500" strokeWidth={1.8} />
+                    <li key={highlight} className="flex items-start gap-3 text-[15px]" style={{ color: MKT.textSecondary }}>
+                      <Check className="mt-0.5 h-5 w-5 shrink-0" strokeWidth={2} style={{ color: MKT.textPrimary }} />
                       {highlight}
                     </li>
                   ))}
@@ -89,18 +95,29 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
               </div>
 
               <div>
-                <p className="mb-6 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-500">
+                <p className="mb-6 text-xs font-medium uppercase tracking-[0.12em]" style={{ color: MKT.textSecondary }}>
                   How it works
                 </p>
                 <ol className="space-y-5">
                   {product.howItWorks.map((step, stepIndex) => (
                     <li key={step.title} className="flex gap-4">
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-900 text-[12px] font-semibold text-white">
+                      <span
+                        className="flex h-7 w-7 shrink-0 items-center justify-center text-[12px] font-medium"
+                        style={{
+                          borderRadius: MKT.radius.button,
+                          backgroundColor: MKT.textPrimary,
+                          color: MKT.surface,
+                        }}
+                      >
                         {stepIndex + 1}
                       </span>
                       <div>
-                        <p className="text-[15px] font-semibold text-gray-900">{step.title}</p>
-                        <p className="mt-0.5 text-[14px] leading-relaxed text-gray-600">{step.description}</p>
+                        <p className="text-[15px] font-medium" style={{ color: MKT.textPrimary }}>
+                          {step.title}
+                        </p>
+                        <p className="mt-0.5 text-[14px] leading-[1.6]" style={{ color: MKT.textSecondary }}>
+                          {step.description}
+                        </p>
                       </div>
                     </li>
                   ))}
@@ -110,49 +127,60 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
 
             <div className="mt-14 flex flex-wrap gap-4">
               <Link href="/auth/signup">
-                <motion.span
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-6 py-3 text-sm font-semibold text-white hover:bg-brand-600"
+                <span
+                  className="mkt-cta inline-flex items-center gap-2 px-6 py-3 text-sm font-medium transition-opacity hover:opacity-90"
+                  style={{ borderRadius: MKT.radius.button }}
                 >
                   Start free trial
                   <ArrowRight className="h-4 w-4" />
-                </motion.span>
+                </span>
               </Link>
               <Link href="/pricing">
-                <motion.span
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-semibold text-gray-900 hover:border-gray-400"
+                <span
+                  className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium transition-opacity hover:opacity-90"
+                  style={{
+                    borderRadius: MKT.radius.button,
+                    border: `1px solid ${MKT.border}`,
+                    backgroundColor: MKT.surface,
+                    color: MKT.textPrimary,
+                  }}
                 >
                   View pricing
-                </motion.span>
+                </span>
               </Link>
             </div>
           </div>
         </section>
 
         {related.length > 0 ? (
-          <section className="bg-[#fafafa] py-16 lg:py-20">
+          <section className="py-16 lg:py-20" style={{ backgroundColor: MKT.background }}>
             <div className="mx-auto max-w-7xl px-6 lg:px-8">
-              <h2 className="mb-8 text-2xl font-semibold tracking-tight text-gray-900">Related products</h2>
+              <h2 className="mb-8 text-2xl font-medium tracking-[-0.02em]" style={{ color: MKT.textPrimary }}>
+                Related products
+              </h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {related.map((item) => {
-                  const RelatedIcon = item.icon;
-                  return (
-                    <Link
-                      key={item.id}
-                      href={getProductHref(item.id)}
-                      className="group rounded-2xl border border-gray-200 bg-white p-5 transition-colors hover:border-gray-300"
-                    >
-                      <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-[#fafafa]">
-                        <RelatedIcon className="h-4 w-4 text-gray-700" strokeWidth={1.75} />
-                      </div>
-                      <p className="text-sm font-semibold text-gray-900 group-hover:text-brand-600">{item.tag}</p>
-                      <p className="mt-1 text-sm text-gray-600 line-clamp-2">{getProductCardSummary(item)}</p>
-                    </Link>
-                  );
-                })}
+                {related.map((item) => (
+                  <Link
+                    key={item.id}
+                    href={getProductHref(item.id)}
+                    className="group overflow-hidden transition-opacity hover:opacity-95"
+                    style={{
+                      borderRadius: MKT.radius.card,
+                      border: `1px solid ${MKT.border}`,
+                      backgroundColor: MKT.surface,
+                    }}
+                  >
+                    <ProductScreenshot src={item.imageSrc} alt={item.imageAlt} />
+                    <div className="p-4">
+                      <p className="text-sm font-medium" style={{ color: MKT.textPrimary }}>
+                        {item.tag}
+                      </p>
+                      <p className="mt-1 line-clamp-2 text-sm leading-[1.6]" style={{ color: MKT.textSecondary }}>
+                        {getProductCardSummary(item)}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
               </div>
             </div>
           </section>

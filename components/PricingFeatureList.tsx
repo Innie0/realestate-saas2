@@ -45,7 +45,9 @@ export default function PricingFeatureList({
       : 'text-brand-500';
   const textClass = isMarketing ? 'text-[#6B6A64]' : 'text-gray-600';
   const headingClass = isMarketing ? 'text-[#141412]' : 'text-gray-900';
-  const labelClass = isMarketing ? 'text-[#6B6A64]' : 'text-gray-500';
+  const labelClass = isMarketing
+    ? 'text-[#6B6A64] text-xs font-medium uppercase tracking-[0.12em]'
+    : 'text-gray-500 font-mono text-[10px] font-semibold uppercase tracking-[0.12em]';
 
   if (variant === 'full' && plan === 'starter') {
     return (
@@ -85,7 +87,7 @@ export default function PricingFeatureList({
       <div className={`space-y-4 ${className}`}>
         {STARTER_FEATURE_GROUPS.map((group) => (
           <div key={group.title}>
-            <p className={`mb-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] ${labelClass}`}>
+            <p className={`mb-1.5 ${labelClass}`}>
               {group.title}
             </p>
             <ul className="space-y-1.5">
