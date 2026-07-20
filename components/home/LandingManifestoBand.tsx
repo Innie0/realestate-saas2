@@ -43,7 +43,8 @@ export default function LandingManifestoBand() {
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ['start 0.75', 'end 0.45'],
+    // Start lighting as soon as the block enters mid-viewport; finish while still well on screen
+    offset: ['start 0.95', 'center 0.45'],
   });
 
   if (reduced) {
