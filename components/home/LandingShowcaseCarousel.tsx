@@ -136,8 +136,8 @@ export default function LandingShowcaseCarousel() {
 
   return (
     <section
-      className="relative z-10 overflow-hidden border-t py-16 sm:py-20 lg:py-24"
-      style={{ borderColor: MKT.border, backgroundColor: MKT.background }}
+      className="relative z-10 overflow-hidden py-16 sm:py-20 lg:py-24"
+      style={{ backgroundColor: MKT.background }}
     >
       <div className="relative mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
         <motion.div

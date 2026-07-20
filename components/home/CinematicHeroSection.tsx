@@ -19,8 +19,8 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
   return (
     <section
       ref={sectionRef as React.RefObject<HTMLElement>}
-      className="relative border-b"
-      style={{ borderColor: MKT.border, backgroundColor: MKT.background }}
+      className="relative"
+      style={{ backgroundColor: MKT.background }}
     >
       <div
         className="mx-auto px-4 pb-16 pt-24 sm:px-6 sm:pb-20 sm:pt-28 md:pt-32 lg:px-8"

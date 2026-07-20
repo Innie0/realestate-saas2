@@ -36,8 +36,8 @@ export default function LandingPricingSection() {
 
   return (
     <section
-      className="relative z-10 border-t py-24 lg:py-32"
-      style={{ borderColor: MKT.border, backgroundColor: MKT.surface }}
+      className="relative z-10 py-24 lg:py-32"
+      style={{ backgroundColor: MKT.surface }}
     >
       <div className="mx-auto px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
         <motion.div {...mktEnterReveal(reduced)} className="mb-16 text-center">

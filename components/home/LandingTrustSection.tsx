@@ -32,8 +32,8 @@ function TestimonialCarousel() {
 
   return (
     <div
-      className="border-t py-16 sm:py-20 lg:py-24"
-      style={{ borderColor: MKT.border, backgroundColor: MKT.surface }}
+      className="py-16 sm:py-20 lg:py-24"
+      style={{ backgroundColor: MKT.surface }}
     >
       <div className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
         <div className="mb-10 sm:mb-12">
@@ -164,8 +164,8 @@ export default function LandingTrustSection() {
       <LandingManifestoBand />
 
       <div
-        className="border-t py-20 lg:py-24"
-        style={{ borderColor: MKT.border, backgroundColor: MKT.surface }}
+        className="py-20 lg:py-24"
+        style={{ backgroundColor: MKT.surface }}
       >
         <div className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
           <motion.div {...mktEnterReveal(reduced)} className="mb-12 text-center">

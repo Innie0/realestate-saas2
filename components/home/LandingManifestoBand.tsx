@@ -15,8 +15,8 @@ export default function LandingManifestoBand() {
 
   return (
     <div
-      className="border-t py-24 sm:py-28 lg:py-36"
-      style={{ borderColor: MKT.border, backgroundColor: MKT.background }}
+      className="py-24 sm:py-28 lg:py-36"
+      style={{ backgroundColor: MKT.background }}
     >
       <div className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
         <motion.div {...mktEnterReveal(reduced)}>
