@@ -24,6 +24,16 @@
     @apply bg-[var(--canvas)] text-gray-900 antialiased;
   }
 
+  /* Overscroll rubber-band (edges) uses html/body bg — match marketing black */
+  html:has(.marketing-root),
+  html:has(.marketing-root) body {
+    background-color: #000000;
+  }
+
+  html:has(.marketing-root) {
+    color-scheme: dark;
+  }
+
   h1 {
     @apply tracking-tight;
   }
