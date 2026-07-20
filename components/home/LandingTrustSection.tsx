@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, ChevronRight } from 'lucide-react';
 import { INTEGRATIONS, TESTIMONIALS } from '@/lib/landing-showcase';
@@ -94,13 +93,6 @@ function TestimonialCarousel() {
                     <p className="mt-0.5 text-sm leading-snug text-gray-600">{testimonial.role}</p>
                   </div>
                 </div>
-                <Link
-                  href="/auth/signup"
-                  className="mt-5 inline-flex items-center gap-1 rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-gray-400 hover:bg-gray-50"
-                >
-                  Start free trial
-                  <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
-                </Link>
               </div>
 
               <div className="md:border-r md:border-gray-200 md:px-10 lg:px-12">
