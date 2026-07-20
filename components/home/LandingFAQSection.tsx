@@ -35,7 +35,7 @@ function FAQItem({
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between px-6 py-5 text-left transition-colors hover:bg-black/[0.02]"
+        className="flex w-full items-center justify-between px-6 py-5 text-left transition-colors hover:bg-white/[0.04]"
       >
         <span className="font-medium" style={{ color: MKT.textPrimary }}>
           {question}

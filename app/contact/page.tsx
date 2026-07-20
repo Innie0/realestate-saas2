@@ -159,7 +159,7 @@ export default function ContactPage() {
                   placeholder="How can we help?"
                   rows={5}
                   required
-                  className="block w-full resize-none px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#141412]/10"
+                  className="block w-full resize-none px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-white/10"
                   style={{
                     borderRadius: MKT.radius.button,
                     border: `1px solid ${MKT.border}`,

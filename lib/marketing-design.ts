@@ -1,15 +1,18 @@
-/** Framer-style landing tokens — framer-style-cursor-prompt.md */
+/** Framer-style landing tokens — dark background, white text */
 export const MKT = {
-  background: '#F7F6F0',
-  surface: '#FFFFFF',
-  textPrimary: '#141412',
-  textSecondary: '#6B6A64',
-  border: '#E7E5DD',
+  background: '#000000',
+  surface: '#111111',
+  textPrimary: '#FFFFFF',
+  textSecondary: '#999999',
+  border: '#2A2A2A',
   accent: '#E4F76C',
   accentHover: '#D8EB5A',
   accentForeground: '#141412',
   /** Inactive / muted UI — never use accent for decorative chrome */
-  muted: '#A8A7A1',
+  muted: '#666666',
+  /** Product mock / screenshot interior — stays light inside browser frames */
+  mockSurface: '#FFFFFF',
+  browserDot: '#444444',
   maxContentWidth: 1200,
   radius: { button: 8, card: 12, browser: 10 },
 } as const;

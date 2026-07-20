@@ -203,8 +203,8 @@ function SignUpForm() {
     <AuthPageShell>
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">Create your account</h1>
-          <p className="mt-2 text-sm sm:text-base text-gray-700">Create your account, then start your 7-day free trial</p>
+          <h1 className="text-3xl sm:text-4xl font-medium tracking-[-0.02em]" style={{ color: '#FFFFFF' }}>Create your account</h1>
+          <p className="mt-2 text-sm sm:text-base" style={{ color: '#999999' }}>Create your account, then start your 7-day free trial</p>
         </div>
 
         {/* Card */}

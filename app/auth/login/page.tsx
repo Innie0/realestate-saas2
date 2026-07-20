@@ -161,8 +161,8 @@ export default function LoginPage() {
     <AuthPageShell>
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">Welcome back</h1>
-          <p className="mt-2 text-sm sm:text-base text-gray-700">Sign in to your account</p>
+          <h1 className="text-3xl sm:text-4xl font-medium tracking-[-0.02em]" style={{ color: '#FFFFFF' }}>Welcome back</h1>
+          <p className="mt-2 text-sm sm:text-base" style={{ color: '#999999' }}>Sign in to your account</p>
         </div>
 
         {/* Card */}

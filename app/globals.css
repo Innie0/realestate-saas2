@@ -81,17 +81,64 @@
     stroke-width: 1.75;
   }
 
-  /* Framer-style marketing — Inter, neutral chrome, accent on CTAs only */
+  /* Framer-style marketing — dark bg, white text, accent on CTAs only */
   .marketing-root {
     font-family: var(--font-inter), Inter, system-ui, sans-serif;
-    --mkt-background: #f7f6f0;
-    --mkt-surface: #ffffff;
-    --mkt-text-primary: #141412;
-    --mkt-text-secondary: #6b6a64;
-    --mkt-border: #e7e5dd;
+    color: var(--mkt-text-primary);
+    background-color: var(--mkt-background);
+    --mkt-background: #000000;
+    --mkt-surface: #111111;
+    --mkt-text-primary: #ffffff;
+    --mkt-text-secondary: #999999;
+    --mkt-border: #2a2a2a;
     --mkt-accent: #e4f76c;
     --mkt-accent-hover: #d8eb5a;
     --mkt-accent-foreground: #141412;
+    --mkt-muted: #666666;
+    --mkt-mock-surface: #ffffff;
+  }
+
+  .marketing-root .text-price {
+    color: var(--mkt-text-primary);
+  }
+
+  .marketing-root .legal-prose :is(h2, h3, .text-gray-900, .text-gray-800, strong) {
+    color: var(--mkt-text-primary);
+  }
+
+  .marketing-root .legal-prose :is(p, ul, li, .text-gray-600, code) {
+    color: var(--mkt-text-secondary);
+  }
+
+  .marketing-root .legal-prose a:not(.legal-btn) {
+    color: var(--mkt-text-primary);
+    text-decoration-color: var(--mkt-border);
+  }
+
+  .marketing-root .legal-prose a:not(.legal-btn):hover {
+    opacity: 0.8;
+  }
+
+  .marketing-root .legal-prose a.legal-btn-primary {
+    background-color: var(--mkt-accent);
+    color: var(--mkt-accent-foreground);
+    border: none;
+  }
+
+  .marketing-root .legal-prose a.legal-btn-primary:hover {
+    background-color: var(--mkt-accent-hover);
+    color: var(--mkt-accent-foreground);
+  }
+
+  .marketing-root .legal-prose a.legal-btn-secondary {
+    background-color: transparent;
+    color: var(--mkt-text-primary);
+    border: 1px solid var(--mkt-border);
+  }
+
+  .marketing-root .legal-prose a.legal-btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--mkt-text-primary);
   }
 }
 

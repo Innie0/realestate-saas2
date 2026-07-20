@@ -27,11 +27,11 @@ export default function BrowserWindowFrame({ children, className = '' }: Browser
           <span
             key={i}
             className="rounded-full"
-            style={{ width: 8, height: 8, backgroundColor: '#C8C6BE' }}
+            style={{ width: 8, height: 8, backgroundColor: MKT.browserDot }}
           />
         ))}
       </div>
-      <div>{children}</div>
+      <div style={{ backgroundColor: MKT.mockSurface }}>{children}</div>
     </div>
   );
 }
