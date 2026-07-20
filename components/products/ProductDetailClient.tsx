@@ -35,7 +35,7 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
       <MarketingSubpageHeader />
 
       <main>
-        <section className="border-b py-12 lg:py-16" style={{ borderColor: MKT.border, backgroundColor: MKT.surface }}>
+        <section className="border-b py-12 lg:py-16" style={{ borderColor: MKT.border, backgroundColor: MKT.background }}>
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <Link
               href="/products"
@@ -77,7 +77,7 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
           </div>
         </section>
 
-        <section className="border-b py-16 lg:py-20" style={{ borderColor: MKT.border, backgroundColor: MKT.surface }}>
+        <section className="border-b py-16 lg:py-20" style={{ borderColor: MKT.border, backgroundColor: MKT.background }}>
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="grid gap-16 lg:grid-cols-2 lg:gap-20">
               <div>

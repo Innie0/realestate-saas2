@@ -1,7 +1,7 @@
 /** Framer-style landing tokens — dark background, white text */
 export const MKT = {
   background: '#000000',
-  surface: '#111111',
+  surface: '#000000',
   textPrimary: '#FFFFFF',
   textSecondary: '#999999',
   border: '#2A2A2A',

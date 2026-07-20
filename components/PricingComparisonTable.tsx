@@ -71,7 +71,7 @@ export default function PricingComparisonTable() {
             {PLAN_COMPARISON_ROWS.map((row, i) => (
               <tr
                 key={row.label}
-                style={{ backgroundColor: i % 2 === 0 ? MKT.surface : MKT.background }}
+                style={{ backgroundColor: MKT.background }}
               >
                 <td className="px-5 py-3 text-sm font-medium sm:px-6" style={{ color: MKT.textPrimary }}>
                   {row.label}

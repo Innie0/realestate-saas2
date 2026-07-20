@@ -35,7 +35,7 @@ export default function ProductsIndexClient() {
       <MarketingSubpageHeader />
 
       <main>
-        <section className="border-b py-16 lg:py-24" style={{ borderColor: MKT.border, backgroundColor: MKT.surface }}>
+        <section className="border-b py-16 lg:py-24" style={{ borderColor: MKT.border, backgroundColor: MKT.background }}>
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <motion.div {...mktEnterReveal(reduced)} className="mx-auto max-w-3xl text-center">
               <p className="mb-4 text-xs font-medium uppercase tracking-[0.12em]" style={{ color: MKT.textSecondary }}>
@@ -76,7 +76,7 @@ export default function ProductsIndexClient() {
               className="border-b py-16 lg:py-20"
               style={{
                 borderColor: MKT.border,
-                backgroundColor: categoryIndex % 2 === 0 ? MKT.background : MKT.surface,
+                backgroundColor: MKT.background,
               }}
             >
               <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -140,7 +140,7 @@ export default function ProductsIndexClient() {
           );
         })}
 
-        <section className="py-20 lg:py-24" style={{ backgroundColor: MKT.surface }}>
+        <section className="py-20 lg:py-24" style={{ backgroundColor: MKT.background }}>
           <div className="mx-auto max-w-7xl px-6 text-center lg:px-8">
             <h2 className="text-3xl font-medium tracking-[-0.02em] sm:text-4xl" style={{ color: MKT.textPrimary }}>
               Ready to replace your patchwork stack?

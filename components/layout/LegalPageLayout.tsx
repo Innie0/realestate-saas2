@@ -22,7 +22,7 @@ export default function LegalPageLayout({
     <div className="marketing-root min-h-screen font-sans" style={{ backgroundColor: MKT.background }}>
       <header
         className="sticky top-0 z-10"
-        style={{ borderBottom: `1px solid ${MKT.border}`, backgroundColor: MKT.surface }}
+        style={{ borderBottom: `1px solid ${MKT.border}`, backgroundColor: MKT.background }}
       >
         <div className="mx-auto max-w-3xl px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
@@ -45,7 +45,7 @@ export default function LegalPageLayout({
           style={{
             borderRadius: MKT.radius.card,
             border: `1px solid ${MKT.border}`,
-            backgroundColor: MKT.surface,
+            backgroundColor: MKT.background,
           }}
         >
           <header className="mb-10 pb-8 border-b" style={{ borderColor: MKT.border }}>

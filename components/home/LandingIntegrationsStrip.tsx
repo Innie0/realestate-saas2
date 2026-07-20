@@ -12,7 +12,7 @@ export default function LandingIntegrationsStrip() {
   return (
     <section
       className="relative z-10 py-8 sm:py-10"
-      style={{ backgroundColor: MKT.surface }}
+      style={{ backgroundColor: MKT.background }}
     >
       <div className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
         <motion.div

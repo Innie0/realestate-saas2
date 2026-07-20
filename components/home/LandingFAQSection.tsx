@@ -29,7 +29,7 @@ function FAQItem({
       style={{
         borderRadius: MKT.radius.card,
         border: `1px solid ${MKT.border}`,
-        backgroundColor: MKT.surface,
+        backgroundColor: MKT.background,
       }}
     >
       <button

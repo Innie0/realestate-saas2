@@ -145,7 +145,7 @@ export default function PricingPage() {
                       className="px-4 py-2 text-sm font-medium transition-colors"
                       style={
                         billingInterval === 'monthly'
-                          ? { borderRadius: MKT.radius.button, backgroundColor: MKT.surface, color: MKT.textPrimary }
+                          ? { borderRadius: MKT.radius.button, backgroundColor: MKT.background, color: MKT.textPrimary }
                           : { color: MKT.textSecondary }
                       }
                     >
@@ -157,7 +157,7 @@ export default function PricingPage() {
                       className="px-4 py-2 text-sm font-medium transition-colors"
                       style={
                         billingInterval === 'annual'
-                          ? { borderRadius: MKT.radius.button, backgroundColor: MKT.surface, color: MKT.textPrimary }
+                          ? { borderRadius: MKT.radius.button, backgroundColor: MKT.background, color: MKT.textPrimary }
                           : { color: MKT.textSecondary }
                       }
                     >
@@ -182,7 +182,7 @@ export default function PricingPage() {
                     className="relative p-7"
                     style={{
                       borderRadius: MKT.radius.card,
-                      backgroundColor: MKT.surface,
+                      backgroundColor: MKT.background,
                       border: plan.popular ? `2px solid ${MKT.textPrimary}` : `1px solid ${MKT.border}`,
                     }}
                   >
@@ -259,7 +259,7 @@ export default function PricingPage() {
                   style={{
                     borderRadius: MKT.radius.card,
                     border: `1px solid ${MKT.border}`,
-                    backgroundColor: MKT.surface,
+                    backgroundColor: MKT.background,
                   }}
                 >
                   <p className="mb-4 text-sm" style={{ color: MKT.textSecondary }}>

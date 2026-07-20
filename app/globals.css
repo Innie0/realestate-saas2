@@ -87,7 +87,7 @@
     color: var(--mkt-text-primary);
     background-color: var(--mkt-background);
     --mkt-background: #000000;
-    --mkt-surface: #111111;
+    --mkt-surface: #000000;
     --mkt-text-primary: #ffffff;
     --mkt-text-secondary: #999999;
     --mkt-border: #2a2a2a;

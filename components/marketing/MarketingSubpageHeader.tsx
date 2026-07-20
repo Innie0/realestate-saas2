@@ -13,7 +13,7 @@ export default function MarketingSubpageHeader() {
       className="sticky top-0 z-[60] transition-[background-color,border-color,box-shadow] duration-300"
       style={{
         borderBottom: menuOpen ? '1px solid transparent' : `1px solid ${MKT.border}`,
-        backgroundColor: menuOpen ? 'transparent' : MKT.surface,
+        backgroundColor: menuOpen ? 'transparent' : MKT.background,
       }}
     >
       <div

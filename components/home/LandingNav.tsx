@@ -44,7 +44,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
       className="fixed inset-x-0 top-0 z-[60] transition-[background-color,border-color,box-shadow] duration-300 ease-out"
       style={{
         borderBottom: overHero ? '1px solid transparent' : `1px solid ${MKT.border}`,
-        backgroundColor: overHero ? 'transparent' : MKT.surface,
+        backgroundColor: overHero ? 'transparent' : MKT.background,
       }}
     >
       <div className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
