@@ -588,7 +588,7 @@ function TasksPageContent() {
             type="button"
             onClick={handleNewConversation}
             data-tour="ai-new-chat"
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-[10px] border border-gray-200 bg-white text-[13px] font-medium text-gray-900 hover:bg-gray-50 transition-colors shrink-0"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-[10px] border border-gray-200 bg-[var(--surface)] text-[13px] font-medium text-gray-900 hover:bg-gray-50 transition-colors shrink-0"
           >
             <Plus className="w-4 h-4" />
             New Chat
@@ -637,7 +637,7 @@ function TasksPageContent() {
                                   if (e.key === 'Enter') handleSaveRename(conv.id);
                                   if (e.key === 'Escape') handleCancelRename();
                                 }}
-                                className="w-full text-[12.5px] bg-white border border-gray-200 rounded-[8px] px-2 py-1 text-gray-900 focus:outline-none focus:border-gray-400"
+                                className="w-full text-[12.5px] bg-[var(--surface)] border border-gray-200 rounded-[8px] px-2 py-1 text-gray-900 focus:outline-none focus:border-gray-400"
                                 autoFocus
                               />
                               <div className="flex items-center gap-1">
@@ -690,7 +690,7 @@ function TasksPageContent() {
                             </button>
                             {openMenuId === conv.id && (
                               <div
-                                className="absolute right-0 top-7 z-50 w-40 bg-white border border-gray-200 rounded-[10px] shadow-lg overflow-hidden"
+                                className="absolute right-0 top-7 z-50 w-40 bg-[var(--surface)] border border-gray-200 rounded-[10px] shadow-lg overflow-hidden"
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 <button
@@ -747,7 +747,7 @@ function TasksPageContent() {
               <button
                 type="button"
                 onClick={() => setThreadSidebar(true)}
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-[10px] border border-gray-200 bg-white text-[13px] font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-[10px] border border-gray-200 bg-[var(--surface)] text-[13px] font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                 aria-label="Show chat list"
               >
                 <PanelLeft className="w-4 h-4" />
@@ -757,14 +757,14 @@ function TasksPageContent() {
                 type="button"
                 onClick={handleNewConversation}
                 data-tour="ai-new-chat"
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-[10px] border border-gray-200 bg-white text-[13px] font-medium text-gray-900 hover:bg-gray-50 transition-colors"
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-[10px] border border-gray-200 bg-[var(--surface)] text-[13px] font-medium text-gray-900 hover:bg-gray-50 transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 New Chat
               </button>
             </div>
           )}
-        <div className="flex flex-col flex-1 border border-gray-200 rounded-[10px] bg-white overflow-hidden min-h-0 min-w-0" data-tour="ai-chat">
+        <div className="flex flex-col flex-1 border border-gray-200 rounded-[10px] bg-[var(--surface)] overflow-hidden min-h-0 min-w-0" data-tour="ai-chat">
           {/* Messages */}
           <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
             {isLoadingMessages ? (
@@ -801,7 +801,7 @@ function TasksPageContent() {
                       type="button"
                       onClick={() => handleStarterPrompt(prompt)}
                       disabled={isLoading}
-                      className="text-left text-[13px] leading-snug px-4 py-3.5 rounded-[10px] border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                      className="text-left text-[13px] leading-snug px-4 py-3.5 rounded-[10px] border border-gray-200 bg-[var(--surface)] text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
                     >
                       {prompt}
                     </button>
@@ -826,7 +826,7 @@ function TasksPageContent() {
                           'rounded-[10px] px-4 py-3 text-[13.5px] leading-relaxed',
                           msg.role === 'user'
                             ? 'bg-brand-500 text-[var(--brand-foreground)]'
-                            : 'bg-white text-gray-900 border border-gray-200',
+                            : 'bg-[var(--surface)] text-gray-900 border border-gray-200',
                         )}
                       >
                         {msg.image_url && !msg.image_name?.toLowerCase().endsWith('.pdf') && (
@@ -848,7 +848,7 @@ function TasksPageContent() {
                           <div className={clsx(
                             'mb-3 flex items-center gap-2 px-3 py-2 rounded-[8px] border w-fit',
                             msg.role === 'user'
-                              ? 'border-white/20 bg-white/10'
+                              ? 'border-white/20 bg-[var(--surface)]/10'
                               : 'border-gray-200 bg-gray-50',
                           )}>
                             <FileText className={clsx('w-4 h-4 flex-shrink-0', msg.role === 'user' ? 'text-white/80' : 'text-gray-600')} />
@@ -868,7 +868,7 @@ function TasksPageContent() {
                     <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[#fdf3e5] flex items-center justify-center">
                       <Sparkles className="w-3.5 h-3.5 text-[#b8842d]" />
                     </div>
-                    <div className="rounded-[10px] px-4 py-3 border border-gray-200 bg-white">
+                    <div className="rounded-[10px] px-4 py-3 border border-gray-200 bg-[var(--surface)]">
                       <div className="flex items-center gap-2">
                         <Loader2 className="w-4 h-4 animate-spin text-gray-600" />
                         <span className="text-[13px] text-gray-600">Thinking…</span>
@@ -891,7 +891,7 @@ function TasksPageContent() {
           )}
 
           {/* Input bar */}
-          <div className="border-t border-gray-200 px-4 sm:px-5 py-3.5 shrink-0 bg-white" data-tour="ai-input">
+          <div className="border-t border-gray-200 px-4 sm:px-5 py-3.5 shrink-0 bg-[var(--surface)]" data-tour="ai-input">
             <form onSubmit={handleSendMessage} className="space-y-2.5">
               {imagePreview && (
                 <div className="mb-2.5 border border-gray-200 rounded-[10px] p-3 bg-gray-50">
@@ -915,7 +915,7 @@ function TasksPageContent() {
               {selectedPdf && (
                 <div className="mb-2.5 border border-gray-200 rounded-[10px] p-3 bg-gray-50">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-[8px] bg-white border border-gray-200 flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-[8px] bg-[var(--surface)] border border-gray-200 flex items-center justify-center flex-shrink-0">
                       <FileText className="w-5 h-5 text-gray-600" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -953,7 +953,7 @@ function TasksPageContent() {
                     }
                   }}
                   placeholder="Type your message… (Shift+Enter for new line)"
-                  className="flex-1 min-h-[42px] max-h-32 bg-white rounded-[10px] border border-gray-200 px-3.5 py-2.5 text-[13.5px] text-gray-900 placeholder:text-gray-600 focus:outline-none focus:border-gray-400 resize-none"
+                  className="flex-1 min-h-[42px] max-h-32 bg-[var(--surface)] rounded-[10px] border border-gray-200 px-3.5 py-2.5 text-[13.5px] text-gray-900 placeholder:text-gray-600 focus:outline-none focus:border-gray-400 resize-none"
                   rows={1}
                   disabled={isLoading}
                 />

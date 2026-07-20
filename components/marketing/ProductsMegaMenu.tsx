@@ -151,7 +151,7 @@ export default function ProductsMegaMenu({
                                   <Link
                                     href={tool.href}
                                     onClick={handleClose}
-                                    className="group block px-3 py-2 transition-colors hover:bg-white/[0.05]"
+                                    className="group block px-3 py-2 transition-colors hover:bg-[var(--surface)]/[0.05]"
                                     style={{ borderRadius: MKT.radius.button }}
                                   >
                                     <span

@@ -174,7 +174,7 @@ export default function BookingSettingsPage() {
               href={bookingUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-white text-gray-600 border border-gray-200 hover:text-gray-900 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-[var(--surface)] text-gray-600 border border-gray-200 hover:text-gray-900 transition-colors"
             >
               <Eye className="w-3.5 h-3.5" /> Preview
             </a>
@@ -219,7 +219,7 @@ export default function BookingSettingsPage() {
                 className={`flex items-center gap-1 px-3 py-2 rounded-lg text-[12.5px] font-medium transition-all border shrink-0 ${
                   copied
                     ? 'bg-teal-50 text-teal-700 border-teal-200'
-                    : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                    : 'bg-[var(--surface)] text-gray-700 border-gray-200 hover:bg-gray-50'
                 }`}
               >
                 {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}

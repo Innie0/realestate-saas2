@@ -81,7 +81,7 @@ export default function PerformanceDashboard({
         <select
           value={adType}
           onChange={(e) => applyFilters(e.target.value, days)}
-          className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-[12px] text-gray-700"
+          className="rounded-lg border border-gray-200 bg-[var(--surface)] px-3 py-1.5 text-[12px] text-gray-700"
         >
           <option value="">All ad types</option>
           {AD_TYPE_OPTIONS.map((o) => (
@@ -134,7 +134,7 @@ export default function PerformanceDashboard({
                 <th className="px-3 py-2.5 font-medium">CPL</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 bg-white">
+            <tbody className="divide-y divide-gray-100 bg-[var(--surface)]">
               {filteredAds.map((ad) => {
                 const label =
                   ad.projectAddress || ad.headline || ad.projectTitle || 'Ad';

@@ -58,7 +58,7 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
       ? 'bg-teal-50/90 text-teal-700'
       : project.status === 'in_progress'
         ? 'bg-amber-50/90 text-amber-800'
-        : 'bg-white/85 text-gray-700';
+        : 'bg-[var(--surface)]/85 text-gray-700';
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent navigation
@@ -71,7 +71,7 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
   return (
     <Link
       href={`/dashboard/projects/${project.id}`}
-      className="group block rounded-xl bg-white border border-gray-200 hover:border-gray-300 transition-colors overflow-hidden"
+      className="group block rounded-xl bg-[var(--surface)] border border-gray-200 hover:border-gray-300 transition-colors overflow-hidden"
     >
       {/* Thumbnail */}
       <div

@@ -13,7 +13,7 @@ export default function AgentCard({ agent }: { agent: PublicAgentSummary }) {
   return (
     <Link
       href={agent.path}
-      className="group flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm hover:border-brand-300 hover:shadow-md transition-all"
+      className="group flex flex-col rounded-2xl border border-gray-200 bg-[var(--surface)] p-5 shadow-sm hover:border-brand-300 hover:shadow-md transition-all"
     >
       <div className="flex items-center gap-3">
         {agent.photoUrl ? (

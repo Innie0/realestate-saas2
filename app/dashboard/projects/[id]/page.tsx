@@ -1467,7 +1467,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   const anyStarted = streamingPro || streamingCasual || streamingLuxury;
 
                   return (
-                    <div className="mb-6 bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <div className="mb-6 bg-[var(--surface)] rounded-xl border border-gray-200 overflow-hidden">
                       {/* Header */}
                       <div className="flex items-center gap-3 px-5 py-3 border-b border-gray-200">
                         <div className="relative flex-shrink-0">
@@ -1500,7 +1500,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                             >
                               {tabLabels[tone]}
                               {isStreaming && (
-                                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                                <span className="w-1.5 h-1.5 rounded-full bg-[var(--surface)] animate-pulse" />
                               )}
                             </button>
                           );
@@ -1610,7 +1610,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                       
                       <textarea
                         className={`block w-full rounded-lg border px-4 py-3 text-[13.5px] leading-[1.7] text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 ${
-                          isEditingDescription ? 'border-brand-500/50 bg-white' : 'border-gray-200 bg-gray-50'
+                          isEditingDescription ? 'border-brand-500/50 bg-[var(--surface)]' : 'border-gray-200 bg-gray-50'
                         }`}
                         rows={8}
                         value={editedDescription}
@@ -2156,7 +2156,7 @@ function ZillowStylePreview({
   };
 
   return (
-    <div className="rounded-xl shadow-lg overflow-hidden border border-gray-200 bg-white">
+    <div className="rounded-xl shadow-lg overflow-hidden border border-gray-200 bg-[var(--surface)]">
       {/* Hero Image Gallery */}
       <div className="relative bg-gray-100">
         {imageUrls.length > 0 ? (

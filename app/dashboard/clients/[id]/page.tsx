@@ -328,13 +328,13 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       <DashboardPage title="Client" inline>
         <div className="animate-pulse space-y-5">
           <div className="h-4 bg-gray-100 rounded w-32" />
-          <div className="h-[176px] rounded-[10px] bg-white border border-gray-200" />
+          <div className="h-[176px] rounded-[10px] bg-[var(--surface)] border border-gray-200" />
           <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-5">
             <div className="space-y-5">
-              <div className="h-40 rounded-[10px] bg-white border border-gray-200" />
-              <div className="h-40 rounded-[10px] bg-white border border-gray-200" />
+              <div className="h-40 rounded-[10px] bg-[var(--surface)] border border-gray-200" />
+              <div className="h-40 rounded-[10px] bg-[var(--surface)] border border-gray-200" />
             </div>
-            <div className="h-[336px] rounded-[10px] bg-white border border-gray-200" />
+            <div className="h-[336px] rounded-[10px] bg-[var(--surface)] border border-gray-200" />
           </div>
         </div>
       </DashboardPage>
@@ -485,7 +485,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                     placeholder="Enter your note..."
                     rows={3}
                     autoFocus
-                    className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-[13px] text-gray-900 placeholder-gray-450 focus:ring-2 focus:ring-brand-500/30 focus:outline-none resize-none"
+                    className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-[var(--surface)] text-[13px] text-gray-900 placeholder-gray-450 focus:ring-2 focus:ring-brand-500/30 focus:outline-none resize-none"
                   />
                   <div className="flex gap-2 mt-3">
                     <Button variant="primary" size="sm" onClick={handleAddNote} disabled={isSubmitting || !newNote.trim()}>
@@ -516,7 +516,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                             onChange={(e) => setEditingNoteContent(e.target.value)}
                             rows={3}
                             autoFocus
-                            className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-[13px] text-gray-900 placeholder-gray-450 focus:ring-2 focus:ring-brand-500/30 focus:outline-none resize-none"
+                            className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-[var(--surface)] text-[13px] text-gray-900 placeholder-gray-450 focus:ring-2 focus:ring-brand-500/30 focus:outline-none resize-none"
                           />
                           <div className="flex gap-2 mt-3">
                             <Button

@@ -51,7 +51,7 @@ export default function AgentDirectorySearch({ groups, linkToAreaPages = false }
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search by name, area, or specialty"
-          className="w-full rounded-xl border border-gray-200 bg-white pl-10 pr-9 py-2.5 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-300"
+          className="w-full rounded-xl border border-gray-200 bg-[var(--surface)] pl-10 pr-9 py-2.5 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-300"
         />
         {query && (
           <button
@@ -81,7 +81,7 @@ export default function AgentDirectorySearch({ groups, linkToAreaPages = false }
                 <a
                   key={area}
                   href={`#${slugifyArea(area)}`}
-                  className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:border-brand-300 hover:text-brand-700 transition-colors"
+                  className="rounded-full border border-gray-200 bg-[var(--surface)] px-3 py-1.5 text-xs font-medium text-gray-600 hover:border-brand-300 hover:text-brand-700 transition-colors"
                 >
                   {area}
                 </a>

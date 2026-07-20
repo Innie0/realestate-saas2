@@ -18,7 +18,7 @@ export default function ProductMediaPanel({ feature, priority = false }: Product
   if (showVideo) {
     return (
       <BrowserWindowFrame>
-        <div className="relative aspect-[16/10] w-full bg-white">
+        <div className="relative aspect-[16/10] w-full bg-[var(--surface)]">
           <video
             src={feature.videoSrc}
             autoPlay

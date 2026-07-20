@@ -302,7 +302,7 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
           {([1, 2, 3] as FollowupTemplateSlot[]).map((slot) => {
             const day = slot === 1 ? 0 : slot === 2 ? timingDays.checkin : timingDays.nudge;
             return (
-              <div key={slot} className="flex items-center justify-between gap-3 px-4 py-3 bg-white">
+              <div key={slot} className="flex items-center justify-between gap-3 px-4 py-3 bg-[var(--surface)]">
                 <div>
                   <p className="text-[13.5px] font-medium text-gray-900">{TIMELINE_LABELS[slot]}</p>
                   <p className="text-[12px] text-gray-600 mt-0.5">{formatTimingLabel(slot, day)}</p>
@@ -428,7 +428,7 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                       type="button"
                       onClick={() => insertMergeTag(tag)}
                       title={tag}
-                      className="inline-flex items-center rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-[12px] font-medium text-gray-700 hover:border-gray-300 hover:bg-gray-50 transition-colors"
+                      className="inline-flex items-center rounded-lg border border-gray-200 bg-[var(--surface)] px-2.5 py-1 text-[12px] font-medium text-gray-700 hover:border-gray-300 hover:bg-gray-50 transition-colors"
                     >
                       {label}
                     </button>
@@ -446,7 +446,7 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                       <button
                         type="button"
                         onClick={() => setExpandedSlot(isOpen ? null : definition.slot)}
-                        className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-white hover:bg-gray-50 transition-colors text-left"
+                        className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-[var(--surface)] hover:bg-gray-50 transition-colors text-left"
                       >
                         <div>
                           <p className="text-[13.5px] font-medium text-gray-900">{definition.label}</p>
@@ -456,7 +456,7 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                       </button>
 
                       {isOpen && (
-                        <div className="px-4 pb-4 pt-1 space-y-3 bg-white border-t border-gray-150">
+                        <div className="px-4 pb-4 pt-1 space-y-3 bg-[var(--surface)] border-t border-gray-150">
                           <div>
                             <label className="block text-[12.5px] font-medium text-gray-600 mb-1.5">Subject</label>
                             <input
@@ -485,21 +485,21 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
                             <button
                               type="button"
                               onClick={() => insertMergeTag('{{first_name}}', { slot: definition.slot, field: 'body' }, true)}
-                              className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600 hover:border-gray-300 hover:bg-white transition-colors"
+                              className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600 hover:border-gray-300 hover:bg-[var(--surface)] transition-colors"
                             >
                               + Lead first name
                             </button>
                             <button
                               type="button"
                               onClick={() => insertMergeTag('{{agent_name}}', { slot: definition.slot, field: 'body' }, true)}
-                              className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600 hover:border-gray-300 hover:bg-white transition-colors"
+                              className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600 hover:border-gray-300 hover:bg-[var(--surface)] transition-colors"
                             >
                               + Your name
                             </button>
                             <button
                               type="button"
                               onClick={() => insertMergeTag('{{lead_type}}', { slot: definition.slot, field: 'body' }, true)}
-                              className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600 hover:border-gray-300 hover:bg-white transition-colors"
+                              className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600 hover:border-gray-300 hover:bg-[var(--surface)] transition-colors"
                             >
                               + Lead type
                             </button>

@@ -103,7 +103,7 @@ export default function AICopyAssistStep({ draft, onChange }: AICopyAssistStepPr
                 'rounded-lg border px-4 py-3 text-left transition-colors duration-150',
                 variant.selected
                   ? 'border-brand-500 bg-brand-50/40 ring-1 ring-brand-500/20'
-                  : 'border-gray-200 hover:border-gray-300 bg-white'
+                  : 'border-gray-200 hover:border-gray-300 bg-[var(--surface)]'
               )}
             >
               <p className="text-[13px] font-semibold text-gray-900">{variant.headline}</p>
@@ -131,7 +131,7 @@ export default function AICopyAssistStep({ draft, onChange }: AICopyAssistStepPr
             onChange={(e) => onChange({ customBody: e.target.value.slice(0, 250) })}
             rows={4}
             placeholder="Write your own ad message…"
-            className="block w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 resize-none"
+            className="block w-full rounded-lg border border-gray-200 bg-[var(--surface)] px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 resize-none"
           />
           <p className="text-[11px] text-gray-600 mt-1">{draft.customBody.length}/250</p>
         </div>

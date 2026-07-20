@@ -13,7 +13,7 @@ type ProductScreenshotProps = {
 export default function ProductScreenshot({ src, alt, priority = false }: ProductScreenshotProps) {
   return (
     <BrowserWindowFrame>
-      <div className="relative aspect-[16/10] w-full bg-white">
+      <div className="relative aspect-[16/10] w-full bg-[var(--surface)]">
         <Image
           src={src}
           alt={alt}

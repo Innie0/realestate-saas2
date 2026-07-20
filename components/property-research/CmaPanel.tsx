@@ -513,7 +513,7 @@ export function CmaPanel({
       {loading && (
         <div className="space-y-4 animate-pulse">
           {[1, 2].map((i) => (
-            <div key={i} className="bg-white border border-gray-200 rounded-[10px] p-5 space-y-3">
+            <div key={i} className="bg-[var(--surface)] border border-gray-200 rounded-[10px] p-5 space-y-3">
               <div className="h-4 bg-gray-100 rounded w-1/3" />
               <div className="h-8 bg-gray-100 rounded w-1/2" />
             </div>
@@ -552,7 +552,7 @@ export function CmaPanel({
               type="button"
               onClick={handleExportPdf}
               disabled={exportingPdf}
-              className="flex items-center gap-1.5 text-[13px] font-medium text-gray-700 border border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300 rounded-[10px] px-3 py-2 transition-colors disabled:opacity-50"
+              className="flex items-center gap-1.5 text-[13px] font-medium text-gray-700 border border-gray-200 bg-[var(--surface)] hover:bg-gray-50 hover:border-gray-300 rounded-[10px] px-3 py-2 transition-colors disabled:opacity-50"
             >
               {exportingPdf ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -582,7 +582,7 @@ export function CmaPanel({
             </p>
           )}
 
-          <div className="bg-white border border-gray-200 rounded-[10px] p-5">
+          <div className="bg-[var(--surface)] border border-gray-200 rounded-[10px] p-5">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-8 h-8 rounded-[10px] bg-gray-100 flex items-center justify-center">
                 <TrendingUp className="w-4 h-4 text-gray-900" />
@@ -603,7 +603,7 @@ export function CmaPanel({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-white border border-gray-200 rounded-[10px] p-5">
+            <div className="bg-[var(--surface)] border border-gray-200 rounded-[10px] p-5">
               <p className="text-[12.5px] text-gray-600 mb-2">AVM Reference</p>
               {result.avm?.estimatedValue ? (
                 <p className="text-[22px] font-bold text-gray-700">{fmt(result.avm.estimatedValue, '$')}</p>
@@ -611,7 +611,7 @@ export function CmaPanel({
                 <p className="text-gray-600 text-[13px]">Not available</p>
               )}
             </div>
-            <div className="bg-white border border-gray-200 rounded-[10px] p-5">
+            <div className="bg-[var(--surface)] border border-gray-200 rounded-[10px] p-5">
               <p className="text-[12.5px] text-gray-600 mb-2">Rent Estimate</p>
               {result.rentEstimate?.monthlyRent ? (
                 <p className="text-[22px] font-bold text-gray-900">{fmt(result.rentEstimate.monthlyRent, '$')}<span className="text-[14px] font-normal text-gray-600">/mo</span></p>
@@ -622,7 +622,7 @@ export function CmaPanel({
           </div>
 
           {result.summary && (
-            <div className="bg-white border border-gray-200 rounded-[10px] p-5">
+            <div className="bg-[var(--surface)] border border-gray-200 rounded-[10px] p-5">
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="w-4 h-4 text-gray-700" />
                 <p className="text-[12.5px] text-gray-600 font-medium">Market Summary</p>
@@ -631,7 +631,7 @@ export function CmaPanel({
             </div>
           )}
 
-          <div className="bg-white border border-gray-200 rounded-[10px] p-5">
+          <div className="bg-[var(--surface)] border border-gray-200 rounded-[10px] p-5">
             <p className="text-[12.5px] text-gray-600 font-medium mb-4">Comparable Sales</p>
             {activeComps.length === 0 ? (
               <p className="text-gray-600 text-[13px]">No comps available.</p>

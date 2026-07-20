@@ -163,7 +163,7 @@ function CalendarPageContent() {
       {!connections.google.connected && (
         <Surface padding="md" className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-brand-50/30">
           <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-white shadow-sm">
+            <div className="p-2 rounded-lg bg-[var(--surface)] shadow-sm">
               <Link2 className="w-5 h-5 text-brand-600" />
             </div>
             <div>
@@ -191,7 +191,7 @@ function CalendarPageContent() {
             type="button"
             onClick={() => handleRefresh()}
             disabled={refreshing}
-            className="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-white rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-[var(--surface)] rounded-lg transition-colors"
             title="Sync calendars"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
@@ -200,7 +200,7 @@ function CalendarPageContent() {
           <button
             type="button"
             onClick={() => setShowConnectionsModal(true)}
-            className="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-white rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-[var(--surface)] rounded-lg transition-colors"
           >
             <Settings className="w-4 h-4" />
             Settings

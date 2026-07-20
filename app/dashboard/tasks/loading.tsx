@@ -12,7 +12,7 @@ export default function TasksLoading() {
             ))}
           </div>
         </div>
-        <div className="border border-gray-200 rounded-[10px] bg-white flex flex-col overflow-hidden">
+        <div className="border border-gray-200 rounded-[10px] bg-[var(--surface)] flex flex-col overflow-hidden">
           <div className="flex-1 flex flex-col items-center justify-center gap-4 px-6">
             <div className="w-14 h-14 rounded-full bg-gray-100" />
             <div className="h-6 w-56 bg-gray-100 rounded" />

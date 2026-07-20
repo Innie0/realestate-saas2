@@ -126,8 +126,8 @@ export default function HeroAssistantPreview({
   const typedPrompt = useTypewriterPrompts(HERO_PROMPTS, typingEnabled);
 
   const shellClass = compactChrome
-    ? 'theme-light relative flex min-h-[340px] h-[min(520px,65svh)] flex-col overflow-hidden bg-white sm:min-h-[400px] lg:h-[520px]'
-    : 'theme-light relative z-10 flex min-h-[360px] h-[min(580px,72svh)] flex-col overflow-hidden rounded-2xl border border-white/30 bg-white shadow-[0_32px_80px_-20px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.15)] ring-1 ring-white/10 sm:min-h-[420px] md:min-h-[480px] lg:h-[580px] lg:min-h-0';
+    ? 'theme-light relative flex min-h-[340px] h-[min(520px,65svh)] flex-col overflow-hidden bg-[var(--surface)] sm:min-h-[400px] lg:h-[520px]'
+    : 'theme-light relative z-10 flex min-h-[360px] h-[min(580px,72svh)] flex-col overflow-hidden rounded-2xl border border-white/30 bg-[var(--surface)] shadow-[0_32px_80px_-20px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.15)] ring-1 ring-white/10 sm:min-h-[420px] md:min-h-[480px] lg:h-[580px] lg:min-h-0';
 
   return (
     <div ref={ref} className="relative mx-auto w-full">
@@ -194,7 +194,7 @@ export default function HeroAssistantPreview({
               <p className="text-[10px] text-gray-600 mt-0.5 sm:text-[11px]">0 / 75 AI messages used this month</p>
             </div>
 
-            <div className="flex min-h-0 flex-1 flex-col mx-3 my-3 rounded-lg border border-gray-200 bg-white overflow-hidden sm:mx-4 sm:my-4">
+            <div className="flex min-h-0 flex-1 flex-col mx-3 my-3 rounded-lg border border-gray-200 bg-[var(--surface)] overflow-hidden sm:mx-4 sm:my-4">
               <div className="flex flex-1 flex-col items-center justify-center px-4 py-5 text-center sm:px-8 sm:py-8">
                 <h3 className="text-[17px] font-medium tracking-[-0.02em] text-gray-900 sm:text-[20px]">
                   How can I help you today?
@@ -206,7 +206,7 @@ export default function HeroAssistantPreview({
                   {STARTER_PROMPTS.map((prompt) => (
                     <div
                       key={prompt}
-                      className="rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-left text-[11px] leading-snug text-gray-700 sm:px-3.5 sm:py-3 sm:text-[12px]"
+                      className="rounded-lg border border-gray-200 bg-[var(--surface)] px-3 py-2.5 text-left text-[11px] leading-snug text-gray-700 sm:px-3.5 sm:py-3 sm:text-[12px]"
                     >
                       {prompt}
                     </div>
@@ -215,7 +215,7 @@ export default function HeroAssistantPreview({
               </div>
 
               <div className="shrink-0 border-t border-gray-200 p-3 sm:p-4">
-                <div className="relative min-h-[80px] rounded-lg border border-gray-200 bg-white px-3 pt-3 pb-11 sm:min-h-[96px] sm:px-4 sm:pt-3.5 sm:pb-12">
+                <div className="relative min-h-[80px] rounded-lg border border-gray-200 bg-[var(--surface)] px-3 pt-3 pb-11 sm:min-h-[96px] sm:px-4 sm:pt-3.5 sm:pb-12">
                   <p className="text-[13px] leading-relaxed text-gray-800 whitespace-normal break-words text-left">
                     {typedPrompt || '\u00A0'}
                     {typingEnabled ? (

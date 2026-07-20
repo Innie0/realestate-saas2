@@ -188,7 +188,7 @@ export default function TransactionDocuments({
           <div className="sm:col-span-2">
             <label className="block text-[12.5px] text-gray-700 mb-1.5">File</label>
             <div
-              className="border-2 border-dashed border-gray-200 rounded-[10px] p-5 text-center cursor-pointer hover:border-gray-300 hover:bg-white transition-colors"
+              className="border-2 border-dashed border-gray-200 rounded-[10px] p-5 text-center cursor-pointer hover:border-gray-300 hover:bg-[var(--surface)] transition-colors"
               onClick={() => fileInputRef.current?.click()}
             >
               <input
@@ -221,7 +221,7 @@ export default function TransactionDocuments({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Purchase Agreement"
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-[13px] text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+              className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-[var(--surface)] text-[13px] text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
             />
           </div>
 
@@ -229,7 +229,7 @@ export default function TransactionDocuments({
             label="Document type"
             value={contractType}
             onChange={setContractType}
-            triggerClassName="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-[13px] text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            triggerClassName="w-full px-3 py-2 rounded-lg border border-gray-200 bg-[var(--surface)] text-[13px] text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
             options={CONTRACT_TYPES.map((t) => ({ value: t.value, label: t.label }))}
           />
         </div>
@@ -277,7 +277,7 @@ export default function TransactionDocuments({
               return (
                 <div
                   key={doc.id}
-                  className="flex items-center gap-3 p-3 rounded-[10px] border border-gray-150 bg-white hover:border-gray-300 transition-colors"
+                  className="flex items-center gap-3 p-3 rounded-[10px] border border-gray-150 bg-[var(--surface)] hover:border-gray-300 transition-colors"
                 >
                   <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
                     <Icon className="w-4 h-4 text-gray-700" strokeWidth={1.75} />

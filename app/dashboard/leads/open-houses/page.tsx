@@ -149,7 +149,7 @@ export default function OpenHousesPage() {
       <div>
         {/* Create form */}
         {showCreate && (
-          <form onSubmit={handleCreate} className="bg-white border border-gray-200 rounded-[10px] p-5 mb-5 space-y-4">
+          <form onSubmit={handleCreate} className="bg-[var(--surface)] border border-gray-200 rounded-[10px] p-5 mb-5 space-y-4">
             <div>
               <label className="block text-[12.5px] text-gray-600 mb-1.5">Property Address *</label>
               <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} required placeholder="123 Main St, City, State" className={inputClass} />
@@ -188,7 +188,7 @@ export default function OpenHousesPage() {
         {loading ? (
           <div className="space-y-3">
             {[1, 2].map(i => (
-              <div key={i} className="bg-white border border-gray-200 rounded-[10px] p-5 animate-pulse">
+              <div key={i} className="bg-[var(--surface)] border border-gray-200 rounded-[10px] p-5 animate-pulse">
                 <div className="h-4 bg-gray-100 rounded w-1/2 mb-3" />
                 <div className="h-3 bg-gray-100 rounded w-1/3" />
               </div>
@@ -210,7 +210,7 @@ export default function OpenHousesPage() {
               const isEnded = oh.status === 'ended';
 
               return (
-                <div key={oh.id} className={`bg-white border rounded-[10px] p-5 ${isEnded ? 'border-gray-150 opacity-60' : 'border-gray-200'}`}>
+                <div key={oh.id} className={`bg-[var(--surface)] border rounded-[10px] p-5 ${isEnded ? 'border-gray-150 opacity-60' : 'border-gray-200'}`}>
                   <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-2">
@@ -230,7 +230,7 @@ export default function OpenHousesPage() {
                         <button
                           onClick={() => handleCopy(oh.id)}
                           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12.5px] font-medium transition-all border ${
-                            isCopied ? 'bg-teal-50 text-teal-700 border-teal-200' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                            isCopied ? 'bg-teal-50 text-teal-700 border-teal-200' : 'bg-[var(--surface)] text-gray-700 border-gray-200 hover:bg-gray-50'
                           }`}
                         >
                           {isCopied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
@@ -238,7 +238,7 @@ export default function OpenHousesPage() {
                         </button>
                         <button
                           onClick={() => handleDownloadQR(oh.id)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12.5px] font-medium bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-colors"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12.5px] font-medium bg-[var(--surface)] text-gray-700 border border-gray-200 hover:bg-gray-50 transition-colors"
                         >
                           <Download className="w-3 h-3" /> QR
                         </button>
@@ -253,7 +253,7 @@ export default function OpenHousesPage() {
                       </div>
                     </div>
 
-                    <div className="p-2 bg-white rounded-[10px] border border-gray-150 flex-shrink-0">
+                    <div className="p-2 bg-[var(--surface)] rounded-[10px] border border-gray-150 flex-shrink-0">
                       <QRCodeCanvas
                         id={`oh-qr-${oh.id}`}
                         value={getSignInUrl(oh.id)}

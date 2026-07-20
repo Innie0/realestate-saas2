@@ -80,7 +80,7 @@ export default function ReminderForm({ clientId, initialData, onSubmit, onCancel
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           placeholder="Additional notes..."
           rows={3}
-          className="w-full px-3 py-2 rounded-[10px] border border-gray-200 bg-white text-[13px] text-gray-900 placeholder-gray-450 focus:ring-2 focus:ring-brand-500/30 focus:outline-none resize-none"
+          className="w-full px-3 py-2 rounded-[10px] border border-gray-200 bg-[var(--surface)] text-[13px] text-gray-900 placeholder-gray-450 focus:ring-2 focus:ring-brand-500/30 focus:outline-none resize-none"
         />
       </div>
 

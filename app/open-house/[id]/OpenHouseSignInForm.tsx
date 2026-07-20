@@ -44,7 +44,7 @@ export default function OpenHouseSignInForm({ openHouseId }: { openHouseId: stri
 
   if (submitted) {
     return (
-      <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center">
+      <div className="bg-[var(--surface)] border border-gray-200 rounded-2xl p-8 text-center">
         <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
           <span className="text-2xl">✓</span>
         </div>
@@ -57,7 +57,7 @@ export default function OpenHouseSignInForm({ openHouseId }: { openHouseId: stri
   const inputClass = 'w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-brand-500 transition-colors';
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
+    <form onSubmit={handleSubmit} className="bg-[var(--surface)] border border-gray-200 rounded-2xl p-6 space-y-4">
       <div>
         <input
           type="text"
@@ -121,7 +121,7 @@ export default function OpenHouseSignInForm({ openHouseId }: { openHouseId: stri
       <button
         type="submit"
         disabled={submitting || !name.trim() || (!email.trim() && !phone.trim())}
-        className="w-full py-3 rounded-xl bg-white text-gray-900 font-semibold text-sm hover:bg-gray-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className="mkt-cta w-full rounded-xl py-3 text-sm font-semibold transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {submitting ? 'Signing in...' : 'Sign In'}
       </button>

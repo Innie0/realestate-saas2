@@ -24,7 +24,7 @@ export default function AdTypeSelector({ value, onChange }: AdTypeSelectorProps)
               'flex items-start gap-3 rounded-[10px] border p-4 text-left transition-colors duration-150',
               selected
                 ? 'border-brand-500 bg-brand-50/40 ring-1 ring-brand-500/20'
-                : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50'
+                : 'border-gray-200 bg-[var(--surface)] hover:border-gray-300 hover:bg-gray-50/50'
             )}
           >
             <div

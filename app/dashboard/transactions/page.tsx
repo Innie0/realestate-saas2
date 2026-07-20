@@ -113,7 +113,7 @@ export default function TransactionsPage() {
       {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-[168px] rounded-[10px] bg-white border border-gray-200 animate-pulse" />
+            <div key={i} className="h-[168px] rounded-[10px] bg-[var(--surface)] border border-gray-200 animate-pulse" />
           ))}
         </div>
       ) : filteredTransactions.length === 0 ? (

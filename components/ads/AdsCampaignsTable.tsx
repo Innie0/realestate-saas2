@@ -25,7 +25,7 @@ function formatNumber(n: number): string {
 export default function AdsCampaignsTable({ campaigns, loading }: AdsCampaignsTableProps) {
   if (loading) {
     return (
-      <div className="rounded-[10px] border border-gray-200 bg-white overflow-hidden animate-pulse">
+      <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] overflow-hidden animate-pulse">
         <div className="px-4 py-3 border-b border-gray-150 h-10 bg-gray-50" />
         {[1, 2, 3].map((i) => (
           <div key={i} className="px-4 py-4 border-b border-gray-100 last:border-0">
@@ -39,7 +39,7 @@ export default function AdsCampaignsTable({ campaigns, loading }: AdsCampaignsTa
 
   if (campaigns.length === 0) {
     return (
-      <div className="rounded-[10px] border border-dashed border-gray-200 bg-white px-6 py-14 text-center">
+      <div className="rounded-[10px] border border-dashed border-gray-200 bg-[var(--surface)] px-6 py-14 text-center">
         <p className="text-[13px] font-semibold text-gray-900">No campaigns to show yet</p>
         <p className="text-caption text-gray-700 mt-2 max-w-md mx-auto">
           Connect Google Ads or Meta Ads above. Meta campaigns sync automatically; Google Ads live
@@ -50,7 +50,7 @@ export default function AdsCampaignsTable({ campaigns, loading }: AdsCampaignsTa
   }
 
   return (
-    <div className="rounded-[10px] border border-gray-200 bg-white overflow-hidden">
+    <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[720px] text-left">
           <thead>

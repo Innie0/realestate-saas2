@@ -47,7 +47,7 @@ export default function ProductScreenshotFrame({
 
   const frame = (
     <BrowserWindowFrame>
-      <div className="relative aspect-[16/10] w-full bg-white">
+      <div className="relative aspect-[16/10] w-full bg-[var(--surface)]">
         {!failed ? (
           <Image
             src={src}

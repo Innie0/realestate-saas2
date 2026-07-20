@@ -316,7 +316,7 @@ function CommandPaletteDialog({
           />
           <div className="flex min-h-full items-start justify-center px-4 pt-[12vh]">
             <motion.div
-              className="relative w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-overlay ring-1 ring-gray-900/[0.06]"
+              className="relative w-full max-w-xl overflow-hidden rounded-2xl bg-[var(--surface)] shadow-overlay ring-1 ring-gray-900/[0.06]"
               variants={reduced ? undefined : modalContent}
               initial="initial"
               animate="animate"

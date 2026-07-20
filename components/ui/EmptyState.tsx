@@ -27,7 +27,7 @@ export default function EmptyState({
       {/* Concentric halo rings give the icon presence without heaviness */}
       <span className="absolute -inset-4 rounded-full border border-gray-200/40" aria-hidden />
       <span className="absolute -inset-1.5 rounded-full border border-gray-200/70" aria-hidden />
-      <span className="absolute inset-0 rounded-full bg-white ring-1 ring-gray-200 shadow-surface" aria-hidden />
+      <span className="absolute inset-0 rounded-full bg-[var(--surface)] shadow-surface ring-1 ring-gray-200" aria-hidden />
       <Icon className="relative w-5 h-5 text-gray-700" strokeWidth={1.5} />
     </div>
   );

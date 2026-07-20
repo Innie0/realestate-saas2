@@ -284,7 +284,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
               value={transaction.status}
               disabled={isUpdatingStatus || isEditing}
               onChange={(value) => handleStatusChange(value as TransactionStatus)}
-              triggerClassName="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-50"
+              triggerClassName="w-full px-3 py-2 bg-[var(--surface)] border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-50"
               options={TRANSACTION_STATUSES.map((option) => ({
                 value: option.value,
                 label: option.label,

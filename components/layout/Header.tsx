@@ -183,7 +183,7 @@ export default function Header({ title, subtitle, actions, inline = false }: Hea
     }
   };
   return (
-    <header className="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b border-gray-200">
+    <header className="sticky top-0 z-20 border-b border-gray-200 bg-[var(--canvas)]/90 backdrop-blur-md">
       <div className="px-4 sm:px-7 py-2.5 sm:h-[52px] sm:py-0">
         <div className="flex h-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           {inline ? (
@@ -224,8 +224,8 @@ export default function Header({ title, subtitle, actions, inline = false }: Hea
 
             {/* Notifications dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-96 max-h-[32rem] overflow-y-auto bg-white ring-1 ring-gray-900/[0.06] rounded-2xl shadow-overlay">
-                <div className="sticky top-0 bg-white border-b border-gray-100 px-5 py-3.5 flex items-center justify-between rounded-t-2xl z-10">
+              <div className="absolute right-0 mt-2 max-h-[32rem] w-96 overflow-y-auto rounded-2xl bg-[var(--surface)] shadow-overlay ring-1 ring-white/[0.08]">
+                <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-gray-200 bg-[var(--surface)] px-5 py-3.5">
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold tracking-tight text-gray-900 text-sm">Notifications</h3>
                     {notifications.length > 0 && (

@@ -377,7 +377,7 @@ export function OwnerContactPanel({
             {results.results.map((person, index) => (
               <div
                 key={index}
-                className="rounded-[10px] overflow-hidden border border-gray-200 transition-all duration-200 hover:border-gray-300 bg-white"
+                className="rounded-[10px] overflow-hidden border border-gray-200 transition-all duration-200 hover:border-gray-300 bg-[var(--surface)]"
               >
                 {/* Card Header - Always Visible */}
                 <button
@@ -390,7 +390,7 @@ export function OwnerContactPanel({
                       const isUnknown = !person.owner.firstName && !person.owner.lastName;
                       const initial = person.owner.firstName?.[0]?.toUpperCase() || person.owner.lastName?.[0]?.toUpperCase();
                       return (
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-[16px] flex-shrink-0 border ${isUnknown ? 'bg-gray-50 border-gray-200 text-gray-600' : 'bg-white border-gray-300 text-gray-900'}`}>
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-[16px] flex-shrink-0 border ${isUnknown ? 'bg-gray-50 border-gray-200 text-gray-600' : 'bg-[var(--surface)] border-gray-300 text-gray-900'}`}>
                           {isUnknown ? '?' : initial}
                         </div>
                       );

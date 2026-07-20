@@ -59,7 +59,7 @@ function TestimonialCarousel() {
                   type="button"
                   onClick={onClick}
                   aria-label={label}
-                  className="flex h-9 w-9 items-center justify-center transition-colors hover:bg-white/[0.06]"
+                  className="flex h-9 w-9 items-center justify-center transition-colors hover:bg-[var(--surface)]/[0.06]"
                   style={{
                     borderRadius: MKT.radius.button,
                     border: `1px solid ${MKT.border}`,

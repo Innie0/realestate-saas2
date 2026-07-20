@@ -134,7 +134,7 @@ export default function CalendarView({
       <div
         key={day}
         className={`min-h-[92px] sm:min-h-[110px] border-t border-l border-gray-100 p-1.5 sm:p-2 transition-colors hover:bg-gray-50 ${
-          isToday ? 'bg-brand-50/60' : 'bg-white'
+          isToday ? 'bg-brand-50/60' : 'bg-[var(--surface)]'
         }`}
       >
         <div

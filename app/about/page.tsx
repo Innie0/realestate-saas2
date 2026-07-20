@@ -90,7 +90,7 @@ export default function AboutPage() {
           </Link>
           <Link
             href="/pricing"
-            className="legal-btn legal-btn-secondary inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium shadow-sm hover:bg-gray-50 transition-colors"
+            className="legal-btn legal-btn-secondary inline-flex items-center justify-center rounded-lg border border-gray-200 bg-[var(--surface)] px-5 py-2.5 text-sm font-medium shadow-sm hover:bg-gray-50 transition-colors"
           >
             View pricing
           </Link>

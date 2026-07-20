@@ -102,7 +102,7 @@ export default async function BookingPage({ params }: BookingPageProps) {
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-2xl p-6 sm:p-8">
+        <div className="bg-[var(--surface)] rounded-2xl border border-gray-200 shadow-2xl p-6 sm:p-8">
           <BookingScheduler agentId={agent.id} agentName={agentName} />
         </div>
 

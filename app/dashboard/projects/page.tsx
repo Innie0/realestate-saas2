@@ -127,7 +127,7 @@ export default function ProjectsPage() {
       {isLoading && projects.length === 0 ? (
         <div className="grid gap-[18px] [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="animate-pulse rounded-xl bg-white border border-gray-200 h-[314px]" />
+            <div key={i} className="animate-pulse rounded-xl bg-[var(--surface)] border border-gray-200 h-[314px]" />
           ))}
         </div>
       ) : filteredProjects.length > 0 ? (

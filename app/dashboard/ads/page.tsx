@@ -283,7 +283,7 @@ function AdsPageContent() {
           onClick={() => setTab('create')}
           className={clsx(
             'inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-[13px] font-medium transition-colors',
-            tab === 'create' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            tab === 'create' ? 'bg-[var(--surface)] text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
           )}
         >
           <PenLine className="h-3.5 w-3.5" />
@@ -294,7 +294,7 @@ function AdsPageContent() {
           onClick={() => setTab('performance')}
           className={clsx(
             'inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-[13px] font-medium transition-colors',
-            tab === 'performance' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            tab === 'performance' ? 'bg-[var(--surface)] text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
           )}
         >
           <BarChart3 className="h-3.5 w-3.5" />

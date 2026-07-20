@@ -223,7 +223,7 @@ export default function TransactionForm({
           <Select
             value={status}
             onChange={(value) => setStatus(value as typeof status)}
-            triggerClassName="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            triggerClassName="w-full px-3 py-2 bg-[var(--surface)] border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
             options={TRANSACTION_STATUSES.map((option) => ({
               value: option.value,
               label: option.label,
@@ -288,7 +288,7 @@ export default function TransactionForm({
             label="Property Type"
             value={propertyType}
             onChange={(value) => setPropertyType(value as typeof propertyType)}
-            triggerClassName="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+            triggerClassName="w-full px-3 py-2 bg-[var(--surface)] border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
             options={[
               { value: 'house', label: 'House' },
               { value: 'apartment', label: 'Apartment' },
@@ -454,7 +454,7 @@ export default function TransactionForm({
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Additional notes about this transaction..."
               rows={4}
-              className="w-full px-3 py-2 bg-white border border-gray-200 text-gray-900 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 resize-none"
+              className="w-full px-3 py-2 bg-[var(--surface)] border border-gray-200 text-gray-900 placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 resize-none"
             />
           </div>
         </div>

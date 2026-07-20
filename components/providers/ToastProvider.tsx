@@ -42,7 +42,7 @@ const VARIANT_STYLES: Record<
     iconClass: 'text-red-600',
   },
   info: {
-    container: 'border-gray-200 bg-white text-gray-900',
+    container: 'border-gray-200 bg-[var(--surface)] text-gray-900',
     icon: Info,
     iconClass: 'text-brand-600',
   },

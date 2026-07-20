@@ -145,7 +145,7 @@ export default function AIInsightsFeed({
                     <button
                       type="button"
                       onClick={() => onDismiss(insight.id)}
-                      className="shrink-0 p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-white/80"
+                      className="shrink-0 p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-[var(--surface)]/80"
                       aria-label="Dismiss"
                     >
                       <X className="h-4 w-4" />

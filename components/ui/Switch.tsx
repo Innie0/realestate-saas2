@@ -46,7 +46,7 @@ export default function Switch({
       >
         <span
           className={clsx(
-            'inline-block transform rounded-full bg-white shadow transition-transform duration-150',
+            'inline-block transform rounded-full bg-[#f4f4f5] shadow transition-transform duration-150',
             dims.knob,
             checked ? dims.translate : 'translate-x-1'
           )}

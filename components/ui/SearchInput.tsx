@@ -16,9 +16,9 @@ export default function SearchInput({
       <input
         type="text"
         className={clsx(
-          'w-full pl-9 pr-4 py-2.5 text-sm bg-white rounded-xl',
+          'w-full rounded-xl bg-[var(--surface)] py-2.5 pl-9 pr-4 text-sm',
           'text-gray-900 placeholder:text-gray-400',
-          'ring-1 ring-gray-900/[0.06] shadow-surface',
+          'shadow-surface ring-1 ring-white/[0.06]',
           'focus:outline-none focus:ring-2 focus:ring-brand-500/30',
           'transition-shadow duration-150',
           className,

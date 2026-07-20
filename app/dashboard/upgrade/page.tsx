@@ -210,7 +210,7 @@ export default function UpgradePage() {
         )}
 
         <div className="grid grid-cols-1 gap-6 max-w-xl mx-auto">
-          <div className="rounded-2xl border-2 border-gray-400 bg-white p-6 flex flex-col relative">
+          <div className="rounded-2xl border-2 border-gray-400 bg-[var(--surface)] p-6 flex flex-col relative">
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
               <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-brand-500 text-white text-xs font-semibold">
                 <Sparkles className="w-3 h-3" />

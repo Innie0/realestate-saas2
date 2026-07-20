@@ -450,7 +450,7 @@ function PropertyResearchContent() {
             <motion.div
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center justify-between gap-3 rounded-[10px] border border-gray-200 bg-white px-4 py-3"
+              className="flex items-center justify-between gap-3 rounded-[10px] border border-gray-200 bg-[var(--surface)] px-4 py-3"
             >
               <div>
                 <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600 mb-0.5">Current property</p>
@@ -468,7 +468,7 @@ function PropertyResearchContent() {
           )}
 
           {/* Tab bar + panel share one bordered card (square join per handoff) */}
-          <div className="rounded-[10px] border border-gray-200 bg-white overflow-hidden" data-tour="research-tabs">
+          <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] overflow-hidden" data-tour="research-tabs">
             <div
               className="flex items-stretch gap-1 bg-gray-100 p-1 border-b border-gray-150"
               role="tablist"

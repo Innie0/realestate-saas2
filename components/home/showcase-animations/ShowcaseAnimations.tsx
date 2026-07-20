@@ -21,7 +21,7 @@ function ShowcaseWindowChrome({ title }: { title: string }) {
         <Sparkles className="h-3 w-3 shrink-0 text-gray-500" strokeWidth={2} />
         <p className="truncate text-[11px] font-medium text-gray-600 sm:text-[12px]">{title}</p>
       </div>
-      <span className="hidden rounded-full bg-white px-2 py-0.5 text-[9px] font-medium uppercase tracking-wide text-gray-500 ring-1 ring-gray-200 sm:inline">
+      <span className="hidden rounded-full bg-[var(--surface)] px-2 py-0.5 text-[9px] font-medium uppercase tracking-wide text-gray-500 ring-1 ring-gray-200 sm:inline">
         Preview
       </span>
     </div>
@@ -54,7 +54,7 @@ export function ShowcaseAnimationFrame({
   title?: string;
 }) {
   return (
-    <div className="theme-light flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200/90 bg-white shadow-[0_20px_50px_-24px_rgba(24,24,27,0.12)] ring-1 ring-gray-900/[0.04]">
+    <div className="theme-light flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200/90 bg-[var(--surface)] shadow-[0_20px_50px_-24px_rgba(24,24,27,0.12)] ring-1 ring-gray-900/[0.04]">
       <ShowcaseWindowChrome title={title} />
       <div
         className={`min-h-0 flex-1 bg-[#fafafa] ${
@@ -64,7 +64,7 @@ export function ShowcaseAnimationFrame({
         {children}
       </div>
       {showChatBar ? (
-        <div className="shrink-0 border-t border-gray-200 bg-white px-4 py-3 sm:px-5 sm:py-3.5">
+        <div className="shrink-0 border-t border-gray-200 bg-[var(--surface)] px-4 py-3 sm:px-5 sm:py-3.5">
           <ShowcaseChatBar />
         </div>
       ) : null}
@@ -95,7 +95,7 @@ export function AskOnceAnimation({ reduced }: { reduced: boolean }) {
             initial={reduced ? false : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9, duration: 0.45, ease }}
-            className="max-w-[90%] rounded-2xl rounded-tl-md border border-gray-200 bg-white px-3.5 py-2.5 shadow-sm"
+            className="max-w-[90%] rounded-2xl rounded-tl-md border border-gray-200 bg-[var(--surface)] px-3.5 py-2.5 shadow-sm"
           >
             <p className="text-[11px] font-medium text-brand-600 sm:text-[12px]">Oikaro</p>
             <p className="mt-1 text-[12px] leading-snug text-gray-700 sm:text-[13px]">
@@ -115,7 +115,7 @@ export function AskOnceAnimation({ reduced }: { reduced: boolean }) {
                 initial={reduced ? false : { opacity: 0, scale: 0.92 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 1.7 + i * 0.12, duration: 0.3 }}
-                className="rounded-full border border-gray-300 bg-white px-2.5 py-1 text-[10px] font-medium text-gray-700 sm:text-[11px]"
+                className="rounded-full border border-gray-300 bg-[var(--surface)] px-2.5 py-1 text-[10px] font-medium text-gray-700 sm:text-[11px]"
               >
                 {chip}
               </motion.span>
@@ -155,7 +155,7 @@ function ListingGenerationPhase({ reduced }: { reduced: boolean }) {
         initial={reduced ? false : { opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.08, duration: 0.35, ease }}
-        className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2"
+        className="flex items-center justify-between rounded-lg border border-gray-200 bg-[var(--surface)] px-3 py-2"
       >
         <div>
           <p className="text-[9px] font-medium uppercase tracking-wide text-gray-500 sm:text-[10px]">
@@ -192,7 +192,7 @@ function ListingGenerationPhase({ reduced }: { reduced: boolean }) {
             className={`rounded-full px-2 py-0.5 text-[9px] font-medium sm:text-[10px] ${
               tone === 'Luxury'
                 ? 'bg-brand-500 text-white'
-                : 'border border-gray-200 bg-white text-gray-600'
+                : 'border border-gray-200 bg-[var(--surface)] text-gray-600'
             }`}
           >
             {tone}
@@ -204,7 +204,7 @@ function ListingGenerationPhase({ reduced }: { reduced: boolean }) {
         initial={reduced ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.32, duration: 0.4 }}
-        className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm"
+        className="rounded-xl border border-gray-200 bg-[var(--surface)] p-3 shadow-sm"
       >
         <motion.p
           initial={reduced ? false : { opacity: 0, y: 4 }}
@@ -266,7 +266,7 @@ function PropertyLookupPhase({ reduced }: { reduced: boolean }) {
         initial={reduced ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 0.35, ease }}
-        className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-2.5 py-2 shadow-sm"
+        className="flex items-center gap-2 rounded-lg border border-gray-200 bg-[var(--surface)] px-2.5 py-2 shadow-sm"
       >
         <Search className="h-3.5 w-3.5 shrink-0 text-gray-500" strokeWidth={2} />
         <p className="text-[11px] font-medium text-gray-900 sm:text-[12px]">123 W Main Street</p>
@@ -276,7 +276,7 @@ function PropertyLookupPhase({ reduced }: { reduced: boolean }) {
         initial={reduced ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25, duration: 0.35, ease }}
-        className="rounded-lg border border-gray-200 bg-white p-2.5"
+        className="rounded-lg border border-gray-200 bg-[var(--surface)] p-2.5"
       >
         <p className="text-[11px] font-semibold text-gray-900 sm:text-[12px]">123 W Main Street</p>
         <p className="mt-0.5 text-[10px] text-gray-600 sm:text-[11px]">3 bed · 2 bath · 1,840 sqft · Built 2004</p>
@@ -296,7 +296,7 @@ function PropertyLookupPhase({ reduced }: { reduced: boolean }) {
         initial={reduced ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.45, duration: 0.35, ease }}
-        className="rounded-lg border border-gray-200 bg-white p-2.5"
+        className="rounded-lg border border-gray-200 bg-[var(--surface)] p-2.5"
       >
         <div className="flex items-start gap-2">
           <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-700">
@@ -336,7 +336,7 @@ function PropertyLookupPhase({ reduced }: { reduced: boolean }) {
         initial={reduced ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.65, duration: 0.35, ease }}
-        className="rounded-lg border border-gray-200 bg-white p-2.5"
+        className="rounded-lg border border-gray-200 bg-[var(--surface)] p-2.5"
       >
         <div className="mb-1.5 flex items-center gap-1.5">
           <History className="h-3 w-3 text-gray-500" strokeWidth={2} />
@@ -422,7 +422,7 @@ export function NeverLoseLeadAnimation({ reduced }: { reduced: boolean }) {
               initial={reduced ? false : { opacity: 0, x: 24 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 + i * 0.25, duration: 0.4, ease }}
-              className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-3 py-2.5 shadow-sm"
+              className="flex items-center justify-between rounded-xl border border-gray-200 bg-[var(--surface)] px-3 py-2.5 shadow-sm"
             >
               <div>
                 <p className="text-[12px] font-semibold text-gray-900 sm:text-[13px]">{lead.name}</p>
@@ -468,7 +468,7 @@ export function CloseConfidenceAnimation({ reduced }: { reduced: boolean }) {
     <ShowcaseAnimationFrame title="Oikaro · Deals & Pipeline">
       <LoopShell reduced={reduced}>
         <div className="space-y-4">
-          <div className="rounded-xl border border-gray-200 bg-white p-3">
+          <div className="rounded-xl border border-gray-200 bg-[var(--surface)] p-3">
             <p className="mb-2.5 text-[11px] font-semibold text-gray-900 sm:text-[12px]">
               742 Maple Ave · Closing Apr 18
             </p>
@@ -499,7 +499,7 @@ export function CloseConfidenceAnimation({ reduced }: { reduced: boolean }) {
             initial={reduced ? false : { opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.95, duration: 0.4, ease }}
-            className="rounded-xl border border-gray-200 bg-white p-3"
+            className="rounded-xl border border-gray-200 bg-[var(--surface)] p-3"
           >
             <p className="text-[10px] font-medium uppercase tracking-wide text-gray-500">This week</p>
             <div className="mt-2 flex gap-1.5">

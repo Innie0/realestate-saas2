@@ -110,7 +110,7 @@ export default function AudienceBudgetStep({ draft, onChange }: AudienceBudgetSt
                 'rounded-lg border px-3 py-2.5 text-left transition-colors duration-150',
                 draft.audience.preset === preset.id
                   ? 'border-brand-500 bg-brand-50/50 ring-1 ring-brand-500/20'
-                  : 'border-gray-200 hover:border-gray-300 bg-white'
+                  : 'border-gray-200 hover:border-gray-300 bg-[var(--surface)]'
               )}
             >
               <p className="text-[12.5px] font-medium text-gray-900">{preset.label}</p>

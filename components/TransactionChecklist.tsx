@@ -271,7 +271,7 @@ export default function TransactionChecklist({
               label="Category"
               value={newItemCategory}
               onChange={(value) => setNewItemCategory(value as typeof newItemCategory)}
-              triggerClassName="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm bg-white text-gray-900"
+              triggerClassName="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm bg-[var(--surface)] text-gray-900"
               options={Object.entries(categoryInfo).map(([key, info]) => ({
                 value: key,
                 label: info.label,

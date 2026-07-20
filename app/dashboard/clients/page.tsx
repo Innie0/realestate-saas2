@@ -345,7 +345,7 @@ export default function ClientsPage() {
                 onClick={() => setViewMode('list')}
                 className={clsx(
                   'p-1.5 rounded-md transition-colors',
-                  viewMode === 'list' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-700'
+                  viewMode === 'list' ? 'bg-[var(--surface)] text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-700'
                 )}
                 aria-label="List view"
               >
@@ -356,7 +356,7 @@ export default function ClientsPage() {
                 onClick={() => setViewMode('grid')}
                 className={clsx(
                   'p-1.5 rounded-md transition-colors',
-                  viewMode === 'grid' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-700'
+                  viewMode === 'grid' ? 'bg-[var(--surface)] text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-700'
                 )}
                 aria-label="Grid view"
               >
@@ -376,7 +376,7 @@ export default function ClientsPage() {
       </Modal>
 
       {isLoading && allClients.length === 0 ? (
-        <div className="rounded-[10px] border border-gray-200 bg-white overflow-hidden animate-pulse">
+        <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] overflow-hidden animate-pulse">
           <div className="h-12 bg-gray-50 border-b border-gray-150" />
           {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="h-16 border-b border-gray-150 px-5 flex items-center gap-4">

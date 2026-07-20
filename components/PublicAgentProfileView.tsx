@@ -49,7 +49,7 @@ function SectionCard({
   return (
     <section
       id={id}
-      className={`rounded-2xl border border-gray-200 bg-white p-6 sm:p-7 shadow-sm ${className}`}
+      className={`rounded-2xl border border-gray-200 bg-[var(--surface)] p-6 sm:p-7 shadow-sm ${className}`}
     >
       <div className="mb-5">
         <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
@@ -100,7 +100,7 @@ export default function PublicAgentProfileView({
   return (
     <div className="min-h-screen bg-[var(--canvas)]">
       {/* Top bar */}
-      <header className="border-b border-gray-200 bg-white/90 backdrop-blur-sm sticky top-0 z-30">
+      <header className="border-b border-gray-200 bg-[var(--surface)]/90 backdrop-blur-sm sticky top-0 z-30">
         <div className="max-w-5xl mx-auto px-4 py-3.5 flex items-center justify-between gap-4">
           <Link href="/" className="inline-flex items-center shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -110,7 +110,7 @@ export default function PublicAgentProfileView({
             {bookingUrl && (
               <Link
                 href={bookingUrl}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs sm:text-sm font-medium text-gray-700 hover:border-brand-300 hover:text-brand-700 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-[var(--surface)] px-3 py-2 text-xs sm:text-sm font-medium text-gray-700 hover:border-brand-300 hover:text-brand-700 transition-colors"
               >
                 <CalendarClock className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Book a showing</span>
@@ -119,7 +119,7 @@ export default function PublicAgentProfileView({
             )}
             <a
               href="#contact"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs sm:text-sm font-medium text-gray-700 hover:border-brand-300 hover:text-brand-700 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-[var(--surface)] px-3 py-2 text-xs sm:text-sm font-medium text-gray-700 hover:border-brand-300 hover:text-brand-700 transition-colors"
             >
               <MessageCircle className="w-3.5 h-3.5" />
               Get in touch
@@ -139,7 +139,7 @@ export default function PublicAgentProfileView({
       </header>
 
       {/* Hero */}
-      <div className="relative overflow-hidden border-b border-gray-200 bg-white">
+      <div className="relative overflow-hidden border-b border-gray-200 bg-[var(--surface)]">
         <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-brand-500/10 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-16 -left-16 w-56 h-56 rounded-full bg-brand-200/30 blur-3xl pointer-events-none" />
         <div className="absolute inset-0 bg-gradient-to-b from-brand-500/[0.06] via-white to-white pointer-events-none" />
@@ -189,7 +189,7 @@ export default function PublicAgentProfileView({
                 {stats.map(({ label, icon: Icon }) => (
                   <span
                     key={label}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-white border border-gray-200 px-3.5 py-1.5 text-xs sm:text-sm text-gray-700 shadow-sm"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface)] border border-gray-200 px-3.5 py-1.5 text-xs sm:text-sm text-gray-700 shadow-sm"
                   >
                     <Icon className="w-3.5 h-3.5 text-brand-600" />
                     {label}
@@ -203,7 +203,7 @@ export default function PublicAgentProfileView({
                 {bookingUrl && (
                   <Link
                     href={bookingUrl}
-                    className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-800 shadow-sm hover:border-brand-300 hover:text-brand-700 transition-colors"
+                    className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-[var(--surface)] px-5 py-2.5 text-sm font-medium text-gray-800 shadow-sm hover:border-brand-300 hover:text-brand-700 transition-colors"
                   >
                     <CalendarClock className="w-4 h-4 text-brand-600" />
                     Book a showing
@@ -221,7 +221,7 @@ export default function PublicAgentProfileView({
                 {agent.profileEmail && (
                   <a
                     href={`mailto:${agent.profileEmail}`}
-                    className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-800 shadow-sm hover:border-brand-300 hover:text-brand-700 transition-colors"
+                    className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-[var(--surface)] px-5 py-2.5 text-sm font-medium text-gray-800 shadow-sm hover:border-brand-300 hover:text-brand-700 transition-colors"
                   >
                     <Mail className="w-4 h-4 text-brand-600" />
                     Email
@@ -232,7 +232,7 @@ export default function PublicAgentProfileView({
                     href={websiteHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-800 shadow-sm hover:border-brand-300 hover:text-brand-700 transition-colors"
+                    className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-[var(--surface)] px-5 py-2.5 text-sm font-medium text-gray-800 shadow-sm hover:border-brand-300 hover:text-brand-700 transition-colors"
                   >
                     <Globe className="w-4 h-4 text-brand-600" />
                     Website
@@ -342,7 +342,7 @@ export default function PublicAgentProfileView({
         </div>
       </div>
 
-      <footer className="border-t border-gray-200 bg-white py-8">
+      <footer className="border-t border-gray-200 bg-[var(--surface)] py-8">
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
           <p className="text-sm text-gray-600">
             © {new Date().getFullYear()} {agent.name}

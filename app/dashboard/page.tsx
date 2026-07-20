@@ -866,7 +866,7 @@ export default function DashboardPage() {
             <Link href="/dashboard/projects/new" data-tour="new-project">
               <Button size="sm" className="gap-2">
                 New listing
-                <span className="rounded bg-white/[0.18] px-1 font-mono text-[10px] font-medium">N</span>
+                <span className="rounded bg-[var(--surface)]/[0.18] px-1 font-mono text-[10px] font-medium">N</span>
               </Button>
             </Link>
           </>

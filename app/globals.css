@@ -12,20 +12,21 @@
 :root {
   color-scheme: dark;
 
-  --canvas: #000000;
-  --surface: #111111;
-  --sidebar: #0a0a0a;
+  --canvas: #0a0a0a;
+  /* Elevated panels — Cursor-like dark gray, never white */
+  --surface: #1c1c1c;
+  --sidebar: #111111;
   --ink: #ffffff;
   --brand: #e4f76c;
   --brand-foreground: #141412;
-  --border: #2a2a2a;
+  --border: #2e2e2e;
   --champagne: #a87c43;
 
   /* Inverted neutrals so existing gray-* classes read on black */
-  --gray-50: #0a0a0a;
-  --gray-100: #111111;
-  --gray-150: #161616;
-  --gray-200: #2a2a2a;
+  --gray-50: #141414;
+  --gray-100: #1c1c1c;
+  --gray-150: #222222;
+  --gray-200: #2e2e2e;
   --gray-300: #3f3f3f;
   --gray-400: #666666;
   --gray-450: #7a7a7a;
@@ -99,7 +100,7 @@
 /* Custom base styles */
 @layer base {
   html {
-    background-color: #000000;
+    background-color: var(--canvas);
   }
 
   body {
@@ -234,7 +235,7 @@
 
 /* Custom utility classes */
 @layer utilities {
-  /* Must live in utilities so it wins over Tailwind's default bg-white */
+  /* Catch any leftover Tailwind bg-white utilities */
   .bg-white {
     background-color: var(--surface) !important;
   }
@@ -280,7 +281,7 @@
 
   /* Dashboard form controls */
   .field-select {
-    @apply px-3 py-2.5 text-sm bg-white rounded-xl text-gray-900 ring-1 ring-gray-900/[0.08] shadow-surface focus:outline-none focus:ring-2 focus:ring-brand-500/30 transition-shadow duration-150;
+    @apply px-3 py-2.5 text-sm bg-[var(--surface)] rounded-xl text-gray-900 ring-1 ring-gray-900/[0.08] shadow-surface focus:outline-none focus:ring-2 focus:ring-brand-500/30 transition-shadow duration-150;
   }
 
   /* Legal page typography */
@@ -376,8 +377,8 @@
 
 /* ── Driver.js tour — dark theme ─────────────────────────────────────────── */
 .driver-popover {
-  background: #111111 !important;
-  border: 1px solid #2a2a2a !important;
+  background: #1c1c1c !important;
+  border: 1px solid #2e2e2e !important;
   border-radius: 10px !important;
   color: #f4f4f5 !important;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45) !important;
@@ -415,8 +416,8 @@
 .driver-popover-prev-btn,
 .driver-popover-next-btn,
 .driver-popover-close-btn {
-  background: #111111 !important;
-  border: 1px solid #2a2a2a !important;
+  background: #1c1c1c !important;
+  border: 1px solid #2e2e2e !important;
   color: #c4c4c4 !important;
   border-radius: 7px !important;
   font-size: 12px !important;
@@ -452,7 +453,7 @@
   background: rgba(0, 0, 0, 0.7) !important;
 }
 
-.driver-popover-arrow-side-left .driver-popover-arrow { border-right-color: #111111 !important; }
-.driver-popover-arrow-side-right .driver-popover-arrow { border-left-color: #111111 !important; }
-.driver-popover-arrow-side-top .driver-popover-arrow { border-bottom-color: #111111 !important; }
-.driver-popover-arrow-side-bottom .driver-popover-arrow { border-top-color: #111111 !important; }
+.driver-popover-arrow-side-left .driver-popover-arrow { border-right-color: #1c1c1c !important; }
+.driver-popover-arrow-side-right .driver-popover-arrow { border-left-color: #1c1c1c !important; }
+.driver-popover-arrow-side-top .driver-popover-arrow { border-bottom-color: #1c1c1c !important; }
+.driver-popover-arrow-side-bottom .driver-popover-arrow { border-top-color: #1c1c1c !important; }

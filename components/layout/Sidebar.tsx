@@ -200,7 +200,7 @@ export default function Sidebar() {
 
   return (
     <>
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 h-16 flex items-center justify-between">
+      <div className="fixed left-0 right-0 top-0 z-50 flex h-16 items-center justify-between border-b border-gray-200 bg-[var(--canvas)] px-4 lg:hidden">
         <Link href="/dashboard" className="flex items-center flex-1 min-h-0 overflow-visible">
           <Image
             src="/logo-sidebar.png"
@@ -269,7 +269,7 @@ export default function Sidebar() {
             <button
               type="button"
               onClick={() => openCommandPalette()}
-              className="flex w-full items-center gap-2 rounded-[7px] border border-gray-200 bg-white px-2.5 py-[6px] text-[12.5px] text-gray-700 transition-colors hover:border-gray-300 hover:bg-gray-50"
+              className="flex w-full items-center gap-2 rounded-[7px] border border-gray-200 bg-[var(--surface)] px-2.5 py-[6px] text-[12.5px] text-gray-700 transition-colors hover:border-gray-300 hover:bg-gray-50"
             >
               <Search className="h-3 w-3 shrink-0" strokeWidth={2} />
               <span className="flex-1 text-left">Search</span>
@@ -312,7 +312,7 @@ export default function Sidebar() {
 
         <div className="relative border-t border-gray-200 p-2.5" ref={userMenuRef}>
           {isUserMenuOpen && !isCollapsed && (
-            <div className="absolute bottom-full left-2.5 right-2.5 mb-1.5 overflow-hidden rounded-[8px] border border-gray-200 bg-white py-1 shadow-overlay">
+            <div className="absolute bottom-full left-2.5 right-2.5 mb-1.5 overflow-hidden rounded-[8px] border border-gray-200 bg-[var(--surface)] py-1 shadow-overlay">
               <Link
                 href="/dashboard/account"
                 onClick={() => {

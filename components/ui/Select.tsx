@@ -138,7 +138,7 @@ export default function Select({
 
   const triggerClasses = clsx(
     'flex w-full items-center justify-between gap-2 text-left text-sm transition-shadow duration-150',
-    'rounded-xl border bg-white text-gray-900 ring-1 ring-gray-900/[0.06] shadow-surface',
+    'rounded-xl border bg-[var(--surface)] text-gray-900 ring-1 ring-white/[0.06] shadow-surface',
     'focus:outline-none focus:ring-2 focus:ring-brand-500/30',
     error
       ? 'border-red-300 focus:ring-red-200'
@@ -196,7 +196,7 @@ export default function Select({
           id={listboxId}
           role="listbox"
           aria-labelledby={label ? selectId : undefined}
-          className="absolute z-50 mt-1.5 max-h-60 w-full overflow-auto rounded-xl border border-gray-200 bg-white py-1 shadow-[0_4px_24px_rgba(0,0,0,0.12)]"
+          className="absolute z-50 mt-1.5 max-h-60 w-full overflow-auto rounded-xl border border-gray-200 bg-[var(--surface)] py-1 shadow-overlay"
         >
           {options.map((option) => {
             const enabledIndex = enabledOptions.indexOf(option);

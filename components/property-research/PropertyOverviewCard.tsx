@@ -92,7 +92,7 @@ export function PropertyOverviewCard({
           Look up the owner for prospecting, or run a comp-based CMA for pricing.
         </p>
         <div className="flex flex-wrap justify-center gap-3">
-          <button type="button" onClick={onLookUpOwner} className="px-4 py-2 text-[13px] font-medium bg-white border border-gray-200 rounded-[10px] hover:bg-gray-50 hover:border-gray-300 transition-colors">
+          <button type="button" onClick={onLookUpOwner} className="px-4 py-2 text-[13px] font-medium bg-[var(--surface)] border border-gray-200 rounded-[10px] hover:bg-gray-50 hover:border-gray-300 transition-colors">
             Look Up Owner
           </button>
           <button type="button" onClick={onRunCma} className="px-4 py-2 text-[13px] font-medium bg-brand-500 text-white rounded-[10px] hover:bg-brand-600 transition-colors">
@@ -181,7 +181,7 @@ export function PropertyOverviewCard({
               type="button"
               onClick={handleExportPdf}
               disabled={exportingPdf}
-              className="mt-3 w-full flex items-center justify-center gap-2 text-[13px] font-medium text-gray-700 border border-gray-200 bg-white rounded-[10px] py-2 hover:bg-gray-100 hover:border-gray-300 transition-colors disabled:opacity-50"
+              className="mt-3 w-full flex items-center justify-center gap-2 text-[13px] font-medium text-gray-700 border border-gray-200 bg-[var(--surface)] rounded-[10px] py-2 hover:bg-gray-100 hover:border-gray-300 transition-colors disabled:opacity-50"
             >
               {exportingPdf ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Generating PDF…</>
@@ -203,7 +203,7 @@ export function PropertyOverviewCard({
         )}
 
         <div className="flex flex-wrap gap-3 pt-3 border-t border-gray-150">
-          <button type="button" onClick={onLookUpOwner} className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium bg-white border border-gray-200 rounded-[10px] hover:bg-gray-50 hover:border-gray-300 transition-colors">
+          <button type="button" onClick={onLookUpOwner} className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium bg-[var(--surface)] border border-gray-200 rounded-[10px] hover:bg-gray-50 hover:border-gray-300 transition-colors">
             <User className="w-4 h-4" />
             {hasLookup ? 'View owner details' : 'Look up owner'}
           </button>

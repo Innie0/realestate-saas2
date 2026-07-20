@@ -63,19 +63,19 @@ export default function Modal({
 
           <div className="flex min-h-full items-center justify-center p-4">
             <motion.div
-              className={`relative w-full ${sizeClasses[size]} rounded-2xl ring-1 ring-gray-900/[0.06] shadow-overlay max-h-[90vh] overflow-y-auto bg-white`}
+              className={`relative w-full ${sizeClasses[size]} max-h-[90vh] overflow-y-auto rounded-2xl bg-[var(--surface)] shadow-overlay ring-1 ring-white/[0.08]`}
               variants={reduced ? undefined : modalContent}
               initial="initial"
               animate="animate"
               exit="exit"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between px-5 sm:px-6 pt-5 pb-4 border-b border-gray-100 sticky top-0 z-10 bg-white rounded-t-2xl">
-                <h3 className="text-base font-semibold tracking-tight text-gray-900 pr-2">{title}</h3>
+              <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-gray-200 bg-[var(--surface)] px-5 pb-4 pt-5 sm:px-6">
+                <h3 className="pr-2 text-base font-semibold tracking-tight text-gray-900">{title}</h3>
                 <button
                   onClick={onClose}
                   aria-label="Close"
-                  className="-m-1.5 rounded-md p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors flex-shrink-0"
+                  className="-m-1.5 flex-shrink-0 rounded-md p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
                 >
                   <X className="w-[18px] h-[18px]" />
                 </button>
