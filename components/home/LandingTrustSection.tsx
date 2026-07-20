@@ -1,17 +1,19 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ChevronRight } from 'lucide-react';
 import { INTEGRATIONS, TESTIMONIALS } from '@/lib/landing-showcase';
 import { IntegrationLogo } from '@/components/home/IntegrationLogos';
 import { useMotionReduced } from '@/lib/motion';
 
-export default function LandingTrustSection() {
+function TestimonialCarousel() {
   const reduced = useMotionReduced();
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const total = TESTIMONIALS.length;
   const testimonial = TESTIMONIALS[testimonialIndex];
+  const progress = ((testimonialIndex + 1) / total) * 100;
 
   const goNext = useCallback(() => {
     setTestimonialIndex((i) => (i + 1) % total);
@@ -28,103 +30,106 @@ export default function LandingTrustSection() {
   }, [goNext, reduced]);
 
   return (
-    <section className="relative z-10 border-t border-gray-200 bg-[#F5F5F5]">
-      {/* Testimonials */}
-      <div className="py-16 sm:py-24 lg:py-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-4xl">
-            <motion.p
-              initial={reduced ? false : { opacity: 0, y: 12 }}
-              whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.5 }}
-              className="mb-10 text-center font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-600"
-            >
-              Trusted by agents
-            </motion.p>
-
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={testimonial.id}
-                initial={reduced ? false : { opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={reduced ? undefined : { opacity: 0, y: -12 }}
-                transition={{ duration: 0.4 }}
-                className="text-center"
+    <div className="border-t border-gray-200 bg-white py-16 sm:py-20 lg:py-24">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        {/* Progress + navigation */}
+        <div className="mb-10 sm:mb-12">
+          <div className="h-px w-full bg-gray-200">
+            <motion.div
+              className="h-px bg-[var(--mkt-accent)]"
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
+            />
+          </div>
+          <div className="mt-4 flex items-center justify-between">
+            <span className="font-mono text-sm tabular-nums text-gray-500">
+              {testimonialIndex + 1}/{total}
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={goPrev}
+                aria-label="Previous testimonial"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50"
               >
-                <span
-                  className="pointer-events-none mb-6 block font-display text-5xl leading-none text-brand-500/25 sm:text-6xl"
-                  aria-hidden
-                >
-                  &ldquo;
-                </span>
-                <blockquote className="text-2xl font-medium leading-snug tracking-tight text-gray-900 sm:text-3xl lg:text-4xl lg:leading-[1.2]">
-                  {testimonial.quote}
-                </blockquote>
-                <div className="mt-10 flex flex-col items-center gap-6 sm:flex-row sm:justify-center sm:gap-12">
-                  <div className="flex items-center gap-3 sm:text-left">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700">
-                      {testimonial.initials}
-                    </div>
-                    <div className="text-left">
-                      <p className="font-semibold text-gray-900">{testimonial.name}</p>
-                      <p className="text-sm text-gray-700">{testimonial.role}</p>
-                    </div>
-                  </div>
-                  <div className="hidden h-10 w-px bg-gray-200 sm:block" aria-hidden />
-                  <div className="text-center">
-                    <p className="text-4xl font-semibold tabular-nums tracking-tight text-gray-900 sm:text-5xl">
-                      {testimonial.metric}
-                    </p>
-                    <p className="mt-1 font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-gray-600">
-                      {testimonial.metricLabel}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-
-            <div className="mt-10 flex flex-col items-center gap-5">
-              <div className="flex items-center justify-center gap-2">
-                {TESTIMONIALS.map((item, i) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => setTestimonialIndex(i)}
-                    aria-label={`Show testimonial ${i + 1}`}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      i === testimonialIndex
-                        ? 'w-6 bg-[var(--mkt-accent)]'
-                        : 'w-2 bg-gray-300 hover:bg-gray-400'
-                    }`}
-                  />
-                ))}
-              </div>
-              <div className="flex items-center justify-center gap-4">
-                <button
-                  type="button"
-                  onClick={goPrev}
-                  aria-label="Previous testimonial"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-900 transition-colors hover:bg-gray-50"
-                >
-                  <ArrowLeft className="h-4 w-4" strokeWidth={1.8} />
-                </button>
-                <span className="font-mono text-sm tabular-nums text-gray-600">
-                  {testimonialIndex + 1} / {total}
-                </span>
-                <button
-                  type="button"
-                  onClick={goNext}
-                  aria-label="Next testimonial"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-900 transition-colors hover:bg-gray-50"
-                >
-                  <ArrowRight className="h-4 w-4" strokeWidth={1.8} />
-                </button>
-              </div>
+                <ArrowLeft className="h-4 w-4" strokeWidth={1.8} />
+              </button>
+              <button
+                type="button"
+                onClick={goNext}
+                aria-label="Next testimonial"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50"
+              >
+                <ArrowRight className="h-4 w-4" strokeWidth={1.8} />
+              </button>
             </div>
           </div>
         </div>
+
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={testimonial.id}
+            initial={reduced ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduced ? undefined : { opacity: 0, y: -8 }}
+            transition={{ duration: 0.35 }}
+          >
+            <p className="mb-6 flex items-center gap-1 text-sm text-gray-600 sm:mb-8 sm:text-[15px]">
+              {testimonial.role}
+              <ChevronRight className="h-3.5 w-3.5 text-gray-400" strokeWidth={2} />
+            </p>
+
+            <blockquote className="max-w-4xl font-display text-[1.65rem] font-normal leading-[1.35] tracking-[-0.01em] text-gray-900 sm:text-3xl lg:text-[2.125rem] lg:leading-[1.32]">
+              &ldquo;{testimonial.quote}&rdquo;
+            </blockquote>
+
+            <div className="mt-12 grid gap-8 border-t border-gray-200 pt-8 sm:mt-14 sm:pt-10 md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_minmax(0,1fr)] md:gap-0">
+              <div className="md:border-r md:border-gray-200 md:pr-10 lg:pr-12">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-semibold text-gray-700">
+                    {testimonial.initials}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-gray-900">{testimonial.name}</p>
+                    <p className="mt-0.5 text-sm leading-snug text-gray-600">{testimonial.role}</p>
+                  </div>
+                </div>
+                <Link
+                  href="/auth/signup"
+                  className="mt-5 inline-flex items-center gap-1 rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-gray-400 hover:bg-gray-50"
+                >
+                  Start free trial
+                  <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
+                </Link>
+              </div>
+
+              <div className="md:border-r md:border-gray-200 md:px-10 lg:px-12">
+                <p className="text-4xl font-semibold tabular-nums tracking-tight text-gray-900 sm:text-5xl">
+                  {testimonial.metric}
+                </p>
+                <p className="mt-2 max-w-[12rem] text-sm leading-snug text-gray-600">{testimonial.metricLabel}</p>
+              </div>
+
+              <div className="md:pl-10 lg:pl-12">
+                <p className="text-4xl font-semibold tabular-nums tracking-tight text-gray-900 sm:text-5xl">
+                  {testimonial.metric2}
+                </p>
+                <p className="mt-2 max-w-[12rem] text-sm leading-snug text-gray-600">{testimonial.metricLabel2}</p>
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
+    </div>
+  );
+}
+
+export default function LandingTrustSection() {
+  const reduced = useMotionReduced();
+
+  return (
+    <section className="relative z-10 bg-[#F5F5F5]">
+      <TestimonialCarousel />
 
       {/* Integrations */}
       <div className="border-t border-gray-200 py-20 lg:py-24">

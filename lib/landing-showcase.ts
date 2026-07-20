@@ -48,6 +48,8 @@ export type Testimonial = {
   role: string;
   metric: string;
   metricLabel: string;
+  metric2: string;
+  metricLabel2: string;
 };
 
 export const SHOWCASE_NARRATIVE = {
@@ -155,6 +157,8 @@ export const TESTIMONIALS: Testimonial[] = [
     role: 'Listing Agent, Austin TX',
     metric: '5+',
     metricLabel: 'Hours saved per week',
+    metric2: '5',
+    metricLabel2: 'Apps replaced',
   },
   {
     id: '2',
@@ -165,6 +169,8 @@ export const TESTIMONIALS: Testimonial[] = [
     role: 'Buyer\'s Agent, Denver CO',
     metric: '10+',
     metricLabel: 'More leads captured',
+    metric2: '0',
+    metricLabel2: 'Missed open house visitors',
   },
   {
     id: '3',
@@ -175,6 +181,8 @@ export const TESTIMONIALS: Testimonial[] = [
     role: 'Team Lead, Miami FL',
     metric: '10x',
     metricLabel: 'Faster listing prep',
+    metric2: '60',
+    metricLabel2: 'Minutes saved per CMA',
   },
 ];
 
