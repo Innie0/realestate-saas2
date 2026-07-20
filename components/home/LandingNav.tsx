@@ -33,7 +33,8 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
     };
   }, [heroRef]);
 
-  const showTransparentNav = inHero && !menuOpen;
+  // Light hero (#F7F6F3): keep dark type; only swap to solid white once past the pin.
+  const overHero = inHero && !menuOpen;
 
   return (
     <motion.nav
@@ -41,9 +42,9 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.05 }}
       className={`fixed inset-x-0 top-0 z-[60] transition-[background-color,border-color,box-shadow] duration-300 ease-out ${
-        showTransparentNav
+        overHero
           ? 'border-b border-transparent bg-transparent'
-          : 'border-b border-gray-200/80 bg-white/95 shadow-sm backdrop-blur-sm'
+          : 'border-b border-[#E4E2DC] bg-white/95 shadow-sm backdrop-blur-sm'
       }`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -51,22 +52,18 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
           <motion.div className="flex min-w-0 shrink-0 items-center" whileHover={{ scale: 1.02 }}>
             <Link
               href="/"
-              className={`truncate font-mono text-[1.15rem] font-semibold tracking-[-0.04em] transition-colors duration-300 sm:text-[1.35rem] md:text-[1.5rem] ${
-                showTransparentNav ? 'text-white' : 'text-gray-900'
-              }`}
+              className="truncate font-mono text-[1.15rem] font-semibold tracking-[-0.04em] text-[#1A1A18] transition-opacity hover:opacity-80 sm:text-[1.35rem] md:text-[1.5rem]"
             >
               Oikaro
             </Link>
           </motion.div>
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 md:gap-3">
-            <ProductsMegaMenu onSolidBackground={!showTransparentNav} onOpenChange={setMenuOpen} />
+            <ProductsMegaMenu onSolidBackground onOpenChange={setMenuOpen} />
             <Link href="/auth/login" className="hidden md:block">
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
-                className={`whitespace-nowrap px-3 py-2 text-sm font-medium transition-colors duration-300 md:px-4 md:py-2.5 ${
-                  showTransparentNav ? 'text-white hover:text-white/80' : 'text-gray-600 hover:text-gray-900'
-                }`}
+                className="whitespace-nowrap px-3 py-2 text-sm font-medium text-[#6B6862] transition-colors hover:text-[#1A1A18] md:px-4 md:py-2.5"
               >
                 Sign In
               </motion.button>
@@ -75,11 +72,8 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
-                className={`whitespace-nowrap px-3 py-2 text-xs font-medium rounded-lg transition-all duration-300 sm:px-4 sm:py-2.5 sm:text-sm ${
-                  showTransparentNav
-                    ? 'border border-white/70 bg-white/10 text-white hover:bg-white/20'
-                    : 'mkt-cta rounded-full'
-                }`}
+                className="whitespace-nowrap rounded-[10px] px-3 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90 sm:px-4 sm:py-2.5 sm:text-sm"
+                style={{ backgroundColor: '#2F3A2E' }}
               >
                 Start free trial
               </motion.button>
