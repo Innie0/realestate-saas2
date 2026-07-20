@@ -614,7 +614,7 @@ function TasksPageContent() {
                       key={conv.id}
                       className={clsx(
                         'group relative px-2.5 py-2.5 rounded-[8px] cursor-pointer transition-colors',
-                        selected ? 'bg-[#f5f5f4]' : 'hover:bg-gray-50',
+                        selected ? 'bg-gray-100' : 'hover:bg-gray-50',
                       )}
                       onClick={() => selectConversation(conv.id)}
                     >
@@ -825,7 +825,7 @@ function TasksPageContent() {
                         className={clsx(
                           'rounded-[10px] px-4 py-3 text-[13.5px] leading-relaxed',
                           msg.role === 'user'
-                            ? 'bg-[#1c1c1e] text-white'
+                            ? 'bg-brand-500 text-[var(--brand-foreground)]'
                             : 'bg-white text-gray-900 border border-gray-200',
                         )}
                       >
@@ -960,7 +960,7 @@ function TasksPageContent() {
                 <button
                   type="submit"
                   disabled={isLoading || (!inputMessage.trim() && !selectedImage && !selectedPdf)}
-                  className="w-9 h-9 flex items-center justify-center rounded-full bg-[#1c1c1e] text-white hover:bg-black transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0 mb-0.5"
+                  className="w-9 h-9 flex items-center justify-center rounded-full bg-brand-500 text-[var(--brand-foreground)] hover:bg-brand-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0 mb-0.5"
                 >
                   {isLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

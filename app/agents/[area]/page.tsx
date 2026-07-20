@@ -54,7 +54,7 @@ export default async function AgentAreaPage({ params }: PageProps) {
 
   if (!group) {
     return (
-      <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[var(--canvas)] flex items-center justify-center p-6">
         <div className="text-center max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
           <p className="text-gray-900 text-lg font-semibold">Area not found</p>
           <p className="text-gray-700 text-sm mt-2">
@@ -73,8 +73,8 @@ export default async function AgentAreaPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F4F4F5]">
-      <header className="sticky top-0 z-10 bg-[#F5F5F5]/90 backdrop-blur-md border-b border-gray-200/70">
+    <div className="min-h-screen bg-[var(--canvas)]">
+      <header className="sticky top-0 z-10 bg-[var(--canvas)]/90 backdrop-blur-md border-b border-gray-200/70">
         <div className="mx-auto max-w-5xl px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <Link

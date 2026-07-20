@@ -126,8 +126,8 @@ export default function HeroAssistantPreview({
   const typedPrompt = useTypewriterPrompts(HERO_PROMPTS, typingEnabled);
 
   const shellClass = compactChrome
-    ? 'relative flex min-h-[340px] h-[min(520px,65svh)] flex-col overflow-hidden bg-white sm:min-h-[400px] lg:h-[520px]'
-    : 'relative z-10 flex min-h-[360px] h-[min(580px,72svh)] flex-col overflow-hidden rounded-2xl border border-white/30 bg-white shadow-[0_32px_80px_-20px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.15)] ring-1 ring-white/10 sm:min-h-[420px] md:min-h-[480px] lg:h-[580px] lg:min-h-0';
+    ? 'theme-light relative flex min-h-[340px] h-[min(520px,65svh)] flex-col overflow-hidden bg-white sm:min-h-[400px] lg:h-[520px]'
+    : 'theme-light relative z-10 flex min-h-[360px] h-[min(580px,72svh)] flex-col overflow-hidden rounded-2xl border border-white/30 bg-white shadow-[0_32px_80px_-20px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.15)] ring-1 ring-white/10 sm:min-h-[420px] md:min-h-[480px] lg:h-[580px] lg:min-h-0';
 
   return (
     <div ref={ref} className="relative mx-auto w-full">
@@ -141,7 +141,7 @@ export default function HeroAssistantPreview({
             className="object-cover scale-110 blur-[32px] saturate-[0.9]"
             priority
           />
-          <div className="absolute inset-0 bg-[#F5F5F5]/20" />
+          <div className="absolute inset-0 bg-black/20" />
         </div>
       ) : null}
 

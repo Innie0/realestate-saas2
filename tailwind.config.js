@@ -21,77 +21,62 @@ module.exports = {
         'label': ['0.6875rem', { lineHeight: '1rem', letterSpacing: '0.04em', fontWeight: '500' }],
       },
       boxShadow: {
-        // Elevation scale — used only where the "console" system explicitly
-        // calls for a border-less floating surface (dropdowns, modals).
-        // Most cards now rely on 1px hairline borders instead (see Surface `flat`).
-        'surface': '0 1px 2px rgba(24,24,27,0.04), 0 4px 12px rgba(24,24,27,0.03)',
-        'raised': '0 2px 4px rgba(24,24,27,0.05), 0 12px 24px -4px rgba(24,24,27,0.08)',
-        'overlay': '0 24px 48px -12px rgba(24,24,27,0.18), 0 8px 16px -8px rgba(24,24,27,0.08)',
-        'glow-brand': '0 1px 2px rgba(24,24,27,0.18), 0 6px 16px -4px rgba(24,24,27,0.25)',
+        'surface': '0 1px 2px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.25)',
+        'raised': '0 2px 4px rgba(0,0,0,0.45), 0 12px 24px -4px rgba(0,0,0,0.35)',
+        'overlay': '0 24px 48px -12px rgba(0,0,0,0.55), 0 8px 16px -8px rgba(0,0,0,0.4)',
+        'glow-brand': '0 1px 2px rgba(228,247,108,0.15), 0 6px 16px -4px rgba(228,247,108,0.25)',
       },
       colors: {
-        // "Console" neutral scale — precise cool-warm grays from the graphite
-        // dashboard design handoff. fafafa canvas, e8e8e6 card borders,
-        // 18181b primary text. Pixel-matched to the handoff's design tokens.
+        // Neutrals driven by CSS vars — dark by default, light inside .theme-light
         gray: {
-          50: '#fafafa',
-          100: '#f5f5f4',
-          150: '#efefed',
-          200: '#e8e8e6',
-          300: '#d4d4d0',
-          400: '#c9c9c4',
-          450: '#a0a09c',
-          500: '#8e8e8a',
-          600: '#78786f',
-          700: '#55554f',
-          800: '#302f2c',
-          900: '#18181b',
-          950: '#000000',
+          50: 'var(--gray-50)',
+          100: 'var(--gray-100)',
+          150: 'var(--gray-150)',
+          200: 'var(--gray-200)',
+          300: 'var(--gray-300)',
+          400: 'var(--gray-400)',
+          450: 'var(--gray-450)',
+          500: 'var(--gray-500)',
+          600: 'var(--gray-600)',
+          700: 'var(--gray-700)',
+          800: 'var(--gray-800)',
+          900: 'var(--gray-900)',
+          950: 'var(--gray-950)',
         },
-        // "Ink" — near-black graphite accent (replaces violet/champagne as the
-        // primary interactive color: buttons, links, active nav state).
         ink: {
-          DEFAULT: '#1c1c1a',
-          900: '#1c1c1a',
+          DEFAULT: 'var(--ink)',
+          900: 'var(--ink)',
           800: '#000000',
           700: '#000000',
-          600: '#4a4a4e',
+          600: 'var(--gray-600)',
         },
-        // brand === graphite accent per the handoff.
-        //   500  primary action bg / active text (#1c1c1a)
-        //   600  hover/pressed (#000000)
-        //   200  active-nav tint bg (#e7e7e4)
-        //   100  light pill bg (#ececea)
-        //   400  avatar gradient stop (#4a4a4e)
+        // Lime accent — Framer-style CTAs
         brand: {
-          50: '#fafafa',
-          100: '#ececea',
-          200: '#e7e7e4',
-          300: '#c9c9c4',
-          400: '#4a4a4e',
-          500: '#1c1c1a',
-          600: '#000000',
-          700: '#000000',
-          800: '#000000',
-          900: '#000000',
-          DEFAULT: '#1c1c1a',
+          50: 'var(--brand-50)',
+          100: 'var(--brand-100)',
+          200: 'var(--brand-200)',
+          300: 'var(--brand-300)',
+          400: 'var(--brand-400)',
+          500: 'var(--brand-500)',
+          600: 'var(--brand-600)',
+          700: 'var(--brand-700)',
+          800: 'var(--brand-800)',
+          900: 'var(--brand-900)',
+          DEFAULT: 'var(--brand-500)',
         },
         primary: {
-          50: '#fafafa',
-          100: '#ececea',
-          200: '#e7e7e4',
-          300: '#c9c9c4',
-          400: '#4a4a4e',
-          500: '#1c1c1a',
-          600: '#000000',
-          700: '#000000',
-          800: '#000000',
-          900: '#000000',
-          DEFAULT: '#1c1c1a',
+          50: 'var(--brand-50)',
+          100: 'var(--brand-100)',
+          200: 'var(--brand-200)',
+          300: 'var(--brand-300)',
+          400: 'var(--brand-400)',
+          500: 'var(--brand-500)',
+          600: 'var(--brand-600)',
+          700: 'var(--brand-700)',
+          800: 'var(--brand-800)',
+          900: 'var(--brand-900)',
+          DEFAULT: 'var(--brand-500)',
         },
-        // Champagne — legacy signature accent, still used for AI/research
-        // module coloring and person-avatar variety. Not part of the new
-        // console screen, kept for pages not yet migrated to this system.
         champagne: {
           50: '#f8f2e6',
           100: '#efe2c8',
@@ -102,12 +87,6 @@ module.exports = {
           600: '#896237',
           700: '#6a4c2d',
         },
-        // ── Semantic hues — restored to near-stock Tailwind values. The
-        // console handoff's hex values match Tailwind's default palette
-        // almost exactly (amber-600/700, rose-600, teal-700, emerald-600),
-        // confirming the design leans on crisp standard semantics rather
-        // than a muted custom scale. Only the lightest tint steps are
-        // hand-tuned to the handoff's exact warm-tinted backgrounds.
         amber: {
           50: '#fef6e7',
           100: '#f5e6c8',
@@ -132,8 +111,6 @@ module.exports = {
           800: '#115e59',
           900: '#134e4a',
         },
-        // emerald, rose, sky: rely on Tailwind's built-in defaults (no
-        // override needed — this key is intentionally omitted).
       },
       keyframes: {
         marquee: {

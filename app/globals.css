@@ -7,31 +7,103 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Theme surfaces as CSS variables so a dark mode can flip them later
-   without touching component classes. */
+/* Site-wide Framer dark theme — black canvas, elevated surfaces, lime accent.
+   Nested .theme-light restores a light palette for product mock interiors. */
 :root {
-  --canvas: #fafafa;          /* app background behind cards */
-  --surface: #ffffff;         /* card / panel background */
-  --sidebar: #f5f5f4;         /* sidebar background */
-  --ink: #1c1c1a;             /* graphite — primary actions, headings */
-  --brand: #1c1c1a;           /* graphite */
-  --champagne: #a87c43;       /* legacy signature accent (AI/research modules) */
+  color-scheme: dark;
+
+  --canvas: #000000;
+  --surface: #111111;
+  --sidebar: #0a0a0a;
+  --ink: #ffffff;
+  --brand: #e4f76c;
+  --brand-foreground: #141412;
+  --border: #2a2a2a;
+  --champagne: #a87c43;
+
+  /* Inverted neutrals so existing gray-* classes read on black */
+  --gray-50: #0a0a0a;
+  --gray-100: #111111;
+  --gray-150: #161616;
+  --gray-200: #2a2a2a;
+  --gray-300: #3f3f3f;
+  --gray-400: #666666;
+  --gray-450: #7a7a7a;
+  --gray-500: #8e8e8e;
+  --gray-600: #a3a3a3;
+  --gray-700: #c4c4c4;
+  --gray-800: #e5e5e5;
+  --gray-900: #f4f4f5;
+  --gray-950: #ffffff;
+
+  /* Lime brand scale */
+  --brand-50: #14160a;
+  --brand-100: #1f2410;
+  --brand-200: #2e3514;
+  --brand-300: #6b7a2e;
+  --brand-400: #c5d84f;
+  --brand-500: #e4f76c;
+  --brand-600: #d8eb5a;
+  --brand-700: #b8c94a;
+  --brand-800: #8a9638;
+  --brand-900: #5a6224;
+
+  /* Marketing aliases */
+  --mkt-background: var(--canvas);
+  --mkt-surface: var(--canvas);
+  --mkt-text-primary: var(--gray-950);
+  --mkt-text-secondary: #999999;
+  --mkt-border: var(--border);
+  --mkt-accent: var(--brand-500);
+  --mkt-accent-hover: var(--brand-600);
+  --mkt-accent-foreground: var(--brand-foreground);
+  --mkt-muted: #666666;
+  --mkt-mock-surface: #ffffff;
+}
+
+/* Product mock interiors — keep light UI chrome inside browser frames */
+.theme-light {
+  color-scheme: light;
+  --canvas: #fafafa;
+  --surface: #ffffff;
+  --sidebar: #f5f5f4;
+  --ink: #1c1c1a;
+  --border: #e8e8e6;
+
+  --gray-50: #fafafa;
+  --gray-100: #f5f5f4;
+  --gray-150: #efefed;
+  --gray-200: #e8e8e6;
+  --gray-300: #d4d4d0;
+  --gray-400: #c9c9c4;
+  --gray-450: #a0a09c;
+  --gray-500: #8e8e8a;
+  --gray-600: #78786f;
+  --gray-700: #55554f;
+  --gray-800: #302f2c;
+  --gray-900: #18181b;
+  --gray-950: #000000;
+
+  --brand-50: #fafafa;
+  --brand-100: #ececea;
+  --brand-200: #e7e7e4;
+  --brand-300: #c9c9c4;
+  --brand-400: #4a4a4e;
+  --brand-500: #1c1c1a;
+  --brand-600: #000000;
+  --brand-700: #000000;
+  --brand-800: #000000;
+  --brand-900: #000000;
 }
 
 /* Custom base styles */
 @layer base {
-  body {
-    @apply bg-[var(--canvas)] text-gray-900 antialiased;
-  }
-
-  /* Overscroll rubber-band (edges) uses html/body bg — match marketing black */
-  html:has(.marketing-root),
-  html:has(.marketing-root) body {
+  html {
     background-color: #000000;
   }
 
-  html:has(.marketing-root) {
-    color-scheme: dark;
+  body {
+    @apply bg-[var(--canvas)] text-gray-900 antialiased;
   }
 
   h1 {
@@ -53,17 +125,25 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.18);
     border-radius: 999px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.25);
+    background: rgba(255, 255, 255, 0.28);
   }
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+  }
+
+  .theme-light ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  .theme-light ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.25);
   }
 
   /* Headings */
@@ -71,41 +151,28 @@
     @apply text-gray-900;
   }
 
-  /* Override browser autofill background on all inputs */
+  /* Override browser autofill for dark theme */
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   textarea:-webkit-autofill,
   select:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
-    -webkit-text-fill-color: #111827 !important;
-    caret-color: #111827;
+    -webkit-box-shadow: 0 0 0px 1000px var(--surface) inset !important;
+    -webkit-text-fill-color: var(--gray-900) !important;
+    caret-color: var(--gray-900);
   }
 
-  /* Unified icon weight inside the app workspace.
-     Only overrides lucide's default (2) — explicit strokeWidth props
-     like 1.5 or 1.25 are set as attributes with other values and are
-     left untouched, so intentional lighter icons keep their weight. */
+  /* Unified icon weight inside the app workspace. */
   .dashboard-root .lucide[stroke-width='2'],
   .marketing-root .lucide[stroke-width='2'] {
     stroke-width: 1.75;
   }
 
-  /* Framer-style marketing — dark bg, white text, accent on CTAs only */
+  /* Marketing chrome — Inter + local aliases (colors inherit from :root) */
   .marketing-root {
     font-family: var(--font-inter), Inter, system-ui, sans-serif;
     color: var(--mkt-text-primary);
     background-color: var(--mkt-background);
-    --mkt-background: #000000;
-    --mkt-surface: #000000;
-    --mkt-text-primary: #ffffff;
-    --mkt-text-secondary: #999999;
-    --mkt-border: #2a2a2a;
-    --mkt-accent: #e4f76c;
-    --mkt-accent-hover: #d8eb5a;
-    --mkt-accent-foreground: #141412;
-    --mkt-muted: #666666;
-    --mkt-mock-surface: #ffffff;
   }
 
   .marketing-root .text-price {
@@ -162,6 +229,30 @@
   .mkt-cta:hover {
     background-color: var(--mkt-accent-hover);
   }
+
+  /* Map common white panels onto elevated dark surfaces app-wide */
+  .bg-white {
+    background-color: var(--surface);
+  }
+
+  .bg-white\/90 {
+    background-color: color-mix(in srgb, var(--surface) 90%, transparent);
+  }
+
+  .bg-white\/95 {
+    background-color: color-mix(in srgb, var(--surface) 95%, transparent);
+  }
+
+  .hover\:bg-white:hover {
+    background-color: var(--surface);
+  }
+
+  /* Lime CTAs need dark text even when callers also set text-white */
+  .bg-brand-500.text-white,
+  .bg-brand-600.text-white,
+  .hover\:bg-brand-500:hover.text-white {
+    color: var(--brand-foreground);
+  }
 }
 
 /* Custom utility classes */
@@ -189,7 +280,7 @@
 
   /* Dashboard form controls */
   .field-select {
-    @apply px-3 py-2.5 text-sm bg-white rounded-xl text-gray-900 ring-1 ring-gray-900/[0.06] shadow-surface focus:outline-none focus:ring-2 focus:ring-brand-500/30 transition-shadow duration-150;
+    @apply px-3 py-2.5 text-sm bg-white rounded-xl text-gray-900 ring-1 ring-gray-900/[0.08] shadow-surface focus:outline-none focus:ring-2 focus:ring-brand-500/30 transition-shadow duration-150;
   }
 
   /* Legal page typography */
@@ -218,7 +309,7 @@
   }
 
   .legal-prose a {
-    @apply text-brand-600 hover:text-brand-700 underline underline-offset-2;
+    @apply text-brand-500 hover:text-brand-400 underline underline-offset-2;
   }
 
   .legal-prose a.legal-btn {
@@ -226,7 +317,7 @@
   }
 
   .legal-prose a.legal-btn-primary {
-    @apply text-white hover:text-white;
+    @apply text-[var(--brand-foreground)] hover:text-[var(--brand-foreground)];
   }
 
   .legal-prose a.legal-btn-secondary {
@@ -278,25 +369,25 @@
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse 90% 60% at 50% -10%, rgba(168, 124, 67, 0.05), transparent 55%),
-      radial-gradient(circle at 100% 0%, rgba(168, 124, 67, 0.03), transparent 40%);
+      radial-gradient(ellipse 90% 60% at 50% -10%, rgba(228, 247, 108, 0.06), transparent 55%),
+      radial-gradient(circle at 100% 0%, rgba(228, 247, 108, 0.04), transparent 40%);
   }
 }
 
-/* ── Driver.js tour — graphite console theme ────────────────────────────── */
+/* ── Driver.js tour — dark theme ─────────────────────────────────────────── */
 .driver-popover {
-  background: #ffffff !important;
-  border: 1px solid #e8e8e6 !important;
+  background: #111111 !important;
+  border: 1px solid #2a2a2a !important;
   border-radius: 10px !important;
-  color: #18181b !important;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08) !important;
+  color: #f4f4f5 !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45) !important;
   padding: 16px 18px !important;
   max-width: 300px !important;
   font-family: inherit !important;
 }
 
 .driver-popover-title {
-  color: #18181b !important;
+  color: #f4f4f5 !important;
   font-size: 13px !important;
   font-weight: 600 !important;
   letter-spacing: -0.01em !important;
@@ -304,13 +395,13 @@
 }
 
 .driver-popover-description {
-  color: #55554f !important;
+  color: #a3a3a3 !important;
   font-size: 12.5px !important;
   line-height: 1.5 !important;
 }
 
 .driver-popover-progress-text {
-  color: #78786f !important;
+  color: #8e8e8e !important;
   font-family: ui-monospace, 'IBM Plex Mono', monospace !important;
   font-size: 10.5px !important;
   letter-spacing: 0.04em !important;
@@ -324,9 +415,9 @@
 .driver-popover-prev-btn,
 .driver-popover-next-btn,
 .driver-popover-close-btn {
-  background: #ffffff !important;
-  border: 1px solid #e8e8e6 !important;
-  color: #55554f !important;
+  background: #111111 !important;
+  border: 1px solid #2a2a2a !important;
+  color: #c4c4c4 !important;
   border-radius: 7px !important;
   font-size: 12px !important;
   font-weight: 500 !important;
@@ -337,19 +428,19 @@
 
 .driver-popover-prev-btn:hover,
 .driver-popover-close-btn:hover {
-  background: #fafaf9 !important;
-  color: #18181b !important;
+  background: #1a1a1a !important;
+  color: #f4f4f5 !important;
 }
 
 .driver-popover-next-btn {
-  background: #1c1c1e !important;
-  color: #ffffff !important;
-  border-color: #1c1c1e !important;
+  background: #e4f76c !important;
+  color: #141412 !important;
+  border-color: #e4f76c !important;
 }
 
 .driver-popover-next-btn:hover {
-  background: #000000 !important;
-  border-color: #000000 !important;
+  background: #d8eb5a !important;
+  border-color: #d8eb5a !important;
 }
 
 .driver-active-element,
@@ -358,10 +449,10 @@
 }
 
 .driver-overlay {
-  background: rgba(0, 0, 0, 0.55) !important;
+  background: rgba(0, 0, 0, 0.7) !important;
 }
 
-.driver-popover-arrow-side-left .driver-popover-arrow { border-right-color: #ffffff !important; }
-.driver-popover-arrow-side-right .driver-popover-arrow { border-left-color: #ffffff !important; }
-.driver-popover-arrow-side-top .driver-popover-arrow { border-bottom-color: #ffffff !important; }
-.driver-popover-arrow-side-bottom .driver-popover-arrow { border-top-color: #ffffff !important; }
+.driver-popover-arrow-side-left .driver-popover-arrow { border-right-color: #111111 !important; }
+.driver-popover-arrow-side-right .driver-popover-arrow { border-left-color: #111111 !important; }
+.driver-popover-arrow-side-top .driver-popover-arrow { border-bottom-color: #111111 !important; }
+.driver-popover-arrow-side-bottom .driver-popover-arrow { border-top-color: #111111 !important; }

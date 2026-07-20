@@ -100,7 +100,7 @@ function FacebookPreview({
   const reduced = useMotionReduced();
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm">
+    <div className="theme-light rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm">
       <div className="flex items-center justify-between px-3 py-2.5 border-b border-gray-100">
         <div className="flex items-center gap-2 min-w-0">
           <AdvertiserAvatar name={advertiserName} url={advertiserAvatar} />
@@ -159,7 +159,7 @@ function InstagramPreview({
   const caption = primaryText ? `${headline ? `${headline}\n\n` : ''}${primaryText}` : headline;
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm">
+    <div className="theme-light rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm">
       <div className="flex items-center justify-between px-3 py-2.5">
         <div className="flex items-center gap-2">
           <AdvertiserAvatar name={advertiserName} url={advertiserAvatar} />

@@ -98,7 +98,7 @@ export default function PublicAgentProfileView({
   ].filter(Boolean) as { label: string; icon: typeof Award }[];
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5]">
+    <div className="min-h-screen bg-[var(--canvas)]">
       {/* Top bar */}
       <header className="border-b border-gray-200 bg-white/90 backdrop-blur-sm sticky top-0 z-30">
         <div className="max-w-5xl mx-auto px-4 py-3.5 flex items-center justify-between gap-4">

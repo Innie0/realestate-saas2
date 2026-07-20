@@ -54,7 +54,7 @@ export function ShowcaseAnimationFrame({
   title?: string;
 }) {
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200/90 bg-white shadow-[0_20px_50px_-24px_rgba(24,24,27,0.12)] ring-1 ring-gray-900/[0.04]">
+    <div className="theme-light flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200/90 bg-white shadow-[0_20px_50px_-24px_rgba(24,24,27,0.12)] ring-1 ring-gray-900/[0.04]">
       <ShowcaseWindowChrome title={title} />
       <div
         className={`min-h-0 flex-1 bg-[#fafafa] ${

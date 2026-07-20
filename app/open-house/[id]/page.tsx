@@ -28,7 +28,7 @@ export default async function OpenHouseSignInPage({ params }: PageProps) {
 
   if (!openHouse) {
     return (
-      <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[var(--canvas)] flex items-center justify-center p-6">
         <div className="text-center">
           <p className="text-gray-700 text-lg font-medium">This open house isn&apos;t available.</p>
           <p className="text-gray-600 text-sm mt-2">The link may have expired or is invalid.</p>
@@ -39,7 +39,7 @@ export default async function OpenHouseSignInPage({ params }: PageProps) {
 
   if (openHouse.status === 'ended') {
     return (
-      <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[var(--canvas)] flex items-center justify-center p-6">
         <div className="text-center">
           <p className="text-gray-700 text-lg font-medium">This open house has ended.</p>
           <p className="text-gray-600 text-sm mt-2">Thanks for your interest!</p>
@@ -53,7 +53,7 @@ export default async function OpenHouseSignInPage({ params }: PageProps) {
   });
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--canvas)] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
           <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
