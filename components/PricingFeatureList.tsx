@@ -15,6 +15,8 @@ type PricingFeatureListProps = {
   className?: string;
   /** Full flat list (legacy); default is compact grouped cards */
   variant?: 'compact' | 'full';
+  /** Marketing landing uses design.md token colors */
+  tone?: 'default' | 'marketing';
 };
 
 function FeatureIcon({
@@ -33,8 +35,17 @@ export default function PricingFeatureList({
   icon = 'check-circle',
   className = '',
   variant = 'compact',
+  tone = 'default',
 }: PricingFeatureListProps) {
-  const iconClass = icon === 'check' ? 'text-green-500' : 'text-brand-500';
+  const isMarketing = tone === 'marketing';
+  const iconClass = isMarketing
+    ? 'text-[#6B6862]'
+    : icon === 'check'
+      ? 'text-green-500'
+      : 'text-brand-500';
+  const textClass = isMarketing ? 'text-[#6B6862]' : 'text-gray-600';
+  const headingClass = isMarketing ? 'text-[#1A1A18]' : 'text-gray-900';
+  const labelClass = isMarketing ? 'text-[#6B6862]' : 'text-gray-500';
 
   if (variant === 'full' && plan === 'starter') {
     return (
@@ -42,7 +53,7 @@ export default function PricingFeatureList({
         {STARTER_FEATURES.map((feature) => (
           <li key={feature} className="flex items-start gap-2.5">
             <FeatureIcon icon={icon} iconClass={iconClass} />
-            <span className="text-sm text-gray-600">{feature}</span>
+            <span className={`text-sm ${textClass}`}>{feature}</span>
           </li>
         ))}
       </ul>
@@ -54,15 +65,15 @@ export default function PricingFeatureList({
       <ul className={`space-y-2 ${className}`}>
         <li className="flex items-start gap-2.5">
           <FeatureIcon icon={icon} iconClass={iconClass} />
-          <span className="text-sm text-gray-600">7-day free trial</span>
+          <span className={`text-sm ${textClass}`}>7-day free trial</span>
         </li>
         <li className="pt-0.5">
-          <span className="text-sm font-semibold text-gray-900">{PRO_PLAN_INTRO}</span>
+          <span className={`text-sm font-semibold ${headingClass}`}>{PRO_PLAN_INTRO}</span>
         </li>
         {PRO_EXCLUSIVE_FEATURES.map((feature) => (
           <li key={feature} className="flex items-start gap-2.5">
             <FeatureIcon icon={icon} iconClass={iconClass} />
-            <span className="text-sm text-gray-600">{formatFeatureText(feature)}</span>
+            <span className={`text-sm ${textClass}`}>{formatFeatureText(feature)}</span>
           </li>
         ))}
       </ul>
@@ -74,14 +85,14 @@ export default function PricingFeatureList({
       <div className={`space-y-4 ${className}`}>
         {STARTER_FEATURE_GROUPS.map((group) => (
           <div key={group.title}>
-            <p className="mb-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-500">
+            <p className={`mb-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] ${labelClass}`}>
               {group.title}
             </p>
             <ul className="space-y-1.5">
               {group.items.map((item) => (
                 <li key={item} className="flex items-start gap-2">
                   <FeatureIcon icon={icon} iconClass={iconClass} />
-                  <span className="text-[13px] leading-snug text-gray-600">{item}</span>
+                  <span className={`text-[13px] leading-snug ${textClass}`}>{item}</span>
                 </li>
               ))}
             </ul>
@@ -94,12 +105,12 @@ export default function PricingFeatureList({
   return (
     <ul className={`space-y-2 ${className}`}>
       <li className="pb-0.5">
-        <span className="text-sm font-semibold text-gray-900">{PRO_PLAN_INTRO}</span>
+        <span className={`text-sm font-semibold ${headingClass}`}>{PRO_PLAN_INTRO}</span>
       </li>
       {PRO_CARD_HIGHLIGHTS.map((feature) => (
         <li key={feature} className="flex items-start gap-2">
           <FeatureIcon icon={icon} iconClass={iconClass} />
-          <span className="text-[13px] leading-snug text-gray-600">{formatFeatureText(feature)}</span>
+            <span className={`text-[13px] leading-snug ${textClass}`}>{formatFeatureText(feature)}</span>
         </li>
       ))}
     </ul>

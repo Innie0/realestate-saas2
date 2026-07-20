@@ -9,7 +9,7 @@ import {
   type MotionValue,
 } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import HeroAssistantPreview from '@/components/home/HeroAssistantPreview';
+import HeroProductScreenshot from '@/components/home/HeroProductScreenshot';
 import { MKT } from '@/lib/marketing-design';
 import { useMotionReduced } from '@/lib/motion';
 
@@ -138,7 +138,7 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
                     }
               }
             >
-              <HeroAssistantPreview showBackdrop={false} />
+              <HeroProductScreenshot />
             </motion.div>
           </div>
         </div>

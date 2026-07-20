@@ -132,7 +132,7 @@ export default function LandingPricingSection() {
               >
                 What&apos;s included
               </p>
-              <PricingFeatureList plan={plan.plan} />
+                <PricingFeatureList plan={plan.plan} tone="marketing" />
             </motion.div>
           ))}
         </div>

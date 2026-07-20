@@ -1,39 +1,47 @@
 import Link from 'next/link';
+import { MKT } from '@/lib/marketing-design';
+
+const FOOTER_LINKS = [
+  { href: '/products', label: 'Products' },
+  { href: '/pricing', label: 'Pricing' },
+  { href: '/about', label: 'About' },
+  { href: '/privacy', label: 'Privacy' },
+  { href: '/terms', label: 'Terms' },
+  { href: '/contact', label: 'Contact' },
+] as const;
 
 export default function MarketingSubpageFooter() {
   return (
-    <footer className="border-t border-gray-200 bg-[#F5F5F5]">
-      <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
+    <footer
+      className="border-t"
+      style={{ borderColor: MKT.border, backgroundColor: MKT.background }}
+    >
+      <div className="mx-auto px-6 py-12 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
         <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
           <Link
             href="/"
-            className="shrink-0 font-mono text-4xl font-semibold tracking-[-0.04em] text-gray-900 transition-opacity hover:opacity-80 sm:text-5xl lg:text-6xl"
+            className="shrink-0 font-mono text-4xl font-semibold tracking-[-0.04em] transition-opacity hover:opacity-80 sm:text-5xl lg:text-6xl"
+            style={{ color: MKT.textPrimary }}
           >
             Oikaro
           </Link>
 
           <div className="md:text-right">
-            <nav className="flex flex-wrap gap-6 text-sm text-gray-700 md:justify-end">
-              <Link href="/products" className="transition-colors hover:text-brand-600">
-                Products
-              </Link>
-              <Link href="/pricing" className="transition-colors hover:text-brand-600">
-                Pricing
-              </Link>
-              <Link href="/about" className="transition-colors hover:text-brand-600">
-                About
-              </Link>
-              <Link href="/privacy" className="transition-colors hover:text-brand-600">
-                Privacy
-              </Link>
-              <Link href="/terms" className="transition-colors hover:text-brand-600">
-                Terms
-              </Link>
-              <Link href="/contact" className="transition-colors hover:text-brand-600">
-                Contact
-              </Link>
+            <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm md:justify-end">
+              {FOOTER_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="transition-opacity hover:opacity-70"
+                  style={{ color: MKT.textSecondary }}
+                >
+                  {link.label}
+                </Link>
+              ))}
             </nav>
-            <p className="mt-4 text-sm text-gray-700">© 2026 Oikaro. All rights reserved.</p>
+            <p className="mt-4 text-sm" style={{ color: MKT.textSecondary }}>
+              © 2026 Oikaro. All rights reserved.
+            </p>
           </div>
         </div>
       </div>

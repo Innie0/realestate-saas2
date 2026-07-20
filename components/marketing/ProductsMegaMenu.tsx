@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { PRODUCT_MENU_COLUMNS } from '@/lib/product-menu';
+import { MKT } from '@/lib/marketing-design';
 import { useMotionReduced } from '@/lib/motion';
 
 type ProductsMegaMenuProps = {
@@ -90,16 +91,9 @@ export default function ProductsMegaMenu({
 
   useEffect(() => () => clearCloseTimer(), []);
 
-  const triggerBase =
-    'group inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-300 sm:gap-1.5 sm:px-4 sm:py-2 sm:text-sm';
-
   const triggerClass = open
-    ? onSolidBackground
-      ? `${triggerBase} bg-gray-900 text-white shadow-sm`
-      : `${triggerBase} bg-white/20 text-white`
-    : onSolidBackground
-      ? `${triggerBase} text-gray-600 hover:bg-gray-100 hover:text-gray-900`
-      : `${triggerBase} text-white hover:bg-white/10`;
+    ? 'font-medium'
+    : 'font-medium transition-opacity hover:opacity-70';
 
   const menuPortal =
     mounted
@@ -114,56 +108,75 @@ export default function ProductsMegaMenu({
                   initial={reduced ? false : { opacity: 0 }}
                   animate={reduced ? undefined : { opacity: 1 }}
                   exit={reduced ? undefined : { opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="fixed inset-0 z-[55] bg-black/10 backdrop-blur-xl"
+                  transition={{ duration: 0.2 }}
+                  className="fixed inset-0 z-[55] bg-black/20"
                   onClick={handleClose}
                 />
 
-            <div
-              key="products-menu-shell"
-              className="pointer-events-none fixed inset-x-0 top-16 z-[56] flex justify-center px-3 sm:top-20 md:top-24 sm:px-6"
-            >
-              <motion.div
-                ref={panelRef}
-                initial={reduced ? false : { opacity: 0, y: -8 }}
-                animate={reduced ? undefined : { opacity: 1, y: 0 }}
-                exit={reduced ? undefined : { opacity: 0, y: -6 }}
-                transition={{ duration: 0.28, ease: [0.25, 0.1, 0.25, 1] }}
-                className="pointer-events-auto w-full max-w-[72rem]"
-                onMouseEnter={handleEnter}
-                onMouseLeave={() => scheduleClose(80)}
-              >
-                <div className="overflow-hidden rounded-[2rem] border border-gray-200/70 bg-white p-3 shadow-[0_40px_100px_-32px_rgba(24,24,27,0.35)] sm:rounded-[2.25rem] sm:p-3.5">
-                  <div className="grid gap-6 p-5 sm:grid-cols-2 sm:p-6 lg:grid-cols-4 lg:gap-4 lg:p-7">
-                    {PRODUCT_MENU_COLUMNS.map((column) => (
-                      <div key={column.id} className="min-w-0">
-                        <p className="mb-3 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-500">
-                          {column.label}
-                        </p>
-                        <ul className="space-y-0.5">
-                          {column.tools.map((tool) => (
-                            <li key={tool.id}>
-                              <Link
-                                href={tool.href}
-                                onClick={handleClose}
-                                className="group block rounded-2xl px-3 py-2 transition-colors hover:bg-[#f5f5f5]"
-                              >
-                                <span className="block text-[14px] font-semibold leading-snug text-gray-900 transition-colors group-hover:text-brand-600">
-                                  {tool.name}
-                                </span>
-                                <span className="mt-0.5 block text-[12px] leading-snug text-gray-600">
-                                  {tool.summary}
-                                </span>
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
+                <div
+                  key="products-menu-shell"
+                  className="pointer-events-none fixed inset-x-0 top-16 z-[56] flex justify-center px-3 sm:top-20 md:top-24 sm:px-6"
+                >
+                  <motion.div
+                    ref={panelRef}
+                    initial={reduced ? false : { opacity: 0, y: -8 }}
+                    animate={reduced ? undefined : { opacity: 1, y: 0 }}
+                    exit={reduced ? undefined : { opacity: 0, y: -6 }}
+                    transition={{ duration: 0.28, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="pointer-events-auto w-full"
+                    style={{ maxWidth: MKT.maxContentWidth }}
+                    onMouseEnter={handleEnter}
+                    onMouseLeave={() => scheduleClose(80)}
+                  >
+                    <div
+                      className="overflow-hidden p-3 sm:p-4"
+                      style={{
+                        borderRadius: MKT.radius.lg,
+                        border: `1px solid ${MKT.border}`,
+                        backgroundColor: MKT.surface,
+                        boxShadow: MKT.shadow,
+                      }}
+                    >
+                      <div className="grid gap-6 p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-4 lg:gap-4">
+                        {PRODUCT_MENU_COLUMNS.map((column) => (
+                          <div key={column.id} className="min-w-0">
+                            <p
+                              className="mb-3 font-mono text-[10px] font-semibold uppercase tracking-[0.14em]"
+                              style={{ color: MKT.textSecondary }}
+                            >
+                              {column.label}
+                            </p>
+                            <ul className="space-y-0.5">
+                              {column.tools.map((tool) => (
+                                <li key={tool.id}>
+                                  <Link
+                                    href={tool.href}
+                                    onClick={handleClose}
+                                    className="group block px-3 py-2 transition-colors hover:bg-black/[0.03]"
+                                    style={{ borderRadius: MKT.radius.md }}
+                                  >
+                                    <span
+                                      className="block text-[14px] font-medium leading-snug transition-opacity group-hover:opacity-70"
+                                      style={{ color: MKT.textPrimary }}
+                                    >
+                                      {tool.name}
+                                    </span>
+                                    <span
+                                      className="mt-0.5 block text-[12px] leading-snug"
+                                      style={{ color: MKT.textSecondary }}
+                                    >
+                                      {tool.summary}
+                                    </span>
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  </motion.div>
                 </div>
-              </motion.div>
-            </div>
               </>
             ) : null}
           </AnimatePresence>,
@@ -181,7 +194,8 @@ export default function ProductsMegaMenu({
       >
         <Link
           href="/products"
-          className={triggerClass}
+          className={`${triggerClass} inline-flex items-center gap-1 px-3 py-2 text-xs sm:gap-1.5 sm:text-sm`}
+          style={{ color: MKT.textSecondary }}
           aria-expanded={open}
           aria-haspopup="true"
         >

@@ -21,7 +21,8 @@ export type ShowcaseSlide = {
   eyebrow: string;
   headline: string;
   description: string;
-  animationId: 'ask-once' | 'win-listing' | 'never-lose-lead' | 'close-confidence';
+  screenshot: string;
+  screenshotAlt: string;
   productsHref: string;
   tools: string[];
 };
@@ -67,7 +68,8 @@ export const SHOWCASE_SLIDES: ShowcaseSlide[] = [
     headline: 'Ask once. Listings, follow-ups, and research — done.',
     description:
       'Draft copy, look up comps, schedule reminders, and analyze photos or PDFs in natural language. Your whole workflow, one chat away.',
-    animationId: 'ask-once',
+    screenshot: '/landing/ai-assistant.png',
+    screenshotAlt: 'Oikaro AI Assistant chat workspace',
     productsHref: '/products/ai-assistant',
     tools: ['AI Assistant'],
   },
@@ -77,7 +79,8 @@ export const SHOWCASE_SLIDES: ShowcaseSlide[] = [
     headline: 'Go from photos to MLS-ready copy in seconds.',
     description:
       'Generate listing descriptions in multiple tones, then look up any address for owner contact, property details, and full sale history — without switching tabs or tools.',
-    animationId: 'win-listing',
+    screenshot: '/landing/projects.png',
+    screenshotAlt: 'Oikaro listing projects and property research',
     productsHref: '/products/projects',
     tools: ['Listing Projects', 'Property Research'],
   },
@@ -87,7 +90,8 @@ export const SHOWCASE_SLIDES: ShowcaseSlide[] = [
     headline: 'Know exactly who to call first.',
     description:
       'Every form submission and open house sign-in lands in your inbox — scored Hot, Warm, or Cold — and syncs straight into your CRM.',
-    animationId: 'never-lose-lead',
+    screenshot: '/landing/leads-inbox.png',
+    screenshotAlt: 'Oikaro leads inbox with Hot, Warm, and Cold scoring',
     productsHref: '/products/leads-inbox',
     tools: ['Leads Inbox', 'Lead Capture', 'Open Houses', 'CRM'],
   },
@@ -97,7 +101,8 @@ export const SHOWCASE_SLIDES: ShowcaseSlide[] = [
     headline: 'Track every deal from offer to close.',
     description:
       'Checklists, calendar sync, ad campaigns, and a dashboard that shows your pipeline at a glance — so nothing slips before closing day.',
-    animationId: 'close-confidence',
+    screenshot: '/landing/transactions.png',
+    screenshotAlt: 'Oikaro transaction pipeline and deal tracking',
     productsHref: '/products/transactions',
     tools: ['Transactions', 'Calendar', 'Ads', 'Dashboard'],
   },
@@ -153,9 +158,9 @@ export const TESTIMONIALS: Testimonial[] = [
     id: '1',
     quote:
       'I finally stopped juggling five different tools. Listings, leads, and follow-ups all live in one place — and the AI actually saves me hours every week.',
-    name: 'Sarah M.',
+    name: 'Sarah Mitchell',
     initials: 'SM',
-    role: 'Listing Agent, Austin TX',
+    role: 'Listing Agent · Compass, Austin TX',
     metric: '5+',
     metricLabel: 'Hours saved per week',
     metric2: '5',
@@ -165,9 +170,9 @@ export const TESTIMONIALS: Testimonial[] = [
     id: '2',
     quote:
       'Open house sign-in alone changed how I work. Every visitor becomes a scored lead in my inbox before I leave the property.',
-    name: 'James R.',
+    name: 'James Rodriguez',
     initials: 'JR',
-    role: 'Buyer\'s Agent, Denver CO',
+    role: 'Buyer\'s Agent · RE/MAX, Denver CO',
     metric: '10+',
     metricLabel: 'More leads captured',
     metric2: '0',
@@ -177,9 +182,9 @@ export const TESTIMONIALS: Testimonial[] = [
     id: '3',
     quote:
       'Property research and CMA used to take an hour. Now I pull comps and a price range in one search while I\'m still on the call.',
-    name: 'Maria L.',
+    name: 'Maria Lopez',
     initials: 'ML',
-    role: 'Team Lead, Miami FL',
+    role: 'Team Lead · Douglas Elliman, Miami FL',
     metric: '10x',
     metricLabel: 'Faster listing prep',
     metric2: '60',
