@@ -9,11 +9,33 @@ const ease = [0.25, 0.1, 0.25, 1] as const;
 /** Fixed height for all showcase demos — prevents layout jump between slides */
 export const SHOWCASE_FRAME_CLASS = 'flex min-h-0 flex-1 flex-col justify-center overflow-y-auto';
 
+function ShowcaseWindowChrome({ title }: { title: string }) {
+  return (
+    <div className="flex shrink-0 items-center gap-3 border-b border-gray-200 bg-[#f5f5f4] px-4 py-2.5 sm:px-5">
+      <div className="flex items-center gap-1.5" aria-hidden>
+        <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+        <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+        <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+      </div>
+      <div className="flex min-w-0 flex-1 items-center justify-center gap-1.5">
+        <Sparkles className="h-3 w-3 shrink-0 text-gray-500" strokeWidth={2} />
+        <p className="truncate text-[11px] font-medium text-gray-600 sm:text-[12px]">{title}</p>
+      </div>
+      <span className="hidden rounded-full bg-white px-2 py-0.5 text-[9px] font-medium uppercase tracking-wide text-gray-500 ring-1 ring-gray-200 sm:inline">
+        Preview
+      </span>
+    </div>
+  );
+}
+
 function ShowcaseChatBar() {
   return (
-    <div className="relative min-h-[72px] rounded-xl border border-gray-200 bg-white px-3.5 pt-3 pb-10 sm:min-h-[80px] sm:px-4 sm:pt-3.5 sm:pb-11">
-      <Paperclip className="absolute bottom-3 left-3.5 h-3.5 w-3.5 text-gray-500 sm:h-4 sm:w-4" strokeWidth={1.8} />
-      <div className="absolute bottom-2.5 right-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-brand-500 text-white sm:bottom-3 sm:h-8 sm:w-8">
+    <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-[#fafafa] px-3 py-2.5 sm:px-3.5">
+      <Paperclip className="h-3.5 w-3.5 shrink-0 text-gray-400 sm:h-4 sm:w-4" strokeWidth={1.8} />
+      <p className="min-w-0 flex-1 truncate text-[12px] text-gray-400 sm:text-[13px]">
+        Ask about listings, leads, or comps…
+      </p>
+      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-900 text-white sm:h-8 sm:w-8">
         <Send className="h-3 w-3 sm:h-3.5 sm:w-3.5" strokeWidth={2} />
       </div>
     </div>
@@ -24,13 +46,16 @@ export function ShowcaseAnimationFrame({
   children,
   className,
   showChatBar = false,
+  title = 'Oikaro · AI Assistant',
 }: {
   children: React.ReactNode;
   className?: string;
   showChatBar?: boolean;
+  title?: string;
 }) {
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200/90 bg-white shadow-[0_20px_50px_-24px_rgba(24,24,27,0.12)] ring-1 ring-gray-900/[0.04]">
+      <ShowcaseWindowChrome title={title} />
       <div
         className={`min-h-0 flex-1 bg-[#fafafa] ${
           showChatBar ? 'px-4 pt-4 sm:px-5 sm:pt-5' : 'p-5 sm:p-6'
@@ -54,7 +79,7 @@ function LoopShell({ children }: { reduced: boolean; children: React.ReactNode }
 /** AI chat: prompt → reply → action chips */
 export function AskOnceAnimation({ reduced }: { reduced: boolean }) {
   return (
-    <ShowcaseAnimationFrame showChatBar>
+    <ShowcaseAnimationFrame showChatBar title="Oikaro · AI Assistant">
       <LoopShell reduced={reduced}>
         <div className="space-y-3">
           <motion.div
@@ -365,7 +390,7 @@ export function WinListingAnimation({ reduced }: { reduced: boolean }) {
   }, [reduced]);
 
   return (
-    <ShowcaseAnimationFrame className="flex min-h-0 flex-1 flex-col justify-start overflow-x-hidden overflow-y-auto">
+    <ShowcaseAnimationFrame className="flex min-h-0 flex-1 flex-col justify-start overflow-x-hidden overflow-y-auto" title="Oikaro · Listings & Research">
       <div className="flex w-full flex-col justify-start">
         <AnimatePresence mode="wait" initial={false}>
           {phase === 'listing' ? (
@@ -388,7 +413,7 @@ export function NeverLoseLeadAnimation({ reduced }: { reduced: boolean }) {
   ];
 
   return (
-    <ShowcaseAnimationFrame>
+    <ShowcaseAnimationFrame title="Oikaro · Leads & CRM">
       <LoopShell reduced={reduced}>
         <div className="space-y-2.5">
           {leads.map((lead, i) => (
@@ -440,7 +465,7 @@ export function CloseConfidenceAnimation({ reduced }: { reduced: boolean }) {
   const tasks = ['Offer accepted', 'Inspection scheduled', 'Appraisal ordered'];
 
   return (
-    <ShowcaseAnimationFrame>
+    <ShowcaseAnimationFrame title="Oikaro · Deals & Pipeline">
       <LoopShell reduced={reduced}>
         <div className="space-y-4">
           <div className="rounded-xl border border-gray-200 bg-white p-3">

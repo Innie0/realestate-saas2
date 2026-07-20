@@ -80,6 +80,30 @@
   .marketing-root .lucide[stroke-width='2'] {
     stroke-width: 1.75;
   }
+
+  /* Marketing accent — lime chartreuse, used sparingly on CTAs & highlights only */
+  .marketing-root {
+    --mkt-accent: #d9ed41;
+    --mkt-accent-hover: #c9dd38;
+    --mkt-accent-foreground: #18181b;
+    --mkt-accent-muted: rgba(217, 237, 65, 0.18);
+  }
+}
+
+@layer components {
+  .mkt-cta {
+    background-color: var(--mkt-accent);
+    color: var(--mkt-accent-foreground);
+    transition: background-color 0.2s ease;
+  }
+
+  .mkt-cta:hover {
+    background-color: var(--mkt-accent-hover);
+  }
+
+  .marketing-root a.mkt-link:hover {
+    color: #5a6218;
+  }
 }
 
 /* Custom utility classes */

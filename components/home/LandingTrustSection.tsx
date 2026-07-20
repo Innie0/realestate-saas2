@@ -94,7 +94,7 @@ export default function LandingTrustSection() {
                     aria-label={`Show testimonial ${i + 1}`}
                     className={`h-2 rounded-full transition-all duration-300 ${
                       i === testimonialIndex
-                        ? 'w-6 bg-brand-500'
+                        ? 'w-6 bg-[var(--mkt-accent)]'
                         : 'w-2 bg-gray-300 hover:bg-gray-400'
                     }`}
                   />

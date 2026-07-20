@@ -189,7 +189,7 @@ export default function HomePageClient() {
               >
                 {plan.popular && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-brand-500 text-white text-xs font-semibold">
+                    <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full mkt-cta text-xs font-semibold">
                       <Sparkles className="w-3 h-3" />
                       Most Popular
                     </span>
@@ -219,7 +219,7 @@ export default function HomePageClient() {
                     whileTap={{ scale: 0.97 }}
                     className={`w-full py-3 rounded-xl text-sm font-semibold transition-colors ${
                       plan.popular
-                        ? 'bg-brand-500 text-white hover:bg-brand-600'
+                        ? 'mkt-cta'
                         : 'bg-gray-100 text-gray-900 border border-gray-300 hover:bg-gray-200'
                     }`}
                   >

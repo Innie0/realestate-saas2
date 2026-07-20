@@ -65,7 +65,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
                 className={`whitespace-nowrap px-3 py-2 text-sm font-medium transition-colors duration-300 md:px-4 md:py-2.5 ${
-                  showTransparentNav ? 'text-white hover:text-white/80' : 'text-gray-600 hover:text-brand-600'
+                  showTransparentNav ? 'text-white hover:text-white/80' : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
                 Sign In
@@ -78,7 +78,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
                 className={`whitespace-nowrap px-3 py-2 text-xs font-medium rounded-lg transition-all duration-300 sm:px-4 sm:py-2.5 sm:text-sm ${
                   showTransparentNav
                     ? 'border border-white/70 bg-white/10 text-white hover:bg-white/20'
-                    : 'bg-brand-500 text-white hover:bg-brand-600 shadow-[0_0_30px_rgba(252,92,3,0.25)]'
+                    : 'mkt-cta rounded-full'
                 }`}
               >
                 <span className="sm:hidden">Start</span>

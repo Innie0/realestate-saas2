@@ -37,7 +37,7 @@ function ShowcaseSlideDetails({ slide, reduced }: { slide: ShowcaseSlide; reduce
           </div>
           <div className="mt-5">
             <Link href="/auth/signup">
-              <span className="group/btn inline-flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-600">
+              <span className="group/btn mkt-cta inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold">
                 Get Started
                 <CtaArrow className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5" />
               </span>
@@ -74,7 +74,7 @@ function ShowcaseSlideRail({
                   {isActive ? (
                     <motion.div
                       layoutId="showcase-active-indicator"
-                      className="absolute bottom-0 left-[-1.25rem] top-0 w-px bg-gray-900 sm:left-[-1.5rem]"
+                      className="absolute bottom-0 left-[-1.25rem] top-0 w-0.5 bg-[var(--mkt-accent)] sm:left-[-1.5rem]"
                       transition={indicatorSpring}
                     />
                   ) : null}
@@ -136,10 +136,11 @@ export default function LandingShowcaseCarousel() {
             {SHOWCASE_NARRATIVE.headline}
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-gray-700">{SHOWCASE_NARRATIVE.subheadline}</p>
+          <p className="mt-3 text-sm text-gray-500">Select a workflow below to preview it in action.</p>
         </motion.div>
 
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-start lg:gap-12 xl:gap-16">
-          <div className={`relative mx-auto w-full max-w-[520px] ${SHOWCASE_DISPLAY_HEIGHT} lg:mx-0 lg:max-w-none`}>
+          <div className={`relative order-2 mx-auto w-full max-w-[520px] ${SHOWCASE_DISPLAY_HEIGHT} lg:order-1 lg:mx-0 lg:max-w-none`}>
             <AnimatePresence initial={false} mode="wait">
               <motion.div
                 key={slide.id}
@@ -154,7 +155,9 @@ export default function LandingShowcaseCarousel() {
             </AnimatePresence>
           </div>
 
-          <ShowcaseSlideRail active={active} onSelect={setActive} reduced={reduced} />
+          <div className="order-1 lg:order-2">
+            <ShowcaseSlideRail active={active} onSelect={setActive} reduced={reduced} />
+          </div>
         </div>
       </div>
     </section>

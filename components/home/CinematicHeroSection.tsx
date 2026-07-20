@@ -65,7 +65,7 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
                 <motion.button
                   whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255,255,255,0.2)' }}
                   whileTap={{ scale: 0.98 }}
-                  className="group flex w-full items-center justify-center gap-2 rounded-xl bg-brand-500 px-8 py-4 text-base font-semibold text-white transition-all hover:bg-brand-600 sm:w-auto"
+                  className="mkt-cta group flex w-full items-center justify-center gap-2 rounded-full px-8 py-4 text-base font-semibold sm:w-auto"
                 >
                   Start free trial
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
