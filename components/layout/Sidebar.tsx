@@ -7,11 +7,13 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, FolderKanban, Calendar, User, LogOut, Users, FileText,
   Menu, X, ChevronsLeft, ChevronsRight, Search, Inbox, Sparkles, ChevronDown, Megaphone,
+  Sun, Moon,
 } from 'lucide-react';
 import clsx from 'clsx';
 import { signOut, getCurrentUser } from '@/lib/supabase';
 import { prefetchDashboardRoute } from '@/lib/dashboard-prefetch';
 import { useToast } from '@/components/providers/ToastProvider';
+import { useDashboardTheme } from '@/components/providers/DashboardThemeProvider';
 import { useCommandPalette } from '@/components/search/CommandPalette';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
@@ -124,6 +126,7 @@ export default function Sidebar() {
   const router = useRouter();
   const toast = useToast();
   const { open: openCommandPalette } = useCommandPalette();
+  const { theme, toggleTheme } = useDashboardTheme();
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -324,6 +327,18 @@ export default function Sidebar() {
                 <User className="h-[14px] w-[14px]" strokeWidth={1.8} />
                 Account
               </Link>
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="flex w-full items-center gap-2.5 px-3 py-[7px] text-[13px] font-medium text-gray-700 hover:bg-gray-50"
+              >
+                {theme === 'dark' ? (
+                  <Sun className="h-[14px] w-[14px]" strokeWidth={1.8} />
+                ) : (
+                  <Moon className="h-[14px] w-[14px]" strokeWidth={1.8} />
+                )}
+                {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+              </button>
               <button
                 type="button"
                 onClick={() => {

@@ -62,7 +62,7 @@
   --mkt-mock-surface: #ffffff;
 }
 
-/* Product mock interiors — keep light UI chrome inside browser frames */
+/* Light palette — product mocks (.theme-light) + dashboard light mode */
 .theme-light {
   color-scheme: light;
   --canvas: #fafafa;
@@ -70,6 +70,7 @@
   --sidebar: #f5f5f4;
   --ink: #1c1c1a;
   --border: #e8e8e6;
+  --brand-foreground: #ffffff;
 
   --gray-50: #fafafa;
   --gray-100: #f5f5f4;
@@ -95,6 +96,19 @@
   --brand-700: #000000;
   --brand-800: #000000;
   --brand-900: #000000;
+}
+
+/* Light dashboard: scrollbars + autofill match the light console */
+.dashboard-root.theme-light ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-root.theme-light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.dashboard-root.theme-light {
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
 }
 
 /* Custom base styles */

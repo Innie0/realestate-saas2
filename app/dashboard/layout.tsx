@@ -1,10 +1,7 @@
 // Dashboard layout - Layout for all dashboard pages
 // Includes sidebar navigation for the agent workspace
 
-import Sidebar from '@/components/layout/Sidebar';
-import FeedbackWidget from '@/components/FeedbackWidget';
-import DashboardProviders from '@/components/providers/DashboardProviders';
-import { CommandPaletteProvider } from '@/components/search/CommandPalette';
+import DashboardShell from '@/components/layout/DashboardShell';
 
 /**
  * DashboardLayout component
@@ -16,26 +13,5 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <CommandPaletteProvider>
-      <div className="dashboard-root flex h-screen overflow-hidden bg-[var(--canvas)]">
-        {/* Sidebar - fixed on the left side */}
-        <Sidebar />
-
-        {/* Main content area */}
-        <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
-          {/* Add top padding on mobile for fixed header */}
-          <div className="lg:hidden h-16" />
-
-          {/* Scrollable content */}
-          <main className="flex-1 overflow-y-auto bg-transparent">
-            <DashboardProviders>{children}</DashboardProviders>
-          </main>
-
-          <FeedbackWidget />
-        </div>
-      </div>
-    </CommandPaletteProvider>
-  );
+  return <DashboardShell>{children}</DashboardShell>;
 }
-
