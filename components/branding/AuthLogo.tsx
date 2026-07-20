@@ -11,7 +11,7 @@ export default function AuthLogo({ className = 'h-16 sm:h-20 w-auto', centered =
   const img = (
     /* eslint-disable-next-line @next/next/no-img-element */
     <img
-      src="/logo-collapsed.png"
+      src="/logo-auth.png"
       alt="Oikaro"
       width={512}
       height={288}

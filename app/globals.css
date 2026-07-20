@@ -50,7 +50,7 @@
 
   /* Marketing aliases */
   --mkt-background: var(--canvas);
-  --mkt-surface: var(--canvas);
+  --mkt-surface: var(--surface);
   --mkt-text-primary: var(--gray-950);
   --mkt-text-secondary: #999999;
   --mkt-border: var(--border);
@@ -230,33 +230,33 @@
     background-color: var(--mkt-accent-hover);
   }
 
-  /* Map common white panels onto elevated dark surfaces app-wide */
-  .bg-white {
-    background-color: var(--surface);
-  }
-
-  .bg-white\/90 {
-    background-color: color-mix(in srgb, var(--surface) 90%, transparent);
-  }
-
-  .bg-white\/95 {
-    background-color: color-mix(in srgb, var(--surface) 95%, transparent);
-  }
-
-  .hover\:bg-white:hover {
-    background-color: var(--surface);
-  }
-
-  /* Lime CTAs need dark text even when callers also set text-white */
-  .bg-brand-500.text-white,
-  .bg-brand-600.text-white,
-  .hover\:bg-brand-500:hover.text-white {
-    color: var(--brand-foreground);
-  }
 }
 
 /* Custom utility classes */
 @layer utilities {
+  /* Must live in utilities so it wins over Tailwind's default bg-white */
+  .bg-white {
+    background-color: var(--surface) !important;
+  }
+
+  .bg-white\/90 {
+    background-color: color-mix(in srgb, var(--surface) 90%, transparent) !important;
+  }
+
+  .bg-white\/95 {
+    background-color: color-mix(in srgb, var(--surface) 95%, transparent) !important;
+  }
+
+  .hover\:bg-white:hover {
+    background-color: var(--surface) !important;
+  }
+
+  /* Lime CTAs need dark text even when callers also set text-white */
+  .bg-brand-500.text-white,
+  .bg-brand-600.text-white {
+    color: var(--brand-foreground) !important;
+  }
+
   .line-clamp-1 {
     display: -webkit-box;
     -webkit-line-clamp: 1;
