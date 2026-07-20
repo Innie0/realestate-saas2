@@ -78,7 +78,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
                 className={`whitespace-nowrap px-3 py-2 text-xs font-medium rounded-lg transition-all duration-300 sm:px-4 sm:py-2.5 sm:text-sm ${
                   showTransparentNav
                     ? 'border border-white/70 bg-white/10 text-white hover:bg-white/20'
-                    : 'rounded-full bg-[#e5ddd0] text-gray-900 hover:bg-[#ddd4c6]'
+                    : 'mkt-cta rounded-full'
                 }`}
               >
                 Start free trial

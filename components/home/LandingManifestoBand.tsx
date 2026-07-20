@@ -13,7 +13,7 @@ export default function LandingManifestoBand() {
   const reduced = useMotionReduced();
 
   return (
-    <div className="mkt-manifesto-bg border-t border-gray-200/60 py-24 sm:py-28 lg:py-36">
+    <div className="border-t border-gray-200/80 bg-white py-24 sm:py-28 lg:py-36">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={reduced ? false : { opacity: 0, y: 24 }}

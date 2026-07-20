@@ -141,7 +141,7 @@ export default function HomePageClient() {
       </section>
 
       {/* ── Pricing ────────────────────────────────────────────────────── */}
-      <section className="relative z-10 border-t border-gray-200/80 bg-[var(--mkt-cream)] py-24 lg:py-32">
+      <section className="relative z-10 border-t border-gray-200/80 bg-white py-24 lg:py-32">
         <div className="mx-auto max-w-5xl px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
