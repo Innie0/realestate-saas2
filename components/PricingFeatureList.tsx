@@ -39,13 +39,13 @@ export default function PricingFeatureList({
 }: PricingFeatureListProps) {
   const isMarketing = tone === 'marketing';
   const iconClass = isMarketing
-    ? 'text-[#6B6862]'
+    ? 'text-[#6B6A64]'
     : icon === 'check'
       ? 'text-green-500'
       : 'text-brand-500';
-  const textClass = isMarketing ? 'text-[#6B6862]' : 'text-gray-600';
-  const headingClass = isMarketing ? 'text-[#1A1A18]' : 'text-gray-900';
-  const labelClass = isMarketing ? 'text-[#6B6862]' : 'text-gray-500';
+  const textClass = isMarketing ? 'text-[#6B6A64]' : 'text-gray-600';
+  const headingClass = isMarketing ? 'text-[#141412]' : 'text-gray-900';
+  const labelClass = isMarketing ? 'text-[#6B6A64]' : 'text-gray-500';
 
   if (variant === 'full' && plan === 'starter') {
     return (

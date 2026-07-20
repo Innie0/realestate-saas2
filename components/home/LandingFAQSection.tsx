@@ -27,10 +27,9 @@ function FAQItem({
       {...mktEnterReveal(reduced, delay)}
       className="overflow-hidden"
       style={{
-        borderRadius: MKT.radius.md,
+        borderRadius: MKT.radius.card,
         border: `1px solid ${MKT.border}`,
         backgroundColor: MKT.surface,
-        boxShadow: MKT.shadow,
       }}
     >
       <button
@@ -82,7 +81,7 @@ export default function LandingFAQSection() {
           className="mx-auto mb-16 max-w-3xl text-center"
         >
           <p
-            className="mb-4 font-mono text-[12px] font-medium uppercase tracking-[0.14em]"
+            className="mb-4 text-xs font-medium uppercase tracking-[0.12em]"
             style={{ color: MKT.textSecondary }}
           >
             FAQ

@@ -14,7 +14,6 @@ export default function MarketingSubpageHeader() {
       style={{
         borderBottom: menuOpen ? '1px solid transparent' : `1px solid ${MKT.border}`,
         backgroundColor: menuOpen ? 'transparent' : MKT.surface,
-        boxShadow: menuOpen ? 'none' : MKT.shadow,
       }}
     >
       <div
@@ -47,7 +46,7 @@ export default function MarketingSubpageHeader() {
           <Link
             href="/auth/signup"
             className="mkt-cta px-3 py-2 text-xs font-medium transition-opacity hover:opacity-90 sm:px-4 sm:text-sm"
-            style={{ borderRadius: MKT.radius.md }}
+            style={{ borderRadius: MKT.radius.button }}
           >
             Get Started
           </Link>

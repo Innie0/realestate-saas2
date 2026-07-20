@@ -42,7 +42,7 @@ export default function LandingPricingSection() {
       <div className="mx-auto px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
         <motion.div {...mktEnterReveal(reduced)} className="mb-16 text-center">
           <p
-            className="mb-4 font-mono text-[12px] font-medium uppercase tracking-[0.14em]"
+            className="mb-4 text-xs font-medium uppercase tracking-[0.12em]"
             style={{ color: MKT.textSecondary }}
           >
             Pricing
@@ -65,15 +65,14 @@ export default function LandingPricingSection() {
               {...mktEnterReveal(reduced, i * 0.08)}
               className="relative p-7"
               style={{
-                borderRadius: MKT.radius.lg,
+                borderRadius: MKT.radius.card,
                 backgroundColor: MKT.surface,
                 border: plan.popular ? `2px solid ${MKT.textPrimary}` : `1px solid ${MKT.border}`,
-                boxShadow: MKT.shadow,
               }}
             >
               {plan.popular && (
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <span className="mkt-cta inline-flex items-center gap-1.5 px-4 py-1 text-xs font-semibold" style={{ borderRadius: MKT.radius.sm }}>
+                  <span className="mkt-cta inline-flex items-center gap-1.5 px-4 py-1 text-xs font-medium" style={{ borderRadius: MKT.radius.button }}>
                     <Sparkles className="h-3 w-3" />
                     Most Popular
                   </span>
@@ -112,9 +111,9 @@ export default function LandingPricingSection() {
                   }`}
                   style={
                     plan.popular
-                      ? { borderRadius: MKT.radius.md }
+                      ? { borderRadius: MKT.radius.button }
                       : {
-                          borderRadius: MKT.radius.md,
+                          borderRadius: MKT.radius.button,
                           backgroundColor: MKT.background,
                           color: MKT.textPrimary,
                           border: `1px solid ${MKT.border}`,
@@ -127,7 +126,7 @@ export default function LandingPricingSection() {
 
               <div className="mb-5 border-t" style={{ borderColor: MKT.border }} />
               <p
-                className="mb-4 font-mono text-[12px] font-medium uppercase tracking-[0.12em]"
+                className="mb-4 text-xs font-medium uppercase tracking-[0.12em]"
                 style={{ color: MKT.textSecondary }}
               >
                 What&apos;s included

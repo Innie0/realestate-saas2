@@ -20,7 +20,7 @@ export default function LandingIntegrationsStrip() {
           className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between"
         >
           <p
-            className="shrink-0 font-mono text-[11px] font-medium uppercase tracking-[0.14em]"
+            className="shrink-0 text-xs font-medium uppercase tracking-[0.12em]"
             style={{ color: MKT.textSecondary }}
           >
             Works with your stack

@@ -40,13 +40,13 @@ function TestimonialCarousel() {
           <div className="h-px w-full" style={{ backgroundColor: MKT.border }}>
             <motion.div
               className="h-px"
-              style={{ backgroundColor: MKT.accent }}
+              style={{ backgroundColor: MKT.textPrimary }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
             />
           </div>
           <div className="mt-4 flex items-center justify-between">
-            <span className="font-mono text-sm tabular-nums" style={{ color: MKT.textSecondary }}>
+            <span className="text-sm tabular-nums" style={{ color: MKT.textSecondary }}>
               {testimonialIndex + 1}/{total}
             </span>
             <div className="flex items-center gap-2">
@@ -61,7 +61,7 @@ function TestimonialCarousel() {
                   aria-label={label}
                   className="flex h-9 w-9 items-center justify-center transition-colors hover:bg-black/[0.03]"
                   style={{
-                    borderRadius: MKT.radius.md,
+                    borderRadius: MKT.radius.button,
                     border: `1px solid ${MKT.border}`,
                     backgroundColor: MKT.surface,
                     color: MKT.textPrimary,
@@ -87,11 +87,11 @@ function TestimonialCarousel() {
               style={{ color: MKT.textSecondary }}
             >
               {testimonial.role}
-              <ChevronRight className="h-3.5 w-3.5" style={{ color: MKT.accentMuted }} strokeWidth={2} />
+              <ChevronRight className="h-3.5 w-3.5" style={{ color: MKT.muted }} strokeWidth={2} />
             </p>
 
             <blockquote
-              className="max-w-4xl font-display text-[1.65rem] font-normal leading-[1.35] tracking-[-0.02em] sm:text-3xl lg:text-[2.125rem] lg:leading-[1.32]"
+              className="max-w-4xl text-[1.65rem] font-medium leading-[1.35] tracking-[-0.02em] sm:text-3xl lg:text-[2.125rem] lg:leading-[1.32]"
               style={{ color: MKT.textPrimary }}
             >
               &ldquo;{testimonial.quote}&rdquo;
@@ -106,7 +106,7 @@ function TestimonialCarousel() {
                   <div
                     className="flex h-10 w-10 shrink-0 items-center justify-center text-xs font-semibold"
                     style={{
-                      borderRadius: MKT.radius.lg,
+                      borderRadius: MKT.radius.card,
                       backgroundColor: MKT.background,
                       color: MKT.textPrimary,
                     }}
@@ -126,7 +126,7 @@ function TestimonialCarousel() {
 
               <div className="md:border-r md:px-10 lg:px-12" style={{ borderColor: MKT.border }}>
                 <p
-                  className="font-mono text-4xl font-medium tabular-nums tracking-tight sm:text-5xl"
+                  className="text-4xl font-medium tabular-nums tracking-tight sm:text-5xl"
                   style={{ color: MKT.textPrimary }}
                 >
                   {testimonial.metric}
@@ -138,7 +138,7 @@ function TestimonialCarousel() {
 
               <div className="md:pl-10 lg:pl-12">
                 <p
-                  className="font-mono text-4xl font-medium tabular-nums tracking-tight sm:text-5xl"
+                  className="text-4xl font-medium tabular-nums tracking-tight sm:text-5xl"
                   style={{ color: MKT.textPrimary }}
                 >
                   {testimonial.metric2}
@@ -170,7 +170,7 @@ export default function LandingTrustSection() {
         <div className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
           <motion.div {...mktEnterReveal(reduced)} className="mb-12 text-center">
             <p
-              className="mb-4 font-mono text-[12px] font-medium uppercase tracking-[0.14em]"
+              className="mb-4 text-xs font-medium uppercase tracking-[0.12em]"
               style={{ color: MKT.textSecondary }}
             >
               Integrations
@@ -193,15 +193,14 @@ export default function LandingTrustSection() {
                 {...mktEnterReveal(reduced, i * 0.05)}
                 className="px-6 py-5 text-center"
                 style={{
-                  borderRadius: MKT.radius.md,
+                  borderRadius: MKT.radius.card,
                   border: `1px solid ${MKT.border}`,
                   backgroundColor: MKT.surface,
-                  boxShadow: MKT.shadow,
                 }}
               >
                 <div
                   className="mx-auto mb-3 flex h-12 w-12 items-center justify-center"
-                  style={{ borderRadius: MKT.radius.md, backgroundColor: MKT.background }}
+                  style={{ borderRadius: MKT.radius.button, backgroundColor: MKT.background }}
                 >
                   <IntegrationLogo id={item.id} className="h-7 w-7" />
                 </div>

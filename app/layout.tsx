@@ -2,14 +2,12 @@
 // This is the main layout file for the Next.js app
 
 import type { Metadata } from 'next';
+import { EB_Garamond, IBM_Plex_Mono, Inter } from 'next/font/google';
 import { GeistSans } from 'geist/font/sans';
-import { EB_Garamond, IBM_Plex_Mono } from 'next/font/google';
 import { GlobalStructuredData } from '@/components/seo/StructuredData';
 import { SITE_NAME, SITE_NAME_ALT, SITE_DESCRIPTION, SITE_DOMAIN, SITE_URL } from '@/lib/site-config';
 import './globals.css';
 
-// Mono for the small structured details — metric labels, timestamps,
-// keyboard-shortcut badges.
 const plexMono = IBM_Plex_Mono({
   subsets: ['latin'],
   weight: ['400', '500', '600'],
@@ -17,7 +15,14 @@ const plexMono = IBM_Plex_Mono({
   display: 'swap',
 });
 
-// Serif display for marketing hero — matches the Oikaro wordmark logo.
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+// Serif display — dashboard/app only; not used on Framer-style marketing pages.
 const ebGaramond = EB_Garamond({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
@@ -116,7 +121,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={GeistSans.variable}>
-      <body className={`${GeistSans.className} ${plexMono.variable} ${ebGaramond.variable} font-sans antialiased`}>
+      <body className={`${GeistSans.className} ${plexMono.variable} ${ebGaramond.variable} ${inter.variable} font-sans antialiased`}>
         <GlobalStructuredData />
         {children}
       </body>

@@ -81,20 +81,17 @@
     stroke-width: 1.75;
   }
 
-  /* Marketing surfaces — design.md tokens */
+  /* Framer-style marketing — Inter, neutral chrome, accent on CTAs only */
   .marketing-root {
-    --mkt-background: #f7f6f3;
+    font-family: var(--font-inter), Inter, system-ui, sans-serif;
+    --mkt-background: #f7f6f0;
     --mkt-surface: #ffffff;
-    --mkt-text-primary: #1a1a18;
-    --mkt-text-secondary: #6b6862;
-    --mkt-accent-muted: #b8c4b4;
-    --mkt-border: #e4e2dc;
-    --mkt-accent: #d9ed41;
-    --mkt-accent-hover: #c9dd38;
-    --mkt-accent-foreground: #18181b;
-    --mkt-accent-muted-alpha: rgba(217, 237, 65, 0.18);
-    --mkt-white: #ffffff;
-    --mkt-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.06);
+    --mkt-text-primary: #141412;
+    --mkt-text-secondary: #6b6a64;
+    --mkt-border: #e7e5dd;
+    --mkt-accent: #e4f76c;
+    --mkt-accent-hover: #d8eb5a;
+    --mkt-accent-foreground: #141412;
   }
 }
 
@@ -107,10 +104,6 @@
 
   .mkt-cta:hover {
     background-color: var(--mkt-accent-hover);
-  }
-
-  .marketing-root a.mkt-link:hover {
-    color: #5a6218;
   }
 }
 

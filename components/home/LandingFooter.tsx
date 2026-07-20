@@ -23,7 +23,7 @@ export default function LandingFooter() {
         <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
           <Link
             href="/"
-            className="shrink-0 font-mono text-4xl font-semibold tracking-[-0.04em] transition-opacity hover:opacity-80 sm:text-5xl lg:text-6xl"
+            className="shrink-0 text-4xl font-medium tracking-[-0.02em] transition-opacity hover:opacity-80 sm:text-5xl lg:text-6xl"
             style={{ color: MKT.textPrimary }}
           >
             Oikaro

@@ -131,10 +131,9 @@ export default function ProductsMegaMenu({
                     <div
                       className="overflow-hidden p-3 sm:p-4"
                       style={{
-                        borderRadius: MKT.radius.lg,
+                        borderRadius: MKT.radius.card,
                         border: `1px solid ${MKT.border}`,
                         backgroundColor: MKT.surface,
-                        boxShadow: MKT.shadow,
                       }}
                     >
                       <div className="grid gap-6 p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-4 lg:gap-4">
@@ -153,7 +152,7 @@ export default function ProductsMegaMenu({
                                     href={tool.href}
                                     onClick={handleClose}
                                     className="group block px-3 py-2 transition-colors hover:bg-black/[0.03]"
-                                    style={{ borderRadius: MKT.radius.md }}
+                                    style={{ borderRadius: MKT.radius.button }}
                                   >
                                     <span
                                       className="block text-[14px] font-medium leading-snug transition-opacity group-hover:opacity-70"

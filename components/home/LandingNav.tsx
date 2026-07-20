@@ -44,8 +44,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
       className="fixed inset-x-0 top-0 z-[60] transition-[background-color,border-color,box-shadow] duration-300 ease-out"
       style={{
         borderBottom: overHero ? '1px solid transparent' : `1px solid ${MKT.border}`,
-        backgroundColor: overHero ? 'transparent' : `${MKT.surface}F2`,
-        boxShadow: overHero ? 'none' : MKT.shadow,
+        backgroundColor: overHero ? 'transparent' : MKT.surface,
       }}
     >
       <div className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
@@ -53,7 +52,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
           <motion.div className="flex min-w-0 shrink-0 items-center" whileHover={{ scale: 1.02 }}>
             <Link
               href="/"
-              className="truncate font-mono text-[1.15rem] font-semibold tracking-[-0.04em] transition-opacity hover:opacity-80 sm:text-[1.35rem] md:text-[1.5rem]"
+              className="truncate text-[1.15rem] font-medium tracking-[-0.02em] transition-opacity hover:opacity-80 sm:text-[1.35rem] md:text-[1.5rem]"
               style={{ color: MKT.textPrimary }}
             >
               Oikaro
@@ -76,7 +75,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
                 className="mkt-cta whitespace-nowrap px-3 py-2 text-xs font-medium transition-opacity hover:opacity-90 sm:px-4 sm:py-2.5 sm:text-sm"
-                style={{ borderRadius: MKT.radius.md }}
+                style={{ borderRadius: MKT.radius.button }}
               >
                 Start free trial
               </motion.button>

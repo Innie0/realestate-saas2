@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { useInView } from 'framer-motion';
+import { useRef } from 'react';
 import {
   LayoutDashboard,
   FolderKanban,
@@ -53,17 +55,27 @@ const SIDEBAR_NAV = [
   },
 ] as const;
 
-function useTypewriterPrompts(prompts: readonly string[]) {
-  const [text, setText] = useState(prompts[0]);
+function useTypewriterPrompts(prompts: readonly string[], enabled: boolean) {
+  const [text, setText] = useState('');
   const [index, setIndex] = useState(0);
   const [deleting, setDeleting] = useState(false);
+  const [started, setStarted] = useState(false);
 
   useEffect(() => {
+    if (!enabled) return;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) {
       setText(prompts[0]);
       return;
     }
+    const startTimer = window.setTimeout(() => setStarted(true), 300);
+    return () => window.clearTimeout(startTimer);
+  }, [enabled, prompts]);
+
+  useEffect(() => {
+    if (!enabled || !started) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
 
     const current = prompts[index];
     let delay = deleting ? 22 : 42;
@@ -90,22 +102,36 @@ function useTypewriterPrompts(prompts: readonly string[]) {
     }, delay);
 
     return () => window.clearTimeout(timer);
-  }, [text, deleting, index, prompts]);
+  }, [text, deleting, index, prompts, enabled, started]);
 
-  return text;
+  return enabled ? text : '';
 }
 
 type HeroAssistantPreviewProps = {
-  /** When false, skip the blurred house backdrop (cinematic hero provides its own). */
   showBackdrop?: boolean;
+  /** Start typing animation once the mockup scrolls into view */
+  animateWhenVisible?: boolean;
+  /** Strip outer chrome — parent BrowserWindowFrame provides the frame */
+  compactChrome?: boolean;
 };
 
-export default function HeroAssistantPreview({ showBackdrop = true }: HeroAssistantPreviewProps) {
-  const typedPrompt = useTypewriterPrompts(HERO_PROMPTS);
+export default function HeroAssistantPreview({
+  showBackdrop = true,
+  animateWhenVisible = false,
+  compactChrome = false,
+}: HeroAssistantPreviewProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const typingEnabled = animateWhenVisible ? inView : true;
+  const typedPrompt = useTypewriterPrompts(HERO_PROMPTS, typingEnabled);
+
+  const shellClass = compactChrome
+    ? 'relative flex min-h-[340px] h-[min(520px,65svh)] flex-col overflow-hidden bg-white sm:min-h-[400px] lg:h-[520px]'
+    : 'relative z-10 flex min-h-[360px] h-[min(580px,72svh)] flex-col overflow-hidden rounded-2xl border border-white/30 bg-white shadow-[0_32px_80px_-20px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.15)] ring-1 ring-white/10 sm:min-h-[420px] md:min-h-[480px] lg:h-[580px] lg:min-h-0';
 
   return (
-    <div className="relative mx-auto w-full max-w-[820px]">
-      {showBackdrop ? (
+    <div ref={ref} className="relative mx-auto w-full">
+      {showBackdrop && !compactChrome ? (
         <div className="absolute -inset-3 sm:-inset-4 rounded-[2rem] overflow-hidden" aria-hidden>
           <Image
             src="/demo-house.png"
@@ -119,9 +145,8 @@ export default function HeroAssistantPreview({ showBackdrop = true }: HeroAssist
         </div>
       ) : null}
 
-      <div className="relative z-10 flex min-h-[360px] h-[min(580px,72svh)] flex-col overflow-hidden rounded-2xl border border-white/30 bg-white shadow-[0_32px_80px_-20px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.15)] ring-1 ring-white/10 sm:min-h-[420px] md:min-h-[480px] lg:h-[580px] lg:min-h-0">
+      <div className={shellClass}>
         <div className="flex min-h-0 flex-1">
-          {/* App sidebar — hidden on narrow viewports so the chat panel stays readable */}
           <aside className="hidden md:flex w-[140px] lg:w-[168px] shrink-0 flex-col border-r border-gray-200 bg-[#f5f5f4] py-3 px-2 lg:py-4 lg:px-2.5">
             <div className="px-1 mb-4 lg:mb-5">
               <Image
@@ -134,7 +159,7 @@ export default function HeroAssistantPreview({ showBackdrop = true }: HeroAssist
             </div>
             {SIDEBAR_NAV.map((group) => (
               <div key={group.label} className="mb-3.5 last:mb-0">
-                <p className="px-2 mb-1 font-mono text-[9px] font-semibold uppercase tracking-[0.08em] text-gray-600">
+                <p className="px-2 mb-1 text-[9px] font-medium uppercase tracking-[0.08em] text-gray-600">
                   {group.label}
                 </p>
                 <ul className="space-y-0.5">
@@ -145,13 +170,13 @@ export default function HeroAssistantPreview({ showBackdrop = true }: HeroAssist
                       <li
                         key={item.name}
                         className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-[11.5px] font-medium ${
-                          active ? 'bg-brand-200 text-gray-900' : 'text-gray-700'
+                          active ? 'bg-gray-200 text-gray-900' : 'text-gray-700'
                         }`}
                       >
                         <Icon className="h-3.5 w-3.5 shrink-0" strokeWidth={1.8} />
                         <span className="truncate">{item.name}</span>
                         {'badge' in item && item.badge ? (
-                          <span className="ml-auto rounded-full bg-brand-500 px-1.5 font-mono text-[8px] font-semibold text-white">
+                          <span className="ml-auto rounded-full bg-[#E4F76C] px-1.5 text-[8px] font-medium text-[#141412]">
                             {item.badge}
                           </span>
                         ) : null}
@@ -163,16 +188,15 @@ export default function HeroAssistantPreview({ showBackdrop = true }: HeroAssist
             ))}
           </aside>
 
-          {/* AI Assistant — chat list collapsed; full-width chat panel */}
           <div className="flex min-w-0 flex-1 flex-col bg-[#fafafa]">
             <div className="shrink-0 border-b border-gray-200 px-4 py-3 sm:px-5 sm:py-3.5">
-              <p className="text-[13px] font-semibold text-gray-900 sm:text-[14px]">AI Assistant</p>
+              <p className="text-[13px] font-medium text-gray-900 sm:text-[14px]">AI Assistant</p>
               <p className="text-[10px] text-gray-600 mt-0.5 sm:text-[11px]">0 / 75 AI messages used this month</p>
             </div>
 
-            <div className="flex min-h-0 flex-1 flex-col mx-3 my-3 rounded-xl border border-gray-200 bg-white overflow-hidden sm:mx-4 sm:my-4">
+            <div className="flex min-h-0 flex-1 flex-col mx-3 my-3 rounded-lg border border-gray-200 bg-white overflow-hidden sm:mx-4 sm:my-4">
               <div className="flex flex-1 flex-col items-center justify-center px-4 py-5 text-center sm:px-8 sm:py-8">
-                <h3 className="text-[17px] font-semibold tracking-[-0.02em] text-gray-900 sm:text-[20px]">
+                <h3 className="text-[17px] font-medium tracking-[-0.02em] text-gray-900 sm:text-[20px]">
                   How can I help you today?
                 </h3>
                 <p className="mt-2 max-w-md text-[12px] leading-relaxed text-gray-600 sm:text-[13px]">
@@ -182,7 +206,7 @@ export default function HeroAssistantPreview({ showBackdrop = true }: HeroAssist
                   {STARTER_PROMPTS.map((prompt) => (
                     <div
                       key={prompt}
-                      className="rounded-[10px] border border-gray-200 bg-white px-3 py-2.5 text-left text-[11px] leading-snug text-gray-700 sm:px-3.5 sm:py-3 sm:text-[12px]"
+                      className="rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-left text-[11px] leading-snug text-gray-700 sm:px-3.5 sm:py-3 sm:text-[12px]"
                     >
                       {prompt}
                     </div>
@@ -190,17 +214,19 @@ export default function HeroAssistantPreview({ showBackdrop = true }: HeroAssist
                 </div>
               </div>
 
-              <div className="shrink-0 border-t border-gray-150 p-3 sm:p-4">
-                <div className="relative min-h-[80px] rounded-xl border border-gray-200 bg-white px-3 pt-3 pb-11 sm:min-h-[96px] sm:px-4 sm:pt-3.5 sm:pb-12">
+              <div className="shrink-0 border-t border-gray-200 p-3 sm:p-4">
+                <div className="relative min-h-[80px] rounded-lg border border-gray-200 bg-white px-3 pt-3 pb-11 sm:min-h-[96px] sm:px-4 sm:pt-3.5 sm:pb-12">
                   <p className="text-[13px] leading-relaxed text-gray-800 whitespace-normal break-words text-left">
-                    {typedPrompt}
-                    <span className="ml-0.5 inline-block h-[14px] w-px animate-pulse bg-gray-900 align-text-bottom" />
+                    {typedPrompt || '\u00A0'}
+                    {typingEnabled ? (
+                      <span className="ml-0.5 inline-block h-[14px] w-px animate-pulse bg-gray-900 align-text-bottom" />
+                    ) : null}
                   </p>
                   <Paperclip
                     className="absolute bottom-3.5 left-3.5 h-4 w-4 text-gray-600"
                     strokeWidth={1.8}
                   />
-                  <div className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-brand-500 text-white">
+                  <div className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-white">
                     <Send className="h-3.5 w-3.5" strokeWidth={2} />
                   </div>
                 </div>

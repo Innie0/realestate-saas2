@@ -20,12 +20,12 @@ export default function LandingManifestoBand() {
     >
       <div className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
         <motion.div {...mktEnterReveal(reduced)}>
-          <p className="font-display text-[1.75rem] font-normal leading-[1.28] tracking-[-0.02em] sm:text-[2.25rem] lg:text-[2.75rem] lg:leading-[1.22]">
+          <p className="text-xl font-medium leading-[1.35] tracking-[-0.02em] sm:text-2xl lg:text-[2.25rem] lg:leading-[1.3]">
             {MANIFESTO_LINES.map((line) => (
               <span
                 key={line.text}
                 className="block"
-                style={{ color: MKT.textPrimary, opacity: line.opacity }}
+                style={{ color: line.opacity < 1 ? MKT.textSecondary : MKT.textPrimary }}
               >
                 {line.text}
               </span>

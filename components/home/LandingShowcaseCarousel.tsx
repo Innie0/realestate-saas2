@@ -1,11 +1,11 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import Image from 'next/image';
+import { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { ArrowRight as CtaArrow } from 'lucide-react';
 import { SHOWCASE_NARRATIVE, SHOWCASE_SLIDES, type ShowcaseSlide } from '@/lib/landing-showcase';
+import ProductScreenshot from '@/components/home/ProductScreenshot';
 import { MKT, mktEnterReveal } from '@/lib/marketing-design';
 import { useMotionReduced } from '@/lib/motion';
 
@@ -30,9 +30,9 @@ function ShowcaseSlideDetails({ slide }: { slide: ShowcaseSlide }) {
             {slide.tools.map((tool) => (
               <span
                 key={tool}
-                className="px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.08em]"
+                className="px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em]"
                 style={{
-                  borderRadius: MKT.radius.sm,
+                  borderRadius: MKT.radius.button,
                   border: `1px solid ${MKT.border}`,
                   backgroundColor: MKT.surface,
                   color: MKT.textSecondary,
@@ -46,7 +46,7 @@ function ShowcaseSlideDetails({ slide }: { slide: ShowcaseSlide }) {
             <Link href="/auth/signup">
               <span
                 className="group/btn mkt-cta inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium"
-                style={{ borderRadius: MKT.radius.md }}
+                style={{ borderRadius: MKT.radius.button }}
               >
                 Start free trial
                 <CtaArrow className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5" />
@@ -90,7 +90,7 @@ function ShowcaseSlideRail({
                     <motion.div
                       layoutId="showcase-active-indicator"
                       className="absolute bottom-0 left-[-1.25rem] top-0 w-0.5 sm:left-[-1.5rem]"
-                      style={{ backgroundColor: MKT.accent }}
+                      style={{ backgroundColor: MKT.textPrimary }}
                       transition={indicatorSpring}
                     />
                   ) : null}
@@ -99,12 +99,12 @@ function ShowcaseSlideRail({
                     type="button"
                     onClick={() => onSelect(i)}
                     className="group w-full py-3 text-left transition-colors lg:py-3.5"
-                    style={{ borderRadius: MKT.radius.md }}
+                    style={{ borderRadius: MKT.radius.button }}
                     aria-current={isActive ? 'true' : undefined}
                   >
                     <p
-                      className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] transition-colors duration-200"
-                      style={{ color: isActive ? MKT.textSecondary : MKT.accentMuted }}
+                      className="text-[10px] font-medium uppercase tracking-[0.1em] transition-colors duration-200"
+                      style={{ color: isActive ? MKT.textSecondary : MKT.muted }}
                     >
                       {item.eyebrow}
                     </p>
@@ -112,7 +112,7 @@ function ShowcaseSlideRail({
                       className={`mt-1.5 text-lg leading-snug tracking-[-0.02em] transition-colors duration-200 sm:text-xl ${
                         isActive ? 'font-medium' : 'font-normal'
                       }`}
-                      style={{ color: isActive ? MKT.textPrimary : MKT.accentMuted }}
+                      style={{ color: isActive ? MKT.textPrimary : MKT.muted }}
                     >
                       {item.headline}
                     </h3>
@@ -137,7 +137,7 @@ export default function LandingShowcaseCarousel() {
   return (
     <section
       className="relative z-10 overflow-hidden border-t py-16 sm:py-20 lg:py-24"
-      style={{ borderColor: MKT.border, backgroundColor: MKT.surface }}
+      style={{ borderColor: MKT.border, backgroundColor: MKT.background }}
     >
       <div className="relative mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
         <motion.div
@@ -145,53 +145,44 @@ export default function LandingShowcaseCarousel() {
           className="mx-auto mb-10 max-w-3xl text-center lg:mb-12"
         >
           <p
-            className="mb-4 font-mono text-[12px] font-medium uppercase tracking-[0.14em]"
+            className="mb-3 text-xs font-medium uppercase tracking-[0.12em]"
             style={{ color: MKT.textSecondary }}
           >
             {SHOWCASE_NARRATIVE.eyebrow}
           </p>
-          <h2 className="font-display text-3xl font-normal tracking-[-0.02em] sm:text-4xl lg:text-5xl lg:leading-[1.12]">
-            <span style={{ color: MKT.textPrimary }}>{SHOWCASE_NARRATIVE.headlineLead}</span>
-            <span style={{ color: MKT.accentMuted }}>{SHOWCASE_NARRATIVE.headlineFade}</span>
+          <h2
+            className="text-3xl font-medium tracking-[-0.02em] sm:text-4xl lg:text-[2.75rem] lg:leading-[1.12]"
+            style={{ color: MKT.textPrimary }}
+          >
+            {SHOWCASE_NARRATIVE.headlineLead}
+            <span style={{ color: MKT.textSecondary }}>{SHOWCASE_NARRATIVE.headlineFade}</span>
           </h2>
-          <p className="mt-5 text-lg leading-[1.6]" style={{ color: MKT.textSecondary }}>
+          <p className="mt-5 text-base leading-[1.6]" style={{ color: MKT.textSecondary }}>
             {SHOWCASE_NARRATIVE.subheadline}
-          </p>
-          <p className="mt-3 text-sm" style={{ color: MKT.textSecondary }}>
-            Select a workflow below to preview it in action.
           </p>
         </motion.div>
 
         <div className="mx-auto grid w-full max-w-6xl gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-start lg:gap-12 xl:gap-16">
-          <div className="relative order-2 mx-auto w-full max-w-[520px] lg:order-1 lg:mx-0 lg:max-w-none">
-            <div
-              className="relative aspect-[16/10] w-full overflow-hidden"
-              style={{ borderRadius: MKT.radius.lg, boxShadow: MKT.shadow }}
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={slide.id}
-                  initial={reduced ? false : { opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={reduced ? undefined : { opacity: 0 }}
-                  transition={{ duration: 0.25, ease: slideEase }}
-                  className="absolute inset-0 bg-white"
-                >
-                  <Image
-                    src={slide.screenshot}
-                    alt={slide.screenshotAlt}
-                    fill
-                    className="object-cover object-top"
-                    sizes="(max-width: 768px) 100vw, 560px"
-                  />
-                </motion.div>
-              </AnimatePresence>
-            </div>
-          </div>
+          <motion.div
+            {...mktEnterReveal(reduced, 0.06)}
+            className="relative order-2 mx-auto w-full max-w-[520px] lg:order-1 lg:mx-0 lg:max-w-none"
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={slide.id}
+                initial={reduced ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={reduced ? undefined : { opacity: 0 }}
+                transition={{ duration: 0.25, ease: slideEase }}
+              >
+                <ProductScreenshot src={slide.screenshot} alt={slide.screenshotAlt} />
+              </motion.div>
+            </AnimatePresence>
+          </motion.div>
 
-          <div className="order-1 lg:order-2">
+          <motion.div {...mktEnterReveal(reduced, 0.1)} className="order-1 lg:order-2">
             <ShowcaseSlideRail active={active} onSelect={setActive} />
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
