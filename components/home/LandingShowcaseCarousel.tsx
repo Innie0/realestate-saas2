@@ -120,7 +120,7 @@ export default function LandingShowcaseCarousel() {
   const slide = SHOWCASE_SLIDES[active];
 
   return (
-    <section className="relative z-10 overflow-hidden py-16 sm:py-24 lg:py-32">
+    <section className="relative z-10 overflow-hidden bg-white py-16 sm:py-24 lg:py-32">
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={reduced ? false : { opacity: 0, y: 28 }}
@@ -132,8 +132,9 @@ export default function LandingShowcaseCarousel() {
           <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-600">
             {SHOWCASE_NARRATIVE.eyebrow}
           </p>
-          <h2 className="text-3xl font-semibold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl lg:leading-[1.12]">
-            {SHOWCASE_NARRATIVE.headline}
+          <h2 className="font-display text-3xl font-normal tracking-tight sm:text-4xl lg:text-5xl lg:leading-[1.12]">
+            <span className="text-gray-900">{SHOWCASE_NARRATIVE.headlineLead}</span>
+            <span className="text-gray-400">{SHOWCASE_NARRATIVE.headlineFade}</span>
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-gray-700">{SHOWCASE_NARRATIVE.subheadline}</p>
           <p className="mt-3 text-sm text-gray-500">Select a workflow below to preview it in action.</p>

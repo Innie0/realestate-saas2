@@ -54,7 +54,8 @@ export type Testimonial = {
 
 export const SHOWCASE_NARRATIVE = {
   eyebrow: 'How it works',
-  headline: 'Close the loop from lead to closing',
+  headlineLead: 'Close the loop from lead',
+  headlineFade: ' to closing',
   subheadline:
     'Oikaro unifies listings, leads, clients, and deals in one workspace — so every conversation, task, and deadline moves your pipeline forward.',
 };

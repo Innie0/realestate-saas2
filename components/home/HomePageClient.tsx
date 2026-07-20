@@ -7,7 +7,6 @@ import CinematicHeroSection from '@/components/home/CinematicHeroSection';
 import LandingNav from '@/components/home/LandingNav';
 import LandingShowcaseCarousel from '@/components/home/LandingShowcaseCarousel';
 import LandingTrustSection from '@/components/home/LandingTrustSection';
-import LandingScrollSurface from '@/components/home/LandingScrollSurface';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, ArrowRight, ChevronDown, Star } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
@@ -127,12 +126,11 @@ export default function HomePageClient() {
 
       <CinematicHeroSection sectionRef={heroRef} />
 
-      <LandingScrollSurface>
-        <LandingShowcaseCarousel />
-        <LandingTrustSection />
+      <LandingShowcaseCarousel />
+      <LandingTrustSection />
 
-        {/* ── FAQ ────────────────────────────────────────────────────────── */}
-        <section className="relative z-10 border-t border-gray-200/80 bg-white py-24 lg:py-32">
+      {/* ── FAQ ────────────────────────────────────────────────────────── */}
+      <section className="relative z-10 border-t border-gray-200/80 bg-white py-24 lg:py-32">
         <div className="mx-auto max-w-3xl px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Frequently asked questions</h2>
@@ -143,7 +141,7 @@ export default function HomePageClient() {
       </section>
 
       {/* ── Pricing ────────────────────────────────────────────────────── */}
-      <section className="relative z-10 border-t border-gray-200/80 py-24 lg:py-32">
+      <section className="relative z-10 border-t border-gray-200/80 bg-[var(--mkt-cream)] py-24 lg:py-32">
         <div className="mx-auto max-w-5xl px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -261,7 +259,7 @@ export default function HomePageClient() {
       </section>
 
       {/* ── Footer ─────────────────────────────────────────────────────── */}
-      <footer className="relative z-10 border-t border-gray-200/80">
+      <footer className="relative z-10 border-t border-gray-200/80 bg-white">
         <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
           <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
             <Link
@@ -292,7 +290,6 @@ export default function HomePageClient() {
           </div>
         </div>
       </footer>
-      </LandingScrollSurface>
     </div>
   );
 }
