@@ -3,151 +3,65 @@
 import { useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useMotionValueEvent,
-  LayoutGroup,
-  type MotionValue,
-} from 'framer-motion';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { ArrowRight as CtaArrow } from 'lucide-react';
 import { SHOWCASE_NARRATIVE, SHOWCASE_SLIDES, type ShowcaseSlide } from '@/lib/landing-showcase';
 import { MKT, mktEnterReveal } from '@/lib/marketing-design';
 import { useMotionReduced } from '@/lib/motion';
 
 const indicatorSpring = { type: 'spring' as const, stiffness: 280, damping: 32, mass: 0.8 };
-const SLIDE_COUNT = SHOWCASE_SLIDES.length;
-/** 100vh viewport + ~150vh scrub track (design.md §8) */
-const PIN_HEIGHT_VH = 250;
+const slideEase = [0.25, 0.1, 0.25, 1] as const;
 
 function ShowcaseSlideDetails({ slide }: { slide: ShowcaseSlide }) {
   return (
-    <div className="mt-6 min-h-[200px] pl-5 sm:pl-6">
-      <p className="max-w-md text-[15px] leading-[1.6]" style={{ color: MKT.textSecondary }}>
-        {slide.description}
-      </p>
-      <div className="mt-4 flex flex-wrap gap-2">
-        {slide.tools.map((tool) => (
-          <span
-            key={tool}
-            className="px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.08em]"
-            style={{
-              borderRadius: MKT.radius.sm,
-              border: `1px solid ${MKT.border}`,
-              backgroundColor: MKT.surface,
-              color: MKT.textSecondary,
-            }}
-          >
-            {tool}
-          </span>
-        ))}
-      </div>
-      <div className="mt-5 flex flex-wrap items-center gap-4">
-        <Link href="/auth/signup">
-          <span
-            className="group/btn mkt-cta inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium"
-            style={{ borderRadius: MKT.radius.md }}
-          >
-            Start free trial
-            <CtaArrow className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5" />
-          </span>
-        </Link>
-        <Link
-          href={slide.productsHref}
-          className="text-sm font-medium transition-opacity hover:opacity-70"
-          style={{ color: MKT.textPrimary }}
-        >
-          Learn more →
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-function useSlideOpacity(scrollYProgress: MotionValue<number>, index: number) {
-  return useTransform(scrollYProgress, (v) => {
-    if (SLIDE_COUNT === 1) return 1;
-    const step = 1 / (SLIDE_COUNT - 1);
-    const center = index * step;
-    const prev = (index - 1) * step;
-    const next = (index + 1) * step;
-
-    if (v <= prev) return index === 0 ? 1 : 0;
-    if (v >= next) return index === SLIDE_COUNT - 1 ? 1 : 0;
-    if (v <= center) {
-      if (index === 0) return 1;
-      return (v - prev) / (center - prev);
-    }
-    if (index === SLIDE_COUNT - 1) return 1;
-    return (next - v) / (next - center);
-  });
-}
-
-function ShowcaseScreenshotLayer({
-  slide,
-  index,
-  scrollYProgress,
-}: {
-  slide: ShowcaseSlide;
-  index: number;
-  scrollYProgress: MotionValue<number>;
-}) {
-  const opacity = useSlideOpacity(scrollYProgress, index);
-
-  return (
-    <motion.div
-      className="absolute inset-0 overflow-hidden bg-white"
-      style={{ opacity, borderRadius: MKT.radius.lg }}
-    >
-      <Image
-        src={slide.screenshot}
-        alt={slide.screenshotAlt}
-        fill
-        className="object-cover object-top"
-        sizes="(max-width: 768px) 100vw, 560px"
-      />
-    </motion.div>
-  );
-}
-
-function ShowcaseScreenshotStack({
-  scrollYProgress,
-  reduced,
-}: {
-  scrollYProgress: MotionValue<number>;
-  reduced: boolean;
-}) {
-  if (reduced) {
-    return (
-      <div
-        className="relative aspect-[16/10] w-full overflow-hidden"
-        style={{ borderRadius: MKT.radius.lg, boxShadow: MKT.shadow }}
-      >
-        <Image
-          src={SHOWCASE_SLIDES[0].screenshot}
-          alt={SHOWCASE_SLIDES[0].screenshotAlt}
-          fill
-          className="object-cover object-top"
-          sizes="(max-width: 768px) 100vw, 560px"
-        />
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className="relative aspect-[16/10] w-full"
-      style={{ borderRadius: MKT.radius.lg, boxShadow: MKT.shadow }}
-    >
-      {SHOWCASE_SLIDES.map((slide, i) => (
-        <ShowcaseScreenshotLayer
+    <div className="mt-6 min-h-[180px] pl-5 sm:pl-6">
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
           key={slide.id}
-          slide={slide}
-          index={i}
-          scrollYProgress={scrollYProgress}
-        />
-      ))}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.22, ease: slideEase }}
+        >
+          <p className="max-w-md text-[15px] leading-[1.6]" style={{ color: MKT.textSecondary }}>
+            {slide.description}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {slide.tools.map((tool) => (
+              <span
+                key={tool}
+                className="px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.08em]"
+                style={{
+                  borderRadius: MKT.radius.sm,
+                  border: `1px solid ${MKT.border}`,
+                  backgroundColor: MKT.surface,
+                  color: MKT.textSecondary,
+                }}
+              >
+                {tool}
+              </span>
+            ))}
+          </div>
+          <div className="mt-5 flex flex-wrap items-center gap-4">
+            <Link href="/auth/signup">
+              <span
+                className="group/btn mkt-cta inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium"
+                style={{ borderRadius: MKT.radius.md }}
+              >
+                Start free trial
+                <CtaArrow className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5" />
+              </span>
+            </Link>
+            <Link
+              href={slide.productsHref}
+              className="text-sm font-medium transition-opacity hover:opacity-70"
+              style={{ color: MKT.textPrimary }}
+            >
+              Learn more →
+            </Link>
+          </div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
@@ -217,77 +131,66 @@ function ShowcaseSlideRail({
 
 export default function LandingShowcaseCarousel() {
   const reduced = useMotionReduced();
-  const trackRef = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
-
-  const { scrollYProgress } = useScroll({
-    target: trackRef,
-    offset: ['start start', 'end end'],
-  });
-
-  useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    if (reduced) return;
-    const idx = Math.round(v * (SLIDE_COUNT - 1));
-    setActive(idx);
-  });
-
-  const scrollToSlide = (index: number) => {
-    setActive(index);
-    const el = trackRef.current;
-    if (!el || reduced) return;
-    const rect = el.getBoundingClientRect();
-    const scrollTop = window.scrollY + rect.top;
-    const trackHeight = el.offsetHeight - window.innerHeight;
-    const fraction = SLIDE_COUNT > 1 ? index / (SLIDE_COUNT - 1) : 0;
-    window.scrollTo({ top: scrollTop + fraction * trackHeight, behavior: 'smooth' });
-  };
+  const slide = SHOWCASE_SLIDES[active];
 
   return (
     <section
-      ref={trackRef}
-      className="relative z-10 border-t"
-      style={{
-        borderColor: MKT.border,
-        backgroundColor: MKT.surface,
-        height: reduced ? 'auto' : `${PIN_HEIGHT_VH}vh`,
-      }}
+      className="relative z-10 overflow-hidden border-t py-16 sm:py-20 lg:py-24"
+      style={{ borderColor: MKT.border, backgroundColor: MKT.surface }}
     >
-      <div className={`${reduced ? '' : 'sticky top-0'} flex min-h-[100svh] flex-col overflow-hidden`}>
-        <div
-          className="mx-auto flex w-full flex-1 flex-col justify-center px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
-          style={{ maxWidth: MKT.maxContentWidth }}
+      <div className="relative mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
+        <motion.div
+          {...mktEnterReveal(reduced)}
+          className="mx-auto mb-10 max-w-3xl text-center lg:mb-12"
         >
-          <motion.div
-            {...mktEnterReveal(reduced)}
-            className="mx-auto mb-10 max-w-3xl text-center lg:mb-14"
+          <p
+            className="mb-4 font-mono text-[12px] font-medium uppercase tracking-[0.14em]"
+            style={{ color: MKT.textSecondary }}
           >
-            <p
-              className="mb-4 font-mono text-[12px] font-medium uppercase tracking-[0.14em]"
-              style={{ color: MKT.textSecondary }}
-            >
-              {SHOWCASE_NARRATIVE.eyebrow}
-            </p>
-            <h2 className="font-display text-3xl font-normal tracking-[-0.02em] sm:text-4xl lg:text-5xl lg:leading-[1.12]">
-              <span style={{ color: MKT.textPrimary }}>{SHOWCASE_NARRATIVE.headlineLead}</span>
-              <span style={{ color: MKT.accentMuted }}>{SHOWCASE_NARRATIVE.headlineFade}</span>
-            </h2>
-            <p className="mt-5 text-lg leading-[1.6]" style={{ color: MKT.textSecondary }}>
-              {SHOWCASE_NARRATIVE.subheadline}
-            </p>
-            {!reduced && (
-              <p className="mt-3 text-sm" style={{ color: MKT.textSecondary }}>
-                Scroll to step through each workflow
-              </p>
-            )}
-          </motion.div>
+            {SHOWCASE_NARRATIVE.eyebrow}
+          </p>
+          <h2 className="font-display text-3xl font-normal tracking-[-0.02em] sm:text-4xl lg:text-5xl lg:leading-[1.12]">
+            <span style={{ color: MKT.textPrimary }}>{SHOWCASE_NARRATIVE.headlineLead}</span>
+            <span style={{ color: MKT.accentMuted }}>{SHOWCASE_NARRATIVE.headlineFade}</span>
+          </h2>
+          <p className="mt-5 text-lg leading-[1.6]" style={{ color: MKT.textSecondary }}>
+            {SHOWCASE_NARRATIVE.subheadline}
+          </p>
+          <p className="mt-3 text-sm" style={{ color: MKT.textSecondary }}>
+            Select a workflow below to preview it in action.
+          </p>
+        </motion.div>
 
-          <div className="mx-auto grid w-full max-w-6xl gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-start lg:gap-12 xl:gap-16">
-            <div className="order-2 lg:order-1">
-              <ShowcaseScreenshotStack scrollYProgress={scrollYProgress} reduced={reduced} />
+        <div className="mx-auto grid w-full max-w-6xl gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-start lg:gap-12 xl:gap-16">
+          <div className="relative order-2 mx-auto w-full max-w-[520px] lg:order-1 lg:mx-0 lg:max-w-none">
+            <div
+              className="relative aspect-[16/10] w-full overflow-hidden"
+              style={{ borderRadius: MKT.radius.lg, boxShadow: MKT.shadow }}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={slide.id}
+                  initial={reduced ? false : { opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={reduced ? undefined : { opacity: 0 }}
+                  transition={{ duration: 0.25, ease: slideEase }}
+                  className="absolute inset-0 bg-white"
+                >
+                  <Image
+                    src={slide.screenshot}
+                    alt={slide.screenshotAlt}
+                    fill
+                    className="object-cover object-top"
+                    sizes="(max-width: 768px) 100vw, 560px"
+                  />
+                </motion.div>
+              </AnimatePresence>
             </div>
-            <div className="order-1 lg:order-2">
-              <ShowcaseSlideRail active={active} onSelect={scrollToSlide} />
-            </div>
+          </div>
+
+          <div className="order-1 lg:order-2">
+            <ShowcaseSlideRail active={active} onSelect={setActive} />
           </div>
         </div>
       </div>

@@ -32,18 +32,18 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
     offset: ['start start', 'end end'],
   });
 
-  const productOpacity = useTransform(scrollYProgress, [0, 0.35, 0.75], [1, 1, 0]);
-  const productY = useTransform(scrollYProgress, [0, 0.75], [0, 32]);
-  const productScale = useTransform(scrollYProgress, [0, 0.75], [1, 0.97]);
-  const productParallax = useTransform(scrollYProgress, [0, 1], [0, -28]);
+  const productOpacity = useTransform(scrollYProgress, [0, 0.6, 1], [1, 1, 0.92]);
+  const productY = useTransform(scrollYProgress, [0, 1], [0, 12]);
+  const productScale = useTransform(scrollYProgress, [0, 1], [1, 0.99]);
+  const productParallax = useTransform(scrollYProgress, [0, 1], [0, -12]);
   const productTranslateY = useTransform(
     [productY, productParallax],
     ([yVal, pVal]) => Number(yVal) + Number(pVal),
   );
 
-  const treatmentOpacity = useTransform(scrollYProgress, [0.25, 0.55, 0.9], [0, 0.55, 1]);
-  const treatmentParallax = useTransform(scrollYProgress, [0, 1], [0, -48]);
-  const copyOpacity = useTransform(scrollYProgress, [0, 0.55, 0.85], [1, 1, 0.35]);
+  const treatmentOpacity = useTransform(scrollYProgress, [0.4, 0.85, 1], [0, 0.35, 0.45]);
+  const treatmentParallax = useTransform(scrollYProgress, [0, 1], [0, -20]);
+  const copyOpacity = useTransform(scrollYProgress, [0, 0.7, 1], [1, 1, 0.92]);
 
   const setRefs = (node: HTMLElement | null) => {
     trackRef.current = node;
@@ -56,11 +56,11 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
     <section
       ref={setRefs}
       className="relative"
-      style={{ height: reduced ? 'auto' : '250vh' }}
+      style={{ height: reduced ? 'auto' : '165vh' }}
     >
       <div
         className={`relative flex flex-col overflow-hidden ${
-          reduced ? 'min-h-[100svh]' : 'sticky top-0 h-[100svh]'
+          reduced ? 'min-h-0' : 'sticky top-0 min-h-0'
         }`}
         style={{ backgroundColor: MKT.background }}
       >
@@ -70,9 +70,9 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
           y={treatmentParallax}
         />
 
-        <div className="relative z-10 flex min-h-0 flex-1 flex-col pt-16 sm:pt-20 md:pt-24">
+        <div className="relative z-10 flex flex-col pt-16 sm:pt-20 md:pt-24">
           <div
-            className="mx-auto flex w-full min-w-0 flex-1 flex-col items-center px-4 pb-8 pt-8 sm:px-6 sm:pb-12 sm:pt-12 lg:px-8"
+            className="mx-auto flex w-full min-w-0 flex-col items-center px-4 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-8 lg:px-8"
             style={{ maxWidth: MKT.maxContentWidth }}
           >
             <motion.div

@@ -65,7 +65,7 @@ Hero → Nav → Showcase (pinned scroll) → Testimonials → Manifesto → Int
 
 ## 8. Scroll transitions & motion
 
-- **Pinned (max 2):** Hero (~150vh scrub), Showcase workflow rail (~150vh scrub, screenshot cross-fade)
+- **Pinned (max 2):** Hero (~65vh scrub track), showcase uses click-to-preview (normal scroll height)
 - **Scrub tied to scroll progress** — reverses on scroll up
 - **All other sections:** 16px fade-up on enter only
 - **`prefers-reduced-motion`:** collapse pins to static layout
