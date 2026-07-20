@@ -10,22 +10,8 @@ import {
 } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import HeroAssistantPreview from '@/components/home/HeroAssistantPreview';
+import { MKT } from '@/lib/marketing-design';
 import { useMotionReduced } from '@/lib/motion';
-
-/** design.md §2 — exact tokens */
-const T = {
-  background: '#F7F6F3',
-  surface: '#FFFFFF',
-  textPrimary: '#1A1A18',
-  textSecondary: '#6B6862',
-  accent: '#D9ED41',
-  accentForeground: '#18181B',
-  accentMuted: '#B8C4B4',
-  border: '#E4E2DC',
-} as const;
-
-/** design.md §4 — shadow */
-const SHADOW = '0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06)';
 
 type CinematicHeroSectionProps = {
   sectionRef: React.RefObject<HTMLElement | null>;
@@ -46,7 +32,6 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
     offset: ['start start', 'end end'],
   });
 
-  // Cross-fade tied to raw scroll progress (scrub, not a one-shot fade-in)
   const productOpacity = useTransform(scrollYProgress, [0, 0.35, 0.75], [1, 1, 0]);
   const productY = useTransform(scrollYProgress, [0, 0.75], [0, 32]);
   const productScale = useTransform(scrollYProgress, [0, 0.75], [1, 0.97]);
@@ -77,9 +62,8 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
         className={`relative flex flex-col overflow-hidden ${
           reduced ? 'min-h-[100svh]' : 'sticky top-0 h-[100svh]'
         }`}
-        style={{ backgroundColor: T.background }}
+        style={{ backgroundColor: MKT.background }}
       >
-        {/* Subtle background treatment — tonal wash + paper grain only (no blobs / shapes) */}
         <HeroTreatmentLayer
           reduced={reduced}
           opacity={treatmentOpacity}
@@ -89,7 +73,7 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
         <div className="relative z-10 flex min-h-0 flex-1 flex-col pt-16 sm:pt-20 md:pt-24">
           <div
             className="mx-auto flex w-full min-w-0 flex-1 flex-col items-center px-4 pb-8 pt-8 sm:px-6 sm:pb-12 sm:pt-12 lg:px-8"
-            style={{ maxWidth: '1200px' }}
+            style={{ maxWidth: MKT.maxContentWidth }}
           >
             <motion.div
               className="mx-auto w-full text-center"
@@ -97,14 +81,14 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
             >
               <p
                 className="font-mono text-[12px] font-medium uppercase tracking-[0.14em]"
-                style={{ color: T.textSecondary }}
+                style={{ color: MKT.textSecondary }}
               >
                 Real estate workspace
               </p>
 
               <h1
                 className="mt-4 font-sans text-[2rem] font-medium leading-[1.1] tracking-[-0.02em] sm:mt-6 sm:text-5xl lg:text-[3.5rem] lg:leading-[1.08]"
-                style={{ color: T.textPrimary }}
+                style={{ color: MKT.textPrimary }}
               >
                 Your entire business,
                 <br />
@@ -113,7 +97,7 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
 
               <p
                 className="mx-auto mt-4 max-w-lg text-base font-normal leading-[1.6] sm:mt-6"
-                style={{ color: T.textSecondary }}
+                style={{ color: MKT.textSecondary }}
               >
                 Listings, leads, research, and deals — finally in one place. Stop juggling
                 spreadsheets, forms, and five different apps.
@@ -122,18 +106,19 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
               <div className="mt-6 sm:mt-8">
                 <Link href="/auth/signup" className="inline-block w-full sm:w-auto">
                   <span
-                    className="group inline-flex w-full items-center justify-center gap-2 px-8 py-3.5 text-base font-medium text-white transition-opacity hover:opacity-90 sm:w-auto"
+                    className="group inline-flex w-full items-center justify-center gap-2 px-8 py-3.5 text-base font-medium transition-opacity hover:opacity-90 sm:w-auto"
                     style={{
-                      backgroundColor: T.accent,
-                      borderRadius: '10px',
-                      boxShadow: SHADOW,
+                      backgroundColor: MKT.accent,
+                      color: MKT.accentForeground,
+                      borderRadius: MKT.radius.md,
+                      boxShadow: MKT.shadow,
                     }}
                   >
                     Start free trial
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                   </span>
                 </Link>
-                <p className="mt-3 text-sm leading-[1.6]" style={{ color: T.textSecondary }}>
+                <p className="mt-3 text-sm leading-[1.6]" style={{ color: MKT.textSecondary }}>
                   7 days free · No setup fees · Cancel anytime
                 </p>
               </div>
@@ -143,13 +128,13 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
               className="relative mt-8 w-full min-w-0 max-w-[820px] sm:mt-10 lg:mt-12 xl:max-w-[880px]"
               style={
                 reduced
-                  ? { borderRadius: '16px', boxShadow: SHADOW }
+                  ? { borderRadius: MKT.radius.lg, boxShadow: MKT.shadow }
                   : {
                       opacity: productOpacity,
                       y: productTranslateY,
                       scale: productScale,
-                      borderRadius: '16px',
-                      boxShadow: SHADOW,
+                      borderRadius: MKT.radius.lg,
+                      boxShadow: MKT.shadow,
                     }
               }
             >
@@ -181,19 +166,19 @@ function HeroTreatmentLayer({
         className="absolute inset-0"
         style={{
           background: `
-            radial-gradient(ellipse 80% 55% at 50% 40%, ${T.accentMuted}33 0%, transparent 70%),
-            linear-gradient(180deg, ${T.background} 0%, ${T.accentMuted}22 100%)
+            radial-gradient(ellipse 80% 55% at 50% 40%, ${MKT.accentMuted}33 0%, transparent 70%),
+            linear-gradient(180deg, ${MKT.background} 0%, ${MKT.accentMuted}22 100%)
           `,
         }}
       />
       <div
         className="absolute inset-0 opacity-[0.35]"
         style={{
-          backgroundImage: `radial-gradient(circle, ${T.textPrimary}0A 0.6px, transparent 0.7px)`,
+          backgroundImage: `radial-gradient(circle, ${MKT.textPrimary}0A 0.6px, transparent 0.7px)`,
           backgroundSize: '12px 12px',
         }}
       />
-      <div className="absolute inset-x-0 bottom-0 h-px" style={{ backgroundColor: T.border }} />
+      <div className="absolute inset-x-0 bottom-0 h-px" style={{ backgroundColor: MKT.border }} />
     </motion.div>
   );
 }
