@@ -4,7 +4,6 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import CinematicHeroSection from '@/components/home/CinematicHeroSection';
 import LandingNav from '@/components/home/LandingNav';
-import LandingIntegrationsStrip from '@/components/home/LandingIntegrationsStrip';
 import LandingShowcaseCarousel from '@/components/home/LandingShowcaseCarousel';
 import LandingTrustSection from '@/components/home/LandingTrustSection';
 import LandingFAQSection from '@/components/home/LandingFAQSection';
@@ -49,7 +48,6 @@ export default function HomePageClient() {
     >
       <LandingNav heroRef={heroRef} />
       <CinematicHeroSection sectionRef={heroRef} />
-      <LandingIntegrationsStrip />
       <LandingShowcaseCarousel />
       <LandingTrustSection />
       <LandingFAQSection />
