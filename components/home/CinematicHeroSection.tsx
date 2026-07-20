@@ -18,7 +18,8 @@ const T = {
   surface: '#FFFFFF',
   textPrimary: '#1A1A18',
   textSecondary: '#6B6862',
-  accent: '#2F3A2E',
+  accent: '#D9ED41',
+  accentForeground: '#18181B',
   accentMuted: '#B8C4B4',
   border: '#E4E2DC',
 } as const;

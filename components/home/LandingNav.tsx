@@ -72,8 +72,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
-                className="whitespace-nowrap rounded-[10px] px-3 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90 sm:px-4 sm:py-2.5 sm:text-sm"
-                style={{ backgroundColor: '#2F3A2E' }}
+                className="mkt-cta whitespace-nowrap rounded-[10px] px-3 py-2 text-xs font-medium transition-opacity hover:opacity-90 sm:px-4 sm:py-2.5 sm:text-sm"
               >
                 Start free trial
               </motion.button>
