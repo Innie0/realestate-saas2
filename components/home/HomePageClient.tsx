@@ -7,6 +7,7 @@ import CinematicHeroSection from '@/components/home/CinematicHeroSection';
 import LandingNav from '@/components/home/LandingNav';
 import LandingShowcaseCarousel from '@/components/home/LandingShowcaseCarousel';
 import LandingTrustSection from '@/components/home/LandingTrustSection';
+import LandingScrollSurface from '@/components/home/LandingScrollSurface';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, ArrowRight, ChevronDown, Star } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
@@ -120,17 +121,18 @@ export default function HomePageClient() {
   }, [router]);
 
   return (
-    <div className="marketing-root min-h-screen bg-[#F5F5F5] text-gray-900 overflow-x-hidden font-sans">
+    <div className="marketing-root min-h-screen text-gray-900 overflow-x-hidden font-sans">
 
       <LandingNav heroRef={heroRef} />
 
       <CinematicHeroSection sectionRef={heroRef} />
 
-      <LandingShowcaseCarousel />
-      <LandingTrustSection />
+      <LandingScrollSurface>
+        <LandingShowcaseCarousel />
+        <LandingTrustSection />
 
-      {/* ── FAQ ────────────────────────────────────────────────────────── */}
-      <section className="relative z-10 bg-[#F5F5F5] py-24 lg:py-32">
+        {/* ── FAQ ────────────────────────────────────────────────────────── */}
+        <section className="relative z-10 border-t border-gray-200/80 bg-white py-24 lg:py-32">
         <div className="mx-auto max-w-3xl px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Frequently asked questions</h2>
@@ -141,7 +143,7 @@ export default function HomePageClient() {
       </section>
 
       {/* ── Pricing ────────────────────────────────────────────────────── */}
-      <section className="relative z-10 py-24 lg:py-32 border-t border-gray-200">
+      <section className="relative z-10 border-t border-gray-200/80 py-24 lg:py-32">
         <div className="mx-auto max-w-5xl px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -223,7 +225,7 @@ export default function HomePageClient() {
                         : 'bg-gray-100 text-gray-900 border border-gray-300 hover:bg-gray-200'
                     }`}
                   >
-                    Start Free Trial
+                    Start free trial
                   </motion.button>
                 </Link>
 
@@ -241,7 +243,7 @@ export default function HomePageClient() {
             transition={{ duration: 0.5, delay: 0.35 }}
             className="mt-8 text-center text-sm text-gray-600"
           >
-            <Link href="/pricing#compare" className="font-medium text-gray-900 hover:text-brand-600 transition-colors">
+            <Link href="/pricing#compare" className="font-medium text-gray-900 hover:text-gray-900/70 transition-colors">
               Compare all features →
             </Link>
           </motion.p>
@@ -259,7 +261,7 @@ export default function HomePageClient() {
       </section>
 
       {/* ── Footer ─────────────────────────────────────────────────────── */}
-      <footer className="relative z-10 border-t border-gray-200 bg-[#F5F5F5]/20 backdrop-blur-sm">
+      <footer className="relative z-10 border-t border-gray-200/80">
         <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
           <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
             <Link
@@ -280,9 +282,9 @@ export default function HomePageClient() {
               </nav>
               <Link
                 href="/auth/signup"
-                className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors md:justify-end"
+                className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-gray-900 hover:text-gray-700 transition-colors md:justify-end"
               >
-                Start your free trial
+                Start free trial
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
               <p className="mt-4 text-sm text-gray-700">© 2026 Oikaro. All rights reserved.</p>
@@ -290,6 +292,7 @@ export default function HomePageClient() {
           </div>
         </div>
       </footer>
+      </LandingScrollSurface>
     </div>
   );
 }

@@ -38,7 +38,7 @@ function ShowcaseSlideDetails({ slide, reduced }: { slide: ShowcaseSlide; reduce
           <div className="mt-5">
             <Link href="/auth/signup">
               <span className="group/btn mkt-cta inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold">
-                Get Started
+                Start free trial
                 <CtaArrow className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5" />
               </span>
             </Link>
@@ -82,7 +82,7 @@ function ShowcaseSlideRail({
                   <button
                     type="button"
                     onClick={() => onSelect(i)}
-                    className="group w-full rounded-xl py-3 text-left transition-colors hover:bg-white/60 lg:py-3.5"
+                    className="group w-full rounded-xl py-3 text-left transition-colors hover:bg-white/50 lg:py-3.5"
                     aria-current={isActive ? 'true' : undefined}
                   >
                     <p
@@ -120,7 +120,7 @@ export default function LandingShowcaseCarousel() {
   const slide = SHOWCASE_SLIDES[active];
 
   return (
-    <section className="relative z-10 overflow-hidden bg-[#F5F5F5] py-16 sm:py-24 lg:py-32">
+    <section className="relative z-10 overflow-hidden py-16 sm:py-24 lg:py-32">
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={reduced ? false : { opacity: 0, y: 28 }}
@@ -129,7 +129,7 @@ export default function LandingShowcaseCarousel() {
           transition={{ duration: 0.6 }}
           className="mx-auto mb-14 max-w-3xl text-center lg:mb-16"
         >
-          <p className="mb-4 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-600">
+          <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-600">
             {SHOWCASE_NARRATIVE.eyebrow}
           </p>
           <h2 className="text-3xl font-semibold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl lg:leading-[1.12]">

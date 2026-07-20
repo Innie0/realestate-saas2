@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, ChevronRight } from 'lucide-react';
 import { INTEGRATIONS, TESTIMONIALS } from '@/lib/landing-showcase';
 import { IntegrationLogo } from '@/components/home/IntegrationLogos';
+import LandingManifestoBand from '@/components/home/LandingManifestoBand';
 import { useMotionReduced } from '@/lib/motion';
 
 function TestimonialCarousel() {
@@ -29,7 +30,7 @@ function TestimonialCarousel() {
   }, [goNext, reduced]);
 
   return (
-    <div className="border-t border-gray-200 bg-white py-16 sm:py-20 lg:py-24">
+    <div className="border-t border-gray-200/80 bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         {/* Progress + navigation */}
         <div className="mb-10 sm:mb-12">
@@ -120,11 +121,11 @@ export default function LandingTrustSection() {
   const reduced = useMotionReduced();
 
   return (
-    <section className="relative z-10 bg-[#F5F5F5]">
+    <section className="relative z-10">
       <TestimonialCarousel />
 
       {/* Integrations */}
-      <div className="border-t border-gray-200 py-20 lg:py-24">
+      <div className="border-t border-gray-200/80 py-20 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={reduced ? false : { opacity: 0, y: 20 }}
@@ -133,7 +134,7 @@ export default function LandingTrustSection() {
             transition={{ duration: 0.5 }}
             className="mb-12 text-center"
           >
-            <p className="mb-4 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-600">
+            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-600">
               Integrations
             </p>
             <h2 className="text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl lg:text-4xl">
@@ -165,26 +166,7 @@ export default function LandingTrustSection() {
         </div>
       </div>
 
-      {/* Marquee */}
-      <div className="relative overflow-hidden border-t border-gray-200 py-10 pb-20 sm:pb-24">
-        {reduced ? (
-          <p className="mx-auto max-w-3xl px-6 text-center text-lg font-medium tracking-tight text-gray-800">
-            Agents use Oikaro to win more listings, capture every lead, and close with confidence — all from one AI-powered workspace.
-          </p>
-        ) : (
-          <div className="animate-marquee flex whitespace-nowrap">
-            {[0, 1].map((copy) => (
-              <p
-                key={copy}
-                aria-hidden={copy === 1}
-                className="mx-8 shrink-0 text-lg font-medium tracking-tight text-gray-800 sm:text-xl"
-              >
-                Agents use Oikaro to win more listings, capture every lead, and close with confidence — all from one AI-powered workspace.&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;
-              </p>
-            ))}
-          </div>
-        )}
-      </div>
+      <LandingManifestoBand />
     </section>
   );
 }

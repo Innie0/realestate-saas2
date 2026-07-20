@@ -43,7 +43,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
       className={`fixed inset-x-0 top-0 z-[60] transition-[background-color,border-color,box-shadow] duration-300 ease-out ${
         showTransparentNav
           ? 'border-b border-transparent bg-transparent'
-          : 'border-b border-gray-200 bg-[#F5F5F5] shadow-sm'
+          : 'border-b border-gray-200/80 bg-[#fffcf8]/95 shadow-sm backdrop-blur-sm'
       }`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -81,8 +81,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
                     : 'mkt-cta rounded-full'
                 }`}
               >
-                <span className="sm:hidden">Start</span>
-                <span className="hidden sm:inline">Get Started</span>
+                Start free trial
               </motion.button>
             </Link>
           </div>

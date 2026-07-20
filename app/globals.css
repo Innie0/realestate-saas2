@@ -81,12 +81,15 @@
     stroke-width: 1.75;
   }
 
-  /* Marketing accent — lime chartreuse, used sparingly on CTAs & highlights only */
+  /* Marketing surfaces — scroll white → warm sand below hero */
   .marketing-root {
     --mkt-accent: #d9ed41;
     --mkt-accent-hover: #c9dd38;
     --mkt-accent-foreground: #18181b;
     --mkt-accent-muted: rgba(217, 237, 65, 0.18);
+    --mkt-white: #ffffff;
+    --mkt-sand: #ede6d6;
+    --mkt-sand-deep: #e3d9c8;
   }
 }
 

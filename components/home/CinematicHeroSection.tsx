@@ -33,7 +33,7 @@ export default function CinematicHeroSection({ sectionRef }: CinematicHeroSectio
       className="relative min-h-[100svh] overflow-hidden"
       style={{
         background:
-          'linear-gradient(180deg, #0a0a0a 0%, #0a0a0a 50%, #2a2a2a 72%, #F5F5F5 100%)',
+          'linear-gradient(180deg, #0a0a0a 0%, #0a0a0a 50%, #2a2a2a 72%, #ffffff 100%)',
       }}
     >
       <div className="relative z-10 flex min-h-[100svh] flex-col pt-16 sm:pt-20 md:pt-24">
