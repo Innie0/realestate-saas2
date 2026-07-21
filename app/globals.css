@@ -49,6 +49,74 @@
   --brand-800: #8a9638;
   --brand-900: #5a6224;
 
+  /* Semantic accents — dark-native tints (soft bg + readable text on dark surfaces).
+     Mid tones (400–600) stay vivid for dots/bars in both themes. */
+  --amber-50: #2a1f0c;
+  --amber-100: #3d2c10;
+  --amber-200: #6b4a18;
+  --amber-300: #b45309;
+  --amber-400: #fbbf24;
+  --amber-500: #f59e0b;
+  --amber-600: #fbbf24;
+  --amber-700: #fcd34d;
+  --amber-800: #fde68a;
+  --amber-900: #fef3c7;
+
+  --teal-50: #0c221f;
+  --teal-100: #123530;
+  --teal-200: #1a5c52;
+  --teal-300: #0f766e;
+  --teal-400: #2dd4bf;
+  --teal-500: #14b8a6;
+  --teal-600: #2dd4bf;
+  --teal-700: #5eead4;
+  --teal-800: #99f6e4;
+  --teal-900: #ccfbf1;
+
+  --emerald-50: #0c2218;
+  --emerald-100: #123524;
+  --emerald-200: #1a5c3a;
+  --emerald-300: #047857;
+  --emerald-400: #34d399;
+  --emerald-500: #10b981;
+  --emerald-600: #34d399;
+  --emerald-700: #6ee7b7;
+  --emerald-800: #a7f3d0;
+  --emerald-900: #d1fae5;
+
+  --rose-50: #2a1218;
+  --rose-100: #3d1822;
+  --rose-200: #6b2436;
+  --rose-300: #be123c;
+  --rose-400: #fb7185;
+  --rose-500: #f43f5e;
+  --rose-600: #fb7185;
+  --rose-700: #fda4af;
+  --rose-800: #fecdd3;
+  --rose-900: #ffe4e6;
+
+  --sky-50: #0c1a2a;
+  --sky-100: #12263d;
+  --sky-200: #1a3f66;
+  --sky-300: #0369a1;
+  --sky-400: #38bdf8;
+  --sky-500: #0ea5e9;
+  --sky-600: #38bdf8;
+  --sky-700: #7dd3fc;
+  --sky-800: #bae6fd;
+  --sky-900: #e0f2fe;
+
+  --champagne-50: #241c12;
+  --champagne-100: #352814;
+  --champagne-200: #5c421e;
+  --champagne-300: #a87c43;
+  --champagne-400: #c29656;
+  --champagne-500: #a87c43;
+  --champagne-600: #d3b077;
+  --champagne-700: #e3cda2;
+  --champagne-800: #efe2c8;
+  --champagne-900: #f8f2e6;
+
   /* Marketing aliases */
   --mkt-background: var(--canvas);
   --mkt-surface: var(--surface);
@@ -96,6 +164,73 @@
   --brand-700: #000000;
   --brand-800: #000000;
   --brand-900: #000000;
+
+  /* Semantic accents — classic light-console tints */
+  --amber-50: #fef6e7;
+  --amber-100: #f5e6c8;
+  --amber-200: #fde68a;
+  --amber-300: #fcd34d;
+  --amber-400: #fbbf24;
+  --amber-500: #f59e0b;
+  --amber-600: #d97706;
+  --amber-700: #b45309;
+  --amber-800: #92400e;
+  --amber-900: #78350f;
+
+  --teal-50: #e6f7f4;
+  --teal-100: #ccfbf1;
+  --teal-200: #99f6e4;
+  --teal-300: #5eead4;
+  --teal-400: #2dd4bf;
+  --teal-500: #14b8a6;
+  --teal-600: #0d9488;
+  --teal-700: #0f766e;
+  --teal-800: #115e59;
+  --teal-900: #134e4a;
+
+  --emerald-50: #ecfdf5;
+  --emerald-100: #d1fae5;
+  --emerald-200: #a7f3d0;
+  --emerald-300: #6ee7b7;
+  --emerald-400: #34d399;
+  --emerald-500: #10b981;
+  --emerald-600: #059669;
+  --emerald-700: #047857;
+  --emerald-800: #065f46;
+  --emerald-900: #064e3b;
+
+  --rose-50: #fff1f2;
+  --rose-100: #ffe4e6;
+  --rose-200: #fecdd3;
+  --rose-300: #fda4af;
+  --rose-400: #fb7185;
+  --rose-500: #f43f5e;
+  --rose-600: #e11d48;
+  --rose-700: #be123c;
+  --rose-800: #9f1239;
+  --rose-900: #881337;
+
+  --sky-50: #f0f9ff;
+  --sky-100: #e0f2fe;
+  --sky-200: #bae6fd;
+  --sky-300: #7dd3fc;
+  --sky-400: #38bdf8;
+  --sky-500: #0ea5e9;
+  --sky-600: #0284c7;
+  --sky-700: #0369a1;
+  --sky-800: #075985;
+  --sky-900: #0c4a6e;
+
+  --champagne-50: #f8f2e6;
+  --champagne-100: #efe2c8;
+  --champagne-200: #e3cda2;
+  --champagne-300: #d3b077;
+  --champagne-400: #c29656;
+  --champagne-500: #a87c43;
+  --champagne-600: #896237;
+  --champagne-700: #6a4c2d;
+  --champagne-800: #6a4c2d;
+  --champagne-900: #4a351f;
 }
 
 /* Light dashboard: scrollbars + autofill match the light console */

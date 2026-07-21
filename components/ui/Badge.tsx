@@ -17,14 +17,14 @@ const variantStyles: Record<BadgeVariant, string> = {
   hot: 'bg-rose-50 text-rose-700 border-rose-200',
   warm: 'bg-amber-50 text-amber-700 border-amber-200',
   cold: 'bg-sky-50 text-sky-700 border-sky-200',
-  pro: 'bg-champagne-50 text-champagne-700 border-champagne-200',
+  pro: 'bg-brand-100 text-gray-900 border-brand-200',
   success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   neutral: 'bg-gray-50 text-gray-600 border-gray-200',
-  // Console system: solid graphite pill, no border (e.g. "Under contract").
+  // Solid brand-tint pill, no border (e.g. "Under contract").
   graphite: 'bg-brand-100 text-gray-900 border-transparent',
-  // Console system: teal "active" pill.
+  // Teal "active" pill — theme-aware via CSS vars.
   info: 'bg-teal-50 text-teal-700 border-teal-200',
-};
+}
 
 interface BadgeProps {
   children: React.ReactNode;
