@@ -130,7 +130,8 @@
   --mkt-mock-surface: #ffffff;
 }
 
-/* Light palette — product mocks (.theme-light) + dashboard light mode */
+/* Light chrome only — brand (lime) + status colors inherit from :root so
+   dashboard light mode matches dark-mode buttons and bubbles. */
 .theme-light {
   color-scheme: light;
   --canvas: #fafafa;
@@ -138,7 +139,8 @@
   --sidebar: #f5f5f4;
   --ink: #1c1c1a;
   --border: #e8e8e6;
-  --brand-foreground: #ffffff;
+  /* Dark text on lime CTAs (same as dark theme) */
+  --brand-foreground: #141412;
 
   --gray-50: #fafafa;
   --gray-100: #f5f5f4;
@@ -154,83 +156,17 @@
   --gray-900: #18181b;
   --gray-950: #000000;
 
-  --brand-50: #fafafa;
-  --brand-100: #ececea;
-  --brand-200: #e7e7e4;
-  --brand-300: #c9c9c4;
-  --brand-400: #4a4a4e;
-  --brand-500: #1c1c1a;
-  --brand-600: #000000;
-  --brand-700: #000000;
-  --brand-800: #000000;
-  --brand-900: #000000;
-
-  /* Semantic accents — classic light-console tints */
-  --amber-50: #fef6e7;
-  --amber-100: #f5e6c8;
-  --amber-200: #fde68a;
-  --amber-300: #fcd34d;
-  --amber-400: #fbbf24;
-  --amber-500: #f59e0b;
-  --amber-600: #d97706;
-  --amber-700: #b45309;
-  --amber-800: #92400e;
-  --amber-900: #78350f;
-
-  --teal-50: #e6f7f4;
-  --teal-100: #ccfbf1;
-  --teal-200: #99f6e4;
-  --teal-300: #5eead4;
-  --teal-400: #2dd4bf;
-  --teal-500: #14b8a6;
-  --teal-600: #0d9488;
-  --teal-700: #0f766e;
-  --teal-800: #115e59;
-  --teal-900: #134e4a;
-
-  --emerald-50: #ecfdf5;
-  --emerald-100: #d1fae5;
-  --emerald-200: #a7f3d0;
-  --emerald-300: #6ee7b7;
-  --emerald-400: #34d399;
-  --emerald-500: #10b981;
-  --emerald-600: #059669;
-  --emerald-700: #047857;
-  --emerald-800: #065f46;
-  --emerald-900: #064e3b;
-
-  --rose-50: #fff1f2;
-  --rose-100: #ffe4e6;
-  --rose-200: #fecdd3;
-  --rose-300: #fda4af;
-  --rose-400: #fb7185;
-  --rose-500: #f43f5e;
-  --rose-600: #e11d48;
-  --rose-700: #be123c;
-  --rose-800: #9f1239;
-  --rose-900: #881337;
-
-  --sky-50: #f0f9ff;
-  --sky-100: #e0f2fe;
-  --sky-200: #bae6fd;
-  --sky-300: #7dd3fc;
-  --sky-400: #38bdf8;
-  --sky-500: #0ea5e9;
-  --sky-600: #0284c7;
-  --sky-700: #0369a1;
-  --sky-800: #075985;
-  --sky-900: #0c4a6e;
-
-  --champagne-50: #f8f2e6;
-  --champagne-100: #efe2c8;
-  --champagne-200: #e3cda2;
-  --champagne-300: #d3b077;
-  --champagne-400: #c29656;
-  --champagne-500: #a87c43;
-  --champagne-600: #896237;
-  --champagne-700: #6a4c2d;
-  --champagne-800: #6a4c2d;
-  --champagne-900: #4a351f;
+  /* Soft lime tints for active nav / chips on light surfaces */
+  --brand-50: #f7fce8;
+  --brand-100: #eef8c8;
+  --brand-200: #e0f29a;
+  --brand-300: #6b7a2e;
+  --brand-400: #c5d84f;
+  --brand-500: #e4f76c;
+  --brand-600: #d8eb5a;
+  --brand-700: #b8c94a;
+  --brand-800: #8a9638;
+  --brand-900: #5a6224;
 }
 
 /* Light dashboard: scrollbars + autofill match the light console */
