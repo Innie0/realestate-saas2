@@ -121,7 +121,7 @@ export default function OpenHouseSignInForm({ openHouseId }: { openHouseId: stri
       <button
         type="submit"
         disabled={submitting || !name.trim() || (!email.trim() && !phone.trim())}
-        className="mkt-cta w-full rounded-xl py-3 text-sm font-semibold transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+        className="w-full rounded-xl bg-mkt-accent py-3 text-sm font-semibold text-mkt-accent-foreground transition-colors hover:bg-mkt-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
       >
         {submitting ? 'Signing in...' : 'Sign In'}
       </button>
