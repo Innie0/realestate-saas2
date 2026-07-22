@@ -4,7 +4,6 @@ import { useRef } from 'react';
 import { ensureGsapRegistered, gsap, landingRevealDefaults, useGSAP } from '@/lib/gsap-config';
 import { LANDING_HERO_SCREENSHOT } from '@/lib/landing-features';
 import { splitWords } from '@/lib/landing-motion';
-import { mktVar } from '@/lib/mkt-css';
 import { useMotionReduced } from '@/lib/motion';
 import MarketingButton from '@/components/marketing/MarketingButton';
 import ProductScreenshot from '@/components/home/ProductScreenshot';
@@ -63,7 +62,6 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
       if (reduced || !section || !root) return;
 
       const visual = root.querySelector('[data-hero-visual]');
-      const glow = section.querySelector('[data-hero-glow]');
       if (!visual) return;
 
       const parallaxVisual = gsap.to(visual, {
@@ -77,25 +75,9 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
         },
       });
 
-      let parallaxGlow: gsap.core.Tween | undefined;
-      if (glow) {
-        parallaxGlow = gsap.to(glow, {
-          y: 100,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: section,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 0.8,
-          },
-        });
-      }
-
       return () => {
         parallaxVisual.scrollTrigger?.kill();
         parallaxVisual.kill();
-        parallaxGlow?.scrollTrigger?.kill();
-        parallaxGlow?.kill();
       };
     },
     { dependencies: [sectionRef, reduced] },
@@ -106,15 +88,6 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
       ref={sectionRef as React.RefObject<HTMLElement>}
       className="relative flex min-h-[100dvh] flex-col overflow-hidden bg-mkt-background"
     >
-      <div
-        data-hero-glow
-        className="pointer-events-none absolute inset-x-0 top-0 h-[min(620px,70vh)] opacity-50"
-        aria-hidden
-        style={{
-          background: `radial-gradient(ellipse 85% 65% at 50% -5%, ${mktVar('--mkt-hero-glow')} 0%, transparent 72%)`,
-        }}
-      />
-
       <div
         ref={rootRef}
         className="relative mx-auto flex w-full max-w-mkt-content flex-1 flex-col justify-center px-5 pb-16 pt-28 sm:px-8 sm:pb-20 sm:pt-32 lg:pt-36"

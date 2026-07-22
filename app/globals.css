@@ -124,9 +124,9 @@
   --mkt-text-primary: var(--gray-950);
   --mkt-text-secondary: var(--gray-600);
   --mkt-border: var(--border);
-  --mkt-accent: var(--brand-500);
-  --mkt-accent-hover: var(--brand-600);
-  --mkt-accent-foreground: var(--brand-foreground);
+  --mkt-accent: #ffffff;
+  --mkt-accent-hover: #e8e8e8;
+  --mkt-accent-foreground: #0a0a0a;
   --mkt-muted: var(--gray-500);
   --mkt-mock-surface: #ffffff;
   --mkt-browser-dot: var(--gray-400);
