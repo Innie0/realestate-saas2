@@ -3,10 +3,13 @@
 import { useRef } from 'react';
 import { ensureGsapRegistered, gsap, landingRevealDefaults, useGSAP } from '@/lib/gsap-config';
 import { LANDING_HERO_SCREENSHOT } from '@/lib/landing-features';
+import { splitWords } from '@/lib/landing-motion';
 import { MKT } from '@/lib/marketing-design';
 import { useMotionReduced } from '@/lib/motion';
 import MarketingButton from '@/components/marketing/MarketingButton';
 import ProductScreenshot from '@/components/home/ProductScreenshot';
+
+const HEADLINE = 'Run listings, leads, and deals from one calm workspace';
 
 type LandingHeroProps = {
   sectionRef: React.RefObject<HTMLElement | null>;
@@ -16,30 +19,41 @@ ensureGsapRegistered();
 
 export default function LandingHero({ sectionRef }: LandingHeroProps) {
   const reduced = useMotionReduced();
-  const copyRef = useRef<HTMLDivElement>(null);
-  const visualRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
-      if (reduced) return;
-      const tl = gsap.timeline({ defaults: { ease: landingRevealDefaults.ease } });
-      if (copyRef.current) {
-        tl.from(copyRef.current.querySelectorAll('[data-hero-part]'), {
-          opacity: 0,
-          y: 28,
-          duration: 0.85,
-          stagger: 0.1,
-        });
-      }
-      if (visualRef.current) {
-        tl.from(
-          visualRef.current,
-          { opacity: 0, y: 36, duration: 1, ease: landingRevealDefaults.ease },
-          '-=0.45',
-        );
-      }
+      if (reduced || !rootRef.current) return;
+
+      const eyebrow = rootRef.current.querySelector('[data-hero-eyebrow]');
+      const words = rootRef.current.querySelectorAll('[data-hero-word]');
+      const subcopy = rootRef.current.querySelector('[data-hero-subcopy]');
+      const cta = rootRef.current.querySelector('[data-hero-cta]');
+      const visual = rootRef.current.querySelector('[data-hero-visual]');
+
+      gsap.set([eyebrow, subcopy, cta, visual], { autoAlpha: 0, y: 16 });
+      gsap.set(words, { y: '110%' });
+
+      const tl = gsap.timeline({
+        defaults: { ease: landingRevealDefaults.ease, duration: landingRevealDefaults.duration },
+      });
+
+      tl.to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.35 })
+        .to(
+          words,
+          {
+            y: '0%',
+            duration: 0.42,
+            stagger: 0.035,
+            ease: landingRevealDefaults.ease,
+          },
+          '-=0.1',
+        )
+        .to(subcopy, { autoAlpha: 1, y: 0, duration: 0.38 }, '-=0.12')
+        .to(cta, { autoAlpha: 1, y: 0, duration: 0.35 }, '-=0.2')
+        .to(visual, { autoAlpha: 1, y: 0, duration: 0.48 }, '-=0.25');
     },
-    { dependencies: [reduced] },
+    { scope: rootRef, dependencies: [reduced] },
   );
 
   return (
@@ -58,12 +72,13 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
       />
 
       <div
+        ref={rootRef}
         className="relative mx-auto px-5 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32 lg:pb-28 lg:pt-36"
         style={{ maxWidth: MKT.maxContentWidth }}
       >
-        <div ref={copyRef} className="mx-auto max-w-3xl text-center">
+        <div className="mx-auto max-w-3xl text-center">
           <p
-            data-hero-part
+            data-hero-eyebrow
             className="mb-5 text-xs font-medium uppercase tracking-[0.14em]"
             style={{ color: MKT.textSecondary }}
           >
@@ -71,15 +86,21 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
           </p>
 
           <h1
-            data-hero-part
             className="font-display text-[2.35rem] font-medium leading-[1.08] tracking-[-0.03em] sm:text-5xl lg:text-[3.5rem]"
             style={{ color: MKT.textPrimary }}
           >
-            Run listings, leads, and deals from one calm workspace
+            {splitWords(HEADLINE).map((word, index, arr) => (
+              <span key={`${word}-${index}`} className="inline-block overflow-hidden align-top">
+                <span data-hero-word className="inline-block">
+                  {word}
+                  {index < arr.length - 1 ? '\u00A0' : ''}
+                </span>
+              </span>
+            ))}
           </h1>
 
           <p
-            data-hero-part
+            data-hero-subcopy
             className="mx-auto mt-6 max-w-xl text-base leading-[1.65] sm:text-[17px]"
             style={{ color: MKT.textSecondary }}
           >
@@ -87,7 +108,10 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
             so you spend less time switching tools and more time with clients.
           </p>
 
-          <div data-hero-part className="mt-10 flex flex-col items-center gap-3">
+          <div
+            data-hero-cta
+            className="mt-10 flex flex-col items-center gap-3"
+          >
             <MarketingButton href="/auth/signup" size="lg">
               Start your 7-day free trial
             </MarketingButton>
@@ -97,7 +121,10 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
           </div>
         </div>
 
-        <div ref={visualRef} className="relative mx-auto mt-14 w-full max-w-[920px] sm:mt-16 lg:mt-20">
+        <div
+          data-hero-visual
+          className="relative mx-auto mt-14 w-full max-w-[920px] sm:mt-16 lg:mt-20"
+        >
           <ProductScreenshot
             src={LANDING_HERO_SCREENSHOT.src}
             alt={LANDING_HERO_SCREENSHOT.alt}

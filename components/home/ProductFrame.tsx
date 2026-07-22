@@ -2,7 +2,8 @@
 
 import { useRef } from 'react';
 import clsx from 'clsx';
-import { ensureGsapRegistered, gsap, useGSAP } from '@/lib/gsap-config';
+import { ensureGsapRegistered, useGSAP } from '@/lib/gsap-config';
+import { bindHoverMotion } from '@/lib/landing-motion';
 import { MKT } from '@/lib/marketing-design';
 import { useMotionReduced } from '@/lib/motion';
 
@@ -22,21 +23,7 @@ export default function ProductFrame({ children, className = '', interactive = t
   useGSAP(
     () => {
       if (!interactive || reduced || !ref.current) return;
-      const el = ref.current;
-
-      const onEnter = () => {
-        gsap.to(el, { y: -4, duration: 0.45, ease: 'power2.out' });
-      };
-      const onLeave = () => {
-        gsap.to(el, { y: 0, duration: 0.45, ease: 'power2.out' });
-      };
-
-      el.addEventListener('mouseenter', onEnter);
-      el.addEventListener('mouseleave', onLeave);
-      return () => {
-        el.removeEventListener('mouseenter', onEnter);
-        el.removeEventListener('mouseleave', onLeave);
-      };
+      return bindHoverMotion(ref.current, { scale: 1.008, y: -4, duration: 0.32 });
     },
     { scope: ref, dependencies: [interactive, reduced] },
   );

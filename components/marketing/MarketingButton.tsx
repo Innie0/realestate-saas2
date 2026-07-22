@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useRef } from 'react';
 import clsx from 'clsx';
-import { ensureGsapRegistered, gsap, useGSAP } from '@/lib/gsap-config';
+import { ensureGsapRegistered, useGSAP } from '@/lib/gsap-config';
+import { bindHoverMotion } from '@/lib/landing-motion';
 import { useMotionReduced } from '@/lib/motion';
 
 type MarketingButtonProps = {
@@ -31,41 +32,13 @@ export default function MarketingButton({
   useGSAP(
     () => {
       if (reduced || !ref.current) return;
-      const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-      if (!finePointer) return;
-
-      const el = ref.current;
-
-      const onEnter = () => {
-        gsap.to(el, { scale: 1.02, duration: 0.25, ease: 'power2.out' });
-      };
-      const onLeave = () => {
-        gsap.to(el, { scale: 1, duration: 0.25, ease: 'power2.out' });
-      };
-      const onDown = () => {
-        gsap.to(el, { scale: 0.98, duration: 0.12, ease: 'power2.out' });
-      };
-      const onUp = () => {
-        gsap.to(el, { scale: 1.02, duration: 0.12, ease: 'power2.out' });
-      };
-
-      el.addEventListener('mouseenter', onEnter);
-      el.addEventListener('mouseleave', onLeave);
-      el.addEventListener('mousedown', onDown);
-      el.addEventListener('mouseup', onUp);
-
-      return () => {
-        el.removeEventListener('mouseenter', onEnter);
-        el.removeEventListener('mouseleave', onLeave);
-        el.removeEventListener('mousedown', onDown);
-        el.removeEventListener('mouseup', onUp);
-      };
+      return bindHoverMotion(ref.current, { scale: 1.02, y: 0, duration: 0.25 });
     },
     { scope: ref, dependencies: [reduced] },
   );
 
   const base =
-    'inline-flex items-center justify-center gap-2 font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mkt-text-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--mkt-background)]';
+    'inline-flex items-center justify-center gap-2 font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mkt-text-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--mkt-background)] will-change-transform';
 
   const sizes = {
     md: 'h-10 px-5 text-sm',
@@ -88,7 +61,7 @@ export default function MarketingButton({
     >
       {children}
       {showArrow ? (
-        <span aria-hidden className="text-[var(--mkt-text-secondary)] transition-transform group-hover:translate-x-0.5">
+        <span aria-hidden className="text-[var(--mkt-text-secondary)]">
           →
         </span>
       ) : null}

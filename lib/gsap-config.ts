@@ -14,11 +14,11 @@ export function ensureGsapRegistered() {
 
 export { gsap, ScrollTrigger, useGSAP };
 
-export const LANDING_EASE = 'power3.out';
+export const LANDING_EASE = 'power2.out';
 
 export const landingRevealDefaults = {
   opacity: 0,
-  y: 24,
-  duration: 0.75,
+  y: 14,
+  duration: 0.4,
   ease: LANDING_EASE,
 } as const;
