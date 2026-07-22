@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
 import LeadsSectionSwitcher from '@/components/leads/LeadsSectionSwitcher';
 import Button from '@/components/ui/Button';
-import Surface from '@/components/ui/Surface';
+import { Card } from '@/components/ui/Card';
 import Switch from '@/components/ui/Switch';
 import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
 import { useToast } from '@/components/providers/ToastProvider';
@@ -194,7 +194,7 @@ export default function BookingSettingsPage() {
 
       <div className="space-y-4">
         {/* Enable + link */}
-        <Surface flat padding="none" className="p-5">
+        <Card className="p-5">
           <div className="flex items-center justify-between gap-4">
             <div>
               <h3 className="text-[15px] font-semibold text-gray-900">Accept bookings</h3>
@@ -227,10 +227,10 @@ export default function BookingSettingsPage() {
               </button>
             </div>
           )}
-        </Surface>
+        </Card>
 
         {/* Availability */}
-        <Surface flat padding="none" className="p-5 space-y-4">
+        <Card className="p-5 space-y-4">
           <h3 className="text-[15px] font-semibold text-gray-900 flex items-center gap-2">
             <CalendarDays className="w-4 h-4 text-gray-700" strokeWidth={1.8} /> Available days
           </h3>
@@ -290,10 +290,10 @@ export default function BookingSettingsPage() {
               </select>
             </div>
           </div>
-        </Surface>
+        </Card>
 
         {/* Booking rules */}
-        <Surface flat padding="none" className="p-5 space-y-4">
+        <Card className="p-5 space-y-4">
           <h3 className="text-[15px] font-semibold text-gray-900 flex items-center gap-2">
             <Clock className="w-4 h-4 text-gray-700" strokeWidth={1.8} /> Booking rules
           </h3>
@@ -322,10 +322,10 @@ export default function BookingSettingsPage() {
               <p className="text-[11.5px] text-gray-600 mt-1">How far ahead leads can schedule</p>
             </div>
           </div>
-        </Surface>
+        </Card>
 
         {/* Location */}
-        <Surface flat padding="none" className="p-5 space-y-4">
+        <Card className="p-5 space-y-4">
           <h3 className="text-[15px] font-semibold text-gray-900 flex items-center gap-2">
             <MapPin className="w-4 h-4 text-gray-700" strokeWidth={1.8} /> Default location
           </h3>
@@ -339,7 +339,7 @@ export default function BookingSettingsPage() {
           <p className="text-[11.5px] text-gray-600">
             Shown to leads when booking. You can always update the exact property address later on the calendar event.
           </p>
-        </Surface>
+        </Card>
       </div>
     </DashboardPage>
   );

@@ -4,7 +4,7 @@ import { Client } from '@/types';
 import { Mail, Phone, Calendar, StickyNote, Bell, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import Surface from './ui/Surface';
+import { Card } from './ui/Card';
 import {
   STAGE_BADGE,
   getClientAvatarClass,
@@ -61,9 +61,8 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
 
   return (
     <Link href={`/dashboard/clients/${client.id}`} className="block h-full">
-      <Surface
-        flat
-        className="cursor-pointer relative h-full min-h-[260px] p-5 sm:p-[22px] transition-colors hover:border-gray-300"
+      <Card
+        className="cursor-pointer relative h-full min-h-[260px] p-5 sm:p-[22px] transition-colors hover:bg-muted/40"
       >
         <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
@@ -169,7 +168,7 @@ export default function ClientCard({ client, onAddNote, onAddReminder }: ClientC
           </button>
         </div>
       </div>
-      </Surface>
+      </Card>
     </Link>
   );
 }

@@ -11,7 +11,6 @@ import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
-import Surface from '@/components/ui/Surface';
 import Badge from '@/components/ui/Badge';
 import Modal from '@/components/ui/Modal';
 import { getTransactionStatusBadgeVariant } from '@/lib/transaction-status';
@@ -1321,7 +1320,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         <div className="space-y-5">
           {projectTab === 'overview' && (<>
               {/* Images section */}
-              <Surface flat className="p-5 sm:p-6">
+              <Card className="p-5 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-[15px] font-semibold text-gray-900">Property Images</h2>
                   <Button size="sm" onClick={handleImageUpload} disabled={isUploading}>
@@ -1388,10 +1387,10 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     </Button>
                   </div>
                 )}
-              </Surface>
+              </Card>
 
               {/* Property information */}
-              <Surface flat className="p-5 sm:p-6">
+              <Card className="p-5 sm:p-6">
                 <h2 className="text-[15px] font-semibold text-gray-900 mb-4">Property Information</h2>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -1432,13 +1431,13 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     </p>
                   </div>
                 </div>
-              </Surface>
+              </Card>
 
           </>)}
 
           {projectTab === 'ai_content' && (<>
               {/* AI-generated content */}
-              <Surface flat className="p-5 sm:p-6">
+              <Card className="p-5 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-[17px] font-semibold text-gray-900">AI-Generated Content</h2>
                   <Button 
@@ -1813,12 +1812,12 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     </p>
                   </div>
                 )}
-              </Surface>
+              </Card>
           </>)}
 
           {projectTab === 'linked' && (<>
           {/* Tasks & Events Section */}
-          <Surface flat className="p-5 sm:p-6">
+          <Card className="p-5 sm:p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[15px] font-semibold text-gray-900 flex items-center">
                   <Calendar className="w-4 h-4 mr-2 text-gray-600" />
@@ -1868,10 +1867,10 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   </Button>
                 </div>
               )}
-            </Surface>
+            </Card>
 
           {/* Transactions Section */}
-          <Surface flat className="p-5 sm:p-6">
+          <Card className="p-5 sm:p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[15px] font-semibold text-gray-900 flex items-center">
                   <FileText className="w-4 h-4 mr-2 text-gray-600" />
@@ -1942,7 +1941,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   </Button>
                 </div>
               )}
-            </Surface>
+            </Card>
           </>)}
         </div>
 

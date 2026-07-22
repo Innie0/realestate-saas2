@@ -1,8 +1,8 @@
 'use client';
 
+import { Card } from '@/components/ui/Card';
 import { useMemo, useState } from 'react';
 import { Loader2 } from 'lucide-react';
-import Surface from '@/components/ui/Surface';
 import { AD_TYPE_OPTIONS } from '@/lib/ads/ad-type-config';
 import type { PerformanceDashboardData } from '@/lib/ads/performance-types';
 import clsx from 'clsx';
@@ -104,23 +104,23 @@ export default function PerformanceDashboard({
             value: totals.costPerLead != null ? formatMoney(totals.costPerLead) : '—',
           },
         ].map((stat) => (
-          <Surface key={stat.label} flat padding="md" className="text-center sm:text-left">
+          <Card key={stat.label} className="p-5 sm:p-6 text-center sm:text-left">
             <p className="text-[10.5px] font-mono uppercase tracking-wide text-gray-600">
               {stat.label}
             </p>
             <p className="text-[15px] font-semibold text-gray-900 tabular-nums mt-0.5">
               {stat.value}
             </p>
-          </Surface>
+          </Card>
         ))}
       </div>
 
       {!hasAds ? (
-        <Surface flat padding="md">
+        <Card className="p-5 sm:p-6">
           <p className="text-[13px] text-gray-600">
             No published ads yet. Create and launch an ad to start tracking performance here.
           </p>
-        </Surface>
+        </Card>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-gray-200">
           <table className="min-w-full text-[13px]">

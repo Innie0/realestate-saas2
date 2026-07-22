@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { ArrowRight, Sparkles, X, Plus, Inbox, Search } from 'lucide-react';
-import Surface from '@/components/ui/Surface';
 import Button from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 
 const STEPS = [
   {
@@ -42,7 +42,7 @@ export default function GettingStartedPanel({ variant, onDismiss }: GettingStart
       : 'Your workspace is empty. Start with a listing, leads, or property research.';
 
   return (
-    <Surface flat padding="md" className="relative">
+    <Card className="p-5 sm:p-6 relative">
       <button
         type="button"
         onClick={onDismiss}
@@ -89,6 +89,6 @@ export default function GettingStartedPanel({ variant, onDismiss }: GettingStart
           Dismiss
         </Button>
       </div>
-    </Surface>
+    </Card>
   );
 }

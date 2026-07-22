@@ -4,8 +4,7 @@ import Link from 'next/link';
 import clsx from 'clsx';
 import useSWR from 'swr';
 import { Bell, Clock, Calendar, X, ArrowRight } from 'lucide-react';
-import Surface from './ui/Surface';
-import Card from './ui/Card';
+import { Card } from './ui/Card';
 
 export interface UpcomingItem {
   id: string;
@@ -294,10 +293,10 @@ export default function NotificationsPanel({ embedded = false, className }: Noti
 
   if (embedded) {
     return (
-      <Surface padding="md" className={className}>
+      <Card className={clsx('p-5 sm:p-6', className)}>
         {header}
         {listContent}
-      </Surface>
+      </Card>
     );
   }
 

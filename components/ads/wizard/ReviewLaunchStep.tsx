@@ -2,7 +2,7 @@
 
 import { Loader2, Megaphone } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import Surface from '@/components/ui/Surface';
+import { Card } from '@/components/ui/Card';
 import GooglePreviewCard from '@/components/ads/GooglePreviewCard';
 import AdPreviewMockup from '@/components/ads/AdPreviewMockup';
 import { getAdTypeLabel } from '@/lib/ads/ad-type-config';
@@ -67,7 +67,7 @@ export default function ReviewLaunchStep({
         )}
       </div>
 
-      <Surface flat padding="md" className="space-y-3">
+      <Card className="p-5 sm:p-6 space-y-3">
         <p className="text-label">Summary</p>
         <dl className="grid gap-2 text-[13px]">
           <div className="flex justify-between gap-4">
@@ -100,7 +100,7 @@ export default function ReviewLaunchStep({
             <dd className="font-medium text-gray-900 text-right">{getCtaLabel(draft.cta)}</dd>
           </div>
         </dl>
-      </Surface>
+      </Card>
 
       {wantsMeta && !metaConnected && (
         <p className="text-[12.5px] text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">

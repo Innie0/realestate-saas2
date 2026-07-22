@@ -1,7 +1,7 @@
 'use client';
 
+import { Card } from '@/components/ui/Card';
 import { ExternalLink, Loader2 } from 'lucide-react';
-import Surface from '@/components/ui/Surface';
 import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
 import { formatListingAddress, normalizeProjectImages } from '@/lib/listing-utils';
 import type { AdPromotion } from '@/lib/ads/types';
@@ -54,7 +54,7 @@ export default function ActivePromotionsPanel({ promotions, loading }: ActivePro
 
           return (
             <StaggerItem key={promo.id}>
-              <Surface flat padding="md">
+              <Card className="p-5 sm:p-6">
                 <div className="flex items-start gap-3">
                   <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                     {thumb ? (
@@ -96,7 +96,7 @@ export default function ActivePromotionsPanel({ promotions, loading }: ActivePro
                     )}
                   </div>
                 </div>
-              </Surface>
+              </Card>
             </StaggerItem>
           );
         })}

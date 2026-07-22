@@ -8,9 +8,9 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
 import Button from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
-import Surface from '@/components/ui/Surface';
 import { useToast } from '@/components/providers/ToastProvider';
 
 /**
@@ -119,7 +119,7 @@ export default function NewProjectPage() {
     >
         <form id="new-project-form" onSubmit={handleSubmit} className="space-y-5">
           {/* Basic information */}
-          <Surface padding="md">
+          <Card className="p-5 sm:p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic information</h2>
             
             <div className="space-y-4">
@@ -163,10 +163,10 @@ export default function NewProjectPage() {
                 ]}
               />
             </div>
-          </Surface>
+          </Card>
 
           {/* Property address */}
-          <Surface padding="md">
+          <Card className="p-5 sm:p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Property address</h2>
             
             <div className="space-y-4">
@@ -204,10 +204,10 @@ export default function NewProjectPage() {
                 />
               </div>
             </div>
-          </Surface>
+          </Card>
 
           {/* Property details */}
-          <Surface padding="md">
+          <Card className="p-5 sm:p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Property details</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -281,7 +281,7 @@ export default function NewProjectPage() {
                 💡 Enter each feature on a new line. Be specific and descriptive!
               </p>
             </div>
-          </Surface>
+          </Card>
 
           <div className="flex gap-3">
             <Button

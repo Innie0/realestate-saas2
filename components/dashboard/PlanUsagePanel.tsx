@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import clsx from 'clsx';
-import Surface from '@/components/ui/Surface';
 import Button from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 
 interface UsageItem {
   current: number;
@@ -33,7 +33,7 @@ const usageGridClass = (layout: 'full' | 'sidebar') =>
 export function PlanUsagePanelSkeleton({ layout = 'full', className }: { layout?: 'full' | 'sidebar'; className?: string }) {
   return (
     <div data-tour="plan-usage" className={clsx('self-start w-full', className)} aria-hidden>
-      <Surface flat padding="md">
+      <Card className="p-5 sm:p-6">
         <div className="flex items-center justify-between gap-3 mb-5 animate-pulse">
           <div className="space-y-2">
             <div className="h-3 bg-gray-100 rounded w-16" />
@@ -50,7 +50,7 @@ export function PlanUsagePanelSkeleton({ layout = 'full', className }: { layout?
             </div>
           ))}
         </div>
-      </Surface>
+      </Card>
     </div>
   );
 }
@@ -64,7 +64,7 @@ export default function PlanUsagePanel({ usage, plan, className, layout = 'full'
 
   return (
     <div data-tour="plan-usage" className={clsx('self-start w-full', className)}>
-      <Surface flat padding="md">
+      <Card className="p-5 sm:p-6">
         <div className="flex items-center justify-between gap-3 mb-4">
           <p className="text-label">
             Plan usage · <span className="capitalize text-gray-600">{plan}</span>
@@ -122,7 +122,7 @@ export default function PlanUsagePanel({ usage, plan, className, layout = 'full'
             );
           })}
         </div>
-      </Surface>
+      </Card>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import Button from '@/components/ui/Button';
-import Surface from '@/components/ui/Surface';
+import { Card } from '@/components/ui/Card';
 import { getAdTypeLabel } from '@/lib/ads/ad-type-config';
 import type { AdPerformanceSummary } from '@/lib/ads/performance-types';
 import clsx from 'clsx';
@@ -23,7 +23,7 @@ export default function AdDetailView({ ad, onOptimize, onClose }: AdDetailViewPr
   const maxImpressions = Math.max(1, ...ad.daily.map((d) => d.impressions));
 
   return (
-    <Surface flat padding="md" className="space-y-4">
+    <Card className="p-5 sm:p-6 space-y-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-label">Ad detail</p>
@@ -93,6 +93,6 @@ export default function AdDetailView({ ad, onOptimize, onClose }: AdDetailViewPr
           insights.
         </p>
       )}
-    </Surface>
+    </Card>
   );
 }

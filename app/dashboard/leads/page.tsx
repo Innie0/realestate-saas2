@@ -6,8 +6,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
 import LeadsSectionSwitcher, { type LeadsTab } from '@/components/leads/LeadsSectionSwitcher';
 import LeadsInbox from '@/components/leads/LeadsInbox';
-import Surface from '@/components/ui/Surface';
 import Button from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import Modal from '@/components/ui/Modal';
 import { supabase } from '@/lib/supabase';
@@ -311,7 +311,7 @@ function LeadsPageContent() {
             </p>
 
             {/* Share Lead Form */}
-            <Surface flat padding="none" className="p-5 sm:p-[22px]">
+            <Card className="p-5 sm:p-[22px]">
               <div className="flex items-center gap-2 mb-2">
                 <Link2 className="w-4 h-4 text-gray-700" strokeWidth={1.8} />
                 <h3 className="text-[15px] font-semibold text-gray-900">Lead capture form</h3>
@@ -389,7 +389,7 @@ function LeadsPageContent() {
                   </Link>
                 </div>
               )}
-            </Surface>
+            </Card>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {[
@@ -463,7 +463,7 @@ function LeadsPageContent() {
             </p>
 
             <div className="grid sm:grid-cols-2 gap-4">
-              <Surface flat padding="none" className="p-5 sm:p-[22px]">
+              <Card className="p-5 sm:p-[22px]">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-gray-100 shrink-0">
                     <MailCheck className="w-4 h-4 text-gray-700" strokeWidth={1.8} />
@@ -489,9 +489,9 @@ function LeadsPageContent() {
                   {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : autoFollowup ? <Check className="w-4 h-4" /> : <MailCheck className="w-4 h-4" />}
                   {autoFollowup ? 'Enabled' : 'Enable auto follow-up'}
                 </button>
-              </Surface>
+              </Card>
 
-              <Surface flat padding="none" className="p-5 sm:p-[22px]">
+              <Card className="p-5 sm:p-[22px]">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-gray-100 shrink-0">
                     <Phone className="w-4 h-4 text-gray-400" strokeWidth={1.8} />
@@ -514,7 +514,7 @@ function LeadsPageContent() {
                   <Phone className="w-4 h-4" />
                   Not available yet
                 </button>
-              </Surface>
+              </Card>
             </div>
 
             <FollowupTemplatesEditor settings={settingsData} onSaved={() => mutateSettings()} />

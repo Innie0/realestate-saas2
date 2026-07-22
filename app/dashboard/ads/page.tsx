@@ -3,8 +3,8 @@
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
-import Surface from '@/components/ui/Surface';
 import PanelHeader from '@/components/ui/PanelHeader';
+import { Card } from '@/components/ui/Card';
 import AdsConnectionsPanel from '@/components/ads/AdsConnectionsPanel';
 import WizardShell from '@/components/ads/wizard/WizardShell';
 import PerformanceDashboard from '@/components/ads/PerformanceDashboard';
@@ -266,18 +266,14 @@ function AdsPageContent() {
       }
     >
       {pageMessage && (
-        <Surface
-          flat
-          padding="none"
-          className={clsx(
+        <Card className={clsx(
             'px-4 py-3 text-[13px] border',
             pageMessage.type === 'success'
               ? 'bg-emerald-50/80 border-emerald-200 text-emerald-800'
               : 'bg-rose-50/80 border-rose-200 text-rose-800',
-          )}
-        >
+          )}>
           {pageMessage.text}
-        </Surface>
+        </Card>
       )}
 
       <div className="flex gap-1 p-1 rounded-[10px] bg-[var(--canvas)] border border-[var(--border)] w-fit">
@@ -327,7 +323,7 @@ function AdsPageContent() {
       ) : (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,1fr)]">
           <div className="space-y-5">
-            <Surface flat padding="none" className="overflow-hidden">
+            <Card className="overflow-hidden">
               <PanelHeader
                 title="Campaign performance"
                 meta={performance?.ads.length ? `${performance.ads.length} ads` : undefined}
@@ -344,7 +340,7 @@ function AdsPageContent() {
                   }}
                 />
               </div>
-            </Surface>
+            </Card>
             {selectedAd && (
               <AdDetailView
                 ad={selectedAd}
@@ -384,7 +380,7 @@ function AdsPageContent() {
         }}
       />
 
-      <Surface flat padding="none" className="overflow-hidden">
+      <Card className="overflow-hidden">
         <button
           type="button"
           onClick={() => setShowAccounts((v) => !v)}
@@ -416,7 +412,7 @@ function AdsPageContent() {
             />
           </div>
         )}
-      </Surface>
+      </Card>
     </DashboardPage>
   );
 }

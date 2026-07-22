@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
 import LeadsSectionSwitcher from '@/components/leads/LeadsSectionSwitcher';
 import Button from '@/components/ui/Button';
-import Surface from '@/components/ui/Surface';
+import { Card } from '@/components/ui/Card';
 import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
 import { QRCodeCanvas } from 'qrcode.react';
 import {
@@ -191,11 +191,11 @@ export default function OpenHousesPage() {
             ))}
           </div>
         ) : openHouses.length === 0 ? (
-          <Surface flat padding="none" className="p-10 text-center">
+          <Card className="p-10 text-center">
             <DoorOpen className="w-9 h-9 text-gray-400 mx-auto mb-3" strokeWidth={1.6} />
             <p className="text-gray-900 font-medium text-[13.5px] mb-1">No open houses yet</p>
             <p className="text-gray-600 text-[13px]">Create one to get a QR code sign-in page for visitors.</p>
-          </Surface>
+          </Card>
         ) : (
           <div className="space-y-3">
             {openHouses.map(oh => {

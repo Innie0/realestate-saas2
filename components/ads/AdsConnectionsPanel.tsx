@@ -2,7 +2,7 @@
 
 import { ExternalLink, Loader2, RefreshCw, Unplug } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import Surface from '@/components/ui/Surface';
+import { Card } from '@/components/ui/Card';
 import type { AdPlatform, AdPlatformConnection } from '@/lib/ads/types';
 import { getConnectionStatus, type AdConnectionStatus } from '@/lib/ads/connection-status';
 import { getAdAccountSetupLabel, getAdAccountSetupUrl, getExternalAdsUrl } from '@/lib/ads/urls';
@@ -102,7 +102,7 @@ export default function AdsConnectionsPanel({
         const setupHint = setupMessage(platform.id, status, conn);
 
         return (
-          <Surface key={platform.id} flat padding="md">
+          <Card key={platform.id} className="p-5 sm:p-6">
             <div className="flex items-start gap-3">
               <div
                 className={clsx(
@@ -213,7 +213,7 @@ export default function AdsConnectionsPanel({
                 </div>
               </div>
             </div>
-          </Surface>
+          </Card>
         );
       })}
     </div>

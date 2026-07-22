@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import Surface from '@/components/ui/Surface';
+import { Card } from '@/components/ui/Card';
 import StepSidebar from '@/components/ads/wizard/StepSidebar';
 import AdTypeSelector from '@/components/ads/wizard/AdTypeSelector';
 import PropertyDetailsStep from '@/components/ads/wizard/PropertyDetailsStep';
@@ -302,7 +302,7 @@ export default function WizardShell({
         onStepClick={goToStep}
       />
 
-      <Surface flat padding="md" className="min-w-0">
+      <Card className="p-5 sm:p-6 min-w-0">
         <div className="flex items-center justify-between gap-3 mb-5">
           <div>
             <p className="text-[11px] font-mono text-gray-600 uppercase tracking-wide">
@@ -352,7 +352,7 @@ export default function WizardShell({
             </div>
           </div>
         )}
-      </Surface>
+      </Card>
 
       {currentStep !== 'review' && (
         <AdPreviewPane

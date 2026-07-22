@@ -6,8 +6,8 @@
 import React, { useState } from 'react';
 import DashboardPage from '@/components/layout/DashboardPage';
 import Button from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
-import Surface from '@/components/ui/Surface';
 import Modal from '@/components/ui/Modal';
 import PlanUsagePanel, { PlanUsagePanelSkeleton } from '@/components/dashboard/PlanUsagePanel';
 import { User, Lock, CreditCard, Sparkles } from 'lucide-react';
@@ -313,15 +313,15 @@ export default function AccountPage() {
         size="narrow"
       >
         {usageLoading ? <PlanUsagePanelSkeleton /> : usage ? <PlanUsagePanel usage={usage} plan={usagePlan} /> : null}
-        <Surface padding="md" className="animate-pulse space-y-3">
+        <Card className="p-5 sm:p-6 animate-pulse space-y-3">
           <div className="h-5 bg-gray-200 rounded w-1/3" />
           <div className="h-10 bg-gray-100 rounded-xl" />
           <div className="h-10 bg-gray-100 rounded-xl" />
-        </Surface>
-        <Surface padding="md" className="animate-pulse space-y-3">
+        </Card>
+        <Card className="p-5 sm:p-6 animate-pulse space-y-3">
           <div className="h-5 bg-gray-200 rounded w-1/3" />
           <div className="h-10 bg-gray-100 rounded-xl" />
-        </Surface>
+        </Card>
       </DashboardPage>
     );
   }
@@ -351,7 +351,7 @@ export default function AccountPage() {
 
         <div className="space-y-5">
           {/* Profile information */}
-          <Surface padding="md">
+          <Card className="p-5 sm:p-6">
             <div className="flex items-center gap-3 mb-5">
               <User className="w-5 h-5 text-gray-900" />
               <h2 className="text-lg font-semibold text-gray-900">Profile</h2>
@@ -390,10 +390,10 @@ export default function AccountPage() {
                 </Button>
               </div>
             </form>
-          </Surface>
+          </Card>
 
           {/* Subscription & billing */}
-          <Surface padding="md">
+          <Card className="p-5 sm:p-6">
             <div className="flex items-center gap-3 mb-5">
               <CreditCard className="w-5 h-5 text-gray-900" />
               <h2 className="text-lg font-semibold text-gray-900">Subscription & Billing</h2>
@@ -474,10 +474,10 @@ export default function AccountPage() {
                 ? 'Your admin account uses Starter plan limits with no Stripe subscription required.'
                 : 'Update payment method, view invoices, or cancel your subscription from the billing portal.'}
             </p>
-          </Surface>
+          </Card>
 
           {/* Password */}
-          <Surface padding="md">
+          <Card className="p-5 sm:p-6">
             <div className="flex items-center gap-3 mb-5">
               <Lock className="w-5 h-5 text-gray-900" />
               <h2 className="text-lg font-semibold text-gray-900">Password</h2>
@@ -513,10 +513,10 @@ export default function AccountPage() {
                 Update password
               </Button>
             </form>
-          </Surface>
+          </Card>
 
           {/* Danger zone */}
-          <Surface padding="md">
+          <Card className="p-5 sm:p-6">
             <h2 className="text-lg font-semibold text-red-600 mb-3">Danger zone</h2>
             <p className="text-gray-600 mb-4">
               Permanently delete your account, cancel any active subscription, and remove your data. This cannot be undone.
@@ -524,7 +524,7 @@ export default function AccountPage() {
             <Button variant="danger" onClick={() => { setShowDeleteModal(true); setDeleteConfirmText(''); setDeleteError(null); }}>
               Delete account
             </Button>
-          </Surface>
+          </Card>
         </div>
 
       <Modal

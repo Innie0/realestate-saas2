@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDown, Eye, Loader2, RotateCcw, Save, Settings2 } from 'lucide-react';
-import Surface from '@/components/ui/Surface';
 import Button from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 import Modal from '@/components/ui/Modal';
 import { useToast } from '@/components/providers/ToastProvider';
 import {
@@ -285,7 +285,7 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
 
   return (
     <>
-      <Surface flat padding="none" className="p-5 sm:p-[22px] space-y-5">
+      <Card className="p-5 sm:p-[22px] space-y-5">
         <div>
           <h3 className="text-[15px] font-semibold text-gray-900">Follow-up schedule</h3>
           <p className="text-[12.5px] text-gray-600 mt-1">
@@ -537,7 +537,7 @@ export default function FollowupTemplatesEditor({ settings, onSaved }: FollowupT
             </div>
           )}
         </div>
-      </Surface>
+      </Card>
 
       <Modal
         isOpen={previewSlot !== null}

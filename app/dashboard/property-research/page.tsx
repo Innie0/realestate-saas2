@@ -4,8 +4,8 @@ import { useCallback, useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import DashboardPage from '@/components/layout/DashboardPage';
-import Surface from '@/components/ui/Surface';
 import Button from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
 import DataLoadingState from '@/components/dashboard/DataLoadingState';
@@ -302,7 +302,7 @@ function PropertyResearchContent() {
     >
       {/* Search form — only shown before a search has been run */}
       {!researchSearched && (
-        <Surface flat padding="none" className="p-5 sm:p-6" data-tour="research-search">
+        <Card data-tour="research-search" className="p-5 sm:p-6">
           <div className="space-y-4">
             <div>
               <label className="block text-[12.5px] font-medium text-gray-700 mb-1.5">Street address *</label>
@@ -376,13 +376,13 @@ function PropertyResearchContent() {
               )}
             </div>
           </div>
-        </Surface>
+        </Card>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-5">
         {/* Context rail */}
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
-          <Surface flat padding="none" className="p-4">
+          <Card className="p-4">
             <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600 mb-3">Usage this month</p>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
@@ -394,9 +394,9 @@ function PropertyResearchContent() {
                 <span className="text-[13px] font-medium text-gray-900">{formatUsage(cmaUsage)}</span>
               </div>
             </div>
-          </Surface>
+          </Card>
 
-          <Surface flat padding="none" className="overflow-hidden" data-tour="research-history">
+          <Card data-tour="research-history" className="overflow-hidden">
             <PanelHeader
               title="Recent"
               meta={history.length > 0 ? `${history.length} saved` : undefined}
@@ -436,19 +436,19 @@ function PropertyResearchContent() {
                 ))}
               </div>
             )}
-          </Surface>
+          </Card>
         </aside>
 
         {/* Results canvas */}
         <div className="space-y-4 min-w-0">
           {lookupLoading && activeTab !== 'owner' && (
-            <Surface flat padding="none">
+            <Card>
               <DataLoadingState
                 title="Researching this address"
                 description="Fetching county records and owner contact data. First lookup usually takes 5–10 seconds."
                 className="py-10"
               />
-            </Surface>
+            </Card>
           )}
 
           {researchSearched && addressLabel && (

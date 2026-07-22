@@ -1,10 +1,10 @@
 'use client';
 
+import { Card } from '@/components/ui/Card';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Globe, MoreHorizontal, Heart, MessageCircle, Send, Bookmark } from 'lucide-react';
 import AnimatedTabPanels from '@/components/motion/AnimatedTabPanels';
-import Surface from '@/components/ui/Surface';
 import { EASE_OUT, useMotionReduced } from '@/lib/motion';
 import type { AdCtaType } from '@/lib/ads/promotion-options';
 import { getCtaLabel } from '@/lib/ads/promotion-options';
@@ -244,7 +244,7 @@ export default function AdPreviewMockup({
   };
 
   return (
-    <Surface flat padding="md" className={clsx('lg:sticky lg:top-20', className)}>
+    <Card className={clsx('p-5 sm:p-6 lg:sticky lg:top-20', className)}>
       <div className="flex items-center justify-between gap-3 mb-4">
         <div>
           <p className="text-label">Ad preview</p>
@@ -290,6 +290,6 @@ export default function AdPreviewMockup({
       <p className="text-[11px] text-gray-600 mt-3 text-center">
         Approximate preview · actual placement may vary
       </p>
-    </Surface>
+    </Card>
   );
 }

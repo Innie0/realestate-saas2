@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Loader2, RefreshCw, Sparkles, X } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import Surface from '@/components/ui/Surface';
+import { Card } from '@/components/ui/Card';
 import type { AIInsight, AIInsightType } from '@/lib/ads/performance-types';
 import clsx from 'clsx';
 
@@ -96,12 +96,12 @@ export default function AIInsightsFeed({
       </div>
 
       {insights.length === 0 ? (
-        <Surface flat padding="md">
+        <Card className="p-5 sm:p-6">
           <p className="text-[13px] text-gray-600">
             Insights appear after your ads run for a few days. We analyze performance daily and
             suggest what to do next.
           </p>
-        </Surface>
+        </Card>
       ) : (
         <div className={clsx('space-y-2', compact && 'max-h-64 overflow-y-auto pr-1')}>
           {insights.map((insight) => {
@@ -110,11 +110,9 @@ export default function AIInsightsFeed({
               insight.type === 'underperformer' || insight.type === 'creative_fatigue';
 
             return (
-              <Surface
+              <Card
                 key={insight.id}
-                flat
-                padding="md"
-                className={clsx('border', style.border, style.bg)}
+                className={clsx('border p-5 sm:p-6', style.border, style.bg)}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
@@ -152,7 +150,7 @@ export default function AIInsightsFeed({
                     </button>
                   )}
                 </div>
-              </Surface>
+              </Card>
             );
           })}
         </div>

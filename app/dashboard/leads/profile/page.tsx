@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
 import LeadsSectionSwitcher from '@/components/leads/LeadsSectionSwitcher';
 import Button from '@/components/ui/Button';
-import Surface from '@/components/ui/Surface';
+import { Card } from '@/components/ui/Card';
 import Switch from '@/components/ui/Switch';
 import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
 import { useToast } from '@/components/providers/ToastProvider';
@@ -214,7 +214,7 @@ export default function ProfileEditorPage() {
               </div>
             )}
             {/* Public profile toggle */}
-            <Surface flat padding="none" className="p-5">
+            <Card className="p-5">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <h3 className="text-[15px] font-semibold text-gray-900">Public profile</h3>
@@ -247,10 +247,10 @@ export default function ProfileEditorPage() {
                   </button>
                 </div>
               )}
-            </Surface>
+            </Card>
 
             {/* Basic info */}
-            <Surface flat padding="none" className="p-5 space-y-4">
+            <Card className="p-5 space-y-4">
               <h3 className="text-[15px] font-semibold text-gray-900 flex items-center gap-2">
                 <User className="w-4 h-4 text-gray-700" strokeWidth={1.8} /> Basic info
               </h3>
@@ -305,10 +305,10 @@ export default function ProfileEditorPage() {
                   </div>
                 )}
               </div>
-            </Surface>
+            </Card>
 
             {/* Professional details */}
-            <Surface flat padding="none" className="p-5 space-y-4">
+            <Card className="p-5 space-y-4">
               <h3 className="text-[15px] font-semibold text-gray-900 flex items-center gap-2">
                 <Briefcase className="w-4 h-4 text-gray-700" strokeWidth={1.8} /> Professional details
               </h3>
@@ -356,10 +356,10 @@ export default function ProfileEditorPage() {
                   />
                 </div>
               </div>
-            </Surface>
+            </Card>
 
             {/* Contact */}
-            <Surface flat padding="none" className="p-5 space-y-4">
+            <Card className="p-5 space-y-4">
               <h3 className="text-[15px] font-semibold text-gray-900">Contact info (shown on profile)</h3>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
@@ -383,10 +383,10 @@ export default function ProfileEditorPage() {
                   />
                 </div>
               </div>
-            </Surface>
+            </Card>
 
             {/* Specialties */}
-            <Surface flat padding="none" className="p-5">
+            <Card className="p-5">
               <h3 className="text-[15px] font-semibold text-gray-900 mb-3 flex items-center gap-2">
                 <Award className="w-4 h-4 text-gray-700" strokeWidth={1.8} /> Specialties
               </h3>
@@ -424,10 +424,10 @@ export default function ProfileEditorPage() {
                   <Plus className="w-4 h-4" />
                 </button>
               </div>
-            </Surface>
+            </Card>
 
             {/* Areas served */}
-            <Surface flat padding="none" className="p-5">
+            <Card className="p-5">
               <h3 className="text-[15px] font-semibold text-gray-900 mb-3 flex items-center gap-2">
                 <Globe className="w-4 h-4 text-gray-700" strokeWidth={1.8} /> Areas served
               </h3>
@@ -465,7 +465,7 @@ export default function ProfileEditorPage() {
                   <Plus className="w-4 h-4" />
                 </button>
               </div>
-            </Surface>
+            </Card>
       </div>
     </DashboardPage>
   );

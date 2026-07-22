@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
 import PageToolbar from '@/components/layout/PageToolbar';
 import Button from '@/components/ui/Button';
-import Surface from '@/components/ui/Surface';
+import { Card } from '@/components/ui/Card';
 import PanelHeader from '@/components/ui/PanelHeader';
 import Modal from '@/components/ui/Modal';
 import CalendarView from '@/components/CalendarView';
@@ -153,16 +153,12 @@ function CalendarPageContent() {
   return (
     <DashboardPage title="Calendar" subtitle="Showings, closings, and synced Google Calendar events">
       {pageMessage && (
-        <Surface
-          flat
-          padding="none"
-          className={clsx(
+        <Card className={clsx(
             'flex items-center justify-between gap-3 px-4 py-3 text-[13px]',
             pageMessage.type === 'error'
               ? 'bg-rose-50/80 text-rose-800 border-rose-200'
               : 'bg-emerald-50/80 text-emerald-800 border-emerald-200',
-          )}
-        >
+          )}>
           <span>{pageMessage.text}</span>
           <button
             type="button"
@@ -172,11 +168,11 @@ function CalendarPageContent() {
           >
             <X className="w-4 h-4" />
           </button>
-        </Surface>
+        </Card>
       )}
 
       {!connections.google.connected ? (
-        <Surface flat padding="md" className="border-brand-200/60 bg-brand-50/30">
+        <Card className="p-5 sm:p-6 border-brand-200/60 bg-brand-50/30">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-start gap-3">
               <div className="p-2.5 rounded-[10px] bg-[var(--surface)] border border-[var(--border)]">
@@ -193,9 +189,9 @@ function CalendarPageContent() {
               {isConnecting ? 'Connecting…' : 'Connect Google'}
             </Button>
           </div>
-        </Surface>
+        </Card>
       ) : (
-        <Surface flat padding="none" className="overflow-hidden">
+        <Card className="overflow-hidden">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3">
             <div className="flex items-center gap-2.5 min-w-0">
               <span className="relative flex h-2 w-2 shrink-0">
@@ -219,7 +215,7 @@ function CalendarPageContent() {
               {refreshing ? 'Syncing…' : 'Sync now'}
             </button>
           </div>
-        </Surface>
+        </Card>
       )}
 
       <PageToolbar>
@@ -239,12 +235,12 @@ function CalendarPageContent() {
         </div>
       </PageToolbar>
 
-      <Surface flat padding="none" className="overflow-hidden">
+      <Card className="overflow-hidden">
         <PanelHeader title="Schedule" meta="Month view" />
         <div className="p-4 sm:p-5">
           <CalendarView highlightEventId={highlightEventId} focusDate={focusDate} />
         </div>
-      </Surface>
+      </Card>
 
       {showEventModal && (
         <Modal isOpen={showEventModal} onClose={() => setShowEventModal(false)} title="Create New Event">
@@ -262,7 +258,7 @@ function CalendarPageContent() {
           <p className="text-[13px] text-gray-700 leading-relaxed">
             Connect your calendars to sync events automatically.
           </p>
-          <Surface flat padding="md">
+          <Card className="p-5 sm:p-6">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-10 h-10 rounded-[10px] bg-[var(--canvas)] border border-[var(--border)] flex items-center justify-center flex-shrink-0">
@@ -297,7 +293,7 @@ function CalendarPageContent() {
                 </Button>
               )}
             </div>
-          </Surface>
+          </Card>
           <p className="text-[12px] text-gray-600 leading-relaxed">
             Events created here sync to your connected calendars, and external events appear in your schedule.
           </p>

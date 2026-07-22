@@ -1,8 +1,8 @@
 'use client';
 
+import { Card } from '@/components/ui/Card';
 import AdPreviewMockup, { type AdPreviewPlatform } from '@/components/ads/AdPreviewMockup';
 import GooglePreviewCard from '@/components/ads/GooglePreviewCard';
-import Surface from '@/components/ui/Surface';
 import type { AdDraft } from '@/lib/ads/ad-draft-types';
 import { getEffectiveCopy, getPrimaryImage } from '@/lib/ads/ad-draft-types';
 import type { AdPlatform } from '@/lib/ads/types';
@@ -34,7 +34,7 @@ export default function AdPreviewPane({
 
   if (compact) {
     return (
-      <Surface flat padding="md" className={className}>
+      <Card className={clsx('p-5 sm:p-6', className)}>
         <p className="text-label mb-3">Preview</p>
         {showMeta && (
           <AdPreviewMockup
@@ -51,7 +51,7 @@ export default function AdPreviewPane({
         {showGoogle && !showMeta && (
           <GooglePreviewCard headline={headline} description={body} />
         )}
-      </Surface>
+      </Card>
     );
   }
 
@@ -74,11 +74,11 @@ export default function AdPreviewPane({
         <GooglePreviewCard headline={headline} description={body} />
       )}
       {!showMeta && !showGoogle && (
-        <Surface flat padding="md">
+        <Card className="p-5 sm:p-6">
           <p className="text-caption text-gray-700 text-center py-8">
             Select a platform in step 4 to preview your ad.
           </p>
-        </Surface>
+        </Card>
       )}
     </div>
   );
