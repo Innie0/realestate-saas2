@@ -20,7 +20,8 @@ interface HeaderProps {
   inline?: boolean;
 }
 
-const titleClass = 'text-title font-semibold tracking-tight text-gray-900 truncate';
+const titleClass =
+  'dashboard-page-title font-display text-[1.125rem] font-medium tracking-[-0.02em] text-gray-900 truncate sm:text-title sm:font-semibold';
 const subtitleInlineClass = 'text-caption text-gray-700 truncate';
 
 /**

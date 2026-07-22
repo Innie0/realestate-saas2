@@ -8,9 +8,12 @@ import ClientsTable from '@/components/clients/ClientsTable';
 import ReminderForm from '@/components/ReminderForm';
 import Button from '@/components/ui/Button';
 import DashboardPage from '@/components/layout/DashboardPage';
+import PageToolbar from '@/components/layout/PageToolbar';
+import Surface from '@/components/ui/Surface';
 import SearchInput from '@/components/ui/SearchInput';
 import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
+import DataLoadingState from '@/components/dashboard/DataLoadingState';
 import Modal from '@/components/ui/Modal';
 import SegmentedControl from '@/components/ui/SegmentedControl';
 import { Plus, Users, LayoutGrid, List } from 'lucide-react';
@@ -289,8 +292,14 @@ export default function ClientsPage() {
       }
     >
       {/* Toolbar */}
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col lg:flex-row lg:items-center gap-3">
+      <PageToolbar
+        meta={
+          !isLoading && sortedClients.length > 0
+            ? `Showing ${showingFrom}–${showingTo} of ${sortedClients.length} client${sortedClients.length === 1 ? '' : 's'}${statusTab !== 'all' || searchQuery ? ` (${totalCount} total)` : ''}`
+            : undefined
+        }
+      >
+        <div className="flex flex-col lg:flex-row lg:items-center gap-3 flex-1 w-full">
           <SearchInput
             data-tour="clients-search"
             placeholder="Search name, email, phone…"
@@ -332,7 +341,7 @@ export default function ClientsPage() {
             />
           </div>
         </div>
-      </div>
+      </PageToolbar>
 
       <Modal isOpen={showCreateForm} onClose={() => setShowCreateForm(false)} title="New Client" size="md">
         <ClientForm
@@ -343,47 +352,36 @@ export default function ClientsPage() {
       </Modal>
 
       {isLoading && allClients.length === 0 ? (
-        <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] overflow-hidden animate-pulse">
-          <div className="h-12 bg-gray-50 border-b border-gray-150" />
-          {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-16 border-b border-gray-150 px-5 flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-gray-100" />
-              <div className="flex-1 space-y-2">
-                <div className="h-3 bg-gray-100 rounded w-40" />
-                <div className="h-2.5 bg-gray-100 rounded w-28" />
-              </div>
-            </div>
-          ))}
-        </div>
+        <Surface flat padding="none">
+          <DataLoadingState
+            title="Loading clients"
+            description="Fetching your CRM contacts…"
+          />
+        </Surface>
       ) : sortedClients.length === 0 ? (
-        <EmptyState
-          icon={Users}
-          title={emptyState.title}
-          description={emptyState.description}
-          action={
-            emptyState.showCreateButton ? (
-              <Button variant="primary" size="md" onClick={() => setShowCreateForm(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Create Your First Client
-              </Button>
-            ) : emptyState.showViewAll ? (
-              <Button variant="outline" size="md" onClick={() => setStatusTab('all')}>
-                View all clients
-              </Button>
-            ) : undefined
-          }
-        />
+        <Surface flat padding="none">
+          <EmptyState
+            icon={Users}
+            title={emptyState.title}
+            description={emptyState.description}
+            action={
+              emptyState.showCreateButton ? (
+                <Button variant="primary" size="md" onClick={() => setShowCreateForm(true)}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create your first client
+                </Button>
+              ) : emptyState.showViewAll ? (
+                <Button variant="outline" size="md" onClick={() => setStatusTab('all')}>
+                  View all clients
+                </Button>
+              ) : undefined
+            }
+          />
+        </Surface>
       ) : viewMode === 'list' ? (
         <>
           <ClientsTable clients={pagedClients} />
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-[13px] text-gray-600">
-            <p>
-              Showing {showingFrom}–{showingTo} of {sortedClients.length} client
-              {sortedClients.length === 1 ? '' : 's'}
-              {statusTab !== 'all' || searchQuery
-                ? ` (${totalCount} total)`
-                : null}
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
@@ -416,11 +414,7 @@ export default function ClientsPage() {
               />
             ))}
           </div>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-[13px] text-gray-600">
-            <p>
-              Showing {showingFrom}–{showingTo} of {sortedClients.length} client
-              {sortedClients.length === 1 ? '' : 's'}
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
@@ -454,7 +448,7 @@ export default function ClientsPage() {
           onChange={(e) => setNoteText(e.target.value)}
           placeholder="Enter your note..."
           rows={4}
-          className="w-full px-3 py-2.5 rounded-[10px] border border-gray-200 bg-gray-50 text-[13px] text-gray-900 placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-500/20 mb-4"
+          className="w-full px-3 py-2.5 rounded-[10px] border border-[var(--border)] bg-gray-50 text-[13px] text-gray-900 placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-500/20 mb-4"
           autoFocus
         />
         <div className="flex gap-3">

@@ -24,13 +24,13 @@ type DashboardThemeContextValue = {
 const DashboardThemeContext = createContext<DashboardThemeContextValue | null>(null);
 
 function readStoredTheme(): DashboardTheme {
-  if (typeof window === 'undefined') return 'dark';
+  if (typeof window === 'undefined') return 'light';
   try {
-    return window.localStorage.getItem(DASHBOARD_THEME_STORAGE_KEY) === 'light'
-      ? 'light'
-      : 'dark';
+    return window.localStorage.getItem(DASHBOARD_THEME_STORAGE_KEY) === 'dark'
+      ? 'dark'
+      : 'light';
   } catch {
-    return 'dark';
+    return 'light';
   }
 }
 

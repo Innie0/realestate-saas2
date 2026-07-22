@@ -30,7 +30,7 @@ export default function Surface({
   return (
     <div
       className={clsx(
-        'rounded-[10px] bg-[var(--surface)] border border-gray-200',
+        'rounded-[10px] border border-[var(--border)] bg-[var(--surface)]',
         paddingStyles[padding],
         hover && 'transition-colors duration-150 hover:bg-gray-150',
         sticky && 'sticky top-16 z-10 backdrop-blur-sm bg-[var(--surface)]/95',

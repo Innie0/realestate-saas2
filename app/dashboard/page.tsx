@@ -10,13 +10,15 @@ import Surface from '@/components/ui/Surface';
 import PanelHeader from '@/components/ui/PanelHeader';
 import Sparkline from '@/components/ui/Sparkline';
 import Button from '@/components/ui/Button';
+import EmptyState from '@/components/ui/EmptyState';
+import DataLoadingState from '@/components/dashboard/DataLoadingState';
 import CountUp from '@/components/motion/CountUp';
 import { fetchUpcomingItems, type UpcomingItem } from '@/components/NotificationsPanel';
 import { DASHBOARD_UPCOMING_KEY } from '@/lib/dashboard-prefetch';
 import PlanUsagePanel, { PlanUsagePanelSkeleton } from '@/components/dashboard/PlanUsagePanel';
 import GettingStartedPanel from '@/components/dashboard/GettingStartedPanel';
 import TransactionStatusBadge from '@/components/transactions/TransactionStatusBadge';
-import { Plus } from 'lucide-react';
+import { Plus, Home } from 'lucide-react';
 import { Project } from '@/types';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
@@ -173,6 +175,8 @@ interface Metric {
   subTone: 'neutral' | 'positive' | 'warning';
   href: string;
   series?: number[];
+  /** Brass accent for priority stats (hot leads, pipeline). */
+  accent?: boolean;
 }
 
 function MetricStrip({ metrics }: { metrics: Metric[] }) {
@@ -183,11 +187,19 @@ function MetricStrip({ metrics }: { metrics: Metric[] }) {
           <Link
             key={m.label}
             href={m.href}
-            className="group px-5 py-4 transition-colors hover:bg-gray-50"
+            className={clsx(
+              'group px-5 py-4 transition-colors hover:bg-gray-50',
+              m.accent && 'bg-brand-50/50',
+            )}
           >
-            <p className="text-label">{m.label}</p>
+            <p className={clsx('text-label', m.accent && 'text-brand-700')}>{m.label}</p>
             <div className="mt-2.5 flex items-end justify-between gap-2">
-              <p className="text-[26px] font-semibold tracking-[-0.02em] tabular-nums text-gray-900 leading-none">
+              <p
+                className={clsx(
+                  'text-[26px] font-semibold tracking-[-0.02em] tabular-nums leading-none',
+                  m.accent ? 'text-brand-600' : 'text-gray-900',
+                )}
+              >
                 {m.placeholder ?? <CountUp value={m.value} format={m.format} />}
               </p>
               {m.series && m.series.some((v) => v > 0) && (
@@ -280,7 +292,7 @@ function NeedsAttention({ items, loading }: { items: AttentionItem[]; loading: b
             <p className="flex-1 min-w-0 text-[13px] text-gray-900 truncate">
               <span className="font-semibold">{item.lead}</span> {item.rest}
             </p>
-            <span className="text-[11.5px] font-medium text-gray-900 shrink-0">
+            <span className="text-[11.5px] font-medium text-brand-600 shrink-0 group-hover:text-brand-700 transition-colors">
               {item.actionLabel} →
             </span>
           </Link>
@@ -315,7 +327,7 @@ function OpenDealsTable({
         action={
           <Link
             href="/dashboard/transactions"
-            className="text-[11.5px] font-medium text-gray-900 hover:opacity-70 transition-opacity"
+            className="text-[11.5px] font-medium text-brand-600 hover:text-brand-700 transition-colors"
           >
             All transactions →
           </Link>
@@ -323,26 +335,26 @@ function OpenDealsTable({
       />
 
       {loading ? (
-        <div className="flex-1 px-4 py-4 space-y-3 animate-pulse min-h-0">
-          {[0, 1, 2].map((i) => (
-            <div key={i} className="h-5 bg-gray-100 rounded" />
-          ))}
-        </div>
+        <DataLoadingState
+          title="Loading deals"
+          description="Fetching your open pipeline…"
+          className="flex-1 py-10 min-h-0"
+        />
       ) : deals.length === 0 ? (
-        <div className="flex-1 px-4 pb-6 pt-3 flex items-start justify-between gap-4 min-h-0">
-          <div>
-            <p className="text-body font-medium text-gray-900">No open deals</p>
-            <p className="text-caption text-gray-700 mt-0.5">
-              Start a transaction to track milestones and closings.
-            </p>
-          </div>
-          <Link href="/dashboard/transactions/new" className="shrink-0">
-            <Button size="sm">
-              <Plus className="w-4 h-4 mr-1.5" />
-              New deal
-            </Button>
-          </Link>
-        </div>
+        <EmptyState
+          icon={Home}
+          title="No open deals"
+          description="Start a transaction to track milestones, documents, and closings."
+          className="py-10"
+          action={
+            <Link href="/dashboard/transactions/new">
+              <Button size="sm">
+                <Plus className="w-4 h-4 mr-1.5" />
+                New deal
+              </Button>
+            </Link>
+          }
+        />
       ) : (
         <div className="flex-1 flex flex-col min-h-0">
           <div className="overflow-x-auto shrink-0">
@@ -445,7 +457,7 @@ function TodayPanel() {
         action={
           <Link
             href="/dashboard/calendar"
-            className="text-[11.5px] font-medium text-gray-900 hover:opacity-70 transition-opacity"
+            className="text-[11.5px] font-medium text-brand-600 hover:text-brand-700 transition-colors"
           >
             Calendar →
           </Link>
@@ -549,7 +561,7 @@ function QuickActionsPanel() {
             className="group flex items-center justify-between gap-3 px-4 py-[7px] transition-colors hover:bg-gray-50"
           >
             <span className="text-[12.5px] text-gray-900 truncate">{label}</span>
-            <kbd className="flex h-5 min-w-[20px] items-center justify-center rounded border border-gray-200 px-1 font-mono text-[10px] font-medium text-gray-600 shrink-0">
+            <kbd className="flex h-5 min-w-[20px] items-center justify-center rounded border border-[var(--border)] px-1 font-mono text-[10px] font-medium text-gray-600 shrink-0">
               {shortcut}
             </kbd>
           </Link>
@@ -651,6 +663,24 @@ export default function DashboardHomePage() {
   const metrics = useMemo<Metric[]>(
     () => [
       {
+        label: 'Hot leads',
+        value: hotLeadCount,
+        sub: hotLeadCount > 0 ? 'Reply within 48h' : 'Inbox handled',
+        subTone: hotLeadCount > 0 ? 'warning' : 'neutral',
+        href: '/dashboard/leads',
+        accent: true,
+      },
+      {
+        label: 'Pipeline',
+        value: pipelineValue,
+        format: (n) => formatCompactPrice(n),
+        placeholder: pipelineValue > 0 ? undefined : '—',
+        sub: `${allTransactions.length} open${closingSoonCount > 0 ? ` · ${closingSoonCount} closing soon` : ''}`,
+        subTone: closingSoonCount > 0 ? 'warning' : 'neutral',
+        href: '/dashboard/transactions',
+        accent: true,
+      },
+      {
         label: 'New leads · 7d',
         value: newLeads7d,
         sub:
@@ -662,22 +692,6 @@ export default function DashboardHomePage() {
         subTone: leadDelta > 0 ? 'positive' : 'neutral',
         href: '/dashboard/leads',
         series: leadSeries,
-      },
-      {
-        label: 'Hot leads',
-        value: hotLeadCount,
-        sub: hotLeadCount > 0 ? 'Reply within 48h' : 'Inbox handled',
-        subTone: hotLeadCount > 0 ? 'warning' : 'neutral',
-        href: '/dashboard/leads',
-      },
-      {
-        label: 'Pipeline',
-        value: pipelineValue,
-        format: (n) => formatCompactPrice(n),
-        placeholder: pipelineValue > 0 ? undefined : '—',
-        sub: `${allTransactions.length} open${closingSoonCount > 0 ? ` · ${closingSoonCount} closing soon` : ''}`,
-        subTone: closingSoonCount > 0 ? 'warning' : 'neutral',
-        href: '/dashboard/transactions',
       },
       {
         label: 'Follow-ups',
@@ -710,7 +724,7 @@ export default function DashboardHomePage() {
     if (hotLeadCount > 0) {
       items.push({
         key: 'hot-leads',
-        dotClass: 'bg-rose-600',
+        dotClass: 'bg-brand-500',
         lead: `${hotLeadCount} hot lead${hotLeadCount === 1 ? '' : 's'}`,
         rest: 'waiting under 48h in your inbox',
         actionLabel: 'Open inbox',

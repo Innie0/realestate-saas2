@@ -18,12 +18,13 @@ import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
 import { useToast } from '@/components/providers/ToastProvider';
 import FollowupTemplatesEditor from '@/components/dashboard/FollowupTemplatesEditor';
+import LeadTemperatureBadge, { getLeadTemperature } from '@/components/dashboard/LeadTemperatureBadge';
 import { formatFollowupScheduleHuman, type FollowupSettings } from '@/lib/followup-emails';
 import { nameAvatarClasses } from '@/lib/accent';
 import { QRCodeCanvas } from 'qrcode.react';
 import {
   Inbox, Link2, Copy, Check, Download, Phone, Mail,
-  Home, Building2, KeyRound, Search, Flame,
+  Home, Building2, KeyRound, Search,
   ArrowRight, Users, Lock, MailCheck,
   Loader2, DoorOpen, CalendarClock,
   ChevronDown, Sparkles, UserCheck, UserPlus, MailX, MapPin,
@@ -64,11 +65,7 @@ function leadHasActiveFollowup(
 }
 
 function getLeadTemp(lead: Lead): 'hot' | 'warm' | 'cold' {
-  const hoursAgo = (Date.now() - new Date(lead.created_at).getTime()) / 3_600_000;
-  const msg = (lead.message || '').toLowerCase();
-  if (hoursAgo < 48 || msg.includes('timeline: asap')) return 'hot';
-  if (hoursAgo < 168 || msg.includes('timeline: 1-3')) return 'warm';
-  return 'cold';
+  return getLeadTemperature(lead.created_at, lead.message);
 }
 
 function timeAgo(dateStr: string): string {
@@ -108,18 +105,6 @@ const SOURCE_LABELS: Record<string, string> = {
   lead_form: 'Lead form',
   open_house: 'Open house',
   listing_page: 'Listing page',
-};
-
-const TEMP_DOT: Record<'hot' | 'warm' | 'cold', string> = {
-  hot: 'bg-red-500',
-  warm: 'bg-amber-500',
-  cold: 'bg-gray-300',
-};
-
-const TEMP_LABEL: Record<'hot' | 'warm' | 'cold', string> = {
-  hot: 'Hot',
-  warm: 'Warm',
-  cold: 'Cold',
 };
 
 function leadInitials(name: string): string {
@@ -210,26 +195,18 @@ function LeadRow({
         className="flex items-center gap-3 px-4 py-3.5 cursor-pointer"
       >
         <div className="relative shrink-0">
-          <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold ${nameAvatarClasses(lead.name)}`}>
+          <div className={`flex size-9 items-center justify-center rounded-full text-xs font-semibold ${nameAvatarClasses(lead.name)}`}>
             {leadInitials(lead.name)}
           </div>
-          <span
-            className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ring-2 ring-white ${TEMP_DOT[temp]}`}
-            title={TEMP_LABEL[temp]}
-          />
         </div>
 
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <p className="text-[14px] font-semibold text-gray-900 truncate">{lead.name}</p>
+            <LeadTemperatureBadge temperature={temp} />
             {getAdSourceLabel(lead.ad_source) && (
               <Badge variant="ad" icon={Sparkles} className="shrink-0 text-[10.5px]">
                 From ad
-              </Badge>
-            )}
-            {temp === 'hot' && (
-              <Badge variant="hot" icon={Flame} className="shrink-0 text-[10.5px]">
-                Hot
               </Badge>
             )}
           </div>

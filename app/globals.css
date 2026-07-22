@@ -7,47 +7,45 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Site-wide Framer dark theme — black canvas, elevated surfaces, lime accent.
-   Nested .theme-light restores a light palette for product mock interiors. */
+/* Site-wide dashboard theme — warm neutrals + brass/gold accent.
+   Default experience is light (see dashboard-theme); dark mode uses warm charcoal. */
 :root {
   color-scheme: dark;
 
-  --canvas: #0a0a0a;
-  /* Elevated panels — Cursor-like dark gray, never white */
-  --surface: #1c1c1c;
-  --sidebar: #111111;
-  --ink: #ffffff;
-  --brand: #e4f76c;
-  --brand-foreground: #141412;
-  --border: #2e2e2e;
+  --canvas: #121110;
+  --surface: #1c1a18;
+  --sidebar: #161514;
+  --ink: #faf7f2;
+  --brand: #a87c43;
+  --brand-foreground: #ffffff;
+  --border: #2e2a26;
   --champagne: #a87c43;
 
-  /* Inverted neutrals so existing gray-* classes read on black */
-  --gray-50: #141414;
-  --gray-100: #1c1c1c;
-  --gray-150: #222222;
-  --gray-200: #2e2e2e;
-  --gray-300: #3f3f3f;
-  --gray-400: #666666;
-  --gray-450: #7a7a7a;
-  --gray-500: #8e8e8e;
-  --gray-600: #a3a3a3;
-  --gray-700: #c4c4c4;
-  --gray-800: #e5e5e5;
-  --gray-900: #f4f4f5;
-  --gray-950: #ffffff;
+  --gray-50: #161514;
+  --gray-100: #1c1a18;
+  --gray-150: #222019;
+  --gray-200: #2e2a26;
+  --gray-300: #3f3a34;
+  --gray-400: #666059;
+  --gray-450: #7a736a;
+  --gray-500: #8e877e;
+  --gray-600: #a39d94;
+  --gray-700: #c4bdb4;
+  --gray-800: #e5dfd6;
+  --gray-900: #f4f0ea;
+  --gray-950: #faf7f2;
 
-  /* Lime brand scale */
-  --brand-50: #14160a;
-  --brand-100: #1f2410;
-  --brand-200: #2e3514;
-  --brand-300: #6b7a2e;
-  --brand-400: #c5d84f;
-  --brand-500: #e4f76c;
-  --brand-600: #d8eb5a;
-  --brand-700: #b8c94a;
-  --brand-800: #8a9638;
-  --brand-900: #5a6224;
+  /* Brass / gold brand scale */
+  --brand-50: #1a1610;
+  --brand-100: #2a2218;
+  --brand-200: #3d3220;
+  --brand-300: #735428;
+  --brand-400: #c29656;
+  --brand-500: #a87c43;
+  --brand-600: #8f6838;
+  --brand-700: #735428;
+  --brand-800: #5c4220;
+  --brand-900: #3d2c15;
 
   /* Semantic accents — dark-native tints (soft bg + readable text on dark surfaces).
      Mid tones (400–600) stay vivid for dots/bars in both themes. */
@@ -162,39 +160,38 @@ html.dashboard-theme-switching * {
 html[data-dashboard-theme='light'],
 .theme-light {
   color-scheme: light;
-  --canvas: #fafafa;
-  --surface: #ffffff;
-  --sidebar: #f5f5f4;
+  --canvas: #faf7f2;
+  --surface: #fffcf7;
+  --sidebar: #f3f0ea;
   --ink: #1c1c1a;
-  --border: #e8e8e6;
-  /* Dark text on lime CTAs (same as dark theme) */
-  --brand-foreground: #141412;
+  --border: #e5e0d6;
+  --brand-foreground: #ffffff;
 
-  --gray-50: #fafafa;
-  --gray-100: #f5f5f4;
-  --gray-150: #efefed;
-  --gray-200: #e8e8e6;
-  --gray-300: #d4d4d0;
-  --gray-400: #c9c9c4;
-  --gray-450: #a0a09c;
-  --gray-500: #8e8e8a;
-  --gray-600: #78786f;
-  --gray-700: #55554f;
-  --gray-800: #302f2c;
-  --gray-900: #18181b;
-  --gray-950: #000000;
+  --gray-50: #faf7f2;
+  --gray-100: #f3f0ea;
+  --gray-150: #ebe6de;
+  --gray-200: #e5e0d6;
+  --gray-300: #d4cfc4;
+  --gray-400: #b8b2a8;
+  --gray-450: #9a948a;
+  --gray-500: #78726a;
+  --gray-600: #5c5650;
+  --gray-700: #444039;
+  --gray-800: #302c28;
+  --gray-900: #1c1c1a;
+  --gray-950: #111111;
 
-  /* Soft lime tints for active nav / chips on light surfaces */
-  --brand-50: #f7fce8;
-  --brand-100: #eef8c8;
-  --brand-200: #e0f29a;
-  --brand-300: #6b7a2e;
-  --brand-400: #c5d84f;
-  --brand-500: #e4f76c;
-  --brand-600: #d8eb5a;
-  --brand-700: #b8c94a;
-  --brand-800: #8a9638;
-  --brand-900: #5a6224;
+  /* Brass / gold tints for active nav, chips, and CTAs */
+  --brand-50: #faf6ef;
+  --brand-100: #f3ebdc;
+  --brand-200: #e3cda2;
+  --brand-300: #c29656;
+  --brand-400: #b08848;
+  --brand-500: #a87c43;
+  --brand-600: #8f6838;
+  --brand-700: #735428;
+  --brand-800: #5c4220;
+  --brand-900: #3d2c15;
 
   /* Status chips on light chrome: soft tint bg + deep label (same families as dark) */
   --amber-50: #fffbeb;
@@ -266,11 +263,11 @@ html[data-dashboard-theme='light'],
 
 /* First paint / overscroll match stored dashboard theme before React mounts */
 html[data-dashboard-theme='light'] {
-  background-color: #fafafa;
+  background-color: #faf7f2;
 }
 
 html[data-dashboard-theme='light'] body {
-  background-color: #fafafa;
+  background-color: #faf7f2;
 }
 
 /* Light dashboard: scrollbars + autofill match the light console */
@@ -359,6 +356,16 @@ html[data-dashboard-theme='light'] .dashboard-root,
   .dashboard-root .lucide[stroke-width='2'],
   .marketing-root .lucide[stroke-width='2'] {
     stroke-width: 1.75;
+  }
+
+  /* Dashboard workspace — sans for dense UI; serif reserved for page titles via .font-display */
+  .dashboard-root {
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .dashboard-root .font-display,
+  .dashboard-root .dashboard-page-title {
+    font-family: var(--font-serif), 'Newsreader', Georgia, serif;
   }
 
   /* Marketing chrome — Geist body, editorial serif for display */

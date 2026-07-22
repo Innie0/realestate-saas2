@@ -20,7 +20,7 @@ interface ClientsTableProps {
 
 export default function ClientsTable({ clients }: ClientsTableProps) {
   return (
-    <div className="rounded-[10px] bg-[var(--surface)] border border-gray-200 overflow-hidden">
+    <div className="rounded-[10px] bg-[var(--surface)] border border-[var(--border)] overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[760px] text-left">
           <thead>

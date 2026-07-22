@@ -89,7 +89,7 @@ function NavLink({
       className={clsx(
         'group relative flex items-center rounded-md text-[13px] font-medium transition-colors duration-100',
         isCollapsed ? 'justify-center px-2 py-2' : 'gap-[9px] px-2.5 py-[6px]',
-        active ? 'bg-brand-200 text-gray-900' : 'text-gray-700 hover:bg-brand-100'
+        active ? 'bg-brand-100 text-gray-900' : 'text-gray-700 hover:bg-brand-50',
       )}
     >
       <Icon

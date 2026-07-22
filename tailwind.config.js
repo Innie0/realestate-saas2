@@ -57,7 +57,7 @@ module.exports = {
           700: '#000000',
           600: 'var(--gray-600)',
         },
-        // Lime accent — Framer-style CTAs
+        /* Brass/gold accent — driven by CSS vars in globals.css */
         brand: {
           50: 'var(--brand-50)',
           100: 'var(--brand-100)',

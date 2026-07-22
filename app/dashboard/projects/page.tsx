@@ -5,10 +5,13 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import DashboardPage from '@/components/layout/DashboardPage';
+import PageToolbar from '@/components/layout/PageToolbar';
 import Button from '@/components/ui/Button';
+import Surface from '@/components/ui/Surface';
 import SearchInput from '@/components/ui/SearchInput';
 import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
+import DataLoadingState from '@/components/dashboard/DataLoadingState';
 import ProjectCard from '@/components/ProjectCard';
 import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
 import { Plus, FolderKanban } from 'lucide-react';
@@ -98,38 +101,43 @@ export default function ProjectsPage() {
         </Link>
       }
     >
-      <div className="flex flex-col sm:flex-row gap-3">
-        <SearchInput
-          data-tour="projects-search"
-          placeholder="Search projects…"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          containerClassName="flex-1"
-        />
-        <Select
-          value={filterStatus}
-          onChange={setFilterStatus}
-          className="sm:min-w-[160px]"
-          data-tour="projects-filter"
-          options={[
-            { value: 'all', label: 'All status' },
-            { value: 'draft', label: 'Draft' },
-            { value: 'in_progress', label: 'In progress' },
-            { value: 'completed', label: 'Completed' },
-          ]}
-        />
-      </div>
-
-      <p className="text-[13px] text-gray-600">
-        Showing {filteredProjects.length} of {projects.length} projects
-      </p>
+      <PageToolbar
+        meta={
+          !isLoading && projects.length > 0
+            ? `Showing ${filteredProjects.length} of ${projects.length} projects`
+            : undefined
+        }
+      >
+        <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full">
+          <SearchInput
+            data-tour="projects-search"
+            placeholder="Search projects…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            containerClassName="flex-1"
+          />
+          <Select
+            value={filterStatus}
+            onChange={setFilterStatus}
+            className="sm:min-w-[160px]"
+            data-tour="projects-filter"
+            options={[
+              { value: 'all', label: 'All status' },
+              { value: 'draft', label: 'Draft' },
+              { value: 'in_progress', label: 'In progress' },
+              { value: 'completed', label: 'Completed' },
+            ]}
+          />
+        </div>
+      </PageToolbar>
 
       {isLoading && projects.length === 0 ? (
-        <div className="grid gap-[18px] [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="animate-pulse rounded-xl bg-[var(--surface)] border border-gray-200 h-[314px]" />
-          ))}
-        </div>
+        <Surface flat padding="none">
+          <DataLoadingState
+            title="Loading projects"
+            description="Fetching your listing projects…"
+          />
+        </Surface>
       ) : filteredProjects.length > 0 ? (
         <StaggerList className="grid gap-[18px] [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
           {filteredProjects.map((project) => (
@@ -142,25 +150,27 @@ export default function ProjectsPage() {
           ))}
         </StaggerList>
       ) : (
-        <EmptyState
-          icon={FolderKanban}
-          title="No projects found"
-          description={
-            searchQuery || filterStatus !== 'all'
-              ? 'Try adjusting your search or filters.'
-              : 'Get started by creating your first listing project.'
-          }
-          action={
-            !searchQuery && filterStatus === 'all' ? (
-              <Link href="/dashboard/projects/new">
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Project
-                </Button>
-              </Link>
-            ) : undefined
-          }
-        />
+        <Surface flat padding="none">
+          <EmptyState
+            icon={FolderKanban}
+            title={searchQuery || filterStatus !== 'all' ? 'No projects found' : 'No projects yet'}
+            description={
+              searchQuery || filterStatus !== 'all'
+                ? 'Try adjusting your search or filters to find a listing project.'
+                : 'Create your first listing project to generate AI descriptions, social posts, and marketing content.'
+            }
+            action={
+              !searchQuery && filterStatus === 'all' ? (
+                <Link href="/dashboard/projects/new">
+                  <Button>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create project
+                  </Button>
+                </Link>
+              ) : undefined
+            }
+          />
+        </Surface>
       )}
     </DashboardPage>
   );

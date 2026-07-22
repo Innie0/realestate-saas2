@@ -16,6 +16,7 @@ import PageToolbar from '@/components/layout/PageToolbar';
 import SearchInput from '@/components/ui/SearchInput';
 import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
+import DataLoadingState from '@/components/dashboard/DataLoadingState';
 import TransactionStatusBadge from '@/components/transactions/TransactionStatusBadge';
 import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
 import { TransactionWithDetails } from '@/types';
@@ -111,31 +112,34 @@ export default function TransactionsPage() {
       )}
 
       {isLoading ? (
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-[168px] rounded-[10px] bg-[var(--surface)] border border-gray-200 animate-pulse" />
-          ))}
-        </div>
+        <Surface flat padding="none">
+          <DataLoadingState
+            title="Loading transactions"
+            description="Fetching your deal pipeline…"
+          />
+        </Surface>
       ) : filteredTransactions.length === 0 ? (
-        <EmptyState
-          icon={Home}
-          title={searchTerm || statusFilter !== 'all' ? 'No matching transactions' : 'No transactions yet'}
-          description={
-            searchTerm || statusFilter !== 'open'
-              ? 'Try adjusting your search or filters.'
-              : 'Create your first transaction to track milestones, documents, and closing dates.'
-          }
-          action={
-            !searchTerm && statusFilter === 'open' ? (
-              <Link href="/dashboard/transactions/new">
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Transaction
-                </Button>
-              </Link>
-            ) : undefined
-          }
-        />
+        <Surface flat padding="none">
+          <EmptyState
+            icon={Home}
+            title={searchTerm || statusFilter !== 'open' ? 'No matching transactions' : 'No transactions yet'}
+            description={
+              searchTerm || statusFilter !== 'open'
+                ? 'Try adjusting your search or filters to find a deal.'
+                : 'Create your first transaction to track milestones, documents, and closing dates.'
+            }
+            action={
+              !searchTerm && statusFilter === 'open' ? (
+                <Link href="/dashboard/transactions/new">
+                  <Button>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create transaction
+                  </Button>
+                </Link>
+              ) : undefined
+            }
+          />
+        </Surface>
       ) : (
         <StaggerList className="space-y-3">
           {filteredTransactions.map((transaction) => {
@@ -145,11 +149,11 @@ export default function TransactionsPage() {
                 <Link href={`/dashboard/transactions/${transaction.id}`} className="block">
                   <Surface
                     flat
-                    className="cursor-pointer p-5 sm:p-[22px] transition-colors hover:border-gray-300"
+                    className="cursor-pointer p-5 sm:p-[22px] transition-colors hover:border-brand-200 hover:bg-brand-50/20"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-start gap-3 min-w-0 flex-1">
-                        <span className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[10px] bg-teal-50 text-teal-700">
+                        <span className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[10px] bg-brand-50 text-brand-700">
                           <Home className="w-[18px] h-[18px]" strokeWidth={1.75} />
                         </span>
                         <div className="min-w-0">
@@ -180,7 +184,7 @@ export default function TransactionsPage() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                       <div>
                         <p className="text-[11.5px] text-gray-600 mb-0.5">Price</p>
-                        <p className="text-[15px] font-semibold text-teal-700 tabular-nums">{formatCurrency(transaction.offer_price)}</p>
+                        <p className="text-[15px] font-semibold text-brand-700 tabular-nums">{formatCurrency(transaction.offer_price)}</p>
                       </div>
                       <div className="min-w-0">
                         <p className="text-[11.5px] text-gray-600 mb-0.5">Buyer</p>
