@@ -10,7 +10,7 @@ import {
   Calendar, ArrowRight,
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import Surface from '@/components/ui/Surface';
+import { Card } from '@/components/ui/Card';
 import DashboardPage from '@/components/layout/DashboardPage';
 import PageToolbar from '@/components/layout/PageToolbar';
 import SearchInput from '@/components/ui/SearchInput';
@@ -112,14 +112,14 @@ export default function TransactionsPage() {
       )}
 
       {isLoading ? (
-        <Surface flat padding="none">
+        <Card className="p-0">
           <DataLoadingState
             title="Loading transactions"
             description="Fetching your deal pipeline…"
           />
-        </Surface>
+        </Card>
       ) : filteredTransactions.length === 0 ? (
-        <Surface flat padding="none">
+        <Card className="p-0">
           <EmptyState
             icon={Home}
             title={searchTerm || statusFilter !== 'open' ? 'No matching transactions' : 'No transactions yet'}
@@ -139,7 +139,7 @@ export default function TransactionsPage() {
               ) : undefined
             }
           />
-        </Surface>
+        </Card>
       ) : (
         <StaggerList className="space-y-3">
           {filteredTransactions.map((transaction) => {
@@ -147,21 +147,18 @@ export default function TransactionsPage() {
             return (
               <StaggerItem key={transaction.id}>
                 <Link href={`/dashboard/transactions/${transaction.id}`} className="block">
-                  <Surface
-                    flat
-                    className="cursor-pointer p-5 sm:p-[22px] transition-colors hover:border-brand-200 hover:bg-brand-50/20"
-                  >
+                  <Card className="cursor-pointer p-5 transition-colors hover:bg-muted/40 sm:p-[22px]">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-start gap-3 min-w-0 flex-1">
                         <span className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[10px] bg-brand-50 text-brand-700">
                           <Home className="w-[18px] h-[18px]" strokeWidth={1.75} />
                         </span>
                         <div className="min-w-0">
-                          <h3 className="text-[17px] font-semibold text-gray-900 truncate">
+                          <h3 className="truncate text-[17px] font-semibold text-foreground">
                             {transaction.property_address}
                           </h3>
                           {(transaction.property_city || transaction.property_state) && (
-                            <p className="text-[13px] text-gray-600 truncate mt-0.5">
+                            <p className="mt-0.5 truncate text-[13px] text-muted-foreground">
                               {[transaction.property_city, transaction.property_state, transaction.property_zip]
                                 .filter(Boolean)
                                 .join(', ')}
@@ -173,7 +170,7 @@ export default function TransactionsPage() {
                       <div className="flex flex-col items-end shrink-0 gap-1.5">
                         <TransactionStatusBadge status={transaction.status} />
                         {closing && (
-                          <span className="flex items-center gap-1 text-[12px] text-gray-600">
+                          <span className="flex items-center gap-1 text-[12px] text-muted-foreground">
                             <Calendar className="w-3 h-3" />
                             {transaction.days_to_closing} days to closing
                           </span>
@@ -183,34 +180,34 @@ export default function TransactionsPage() {
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                       <div>
-                        <p className="text-[11.5px] text-gray-600 mb-0.5">Price</p>
-                        <p className="text-[15px] font-semibold text-brand-700 tabular-nums">{formatCurrency(transaction.offer_price)}</p>
+                        <p className="mb-0.5 text-[11.5px] text-muted-foreground">Price</p>
+                        <p className="text-[15px] font-semibold tabular-nums text-primary">{formatCurrency(transaction.offer_price)}</p>
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[11.5px] text-gray-600 mb-0.5">Buyer</p>
-                        <p className="text-[14px] font-medium text-gray-900 truncate">{transaction.buyer_name}</p>
+                        <p className="mb-0.5 text-[11.5px] text-muted-foreground">Buyer</p>
+                        <p className="truncate text-[14px] font-medium text-foreground">{transaction.buyer_name}</p>
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[11.5px] text-gray-600 mb-0.5">Seller</p>
-                        <p className="text-[14px] font-medium text-gray-900 truncate">{transaction.seller_name}</p>
+                        <p className="mb-0.5 text-[11.5px] text-muted-foreground">Seller</p>
+                        <p className="truncate text-[14px] font-medium text-foreground">{transaction.seller_name}</p>
                       </div>
                       <div>
-                        <p className="text-[11.5px] text-gray-600 mb-0.5">Tasks</p>
-                        <p className="text-[14px] font-medium text-gray-900">
+                        <p className="mb-0.5 text-[11.5px] text-muted-foreground">Tasks</p>
+                        <p className="text-[14px] font-medium text-foreground">
                           {transaction.completed_items_count}/{transaction.total_items_count}
                         </p>
                       </div>
                     </div>
 
                     {closing && (
-                      <div className="mt-4 pt-4 border-t border-gray-150 flex items-center justify-between">
-                        <p className="text-[13px] text-gray-600">
-                          <span className="font-semibold text-gray-900">Closing</span> {closing}
+                      <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
+                        <p className="text-[13px] text-muted-foreground">
+                          <span className="font-semibold text-foreground">Closing</span> {closing}
                         </p>
-                        <ArrowRight className="w-4 h-4 text-gray-600" />
+                        <ArrowRight className="size-4 text-muted-foreground" />
                       </div>
                     )}
-                  </Surface>
+                  </Card>
                 </Link>
               </StaggerItem>
             );

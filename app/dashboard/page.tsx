@@ -894,10 +894,13 @@ export default function DashboardHomePage() {
         />
       )}
 
-      {/* 1. Action queue first (enterprise hierarchy) */}
+      {/* 1. Business pulse — hot leads, pipeline, new leads, follow-ups */}
+      {metricsLoading ? <MetricStripSkeleton /> : <MetricStrip metrics={metrics} />}
+
+      {/* 2. Action queue */}
       <NeedsAttention items={attentionItems} loading={attentionLoading} />
 
-      {/* 2. Work area + right rail */}
+      {/* 3. Work area + right rail */}
       <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[1fr_320px]">
         <div className="flex min-w-0 flex-col gap-4">
           <OpenDealsTable transactions={allTransactions} loading={transactionsLoading && allTransactions.length === 0} />
@@ -909,10 +912,7 @@ export default function DashboardHomePage() {
         </div>
       </div>
 
-      {/* 3. Supporting KPIs */}
-      {metricsLoading ? <MetricStripSkeleton /> : <MetricStrip metrics={metrics} />}
-
-      {/* 3. Plan usage — full width */}
+      {/* 4. Plan usage — full width */}
       <div data-tour="plan-usage">
         {usage ? (
           <PlanUsagePanel usage={usage} plan={plan} layout="full" />

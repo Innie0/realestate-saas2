@@ -89,13 +89,13 @@ function NavLink({
       className={clsx(
         'group relative flex items-center rounded-md text-[13px] font-medium transition-colors duration-100',
         isCollapsed ? 'justify-center px-2 py-2' : 'gap-[9px] px-2.5 py-[6px]',
-        active ? 'bg-brand-100 text-gray-900' : 'text-gray-700 hover:bg-brand-50',
+        active ? 'bg-accent text-foreground' : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground',
       )}
     >
       <Icon
         className={clsx(
           'relative z-10 h-[14px] w-[14px] flex-shrink-0',
-          active ? 'text-gray-900' : 'text-gray-700'
+          active ? 'text-foreground' : 'text-muted-foreground'
         )}
         strokeWidth={1.8}
       />
@@ -203,27 +203,27 @@ export default function Sidebar() {
 
   return (
     <>
-      <div className="fixed left-0 right-0 top-0 z-50 flex h-16 items-center justify-between border-b border-gray-200 bg-[var(--canvas)] px-4 lg:hidden">
+      <div className="fixed left-0 right-0 top-0 z-50 flex h-16 items-center justify-between border-b border-border bg-[var(--canvas)] px-4 lg:hidden">
         <Link href="/dashboard" className="flex items-center gap-2 min-h-0">
           <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] bg-brand-500 text-[11px] font-bold text-[var(--brand-foreground)]">
             O
           </span>
-          <span className="text-[13px] font-semibold tracking-tight text-gray-900">Oikaro</span>
+          <span className="text-[13px] font-semibold tracking-tight text-foreground">Oikaro</span>
         </Link>
         <button
           type="button"
           onClick={() => openCommandPalette()}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors lg:hidden"
+          className="rounded-lg p-2 transition-colors hover:bg-muted lg:hidden"
           aria-label="Search"
         >
-          <Search className="w-5 h-5" />
+          <Search className="size-5" />
         </button>
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="rounded-lg p-2 transition-colors hover:bg-muted"
           aria-label="Toggle menu"
         >
-          {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          {isMobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
       </div>
 
@@ -233,7 +233,7 @@ export default function Sidebar() {
 
       <div
         className={clsx(
-          'fixed top-0 h-screen flex flex-col bg-[var(--sidebar)] z-50 border-r border-gray-200',
+          'fixed top-0 h-screen flex flex-col bg-[var(--sidebar)] z-50 border-r border-border',
           'lg:translate-x-0 lg:relative',
           isCollapsed ? 'lg:w-[56px]' : 'lg:w-[216px]',
           'w-60',
@@ -241,7 +241,7 @@ export default function Sidebar() {
         )}
         style={{ transition: 'width 0.2s ease, transform 0.2s ease' }}
       >
-        <div className="hidden lg:flex h-[52px] shrink-0 items-center gap-2 border-b border-gray-200 overflow-visible px-4">
+        <div className="hidden lg:flex h-[52px] shrink-0 items-center gap-2 border-b border-border overflow-visible px-4">
           {isCollapsed ? (
             <Image
               src="/logo-collapsed.png"
@@ -256,7 +256,7 @@ export default function Sidebar() {
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-brand-500 text-[11px] font-bold text-[var(--brand-foreground)]">
                 O
               </span>
-              <span className="text-[13px] font-semibold tracking-tight text-gray-900">Oikaro</span>
+              <span className="text-[13px] font-semibold tracking-tight text-foreground">Oikaro</span>
             </>
           )}
         </div>
@@ -268,11 +268,11 @@ export default function Sidebar() {
             <button
               type="button"
               onClick={() => openCommandPalette()}
-              className="flex w-full items-center gap-2 rounded-[7px] border border-gray-200 bg-[var(--surface)] px-2.5 py-[6px] text-[12.5px] text-gray-700 transition-colors hover:border-gray-300 hover:bg-gray-50"
+              className="flex w-full items-center gap-2 rounded-[7px] border border-border bg-[var(--surface)] px-2.5 py-[6px] text-[12.5px] text-muted-foreground transition-colors hover:border-border hover:bg-muted/40"
             >
               <Search className="h-3 w-3 shrink-0" strokeWidth={2} />
               <span className="flex-1 text-left">Search</span>
-              <span className="rounded border border-gray-200 bg-gray-100 px-1 font-mono text-[10px] font-medium text-gray-600">
+              <span className="rounded border border-border bg-muted px-1 font-mono text-[10px] font-medium text-muted-foreground">
                 ⌘K
               </span>
             </button>
@@ -288,7 +288,7 @@ export default function Sidebar() {
           {navGroups.map((group) => (
             <div key={group.label} className={clsx('mb-[18px] last:mb-2', isCollapsed && 'mb-3')}>
               {!isCollapsed && (
-                <p className="px-2.5 mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-gray-600">
+                <p className="px-2.5 mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                   {group.label}
                 </p>
               )}
@@ -309,16 +309,16 @@ export default function Sidebar() {
           ))}
         </nav>
 
-        <div className="relative border-t border-gray-200 p-2.5" ref={userMenuRef}>
+        <div className="relative border-t border-border p-2.5" ref={userMenuRef}>
           {isUserMenuOpen && !isCollapsed && (
-            <div className="absolute bottom-full left-2.5 right-2.5 mb-1.5 overflow-hidden rounded-[8px] border border-gray-200 bg-[var(--surface)] py-1 shadow-overlay">
+            <div className="absolute bottom-full left-2.5 right-2.5 mb-1.5 overflow-hidden rounded-[8px] border border-border bg-[var(--surface)] py-1 shadow-overlay">
               <Link
                 href="/dashboard/account"
                 onClick={() => {
                   setIsUserMenuOpen(false);
                   closeMobile();
                 }}
-                className="flex items-center gap-2.5 px-3 py-[7px] text-[13px] font-medium text-gray-700 hover:bg-gray-50"
+                className="flex items-center gap-2.5 px-3 py-[7px] text-[13px] font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground"
               >
                 <User className="h-[14px] w-[14px]" strokeWidth={1.8} />
                 Account
@@ -326,7 +326,7 @@ export default function Sidebar() {
               <button
                 type="button"
                 onClick={toggleTheme}
-                className="flex w-full items-center gap-2.5 px-3 py-[7px] text-[13px] font-medium text-gray-700 hover:bg-gray-50"
+                className="flex w-full items-center gap-2.5 px-3 py-[7px] text-[13px] font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground"
               >
                 {theme === 'dark' ? (
                   <Sun className="h-[14px] w-[14px]" strokeWidth={1.8} />
@@ -342,7 +342,7 @@ export default function Sidebar() {
                   setShowSignOutModal(true);
                 }}
                 disabled={isSigningOut}
-                className="flex w-full items-center gap-2.5 px-3 py-[7px] text-[13px] font-medium text-gray-700 hover:bg-rose-50 hover:text-rose-600 disabled:opacity-50"
+                className="flex w-full items-center gap-2.5 px-3 py-[7px] text-[13px] font-medium text-muted-foreground hover:bg-rose-50 hover:text-rose-600 disabled:opacity-50"
               >
                 <LogOut className="h-[14px] w-[14px]" strokeWidth={1.8} />
                 Sign out
@@ -353,7 +353,7 @@ export default function Sidebar() {
                   setIsUserMenuOpen(false);
                   toggleCollapsed();
                 }}
-                className="hidden w-full items-center gap-2.5 px-3 py-[7px] text-[13px] font-medium text-gray-700 hover:bg-gray-50 lg:flex"
+                className="hidden w-full items-center gap-2.5 px-3 py-[7px] text-[13px] font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground lg:flex"
               >
                 <ChevronsLeft className="h-[14px] w-[14px]" strokeWidth={1.8} />
                 Collapse sidebar
@@ -364,7 +364,7 @@ export default function Sidebar() {
             type="button"
             onClick={() => (isCollapsed ? toggleCollapsed() : setIsUserMenuOpen((v) => !v))}
             className={clsx(
-              'flex w-full items-center rounded-[7px] transition-colors hover:bg-brand-100',
+              'flex w-full items-center rounded-[7px] transition-colors hover:bg-muted/60',
               isCollapsed ? 'justify-center py-2' : 'gap-[9px] px-1.5 py-1.5'
             )}
           >
@@ -377,12 +377,12 @@ export default function Sidebar() {
             {!isCollapsed && (
               <>
                 <div className="min-w-0 flex-1 text-left">
-                  <p className="truncate text-[12px] font-medium leading-tight text-gray-900">
+                  <p className="truncate text-[12px] font-medium leading-tight text-foreground">
                     {userName || 'Your account'}
                   </p>
-                  <p className="truncate text-[10.5px] leading-tight text-gray-600">{userEmail}</p>
+                  <p className="truncate text-[10.5px] leading-tight text-muted-foreground">{userEmail}</p>
                 </div>
-                <ChevronDown className="h-[13px] w-[13px] shrink-0 text-gray-600" strokeWidth={2} />
+                <ChevronDown className="h-[13px] w-[13px] shrink-0 text-muted-foreground" strokeWidth={2} />
               </>
             )}
           </button>
@@ -390,7 +390,7 @@ export default function Sidebar() {
             <button
               type="button"
               onClick={toggleCollapsed}
-              className="mt-1 hidden w-full items-center justify-center rounded-md py-[7px] text-gray-600 hover:bg-brand-100 hover:text-gray-700 lg:flex"
+              className="mt-1 hidden w-full items-center justify-center rounded-md py-[7px] text-muted-foreground hover:bg-muted/60 hover:text-foreground lg:flex"
               title="Expand sidebar"
             >
               <ChevronsRight className="h-4 w-4" />
@@ -405,7 +405,7 @@ export default function Sidebar() {
         title="Sign out?"
         size="sm"
       >
-        <p className="text-sm text-gray-600 mb-6">
+        <p className="mb-6 text-sm text-muted-foreground">
           You&apos;ll need to sign in again to access your dashboard.
         </p>
         <div className="flex gap-3 justify-end">

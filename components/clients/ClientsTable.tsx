@@ -13,6 +13,14 @@ import {
   getClientStage,
 } from '@/lib/client-crm-display';
 import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
+import { Card } from '@/components/ui/Card';
+import {
+  Table,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 interface ClientsTableProps {
   clients: ClientListRow[];
@@ -20,22 +28,17 @@ interface ClientsTableProps {
 
 export default function ClientsTable({ clients }: ClientsTableProps) {
   return (
-    <div className="rounded-[10px] bg-[var(--surface)] border border-[var(--border)] overflow-hidden">
+    <Card className="overflow-hidden p-0">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[760px] text-left">
-          <thead>
-            <tr className="border-b border-gray-150 bg-gray-50">
+        <Table className="min-w-[760px]">
+          <TableHeader>
+            <TableRow>
               {['Client', 'Interest', 'Stage', 'Last contact', 'Next follow-up'].map((heading) => (
-                <th
-                  key={heading}
-                  className="px-4 sm:px-5 py-3 font-mono text-[10.5px] font-semibold uppercase tracking-[0.06em] text-gray-600"
-                >
-                  {heading}
-                </th>
+                <TableHead key={heading}>{heading}</TableHead>
               ))}
-            </tr>
-          </thead>
-          <StaggerList as="tbody" className="divide-y divide-gray-150">
+            </TableRow>
+          </TableHeader>
+          <StaggerList as="tbody">
             {clients.map((client) => {
               const interest = getClientInterest(client);
               const stage = getClientStage(client);
@@ -44,66 +47,62 @@ export default function ClientsTable({ clients }: ClientsTableProps) {
               const isOverdue = client.next_reminder?.is_overdue;
 
               return (
-                <StaggerItem
-                  key={client.id}
-                  as="tr"
-                  className="group hover:bg-gray-50 transition-colors"
-                >
-                  <td className="px-4 sm:px-5 py-4">
+                <StaggerItem key={client.id} as="tr" className="group">
+                  <TableCell>
                     <Link href={`/dashboard/clients/${client.id}`} className="flex items-center gap-3 min-w-0 group/link">
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 ${getClientAvatarClass(client.name)}`}
+                        className={`flex size-10 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${getClientAvatarClass(client.name)}`}
                         aria-hidden
                       >
                         {getClientInitials(client.name) || '?'}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[13.5px] font-semibold text-gray-900 truncate group-hover/link:text-gray-950 transition-colors">
+                        <p className="truncate text-sm font-semibold text-foreground transition-colors group-hover/link:text-foreground">
                           {client.name}
                         </p>
-                        <p className="text-[12px] text-gray-600 truncate">{client.email || client.phone || '—'}</p>
+                        <p className="truncate text-xs text-muted-foreground">{client.email || client.phone || '—'}</p>
                       </div>
                     </Link>
-                  </td>
-                  <td className="px-4 sm:px-5 py-4">
-                    <p className="text-[13px] text-gray-900 truncate">{interest.headline}</p>
+                  </TableCell>
+                  <TableCell>
+                    <p className="truncate text-sm text-foreground">{interest.headline}</p>
                     {interest.subline && (
-                      <p className="text-[12px] text-gray-600 truncate mt-0.5">{interest.subline}</p>
+                      <p className="mt-0.5 truncate text-xs text-muted-foreground">{interest.subline}</p>
                     )}
-                  </td>
-                  <td className="px-4 sm:px-5 py-4">
+                  </TableCell>
+                  <TableCell>
                     <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium border ${stageStyle.className}`}
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${stageStyle.className}`}
                     >
-                      <span className={`w-1.5 h-1.5 rounded-full ${stageStyle.dotClassName}`} />
+                      <span className={`size-1.5 rounded-full ${stageStyle.dotClassName}`} />
                       {stageStyle.label}
                     </span>
-                  </td>
-                  <td className="px-4 sm:px-5 py-4">
-                    <span className="inline-flex items-center gap-1.5 text-[13px] text-gray-700">
-                      <Clock className="w-3.5 h-3.5 text-gray-600" />
+                  </TableCell>
+                  <TableCell>
+                    <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
+                      <Clock className="size-3.5" />
                       {formatLastContact(client.last_contact_at)}
                     </span>
-                  </td>
-                  <td className="px-4 sm:px-5 py-4">
+                  </TableCell>
+                  <TableCell>
                     <span
-                      className={`text-[13px] ${
+                      className={`text-sm ${
                         followUp.tone === 'overdue'
-                          ? 'text-amber-700 font-medium'
+                          ? 'font-medium text-amber-700'
                           : followUp.tone === 'upcoming'
-                            ? 'text-gray-700'
-                            : 'text-gray-600'
+                            ? 'text-foreground'
+                            : 'text-muted-foreground'
                       } ${isOverdue ? 'animate-pulse' : ''}`}
                     >
                       {followUp.text}
                     </span>
-                  </td>
+                  </TableCell>
                 </StaggerItem>
               );
             })}
           </StaggerList>
-        </table>
+        </Table>
       </div>
-    </div>
+    </Card>
   );
 }

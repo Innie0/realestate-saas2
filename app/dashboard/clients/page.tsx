@@ -7,9 +7,9 @@ import ClientForm from '@/components/ClientForm';
 import ClientsTable from '@/components/clients/ClientsTable';
 import ReminderForm from '@/components/ReminderForm';
 import Button from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 import DashboardPage from '@/components/layout/DashboardPage';
 import PageToolbar from '@/components/layout/PageToolbar';
-import Surface from '@/components/ui/Surface';
 import SearchInput from '@/components/ui/SearchInput';
 import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
@@ -352,14 +352,14 @@ export default function ClientsPage() {
       </Modal>
 
       {isLoading && allClients.length === 0 ? (
-        <Surface flat padding="none">
+        <Card className="p-0">
           <DataLoadingState
             title="Loading clients"
             description="Fetching your CRM contacts…"
           />
-        </Surface>
+        </Card>
       ) : sortedClients.length === 0 ? (
-        <Surface flat padding="none">
+        <Card className="p-0">
           <EmptyState
             icon={Users}
             title={emptyState.title}
@@ -377,7 +377,7 @@ export default function ClientsPage() {
               ) : undefined
             }
           />
-        </Surface>
+        </Card>
       ) : viewMode === 'list' ? (
         <>
           <ClientsTable clients={pagedClients} />

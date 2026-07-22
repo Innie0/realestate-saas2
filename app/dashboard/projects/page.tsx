@@ -7,7 +7,7 @@ import Link from 'next/link';
 import DashboardPage from '@/components/layout/DashboardPage';
 import PageToolbar from '@/components/layout/PageToolbar';
 import Button from '@/components/ui/Button';
-import Surface from '@/components/ui/Surface';
+import { Card } from '@/components/ui/Card';
 import SearchInput from '@/components/ui/SearchInput';
 import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
@@ -132,12 +132,12 @@ export default function ProjectsPage() {
       </PageToolbar>
 
       {isLoading && projects.length === 0 ? (
-        <Surface flat padding="none">
+        <Card className="p-0">
           <DataLoadingState
             title="Loading projects"
             description="Fetching your listing projects…"
           />
-        </Surface>
+        </Card>
       ) : filteredProjects.length > 0 ? (
         <StaggerList className="grid gap-[18px] [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
           {filteredProjects.map((project) => (
@@ -150,7 +150,7 @@ export default function ProjectsPage() {
           ))}
         </StaggerList>
       ) : (
-        <Surface flat padding="none">
+        <Card className="p-0">
           <EmptyState
             icon={FolderKanban}
             title={searchQuery || filterStatus !== 'all' ? 'No projects found' : 'No projects yet'}
@@ -170,7 +170,7 @@ export default function ProjectsPage() {
               ) : undefined
             }
           />
-        </Surface>
+        </Card>
       )}
     </DashboardPage>
   );
