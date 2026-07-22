@@ -347,7 +347,7 @@ export default function ClientsPage() {
                 onClick={() => setViewMode('list')}
                 className={clsx(
                   'p-1.5 rounded-md transition-colors',
-                  viewMode === 'list' ? 'bg-[var(--surface)] text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-700'
+                  viewMode === 'list' ? 'bg-[var(--surface)] text-gray-900 border border-gray-200' : 'text-gray-600 hover:text-gray-700'
                 )}
                 aria-label="List view"
               >
@@ -358,7 +358,7 @@ export default function ClientsPage() {
                 onClick={() => setViewMode('grid')}
                 className={clsx(
                   'p-1.5 rounded-md transition-colors',
-                  viewMode === 'grid' ? 'bg-[var(--surface)] text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-700'
+                  viewMode === 'grid' ? 'bg-[var(--surface)] text-gray-900 border border-gray-200' : 'text-gray-600 hover:text-gray-700'
                 )}
                 aria-label="Grid view"
               >

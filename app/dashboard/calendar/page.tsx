@@ -161,9 +161,9 @@ function CalendarPageContent() {
       )}
 
       {!connections.google.connected && (
-        <Surface padding="md" className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-brand-50/30">
+        <Surface flat padding="md" className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-brand-50/30">
           <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-[var(--surface)] shadow-sm">
+            <div className="p-2 rounded-lg bg-[var(--surface)] border border-gray-200">
               <Link2 className="w-5 h-5 text-brand-600" />
             </div>
             <div>
@@ -212,7 +212,7 @@ function CalendarPageContent() {
         </div>
       </PageToolbar>
 
-      <Surface padding="md">
+      <Surface flat padding="md">
         <CalendarView highlightEventId={highlightEventId} focusDate={focusDate} />
       </Surface>
 
@@ -230,7 +230,7 @@ function CalendarPageContent() {
       <Modal isOpen={showConnectionsModal} onClose={() => setShowConnectionsModal(false)} title="Calendar Connections">
         <div className="space-y-4">
           <p className="text-sm text-gray-700">Connect your calendars to sync events automatically.</p>
-          <Surface padding="md" className="shadow-none">
+          <Surface flat padding="md">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">

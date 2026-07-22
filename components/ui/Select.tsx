@@ -137,13 +137,13 @@ export default function Select({
   };
 
   const triggerClasses = clsx(
-    'flex w-full items-center justify-between gap-2 text-left text-sm transition-shadow duration-150',
-    'rounded-xl border bg-[var(--surface)] text-gray-900 ring-1 ring-white/[0.06] shadow-surface',
+    'flex w-full items-center justify-between gap-2 text-left text-sm transition-colors duration-150',
+    'rounded-lg border bg-[var(--surface)] text-gray-900',
     'focus:outline-none focus:ring-2 focus:ring-brand-500/30',
     error
       ? 'border-red-300 focus:ring-red-200'
-      : 'border-transparent',
-    disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:ring-gray-900/[0.09]',
+      : 'border-gray-200',
+    disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-gray-300',
     !selectedOption && !value && 'text-gray-400',
     triggerClassName,
   );

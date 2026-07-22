@@ -7,7 +7,7 @@ interface SurfaceProps {
   hover?: boolean;
   sticky?: boolean;
   /**
-   * Flat card: 1px hairline border, 10px radius, no shadow.
+   * Kept for API compatibility — all Surfaces are flat (border, no shadow).
    */
   flat?: boolean;
 }
@@ -19,26 +19,20 @@ const paddingStyles = {
   lg: 'p-6 sm:p-8',
 };
 
-/** Elevated panel on the dark canvas — never white. */
+/** Flat panel on the canvas — hairline border, no elevation shadow. */
 export default function Surface({
   children,
   className,
   padding = 'md',
   hover = false,
   sticky = false,
-  flat = false,
 }: SurfaceProps) {
   return (
     <div
       className={clsx(
-        flat
-          ? 'rounded-[10px] bg-[var(--surface)] border border-gray-200'
-          : 'rounded-2xl bg-[var(--surface)] ring-1 ring-white/[0.06] shadow-surface',
+        'rounded-[10px] bg-[var(--surface)] border border-gray-200',
         paddingStyles[padding],
-        hover &&
-          (flat
-            ? 'transition-colors duration-150 hover:bg-gray-150'
-            : 'transition-all duration-200 hover:shadow-raised hover:ring-white/[0.1] hover:-translate-y-px'),
+        hover && 'transition-colors duration-150 hover:bg-gray-150',
         sticky && 'sticky top-16 z-10 backdrop-blur-sm bg-[var(--surface)]/95',
         className,
       )}

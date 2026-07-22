@@ -191,7 +191,7 @@ export default function BrandKitPage() {
                   </div>
                 </div>
                 <div
-                  className="w-24 h-24 rounded-lg shadow-sm"
+                  className="w-24 h-24 rounded-lg border border-gray-200"
                   style={{ backgroundColor: brandKit.primary_color }}
                 />
               </div>
@@ -223,7 +223,7 @@ export default function BrandKitPage() {
                   </div>
                 </div>
                 <div
-                  className="w-24 h-24 rounded-lg shadow-sm"
+                  className="w-24 h-24 rounded-lg border border-gray-200"
                   style={{ backgroundColor: brandKit.secondary_color }}
                 />
               </div>
@@ -255,7 +255,7 @@ export default function BrandKitPage() {
                   </div>
                 </div>
                 <div
-                  className="w-24 h-24 rounded-lg shadow-sm"
+                  className="w-24 h-24 rounded-lg border border-gray-200"
                   style={{ backgroundColor: brandKit.accent_color }}
                 />
               </div>

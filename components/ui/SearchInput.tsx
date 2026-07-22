@@ -16,11 +16,10 @@ export default function SearchInput({
       <input
         type="text"
         className={clsx(
-          'w-full rounded-xl bg-[var(--surface)] py-2.5 pl-9 pr-4 text-sm',
+          'w-full rounded-lg border border-gray-200 bg-[var(--surface)] py-2.5 pl-9 pr-4 text-sm',
           'text-gray-900 placeholder:text-gray-400',
-          'shadow-surface ring-1 ring-white/[0.06]',
-          'focus:outline-none focus:ring-2 focus:ring-brand-500/30',
-          'transition-shadow duration-150',
+          'focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-300',
+          'transition-colors duration-150',
           className,
         )}
         {...props}

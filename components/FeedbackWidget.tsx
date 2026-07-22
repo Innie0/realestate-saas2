@@ -65,7 +65,7 @@ export default function FeedbackWidget() {
     <>
       {/* Feedback panel — shows regardless of dismissed state */}
       {open && (
-        <div className={`fixed ${dismissed ? 'bottom-16' : 'bottom-28'} right-6 z-50 w-80 rounded-2xl border border-gray-200 bg-[var(--surface)] shadow-2xl overflow-hidden`}>
+        <div className={`fixed ${dismissed ? 'bottom-16' : 'bottom-28'} right-6 z-50 w-80 rounded-[10px] border border-gray-200 bg-[var(--surface)] overflow-hidden`}>
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
             <span className="text-sm font-semibold text-gray-900">Share Feedback</span>

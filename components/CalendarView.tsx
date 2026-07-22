@@ -133,7 +133,7 @@ export default function CalendarView({
     days.push(
       <div
         key={day}
-        className={`min-h-[92px] sm:min-h-[110px] border-t border-l border-gray-100 p-1.5 sm:p-2 transition-colors hover:bg-gray-50 ${
+        className={`min-h-[92px] sm:min-h-[110px] border-t border-l border-gray-200 p-1.5 sm:p-2 transition-colors hover:bg-gray-50 ${
           isToday ? 'bg-brand-50/60' : 'bg-[var(--surface)]'
         }`}
       >
@@ -220,7 +220,7 @@ export default function CalendarView({
       </div>
 
       {isLoading ? (
-        <div className="grid grid-cols-7 gap-px rounded-xl border border-gray-100 overflow-hidden animate-pulse">
+        <div className="grid grid-cols-7 gap-px rounded-[10px] border border-gray-200 overflow-hidden animate-pulse">
           {Array.from({ length: 35 }).map((_, i) => (
             <div key={i} className="min-h-[92px] sm:min-h-[110px] bg-gray-50" />
           ))}
@@ -242,7 +242,7 @@ export default function CalendarView({
               ))}
             </div>
 
-            <div className="grid grid-cols-7 border-r border-b border-gray-100 rounded-xl overflow-hidden">
+            <div className="grid grid-cols-7 border-r border-b border-gray-200 rounded-[10px] overflow-hidden">
               {days}
             </div>
           </motion.div>
