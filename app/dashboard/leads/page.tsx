@@ -482,8 +482,8 @@ function LeadsPageContent() {
                   disabled={savingSettings}
                   className={`w-full flex items-center justify-center gap-2 h-10 px-4 rounded-[10px] text-[13px] font-medium transition-all ${
                     autoFollowup
-                      ? 'bg-teal-50 text-teal-700 border border-teal-200'
-                      : 'bg-[var(--surface)] text-gray-600 border border-gray-200 hover:border-gray-300 hover:text-gray-900'
+                      ? 'bg-card text-foreground border border-border shadow-sm'
+                      : 'bg-[var(--surface)] text-muted-foreground border border-border hover:border-gray-300 hover:text-foreground'
                   }`}
                 >
                   {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : autoFollowup ? <Check className="w-4 h-4" /> : <MailCheck className="w-4 h-4" />}
