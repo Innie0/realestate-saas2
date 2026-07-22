@@ -845,9 +845,14 @@ export default function DashboardPage() {
     localStorage.setItem('oikaro_getting_started_dismissed', '1');
   };
 
+  // Wait for workspace lists to finish loading — otherwise empty defaults flash
+  // the Getting Started card for a frame on every refresh.
+  const workspaceListsReady =
+    !projectsLoading && !leadsLoading && !transactionsLoading;
+
   const showOnboarding =
     (showWelcome || showGettingStarted) &&
-    !loading &&
+    workspaceListsReady &&
     recentProjects.length === 0 &&
     inboxLeads.length === 0 &&
     allTransactions.length === 0;
