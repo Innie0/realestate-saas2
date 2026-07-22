@@ -100,7 +100,8 @@ module.exports = {
   				'700': 'var(--brand-700)',
   				'800': 'var(--brand-800)',
   				'900': 'var(--brand-900)',
-  				DEFAULT: 'var(--brand-500)'
+  				DEFAULT: 'var(--brand-500)',
+  				foreground: 'var(--primary-foreground)',
   			},
   			secondary: {
   				DEFAULT: 'var(--secondary)',

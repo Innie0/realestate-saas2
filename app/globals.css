@@ -627,9 +627,11 @@ html[data-dashboard-theme='light'] .dashboard-root,
     background-color: var(--surface) !important;
   }
 
-  /* Lime CTAs need dark text even when callers also set text-white */
+  /* Primary CTAs — ensure label contrasts with fill in both themes */
   .bg-brand-500.text-white,
-  .bg-brand-600.text-white {
+  .bg-brand-600.text-white,
+  .bg-primary.text-primary-foreground,
+  .bg-primary:not([class*='text-']) {
     color: var(--brand-foreground) !important;
   }
 

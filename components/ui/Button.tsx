@@ -31,6 +31,7 @@ const sizeMap = {
 } as const;
 
 const extraVariantClasses: Partial<Record<AppVariant, string>> = {
+  primary: 'text-[var(--brand-foreground)]',
   'outline-light': 'text-brand-400 border-brand-300 hover:bg-brand-50',
   white: 'bg-card text-foreground',
 };

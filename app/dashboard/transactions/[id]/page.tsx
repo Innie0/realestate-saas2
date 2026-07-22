@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Select from '@/components/ui/Select';
-import Surface from '@/components/ui/Surface';
+import { Card } from '@/components/ui/Card';
 import Modal from '@/components/ui/Modal';
 import PageShell from '@/components/layout/PageShell';
 import DashboardPage from '@/components/layout/DashboardPage';
@@ -328,7 +328,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
       )}
 
       {/* Tab navigation */}
-      <div className="border-b border-gray-200">
+      <div className="border-b border-border">
         <nav className="flex gap-[26px] overflow-x-auto">
           {DETAIL_TABS.map((tab) => {
             const Icon = tab.icon;
@@ -339,7 +339,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
                 className={`relative flex items-center gap-1.5 py-3 text-[13px] font-medium whitespace-nowrap transition-colors ${
-                  isActive ? 'text-gray-900' : 'text-gray-600 hover:text-gray-700'
+                  isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -375,7 +375,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
               ].map(stat => {
                 const Icon = stat.icon;
                 return (
-                  <Surface key={stat.label} flat className="p-4">
+                  <Card key={stat.label} className="p-4">
                     <div className="flex items-center gap-3">
                       <div className="w-[34px] h-[34px] rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
                         <Icon className="w-4 h-4 text-gray-900" strokeWidth={1.75} />
@@ -385,14 +385,14 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                         <p className="text-[17px] font-semibold text-gray-900 truncate">{stat.value}</p>
                       </div>
                     </div>
-                  </Surface>
+                  </Card>
                 );
               })}
             </div>
 
             {/* Buyer & Seller side by side */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <Surface flat className="p-5 sm:p-[22px]">
+              <Card className="p-5 sm:p-[22px]">
                 <h3 className="font-mono text-[11px] uppercase tracking-[0.1em] text-gray-600 mb-3 flex items-center gap-1.5">
                   <User className="w-3.5 h-3.5" /> Buyer
                 </h3>
@@ -414,9 +414,9 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                     <p className="text-[12.5px] text-gray-700">Agent: <span className="font-medium text-gray-900">{transaction.buyer_agent_name}</span></p>
                   </div>
                 )}
-              </Surface>
+              </Card>
 
-              <Surface flat className="p-5 sm:p-[22px]">
+              <Card className="p-5 sm:p-[22px]">
                 <h3 className="font-mono text-[11px] uppercase tracking-[0.1em] text-gray-600 mb-3 flex items-center gap-1.5">
                   <Users className="w-3.5 h-3.5" /> Seller
                 </h3>
@@ -438,28 +438,28 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                     <p className="text-[12.5px] text-gray-700">Agent: <span className="font-medium text-gray-900">{transaction.seller_agent_name}</span></p>
                   </div>
                 )}
-              </Surface>
+              </Card>
             </div>
 
             {/* Notes */}
             {transaction.notes && (
-              <Surface flat className="p-5 sm:p-[22px]">
+              <Card className="p-5 sm:p-[22px]">
                 <h3 className="font-mono text-[11px] uppercase tracking-[0.1em] text-gray-600 mb-3 flex items-center gap-1.5">
                   <FileText className="w-3.5 h-3.5" /> Notes
                 </h3>
                 <p className="text-gray-700 whitespace-pre-wrap text-[13.5px] leading-relaxed">{transaction.notes}</p>
-              </Surface>
+              </Card>
             )}
           </div>
         )}
 
         {activeTab === 'tasks' && (
           <div className="space-y-5">
-            <Surface flat className="p-5 sm:p-[22px]">
+            <Card className="p-5 sm:p-[22px]">
               <h2 className="text-[15px] font-semibold text-gray-900 mb-4">Transaction Timeline</h2>
               <TransactionTimeline transaction={transaction} />
-            </Surface>
-            <Surface flat className="p-5 sm:p-[22px]">
+            </Card>
+            <Card className="p-5 sm:p-[22px]">
               <h2 className="text-[15px] font-semibold text-gray-900 mb-4">Task Checklist</h2>
               <TransactionChecklist
                 transactionId={transaction.id}
@@ -467,12 +467,12 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                 onUpdate={fetchTransaction}
                 onItemToggle={handleChecklistItemToggle}
               />
-            </Surface>
+            </Card>
           </div>
         )}
 
         <div className={activeTab === 'documents' ? '' : 'hidden'}>
-          <Surface flat className="p-5 sm:p-[22px]">
+          <Card className="p-5 sm:p-[22px]">
             <h2 className="text-[15px] font-semibold text-gray-900 mb-1">Deal Documents</h2>
             <p className="text-[13px] text-gray-600 mb-5">
               Store contracts, disclosures, inspection reports, and other files for this transaction.
@@ -483,11 +483,11 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
               prefetchedSetupError={documentsSetupError}
               documentsReady={documentsReady}
             />
-          </Surface>
+          </Card>
         </div>
 
         {activeTab === 'reminders' && (
-          <Surface flat className="p-5 sm:p-[22px]">
+          <Card className="p-5 sm:p-[22px]">
             <h2 className="text-[15px] font-semibold text-gray-900 mb-4">Reminders</h2>
             {transaction.reminders && transaction.reminders.filter(r => !r.is_dismissed).length > 0 ? (
               <div className="space-y-2.5">
@@ -518,11 +518,11 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
             ) : (
               <p className="text-gray-600 text-[13px] text-center py-8">No reminders set</p>
             )}
-          </Surface>
+          </Card>
         )}
 
         {activeTab === 'financials' && (
-          <Surface flat className="p-5 sm:p-[22px]">
+          <Card className="p-5 sm:p-[22px]">
             <h2 className="text-[15px] font-semibold text-gray-900 mb-4">Financial Details</h2>
             <div className="divide-y divide-gray-150">
               {[
@@ -537,7 +537,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                 </div>
               ))}
             </div>
-          </Surface>
+          </Card>
         )}
       </div>
       </div>

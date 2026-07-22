@@ -6,7 +6,7 @@ import { ClientWithDetails, Reminder } from '@/types';
 import ClientForm from '@/components/ClientForm';
 import ReminderForm from '@/components/ReminderForm';
 import Button from '@/components/ui/Button';
-import Surface from '@/components/ui/Surface';
+import { Card } from '@/components/ui/Card';
 import Modal from '@/components/ui/Modal';
 import DashboardPage from '@/components/layout/DashboardPage';
 import {
@@ -37,8 +37,8 @@ import {
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-1 items-center justify-between">
-      <span className="text-[13px] text-gray-600">{label}</span>
-      <span className="text-[13px] font-semibold text-gray-900">{value}</span>
+      <span className="text-[13px] text-muted-foreground">{label}</span>
+      <span className="text-[13px] font-semibold text-foreground">{value}</span>
     </div>
   );
 }
@@ -378,7 +378,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         )}
 
         {/* Hero card */}
-        <Surface flat padding="none" className="p-5 sm:p-[26px]">
+        <Card className="p-5 sm:p-[26px]">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
             <div className="flex items-center gap-4 min-w-0">
               <div
@@ -448,7 +448,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
               <p className="mt-1 text-[14px] font-semibold text-gray-900">{detail.timeline || '—'}</p>
             </div>
           </div>
-        </Surface>
+        </Card>
 
         {/* Edit Client modal */}
         <Modal isOpen={isEditing} onClose={() => setIsEditing(false)} title="Edit Client" size="md">
@@ -465,7 +465,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           {/* Left column: Notes + Reminders stacked */}
           <div className="flex flex-col gap-5">
             {/* Notes card */}
-            <Surface flat padding="none" className="p-5 sm:p-[22px]">
+            <Card className="p-5 sm:p-[22px]">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <FileText className="w-4 h-4 text-gray-700" />
@@ -562,10 +562,10 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                   <p className="text-[13px] text-gray-600">No notes yet</p>
                 )}
               </div>
-            </Surface>
+            </Card>
 
             {/* Reminders card */}
-            <Surface flat padding="none" className="p-5 sm:p-[22px]">
+            <Card className="p-5 sm:p-[22px]">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-gray-700" />
@@ -659,11 +659,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                   <p className="text-[13px] text-gray-600">No reminders yet</p>
                 )}
               </div>
-            </Surface>
+            </Card>
           </div>
 
           {/* Right rail: Client Details, stretched to match the left column's full height */}
-          <Surface flat padding="none" className="p-5 sm:p-[26px] flex flex-col h-full">
+          <Card className="p-5 sm:p-[26px] flex flex-col h-full">
             <h2 className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-gray-600 mb-1">
               Client Details
             </h2>
@@ -674,7 +674,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
               <DetailRow label="Budget" value={detail.budget || '—'} />
               <DetailRow label="Last contact" value={formatLastContact(lastContactAt)} />
             </div>
-          </Surface>
+          </Card>
         </div>
       </div>
     </DashboardPage>
