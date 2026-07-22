@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import type { LucideIcon } from 'lucide-react';
+import { ACCENT } from '@/lib/accent';
 import { useMotionReduced } from '@/lib/motion';
 
 export interface Segment<T extends string = string> {
@@ -55,8 +56,8 @@ export default function SegmentedControl<T extends string>({
   const reduced = useMotionReduced();
   const styles = sizeStyles[size];
 
-  const pillClass =
-    'absolute inset-0 rounded-md border border-border bg-card shadow-sm dark:bg-gray-200 dark:shadow-none';
+  /** Sky accent — theme-aware blues from lib/accent.ts */
+  const pillClass = 'absolute inset-0 rounded-md bg-sky-100 border border-sky-200';
 
   return (
     <div
@@ -97,7 +98,7 @@ export default function SegmentedControl<T extends string>({
           'relative z-10 inline-flex items-center justify-center gap-1.5 font-medium transition-colors',
           iconOnly ? styles.iconOnly : styles.button,
           stretch && 'flex-1 sm:flex-none',
-          active ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
+          active ? ACCENT.sky.text : 'text-muted-foreground hover:text-foreground',
         );
 
         if (href && !onChange) {
