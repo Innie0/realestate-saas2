@@ -147,6 +147,27 @@
   --mkt-radius-button: 6px;
   --mkt-radius-card: 12px;
   --mkt-radius-browser: 12px;
+
+  /* shadcn/ui semantic tokens — mapped to dashboard palette */
+  --background: var(--canvas);
+  --foreground: var(--gray-950);
+  --card: var(--surface);
+  --card-foreground: var(--gray-950);
+  --popover: var(--surface);
+  --popover-foreground: var(--gray-950);
+  --primary: var(--brand-500);
+  --primary-foreground: var(--brand-foreground);
+  --secondary: var(--gray-100);
+  --secondary-foreground: var(--gray-900);
+  --muted: var(--gray-100);
+  --muted-foreground: var(--gray-600);
+  --accent: var(--brand-100);
+  --accent-foreground: var(--gray-900);
+  --destructive: var(--rose-500);
+  --destructive-foreground: #ffffff;
+  --input: var(--border);
+  --ring: var(--brand-400);
+  --radius: 0.625rem;
 }
 
 /* Disable color/border transitions while flipping theme so light borders

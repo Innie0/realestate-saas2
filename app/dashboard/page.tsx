@@ -6,12 +6,27 @@ import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
 import clsx from 'clsx';
 import DashboardPage from '@/components/layout/DashboardPage';
-import Surface from '@/components/ui/Surface';
-import PanelHeader from '@/components/ui/PanelHeader';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/Card';
 import Sparkline from '@/components/ui/Sparkline';
 import Button from '@/components/ui/Button';
 import EmptyState from '@/components/ui/EmptyState';
 import DataLoadingState from '@/components/dashboard/DataLoadingState';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import CountUp from '@/components/motion/CountUp';
 import { fetchUpcomingItems, type UpcomingItem } from '@/components/NotificationsPanel';
 import { DASHBOARD_UPCOMING_KEY } from '@/lib/dashboard-prefetch';
@@ -181,39 +196,39 @@ interface Metric {
 
 function MetricStrip({ metrics }: { metrics: Metric[] }) {
   return (
-    <Surface flat padding="none" className="overflow-hidden">
-      <div className="grid grid-cols-2 lg:grid-cols-4 divide-y divide-gray-150 lg:divide-y-0 lg:divide-x lg:divide-gray-150">
+    <Card className="overflow-hidden p-0">
+      <div className="grid grid-cols-2 divide-border lg:grid-cols-4 lg:divide-x lg:divide-y-0 divide-y">
         {metrics.map((m) => (
           <Link
             key={m.label}
             href={m.href}
             className={clsx(
-              'group px-5 py-4 transition-colors hover:bg-gray-50',
-              m.accent && 'bg-brand-50/50',
+              'group px-4 py-4 transition-colors hover:bg-muted/40 sm:px-5',
+              m.accent && 'bg-accent/30',
             )}
           >
-            <p className={clsx('text-label', m.accent && 'text-brand-700')}>{m.label}</p>
-            <div className="mt-2.5 flex items-end justify-between gap-2">
+            <p className={clsx('text-label', m.accent && 'text-accent-foreground')}>{m.label}</p>
+            <div className="mt-2 flex items-end justify-between gap-2">
               <p
                 className={clsx(
-                  'text-[26px] font-semibold tracking-[-0.02em] tabular-nums leading-none',
-                  m.accent ? 'text-brand-600' : 'text-gray-900',
+                  'text-2xl font-semibold tracking-tight tabular-nums leading-none text-foreground',
+                  m.accent && 'text-foreground',
                 )}
               >
                 {m.placeholder ?? <CountUp value={m.value} format={m.format} />}
               </p>
               {m.series && m.series.some((v) => v > 0) && (
-                <span className="text-gray-900 shrink-0 -mb-0.5">
+                <span className="shrink-0 text-foreground">
                   <Sparkline data={m.series} width={72} height={26} />
                 </span>
               )}
             </div>
             <p
               className={clsx(
-                'text-[12px] mt-2 leading-tight',
+                'mt-2 text-xs leading-tight',
                 m.subTone === 'positive' && 'text-emerald-600',
                 m.subTone === 'warning' && 'text-amber-700',
-                m.subTone === 'neutral' && 'text-gray-700',
+                m.subTone === 'neutral' && 'text-muted-foreground',
               )}
             >
               {m.sub}
@@ -221,23 +236,23 @@ function MetricStrip({ metrics }: { metrics: Metric[] }) {
           </Link>
         ))}
       </div>
-    </Surface>
+    </Card>
   );
 }
 
 function MetricStripSkeleton() {
   return (
-    <Surface flat padding="none" className="overflow-hidden">
-      <div className="grid grid-cols-2 lg:grid-cols-4 divide-y divide-gray-150 lg:divide-y-0 lg:divide-x lg:divide-gray-150">
+    <Card className="overflow-hidden p-0">
+      <div className="grid grid-cols-2 gap-0 lg:grid-cols-4">
         {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="px-5 py-4 animate-pulse">
-            <div className="h-3 bg-gray-100 rounded w-20" />
-            <div className="h-7 bg-gray-100 rounded w-16 mt-3" />
-            <div className="h-3 bg-gray-100 rounded w-24 mt-3" />
+          <div key={i} className="space-y-3 px-4 py-4 sm:px-5">
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-7 w-16" />
+            <Skeleton className="h-3 w-24" />
           </div>
         ))}
       </div>
-    </Surface>
+    </Card>
   );
 }
 
@@ -255,56 +270,54 @@ interface AttentionItem {
 function NeedsAttention({ items, loading }: { items: AttentionItem[]; loading: boolean }) {
   if (loading) {
     return (
-      <Surface flat padding="md" className="animate-pulse">
-        <div className="h-3 bg-gray-100 rounded w-40 mb-4" />
-        <div className="space-y-3">
-          {[0, 1].map((i) => (
-            <div key={i} className="h-4 bg-gray-100 rounded w-3/4" />
-          ))}
-        </div>
-      </Surface>
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-4 w-40" />
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-4 w-2/3" />
+        </CardContent>
+      </Card>
     );
   }
 
   if (items.length === 0) return null;
 
   return (
-    <Surface flat padding="none" className="overflow-hidden">
-      <PanelHeader
-        title="Needs your attention"
-        action={
-          <span className="font-mono text-[10.5px] font-medium text-gray-600 tracking-[0.04em]">
-            {items.length} ITEM{items.length === 1 ? '' : 'S'}
-          </span>
-        }
-      />
-      <div>
+    <Card className="overflow-hidden p-0">
+      <CardHeader className="flex-row items-center justify-between space-y-0">
+        <div>
+          <CardTitle>Needs your attention</CardTitle>
+          <CardDescription>Urgent items that need a response today</CardDescription>
+        </div>
+        <span className="font-mono text-[10px] font-medium tracking-wide text-muted-foreground">
+          {items.length} ITEM{items.length === 1 ? '' : 'S'}
+        </span>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-0 p-0">
         {items.map((item, i) => (
           <Link
             key={item.key}
             href={item.href}
             className={clsx(
-              'flex items-center gap-3 px-4 py-[11px] transition-colors hover:bg-gray-50',
-              i < items.length - 1 && 'border-b border-gray-150',
+              'group flex items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/40 sm:px-5',
+              i < items.length - 1 && 'border-b border-border',
             )}
           >
-            <span className={clsx('h-[7px] w-[7px] rounded-full shrink-0', item.dotClass)} aria-hidden />
-            <p className="flex-1 min-w-0 text-[13px] text-gray-900 truncate">
+            <span className={clsx('size-2 shrink-0 rounded-full', item.dotClass)} aria-hidden />
+            <p className="min-w-0 flex-1 truncate text-sm text-foreground">
               <span className="font-semibold">{item.lead}</span> {item.rest}
             </p>
-            <span className="text-[11.5px] font-medium text-brand-600 shrink-0 group-hover:text-brand-700 transition-colors">
-              {item.actionLabel} →
-            </span>
+            <span className="shrink-0 text-xs font-medium text-primary">{item.actionLabel} →</span>
           </Link>
         ))}
-      </div>
-    </Surface>
+      </CardContent>
+    </Card>
   );
 }
 
 /* ── Open deals table ────────────────────────────────────────────────── */
-
-const DEAL_COL_WIDTHS = ['36.1%', '19.7%', '16.4%', '14.7%', '13.1%'];
 
 function formatClosing(date?: string | null): string {
   if (!date) return '—';
@@ -321,100 +334,79 @@ function OpenDealsTable({
   const deals = transactions.slice(0, 6);
 
   return (
-    <Surface flat padding="none" className="flex flex-1 flex-col min-h-0 overflow-hidden">
-      <PanelHeader
-        title="Open deals"
-        action={
-          <Link
-            href="/dashboard/transactions"
-            className="text-[11.5px] font-medium text-brand-600 hover:text-brand-700 transition-colors"
-          >
-            All transactions →
-          </Link>
-        }
-      />
+    <Card className="flex min-h-0 flex-1 flex-col overflow-hidden p-0">
+      <CardHeader className="flex-row items-center justify-between space-y-0">
+        <CardTitle>Open deals</CardTitle>
+        <Link href="/dashboard/transactions" className="text-xs font-medium text-primary hover:underline">
+          All transactions →
+        </Link>
+      </CardHeader>
 
       {loading ? (
         <DataLoadingState
           title="Loading deals"
           description="Fetching your open pipeline…"
-          className="flex-1 py-10 min-h-0"
+          className="min-h-0 flex-1 py-10"
         />
       ) : deals.length === 0 ? (
-        <EmptyState
-          icon={Home}
-          title="No open deals"
-          description="Start a transaction to track milestones, documents, and closings."
-          className="py-10"
-          action={
-            <Link href="/dashboard/transactions/new">
-              <Button size="sm">
-                <Plus className="w-4 h-4 mr-1.5" />
-                New deal
-              </Button>
-            </Link>
-          }
-        />
+        <CardContent className="flex flex-1 flex-col justify-center py-6">
+          <EmptyState
+            icon={Home}
+            title="No open deals"
+            description="Start a transaction to track milestones, documents, and closings."
+            className="py-6"
+            action={
+              <Link href="/dashboard/transactions/new">
+                <Button size="sm">
+                  <Plus className="mr-1.5 size-4" />
+                  New deal
+                </Button>
+              </Link>
+            }
+          />
+        </CardContent>
       ) : (
-        <div className="flex-1 flex flex-col min-h-0">
-          <div className="overflow-x-auto shrink-0">
-            <table className="w-full min-w-[560px] text-left table-fixed">
-            <colgroup>
-              {DEAL_COL_WIDTHS.map((w, i) => (
-                <col key={i} style={{ width: w }} />
-              ))}
-            </colgroup>
-            <thead>
-              <tr className="border-b border-gray-150 bg-gray-50">
+        <CardContent className="min-h-0 flex-1 p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
                 {['Property', 'Client', 'Stage', 'Price', 'Closing'].map((h) => (
-                  <th
+                  <TableHead
                     key={h}
-                    className={clsx(
-                      'px-4 py-[7px] font-mono text-[10.5px] font-semibold uppercase tracking-[0.06em] text-gray-600',
-                      (h === 'Price' || h === 'Closing') && 'text-right',
-                    )}
+                    className={clsx((h === 'Price' || h === 'Closing') && 'text-right')}
                   >
                     {h}
-                  </th>
+                  </TableHead>
                 ))}
-              </tr>
-            </thead>
-            <tbody>
-              {deals.map((tx, i) => (
-                <tr
-                  key={tx.id}
-                  className={clsx(
-                    'group transition-colors hover:bg-gray-50',
-                    i < deals.length - 1 && 'border-b border-gray-150',
-                  )}
-                >
-                  <td className="px-4 py-[11px] max-w-0">
-                    <Link href={`/dashboard/transactions/${tx.id}`} className="block">
-                      <p className="text-[13px] font-medium text-gray-900 truncate">
-                        {tx.property_address}
-                      </p>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {deals.map((tx) => (
+                <TableRow key={tx.id} className="group">
+                  <TableCell className="max-w-0 font-medium">
+                    <Link href={`/dashboard/transactions/${tx.id}`} className="block truncate hover:underline">
+                      {tx.property_address}
                     </Link>
-                  </td>
-                  <td className="px-4 py-[11px] text-[12.5px] text-gray-700 truncate">
+                  </TableCell>
+                  <TableCell className="truncate text-muted-foreground">
                     {tx.buyer_name || tx.seller_name || '—'}
-                  </td>
-                  <td className="px-4 py-[11px]">
+                  </TableCell>
+                  <TableCell>
                     <TransactionStatusBadge status={tx.status} />
-                  </td>
-                  <td className="px-4 py-[11px] text-right font-mono text-[12.5px] font-medium text-gray-900 tabular-nums whitespace-nowrap">
+                  </TableCell>
+                  <TableCell className="text-right font-mono tabular-nums">
                     {tx.offer_price ? formatCompactPrice(tx.offer_price) : '—'}
-                  </td>
-                  <td className="px-4 py-[11px] text-right text-[12.5px] text-gray-700 whitespace-nowrap">
+                  </TableCell>
+                  <TableCell className="text-right text-muted-foreground">
                     {formatClosing(tx.closing_date)}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
-          </div>
-        </div>
+            </TableBody>
+          </Table>
+        </CardContent>
       )}
-    </Surface>
+    </Card>
   );
 }
 
@@ -451,45 +443,41 @@ function TodayPanel() {
   }, [items]);
 
   return (
-    <Surface flat padding="none" className="overflow-hidden" data-tour="notifications">
-      <PanelHeader
-        title="Today"
-        action={
-          <Link
-            href="/dashboard/calendar"
-            className="text-[11.5px] font-medium text-brand-600 hover:text-brand-700 transition-colors"
-          >
-            Calendar →
-          </Link>
-        }
-      />
+    <Card className="overflow-hidden p-0" data-tour="notifications">
+      <CardHeader className="flex-row items-center justify-between space-y-0">
+        <CardTitle>Today</CardTitle>
+        <Link href="/dashboard/calendar" className="text-xs font-medium text-primary hover:underline">
+          Calendar →
+        </Link>
+      </CardHeader>
       {isLoading ? (
-        <div className="px-4 py-3 space-y-3 animate-pulse">
-          {[0, 1].map((i) => (
-            <div key={i} className="h-8 bg-gray-100 rounded" />
-          ))}
-        </div>
+        <CardContent className="flex flex-col gap-3">
+          <Skeleton className="h-8 w-full" />
+          <Skeleton className="h-8 w-full" />
+        </CardContent>
       ) : todayItems.length === 0 ? (
-        <p className="px-4 py-4 text-caption text-gray-700">Nothing scheduled today.</p>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">Nothing scheduled today.</p>
+        </CardContent>
       ) : (
-        <div className="py-1.5">
+        <CardContent className="flex flex-col gap-0 p-0">
           {todayItems.map((item) => {
             const overdue = item.type === 'reminder' && isPast(item.date);
             const isShowing = item.type === 'event' && item.eventType === 'showing';
             const borderClass = overdue
               ? 'border-amber-600'
               : isShowing
-                ? 'border-gray-900'
-                : 'border-gray-300';
+                ? 'border-foreground'
+                : 'border-muted-foreground/40';
             return (
-              <div key={item.id} className="flex gap-3 px-4 py-[9px] transition-colors hover:bg-gray-50">
-                <span className="w-11 shrink-0 pt-px font-mono text-[11.5px] font-medium text-gray-600">
+              <div key={item.id} className="flex gap-3 px-4 py-2 transition-colors hover:bg-muted/40 sm:px-5">
+                <span className="w-11 shrink-0 pt-px font-mono text-xs font-medium text-muted-foreground">
                   {timeLabel(item.date)}
                 </span>
                 <div className={clsx('border-l-2 pl-2.5', borderClass)}>
-                  <p className="text-[12.5px] font-medium text-gray-900">{item.title}</p>
+                  <p className="text-sm font-medium text-foreground">{item.title}</p>
                   {(item.description || item.clientName || item.location) && (
-                    <p className="mt-0.5 text-[11.5px] text-gray-700 truncate">
+                    <p className="mt-0.5 truncate text-xs text-muted-foreground">
                       {item.description || item.clientName || item.location}
                     </p>
                   )}
@@ -497,9 +485,9 @@ function TodayPanel() {
               </div>
             );
           })}
-        </div>
+        </CardContent>
       )}
-    </Surface>
+    </Card>
   );
 }
 
@@ -507,67 +495,69 @@ function TodayPanel() {
 
 function ContinuePanel({ items, loading }: { items: ContinueListItem[]; loading: boolean }) {
   return (
-    <Surface flat padding="none" className="overflow-hidden">
-      <PanelHeader title="Continue" />
+    <Card className="overflow-hidden p-0">
+      <CardHeader>
+        <CardTitle>Continue</CardTitle>
+        <CardDescription>Pick up where you left off</CardDescription>
+      </CardHeader>
       {loading ? (
-        <div className="px-4 py-3 space-y-3 animate-pulse">
-          {[0, 1].map((i) => (
-            <div key={i} className="h-4 bg-gray-100 rounded" />
-          ))}
-        </div>
+        <CardContent className="flex flex-col gap-3">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-3/4" />
+        </CardContent>
       ) : items.length === 0 ? (
-        <p className="px-4 py-4 text-caption text-gray-700">
-          Nothing in progress. Create a listing to get started.
-        </p>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">Nothing in progress. Create a listing to get started.</p>
+        </CardContent>
       ) : (
-        <div className="py-1.5">
+        <CardContent className="flex flex-col gap-0 p-0">
           {items.map((item) => (
             <Link
               key={item.key}
               href={item.href}
-              className="group flex items-center gap-2.5 px-4 py-[9px] transition-colors hover:bg-gray-50"
+              className="group flex items-center gap-2.5 px-4 py-2 transition-colors hover:bg-muted/40 sm:px-5"
             >
               <span
                 className={clsx(
-                  'h-2 w-2 shrink-0 rounded-[2px] border-[1.5px]',
-                  item.kind === 'project' ? 'border-amber-600' : 'border-gray-900',
+                  'size-2 shrink-0 rounded-sm border-[1.5px]',
+                  item.kind === 'project' ? 'border-amber-600' : 'border-foreground',
                 )}
               />
-              <div className="flex-1 min-w-0">
-                <p className="text-[12.5px] font-medium text-gray-900 truncate">{item.title}</p>
-                <p className="text-[11.5px] text-gray-700 capitalize truncate">{item.subtitle}</p>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-foreground">{item.title}</p>
+                <p className="truncate text-xs capitalize text-muted-foreground">{item.subtitle}</p>
               </div>
-              <span className="text-gray-400 group-hover:text-gray-700 transition-colors shrink-0">→</span>
+              <span className="shrink-0 text-muted-foreground transition-colors group-hover:text-foreground">→</span>
             </Link>
           ))}
-        </div>
+        </CardContent>
       )}
-    </Surface>
+    </Card>
   );
 }
 
-/* ── Quick actions with keyboard shortcuts (right rail) ──────────────── */
-
 function QuickActionsPanel() {
   return (
-    <Surface flat padding="none" className="overflow-hidden">
-      <PanelHeader title="Quick actions" />
-      <div className="py-1.5">
+    <Card className="overflow-hidden p-0">
+      <CardHeader>
+        <CardTitle>Quick actions</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-0 p-0">
         {QUICK_LINKS.map(({ href, label, shortcut, tour }) => (
           <Link
             key={href}
             href={href}
             data-tour={tour}
-            className="group flex items-center justify-between gap-3 px-4 py-[7px] transition-colors hover:bg-gray-50"
+            className="group flex items-center justify-between gap-3 px-4 py-2 transition-colors hover:bg-muted/40 sm:px-5"
           >
-            <span className="text-[12.5px] text-gray-900 truncate">{label}</span>
-            <kbd className="flex h-5 min-w-[20px] items-center justify-center rounded border border-[var(--border)] px-1 font-mono text-[10px] font-medium text-gray-600 shrink-0">
+            <span className="truncate text-sm text-foreground">{label}</span>
+            <kbd className="flex h-5 min-w-5 items-center justify-center rounded border border-border px-1 font-mono text-[10px] font-medium text-muted-foreground">
               {shortcut}
             </kbd>
           </Link>
         ))}
-      </div>
-    </Surface>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -904,21 +894,23 @@ export default function DashboardHomePage() {
         />
       )}
 
-      {/* 1. Metric strip */}
-      {metricsLoading ? <MetricStripSkeleton /> : <MetricStrip metrics={metrics} />}
+      {/* 1. Action queue first (enterprise hierarchy) */}
+      <NeedsAttention items={attentionItems} loading={attentionLoading} />
 
-      {/* 2. Two-column console layout — left flexible, right rail fixed 340px */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-5 items-stretch">
-        <div className="flex flex-col gap-5 min-w-0 h-full">
-          <NeedsAttention items={attentionItems} loading={attentionLoading} />
+      {/* 2. Work area + right rail */}
+      <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[1fr_320px]">
+        <div className="flex min-w-0 flex-col gap-4">
           <OpenDealsTable transactions={allTransactions} loading={transactionsLoading && allTransactions.length === 0} />
         </div>
-        <div className="flex flex-col gap-5 min-w-0">
+        <div className="flex min-w-0 flex-col gap-4">
           <TodayPanel />
           <ContinuePanel items={continueListItems} loading={continueLoading} />
           <QuickActionsPanel />
         </div>
       </div>
+
+      {/* 3. Supporting KPIs */}
+      {metricsLoading ? <MetricStripSkeleton /> : <MetricStrip metrics={metrics} />}
 
       {/* 3. Plan usage — full width */}
       <div data-tour="plan-usage">

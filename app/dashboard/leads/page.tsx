@@ -1,33 +1,27 @@
 'use client';
 
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { AnimatePresence, motion } from 'framer-motion';
 import DashboardPage from '@/components/layout/DashboardPage';
 import LeadsSectionSwitcher, { type LeadsTab } from '@/components/leads/LeadsSectionSwitcher';
+import LeadsInbox from '@/components/leads/LeadsInbox';
 import Surface from '@/components/ui/Surface';
-import EmptyState from '@/components/ui/EmptyState';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
-import SegmentedControl from '@/components/ui/SegmentedControl';
 import Modal from '@/components/ui/Modal';
-import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
 import { supabase } from '@/lib/supabase';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
 import { useToast } from '@/components/providers/ToastProvider';
 import FollowupTemplatesEditor from '@/components/dashboard/FollowupTemplatesEditor';
-import LeadTemperatureBadge, { getLeadTemperature } from '@/components/dashboard/LeadTemperatureBadge';
+import { getLeadTemperature } from '@/components/dashboard/LeadTemperatureBadge';
 import { formatFollowupScheduleHuman, type FollowupSettings } from '@/lib/followup-emails';
-import { nameAvatarClasses } from '@/lib/accent';
 import { QRCodeCanvas } from 'qrcode.react';
 import {
-  Inbox, Link2, Copy, Check, Download, Phone, Mail,
-  Home, Building2, KeyRound, Search,
+  Link2, Copy, Check, Download,
   ArrowRight, Users, Lock, MailCheck,
-  Loader2, DoorOpen, CalendarClock,
-  ChevronDown, Sparkles, UserCheck, UserPlus, MailX, MapPin,
+  Loader2, CalendarClock, DoorOpen, Sparkles, Phone,
 } from 'lucide-react';
 
 interface Lead {
@@ -66,346 +60,6 @@ function leadHasActiveFollowup(
 
 function getLeadTemp(lead: Lead): 'hot' | 'warm' | 'cold' {
   return getLeadTemperature(lead.created_at, lead.message);
-}
-
-function timeAgo(dateStr: string): string {
-  const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
-  if (seconds < 60) return 'just now';
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
-
-const LEAD_TYPE_ICONS: Record<string, React.ElementType> = {
-  buyer: Home,
-  seller: Building2,
-  renter: KeyRound,
-  browsing: Search,
-};
-
-const LEAD_TYPE_LABELS: Record<string, string> = {
-  buyer: 'Buying',
-  seller: 'Selling',
-  renter: 'Renting',
-  browsing: 'Just looking',
-};
-
-const AD_SOURCE_LABELS: Record<string, string> = {
-  meta_ad: 'From ad',
-  google_ad: 'From ad',
-};
-
-function getAdSourceLabel(adSource?: string | null): string | null {
-  if (!adSource) return null;
-  return AD_SOURCE_LABELS[adSource] ?? null;
-}
-
-const SOURCE_LABELS: Record<string, string> = {
-  lead_form: 'Lead form',
-  open_house: 'Open house',
-  listing_page: 'Listing page',
-};
-
-function leadInitials(name: string): string {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2) || '?';
-}
-
-function parseLeadDetail(lead: Lead) {
-  const msg = lead.message || '';
-  const infoLines = msg.split('\n').filter(l =>
-    l.startsWith('Timeline:') || l.startsWith('Budget:') || l.startsWith('Area:')
-  );
-  const openHouseLine = lead.source === 'open_house' && msg.startsWith('Open house:')
-    ? msg.replace(/^Open house:\s*/, '')
-    : null;
-  const listingLine = lead.source === 'listing_page' && msg.includes('interested in')
-    ? msg.replace(/^I'm interested in\s*/i, '')
-    : null;
-  const linkedProject = lead.projects && !Array.isArray(lead.projects) ? lead.projects : null;
-  const listingDisplay = linkedProject
-    ? [linkedProject.property_info?.address, linkedProject.title].find(Boolean) || listingLine
-    : listingLine;
-
-  return { infoLines, openHouseLine, listingDisplay, linkedProject };
-}
-
-function getLeadSummaryLine(lead: Lead): string {
-  const { infoLines, openHouseLine, listingDisplay } = parseLeadDetail(lead);
-  if (getAdSourceLabel(lead.ad_source)) return 'From paid ad';
-  if (openHouseLine) return `Open house · ${openHouseLine}`;
-  if (listingDisplay) return `Re: ${listingDisplay}`;
-  if (infoLines.length > 0) return infoLines.join(' · ');
-  if (lead.lead_type && LEAD_TYPE_LABELS[lead.lead_type]) return LEAD_TYPE_LABELS[lead.lead_type];
-  if (lead.source && SOURCE_LABELS[lead.source]) return SOURCE_LABELS[lead.source];
-  return lead.email || lead.phone || 'New lead';
-}
-
-function LeadRow({
-  lead,
-  expanded,
-  onToggle,
-  autoFollowupEnabled,
-  followupScheduleText,
-  onAddToCrm,
-  addingId,
-  onMarkContacted,
-  markingContactedId,
-  stoppedIds,
-  onContactLead,
-}: {
-  lead: Lead;
-  expanded: boolean;
-  onToggle: () => void;
-  autoFollowupEnabled: boolean;
-  followupScheduleText: string;
-  onAddToCrm: (id: string) => void;
-  addingId: string | null;
-  onMarkContacted: (id: string) => void;
-  markingContactedId: string | null;
-  stoppedIds: Set<string>;
-  onContactLead: (lead: Lead, type: 'email' | 'phone') => void;
-}) {
-  const temp = getLeadTemp(lead);
-  const isAdding = addingId === lead.id;
-  const isMarkingContacted = markingContactedId === lead.id;
-  const followupActive = leadHasActiveFollowup(lead, autoFollowupEnabled, stoppedIds);
-  const emailsStopped = stoppedIds.has(lead.id);
-  const { infoLines, openHouseLine, listingDisplay, linkedProject } = parseLeadDetail(lead);
-
-  const stopPropagation = (e: React.MouseEvent) => e.stopPropagation();
-
-  return (
-    <div
-      className={`group rounded-[10px] bg-[var(--surface)] border border-gray-200 transition-colors ${
-        expanded ? 'border-gray-300' : 'hover:border-gray-300'
-      }`}
-    >
-      <div
-        onClick={onToggle}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && onToggle()}
-        className="flex items-center gap-3 px-4 py-3.5 cursor-pointer"
-      >
-        <div className="relative shrink-0">
-          <div className={`flex size-9 items-center justify-center rounded-full text-xs font-semibold ${nameAvatarClasses(lead.name)}`}>
-            {leadInitials(lead.name)}
-          </div>
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="text-[14px] font-semibold text-gray-900 truncate">{lead.name}</p>
-            <LeadTemperatureBadge temperature={temp} />
-            {getAdSourceLabel(lead.ad_source) && (
-              <Badge variant="ad" icon={Sparkles} className="shrink-0 text-[10.5px]">
-                From ad
-              </Badge>
-            )}
-          </div>
-          <p className="text-[12.5px] text-gray-600 truncate mt-0.5">{getLeadSummaryLine(lead)}</p>
-        </div>
-
-        <div className="hidden sm:flex items-center gap-1 shrink-0" onClick={stopPropagation}>
-          {lead.phone && (
-            <button
-              type="button"
-              onClick={() => onContactLead(lead, 'phone')}
-              className="p-1.5 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-              title={lead.phone}
-            >
-              <Phone className="w-3.5 h-3.5" />
-            </button>
-          )}
-          {lead.email && (
-            <button
-              type="button"
-              onClick={() => onContactLead(lead, 'email')}
-              className="p-1.5 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-              title={lead.email}
-            >
-              <Mail className="w-3.5 h-3.5" />
-            </button>
-          )}
-        </div>
-
-        <span className="hidden md:flex items-center gap-1.5 font-mono text-[11.5px] text-gray-600 shrink-0 w-20 justify-end">
-          <Mail className="w-3 h-3" />
-          {timeAgo(lead.created_at)}
-        </span>
-
-        <Button
-          type="button"
-          size="sm"
-          onClick={(e) => {
-            stopPropagation(e);
-            onAddToCrm(lead.id);
-          }}
-          disabled={isAdding}
-          isLoading={isAdding}
-          className="shrink-0 gap-1.5 px-2.5"
-        >
-          {!isAdding && <UserPlus className="w-3 h-3" />}
-          <span className="hidden sm:inline">Add to CRM</span>
-        </Button>
-
-        <ChevronDown
-          className={`w-4 h-4 text-gray-400 shrink-0 transition-transform ${expanded ? 'rotate-180' : ''}`}
-        />
-      </div>
-
-      <AnimatePresence initial={false}>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
-            className="overflow-hidden"
-          >
-            <div className="px-4 pb-4 pt-0.5 border-t border-gray-150 ml-12 space-y-3">
-              {(openHouseLine || listingDisplay) && (
-                <div className="flex items-start gap-2 rounded-[10px] bg-gray-50 border border-gray-150 px-3 py-2">
-                  {openHouseLine ? (
-                    <DoorOpen className="w-3.5 h-3.5 text-gray-700 mt-0.5 shrink-0" />
-                  ) : (
-                    <MapPin className="w-3.5 h-3.5 text-gray-700 mt-0.5 shrink-0" />
-                  )}
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[10.5px] font-mono font-semibold uppercase tracking-[0.06em] text-gray-600">
-                      {openHouseLine ? 'Open house' : 'Listing inquiry'}
-                    </p>
-                    <p className="text-[12.5px] text-gray-700 mt-0.5 break-words">{openHouseLine || listingDisplay}</p>
-                    {linkedProject && (
-                      <div className="flex flex-wrap gap-3 mt-2">
-                        <Link
-                          href={`/dashboard/projects/${linkedProject.id}`}
-                          className="text-[12.5px] font-medium text-gray-900 hover:underline"
-                        >
-                          View project
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {followupActive && (
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded-[10px] bg-amber-50 border border-amber-200 px-3 py-2">
-                  <p className="text-[12.5px] text-amber-800">
-                    Auto follow-up is scheduled ({followupScheduleText}).
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => onMarkContacted(lead.id)}
-                    disabled={isMarkingContacted}
-                    className="shrink-0 inline-flex items-center justify-center gap-1.5 text-[12px] font-medium px-2.5 py-1.5 rounded-lg bg-[var(--surface)] text-amber-900 border border-amber-200 hover:bg-amber-100 transition-colors disabled:opacity-60"
-                  >
-                    {isMarkingContacted ? (
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                    ) : (
-                      <UserCheck className="w-3 h-3" />
-                    )}
-                    Mark contacted
-                  </button>
-                </div>
-              )}
-
-              {!followupActive && emailsStopped && lead.email && autoFollowupEnabled && (
-                <p className="text-[12.5px] text-gray-600 flex items-center gap-1.5">
-                  <MailX className="w-3.5 h-3.5" />
-                  Auto follow-up stopped for this lead
-                </p>
-              )}
-
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12.5px] text-gray-700">
-                {lead.email && (
-                  <button
-                    type="button"
-                    onClick={() => onContactLead(lead, 'email')}
-                    className="flex items-center gap-1.5 hover:text-gray-900 transition-colors"
-                  >
-                    <Mail className="w-3.5 h-3.5" />
-                    {lead.email}
-                  </button>
-                )}
-                {lead.phone && (
-                  <button
-                    type="button"
-                    onClick={() => onContactLead(lead, 'phone')}
-                    className="flex items-center gap-1.5 hover:text-gray-900 transition-colors"
-                  >
-                    <Phone className="w-3.5 h-3.5" />
-                    {lead.phone}
-                  </button>
-                )}
-                {getAdSourceLabel(lead.ad_source) && (
-                  <Badge variant="ad">{getAdSourceLabel(lead.ad_source)}</Badge>
-                )}
-                {lead.source && SOURCE_LABELS[lead.source] && (
-                  <Badge variant="neutral">{SOURCE_LABELS[lead.source]}</Badge>
-                )}
-              </div>
-
-              {infoLines.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {infoLines.map((line, i) => (
-                    <span key={i} className="text-[12px] bg-gray-50 border border-gray-150 text-gray-700 px-2 py-0.5 rounded-lg">
-                      {line}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              <div className="flex flex-wrap gap-2 pt-1">
-                {lead.phone && (
-                  <button
-                    type="button"
-                    onClick={() => onContactLead(lead, 'phone')}
-                    className="flex items-center justify-center gap-1.5 text-[12.5px] font-medium px-3 py-1.5 rounded-lg bg-[var(--surface)] hover:bg-gray-50 text-gray-700 border border-gray-200 transition-colors"
-                  >
-                    <Phone className="w-3 h-3" /> Call
-                  </button>
-                )}
-                {lead.email && (
-                  <button
-                    type="button"
-                    onClick={() => onContactLead(lead, 'email')}
-                    className="flex items-center justify-center gap-1.5 text-[12.5px] font-medium px-3 py-1.5 rounded-lg bg-[var(--surface)] hover:bg-gray-50 text-gray-700 border border-gray-200 transition-colors"
-                  >
-                    <Mail className="w-3 h-3" /> Email
-                  </button>
-                )}
-                {followupActive && (
-                  <button
-                    type="button"
-                    onClick={() => onMarkContacted(lead.id)}
-                    disabled={isMarkingContacted}
-                    title="Stop automated follow-up emails"
-                    className="flex items-center justify-center gap-1.5 text-[12.5px] font-medium px-3 py-1.5 rounded-lg border bg-[var(--surface)] hover:bg-rose-50 text-gray-700 hover:text-rose-700 border-gray-200 hover:border-rose-200 transition-colors disabled:opacity-60"
-                  >
-                    {isMarkingContacted ? (
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                    ) : (
-                      <MailX className="w-3 h-3" />
-                    )}
-                    Stop emails
-                  </button>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
 }
 
 function LeadsPageContent() {
@@ -459,7 +113,7 @@ function LeadsPageContent() {
   const [bookingUrl, setBookingUrl] = useState('');
   const [copied, setCopied] = useState(false);
   const [filter, setFilter] = useState<'all' | 'hot' | 'warm' | 'cold'>('all');
-  const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [addingToCrmId, setAddingToCrmId] = useState<string | null>(null);
   const [markingContactedId, setMarkingContactedId] = useState<string | null>(null);
   const [stoppedFollowupIds, setStoppedFollowupIds] = useState<Set<string>>(new Set());
@@ -604,7 +258,20 @@ function LeadsPageContent() {
   const now = Date.now();
   const thisWeek = leads.filter(l => now - new Date(l.created_at).getTime() < 7 * 86_400_000);
   const hotLeads = leads.filter(l => getLeadTemp(l) === 'hot');
-  const filteredLeads = leads.filter(l => filter === 'all' || getLeadTemp(l) === filter);
+  const filteredLeads = useMemo(
+    () => leads.filter((l) => filter === 'all' || getLeadTemp(l) === filter),
+    [leads, filter],
+  );
+
+  useEffect(() => {
+    if (filteredLeads.length === 0) {
+      setSelectedLeadId(null);
+      return;
+    }
+    setSelectedLeadId((current) =>
+      current && filteredLeads.some((l) => l.id === current) ? current : filteredLeads[0].id,
+    );
+  }, [filteredLeads]);
 
   return (
     <DashboardPage
@@ -617,80 +284,23 @@ function LeadsPageContent() {
         </div>
 
         {activeTab === 'inbox' && (
-          <div className="space-y-5">
-            <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div>
-                  <h2 className="text-[16px] font-semibold tracking-tight text-gray-900">Inbox</h2>
-                  <p className="text-[13px] text-gray-600 mt-0.5">New captures stay here until you add them to your CRM.</p>
-                </div>
-                <div data-tour="leads-filter">
-                  <SegmentedControl
-                    layoutId="leads-temp-filter"
-                    segments={[
-                      { id: 'all', label: 'All' },
-                      { id: 'hot', label: 'Hot' },
-                      { id: 'warm', label: 'Warm' },
-                      { id: 'cold', label: 'Cold' },
-                    ]}
-                    value={filter}
-                    onChange={setFilter}
-                    stretch
-                  />
-                </div>
-              </div>
-
-              {isLoading && leads.length === 0 ? (
-                <div className="space-y-2">
-                  {[1, 2, 3].map(i => (
-                    <div key={i} className="bg-[var(--surface)] border border-gray-200 rounded-[10px] p-4 animate-pulse">
-                      <div className="h-4 bg-gray-100 rounded w-1/3 mb-3" />
-                      <div className="h-3 bg-gray-100 rounded w-1/2" />
-                    </div>
-                  ))}
-                </div>
-              ) : filteredLeads.length === 0 ? (
-                <EmptyState
-                  icon={Inbox}
-                  title={filter === 'all' ? 'No leads yet' : `No ${filter} leads`}
-                  description={
-                    filter === 'all'
-                      ? 'Share your lead form or run an open house to start collecting leads.'
-                      : 'Try a different filter to see more leads.'
-                  }
-                  action={
-                    filter === 'all' ? (
-                      <Button variant="secondary" size="sm" onClick={() => setActiveTab('capture')}>
-                        Go to Capture
-                      </Button>
-                    ) : undefined
-                  }
-                />
-              ) : (
-                <StaggerList className="space-y-2">
-                  {filteredLeads.map(lead => (
-                    <StaggerItem key={lead.id}>
-                      <LeadRow
-                        lead={lead}
-                        expanded={expandedLeadId === lead.id}
-                        onToggle={() =>
-                          setExpandedLeadId((current) => (current === lead.id ? null : lead.id))
-                        }
-                        autoFollowupEnabled={autoFollowup}
-                        followupScheduleText={followupScheduleText}
-                        onAddToCrm={handleAddToCrm}
-                        addingId={addingToCrmId}
-                        onMarkContacted={handleMarkContacted}
-                        markingContactedId={markingContactedId}
-                        stoppedIds={stoppedFollowupIds}
-                        onContactLead={handleContactLead}
-                      />
-                    </StaggerItem>
-                  ))}
-                </StaggerList>
-              )}
-            </div>
-          </div>
+          <LeadsInbox
+            leads={leads}
+            isLoading={isLoading}
+            filter={filter}
+            onFilterChange={setFilter}
+            selectedLeadId={selectedLeadId}
+            onSelectLead={setSelectedLeadId}
+            autoFollowupEnabled={autoFollowup}
+            followupScheduleText={followupScheduleText}
+            stoppedIds={stoppedFollowupIds}
+            addingId={addingToCrmId}
+            markingContactedId={markingContactedId}
+            onAddToCrm={handleAddToCrm}
+            onMarkContacted={handleMarkContacted}
+            onContactLead={handleContactLead}
+            onGoToCapture={() => setActiveTab('capture')}
+          />
         )}
 
         {/* ─── CAPTURE ───────────────────────────────────────────────────── */}
