@@ -204,15 +204,11 @@ export default function Sidebar() {
   return (
     <>
       <div className="fixed left-0 right-0 top-0 z-50 flex h-16 items-center justify-between border-b border-gray-200 bg-[var(--canvas)] px-4 lg:hidden">
-        <Link href="/dashboard" className="flex items-center flex-1 min-h-0 overflow-visible">
-          <Image
-            src="/logo-sidebar.png"
-            alt="Oikaro"
-            width={480}
-            height={144}
-            priority
-            className="h-9 w-auto max-w-[200px] object-contain scale-[1.8] origin-left"
-          />
+        <Link href="/dashboard" className="flex items-center gap-2 min-h-0">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] bg-brand-500 text-[11px] font-bold text-[var(--brand-foreground)]">
+            O
+          </span>
+          <span className="text-[13px] font-semibold tracking-tight text-gray-900">Oikaro</span>
         </Link>
         <button
           type="button"

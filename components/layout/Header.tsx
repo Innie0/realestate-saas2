@@ -13,9 +13,12 @@ interface HeaderProps {
   title: string;
   subtitle?: string;
   actions?: React.ReactNode;
-  /** Baseline-aligned title + subtitle on one line (dashboard home greeting). */
+  /** Baseline-aligned title + subtitle on one line (e.g. dashboard home greeting). */
   inline?: boolean;
 }
+
+const titleClass = 'text-title font-semibold tracking-tight text-gray-900 truncate';
+const subtitleInlineClass = 'text-caption text-gray-700 truncate';
 
 interface UpcomingItem {
   id: string;
@@ -188,14 +191,12 @@ export default function Header({ title, subtitle, actions, inline = false }: Hea
         <div className="flex h-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           {inline ? (
             <div className="flex min-w-0 flex-1 items-baseline gap-2.5">
-              <h1 className="text-[14px] font-semibold tracking-[-0.01em] text-gray-900 truncate">{title}</h1>
-              {subtitle && (
-                <span className="text-[12.5px] text-gray-700 truncate">{subtitle}</span>
-              )}
+              <h1 className={titleClass}>{title}</h1>
+              {subtitle && <span className={subtitleInlineClass}>{subtitle}</span>}
             </div>
           ) : (
             <div className="min-w-0 flex-1">
-              <h1 className="text-[18px] sm:text-[21px] font-semibold tracking-tight text-gray-900 truncate">{title}</h1>
+              <h1 className={titleClass}>{title}</h1>
               {subtitle && (
                 <p className="text-caption text-gray-700 mt-0.5 truncate">{subtitle}</p>
               )}

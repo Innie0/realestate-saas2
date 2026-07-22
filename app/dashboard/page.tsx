@@ -5,8 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
 import clsx from 'clsx';
-import Header from '@/components/layout/Header';
-import PageTransition from '@/components/motion/PageTransition';
+import DashboardPage from '@/components/layout/DashboardPage';
 import Surface from '@/components/ui/Surface';
 import PanelHeader from '@/components/ui/PanelHeader';
 import Sparkline from '@/components/ui/Sparkline';
@@ -555,7 +554,7 @@ function QuickActionsPanel() {
   );
 }
 
-export default function DashboardPage() {
+export default function DashboardHomePage() {
   const router = useRouter();
   const [showWelcome, setShowWelcome] = useState(false);
   const [showGettingStarted, setShowGettingStarted] = useState(false);
@@ -858,62 +857,58 @@ export default function DashboardPage() {
     allTransactions.length === 0;
 
   return (
-    <div>
-      <Header
-        inline
-        title={`${getGreeting()}${firstName ? `, ${firstName}` : ''}`}
-        subtitle={formatToday()}
-        actions={
-          <>
-            {overdueReminderCount > 0 && (
-              <span className="hidden sm:inline-flex items-center gap-1.5 rounded-[6px] border border-amber-100 bg-amber-50 px-2.5 py-1 text-[12px] font-medium text-amber-700">
-                <span className="h-1.5 w-1.5 rounded-full bg-amber-600" />
-                {overdueReminderCount} follow-up{overdueReminderCount === 1 ? '' : 's'} overdue
-              </span>
-            )}
-            <Link href="/dashboard/projects/new" data-tour="new-project">
-              <Button size="sm" className="gap-2">
-                New listing
-                <span className="rounded bg-[var(--surface)]/[0.18] px-1 font-mono text-[10px] font-medium">N</span>
-              </Button>
-            </Link>
-          </>
-        }
-      />
+    <DashboardPage
+      inline
+      title={`${getGreeting()}${firstName ? `, ${firstName}` : ''}`}
+      subtitle={formatToday()}
+      actions={
+        <>
+          {overdueReminderCount > 0 && (
+            <span className="hidden sm:inline-flex items-center gap-1.5 rounded-[6px] border border-amber-100 bg-amber-50 px-2.5 py-1 text-[12px] font-medium text-amber-700">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-600" />
+              {overdueReminderCount} follow-up{overdueReminderCount === 1 ? '' : 's'} overdue
+            </span>
+          )}
+          <Link href="/dashboard/projects/new" data-tour="new-project">
+            <Button size="sm" className="gap-2">
+              New listing
+              <span className="rounded bg-[var(--surface)]/[0.18] px-1 font-mono text-[10px] font-medium">N</span>
+            </Button>
+          </Link>
+        </>
+      }
+    >
+      {showOnboarding && (
+        <GettingStartedPanel
+          variant={showWelcome ? 'welcome' : 'empty'}
+          onDismiss={dismissGettingStarted}
+        />
+      )}
 
-      <PageTransition className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-7 sm:py-6 space-y-5">
-        {showOnboarding && (
-          <GettingStartedPanel
-            variant={showWelcome ? 'welcome' : 'empty'}
-            onDismiss={dismissGettingStarted}
-          />
-        )}
+      {/* 1. Metric strip */}
+      {metricsLoading ? <MetricStripSkeleton /> : <MetricStrip metrics={metrics} />}
 
-        {/* 1. Metric strip */}
-        {metricsLoading ? <MetricStripSkeleton /> : <MetricStrip metrics={metrics} />}
-
-        {/* 2. Two-column console layout — left flexible, right rail fixed 340px */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-5 items-stretch">
-          <div className="flex flex-col gap-5 min-w-0 h-full">
-            <NeedsAttention items={attentionItems} loading={attentionLoading} />
-            <OpenDealsTable transactions={allTransactions} loading={transactionsLoading && allTransactions.length === 0} />
-          </div>
-          <div className="flex flex-col gap-5 min-w-0">
-            <TodayPanel />
-            <ContinuePanel items={continueListItems} loading={continueLoading} />
-            <QuickActionsPanel />
-          </div>
+      {/* 2. Two-column console layout — left flexible, right rail fixed 340px */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-5 items-stretch">
+        <div className="flex flex-col gap-5 min-w-0 h-full">
+          <NeedsAttention items={attentionItems} loading={attentionLoading} />
+          <OpenDealsTable transactions={allTransactions} loading={transactionsLoading && allTransactions.length === 0} />
         </div>
-
-        {/* 3. Plan usage — full width */}
-        <div data-tour="plan-usage">
-          {usage ? (
-            <PlanUsagePanel usage={usage} plan={plan} layout="full" />
-          ) : usageLoading ? (
-            <PlanUsagePanelSkeleton layout="full" />
-          ) : null}
+        <div className="flex flex-col gap-5 min-w-0">
+          <TodayPanel />
+          <ContinuePanel items={continueListItems} loading={continueLoading} />
+          <QuickActionsPanel />
         </div>
-      </PageTransition>
-    </div>
+      </div>
+
+      {/* 3. Plan usage — full width */}
+      <div data-tour="plan-usage">
+        {usage ? (
+          <PlanUsagePanel usage={usage} plan={plan} layout="full" />
+        ) : usageLoading ? (
+          <PlanUsagePanelSkeleton layout="full" />
+        ) : null}
+      </div>
+    </DashboardPage>
   );
 }

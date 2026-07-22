@@ -10,6 +10,7 @@ import Surface from '@/components/ui/Surface';
 import EmptyState from '@/components/ui/EmptyState';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
+import SegmentedControl from '@/components/ui/SegmentedControl';
 import Modal from '@/components/ui/Modal';
 import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
 import { supabase } from '@/lib/supabase';
@@ -633,7 +634,6 @@ function LeadsPageContent() {
       title="Leads"
       subtitle={`${leads.length} in inbox · ${hotLeads.length} hot · ${thisWeek.length} this week`}
       size="medium"
-      inline
     >
         <div data-tour="leads-tabs">
           <LeadsSectionSwitcher active={activeTab} onChange={setActiveTab} />
@@ -647,18 +647,19 @@ function LeadsPageContent() {
                   <h2 className="text-[16px] font-semibold tracking-tight text-gray-900">Inbox</h2>
                   <p className="text-[13px] text-gray-600 mt-0.5">New captures stay here until you add them to your CRM.</p>
                 </div>
-                <div data-tour="leads-filter" className="flex gap-0.5 bg-gray-100 rounded-lg p-1 w-full sm:w-auto">
-                  {(['all', 'hot', 'warm', 'cold'] as const).map(f => (
-                    <button
-                      key={f}
-                      onClick={() => setFilter(f)}
-                      className={`flex-1 sm:flex-none px-3 py-1.5 rounded-md text-[12.5px] font-medium transition-all duration-150 capitalize ${
-                        filter === f ? 'bg-[var(--surface)] text-gray-900 border border-gray-200' : 'text-gray-600 hover:text-gray-800'
-                      }`}
-                    >
-                      {f}
-                    </button>
-                  ))}
+                <div data-tour="leads-filter">
+                  <SegmentedControl
+                    layoutId="leads-temp-filter"
+                    segments={[
+                      { id: 'all', label: 'All' },
+                      { id: 'hot', label: 'Hot' },
+                      { id: 'warm', label: 'Warm' },
+                      { id: 'cold', label: 'Cold' },
+                    ]}
+                    value={filter}
+                    onChange={setFilter}
+                    stretch
+                  />
                 </div>
               </div>
 

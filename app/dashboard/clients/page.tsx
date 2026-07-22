@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { motion } from 'framer-motion';
 import { Client } from '@/types';
 import ClientCard from '@/components/ClientCard';
 import ClientForm from '@/components/ClientForm';
@@ -13,6 +12,7 @@ import SearchInput from '@/components/ui/SearchInput';
 import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
 import Modal from '@/components/ui/Modal';
+import SegmentedControl from '@/components/ui/SegmentedControl';
 import { Plus, Users, LayoutGrid, List } from 'lucide-react';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
@@ -26,7 +26,6 @@ import {
   filterClientsByStatusTab,
   sortClients,
 } from '@/lib/client-crm-display';
-import clsx from 'clsx';
 
 const PAGE_SIZE = 10;
 
@@ -301,32 +300,13 @@ export default function ClientsPage() {
           />
 
           <div className="flex flex-wrap items-center gap-2 lg:ml-auto">
-            <div
-              data-tour="clients-filter"
-              className="relative inline-flex rounded-lg bg-gray-100 p-1"
-            >
-              {STATUS_TABS.map((tab) => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setStatusTab(tab.id)}
-                  className={clsx(
-                    'relative px-3 py-1.5 rounded-lg text-[12.5px] font-medium transition-colors z-10',
-                    statusTab === tab.id
-                      ? 'text-[var(--brand-foreground)]'
-                      : 'text-gray-600 hover:text-gray-900'
-                  )}
-                >
-                  {statusTab === tab.id && (
-                    <motion.span
-                      layoutId="clients-status-pill"
-                      className="absolute inset-0 rounded-lg bg-brand-500 -z-10"
-                      transition={{ type: 'spring', stiffness: 500, damping: 38 }}
-                    />
-                  )}
-                  {tab.label}
-                </button>
-              ))}
+            <div data-tour="clients-filter">
+              <SegmentedControl
+                layoutId="clients-status-filter"
+                segments={STATUS_TABS}
+                value={statusTab}
+                onChange={setStatusTab}
+              />
             </div>
 
             <Select
@@ -341,30 +321,15 @@ export default function ClientsPage() {
               ]}
             />
 
-            <div className="inline-flex rounded-lg bg-gray-100 p-1">
-              <button
-                type="button"
-                onClick={() => setViewMode('list')}
-                className={clsx(
-                  'p-1.5 rounded-md transition-colors',
-                  viewMode === 'list' ? 'bg-[var(--surface)] text-gray-900 border border-gray-200' : 'text-gray-600 hover:text-gray-700'
-                )}
-                aria-label="List view"
-              >
-                <List className="w-4 h-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('grid')}
-                className={clsx(
-                  'p-1.5 rounded-md transition-colors',
-                  viewMode === 'grid' ? 'bg-[var(--surface)] text-gray-900 border border-gray-200' : 'text-gray-600 hover:text-gray-700'
-                )}
-                aria-label="Grid view"
-              >
-                <LayoutGrid className="w-4 h-4" />
-              </button>
-            </div>
+            <SegmentedControl
+              layoutId="clients-view-mode"
+              segments={[
+                { id: 'list', icon: List, ariaLabel: 'List view' },
+                { id: 'grid', icon: LayoutGrid, ariaLabel: 'Grid view' },
+              ]}
+              value={viewMode}
+              onChange={setViewMode}
+            />
           </div>
         </div>
       </div>
