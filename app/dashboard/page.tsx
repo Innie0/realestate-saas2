@@ -366,38 +366,35 @@ function OpenDealsTable({
           />
         </CardContent>
       ) : (
-        <CardContent className="min-h-0 flex-1 p-0">
-          <Table>
+        <CardContent className="min-h-0 flex-1 overflow-x-auto p-0">
+          <Table className="w-auto min-w-0">
             <TableHeader>
               <TableRow>
-                {['Property', 'Client', 'Stage', 'Price', 'Closing'].map((h) => (
-                  <TableHead
-                    key={h}
-                    className={clsx((h === 'Price' || h === 'Closing') && 'text-right')}
-                  >
-                    {h}
-                  </TableHead>
-                ))}
+                <TableHead className="whitespace-nowrap px-4 sm:px-5">Property</TableHead>
+                <TableHead className="whitespace-nowrap px-4 sm:px-5">Client</TableHead>
+                <TableHead className="whitespace-nowrap px-4 sm:px-5">Stage</TableHead>
+                <TableHead className="whitespace-nowrap px-4 sm:px-5 text-right">Price</TableHead>
+                <TableHead className="whitespace-nowrap px-4 sm:px-5 text-right">Closing</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {deals.map((tx) => (
                 <TableRow key={tx.id} className="group">
-                  <TableCell className="max-w-0 font-medium">
+                  <TableCell className="max-w-[14rem] px-4 font-medium sm:max-w-[18rem] sm:px-5">
                     <Link href={`/dashboard/transactions/${tx.id}`} className="block truncate hover:underline">
                       {tx.property_address}
                     </Link>
                   </TableCell>
-                  <TableCell className="truncate text-muted-foreground">
+                  <TableCell className="max-w-[9rem] truncate px-4 text-muted-foreground sm:px-5">
                     {tx.buyer_name || tx.seller_name || '—'}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="whitespace-nowrap px-4 sm:px-5">
                     <TransactionStatusBadge status={tx.status} />
                   </TableCell>
-                  <TableCell className="text-right font-mono tabular-nums">
+                  <TableCell className="whitespace-nowrap px-4 text-right font-mono tabular-nums sm:px-5">
                     {tx.offer_price ? formatCompactPrice(tx.offer_price) : '—'}
                   </TableCell>
-                  <TableCell className="text-right text-muted-foreground">
+                  <TableCell className="whitespace-nowrap px-4 text-right text-muted-foreground sm:px-5">
                     {formatClosing(tx.closing_date)}
                   </TableCell>
                 </TableRow>
@@ -901,7 +898,7 @@ export default function DashboardHomePage() {
       <NeedsAttention items={attentionItems} loading={attentionLoading} />
 
       {/* 3. Work area + right rail */}
-      <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(380px,440px)]">
+      <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[1fr_320px]">
         <div className="flex min-w-0 flex-col gap-4">
           <OpenDealsTable transactions={allTransactions} loading={transactionsLoading && allTransactions.length === 0} />
         </div>
