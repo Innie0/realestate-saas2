@@ -1,88 +1,98 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import clsx from 'clsx';
 import ProductsMegaMenu from '@/components/marketing/ProductsMegaMenu';
+import MarketingButton from '@/components/marketing/MarketingButton';
+import { ensureGsapRegistered, gsap, landingRevealDefaults, useGSAP } from '@/lib/gsap-config';
 import { MKT } from '@/lib/marketing-design';
+import { useMotionReduced } from '@/lib/motion';
 
 type LandingNavProps = {
   heroRef: React.RefObject<HTMLElement | null>;
 };
 
+ensureGsapRegistered();
+
 export default function LandingNav({ heroRef }: LandingNavProps) {
-  const [inHero, setInHero] = useState(true);
+  const reduced = useMotionReduced();
+  const navRef = useRef<HTMLElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
-    const update = () => {
-      const hero = heroRef.current;
-      const navThreshold = 96;
-
-      if (hero) {
-        const { bottom } = hero.getBoundingClientRect();
-        setInHero(bottom > navThreshold);
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 24);
+      if (y > 120 && y > lastScrollY.current && !menuOpen) {
+        setHidden(true);
+      } else {
+        setHidden(false);
       }
+      lastScrollY.current = y;
     };
 
-    update();
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
-    return () => {
-      window.removeEventListener('scroll', update);
-      window.removeEventListener('resize', update);
-    };
-  }, [heroRef]);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [menuOpen]);
 
-  const overHero = inHero && !menuOpen;
+  useGSAP(
+    () => {
+      if (reduced || !navRef.current) return;
+      gsap.from(navRef.current, {
+        ...landingRevealDefaults,
+        y: -16,
+        duration: 0.6,
+        delay: 0.05,
+      });
+    },
+    { scope: navRef, dependencies: [reduced] },
+  );
+
+  const solid = scrolled || menuOpen;
 
   return (
-    <motion.nav
-      initial={{ opacity: 0, y: -12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.05 }}
-      className="fixed inset-x-0 top-0 z-[60] transition-[background-color,border-color,box-shadow] duration-300 ease-out"
+    <nav
+      ref={navRef}
+      className={clsx(
+        'fixed inset-x-0 top-0 z-[60] transition-transform duration-300 ease-out',
+        hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0',
+      )}
       style={{
-        borderBottom: overHero ? '1px solid transparent' : `1px solid ${MKT.border}`,
-        backgroundColor: overHero ? 'transparent' : MKT.background,
+        borderBottom: solid ? `1px solid ${MKT.border}` : '1px solid transparent',
+        backgroundColor: solid ? 'rgba(251, 251, 250, 0.88)' : 'transparent',
+        backdropFilter: solid ? 'blur(12px)' : 'none',
       }}
     >
-      <div className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
-        <div className="flex h-16 items-center justify-between gap-2 min-w-0 sm:h-20 md:h-24">
-          <motion.div className="flex min-w-0 shrink-0 items-center" whileHover={{ scale: 1.02 }}>
+      <div className="mx-auto px-5 sm:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
+        <div className="flex h-16 items-center justify-between gap-4 sm:h-[4.5rem]">
+          <Link
+            href="/"
+            className="truncate text-[1.05rem] font-medium tracking-[-0.02em] transition-opacity hover:opacity-70 sm:text-lg"
+            style={{ color: MKT.textPrimary }}
+          >
+            Oikaro
+          </Link>
+
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <ProductsMegaMenu onSolidBackground={solid} onOpenChange={setMenuOpen} />
             <Link
-              href="/"
-              className="truncate text-[1.15rem] font-medium tracking-[-0.02em] transition-opacity hover:opacity-80 sm:text-[1.35rem] md:text-[1.5rem]"
-              style={{ color: MKT.textPrimary }}
+              href="/auth/login"
+              className="hidden px-3 py-2 text-sm font-medium transition-opacity hover:opacity-70 md:inline-flex"
+              style={{ color: MKT.textSecondary }}
             >
-              Oikaro
+              Sign in
             </Link>
-          </motion.div>
-          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 md:gap-3">
-            <ProductsMegaMenu onSolidBackground onOpenChange={setMenuOpen} />
-            <Link href="/auth/login" className="hidden md:block">
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                className="whitespace-nowrap px-3 py-2 text-sm font-medium transition-opacity hover:opacity-70 md:px-4 md:py-2.5"
-                style={{ color: MKT.textSecondary }}
-              >
-                Sign In
-              </motion.button>
-            </Link>
-            <Link href="/auth/signup">
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                className="mkt-cta whitespace-nowrap px-3 py-2 text-xs font-medium transition-opacity hover:opacity-90 sm:px-4 sm:py-2.5 sm:text-sm"
-                style={{ borderRadius: MKT.radius.button }}
-              >
-                Start free trial
-              </motion.button>
-            </Link>
+            <MarketingButton href="/auth/signup" size="md" className="hidden sm:inline-flex">
+              Start free trial
+            </MarketingButton>
           </div>
         </div>
       </div>
-    </motion.nav>
+    </nav>
   );
 }

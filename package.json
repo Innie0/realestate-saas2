@@ -10,6 +10,7 @@
     "stripe:setup-prices": "node --env-file=.env.local scripts/create-stripe-prices.mjs"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "@stripe/stripe-js": "^8.7.0",
     "@supabase/auth-helpers-nextjs": "^0.8.7",
@@ -20,6 +21,7 @@
     "framer-motion": "^12.23.26",
     "geist": "^1.7.2",
     "googleapis": "^128.0.0",
+    "gsap": "^3.15.0",
     "lucide-react": "^0.294.0",
     "next": "^16.1.6",
     "openai": "^4.20.1",

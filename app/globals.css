@@ -341,11 +341,27 @@ html[data-dashboard-theme='light'] .dashboard-root,
     stroke-width: 1.75;
   }
 
-  /* Marketing chrome — Inter + local aliases (colors inherit from :root) */
+  /* Marketing chrome — Geist body, editorial serif for display */
   .marketing-root {
-    font-family: var(--font-inter), Inter, system-ui, sans-serif;
+    --mkt-background: #fbfbfa;
+    --mkt-surface: #ffffff;
+    --mkt-surface-muted: #f7f6f3;
+    --mkt-text-primary: #111111;
+    --mkt-text-secondary: #787774;
+    --mkt-border: #eaeaea;
+    --mkt-accent: #111111;
+    --mkt-accent-hover: #333333;
+    --mkt-accent-foreground: #ffffff;
+    --mkt-muted: #a3a29e;
+    --mkt-mock-surface: #ffffff;
+
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
     color: var(--mkt-text-primary);
     background-color: var(--mkt-background);
+  }
+
+  .marketing-root .font-display {
+    font-family: var(--font-serif), 'Newsreader', Georgia, serif;
   }
 
   .marketing-root .text-price {
@@ -387,7 +403,7 @@ html[data-dashboard-theme='light'] .dashboard-root,
   }
 
   .marketing-root .legal-prose a.legal-btn-secondary:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--mkt-surface-muted);
     color: var(--mkt-text-primary);
   }
 }
@@ -403,6 +419,11 @@ html[data-dashboard-theme='light'] .dashboard-root,
     background-color: var(--mkt-accent-hover);
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    .landing-reveal-pending {
+      opacity: 0;
+    }
+  }
 }
 
 /* Custom utility classes */

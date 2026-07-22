@@ -1,7 +1,4 @@
-'use client';
-
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
 import { MKT } from '@/lib/marketing-design';
 
 const FOOTER_LINKS = [
@@ -15,22 +12,24 @@ const FOOTER_LINKS = [
 
 export default function LandingFooter() {
   return (
-    <footer
-      className="relative z-10"
-      style={{ backgroundColor: MKT.background }}
-    >
-      <div className="mx-auto px-6 py-12 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
-        <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
-          <Link
-            href="/"
-            className="shrink-0 text-4xl font-medium tracking-[-0.02em] transition-opacity hover:opacity-80 sm:text-5xl lg:text-6xl"
-            style={{ color: MKT.textPrimary }}
-          >
-            Oikaro
-          </Link>
+    <footer className="border-t" style={{ borderColor: MKT.border, backgroundColor: MKT.background }}>
+      <div className="mx-auto px-5 py-14 sm:px-8 lg:py-16" style={{ maxWidth: MKT.maxContentWidth }}>
+        <div className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
+          <div>
+            <Link
+              href="/"
+              className="font-display text-3xl font-medium tracking-[-0.03em] transition-opacity hover:opacity-70 sm:text-4xl"
+              style={{ color: MKT.textPrimary }}
+            >
+              Oikaro
+            </Link>
+            <p className="mt-3 max-w-xs text-sm leading-[1.6]" style={{ color: MKT.textSecondary }}>
+              One workspace for listings, leads, clients, and transactions.
+            </p>
+          </div>
 
           <div className="md:text-right">
-            <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm md:justify-end">
+            <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
               {FOOTER_LINKS.map((link) => (
                 <Link
                   key={link.href}
@@ -44,13 +43,12 @@ export default function LandingFooter() {
             </nav>
             <Link
               href="/auth/signup"
-              className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-70 md:justify-end"
+              className="mt-5 inline-flex text-sm font-medium transition-opacity hover:opacity-70"
               style={{ color: MKT.textPrimary }}
             >
-              Start free trial
-              <ArrowRight className="h-3.5 w-3.5" />
+              Start your 7-day free trial
             </Link>
-            <p className="mt-4 text-sm" style={{ color: MKT.textSecondary }}>
+            <p className="mt-6 text-sm" style={{ color: MKT.textSecondary }}>
               © 2026 Oikaro. All rights reserved.
             </p>
           </div>

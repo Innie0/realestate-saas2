@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
 import PricingFeatureList from '@/components/PricingFeatureList';
+import LandingScrollReveal from '@/components/home/LandingScrollReveal';
+import MarketingButton from '@/components/marketing/MarketingButton';
 import {
   STARTER_PLAN_DESCRIPTION,
   PRO_PLAN_DESCRIPTION,
@@ -11,8 +11,7 @@ import {
   getPricingFootnote,
   isAnyAnnualBillingAvailable,
 } from '@/lib/pricing';
-import { MKT, mktEnterReveal } from '@/lib/marketing-design';
-import { useMotionReduced } from '@/lib/motion';
+import { MKT } from '@/lib/marketing-design';
 
 const PLANS = [
   {
@@ -32,131 +31,103 @@ const PLANS = [
 ];
 
 export default function LandingPricingSection() {
-  const reduced = useMotionReduced();
-
   return (
-    <section
-      className="relative z-10 py-24 lg:py-32"
-      style={{ backgroundColor: MKT.background }}
-    >
-      <div className="mx-auto px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
-        <motion.div {...mktEnterReveal(reduced)} className="mb-16 text-center">
-          <p
-            className="mb-4 text-xs font-medium uppercase tracking-[0.12em]"
-            style={{ color: MKT.textSecondary }}
-          >
+    <section className="border-t py-24 lg:py-32" style={{ borderColor: MKT.border, backgroundColor: MKT.background }}>
+      <div className="mx-auto px-5 sm:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
+        <LandingScrollReveal className="mx-auto mb-16 max-w-2xl text-center">
+          <p className="text-xs font-medium uppercase tracking-[0.14em]" style={{ color: MKT.textSecondary }}>
             Pricing
           </p>
           <h2
-            className="font-sans text-3xl font-medium tracking-[-0.02em] sm:text-4xl lg:text-5xl"
+            className="font-display mt-4 text-3xl font-medium tracking-[-0.03em] sm:text-4xl"
             style={{ color: MKT.textPrimary }}
           >
             Simple, transparent pricing
           </h2>
-          <p className="mx-auto mt-4 max-w-lg text-lg leading-[1.6]" style={{ color: MKT.textSecondary }}>
+          <p className="mt-4 text-base leading-[1.65]" style={{ color: MKT.textSecondary }}>
             7-day free trial on every plan. No setup fees. Cancel anytime.
           </p>
-        </motion.div>
+        </LandingScrollReveal>
 
         <div className="mx-auto grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2 md:items-start">
           {PLANS.map((plan, i) => (
-            <motion.div
+            <LandingScrollReveal
               key={plan.name}
-              {...mktEnterReveal(reduced, i * 0.08)}
-              className="relative p-7"
+              delay={i * 0.06}
+              className="relative flex flex-col p-7 sm:p-8"
               style={{
                 borderRadius: MKT.radius.card,
                 backgroundColor: MKT.surface,
-                border: plan.popular ? `2px solid ${MKT.textPrimary}` : `1px solid ${MKT.border}`,
+                border: plan.popular ? `1.5px solid ${MKT.textPrimary}` : `1px solid ${MKT.border}`,
               }}
             >
-              {plan.popular && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <span className="mkt-cta inline-flex items-center gap-1.5 px-4 py-1 text-xs font-medium" style={{ borderRadius: MKT.radius.button }}>
-                    <Sparkles className="h-3 w-3" />
-                    Most Popular
-                  </span>
-                </div>
-              )}
+              {plan.popular ? (
+                <span
+                  className="absolute -top-3 left-6 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.1em]"
+                  style={{
+                    borderRadius: 9999,
+                    backgroundColor: MKT.tag.green.bg,
+                    color: MKT.tag.green.text,
+                  }}
+                >
+                  Most popular
+                </span>
+              ) : null}
 
-              <div className="mb-5">
+              <div className="mb-6">
                 <h3 className="text-xl font-medium" style={{ color: MKT.textPrimary }}>
                   {plan.name}
                 </h3>
-                <p className="mt-1 text-sm leading-[1.6]" style={{ color: MKT.textSecondary }}>
+                <p className="mt-2 text-sm leading-[1.6]" style={{ color: MKT.textSecondary }}>
                   {plan.description}
                 </p>
               </div>
 
-              <div className="mb-6">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-price text-4xl" style={{ color: MKT.textPrimary }}>
+              <div className="mb-8">
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-4xl font-medium tabular-nums tracking-tight" style={{ color: MKT.textPrimary }}>
                     {plan.price}
                   </span>
                   <span className="text-sm" style={{ color: MKT.textSecondary }}>
                     / mo after trial
                   </span>
                 </div>
-                {isAnyAnnualBillingAvailable() && (
+                {isAnyAnnualBillingAvailable() ? (
                   <p className="mt-2 text-xs" style={{ color: MKT.textSecondary }}>
                     or {getPlanDisplayPrice(plan.plan, 'annual')}/year — save 2 months
                   </p>
-                )}
+                ) : null}
               </div>
 
-              <Link href="/auth/signup" className="mb-7 block">
-                <span
-                  className={`block w-full py-3 text-center text-sm font-medium transition-opacity hover:opacity-90 ${
-                    plan.popular ? 'mkt-cta' : ''
-                  }`}
-                  style={
-                    plan.popular
-                      ? { borderRadius: MKT.radius.button }
-                      : {
-                          borderRadius: MKT.radius.button,
-                          backgroundColor: MKT.background,
-                          color: MKT.textPrimary,
-                          border: `1px solid ${MKT.border}`,
-                        }
-                  }
-                >
-                  Start free trial
-                </span>
-              </Link>
+              <MarketingButton
+                href="/auth/signup"
+                variant={plan.popular ? 'primary' : 'secondary'}
+                className="mb-8 w-full"
+              >
+                Start your 7-day free trial
+              </MarketingButton>
 
               <div className="mb-5 border-t" style={{ borderColor: MKT.border }} />
-              <p
-                className="mb-4 text-xs font-medium uppercase tracking-[0.12em]"
-                style={{ color: MKT.textSecondary }}
-              >
+              <p className="mb-4 text-xs font-medium uppercase tracking-[0.12em]" style={{ color: MKT.textSecondary }}>
                 What&apos;s included
               </p>
-                <PricingFeatureList plan={plan.plan} tone="marketing" />
-            </motion.div>
+              <PricingFeatureList plan={plan.plan} tone="marketing" />
+            </LandingScrollReveal>
           ))}
         </div>
 
-        <motion.p
-          {...mktEnterReveal(reduced, 0.2)}
-          className="mt-8 text-center text-sm"
-          style={{ color: MKT.textSecondary }}
-        >
+        <LandingScrollReveal className="mt-10 text-center" delay={0.12}>
           <Link
             href="/pricing#compare"
-            className="font-medium transition-opacity hover:opacity-70"
+            className="text-sm font-medium transition-opacity hover:opacity-70"
             style={{ color: MKT.textPrimary }}
           >
-            Compare all features →
+            Compare all features
           </Link>
-        </motion.p>
-
-        <motion.p
-          {...mktEnterReveal(reduced, 0.24)}
-          className="mt-10 text-center text-sm"
-          style={{ color: MKT.textSecondary }}
-        >
-          {getPricingFootnote()}
-        </motion.p>
+          <p className="mt-8 text-sm" style={{ color: MKT.textSecondary }}>
+            {getPricingFootnote()}
+          </p>
+        </LandingScrollReveal>
       </div>
     </section>
   );

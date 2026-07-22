@@ -1,29 +1,36 @@
-/** Framer-style landing tokens — dark background, white text */
+/** Editorial landing tokens — warm monochrome, premium B2B */
 export const MKT = {
-  background: '#0A0A0A',
-  surface: '#1C1C1C',
-  textPrimary: '#FFFFFF',
-  textSecondary: '#999999',
-  border: '#2E2E2E',
-  accent: '#E4F76C',
-  accentHover: '#D8EB5A',
-  accentForeground: '#141412',
-  /** Inactive / muted UI — never use accent for decorative chrome */
-  muted: '#666666',
-  /** Product mock / screenshot interior — stays light inside browser frames */
+  background: '#FBFBFA',
+  surface: '#FFFFFF',
+  surfaceMuted: '#F7F6F3',
+  textPrimary: '#111111',
+  textSecondary: '#787774',
+  border: '#EAEAEA',
+  /** Primary CTA — charcoal for trust; brand lime lives in product UI */
+  accent: '#111111',
+  accentHover: '#333333',
+  accentForeground: '#FFFFFF',
+  muted: '#A3A29E',
+  /** Product mock / screenshot interior */
   mockSurface: '#FFFFFF',
-  browserDot: '#444444',
-  maxContentWidth: 1200,
-  radius: { button: 8, card: 12, browser: 10 },
+  browserDot: '#D4D4D0',
+  maxContentWidth: 1120,
+  radius: { button: 6, card: 12, browser: 12 },
+  /** Muted pastels for tags */
+  tag: {
+    green: { bg: '#EDF3EC', text: '#346538' },
+    blue: { bg: '#E1F3FE', text: '#1F6C9F' },
+    amber: { bg: '#FBF3DB', text: '#956400' },
+  },
 } as const;
 
-/** IntersectionObserver fade-up — once only, not scroll-linked */
+/** @deprecated Use LandingScrollReveal + GSAP instead */
 export const mktEnterReveal = (reduced: boolean, delay = 0) =>
   reduced
     ? {}
     : {
-        initial: { opacity: 0, y: 24 },
+        initial: { opacity: 0, y: 12 },
         whileInView: { opacity: 1, y: 0 },
         viewport: { once: true, margin: '-40px' as const },
-        transition: { duration: 0.4, delay, ease: 'easeOut' as const },
+        transition: { duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] as const },
       };

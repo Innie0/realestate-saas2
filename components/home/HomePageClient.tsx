@@ -2,12 +2,13 @@
 
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import CinematicHeroSection from '@/components/home/CinematicHeroSection';
 import LandingNav from '@/components/home/LandingNav';
-import LandingShowcaseCarousel from '@/components/home/LandingShowcaseCarousel';
+import LandingHero from '@/components/home/LandingHero';
+import LandingFeatureSections from '@/components/home/LandingFeatureSections';
 import LandingTrustSection from '@/components/home/LandingTrustSection';
 import LandingFAQSection from '@/components/home/LandingFAQSection';
 import LandingPricingSection from '@/components/home/LandingPricingSection';
+import LandingCTABand from '@/components/home/LandingCTABand';
 import LandingFooter from '@/components/home/LandingFooter';
 import { supabase } from '@/lib/supabase';
 import { MKT } from '@/lib/marketing-design';
@@ -43,15 +44,16 @@ export default function HomePageClient() {
 
   return (
     <div
-      className="marketing-root min-h-screen overflow-x-hidden font-sans"
+      className="marketing-root min-h-screen overflow-x-hidden"
       style={{ color: MKT.textPrimary, backgroundColor: MKT.background }}
     >
       <LandingNav heroRef={heroRef} />
-      <CinematicHeroSection sectionRef={heroRef} />
-      <LandingShowcaseCarousel />
+      <LandingHero sectionRef={heroRef} />
+      <LandingFeatureSections />
       <LandingTrustSection />
       <LandingFAQSection />
       <LandingPricingSection />
+      <LandingCTABand />
       <LandingFooter />
     </div>
   );
