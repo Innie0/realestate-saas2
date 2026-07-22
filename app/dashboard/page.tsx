@@ -8,6 +8,7 @@ import clsx from 'clsx';
 import Header from '@/components/layout/Header';
 import PageTransition from '@/components/motion/PageTransition';
 import Surface from '@/components/ui/Surface';
+import PanelHeader from '@/components/ui/PanelHeader';
 import Sparkline from '@/components/ui/Sparkline';
 import Button from '@/components/ui/Button';
 import CountUp from '@/components/motion/CountUp';
@@ -257,12 +258,14 @@ function NeedsAttention({ items, loading }: { items: AttentionItem[]; loading: b
 
   return (
     <Surface flat padding="none" className="overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-[11px] border-b border-gray-150">
-        <h2 className="text-[12.5px] font-semibold text-gray-900">Needs your attention</h2>
-        <span className="font-mono text-[10.5px] font-medium text-gray-600 tracking-[0.04em]">
-          {items.length} ITEM{items.length === 1 ? '' : 'S'}
-        </span>
-      </div>
+      <PanelHeader
+        title="Needs your attention"
+        action={
+          <span className="font-mono text-[10.5px] font-medium text-gray-600 tracking-[0.04em]">
+            {items.length} ITEM{items.length === 1 ? '' : 'S'}
+          </span>
+        }
+      />
       <div>
         {items.map((item, i) => (
           <Link
@@ -307,15 +310,17 @@ function OpenDealsTable({
 
   return (
     <Surface flat padding="none" className="flex flex-1 flex-col min-h-0 overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-[11px] border-b border-gray-150 shrink-0">
-        <h2 className="text-[12.5px] font-semibold text-gray-900">Open deals</h2>
-        <Link
-          href="/dashboard/transactions"
-          className="text-[11.5px] font-medium text-gray-900 hover:opacity-70 transition-opacity"
-        >
-          All transactions →
-        </Link>
-      </div>
+      <PanelHeader
+        title="Open deals"
+        action={
+          <Link
+            href="/dashboard/transactions"
+            className="text-[11.5px] font-medium text-gray-900 hover:opacity-70 transition-opacity"
+          >
+            All transactions →
+          </Link>
+        }
+      />
 
       {loading ? (
         <div className="flex-1 px-4 py-4 space-y-3 animate-pulse min-h-0">
@@ -431,15 +436,17 @@ function TodayPanel() {
 
   return (
     <Surface flat padding="none" className="overflow-hidden" data-tour="notifications">
-      <div className="flex items-center justify-between px-4 py-[11px] border-b border-gray-150">
-        <h2 className="text-[12.5px] font-semibold text-gray-900">Today</h2>
-        <Link
-          href="/dashboard/calendar"
-          className="text-[11.5px] font-medium text-gray-900 hover:opacity-70 transition-opacity"
-        >
-          Calendar →
-        </Link>
-      </div>
+      <PanelHeader
+        title="Today"
+        action={
+          <Link
+            href="/dashboard/calendar"
+            className="text-[11.5px] font-medium text-gray-900 hover:opacity-70 transition-opacity"
+          >
+            Calendar →
+          </Link>
+        }
+      />
       {isLoading ? (
         <div className="px-4 py-3 space-y-3 animate-pulse">
           {[0, 1].map((i) => (
@@ -485,9 +492,7 @@ function TodayPanel() {
 function ContinuePanel({ items, loading }: { items: ContinueListItem[]; loading: boolean }) {
   return (
     <Surface flat padding="none" className="overflow-hidden">
-      <div className="px-4 py-[11px] border-b border-gray-150">
-        <h2 className="text-[12.5px] font-semibold text-gray-900">Continue</h2>
-      </div>
+      <PanelHeader title="Continue" />
       {loading ? (
         <div className="px-4 py-3 space-y-3 animate-pulse">
           {[0, 1].map((i) => (
@@ -530,9 +535,7 @@ function ContinuePanel({ items, loading }: { items: ContinueListItem[]; loading:
 function QuickActionsPanel() {
   return (
     <Surface flat padding="none" className="overflow-hidden">
-      <div className="px-4 py-[11px] border-b border-gray-150">
-        <h2 className="text-[12.5px] font-semibold text-gray-900">Quick actions</h2>
-      </div>
+      <PanelHeader title="Quick actions" />
       <div className="py-1.5">
         {QUICK_LINKS.map(({ href, label, shortcut, tour }) => (
           <Link

@@ -223,6 +223,17 @@
   --sky-700: #0369a1;
   --sky-800: #075985;
   --sky-900: #0c4a6e;
+
+  --champagne-50: #fdf3e5;
+  --champagne-100: #f8e8d0;
+  --champagne-200: #efe2c8;
+  --champagne-300: #e3cda2;
+  --champagne-400: #d3b077;
+  --champagne-500: #a87c43;
+  --champagne-600: #c29656;
+  --champagne-700: #8a642e;
+  --champagne-800: #6b4d22;
+  --champagne-900: #4a3518;
 }
 
 /* Light dashboard: scrollbars + autofill match the light console */
@@ -422,7 +433,7 @@
 
   /* Dashboard form controls */
   .field-select {
-    @apply px-3 py-2.5 text-sm bg-[var(--surface)] rounded-xl text-gray-900 ring-1 ring-gray-900/[0.08] shadow-surface focus:outline-none focus:ring-2 focus:ring-brand-500/30 transition-shadow duration-150;
+    @apply px-3 py-2.5 text-sm bg-[var(--surface)] rounded-lg text-gray-900 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/30 transition-shadow duration-150;
   }
 
   /* Legal page typography */

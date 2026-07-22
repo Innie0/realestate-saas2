@@ -499,7 +499,7 @@ export function CmaPanel({
           type="button"
           onClick={() => runAnalysis()}
           disabled={loading || !street.trim() || !state}
-          className="w-full flex items-center justify-center gap-2 bg-brand-500 text-white text-[13.5px] font-semibold py-2.5 rounded-[10px] hover:bg-brand-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 h-9 bg-brand-500 text-[var(--brand-foreground)] text-[13px] font-semibold rounded-lg hover:bg-brand-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? (
             <><Loader2 className="w-4 h-4 animate-spin" /> Running CMA…</>

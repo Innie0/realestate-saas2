@@ -226,7 +226,7 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
           <button
             type="submit"
             disabled={submitting}
-            className="w-full rounded-lg px-6 py-3.5 text-sm font-semibold transition-colors focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed bg-brand-500 text-white hover:bg-brand-600 focus:ring-brand-500/40"
+            className="w-full rounded-lg px-6 py-3.5 text-sm font-semibold transition-colors focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed bg-brand-500 text-[var(--brand-foreground)] hover:bg-brand-600 focus:ring-brand-500/40"
           >
             {submitting ? 'Confirming...' : 'Confirm showing'}
           </button>

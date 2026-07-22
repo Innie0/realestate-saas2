@@ -312,7 +312,9 @@ export default function ClientsPage() {
                   onClick={() => setStatusTab(tab.id)}
                   className={clsx(
                     'relative px-3 py-1.5 rounded-lg text-[12.5px] font-medium transition-colors z-10',
-                    statusTab === tab.id ? 'text-white' : 'text-gray-600 hover:text-gray-900'
+                    statusTab === tab.id
+                      ? 'text-[var(--brand-foreground)]'
+                      : 'text-gray-600 hover:text-gray-900'
                   )}
                 >
                   {statusTab === tab.id && (

@@ -123,7 +123,7 @@ export default function FeedbackWidget() {
               <button
                 type="submit"
                 disabled={submitting || !message.trim()}
-                className="w-full py-2 rounded-xl bg-brand-500 text-white text-sm font-semibold hover:bg-brand-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                className="w-full h-9 rounded-lg bg-brand-500 text-[var(--brand-foreground)] text-sm font-semibold hover:bg-brand-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
                 {submitting ? (
                   <span>Sending...</span>
@@ -154,7 +154,7 @@ export default function FeedbackWidget() {
 
         <button
           onClick={() => setOpen((prev) => !prev)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-brand-500 text-white text-sm font-semibold shadow-lg hover:bg-brand-600 transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-brand-500 text-[var(--brand-foreground)] text-sm font-semibold hover:bg-brand-600 transition-colors"
         >
           <MessageSquare className="w-4 h-4" />
           Feedback

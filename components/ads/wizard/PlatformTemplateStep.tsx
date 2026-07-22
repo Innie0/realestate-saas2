@@ -54,7 +54,7 @@ export default function PlatformTemplateStep({
             className={clsx(
               'rounded-lg border px-4 py-2.5 text-[13px] font-medium transition-colors',
               draft.platforms.includes('meta')
-                ? 'border-indigo-500 bg-indigo-50 text-indigo-800'
+                ? 'border-brand-400 bg-brand-50 text-gray-900'
                 : 'border-gray-200 text-gray-600 hover:border-gray-300'
             )}
           >

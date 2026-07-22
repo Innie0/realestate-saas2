@@ -147,13 +147,13 @@ export default function UpgradePage() {
   return (
     <DashboardPage title="Upgrade to Pro" subtitle="Unlock unlimited access to every feature" size="medium">
         {starterReady && (
-          <div className="rounded-2xl border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-gray-700">
+          <div className="rounded-[10px] border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-gray-700">
             Starter is connected in Stripe. Click <strong>Upgrade to Pro</strong> below to test the prorated upgrade.
           </div>
         )}
 
         {isAdmin && !hasStripeStarter && (
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+          <div className="rounded-[10px] border border-amber-200 bg-amber-50 p-5">
             <p className="text-sm font-semibold text-gray-900 mb-1">Admin: test the upgrade flow</p>
             <p className="text-sm text-gray-600 mb-4">
               Your admin account skips normal billing. Connect a real Starter subscription in Stripe first,
@@ -164,7 +164,7 @@ export default function UpgradePage() {
         )}
 
         {usage && (
-          <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
+          <div className="rounded-[10px] border border-gray-200 bg-gray-50 p-5">
             <div className="flex items-center gap-2 mb-4">
               <Zap className="w-4 h-4 text-gray-900/60" />
               <span className="text-sm font-semibold text-gray-900 capitalize">
@@ -210,9 +210,9 @@ export default function UpgradePage() {
         )}
 
         <div className="grid grid-cols-1 gap-6 max-w-xl mx-auto">
-          <div className="rounded-2xl border-2 border-gray-400 bg-[var(--surface)] p-6 flex flex-col relative">
+          <div className="rounded-[10px] border-2 border-gray-400 bg-[var(--surface)] p-6 flex flex-col relative">
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-              <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-brand-500 text-white text-xs font-semibold">
+              <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-brand-500 text-[var(--brand-foreground)] text-xs font-semibold">
                 <Sparkles className="w-3 h-3" />
                 Most Popular
               </span>
@@ -244,7 +244,7 @@ export default function UpgradePage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-6 overflow-x-auto">
+        <div className="rounded-[10px] border border-gray-200 bg-gray-50 p-6 overflow-x-auto">
           <h3 className="text-lg font-bold text-gray-900 mb-5">Plan Comparison</h3>
           <div className="min-w-[480px]">
             <div className="grid grid-cols-3 mb-3">

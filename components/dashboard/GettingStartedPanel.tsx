@@ -53,8 +53,8 @@ export default function GettingStartedPanel({ variant, onDismiss }: GettingStart
       </button>
 
       <div className="flex items-start gap-3 pr-8 mb-4">
-        <div className="w-10 h-10 rounded-full bg-[#fdf3e5] flex items-center justify-center shrink-0">
-          <Sparkles className="w-4 h-4 text-[#b8842d]" />
+        <div className="w-10 h-10 rounded-full bg-champagne-50 flex items-center justify-center shrink-0">
+          <Sparkles className="w-4 h-4 text-champagne-600" />
         </div>
         <div>
           <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600 mb-1">

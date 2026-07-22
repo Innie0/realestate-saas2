@@ -10,7 +10,8 @@ export type BadgeVariant =
   | 'success'
   | 'neutral'
   | 'graphite'
-  | 'info';
+  | 'info'
+  | 'ad';
 
 const variantStyles: Record<BadgeVariant, string> = {
   default: 'bg-gray-100 text-gray-700 border-gray-200',
@@ -24,6 +25,8 @@ const variantStyles: Record<BadgeVariant, string> = {
   graphite: 'bg-brand-100 text-gray-900 border-transparent',
   // Teal "active" pill — theme-aware via CSS vars.
   info: 'bg-teal-50 text-teal-700 border-teal-200',
+  // Paid-ad / Meta source chip.
+  ad: 'bg-sky-50 text-sky-700 border-sky-200',
 }
 
 interface BadgeProps {

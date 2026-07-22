@@ -108,8 +108,8 @@ export default function AdsConnectionsPanel({
                 className={clsx(
                   'flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] text-sm font-semibold',
                   platform.id === 'google'
-                    ? 'bg-blue-50 text-blue-700 border border-blue-100'
-                    : 'bg-indigo-50 text-indigo-700 border border-indigo-100',
+                    ? 'bg-sky-50 text-sky-700 border border-sky-200'
+                    : 'bg-brand-50 text-gray-900 border border-brand-200',
                 )}
               >
                 {platform.accent}

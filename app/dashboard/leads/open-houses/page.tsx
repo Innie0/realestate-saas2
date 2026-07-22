@@ -173,14 +173,10 @@ export default function OpenHousesPage() {
               <input type="text" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. Sunday Open House — 5721 West Prospect Dr" className={inputClass} />
               <p className="text-[11.5px] text-gray-600 mt-1">Shown in your leads inbox when someone signs in. Leave blank to use the address only.</p>
             </div>
-            <button
-              type="submit"
-              disabled={creating}
-              className="w-full py-2.5 rounded-[10px] bg-brand-500 text-white font-medium text-[13px] hover:bg-brand-600 transition-colors disabled:opacity-40 flex items-center justify-center gap-2"
-            >
-              {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+            <Button type="submit" fullWidth disabled={creating} isLoading={creating} className="gap-2">
+              {!creating && <Plus className="w-4 h-4" />}
               Create Open House
-            </button>
+            </Button>
           </form>
         )}
 

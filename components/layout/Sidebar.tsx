@@ -108,7 +108,7 @@ function NavLink({
         {item.name}
       </span>
       {!isCollapsed && !!count && count > 0 && (
-        <span className="relative z-10 rounded-full bg-brand-500 px-[6px] py-[1px] font-mono text-[10px] font-semibold text-white">
+        <span className="relative z-10 rounded-full bg-brand-500 px-[6px] py-[1px] font-mono text-[10px] font-semibold text-[var(--brand-foreground)]">
           {count}
         </span>
       )}
@@ -257,7 +257,7 @@ export default function Sidebar() {
             />
           ) : (
             <>
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-brand-500 text-[11px] font-bold text-white">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-brand-500 text-[11px] font-bold text-[var(--brand-foreground)]">
                 O
               </span>
               <span className="text-[13px] font-semibold tracking-tight text-gray-900">Oikaro</span>

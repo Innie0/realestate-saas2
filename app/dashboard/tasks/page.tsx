@@ -775,7 +775,7 @@ function TasksPageContent() {
                     className={clsx('flex gap-3', i % 2 === 0 ? 'justify-end' : 'justify-start')}
                   >
                     {i % 2 !== 0 && (
-                      <div className="w-7 h-7 rounded-full bg-[#fdf3e5] animate-pulse shrink-0" />
+                      <div className="w-7 h-7 rounded-full bg-champagne-50 animate-pulse shrink-0" />
                     )}
                     <div
                       className={clsx(
@@ -816,8 +816,8 @@ function TasksPageContent() {
                     className={clsx('flex gap-3', msg.role === 'user' ? 'justify-end' : 'justify-start')}
                   >
                     {msg.role === 'assistant' && (
-                      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[#fdf3e5] flex items-center justify-center mt-0.5">
-                        <Sparkles className="w-3.5 h-3.5 text-[#b8842d]" />
+                      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-champagne-50 flex items-center justify-center mt-0.5">
+                        <Sparkles className="w-3.5 h-3.5 text-champagne-600" />
                       </div>
                     )}
                     <div className={clsx('max-w-[85%]', msg.role === 'user' ? 'ml-auto' : '')}>
@@ -865,8 +865,8 @@ function TasksPageContent() {
 
                 {isLoading && (
                   <div className="flex gap-3 justify-start">
-                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[#fdf3e5] flex items-center justify-center">
-                      <Sparkles className="w-3.5 h-3.5 text-[#b8842d]" />
+                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-champagne-50 flex items-center justify-center">
+                      <Sparkles className="w-3.5 h-3.5 text-champagne-600" />
                     </div>
                     <div className="rounded-[10px] px-4 py-3 border border-gray-200 bg-[var(--surface)]">
                       <div className="flex items-center gap-2">

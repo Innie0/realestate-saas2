@@ -43,7 +43,7 @@ function NewTransactionPageContent() {
         </div>
 
         {/* Form */}
-        <div className="rounded-2xl border border-gray-200 p-6 bg-[var(--surface)]">
+        <div className="rounded-[10px] border border-gray-200 p-6 bg-[var(--surface)]">
           <TransactionForm
             defaultProjectId={projectId}
             defaultAddress={address}

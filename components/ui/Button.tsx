@@ -39,7 +39,7 @@ export default function Button({
     outline: 'text-gray-700 bg-[var(--surface)] ring-1 ring-inset ring-gray-300/70 hover:bg-gray-50 hover:ring-gray-400/60 focus-visible:ring-brand-400/30 shadow-sm',
     'outline-light': 'text-brand-400 bg-[var(--surface)] ring-1 ring-inset ring-brand-300 hover:bg-brand-50 focus-visible:ring-brand-400/30',
     white: 'bg-[var(--surface)] text-gray-900 hover:bg-gray-50 focus-visible:ring-gray-300/60 shadow-sm',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-400/40 shadow-sm',
+    danger: 'bg-rose-600 text-white hover:bg-rose-700 focus-visible:ring-rose-400/40',
   };
 
   // Size styles — fixed control heights keep buttons aligned with inputs

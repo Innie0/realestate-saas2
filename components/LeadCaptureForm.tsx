@@ -351,7 +351,7 @@ export default function LeadCaptureForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-lg px-6 py-3.5 text-sm font-semibold transition-colors focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed bg-brand-500 text-white hover:bg-brand-600 focus:ring-brand-500/40"
+        className="w-full rounded-lg px-6 py-3.5 text-sm font-semibold transition-colors focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed bg-brand-500 text-[var(--brand-foreground)] hover:bg-brand-600 focus:ring-brand-500/40"
       >
         {isSubmitting ? 'Sending...' : isListingForm ? 'Request info' : `Contact ${agentName.split(' ')[0]}`}
       </button>

@@ -333,7 +333,7 @@ export default function AccountPage() {
       size="narrow"
     >
         {showUpgradedBanner && (
-          <div className="mb-6 flex items-start gap-3 rounded-2xl border border-brand-200 bg-brand-50 px-4 py-3">
+          <div className="mb-6 flex items-start gap-3 rounded-[10px] border border-brand-200 bg-brand-50 px-4 py-3">
             <Sparkles className="w-5 h-5 text-brand-600 shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-semibold text-gray-900">You&apos;re on Pro</p>

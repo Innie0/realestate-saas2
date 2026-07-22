@@ -9,6 +9,7 @@ import LeadsSectionSwitcher, { type LeadsTab } from '@/components/leads/LeadsSec
 import Surface from '@/components/ui/Surface';
 import EmptyState from '@/components/ui/EmptyState';
 import Button from '@/components/ui/Button';
+import Badge from '@/components/ui/Badge';
 import Modal from '@/components/ui/Modal';
 import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
 import { supabase } from '@/lib/supabase';
@@ -221,14 +222,14 @@ function LeadRow({
           <div className="flex items-center gap-2">
             <p className="text-[14px] font-semibold text-gray-900 truncate">{lead.name}</p>
             {getAdSourceLabel(lead.ad_source) && (
-              <span className="inline-flex items-center gap-0.5 text-[10.5px] font-semibold text-indigo-600 shrink-0">
-                <Sparkles className="w-3 h-3" /> From ad
-              </span>
+              <Badge variant="ad" icon={Sparkles} className="shrink-0 text-[10.5px]">
+                From ad
+              </Badge>
             )}
             {temp === 'hot' && (
-              <span className="inline-flex items-center gap-0.5 text-[10.5px] font-semibold text-red-600 shrink-0">
-                <Flame className="w-3 h-3" /> Hot
-              </span>
+              <Badge variant="hot" icon={Flame} className="shrink-0 text-[10.5px]">
+                Hot
+              </Badge>
             )}
           </div>
           <p className="text-[12.5px] text-gray-600 truncate mt-0.5">{getLeadSummaryLine(lead)}</p>
@@ -262,18 +263,20 @@ function LeadRow({
           {timeAgo(lead.created_at)}
         </span>
 
-        <button
+        <Button
           type="button"
+          size="sm"
           onClick={(e) => {
             stopPropagation(e);
             onAddToCrm(lead.id);
           }}
           disabled={isAdding}
-          className="shrink-0 inline-flex items-center gap-1.5 text-[12.5px] font-medium px-2.5 py-1.5 rounded-lg bg-brand-500 text-white hover:bg-brand-600 transition-colors disabled:opacity-60"
+          isLoading={isAdding}
+          className="shrink-0 gap-1.5 px-2.5"
         >
-          {isAdding ? <Loader2 className="w-3 h-3 animate-spin" /> : <UserPlus className="w-3 h-3" />}
+          {!isAdding && <UserPlus className="w-3 h-3" />}
           <span className="hidden sm:inline">Add to CRM</span>
-        </button>
+        </Button>
 
         <ChevronDown
           className={`w-4 h-4 text-gray-400 shrink-0 transition-transform ${expanded ? 'rotate-180' : ''}`}
@@ -366,14 +369,10 @@ function LeadRow({
                   </button>
                 )}
                 {getAdSourceLabel(lead.ad_source) && (
-                  <span className="px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100">
-                    {getAdSourceLabel(lead.ad_source)}
-                  </span>
+                  <Badge variant="ad">{getAdSourceLabel(lead.ad_source)}</Badge>
                 )}
                 {lead.source && SOURCE_LABELS[lead.source] && (
-                  <span className="px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-700">
-                    {SOURCE_LABELS[lead.source]}
-                  </span>
+                  <Badge variant="neutral">{SOURCE_LABELS[lead.source]}</Badge>
                 )}
               </div>
 
@@ -412,7 +411,7 @@ function LeadRow({
                     onClick={() => onMarkContacted(lead.id)}
                     disabled={isMarkingContacted}
                     title="Stop automated follow-up emails"
-                    className="flex items-center justify-center gap-1.5 text-[12.5px] font-medium px-3 py-1.5 rounded-lg border bg-[var(--surface)] hover:bg-red-50 text-gray-700 hover:text-red-600 border-gray-200 hover:border-red-200 transition-colors disabled:opacity-60"
+                    className="flex items-center justify-center gap-1.5 text-[12.5px] font-medium px-3 py-1.5 rounded-lg border bg-[var(--surface)] hover:bg-rose-50 text-gray-700 hover:text-rose-700 border-gray-200 hover:border-rose-200 transition-colors disabled:opacity-60"
                   >
                     {isMarkingContacted ? (
                       <Loader2 className="w-3 h-3 animate-spin" />
@@ -796,7 +795,7 @@ function LeadsPageContent() {
                   <p className="text-[13px] text-gray-600 mb-4">Available on Starter and Pro plans</p>
                   <Link
                     href="/dashboard/upgrade"
-                    className="text-[13px] font-medium text-white bg-brand-500 hover:bg-brand-600 px-5 py-2.5 rounded-lg transition-colors"
+                    className="text-[13px] font-medium text-[var(--brand-foreground)] bg-brand-500 hover:bg-brand-600 px-5 py-2.5 rounded-lg transition-colors"
                   >
                     Upgrade to unlock
                   </Link>

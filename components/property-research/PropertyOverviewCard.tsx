@@ -95,7 +95,7 @@ export function PropertyOverviewCard({
           <button type="button" onClick={onLookUpOwner} className="px-4 py-2 text-[13px] font-medium bg-[var(--surface)] border border-gray-200 rounded-[10px] hover:bg-gray-50 hover:border-gray-300 transition-colors">
             Look Up Owner
           </button>
-          <button type="button" onClick={onRunCma} className="px-4 py-2 text-[13px] font-medium bg-brand-500 text-white rounded-[10px] hover:bg-brand-600 transition-colors">
+          <button type="button" onClick={onRunCma} className="h-9 px-4 text-[13px] font-medium bg-brand-500 text-[var(--brand-foreground)] rounded-lg hover:bg-brand-600 transition-colors">
             Run CMA
           </button>
         </div>
@@ -132,28 +132,28 @@ export function PropertyOverviewCard({
 
         <div className="grid grid-cols-2 sm:grid-cols-[repeat(4,minmax(0,1fr))] gap-3">
           {details?.bedrooms != null && (
-            <div className="text-center p-3 rounded-[10px] bg-[#fafaf9] border border-gray-150 min-w-0">
+            <div className="text-center p-3 rounded-[10px] bg-gray-50 border border-gray-150 min-w-0">
               <Bed className="w-4 h-4 text-gray-600 mx-auto mb-1" />
               <p className="text-[15px] font-semibold text-gray-900">{details.bedrooms}</p>
               <p className="text-[10.5px] text-gray-600">Beds</p>
             </div>
           )}
           {details?.bathrooms != null && (
-            <div className="text-center p-3 rounded-[10px] bg-[#fafaf9] border border-gray-150 min-w-0">
+            <div className="text-center p-3 rounded-[10px] bg-gray-50 border border-gray-150 min-w-0">
               <Bath className="w-4 h-4 text-gray-600 mx-auto mb-1" />
               <p className="text-[15px] font-semibold text-gray-900">{details.bathrooms}</p>
               <p className="text-[10.5px] text-gray-600">Baths</p>
             </div>
           )}
           {details?.squareFootage != null && (
-            <div className="text-center p-3 rounded-[10px] bg-[#fafaf9] border border-gray-150 min-w-0">
+            <div className="text-center p-3 rounded-[10px] bg-gray-50 border border-gray-150 min-w-0">
               <Ruler className="w-4 h-4 text-gray-600 mx-auto mb-1" />
               <p className="text-[15px] font-semibold text-gray-900">{Number(details.squareFootage).toLocaleString()}</p>
               <p className="text-[10.5px] text-gray-600">Sq Ft</p>
             </div>
           )}
           {details?.assessedValue != null && (
-            <div className="text-center p-3 rounded-[10px] bg-[#fafaf9] border border-gray-150 min-w-0">
+            <div className="text-center p-3 rounded-[10px] bg-gray-50 border border-gray-150 min-w-0">
               <DollarSign className="w-4 h-4 text-gray-600 mx-auto mb-1" />
               <p className="text-[15px] font-semibold text-gray-900">{fmt(details.assessedValue, '$')}</p>
               <p className="text-[10.5px] text-gray-600">Assessed</p>
@@ -207,7 +207,7 @@ export function PropertyOverviewCard({
             <User className="w-4 h-4" />
             {hasLookup ? 'View owner details' : 'Look up owner'}
           </button>
-          <button type="button" onClick={onRunCma} className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium bg-brand-500 text-white rounded-[10px] hover:bg-brand-600 transition-colors">
+          <button type="button" onClick={onRunCma} className="flex items-center gap-1.5 h-9 px-4 text-[13px] font-medium bg-brand-500 text-[var(--brand-foreground)] rounded-lg hover:bg-brand-600 transition-colors">
             <BarChart2 className="w-4 h-4" />
             {cmaResult ? 'View full CMA' : 'Run CMA'}
           </button>

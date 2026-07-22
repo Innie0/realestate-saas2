@@ -12,15 +12,17 @@ export default function StatCard({ label, value, icon: Icon, className }: StatCa
   return (
     <div
       className={clsx(
-        'rounded-xl border border-gray-200 bg-[var(--surface)] p-4',
+        'rounded-[10px] border border-gray-200 bg-[var(--surface)] px-5 py-4',
         className,
       )}
     >
       <div className="mb-2 flex items-center gap-2">
-        <Icon className="h-4 w-4 text-gray-400" strokeWidth={1.75} />
-        <p className="text-xs font-medium uppercase tracking-wide text-gray-700">{label}</p>
+        <Icon className="h-3.5 w-3.5 text-gray-500" strokeWidth={1.75} />
+        <p className="text-label text-gray-600">{label}</p>
       </div>
-      <p className="text-2xl font-bold tabular-nums text-gray-900">{value}</p>
+      <p className="text-[26px] font-semibold tabular-nums tracking-[-0.02em] text-gray-900">
+        {value}
+      </p>
     </div>
   );
 }

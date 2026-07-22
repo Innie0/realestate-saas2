@@ -484,7 +484,7 @@ function PropertyResearchContent() {
                     onClick={() => setActiveTab(id)}
                     className={clsx(
                       'flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-[8px] text-[13px] font-medium transition-colors',
-                      isActive ? 'bg-brand-500 text-white' : 'text-gray-600 hover:text-gray-900'
+                      isActive ? 'bg-brand-500 text-[var(--brand-foreground)]' : 'text-gray-600 hover:text-gray-900'
                     )}
                   >
                     <Icon className="w-3.5 h-3.5" strokeWidth={1.9} />
