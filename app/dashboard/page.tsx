@@ -901,7 +901,7 @@ export default function DashboardHomePage() {
       <NeedsAttention items={attentionItems} loading={attentionLoading} />
 
       {/* 3. Work area + right rail */}
-      <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[1fr_320px]">
+      <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(380px,440px)]">
         <div className="flex min-w-0 flex-col gap-4">
           <OpenDealsTable transactions={allTransactions} loading={transactionsLoading && allTransactions.length === 0} />
         </div>
