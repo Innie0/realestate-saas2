@@ -35,6 +35,10 @@ const publicApiPrefixes = [
   '/api/calendar/outlook/callback',
 ];
 
+const SUBSCRIPTION_OK_COOKIE = 'oikaro_sub_ok';
+/** Skip repeated subscription DB lookups while session remains valid. */
+const SUBSCRIPTION_CACHE_SECONDS = 120;
+
 function isPublicPath(pathname: string): boolean {
   if (publicRoutes.includes(pathname)) return true;
   return publicPathPrefixes.some((prefix) => pathname.startsWith(prefix));
@@ -84,6 +88,17 @@ export async function middleware(req: NextRequest) {
 
   const email = session.user.email;
   if (isAdminEmail(email)) {
+    res.cookies.set(SUBSCRIPTION_OK_COOKIE, '1', {
+      maxAge: SUBSCRIPTION_CACHE_SECONDS,
+      path: '/',
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
+    return res;
+  }
+
+  if (req.cookies.get(SUBSCRIPTION_OK_COOKIE)?.value === '1') {
     return res;
   }
 
@@ -106,6 +121,14 @@ export async function middleware(req: NextRequest) {
     }
     return NextResponse.redirect(pricingUrl);
   }
+
+  res.cookies.set(SUBSCRIPTION_OK_COOKIE, '1', {
+    maxAge: SUBSCRIPTION_CACHE_SECONDS,
+    path: '/',
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  });
 
   return res;
 }

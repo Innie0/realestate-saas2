@@ -12,6 +12,7 @@ import Sparkline from '@/components/ui/Sparkline';
 import Button from '@/components/ui/Button';
 import CountUp from '@/components/motion/CountUp';
 import { fetchUpcomingItems, type UpcomingItem } from '@/components/NotificationsPanel';
+import { DASHBOARD_UPCOMING_KEY } from '@/lib/dashboard-prefetch';
 import PlanUsagePanel, { PlanUsagePanelSkeleton } from '@/components/dashboard/PlanUsagePanel';
 import GettingStartedPanel from '@/components/dashboard/GettingStartedPanel';
 import TransactionStatusBadge from '@/components/transactions/TransactionStatusBadge';
@@ -417,7 +418,11 @@ function isPast(dateString: string): boolean {
 }
 
 function TodayPanel() {
-  const { data: items = [], isLoading } = useSWR<UpcomingItem[]>('dashboard-upcoming', fetchUpcomingItems);
+  const { data: items = [], isLoading } = useSWR<UpcomingItem[]>(
+    DASHBOARD_UPCOMING_KEY,
+    fetchUpcomingItems,
+    { revalidateOnFocus: false, dedupingInterval: 120_000 },
+  );
 
   const todayItems = useMemo(() => {
     const now = new Date();

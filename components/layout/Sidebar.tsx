@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import clsx from 'clsx';
 import { signOut, getCurrentUser } from '@/lib/supabase';
-import { prefetchDashboardRoute } from '@/lib/dashboard-prefetch';
+import { prefetchDashboardRoute, prefetchAllDashboardRoutes, scheduleIdleWork } from '@/lib/dashboard-prefetch';
 import { useToast } from '@/components/providers/ToastProvider';
 import { useDashboardTheme } from '@/components/providers/DashboardThemeProvider';
 import { useCommandPalette } from '@/components/search/CommandPalette';
@@ -142,6 +142,10 @@ export default function Sidebar() {
     const saved = localStorage.getItem('sidebar-collapsed');
     if (saved !== null) setIsCollapsed(saved === 'true');
   }, []);
+
+  useEffect(() => {
+    scheduleIdleWork(() => prefetchAllDashboardRoutes(router));
+  }, [router]);
 
   useEffect(() => {
     (async () => {

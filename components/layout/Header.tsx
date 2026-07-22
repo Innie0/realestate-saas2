@@ -4,7 +4,10 @@
 'use client'; // This component uses client-side features
 
 import React, { useState, useEffect, useRef } from 'react';
+import useSWR, { mutate as globalMutate } from 'swr';
 import { Bell, Clock, Calendar, X, User, MapPin } from 'lucide-react';
+import { fetchUpcomingItems, type UpcomingItem } from '@/components/NotificationsPanel';
+import { DASHBOARD_UPCOMING_KEY } from '@/lib/dashboard-prefetch';
 
 /**
  * HeaderProps - Props for the Header component
@@ -20,31 +23,22 @@ interface HeaderProps {
 const titleClass = 'text-title font-semibold tracking-tight text-gray-900 truncate';
 const subtitleInlineClass = 'text-caption text-gray-700 truncate';
 
-interface UpcomingItem {
-  id: string;
-  title: string;
-  description?: string;
-  date: string;
-  type: 'reminder' | 'event';
-  clientName?: string;
-  location?: string;
-  eventType?: string;
-}
-
 /**
  * Header component
  * Top bar that shows the current page title and user actions
  */
 export default function Header({ title, subtitle, actions, inline = false }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState<UpcomingItem[]>([]);
-  const [loading, setLoading] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
 
-  // Load upcoming notifications on mount
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
+  const {
+    data: notifications = [],
+    isLoading: loading,
+    mutate: mutateNotifications,
+  } = useSWR<UpcomingItem[]>(DASHBOARD_UPCOMING_KEY, fetchUpcomingItems, {
+    revalidateOnFocus: false,
+    dedupingInterval: 120_000,
+  });
 
   // Close notifications when clicking outside
   useEffect(() => {
@@ -60,90 +54,15 @@ export default function Header({ title, subtitle, actions, inline = false }: Hea
     }
   }, [showNotifications]);
 
-  const fetchNotifications = async () => {
-    setLoading(true);
-    try {
-      const now = new Date();
-      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-      const sevenDaysFromNow = new Date(startOfToday.getTime() + 7 * 24 * 60 * 60 * 1000);
-
-      const [remindersResponse, eventsResponse] = await Promise.all([
-        fetch('/api/reminders?include_completed=false'),
-        fetch('/api/calendar/events'),
-      ]);
-      const [remindersResult, eventsResult] = await Promise.all([
-        remindersResponse.json(),
-        eventsResponse.json(),
-      ]);
-
-      const upcomingItems: UpcomingItem[] = [];
-
-      // Process reminders
-      if (remindersResult.success) {
-        const upcomingReminders = remindersResult.data
-          .filter((reminder: any) => {
-            const reminderDate = new Date(reminder.reminder_date);
-            return reminderDate >= startOfToday && reminderDate <= sevenDaysFromNow;
-          })
-          .map((reminder: any) => ({
-            id: `reminder-${reminder.id}`,
-            title: reminder.title,
-            description: reminder.description,
-            date: reminder.reminder_date,
-            type: 'reminder' as const,
-            clientName: reminder.clients?.name,
-          }));
-        
-        upcomingItems.push(...upcomingReminders);
-      }
-
-      // Process calendar events
-      if (eventsResult.success) {
-        const upcomingEvents = eventsResult.data
-          .filter((event: any) => {
-            const eventDate = new Date(event.start_time);
-            return eventDate >= startOfToday && eventDate <= sevenDaysFromNow;
-          })
-          .map((event: any) => ({
-            id: `event-${event.id}`,
-            title: event.title,
-            description: event.description,
-            date: event.start_time,
-            type: 'event' as const,
-            location: event.location,
-            eventType: event.event_type,
-          }));
-        
-        upcomingItems.push(...upcomingEvents);
-      }
-
-      // Sort by date
-      upcomingItems.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-      
-      setNotifications(upcomingItems);
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const sortByDate = (list: UpcomingItem[]) =>
-    [...list].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
-  const restoreNotification = (item: UpcomingItem) => {
-    setNotifications(prev => sortByDate([...prev, item]));
-  };
-
   const handleComplete = async (itemId: string) => {
     if (!itemId.startsWith('reminder-')) return;
 
     const id = itemId.replace('reminder-', '');
-    let previous: UpcomingItem | undefined;
-    setNotifications(prev => {
-      previous = prev.find(i => i.id === itemId);
-      return prev.filter(i => i.id !== itemId);
-    });
+    let previous: UpcomingItem[] = notifications;
+    await mutateNotifications(
+      notifications.filter((i) => i.id !== itemId),
+      { revalidate: false },
+    );
 
     try {
       const response = await fetch(`/api/reminders/${id}`, {
@@ -152,12 +71,12 @@ export default function Header({ title, subtitle, actions, inline = false }: Hea
         body: JSON.stringify({ is_completed: true }),
       });
 
-      if (!response.ok && previous) {
-        restoreNotification(previous);
+      if (!response.ok) {
+        await mutateNotifications(previous, { revalidate: false });
       }
     } catch (error) {
       console.error('Error completing reminder:', error);
-      if (previous) restoreNotification(previous);
+      await mutateNotifications(previous, { revalidate: false });
     }
   };
 
