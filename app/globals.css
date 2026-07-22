@@ -7,45 +7,46 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Site-wide dashboard theme — warm neutrals + brass/gold accent.
-   Default experience is light (see dashboard-theme); dark mode uses warm charcoal. */
+/* Default theme — Framer dark (matches marketing / landing page).
+   Dashboard light mode overrides below with warm cream + brass accent. */
 :root {
   color-scheme: dark;
 
-  --canvas: #121110;
-  --surface: #1c1a18;
-  --sidebar: #161514;
-  --ink: #faf7f2;
-  --brand: #a87c43;
-  --brand-foreground: #ffffff;
-  --border: #2e2a26;
+  --canvas: #0a0a0a;
+  --surface: #1c1c1c;
+  --sidebar: #111111;
+  --ink: #ffffff;
+  --brand: #ffffff;
+  --brand-foreground: #0a0a0a;
+  --border: #2e2e2e;
   --champagne: #a87c43;
 
-  --gray-50: #161514;
-  --gray-100: #1c1a18;
-  --gray-150: #222019;
-  --gray-200: #2e2a26;
-  --gray-300: #3f3a34;
-  --gray-400: #666059;
-  --gray-450: #7a736a;
-  --gray-500: #8e877e;
-  --gray-600: #a39d94;
-  --gray-700: #c4bdb4;
-  --gray-800: #e5dfd6;
-  --gray-900: #f4f0ea;
-  --gray-950: #faf7f2;
+  /* Inverted neutrals — gray-* utilities read correctly on black canvas */
+  --gray-50: #141414;
+  --gray-100: #1c1c1c;
+  --gray-150: #222222;
+  --gray-200: #2e2e2e;
+  --gray-300: #3f3f3f;
+  --gray-400: #666666;
+  --gray-450: #7a7a7a;
+  --gray-500: #8e8e8e;
+  --gray-600: #a3a3a3;
+  --gray-700: #c4c4c4;
+  --gray-800: #e5e5e5;
+  --gray-900: #f4f4f5;
+  --gray-950: #ffffff;
 
-  /* Brass / gold brand scale */
-  --brand-50: #1a1610;
-  --brand-100: #2a2218;
-  --brand-200: #3d3220;
-  --brand-300: #735428;
-  --brand-400: #c29656;
-  --brand-500: #a87c43;
-  --brand-600: #8f6838;
-  --brand-700: #735428;
-  --brand-800: #5c4220;
-  --brand-900: #3d2c15;
+  /* Primary CTAs — white on dark (same as landing mkt-accent) */
+  --brand-50: #1c1c1c;
+  --brand-100: #2e2e2e;
+  --brand-200: #3f3f3f;
+  --brand-300: #666666;
+  --brand-400: #e5e5e5;
+  --brand-500: #ffffff;
+  --brand-600: #e8e8e8;
+  --brand-700: #d4d4d4;
+  --brand-800: #a3a3a3;
+  --brand-900: #737373;
 
   /* Semantic accents — dark-native tints (soft bg + readable text on dark surfaces).
      Mid tones (400–600) stay vivid for dots/bars in both themes. */
@@ -141,7 +142,7 @@
   --mkt-nav-transparent-bg: rgba(10, 10, 10, 0);
   --mkt-nav-transparent-border: rgba(46, 46, 46, 0);
   --mkt-hero-glow: rgba(228, 247, 108, 0.14);
-  --mkt-champagne: var(--brand-500);
+  --mkt-champagne: #a87c43;
   --mkt-max-content-width: 70rem;
   --mkt-radius-button: 6px;
   --mkt-radius-card: 12px;
@@ -155,8 +156,7 @@ html.dashboard-theme-switching * {
   transition: none !important;
 }
 
-/* Light chrome — applied early via html[data-dashboard-theme] (blocking script)
-   and via .theme-light for nested product mocks / dashboard-root. */
+/* Light dashboard — warm cream + brass (inverse of Framer dark landing theme) */
 html[data-dashboard-theme='light'],
 .theme-light {
   color-scheme: light;
@@ -268,6 +268,14 @@ html[data-dashboard-theme='light'] {
 
 html[data-dashboard-theme='light'] body {
   background-color: #faf7f2;
+}
+
+html[data-dashboard-theme='dark'] {
+  background-color: #0a0a0a;
+}
+
+html[data-dashboard-theme='dark'] body {
+  background-color: #0a0a0a;
 }
 
 /* Light dashboard: scrollbars + autofill match the light console */
