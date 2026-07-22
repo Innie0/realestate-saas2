@@ -56,19 +56,68 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
     { scope: rootRef, dependencies: [reduced] },
   );
 
+  useGSAP(
+    () => {
+      const section = sectionRef.current;
+      const root = rootRef.current;
+      if (reduced || !section || !root) return;
+
+      const visual = root.querySelector('[data-hero-visual]');
+      const glow = section.querySelector('[data-hero-glow]');
+      if (!visual) return;
+
+      const parallaxVisual = gsap.to(visual, {
+        y: -72,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 0.8,
+        },
+      });
+
+      let parallaxGlow: gsap.core.Tween | undefined;
+      if (glow) {
+        parallaxGlow = gsap.to(glow, {
+          y: 100,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: section,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 0.8,
+          },
+        });
+      }
+
+      return () => {
+        parallaxVisual.scrollTrigger?.kill();
+        parallaxVisual.kill();
+        parallaxGlow?.scrollTrigger?.kill();
+        parallaxGlow?.kill();
+      };
+    },
+    { dependencies: [sectionRef, reduced] },
+  );
+
   return (
-    <section ref={sectionRef as React.RefObject<HTMLElement>} className="relative overflow-hidden bg-mkt-background">
+    <section
+      ref={sectionRef as React.RefObject<HTMLElement>}
+      className="relative flex min-h-[100dvh] flex-col overflow-hidden bg-mkt-background"
+    >
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[520px] opacity-[0.45]"
+        data-hero-glow
+        className="pointer-events-none absolute inset-x-0 top-0 h-[min(620px,70vh)] opacity-50"
         aria-hidden
         style={{
-          background: `radial-gradient(ellipse 80% 60% at 50% -10%, ${mktVar('--mkt-hero-glow')} 0%, transparent 70%)`,
+          background: `radial-gradient(ellipse 85% 65% at 50% -5%, ${mktVar('--mkt-hero-glow')} 0%, transparent 72%)`,
         }}
       />
 
       <div
         ref={rootRef}
-        className="relative mx-auto max-w-mkt-content px-5 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32 lg:pb-28 lg:pt-36"
+        className="relative mx-auto flex w-full max-w-mkt-content flex-1 flex-col justify-center px-5 pb-16 pt-28 sm:px-8 sm:pb-20 sm:pt-32 lg:pt-36"
       >
         <div className="mx-auto max-w-3xl text-center">
           <p
@@ -78,7 +127,7 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
             Built for real estate agents
           </p>
 
-          <h1 className="font-display text-[2.35rem] font-medium leading-[1.08] tracking-[-0.03em] text-mkt-foreground sm:text-5xl lg:text-[3.5rem]">
+          <h1 className="font-display text-[clamp(2.25rem,5.5vw,4rem)] font-medium leading-[1.06] tracking-[-0.035em] text-mkt-foreground">
             {splitWords(HEADLINE).map((word, index, arr) => (
               <span key={`${word}-${index}`} className="inline-block overflow-hidden align-top">
                 <span data-hero-word className="inline-block">
@@ -107,12 +156,13 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
 
         <div
           data-hero-visual
-          className="relative mx-auto mt-14 w-full max-w-[920px] sm:mt-16 lg:mt-20"
+          className="relative mx-auto mt-12 w-full max-w-[920px] will-change-transform sm:mt-14 lg:mt-16"
         >
           <ProductScreenshot
             src={LANDING_HERO_SCREENSHOT.src}
             alt={LANDING_HERO_SCREENSHOT.alt}
             priority
+            className="shadow-[0_32px_64px_-16px_rgba(0,0,0,0.14)]"
           />
         </div>
       </div>

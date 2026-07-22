@@ -67,7 +67,7 @@ export function AuthFormMotion({ children, className }: AuthPageMotionProps) {
 
 export function AuthTrialBadge() {
   return (
-    <span className="inline-flex items-center rounded-full bg-mkt-tag-green-bg px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.1em] text-mkt-tag-green-text">
+    <span className="inline-flex items-center rounded-full bg-mkt-tag-amber-bg px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.1em] text-mkt-tag-amber-text">
       7-day free trial
     </span>
   );

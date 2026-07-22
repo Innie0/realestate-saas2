@@ -9,11 +9,18 @@ type ProductScreenshotProps = {
   alt: string;
   priority?: boolean;
   href?: string;
+  className?: string;
 };
 
-export default function ProductScreenshot({ src, alt, priority = false, href }: ProductScreenshotProps) {
+export default function ProductScreenshot({
+  src,
+  alt,
+  priority = false,
+  href,
+  className,
+}: ProductScreenshotProps) {
   const image = (
-    <ProductFrame interactive={!href}>
+    <ProductFrame interactive={!href} className={className}>
       <div className="relative aspect-[16/10] w-full bg-[var(--mkt-mock-surface)]">
         <Image
           src={src}

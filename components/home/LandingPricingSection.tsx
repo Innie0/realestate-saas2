@@ -60,7 +60,7 @@ export default function LandingPricingSection() {
               }`}
             >
               {plan.popular ? (
-                <span className="absolute -top-3 left-6 rounded-full bg-mkt-tag-green-bg px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.1em] text-mkt-tag-green-text">
+                <span className="absolute -top-3 left-6 rounded-full bg-mkt-tag-amber-bg px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.1em] text-mkt-tag-amber-text">
                   Most popular
                 </span>
               ) : null}

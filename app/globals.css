@@ -117,33 +117,34 @@
   --champagne-800: #efe2c8;
   --champagne-900: #f8f2e6;
 
-  /* Marketing — Forest Canopy (warm cream canvas + deep forest accent).
+  /* Marketing — warm editorial (cream canvas + charcoal accent).
      Namespaced separately from dashboard lime; consumed via mkt-* Tailwind utilities. */
-  --mkt-background: #faf7f2;
-  --mkt-surface: #fffcf7;
-  --mkt-surface-muted: #f3f0ea;
-  --mkt-text-primary: #1a2e1a;
-  --mkt-text-secondary: #5c665c;
-  --mkt-border: #e5e0d6;
-  --mkt-accent: #15803d;
-  --mkt-accent-hover: #166534;
+  --mkt-background: #fbfbfa;
+  --mkt-surface: #ffffff;
+  --mkt-surface-muted: #f7f6f3;
+  --mkt-text-primary: #111111;
+  --mkt-text-secondary: #787774;
+  --mkt-border: #eaeaea;
+  --mkt-accent: #1c1c1a;
+  --mkt-accent-hover: #333333;
   --mkt-accent-foreground: #ffffff;
-  --mkt-muted: #8a938a;
+  --mkt-muted: #a3a29e;
   --mkt-mock-surface: #ffffff;
-  --mkt-browser-dot: #d4cfc4;
+  --mkt-browser-dot: #d4d4d0;
   --mkt-error-border: #c4a0a0;
   --mkt-error-surface-border: #e8c4c4;
-  --mkt-tag-green-bg: #e8f0e8;
-  --mkt-tag-green-text: #1b4332;
-  --mkt-tag-blue-bg: #e8ede8;
-  --mkt-tag-blue-text: #2d4a35;
-  --mkt-tag-amber-bg: #f5efe6;
-  --mkt-tag-amber-text: #7a5c3a;
-  --mkt-nav-scrolled-bg: rgba(250, 247, 242, 0.92);
-  --mkt-nav-menu-bg: rgba(250, 247, 242, 0.96);
-  --mkt-nav-transparent-bg: rgba(250, 247, 242, 0);
-  --mkt-nav-transparent-border: rgba(229, 224, 214, 0);
-  --mkt-hero-glow: rgba(232, 240, 232, 0.9);
+  --mkt-tag-green-bg: #fbf3db;
+  --mkt-tag-green-text: #956400;
+  --mkt-tag-blue-bg: #e1f3fe;
+  --mkt-tag-blue-text: #1f6c9f;
+  --mkt-tag-amber-bg: #fdebec;
+  --mkt-tag-amber-text: #9f2f2d;
+  --mkt-nav-scrolled-bg: rgba(251, 251, 250, 0.92);
+  --mkt-nav-menu-bg: rgba(251, 251, 250, 0.96);
+  --mkt-nav-transparent-bg: rgba(251, 251, 250, 0);
+  --mkt-nav-transparent-border: rgba(234, 234, 234, 0);
+  --mkt-hero-glow: rgba(248, 235, 210, 0.75);
+  --mkt-champagne: #a87c43;
   --mkt-max-content-width: 70rem;
   --mkt-radius-button: 6px;
   --mkt-radius-card: 12px;

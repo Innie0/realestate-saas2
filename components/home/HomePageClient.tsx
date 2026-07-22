@@ -4,12 +4,14 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import LandingNav from '@/components/home/LandingNav';
 import LandingHero from '@/components/home/LandingHero';
-import LandingFeatureSections from '@/components/home/LandingFeatureSections';
+import LandingPinnedShowcase from '@/components/home/LandingPinnedShowcase';
 import LandingTrustSection from '@/components/home/LandingTrustSection';
 import LandingFAQSection from '@/components/home/LandingFAQSection';
 import LandingPricingSection from '@/components/home/LandingPricingSection';
 import LandingCTABand from '@/components/home/LandingCTABand';
 import LandingFooter from '@/components/home/LandingFooter';
+import MarketingAtmosphere from '@/components/marketing/MarketingAtmosphere';
+import MarketingSmoothScroll from '@/components/marketing/MarketingSmoothScroll';
 import { supabase } from '@/lib/supabase';
 
 export default function HomePageClient() {
@@ -42,15 +44,18 @@ export default function HomePageClient() {
   }, [router]);
 
   return (
-    <div className="marketing-root min-h-screen overflow-x-hidden bg-mkt-background text-mkt-foreground">
-      <LandingNav heroRef={heroRef} />
-      <LandingHero sectionRef={heroRef} />
-      <LandingFeatureSections />
-      <LandingTrustSection />
-      <LandingFAQSection />
-      <LandingPricingSection />
-      <LandingCTABand />
-      <LandingFooter />
-    </div>
+    <MarketingSmoothScroll>
+      <div className="marketing-root relative min-h-screen overflow-x-hidden bg-mkt-background text-mkt-foreground">
+        <MarketingAtmosphere />
+        <LandingNav heroRef={heroRef} />
+        <LandingHero sectionRef={heroRef} />
+        <LandingPinnedShowcase />
+        <LandingTrustSection />
+        <LandingFAQSection />
+        <LandingPricingSection />
+        <LandingCTABand />
+        <LandingFooter />
+      </div>
+    </MarketingSmoothScroll>
   );
 }
