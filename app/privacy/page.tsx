@@ -4,7 +4,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import LegalPageLayout from '@/components/layout/LegalPageLayout';
-import { Shield } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
@@ -14,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalPageLayout title="Privacy Policy" updated="June 13, 2026" icon={Shield}>
+    <LegalPageLayout title="Privacy Policy" updated="June 13, 2026">
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">Introduction</h2>
               <p className="text-gray-600 leading-relaxed mb-4">
@@ -438,7 +437,7 @@ export default function PrivacyPage() {
                 <li><strong>Update data:</strong> Use your account Settings page</li>
                 <li><strong>Delete account:</strong> Contact us at privacy@oikaro.com</li>
                 <li><strong>Data export:</strong> Contact us at privacy@oikaro.com</li>
-                <li><strong>Questions:</strong> Email us at support@oikaro.ai or use our <Link href="/contact" className="text-brand-600 hover:text-brand-700">contact form</Link></li>
+                <li><strong>Questions:</strong> Email us at support@oikaro.ai or use our <Link href="/contact">contact form</Link></li>
               </ul>
             </section>
 
@@ -517,10 +516,10 @@ export default function PrivacyPage() {
               <p className="text-gray-600 leading-relaxed mb-4">
                 For privacy-related questions or to exercise your rights:
               </p>
-              <div className="bg-gray-100 border border-gray-200 rounded-lg p-6 space-y-2">
-                <p className="text-gray-600"><strong>Email:</strong> privacy@oikaro.com</p>
-                <p className="text-gray-600"><strong>Support:</strong> support@oikaro.ai</p>
-                <p className="text-gray-600"><strong>Response time:</strong> We aim to respond within 30 days</p>
+              <div className="legal-callout">
+                <p><strong>Email:</strong> privacy@oikaro.com</p>
+                <p><strong>Support:</strong> support@oikaro.ai</p>
+                <p><strong>Response time:</strong> We aim to respond within 30 days</p>
               </div>
             </section>
 
@@ -535,11 +534,9 @@ export default function PrivacyPage() {
               </ul>
             </section>
 
-            <div className="border-t border-gray-100 pt-8 mt-8">
-              <p className="text-gray-700 text-sm italic">
-                By using our Service, you acknowledge that you have read and understood this Privacy Policy.
-              </p>
-            </div>
+            <p className="legal-note">
+              By using our Service, you acknowledge that you have read and understood this Privacy Policy.
+            </p>
     </LegalPageLayout>
   );
 }

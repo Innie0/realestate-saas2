@@ -3,7 +3,6 @@
 
 import type { Metadata } from 'next';
 import LegalPageLayout from '@/components/layout/LegalPageLayout';
-import { FileText } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
@@ -13,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <LegalPageLayout title="Terms of Service" updated="June 13, 2026" icon={FileText}>
+    <LegalPageLayout title="Terms of Service" updated="June 13, 2026">
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">Agreement to Terms</h2>
               <p className="text-gray-600 leading-relaxed mb-4">
@@ -468,17 +467,15 @@ export default function TermsPage() {
               <p className="text-gray-600 leading-relaxed mb-4">
                 If you have questions about these Terms, please contact us:
               </p>
-              <div className="bg-gray-100 border border-gray-200 rounded-lg p-6 space-y-2">
-                <p className="text-gray-600"><strong>Email:</strong> legal@oikaro.com</p>
-                <p className="text-gray-600"><strong>Support:</strong> support@oikaro.ai</p>
+              <div className="legal-callout">
+                <p><strong>Email:</strong> legal@oikaro.com</p>
+                <p><strong>Support:</strong> support@oikaro.ai</p>
               </div>
             </section>
 
-            <div className="border-t border-gray-100 pt-8 mt-8">
-              <p className="text-gray-700 text-sm italic">
-                By using Oikaro, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
-              </p>
-            </div>
+            <p className="legal-note">
+              By using Oikaro, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
+            </p>
     </LegalPageLayout>
   );
 }

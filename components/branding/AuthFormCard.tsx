@@ -1,14 +1,21 @@
+'use client';
+
+import { useRef } from 'react';
+import { ensureGsapRegistered, useGSAP } from '@/lib/gsap-config';
+import { bindHoverMotion } from '@/lib/landing-motion';
 import { MKT } from '@/lib/marketing-design';
+import { useMotionReduced } from '@/lib/motion';
 
 type AuthFormCardProps = {
   children: React.ReactNode;
 };
 
-/** Dark elevated card for auth forms — readable on black marketing chrome */
+ensureGsapRegistered();
+
 export default function AuthFormCard({ children }: AuthFormCardProps) {
   return (
     <div
-      className="rounded-2xl p-6 sm:p-8"
+      className="p-6 sm:p-8"
       style={{
         borderRadius: MKT.radius.card,
         border: `1px solid ${MKT.border}`,
@@ -27,19 +34,32 @@ export function AuthGoogleButton({
   onClick: () => void;
   label: string;
 }) {
+  const reduced = useMotionReduced();
+  const ref = useRef<HTMLButtonElement>(null);
+
+  useGSAP(
+    () => {
+      if (reduced || !ref.current) return;
+      return bindHoverMotion(ref.current, { scale: 1.01, y: 0, duration: 0.22 });
+    },
+    { scope: ref, dependencies: [reduced] },
+  );
+
   return (
     <button
+      ref={ref}
       type="button"
       onClick={onClick}
-      className="flex w-full items-center justify-center gap-3 px-4 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
+      data-auth-part
+      className="flex w-full items-center justify-center gap-3 px-4 py-3 text-sm font-medium will-change-transform"
       style={{
         borderRadius: MKT.radius.button,
         border: `1px solid ${MKT.border}`,
-        backgroundColor: '#FFFFFF',
-        color: '#141412',
+        backgroundColor: MKT.surface,
+        color: MKT.textPrimary,
       }}
     >
-      <svg className="h-5 w-5 flex-shrink-0" viewBox="0 0 24 24" aria-hidden>
+      <svg className="size-5 shrink-0" viewBox="0 0 24 24" aria-hidden>
         <path
           fill="#4285F4"
           d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -64,7 +84,7 @@ export function AuthGoogleButton({
 
 export function AuthDivider({ label }: { label: string }) {
   return (
-    <div className="relative my-6">
+    <div className="relative my-6" data-auth-part>
       <div className="absolute inset-0 flex items-center">
         <div className="w-full border-t" style={{ borderColor: MKT.border }} />
       </div>
