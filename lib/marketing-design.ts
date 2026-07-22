@@ -1,26 +1,30 @@
-/** Editorial landing tokens — warm monochrome, premium B2B */
+/** Editorial marketing tokens — Forest Canopy (warm cream + deep forest accent) */
 export const MKT = {
-  background: '#FBFBFA',
-  surface: '#FFFFFF',
-  surfaceMuted: '#F7F6F3',
-  textPrimary: '#111111',
-  textSecondary: '#787774',
-  border: '#EAEAEA',
-  /** Primary CTA — charcoal for trust; brand lime lives in product UI */
-  accent: '#111111',
-  accentHover: '#333333',
+  background: '#FAF7F2',
+  surface: '#FFFCF7',
+  surfaceMuted: '#F3F0EA',
+  textPrimary: '#1A2E1A',
+  textSecondary: '#5C665C',
+  border: '#E5E0D6',
+  /** Primary CTA — deep forest green; product UI keeps lime brand */
+  accent: '#15803D',
+  accentHover: '#166534',
   accentForeground: '#FFFFFF',
-  muted: '#A3A29E',
+  muted: '#8A938A',
   /** Product mock / screenshot interior */
   mockSurface: '#FFFFFF',
-  browserDot: '#D4D4D0',
+  browserDot: '#D4CFC4',
+  /** Nav blur + hero glow (canvas-tinted, not pure white) */
+  navScrolledBg: 'rgba(250, 247, 242, 0.92)',
+  navMenuBg: 'rgba(250, 247, 242, 0.96)',
+  heroGlow: 'rgba(232, 240, 232, 0.9)',
   maxContentWidth: 1120,
   radius: { button: 6, card: 12, browser: 12 },
-  /** Muted pastels for tags */
+  /** Muted pastels harmonized with forest accent */
   tag: {
-    green: { bg: '#EDF3EC', text: '#346538' },
-    blue: { bg: '#E1F3FE', text: '#1F6C9F' },
-    amber: { bg: '#FBF3DB', text: '#956400' },
+    green: { bg: '#E8F0E8', text: '#1B4332' },
+    blue: { bg: '#E8EDE8', text: '#2D4A35' },
+    amber: { bg: '#F5EFE6', text: '#7A5C3A' },
   },
 } as const;
 

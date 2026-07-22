@@ -17,7 +17,7 @@ export default function AuthPageShell({ children }: AuthPageShellProps) {
         aria-hidden
         style={{
           background:
-            'radial-gradient(ellipse 70% 60% at 50% -20%, rgba(237, 243, 236, 0.85) 0%, transparent 70%)',
+            `radial-gradient(ellipse 70% 60% at 50% -20%, ${MKT.heroGlow} 0%, transparent 70%)`,
         }}
       />
       <div className="relative w-full max-w-md">

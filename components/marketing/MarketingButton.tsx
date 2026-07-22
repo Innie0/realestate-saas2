@@ -38,7 +38,7 @@ export default function MarketingButton({
   );
 
   const base =
-    'inline-flex items-center justify-center gap-2 font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mkt-text-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--mkt-background)] will-change-transform';
+    'inline-flex items-center justify-center gap-2 font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mkt-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--mkt-background)] will-change-transform';
 
   const sizes = {
     md: 'h-10 px-5 text-sm',

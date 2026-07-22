@@ -60,7 +60,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
       if (reduced || !nav || !hero) return;
 
       return bindNavScrollChrome(nav, hero, {
-        bg: 'rgba(251, 251, 250, 0.92)',
+        bg: MKT.navScrolledBg,
         border: MKT.border,
       });
     },
@@ -74,7 +74,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
 
       if (menuOpen) {
         gsap.to(nav, {
-          backgroundColor: 'rgba(251, 251, 250, 0.96)',
+          backgroundColor: MKT.navMenuBg,
           borderBottomColor: MKT.border,
           backdropFilter: 'blur(14px)',
           duration: 0.3,

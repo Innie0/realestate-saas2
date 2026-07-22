@@ -18,7 +18,7 @@ export default function MarketingPageHeader({
       className="sticky top-0 z-10 border-b backdrop-blur-md"
       style={{
         borderColor: MKT.border,
-        backgroundColor: 'rgba(251, 251, 250, 0.92)',
+        backgroundColor: MKT.navScrolledBg,
       }}
     >
       <div className="mx-auto flex h-16 max-w-3xl items-center justify-between px-5 sm:px-8">

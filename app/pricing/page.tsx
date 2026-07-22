@@ -183,7 +183,7 @@ export default function PricingPage() {
                     style={{
                       borderRadius: MKT.radius.card,
                       backgroundColor: MKT.background,
-                      border: plan.popular ? `2px solid ${MKT.textPrimary}` : `1px solid ${MKT.border}`,
+                      border: plan.popular ? `2px solid ${MKT.accent}` : `1px solid ${MKT.border}`,
                     }}
                   >
                     {plan.popular && (

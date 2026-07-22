@@ -61,7 +61,7 @@ export default function LandingPricingSection() {
               style={{
                 borderRadius: MKT.radius.card,
                 backgroundColor: MKT.surface,
-                border: plan.popular ? `1.5px solid ${MKT.textPrimary}` : `1px solid ${MKT.border}`,
+                border: plan.popular ? `1.5px solid ${MKT.accent}` : `1px solid ${MKT.border}`,
               }}
             >
               {plan.popular ? (

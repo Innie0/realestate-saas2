@@ -139,8 +139,8 @@ export function bindNavScrollChrome(
   colors: { bg: string; border: string },
 ) {
   gsap.set(nav, {
-    backgroundColor: 'rgba(251, 251, 250, 0)',
-    borderBottomColor: 'rgba(234, 234, 234, 0)',
+    backgroundColor: 'rgba(250, 247, 242, 0)',
+    borderBottomColor: 'rgba(229, 224, 214, 0)',
     backdropFilter: 'blur(0px)',
   });
 
@@ -158,8 +158,8 @@ export function bindNavScrollChrome(
     },
     onLeaveBack: () => {
       gsap.to(nav, {
-        backgroundColor: 'rgba(251, 251, 250, 0)',
-        borderBottomColor: 'rgba(234, 234, 234, 0)',
+        backgroundColor: 'rgba(250, 247, 242, 0)',
+        borderBottomColor: 'rgba(229, 224, 214, 0)',
         backdropFilter: 'blur(0px)',
         duration: 0.35,
         ease: LANDING_MOTION.ease,

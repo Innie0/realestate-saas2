@@ -67,7 +67,7 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
         aria-hidden
         style={{
           background:
-            'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(237, 243, 236, 0.9) 0%, transparent 70%)',
+            `radial-gradient(ellipse 80% 60% at 50% -10%, ${MKT.heroGlow} 0%, transparent 70%)`,
         }}
       />
 
