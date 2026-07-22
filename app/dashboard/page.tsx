@@ -334,10 +334,10 @@ function OpenDealsTable({
   const deals = transactions.slice(0, 6);
 
   return (
-    <Card className="flex min-h-0 flex-1 flex-col overflow-hidden p-0">
-      <CardHeader className="flex-row items-center justify-between space-y-0">
+    <Card className="flex w-max max-w-full min-h-0 flex-col overflow-hidden p-0">
+      <CardHeader className="flex-row items-center justify-between gap-8 space-y-0">
         <CardTitle>Open deals</CardTitle>
-        <Link href="/dashboard/transactions" className="text-xs font-medium text-primary hover:underline">
+        <Link href="/dashboard/transactions" className="shrink-0 text-xs font-medium text-primary hover:underline">
           All transactions →
         </Link>
       </CardHeader>
@@ -366,8 +366,8 @@ function OpenDealsTable({
           />
         </CardContent>
       ) : (
-        <CardContent className="min-h-0 flex-1 overflow-x-auto p-0">
-          <Table className="w-auto min-w-0">
+        <CardContent className="min-h-0 flex-1 p-0">
+          <Table className="w-auto" containerClassName="w-max max-w-full">
             <TableHeader>
               <TableRow>
                 <TableHead className="whitespace-nowrap px-4 sm:px-5">Property</TableHead>
@@ -898,8 +898,8 @@ export default function DashboardHomePage() {
       <NeedsAttention items={attentionItems} loading={attentionLoading} />
 
       {/* 3. Work area + right rail */}
-      <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[1fr_320px]">
-        <div className="flex min-w-0 flex-col gap-4">
+      <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[auto_minmax(0,1fr)]">
+        <div className="min-w-0 w-max max-w-full">
           <OpenDealsTable transactions={allTransactions} loading={transactionsLoading && allTransactions.length === 0} />
         </div>
         <div className="flex min-w-0 flex-col gap-4">
