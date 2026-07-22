@@ -13,7 +13,7 @@ import { Plus, RefreshCw, Settings, Link2, X } from 'lucide-react';
 import { CalendarEvent } from '@/types';
 import { useApi } from '@/lib/swr';
 import { mutate as globalMutate } from 'swr';
-import { calendarEventsPrefetchUrl, scheduleIdleWork } from '@/lib/dashboard-prefetch';
+import { calendarEventsPrefetchUrl } from '@/lib/dashboard-prefetch';
 
 function CalendarPageContent() {
   const searchParams = useSearchParams();
@@ -62,11 +62,14 @@ function CalendarPageContent() {
   }, []);
 
   React.useEffect(() => {
-    scheduleIdleWork(() => {
+    const syncTimer = window.setTimeout(() => {
       void handleRefresh(true);
-    });
+    }, 3000);
     const syncInterval = setInterval(() => handleRefresh(true), 5 * 60 * 1000);
-    return () => clearInterval(syncInterval);
+    return () => {
+      clearTimeout(syncTimer);
+      clearInterval(syncInterval);
+    };
   }, []);
 
   const handleCreateEvent = async (eventData: Partial<CalendarEvent>) => {
