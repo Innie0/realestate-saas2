@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { Bed, Bath, Ruler, Home, Tag, DollarSign, TrendingUp, User, BarChart2, Download, Loader2 } from 'lucide-react';
+import EmptyState from '@/components/ui/EmptyState';
+import Button from '@/components/ui/Button';
 import type { CmaAnalysisResult } from './CmaPanel';
 import { buildCmaPdfPayload, downloadCmaPdf } from '@/lib/export-cma-pdf';
 import { useToast } from '@/components/providers/ToastProvider';
@@ -83,23 +85,21 @@ export function PropertyOverviewCard({
 
   if (!hasLookup && !cmaResult) {
     return (
-      <div className="p-10 text-center">
-        <div className="w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
-          <Home className="w-5 h-5 text-gray-600" strokeWidth={1.75} />
-        </div>
-        <p className="text-[13.5px] font-medium text-gray-900 mb-1">Enter an address above</p>
-        <p className="text-[13px] text-gray-600 mb-6">
-          Look up the owner for prospecting, or run a comp-based CMA for pricing.
-        </p>
-        <div className="flex flex-wrap justify-center gap-3">
-          <button type="button" onClick={onLookUpOwner} className="px-4 py-2 text-[13px] font-medium bg-[var(--surface)] border border-gray-200 rounded-[10px] hover:bg-gray-50 hover:border-gray-300 transition-colors">
-            Look Up Owner
-          </button>
-          <button type="button" onClick={onRunCma} className="h-9 px-4 text-[13px] font-medium bg-brand-500 text-[var(--brand-foreground)] rounded-lg hover:bg-brand-600 transition-colors">
-            Run CMA
-          </button>
-        </div>
-      </div>
+      <EmptyState
+        icon={Home}
+        title="Research this address"
+        description="Look up the owner for prospecting, or run a comp-based CMA for pricing guidance."
+        action={
+          <div className="flex flex-wrap justify-center gap-2.5">
+            <Button variant="secondary" size="sm" onClick={onLookUpOwner}>
+              Look up owner
+            </Button>
+            <Button size="sm" onClick={onRunCma}>
+              Run CMA
+            </Button>
+          </div>
+        }
+      />
     );
   }
 

@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { MapPin, Phone, Mail, Home, Building, Loader2, AlertCircle, ChevronDown, ChevronUp, Shield, Copy, Check, X, Calendar, DollarSign, Ruler, Bed, Bath, FileText, TrendingUp, Tag, Clock, ExternalLink, RefreshCw } from 'lucide-react';
+import DataLoadingState from '@/components/dashboard/DataLoadingState';
+import EmptyState from '@/components/ui/EmptyState';
+import { MapPin, Phone, Mail, Home, Building, AlertCircle, ChevronDown, ChevronUp, Shield, Copy, Check, X, Calendar, DollarSign, Ruler, Bed, Bath, FileText, TrendingUp, Tag, Clock, ExternalLink, RefreshCw, Search } from 'lucide-react';
 import { normalizeAddressKey } from '@/lib/property-research-cache';
 import { isDemoMarketingAddress } from '@/lib/demo-property-research';
 import {
@@ -311,10 +313,10 @@ export function OwnerContactPanel({
   return (
     <div className="space-y-6">
       {isLoading && (
-        <div className="flex items-center justify-center gap-2 py-12 text-gray-700">
-          <Loader2 className="w-5 h-5 animate-spin" />
-          Pulling property records and owner contact info — usually 5–10 seconds on first lookup.
-        </div>
+        <DataLoadingState
+          title="Pulling owner records"
+          description="Fetching county records and contact data. First lookup usually takes 5–10 seconds; repeat searches of the same address are much faster."
+        />
       )}
 
       {results?.isDemo && !isLoading && (
@@ -1115,9 +1117,11 @@ export function OwnerContactPanel({
         )}
 
       {!isLoading && !results && !error && (
-        <p className="text-[13px] text-gray-600 text-center py-8">
-          Run a search from the form above to find owner contact info and property records.
-        </p>
+        <EmptyState
+          icon={Search}
+          title="No lookup yet"
+          description="Enter a street address and state above, then run Research address or open this tab to pull owner contact info."
+        />
       )}
     </div>
   );

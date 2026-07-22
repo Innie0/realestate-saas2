@@ -4,6 +4,7 @@ import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
 import Surface from '@/components/ui/Surface';
+import PanelHeader from '@/components/ui/PanelHeader';
 import AdsConnectionsPanel from '@/components/ads/AdsConnectionsPanel';
 import WizardShell from '@/components/ads/wizard/WizardShell';
 import PerformanceDashboard from '@/components/ads/PerformanceDashboard';
@@ -265,25 +266,29 @@ function AdsPageContent() {
       }
     >
       {pageMessage && (
-        <div
+        <Surface
+          flat
+          padding="none"
           className={clsx(
-            'rounded-[10px] border px-4 py-3 text-[13px]',
+            'px-4 py-3 text-[13px] border',
             pageMessage.type === 'success'
-              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-              : 'bg-red-50 border-red-200 text-red-800'
+              ? 'bg-emerald-50/80 border-emerald-200 text-emerald-800'
+              : 'bg-rose-50/80 border-rose-200 text-rose-800',
           )}
         >
           {pageMessage.text}
-        </div>
+        </Surface>
       )}
 
-      <div className="flex gap-1 p-1 rounded-lg bg-gray-100 w-fit">
+      <div className="flex gap-1 p-1 rounded-[10px] bg-[var(--canvas)] border border-[var(--border)] w-fit">
         <button
           type="button"
           onClick={() => setTab('create')}
           className={clsx(
-            'inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-[13px] font-medium transition-colors',
-            tab === 'create' ? 'bg-[var(--surface)] text-gray-900 border border-gray-200' : 'text-gray-600 hover:text-gray-900'
+            'inline-flex items-center gap-1.5 rounded-[8px] px-4 py-2 text-[13px] font-medium transition-colors',
+            tab === 'create'
+              ? 'bg-brand-500 text-[var(--brand-foreground)]'
+              : 'text-gray-600 hover:text-gray-900 hover:bg-[var(--surface)]',
           )}
         >
           <PenLine className="h-3.5 w-3.5" />
@@ -293,8 +298,10 @@ function AdsPageContent() {
           type="button"
           onClick={() => setTab('performance')}
           className={clsx(
-            'inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-[13px] font-medium transition-colors',
-            tab === 'performance' ? 'bg-[var(--surface)] text-gray-900 border border-gray-200' : 'text-gray-600 hover:text-gray-900'
+            'inline-flex items-center gap-1.5 rounded-[8px] px-4 py-2 text-[13px] font-medium transition-colors',
+            tab === 'performance'
+              ? 'bg-brand-500 text-[var(--brand-foreground)]'
+              : 'text-gray-600 hover:text-gray-900 hover:bg-[var(--surface)]',
           )}
         >
           <BarChart3 className="h-3.5 w-3.5" />
@@ -320,16 +327,24 @@ function AdsPageContent() {
       ) : (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,1fr)]">
           <div className="space-y-5">
-            <PerformanceDashboard
-              data={performance ?? null}
-              loading={performanceLoading}
-              selectedAdId={selectedAdId}
-              onSelectAd={setSelectedAdId}
-              onFilterChange={({ adType, days }) => {
-                setPerfAdType(adType);
-                setPerfDays(days);
-              }}
-            />
+            <Surface flat padding="none" className="overflow-hidden">
+              <PanelHeader
+                title="Campaign performance"
+                meta={performance?.ads.length ? `${performance.ads.length} ads` : undefined}
+              />
+              <div className="p-4 sm:p-5">
+                <PerformanceDashboard
+                  data={performance ?? null}
+                  loading={performanceLoading}
+                  selectedAdId={selectedAdId}
+                  onSelectAd={setSelectedAdId}
+                  onFilterChange={({ adType, days }) => {
+                    setPerfAdType(adType);
+                    setPerfDays(days);
+                  }}
+                />
+              </div>
+            </Surface>
             {selectedAd && (
               <AdDetailView
                 ad={selectedAd}
@@ -369,27 +384,27 @@ function AdsPageContent() {
         }}
       />
 
-      <section>
+      <Surface flat padding="none" className="overflow-hidden">
         <button
           type="button"
           onClick={() => setShowAccounts((v) => !v)}
-          className="flex items-center gap-2 text-label hover:text-gray-700 transition-colors"
+          className="flex w-full items-center justify-between gap-2 px-4 py-[11px] text-left hover:bg-[var(--canvas)] transition-colors"
         >
-          <Megaphone className="h-3.5 w-3.5" />
-          Ad accounts
+          <span className="flex items-center gap-2 text-[12.5px] font-semibold text-gray-900">
+            <Megaphone className="h-3.5 w-3.5 text-brand-600" />
+            Ad accounts
+          </span>
           <ChevronDown
-            className={clsx('h-4 w-4 text-gray-400 transition-transform', showAccounts && 'rotate-180')}
+            className={clsx('h-4 w-4 text-gray-500 transition-transform', showAccounts && 'rotate-180')}
           />
         </button>
         {showAccounts && (
-          <div className="mt-3 space-y-3">
-            <Surface flat padding="md">
-              <p className="text-caption text-gray-700 max-w-2xl">
-                Connect Meta to publish ads on your own ad account. If you only see “Setup required,”
-                create an ad account in Meta Ads Manager with the same login, add billing, then click
-                Check again. Google login is optional and used for reporting when configured.
-              </p>
-            </Surface>
+          <div className="border-t border-[var(--border)] p-4 sm:p-5 space-y-3 bg-[var(--canvas)]/40">
+            <p className="text-[13px] text-gray-700 max-w-2xl leading-relaxed">
+              Connect Meta to publish ads on your own ad account. If you only see “Setup required,”
+              create an ad account in Meta Ads Manager with the same login, add billing, then click
+              Check again. Google login is optional and used for reporting when configured.
+            </p>
             <AdsConnectionsPanel
               connections={connections ?? []}
               connecting={connecting}
@@ -401,7 +416,7 @@ function AdsPageContent() {
             />
           </div>
         )}
-      </section>
+      </Surface>
     </DashboardPage>
   );
 }

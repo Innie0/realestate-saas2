@@ -7,6 +7,9 @@ import DashboardPage from '@/components/layout/DashboardPage';
 import Surface from '@/components/ui/Surface';
 import Button from '@/components/ui/Button';
 import Select from '@/components/ui/Select';
+import EmptyState from '@/components/ui/EmptyState';
+import DataLoadingState from '@/components/dashboard/DataLoadingState';
+import PanelHeader from '@/components/ui/PanelHeader';
 import AnimatedTabPanels from '@/components/motion/AnimatedTabPanels';
 import { useApi } from '@/lib/swr';
 import { useTour } from '@/hooks/useTour';
@@ -66,6 +69,9 @@ const TABS: { id: TabId; label: string; icon: React.ElementType }[] = [
   { id: 'owner', label: 'Owner & Contact', icon: User },
   { id: 'cma', label: 'Market / CMA', icon: BarChart2 },
 ];
+
+const inputClass =
+  'w-full rounded-[10px] border border-[var(--border)] bg-[var(--canvas)] text-gray-900 placeholder:text-gray-600 focus:outline-none focus:border-brand-400 text-[13px]';
 
 function PropertyResearchContent() {
   const searchParams = useSearchParams();
@@ -292,13 +298,14 @@ function PropertyResearchContent() {
       subtitle={usageMeta ?? 'Look up owners, property details, and run comp-based CMA'}
       size="default"
       inline
+      ambient="tool"
     >
       {/* Search form — only shown before a search has been run */}
       {!researchSearched && (
         <Surface flat padding="none" className="p-5 sm:p-6" data-tour="research-search">
           <div className="space-y-4">
             <div>
-              <label className="block text-[12.5px] font-medium text-gray-600 mb-1.5">Street address *</label>
+              <label className="block text-[12.5px] font-medium text-gray-700 mb-1.5">Street address *</label>
               <div className="relative">
                 <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
                 <input
@@ -306,19 +313,19 @@ function PropertyResearchContent() {
                   value={street}
                   onChange={(e) => setStreet(e.target.value)}
                   placeholder="e.g. 123 W Main Street"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-[10px] border border-gray-200 bg-gray-50 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:border-gray-400 text-[14px]"
+                  className={`${inputClass} pl-10 pr-4 py-2.5 text-[14px]`}
                 />
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="block text-[12.5px] font-medium text-gray-600 mb-1.5">City</label>
+                <label className="block text-[12.5px] font-medium text-gray-700 mb-1.5">City</label>
                 <input
                   type="text"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   placeholder="Austin"
-                  className="w-full px-3 py-2.5 rounded-[10px] border border-gray-200 bg-gray-50 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:border-gray-400 text-[13px]"
+                  className={`${inputClass} px-3 py-2.5`}
                 />
               </div>
               <div>
@@ -327,7 +334,7 @@ function PropertyResearchContent() {
                   value={state}
                   onChange={setState}
                   placeholder="Select state"
-                  triggerClassName="w-full bg-gray-50 border-gray-200"
+                  triggerClassName={`${inputClass} py-2.5`}
                   options={[
                     { value: '', label: 'Select state' },
                     ...US_STATES.map((s) => ({ value: s.value, label: s.label })),
@@ -335,13 +342,13 @@ function PropertyResearchContent() {
                 />
               </div>
               <div>
-                <label className="block text-[12.5px] font-medium text-gray-600 mb-1.5">ZIP</label>
+                <label className="block text-[12.5px] font-medium text-gray-700 mb-1.5">ZIP</label>
                 <input
                   type="text"
                   value={zip}
                   onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
                   placeholder="93291"
-                  className="w-full px-3 py-2.5 rounded-[10px] border border-gray-200 bg-gray-50 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:border-gray-400 text-[13px]"
+                  className={`${inputClass} px-3 py-2.5`}
                 />
               </div>
             </div>
@@ -390,31 +397,36 @@ function PropertyResearchContent() {
           </Surface>
 
           <Surface flat padding="none" className="overflow-hidden" data-tour="research-history">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-150">
-              <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600">
-                <History className="w-3.5 h-3.5" />
-                Recent
-              </span>
-              {history.length > 0 && (
-                <button
-                  type="button"
-                  onClick={clearHistory}
-                  className="text-[12px] text-gray-600 hover:text-rose-600 flex items-center gap-1 transition-colors"
-                >
-                  <Trash2 className="w-3.5 h-3.5" /> Clear
-                </button>
-              )}
-            </div>
+            <PanelHeader
+              title="Recent"
+              meta={history.length > 0 ? `${history.length} saved` : undefined}
+              action={
+                history.length > 0 ? (
+                  <button
+                    type="button"
+                    onClick={clearHistory}
+                    className="text-[12px] text-gray-600 hover:text-rose-600 flex items-center gap-1 transition-colors"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" /> Clear
+                  </button>
+                ) : undefined
+              }
+            />
             {history.length === 0 ? (
-              <p className="px-4 py-6 text-[12.5px] text-gray-600 text-center">Searched addresses appear here</p>
+              <EmptyState
+                icon={History}
+                title="No recent searches"
+                description="Addresses you research appear here so you can reload cached results without using another lookup."
+                className="py-8"
+              />
             ) : (
-              <div className="divide-y divide-gray-150 max-h-64 overflow-y-auto">
+              <div className="divide-y divide-[var(--border)] max-h-64 overflow-y-auto">
                 {history.map((entry) => (
                   <button
                     key={entry.id}
                     type="button"
                     onClick={() => loadHistory(entry)}
-                    className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors"
+                    className="w-full text-left px-4 py-3 hover:bg-[var(--canvas)] transition-colors"
                   >
                     <p className="text-[13px] text-gray-900 truncate">{entry.label}</p>
                     <p className="text-[11.5px] text-gray-600 mt-0.5">
@@ -429,28 +441,21 @@ function PropertyResearchContent() {
 
         {/* Results canvas */}
         <div className="space-y-4 min-w-0">
-          {lookupLoading && (
-            <motion.div
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-start gap-3 rounded-[10px] border border-gray-200 bg-gray-50 px-4 py-3 text-[13px] text-gray-700"
-            >
-              <Loader2 className="w-4 h-4 animate-spin shrink-0 mt-0.5 text-gray-700" />
-              <div>
-                <p className="font-medium text-gray-900">Researching this address…</p>
-                <p className="text-gray-600 mt-0.5">
-                  Fetching county records and owner contact data. First lookup usually takes 5–10
-                  seconds; repeat searches of the same address are much faster.
-                </p>
-              </div>
-            </motion.div>
+          {lookupLoading && activeTab !== 'owner' && (
+            <Surface flat padding="none">
+              <DataLoadingState
+                title="Researching this address"
+                description="Fetching county records and owner contact data. First lookup usually takes 5–10 seconds."
+                className="py-10"
+              />
+            </Surface>
           )}
 
           {researchSearched && addressLabel && (
             <motion.div
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center justify-between gap-3 rounded-[10px] border border-gray-200 bg-[var(--surface)] px-4 py-3"
+              className="flex items-center justify-between gap-3 rounded-[10px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3"
             >
               <div>
                 <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600 mb-0.5">Current property</p>
@@ -468,9 +473,9 @@ function PropertyResearchContent() {
           )}
 
           {/* Tab bar + panel share one bordered card (square join per handoff) */}
-          <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] overflow-hidden" data-tour="research-tabs">
+          <div className="rounded-[10px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden" data-tour="research-tabs">
             <div
-              className="flex items-stretch gap-1 bg-gray-100 p-1 border-b border-gray-150"
+              className="flex items-stretch gap-1 bg-[var(--canvas)] p-1 border-b border-[var(--border)]"
               role="tablist"
             >
               {TABS.map(({ id, label, icon: Icon }) => {
@@ -484,7 +489,9 @@ function PropertyResearchContent() {
                     onClick={() => setActiveTab(id)}
                     className={clsx(
                       'flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-[8px] text-[13px] font-medium transition-colors',
-                      isActive ? 'bg-brand-500 text-[var(--brand-foreground)]' : 'text-gray-600 hover:text-gray-900'
+                      isActive
+                        ? 'bg-brand-500 text-[var(--brand-foreground)] shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-[var(--surface)]',
                     )}
                   >
                     <Icon className="w-3.5 h-3.5" strokeWidth={1.9} />
@@ -562,8 +569,8 @@ export default function PropertyResearchPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center">
-          <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+        <div className="min-h-screen flex items-center justify-center bg-[var(--canvas)]">
+          <DataLoadingState title="Loading Property Research" className="py-10" />
         </div>
       }
     >

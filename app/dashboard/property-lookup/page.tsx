@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
+import DataLoadingState from '@/components/dashboard/DataLoadingState';
 
 export default function PropertyLookupRedirect() {
   const router = useRouter();
@@ -10,8 +10,12 @@ export default function PropertyLookupRedirect() {
     router.replace('/dashboard/property-research');
   }, [router]);
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+    <div className="min-h-screen flex items-center justify-center bg-[var(--canvas)]">
+      <DataLoadingState
+        title="Opening Property Research"
+        description="Property Lookup now lives in Property Research — one place for owner records and CMA."
+        className="py-10"
+      />
     </div>
   );
 }

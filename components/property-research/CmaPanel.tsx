@@ -11,10 +11,12 @@ import {
 } from '@/lib/cma';
 import { useToast } from '@/components/providers/ToastProvider';
 import Select from '@/components/ui/Select';
+import DataLoadingState from '@/components/dashboard/DataLoadingState';
+import EmptyState from '@/components/ui/EmptyState';
 import {
-  BarChart2, Loader2, AlertCircle, Home, DollarSign,
-  TrendingUp, BedDouble, Bath, Ruler, MapPin, Sparkles,
-  ChevronDown, ChevronUp, X, RefreshCw, Info, Download,
+  BarChart2, Loader2, AlertCircle, DollarSign,
+  TrendingUp, MapPin, Sparkles,
+  X, RefreshCw, Info, Download,
 } from 'lucide-react';
 import { buildCmaPdfPayload, downloadCmaPdf } from '@/lib/export-cma-pdf';
 import { normalizeAddressKey } from '@/lib/property-research-cache';
@@ -511,14 +513,10 @@ export function CmaPanel({
       )}
 
       {loading && (
-        <div className="space-y-4 animate-pulse">
-          {[1, 2].map((i) => (
-            <div key={i} className="bg-[var(--surface)] border border-gray-200 rounded-[10px] p-5 space-y-3">
-              <div className="h-4 bg-gray-100 rounded w-1/3" />
-              <div className="h-8 bg-gray-100 rounded w-1/2" />
-            </div>
-          ))}
-        </div>
+        <DataLoadingState
+          title="Running comp-based analysis"
+          description="Scoring nearby sales and adjusting for beds, baths, and condition. This usually takes 10–20 seconds."
+        />
       )}
 
       {result && !loading && liveValuation && (
@@ -677,9 +675,11 @@ export function CmaPanel({
       )}
 
       {!result && !loading && (
-        <p className="text-[13px] text-gray-600 text-center py-8">
-          Configure subject details above, then run the comp-based analysis.
-        </p>
+        <EmptyState
+          icon={BarChart2}
+          title="Ready for CMA"
+          description="Confirm subject beds, baths, and condition above, then run the comp-based analysis for a suggested list price."
+        />
       )}
     </div>
   );
