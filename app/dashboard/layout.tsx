@@ -1,17 +1,19 @@
-// Dashboard layout - Layout for all dashboard pages
-// Includes sidebar navigation for the agent workspace
-
 import DashboardShell from '@/components/layout/DashboardShell';
+import { DASHBOARD_THEME_INIT_SCRIPT } from '@/lib/dashboard-theme';
 
 /**
- * DashboardLayout component
- * Wraps all dashboard pages with sidebar navigation. No marketing chrome
- * (footer/legal links) — this is the agent workspace, not a marketing page.
+ * Dashboard layout — agent workspace shell (no marketing chrome).
+ * Blocking theme script prevents a dark flash when light mode is stored.
  */
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <DashboardShell>{children}</DashboardShell>;
+  return (
+    <>
+      <script dangerouslySetInnerHTML={{ __html: DASHBOARD_THEME_INIT_SCRIPT }} />
+      <DashboardShell>{children}</DashboardShell>
+    </>
+  );
 }

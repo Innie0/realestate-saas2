@@ -130,8 +130,16 @@
   --mkt-mock-surface: #ffffff;
 }
 
-/* Light chrome only — brand (lime) + status colors inherit from :root so
-   dashboard light mode matches dark-mode buttons and bubbles. */
+/* Disable color/border transitions while flipping theme so light borders
+   don't animate into a white flash on dark canvas. */
+html.dashboard-theme-switching,
+html.dashboard-theme-switching * {
+  transition: none !important;
+}
+
+/* Light chrome — applied early via html[data-dashboard-theme] (blocking script)
+   and via .theme-light for nested product mocks / dashboard-root. */
+html[data-dashboard-theme='light'],
 .theme-light {
   color-scheme: light;
   --canvas: #fafafa;
@@ -236,15 +244,27 @@
   --champagne-900: #4a3518;
 }
 
+/* First paint / overscroll match stored dashboard theme before React mounts */
+html[data-dashboard-theme='light'] {
+  background-color: #fafafa;
+}
+
+html[data-dashboard-theme='light'] body {
+  background-color: #fafafa;
+}
+
 /* Light dashboard: scrollbars + autofill match the light console */
+html[data-dashboard-theme='light'] .dashboard-root ::-webkit-scrollbar-thumb,
 .dashboard-root.theme-light ::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.15);
 }
 
+html[data-dashboard-theme='light'] .dashboard-root ::-webkit-scrollbar-thumb:hover,
 .dashboard-root.theme-light ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.25);
 }
 
+html[data-dashboard-theme='light'] .dashboard-root,
 .dashboard-root.theme-light {
   scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
 }

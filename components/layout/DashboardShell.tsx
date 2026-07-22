@@ -20,6 +20,7 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
         theme === 'light' && 'theme-light',
       )}
       data-theme={theme}
+      suppressHydrationWarning
     >
       <Sidebar />
 
