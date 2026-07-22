@@ -55,10 +55,13 @@ export default function SegmentedControl<T extends string>({
   const reduced = useMotionReduced();
   const styles = sizeStyles[size];
 
+  const pillClass =
+    'absolute inset-0 rounded-md border border-border bg-card shadow-sm dark:bg-gray-200 dark:shadow-none';
+
   return (
     <div
       className={clsx(
-        'inline-flex gap-0.5 bg-gray-100',
+        'inline-flex gap-0.5 bg-muted',
         styles.track,
         stretch && 'w-full sm:w-auto',
         className,
@@ -74,13 +77,11 @@ export default function SegmentedControl<T extends string>({
             {active && !reduced && (
               <motion.span
                 layoutId={layoutId}
-                className="absolute inset-0 rounded-md bg-[var(--surface)] border border-gray-200"
+                className={pillClass}
                 transition={{ type: 'spring', stiffness: 500, damping: 38 }}
               />
             )}
-            {active && reduced && (
-              <span className="absolute inset-0 rounded-md bg-[var(--surface)] border border-gray-200" />
-            )}
+            {active && reduced && <span className={pillClass} />}
             {Icon && (
               <Icon
                 className={clsx('relative z-10 shrink-0', styles.icon)}
@@ -96,7 +97,7 @@ export default function SegmentedControl<T extends string>({
           'relative z-10 inline-flex items-center justify-center gap-1.5 font-medium transition-colors',
           iconOnly ? styles.iconOnly : styles.button,
           stretch && 'flex-1 sm:flex-none',
-          active ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900',
+          active ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
         );
 
         if (href && !onChange) {
