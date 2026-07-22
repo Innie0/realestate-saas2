@@ -24,7 +24,6 @@ module.exports = {
         'surface': '0 1px 2px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.25)',
         'raised': '0 2px 4px rgba(0,0,0,0.45), 0 12px 24px -4px rgba(0,0,0,0.35)',
         'overlay': '0 24px 48px -12px rgba(0,0,0,0.55), 0 8px 16px -8px rgba(0,0,0,0.4)',
-        'glow-brand': '0 1px 2px rgba(228,247,108,0.15), 0 6px 16px -4px rgba(228,247,108,0.25)',
       },
       colors: {
         // Neutrals driven by CSS vars — dark by default, light inside .theme-light
