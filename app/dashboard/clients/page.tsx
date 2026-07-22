@@ -315,6 +315,7 @@ export default function ClientsPage() {
                 segments={STATUS_TABS}
                 value={statusTab}
                 onChange={setStatusTab}
+                activeStyle="sky"
               />
             </div>
 

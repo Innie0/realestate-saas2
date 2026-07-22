@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import type { LucideIcon } from 'lucide-react';
-import { ACCENT } from '@/lib/accent';
 import { useMotionReduced } from '@/lib/motion';
 
 export interface Segment<T extends string = string> {
@@ -27,7 +26,17 @@ interface SegmentedControlProps<T extends string> {
   /** Stretch segments evenly on small screens */
   stretch?: boolean;
   size?: 'sm' | 'md';
+  /** Sky = blue active chip (Clients status). Neutral = raised surface (default). */
+  activeStyle?: 'sky' | 'neutral';
 }
+
+/** Light-theme sky chip — same look in dark and light dashboard modes. */
+const SKY_ACTIVE_PILL =
+  'absolute inset-0 rounded-md border border-[#bae6fd] bg-[#e0f2fe]';
+const SKY_ACTIVE_TEXT = 'text-[#0284c7]';
+
+const NEUTRAL_ACTIVE_PILL =
+  'absolute inset-0 rounded-md border border-border bg-card shadow-sm dark:bg-gray-200 dark:shadow-none';
 
 const sizeStyles = {
   sm: {
@@ -52,12 +61,13 @@ export default function SegmentedControl<T extends string>({
   className,
   stretch = false,
   size = 'sm',
+  activeStyle = 'neutral',
 }: SegmentedControlProps<T>) {
   const reduced = useMotionReduced();
   const styles = sizeStyles[size];
 
-  /** Sky accent — theme-aware blues from lib/accent.ts */
-  const pillClass = 'absolute inset-0 rounded-md bg-sky-100 border border-sky-200';
+  const pillClass = activeStyle === 'sky' ? SKY_ACTIVE_PILL : NEUTRAL_ACTIVE_PILL;
+  const activeTextClass = activeStyle === 'sky' ? SKY_ACTIVE_TEXT : 'text-foreground';
 
   return (
     <div
@@ -98,7 +108,7 @@ export default function SegmentedControl<T extends string>({
           'relative z-10 inline-flex items-center justify-center gap-1.5 font-medium transition-colors',
           iconOnly ? styles.iconOnly : styles.button,
           stretch && 'flex-1 sm:flex-none',
-          active ? ACCENT.sky.text : 'text-muted-foreground hover:text-foreground',
+          active ? activeTextClass : 'text-muted-foreground hover:text-foreground',
         );
 
         if (href && !onChange) {
