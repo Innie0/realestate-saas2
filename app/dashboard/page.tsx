@@ -334,7 +334,7 @@ function OpenDealsTable({
   const deals = transactions.slice(0, 6);
 
   return (
-    <Card className="flex w-max max-w-full min-h-0 flex-col overflow-hidden p-0">
+    <Card className="flex h-full min-h-0 w-max max-w-full flex-col overflow-hidden p-0">
       <CardHeader className="flex-row items-center justify-between gap-8 space-y-0">
         <CardTitle>Open deals</CardTitle>
         <Link href="/dashboard/transactions" className="shrink-0 text-xs font-medium text-primary hover:underline">
@@ -898,8 +898,8 @@ export default function DashboardHomePage() {
       <NeedsAttention items={attentionItems} loading={attentionLoading} />
 
       {/* 3. Work area + right rail */}
-      <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[auto_minmax(0,1fr)]">
-        <div className="min-w-0 w-max max-w-full">
+      <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[auto_minmax(0,1fr)]">
+        <div className="flex min-h-0 w-max max-w-full flex-col self-stretch">
           <OpenDealsTable transactions={allTransactions} loading={transactionsLoading && allTransactions.length === 0} />
         </div>
         <div className="flex min-w-0 flex-col gap-4">
