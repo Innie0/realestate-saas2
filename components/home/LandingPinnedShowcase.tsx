@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useRef } from 'react';
-import clsx from 'clsx';
 import { ensureGsapRegistered, gsap, useGSAP } from '@/lib/gsap-config';
 import { SHOWCASE_NARRATIVE, SHOWCASE_SLIDES } from '@/lib/landing-showcase';
 import { useMotionReduced } from '@/lib/motion';
@@ -25,15 +24,14 @@ export default function LandingPinnedShowcase() {
   useGSAP(
     () => {
       const pin = pinRef.current;
-      const section = sectionRef.current;
-      if (reduced || !pin || !section) return;
+      if (reduced || !pin) return;
 
       const slides = gsap.utils.toArray<HTMLElement>('[data-pinned-slide]', pin);
       const indicators = gsap.utils.toArray<HTMLElement>('[data-pinned-indicator]', pin);
       if (slides.length < 2) return;
 
-      gsap.set(slides, { autoAlpha: 0, y: 48, scale: 0.98 });
-      gsap.set(slides[0], { autoAlpha: 1, y: 0, scale: 1 });
+      gsap.set(slides, { autoAlpha: 0, zIndex: 0 });
+      gsap.set(slides[0], { autoAlpha: 1, zIndex: 1 });
       gsap.set(indicators, { scale: 1, opacity: 0.35 });
       gsap.set(indicators[0], { scale: 1.2, opacity: 1 });
 
@@ -41,10 +39,11 @@ export default function LandingPinnedShowcase() {
         scrollTrigger: {
           trigger: pin,
           start: 'top top',
-          end: () => `+=${window.innerHeight * slides.length * 0.85}`,
+          end: () => `+=${window.innerHeight * slides.length * 0.9}`,
           pin: true,
-          scrub: 0.65,
+          scrub: 0.55,
           anticipatePin: 1,
+          invalidateOnRefresh: true,
         },
       });
 
@@ -54,25 +53,16 @@ export default function LandingPinnedShowcase() {
         const prev = slides[index - 1];
         const indicator = indicators[index];
 
-        tl.to(prev, {
-          autoAlpha: 0,
-          y: -36,
-          scale: 0.98,
-          duration: 1,
-          ease: 'power2.inOut',
-        })
-          .fromTo(
-            slide,
-            { autoAlpha: 0, y: 48, scale: 0.98 },
-            { autoAlpha: 1, y: 0, scale: 1, duration: 1, ease: 'power2.out' },
-            '<0.15',
-          )
+        // Strict sequential crossfade — each slide fully exits before the next enters.
+        tl.to(prev, { autoAlpha: 0, duration: 0.5, ease: 'power2.inOut' })
+          .set(slide, { zIndex: index + 1 })
+          .fromTo(slide, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5, ease: 'power2.out' })
           .to(
             indicators,
-            { scale: 1, opacity: 0.35, duration: 0.4, stagger: 0.05 },
-            '<0.3',
+            { scale: 1, opacity: 0.35, duration: 0.25, stagger: 0.04 },
+            '-=0.15',
           )
-          .to(indicator, { scale: 1.2, opacity: 1, duration: 0.4 }, '<');
+          .to(indicator, { scale: 1.2, opacity: 1, duration: 0.25 }, '<');
       });
 
       return () => {
@@ -126,12 +116,11 @@ export default function LandingPinnedShowcase() {
     <section
       ref={sectionRef}
       aria-label="How Oikaro works"
-      className="relative border-t border-mkt-border bg-mkt-background"
+      className="relative isolate border-t border-mkt-border bg-mkt-background"
     >
       <div ref={pinRef} className="relative min-h-[100dvh]">
         <div className="mx-auto flex h-[100dvh] max-w-mkt-content flex-col justify-center px-5 py-16 sm:px-8 lg:grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-16 lg:py-0">
-          {/* Pinned narrative column */}
-          <div className="mb-10 lg:mb-0">
+          <div className="mb-10 shrink-0 lg:mb-0">
             <p className="text-xs font-medium uppercase tracking-[0.14em] text-mkt-secondary">
               {SHOWCASE_NARRATIVE.eyebrow}
             </p>
@@ -144,30 +133,26 @@ export default function LandingPinnedShowcase() {
             </p>
 
             <div className="mt-8 flex items-center gap-2" aria-hidden>
-              {SHOWCASE_SLIDES.map((slide, index) => (
+              {SHOWCASE_SLIDES.map((slide) => (
                 <span
                   key={slide.id}
                   data-pinned-indicator
-                  className="h-1.5 w-6 rounded-full bg-mkt-foreground origin-left"
+                  className="h-1.5 w-6 origin-left rounded-full bg-mkt-accent"
                   title={slide.eyebrow}
                 />
               ))}
             </div>
-            <p className="mt-3 text-xs text-mkt-muted">
-              Scroll to walk through the workflow
-            </p>
+            <p className="mt-3 text-xs text-mkt-muted">Scroll to walk through the workflow</p>
           </div>
 
-          {/* Scrubbed slide stack */}
-          <div className="relative min-h-[420px] sm:min-h-[460px] lg:min-h-[520px]">
+          {/* Fixed-height stack — overflow hidden prevents slides bleeding during crossfade */}
+          <div className="relative h-[min(540px,72vh)] min-h-[420px] overflow-hidden sm:min-h-[460px] lg:min-h-0 lg:h-[min(560px,78vh)]">
             {SHOWCASE_SLIDES.map((slide, index) => (
               <div
                 key={slide.id}
                 data-pinned-slide
-                className={clsx(
-                  'absolute inset-0 flex flex-col',
-                  index === 0 ? 'relative lg:absolute' : '',
-                )}
+                className="absolute inset-0 flex flex-col overflow-hidden"
+                style={{ zIndex: index === 0 ? 1 : 0 }}
               >
                 <span
                   className={`inline-block w-fit rounded-full px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.1em] ${TAG_CLASSES[index % 3]}`}
@@ -191,11 +176,11 @@ export default function LandingPinnedShowcase() {
                     Learn more
                   </Link>
                 </div>
-                <div className="mt-8 flex-1">
+                <div className="mt-8 min-h-0 flex-1">
                   <ProductScreenshot
                     src={slide.screenshot}
                     alt={slide.screenshotAlt}
-                    className="shadow-[0_24px_48px_-12px_rgba(0,0,0,0.12)]"
+                    className="shadow-raised"
                   />
                 </div>
               </div>

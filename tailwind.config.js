@@ -156,7 +156,7 @@ module.exports = {
           800: 'var(--sky-800)',
           900: 'var(--sky-900)',
         },
-        /* Marketing — Forest Canopy palette (see :root --mkt-* in globals.css) */
+        /* Marketing — Framer dark palette (see :root --mkt-* in globals.css) */
         mkt: {
           background: 'var(--mkt-background)',
           surface: {

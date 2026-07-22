@@ -117,34 +117,33 @@
   --champagne-800: #efe2c8;
   --champagne-900: #f8f2e6;
 
-  /* Marketing — warm editorial (cream canvas + charcoal accent).
-     Namespaced separately from dashboard lime; consumed via mkt-* Tailwind utilities. */
-  --mkt-background: #fbfbfa;
-  --mkt-surface: #ffffff;
-  --mkt-surface-muted: #f7f6f3;
-  --mkt-text-primary: #111111;
-  --mkt-text-secondary: #787774;
-  --mkt-border: #eaeaea;
-  --mkt-accent: #1c1c1a;
-  --mkt-accent-hover: #333333;
-  --mkt-accent-foreground: #ffffff;
-  --mkt-muted: #a3a29e;
+  /* Marketing — Framer dark (aliases dashboard canvas, surface, lime accent). */
+  --mkt-background: var(--canvas);
+  --mkt-surface: var(--surface);
+  --mkt-surface-muted: var(--gray-100);
+  --mkt-text-primary: var(--gray-950);
+  --mkt-text-secondary: var(--gray-600);
+  --mkt-border: var(--border);
+  --mkt-accent: var(--brand-500);
+  --mkt-accent-hover: var(--brand-600);
+  --mkt-accent-foreground: var(--brand-foreground);
+  --mkt-muted: var(--gray-500);
   --mkt-mock-surface: #ffffff;
-  --mkt-browser-dot: #d4d4d0;
-  --mkt-error-border: #c4a0a0;
-  --mkt-error-surface-border: #e8c4c4;
-  --mkt-tag-green-bg: #fbf3db;
-  --mkt-tag-green-text: #956400;
-  --mkt-tag-blue-bg: #e1f3fe;
-  --mkt-tag-blue-text: #1f6c9f;
-  --mkt-tag-amber-bg: #fdebec;
-  --mkt-tag-amber-text: #9f2f2d;
-  --mkt-nav-scrolled-bg: rgba(251, 251, 250, 0.92);
-  --mkt-nav-menu-bg: rgba(251, 251, 250, 0.96);
-  --mkt-nav-transparent-bg: rgba(251, 251, 250, 0);
-  --mkt-nav-transparent-border: rgba(234, 234, 234, 0);
-  --mkt-hero-glow: rgba(248, 235, 210, 0.75);
-  --mkt-champagne: #a87c43;
+  --mkt-browser-dot: var(--gray-400);
+  --mkt-error-border: var(--rose-300);
+  --mkt-error-surface-border: var(--rose-200);
+  --mkt-tag-green-bg: var(--brand-100);
+  --mkt-tag-green-text: var(--brand-400);
+  --mkt-tag-blue-bg: var(--sky-100);
+  --mkt-tag-blue-text: var(--sky-400);
+  --mkt-tag-amber-bg: var(--amber-100);
+  --mkt-tag-amber-text: var(--amber-400);
+  --mkt-nav-scrolled-bg: rgba(10, 10, 10, 0.88);
+  --mkt-nav-menu-bg: rgba(10, 10, 10, 0.94);
+  --mkt-nav-transparent-bg: rgba(10, 10, 10, 0);
+  --mkt-nav-transparent-border: rgba(46, 46, 46, 0);
+  --mkt-hero-glow: rgba(228, 247, 108, 0.14);
+  --mkt-champagne: var(--brand-500);
   --mkt-max-content-width: 70rem;
   --mkt-radius-button: 6px;
   --mkt-radius-card: 12px;
@@ -364,6 +363,7 @@ html[data-dashboard-theme='light'] .dashboard-root,
 
   /* Marketing chrome — Geist body, editorial serif for display */
   .marketing-root {
+    color-scheme: dark;
     font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
     color: var(--mkt-text-primary);
     background-color: var(--mkt-background);

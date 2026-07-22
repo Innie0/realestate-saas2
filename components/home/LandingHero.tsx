@@ -162,7 +162,7 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
             src={LANDING_HERO_SCREENSHOT.src}
             alt={LANDING_HERO_SCREENSHOT.alt}
             priority
-            className="shadow-[0_32px_64px_-16px_rgba(0,0,0,0.14)]"
+            className="shadow-raised"
           />
         </div>
       </div>

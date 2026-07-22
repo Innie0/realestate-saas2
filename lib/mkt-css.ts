@@ -1,13 +1,13 @@
 /** Read a marketing CSS custom property from :root (for GSAP / runtime animation). */
 const MKT_VAR_FALLBACKS: Record<string, string> = {
-  '--mkt-text-primary': '#111111',
-  '--mkt-text-secondary': '#787774',
-  '--mkt-border': '#eaeaea',
-  '--mkt-nav-scrolled-bg': 'rgba(251, 251, 250, 0.92)',
-  '--mkt-nav-menu-bg': 'rgba(251, 251, 250, 0.96)',
-  '--mkt-nav-transparent-bg': 'rgba(251, 251, 250, 0)',
-  '--mkt-nav-transparent-border': 'rgba(234, 234, 234, 0)',
-  '--mkt-hero-glow': 'rgba(248, 235, 210, 0.75)',
+  '--mkt-text-primary': '#ffffff',
+  '--mkt-text-secondary': '#a3a3a3',
+  '--mkt-border': '#2e2e2e',
+  '--mkt-nav-scrolled-bg': 'rgba(10, 10, 10, 0.88)',
+  '--mkt-nav-menu-bg': 'rgba(10, 10, 10, 0.94)',
+  '--mkt-nav-transparent-bg': 'rgba(10, 10, 10, 0)',
+  '--mkt-nav-transparent-border': 'rgba(46, 46, 46, 0)',
+  '--mkt-hero-glow': 'rgba(228, 247, 108, 0.14)',
 };
 
 export function mktVar(name: `--mkt-${string}`): string {
