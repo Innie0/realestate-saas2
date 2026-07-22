@@ -7,7 +7,6 @@
 import { useState } from 'react';
 import { CreditCard, Loader2 } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import { MKT } from '@/lib/marketing-design';
 
 interface SubscribeButtonProps {
   priceId: string;
@@ -77,19 +76,11 @@ export default function SubscribeButton({
           type="button"
           onClick={handleSubscribe}
           disabled={loading}
-          className={`inline-flex w-full items-center justify-center gap-2 py-3 text-sm font-medium transition-opacity disabled:cursor-not-allowed disabled:opacity-50 ${
-            isPrimary ? 'mkt-cta hover:opacity-90' : ''
-          }`}
-          style={
+          className={`inline-flex w-full items-center justify-center gap-2 rounded-mkt-button py-3 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
             isPrimary
-              ? { borderRadius: MKT.radius.button }
-              : {
-                  borderRadius: MKT.radius.button,
-                  backgroundColor: MKT.background,
-                  color: MKT.textPrimary,
-                  border: `1px solid ${MKT.border}`,
-                }
-          }
+              ? 'bg-mkt-accent text-mkt-accent-foreground hover:bg-mkt-accent-hover'
+              : 'border border-mkt-border bg-mkt-background text-mkt-foreground'
+          }`}
         >
           {loading ? (
             <Loader2 className="h-4 w-4 animate-spin" />

@@ -25,6 +25,14 @@ module.exports = {
         'raised': '0 2px 4px rgba(0,0,0,0.45), 0 12px 24px -4px rgba(0,0,0,0.35)',
         'overlay': '0 24px 48px -12px rgba(0,0,0,0.55), 0 8px 16px -8px rgba(0,0,0,0.4)',
       },
+      maxWidth: {
+        'mkt-content': 'var(--mkt-max-content-width)',
+      },
+      borderRadius: {
+        'mkt-button': 'var(--mkt-radius-button)',
+        'mkt-card': 'var(--mkt-radius-card)',
+        'mkt-browser': 'var(--mkt-radius-browser)',
+      },
       colors: {
         // Neutrals driven by CSS vars — dark by default, light inside .theme-light
         gray: {
@@ -147,6 +155,39 @@ module.exports = {
           700: 'var(--sky-700)',
           800: 'var(--sky-800)',
           900: 'var(--sky-900)',
+        },
+        /* Marketing — Forest Canopy palette (see :root --mkt-* in globals.css) */
+        mkt: {
+          background: 'var(--mkt-background)',
+          surface: {
+            DEFAULT: 'var(--mkt-surface)',
+            muted: 'var(--mkt-surface-muted)',
+          },
+          foreground: 'var(--mkt-text-primary)',
+          secondary: 'var(--mkt-text-secondary)',
+          border: 'var(--mkt-border)',
+          accent: {
+            DEFAULT: 'var(--mkt-accent)',
+            hover: 'var(--mkt-accent-hover)',
+            foreground: 'var(--mkt-accent-foreground)',
+          },
+          muted: 'var(--mkt-muted)',
+          mock: 'var(--mkt-mock-surface)',
+          dot: 'var(--mkt-browser-dot)',
+          tag: {
+            green: {
+              bg: 'var(--mkt-tag-green-bg)',
+              text: 'var(--mkt-tag-green-text)',
+            },
+            blue: {
+              bg: 'var(--mkt-tag-blue-bg)',
+              text: 'var(--mkt-tag-blue-text)',
+            },
+            amber: {
+              bg: 'var(--mkt-tag-amber-bg)',
+              text: 'var(--mkt-tag-amber-text)',
+            },
+          },
         },
       },
       keyframes: {

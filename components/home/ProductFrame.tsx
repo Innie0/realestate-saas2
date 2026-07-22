@@ -4,7 +4,6 @@ import { useRef } from 'react';
 import clsx from 'clsx';
 import { ensureGsapRegistered, useGSAP } from '@/lib/gsap-config';
 import { bindHoverMotion } from '@/lib/landing-motion';
-import { MKT } from '@/lib/marketing-design';
 import { useMotionReduced } from '@/lib/motion';
 
 type ProductFrameProps = {
@@ -31,28 +30,21 @@ export default function ProductFrame({ children, className = '', interactive = t
   return (
     <div
       ref={ref}
-      className={clsx('overflow-hidden will-change-transform', className)}
-      style={{
-        borderRadius: MKT.radius.browser,
-        border: `1px solid ${MKT.border}`,
-        backgroundColor: MKT.surface,
-        boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
-      }}
+      className={clsx(
+        'overflow-hidden rounded-mkt-browser border border-mkt-border bg-mkt-surface will-change-transform',
+        className,
+      )}
+      style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}
     >
       <div
-        className="flex items-center gap-1.5 px-3.5"
-        style={{ height: 36, borderBottom: `1px solid ${MKT.border}`, backgroundColor: MKT.surfaceMuted }}
+        className="flex h-9 items-center gap-1.5 border-b border-mkt-border bg-mkt-surface-muted px-3.5"
         aria-hidden
       >
         {[0, 1, 2].map((i) => (
-          <span
-            key={i}
-            className="rounded-full"
-            style={{ width: 10, height: 10, backgroundColor: MKT.browserDot }}
-          />
+          <span key={i} className="size-2.5 rounded-full bg-mkt-dot" />
         ))}
       </div>
-      <div style={{ backgroundColor: MKT.mockSurface }}>{children}</div>
+      <div className="bg-mkt-mock">{children}</div>
     </div>
   );
 }

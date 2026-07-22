@@ -9,7 +9,6 @@ import AuthAlert from '@/components/marketing/AuthAlert';
 import AuthPageMotion, { AuthFormMotion } from '@/components/marketing/AuthPageMotion';
 import AuthSubmitButton from '@/components/marketing/AuthSubmitButton';
 import MarketingInput from '@/components/marketing/MarketingInput';
-import { MKT } from '@/lib/marketing-design';
 import { signInWithEmail, signInWithGoogle, supabase } from '@/lib/supabase';
 
 export default function LoginPage() {
@@ -120,13 +119,10 @@ export default function LoginPage() {
     <AuthPageShell>
       <AuthPageMotion>
         <div className="mb-8 text-center">
-          <h1
-            className="font-display text-3xl font-medium tracking-[-0.03em] sm:text-4xl"
-            style={{ color: MKT.textPrimary }}
-          >
+          <h1 className="font-display text-3xl font-medium tracking-[-0.03em] text-mkt-foreground sm:text-4xl">
             Welcome back
           </h1>
-          <p className="mt-2 text-sm sm:text-base" style={{ color: MKT.textSecondary }}>
+          <p className="mt-2 text-sm text-mkt-secondary sm:text-base">
             Sign in to your Oikaro account
           </p>
         </div>
@@ -166,8 +162,7 @@ export default function LoginPage() {
               <div data-auth-part className="text-right">
                 <Link
                   href="/auth/forgot-password"
-                  className="text-sm transition-opacity hover:opacity-70"
-                  style={{ color: MKT.textSecondary }}
+                  className="text-sm text-mkt-secondary transition-opacity hover:opacity-70"
                 >
                   Forgot password?
                 </Link>
@@ -182,14 +177,12 @@ export default function LoginPage() {
 
             <p
               data-auth-part
-              className="mt-6 text-center text-sm"
-              style={{ color: MKT.textSecondary }}
+              className="mt-6 text-center text-sm text-mkt-secondary"
             >
               Don&apos;t have an account?{' '}
               <Link
                 href="/auth/signup"
-                className="font-medium transition-opacity hover:opacity-70"
-                style={{ color: MKT.textPrimary }}
+                className="font-medium text-mkt-foreground transition-opacity hover:opacity-70"
               >
                 Start your 7-day free trial
               </Link>

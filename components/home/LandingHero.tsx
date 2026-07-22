@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { ensureGsapRegistered, gsap, landingRevealDefaults, useGSAP } from '@/lib/gsap-config';
 import { LANDING_HERO_SCREENSHOT } from '@/lib/landing-features';
 import { splitWords } from '@/lib/landing-motion';
-import { MKT } from '@/lib/marketing-design';
+import { mktVar } from '@/lib/mkt-css';
 import { useMotionReduced } from '@/lib/motion';
 import MarketingButton from '@/components/marketing/MarketingButton';
 import ProductScreenshot from '@/components/home/ProductScreenshot';
@@ -57,38 +57,28 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
   );
 
   return (
-    <section
-      ref={sectionRef as React.RefObject<HTMLElement>}
-      className="relative overflow-hidden"
-      style={{ backgroundColor: MKT.background }}
-    >
+    <section ref={sectionRef as React.RefObject<HTMLElement>} className="relative overflow-hidden bg-mkt-background">
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[520px] opacity-[0.45]"
         aria-hidden
         style={{
-          background:
-            `radial-gradient(ellipse 80% 60% at 50% -10%, ${MKT.heroGlow} 0%, transparent 70%)`,
+          background: `radial-gradient(ellipse 80% 60% at 50% -10%, ${mktVar('--mkt-hero-glow')} 0%, transparent 70%)`,
         }}
       />
 
       <div
         ref={rootRef}
-        className="relative mx-auto px-5 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32 lg:pb-28 lg:pt-36"
-        style={{ maxWidth: MKT.maxContentWidth }}
+        className="relative mx-auto max-w-mkt-content px-5 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32 lg:pb-28 lg:pt-36"
       >
         <div className="mx-auto max-w-3xl text-center">
           <p
             data-hero-eyebrow
-            className="mb-5 text-xs font-medium uppercase tracking-[0.14em]"
-            style={{ color: MKT.textSecondary }}
+            className="mb-5 text-xs font-medium uppercase tracking-[0.14em] text-mkt-secondary"
           >
             Built for real estate agents
           </p>
 
-          <h1
-            className="font-display text-[2.35rem] font-medium leading-[1.08] tracking-[-0.03em] sm:text-5xl lg:text-[3.5rem]"
-            style={{ color: MKT.textPrimary }}
-          >
+          <h1 className="font-display text-[2.35rem] font-medium leading-[1.08] tracking-[-0.03em] text-mkt-foreground sm:text-5xl lg:text-[3.5rem]">
             {splitWords(HEADLINE).map((word, index, arr) => (
               <span key={`${word}-${index}`} className="inline-block overflow-hidden align-top">
                 <span data-hero-word className="inline-block">
@@ -101,23 +91,17 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
 
           <p
             data-hero-subcopy
-            className="mx-auto mt-6 max-w-xl text-base leading-[1.65] sm:text-[17px]"
-            style={{ color: MKT.textSecondary }}
+            className="mx-auto mt-6 max-w-xl text-base leading-[1.65] text-mkt-secondary sm:text-[17px]"
           >
             Oikaro brings your pipeline, client records, and transaction checklists together —
             so you spend less time switching tools and more time with clients.
           </p>
 
-          <div
-            data-hero-cta
-            className="mt-10 flex flex-col items-center gap-3"
-          >
+          <div data-hero-cta className="mt-10 flex flex-col items-center gap-3">
             <MarketingButton href="/auth/signup" size="lg">
               Start your 7-day free trial
             </MarketingButton>
-            <p className="text-sm" style={{ color: MKT.textSecondary }}>
-              No setup fees · Cancel anytime
-            </p>
+            <p className="text-sm text-mkt-secondary">No setup fees · Cancel anytime</p>
           </div>
         </div>
 

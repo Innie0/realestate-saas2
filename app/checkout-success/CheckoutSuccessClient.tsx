@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import AuthPageShell from '@/components/branding/AuthPageShell';
 import AuthFormCard from '@/components/branding/AuthFormCard';
-import { MKT } from '@/lib/marketing-design';
 
 export default function CheckoutSuccessClient() {
   const router = useRouter();
@@ -73,17 +72,9 @@ export default function CheckoutSuccessClient() {
       <div className="mt-8">
         <AuthFormCard>
           <div className="px-2 py-4 text-center">
-            <Loader2
-              className="mx-auto h-10 w-10 animate-spin"
-              style={{ color: MKT.accent }}
-              aria-hidden
-            />
-            <p className="mt-5 text-lg font-semibold" style={{ color: MKT.textPrimary }}>
-              Payment successful
-            </p>
-            <p className="mt-2 text-sm" style={{ color: MKT.textSecondary }}>
-              {message}
-            </p>
+            <Loader2 className="mx-auto h-10 w-10 animate-spin text-mkt-accent" aria-hidden />
+            <p className="mt-5 text-lg font-semibold text-mkt-foreground">Payment successful</p>
+            <p className="mt-2 text-sm text-mkt-secondary">{message}</p>
           </div>
         </AuthFormCard>
       </div>

@@ -1,8 +1,8 @@
 'use client';
 
 import { useMemo, useRef } from 'react';
-import { ensureGsapRegistered, gsap, ScrollTrigger, useGSAP } from '@/lib/gsap-config';
-import { MKT } from '@/lib/marketing-design';
+import { ensureGsapRegistered, gsap, useGSAP } from '@/lib/gsap-config';
+import { mktVar } from '@/lib/mkt-css';
 import { useMotionReduced } from '@/lib/motion';
 
 const MANIFESTO =
@@ -20,10 +20,10 @@ export default function LandingManifestoBand() {
       if (reduced || !sectionRef.current) return;
 
       const spans = sectionRef.current.querySelectorAll('[data-word]');
-      gsap.set(spans, { color: MKT.textSecondary });
+      gsap.set(spans, { color: mktVar('--mkt-text-secondary') });
 
       gsap.to(spans, {
-        color: MKT.textPrimary,
+        color: mktVar('--mkt-text-primary'),
         stagger: 0.08,
         ease: 'none',
         scrollTrigger: {
@@ -40,13 +40,13 @@ export default function LandingManifestoBand() {
   return (
     <div
       ref={sectionRef}
-      className="border-t py-28 sm:py-36 lg:py-44"
-      style={{ borderColor: MKT.border, backgroundColor: MKT.background }}
+      className="border-t border-mkt-border bg-mkt-background py-28 sm:py-36 lg:py-44"
     >
-      <div className="mx-auto px-5 sm:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
+      <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <p
-          className="font-display max-w-4xl text-2xl font-medium leading-[1.35] tracking-[-0.03em] sm:text-3xl lg:text-[2.35rem] lg:leading-[1.28]"
-          style={{ color: reduced ? MKT.textPrimary : MKT.textSecondary }}
+          className={`font-display max-w-4xl text-2xl font-medium leading-[1.35] tracking-[-0.03em] sm:text-3xl lg:text-[2.35rem] lg:leading-[1.28] ${
+            reduced ? 'text-mkt-foreground' : 'text-mkt-secondary'
+          }`}
         >
           {words.map((word, index) => (
             <span key={`${word}-${index}`} data-word className="inline">

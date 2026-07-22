@@ -9,7 +9,6 @@ import HoverMotionCard from '@/components/home/HoverMotionCard';
 import LandingManifestoBand from '@/components/home/LandingManifestoBand';
 import LandingStaggerReveal from '@/components/home/LandingStaggerReveal';
 import { bindHoverMotion } from '@/lib/landing-motion';
-import { MKT } from '@/lib/marketing-design';
 import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
@@ -50,14 +49,12 @@ function TestimonialCarousel() {
   );
 
   return (
-    <div className="border-t py-24 sm:py-28 lg:py-32" style={{ borderColor: MKT.border }}>
-      <div className="mx-auto px-5 sm:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
+    <div className="border-t border-mkt-border py-24 sm:py-28 lg:py-32">
+      <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <div className="mb-10 flex items-end justify-between gap-6">
-          <p className="text-xs font-medium uppercase tracking-[0.14em]" style={{ color: MKT.textSecondary }}>
-            From agents
-          </p>
+          <p className="text-xs font-medium uppercase tracking-[0.14em] text-mkt-secondary">From agents</p>
           <div className="flex items-center gap-2">
-            <span className="text-sm tabular-nums" style={{ color: MKT.textSecondary }}>
+            <span className="text-sm tabular-nums text-mkt-secondary">
               {index + 1} / {total}
             </span>
             <NavArrowButton label="Previous testimonial" onClick={goPrev}>
@@ -72,47 +69,33 @@ function TestimonialCarousel() {
         <div ref={contentRef}>
           <blockquote
             data-testimonial-part
-            className="font-display max-w-3xl text-2xl font-medium leading-[1.32] tracking-[-0.03em] sm:text-3xl lg:text-[2rem]"
-            style={{ color: MKT.textPrimary }}
+            className="font-display max-w-3xl text-2xl font-medium leading-[1.32] tracking-[-0.03em] text-mkt-foreground sm:text-3xl lg:text-[2rem]"
           >
             &ldquo;{testimonial.quote}&rdquo;
           </blockquote>
 
-          <div
-            className="mt-12 grid gap-8 border-t pt-8 sm:grid-cols-[1.4fr_1fr_1fr] sm:gap-0 sm:pt-10"
-            style={{ borderColor: MKT.border }}
-          >
-            <div data-testimonial-part className="sm:border-r sm:pr-10" style={{ borderColor: MKT.border }}>
-              <p className="text-sm font-medium" style={{ color: MKT.textPrimary }}>
-                {testimonial.name}
-              </p>
-              <p className="mt-1 text-sm leading-snug" style={{ color: MKT.textSecondary }}>
-                {testimonial.role}
-              </p>
+          <div className="mt-12 grid gap-8 border-t border-mkt-border pt-8 sm:grid-cols-[1.4fr_1fr_1fr] sm:gap-0 sm:pt-10">
+            <div data-testimonial-part className="sm:border-r sm:border-mkt-border sm:pr-10">
+              <p className="text-sm font-medium text-mkt-foreground">{testimonial.name}</p>
+              <p className="mt-1 text-sm leading-snug text-mkt-secondary">{testimonial.role}</p>
             </div>
-            <div data-testimonial-part className="sm:border-r sm:px-10" style={{ borderColor: MKT.border }}>
+            <div data-testimonial-part className="sm:border-r sm:border-mkt-border sm:px-10">
               <CountUpMetric
                 key={`${testimonial.id}-m1`}
                 value={testimonial.metric}
                 trigger="mount"
-                className="text-3xl font-medium tabular-nums tracking-tight"
-                style={{ color: MKT.textPrimary }}
+                className="text-3xl font-medium tabular-nums tracking-tight text-mkt-foreground"
               />
-              <p className="mt-1 text-sm" style={{ color: MKT.textSecondary }}>
-                {testimonial.metricLabel}
-              </p>
+              <p className="mt-1 text-sm text-mkt-secondary">{testimonial.metricLabel}</p>
             </div>
             <div data-testimonial-part className="sm:pl-10">
               <CountUpMetric
                 key={`${testimonial.id}-m2`}
                 value={testimonial.metric2}
                 trigger="mount"
-                className="text-3xl font-medium tabular-nums tracking-tight"
-                style={{ color: MKT.textPrimary }}
+                className="text-3xl font-medium tabular-nums tracking-tight text-mkt-foreground"
               />
-              <p className="mt-1 text-sm" style={{ color: MKT.textSecondary }}>
-                {testimonial.metricLabel2}
-              </p>
+              <p className="mt-1 text-sm text-mkt-secondary">{testimonial.metricLabel2}</p>
             </div>
           </div>
         </div>
@@ -147,8 +130,7 @@ function NavArrowButton({
       type="button"
       onClick={onClick}
       aria-label={label}
-      className="flex size-9 items-center justify-center border text-sm"
-      style={{ borderColor: MKT.border, borderRadius: 6, color: MKT.textPrimary, backgroundColor: MKT.surface }}
+      className="flex size-9 items-center justify-center rounded-mkt-button border border-mkt-border bg-mkt-surface text-sm text-mkt-foreground"
     >
       {children}
     </button>
@@ -157,51 +139,36 @@ function NavArrowButton({
 
 export default function LandingTrustSection() {
   return (
-    <section style={{ backgroundColor: MKT.background }}>
+    <section className="bg-mkt-background">
       <TestimonialCarousel />
       <LandingManifestoBand />
 
-      <div className="border-t py-24 sm:py-28 lg:py-32" style={{ borderColor: MKT.border }}>
-        <div className="mx-auto px-5 sm:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
+      <div className="border-t border-mkt-border py-24 sm:py-28 lg:py-32">
+        <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
           <LandingStaggerReveal className="mb-14 max-w-xl">
-            <p data-reveal className="text-xs font-medium uppercase tracking-[0.14em]" style={{ color: MKT.textSecondary }}>
+            <p data-reveal className="text-xs font-medium uppercase tracking-[0.14em] text-mkt-secondary">
               Integrations
             </p>
             <h2
               data-reveal
-              className="font-display mt-4 text-2xl font-medium tracking-[-0.03em] sm:text-3xl"
-              style={{ color: MKT.textPrimary }}
+              className="font-display mt-4 text-2xl font-medium tracking-[-0.03em] text-mkt-foreground sm:text-3xl"
             >
               Fits the tools you already use
             </h2>
-            <p data-reveal className="mt-4 text-base leading-[1.65]" style={{ color: MKT.textSecondary }}>
+            <p data-reveal className="mt-4 text-base leading-[1.65] text-mkt-secondary">
               Connect calendars and ad accounts without rebuilding your workflow from scratch.
             </p>
           </LandingStaggerReveal>
 
-          <div
-            className="grid gap-px overflow-hidden border sm:grid-cols-2 lg:grid-cols-4"
-            style={{ borderColor: MKT.border, backgroundColor: MKT.border }}
-          >
+          <div className="grid gap-px overflow-hidden border border-mkt-border bg-mkt-border sm:grid-cols-2 lg:grid-cols-4">
             {INTEGRATIONS.map((item) => (
-              <HoverMotionCard
-                key={item.id}
-                className="flex flex-col gap-4 px-6 py-8"
-                style={{ backgroundColor: MKT.surface }}
-              >
-                <div
-                  className="flex size-11 items-center justify-center"
-                  style={{ borderRadius: 8, backgroundColor: MKT.surfaceMuted }}
-                >
+              <HoverMotionCard key={item.id} className="flex flex-col gap-4 bg-mkt-surface px-6 py-8">
+                <div className="flex size-11 items-center justify-center rounded-lg bg-mkt-surface-muted">
                   <IntegrationLogo id={item.id} className="size-6" />
                 </div>
                 <div>
-                  <p className="text-[15px] font-medium" style={{ color: MKT.textPrimary }}>
-                    {item.name}
-                  </p>
-                  <p className="mt-1.5 text-sm leading-[1.55]" style={{ color: MKT.textSecondary }}>
-                    {item.description}
-                  </p>
+                  <p className="text-[15px] font-medium text-mkt-foreground">{item.name}</p>
+                  <p className="mt-1.5 text-sm leading-[1.55] text-mkt-secondary">{item.description}</p>
                 </div>
               </HoverMotionCard>
             ))}

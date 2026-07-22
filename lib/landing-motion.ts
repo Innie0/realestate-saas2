@@ -2,6 +2,7 @@
 
 import type { RefObject } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap-config';
+import { mktVar } from '@/lib/mkt-css';
 
 export const LANDING_MOTION = {
   ease: 'power2.out',
@@ -132,6 +133,7 @@ export function animateCountUp(
   });
 }
 
+
 /** Smooth nav chrome as user scrolls past the hero. */
 export function bindNavScrollChrome(
   nav: HTMLElement,
@@ -139,8 +141,8 @@ export function bindNavScrollChrome(
   colors: { bg: string; border: string },
 ) {
   gsap.set(nav, {
-    backgroundColor: 'rgba(250, 247, 242, 0)',
-    borderBottomColor: 'rgba(229, 224, 214, 0)',
+    backgroundColor: mktVar('--mkt-nav-transparent-bg'),
+    borderBottomColor: mktVar('--mkt-nav-transparent-border'),
     backdropFilter: 'blur(0px)',
   });
 
@@ -158,8 +160,8 @@ export function bindNavScrollChrome(
     },
     onLeaveBack: () => {
       gsap.to(nav, {
-        backgroundColor: 'rgba(250, 247, 242, 0)',
-        borderBottomColor: 'rgba(229, 224, 214, 0)',
+        backgroundColor: mktVar('--mkt-nav-transparent-bg'),
+        borderBottomColor: mktVar('--mkt-nav-transparent-border'),
         backdropFilter: 'blur(0px)',
         duration: 0.35,
         ease: LANDING_MOTION.ease,

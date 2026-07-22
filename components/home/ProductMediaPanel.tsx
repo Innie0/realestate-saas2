@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import BrowserWindowFrame from '@/components/home/BrowserWindowFrame';
 import ProductScreenshotFrame from '@/components/home/ProductScreenshotFrame';
-import { MKT } from '@/lib/marketing-design';
 import type { LandingFeature } from '@/lib/landing-features';
 
 type ProductMediaPanelProps = {
@@ -30,10 +29,7 @@ export default function ProductMediaPanel({ feature, priority = false }: Product
             onError={() => setVideoFailed(true)}
           />
         </div>
-        <p
-          className="border-t px-4 py-2 text-center text-[11px]"
-          style={{ borderColor: MKT.border, color: MKT.textSecondary }}
-        >
+        <p className="border-t border-mkt-border px-4 py-2 text-center text-[11px] text-mkt-secondary">
           Screen recording — {feature.tag}
         </p>
       </BrowserWindowFrame>

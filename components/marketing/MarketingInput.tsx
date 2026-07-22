@@ -3,7 +3,7 @@
 import { useRef } from 'react';
 import clsx from 'clsx';
 import { ensureGsapRegistered, gsap, useGSAP } from '@/lib/gsap-config';
-import { MKT } from '@/lib/marketing-design';
+import { mktVar } from '@/lib/mkt-css';
 import { useMotionReduced } from '@/lib/motion';
 
 type MarketingInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
@@ -34,14 +34,14 @@ export default function MarketingInput({
 
       const onFocus = () => {
         gsap.to(input, {
-          borderColor: MKT.textPrimary,
+          borderColor: mktVar('--mkt-text-primary'),
           duration: 0.2,
           ease: 'power2.out',
         });
       };
       const onBlur = () => {
         gsap.to(input, {
-          borderColor: error ? '#c4a0a0' : MKT.border,
+          borderColor: error ? mktVar('--mkt-error-border') : mktVar('--mkt-border'),
           duration: 0.2,
           ease: 'power2.out',
         });
@@ -60,32 +60,26 @@ export default function MarketingInput({
   return (
     <div ref={wrapRef} className="w-full">
       {label ? (
-        <label
-          htmlFor={inputId}
-          className="mb-1.5 block text-sm font-medium"
-          style={{ color: MKT.textPrimary }}
-        >
+        <label htmlFor={inputId} className="mb-1.5 block text-sm font-medium text-mkt-foreground">
           {label}
         </label>
       ) : null}
 
       <input
         id={inputId}
-        className={clsx('mkt-input', error && 'mkt-input--error', className)}
+        className={clsx('mkt-input', error && 'border-[var(--mkt-error-border)]', className)}
         aria-invalid={error ? true : undefined}
         {...props}
       />
 
       {error ? (
-        <p className="mt-1.5 text-sm" style={{ color: MKT.tag.amber.text }} role="alert">
+        <p className="mt-1.5 text-sm text-mkt-tag-amber-text" role="alert">
           {error}
         </p>
       ) : null}
 
       {helperText && !error ? (
-        <p className="mt-1.5 text-sm" style={{ color: MKT.textSecondary }}>
-          {helperText}
-        </p>
+        <p className="mt-1.5 text-sm text-mkt-secondary">{helperText}</p>
       ) : null}
     </div>
   );

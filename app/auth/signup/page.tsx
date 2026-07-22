@@ -9,7 +9,6 @@ import AuthAlert from '@/components/marketing/AuthAlert';
 import AuthPageMotion, { AuthFormMotion, AuthTrialBadge } from '@/components/marketing/AuthPageMotion';
 import AuthSubmitButton from '@/components/marketing/AuthSubmitButton';
 import MarketingInput from '@/components/marketing/MarketingInput';
-import { MKT } from '@/lib/marketing-design';
 import { signUpWithEmail, signInWithGoogle, supabase } from '@/lib/supabase';
 import { PRO_MONTHLY_PRICE_ID, STARTER_MONTHLY_PRICE_ID } from '@/lib/pricing';
 
@@ -172,13 +171,10 @@ function SignUpForm() {
           <div className="mb-4 flex justify-center">
             <AuthTrialBadge />
           </div>
-          <h1
-            className="font-display text-3xl font-medium tracking-[-0.03em] sm:text-4xl"
-            style={{ color: MKT.textPrimary }}
-          >
+          <h1 className="font-display text-3xl font-medium tracking-[-0.03em] text-mkt-foreground sm:text-4xl">
             Create your account
           </h1>
-          <p className="mt-2 text-sm sm:text-base" style={{ color: MKT.textSecondary }}>
+          <p className="mt-2 text-sm text-mkt-secondary sm:text-base">
             Set up your account, then start your 7-day free trial — no charge until the trial ends.
           </p>
         </div>
@@ -250,15 +246,13 @@ function SignUpForm() {
                 />
                 <label
                   htmlFor="terms-agreement"
-                  className="cursor-pointer text-sm leading-relaxed"
-                  style={{ color: MKT.textSecondary }}
+                  className="cursor-pointer text-sm leading-relaxed text-mkt-secondary"
                 >
                   I agree to the{' '}
                   <Link
                     href="/terms"
                     target="_blank"
-                    className="font-medium underline-offset-2 transition-opacity hover:opacity-70 hover:underline"
-                    style={{ color: MKT.textPrimary }}
+                    className="font-medium text-mkt-foreground underline-offset-2 transition-opacity hover:opacity-70 hover:underline"
                   >
                     Terms of Service
                   </Link>{' '}
@@ -266,8 +260,7 @@ function SignUpForm() {
                   <Link
                     href="/privacy"
                     target="_blank"
-                    className="font-medium underline-offset-2 transition-opacity hover:opacity-70 hover:underline"
-                    style={{ color: MKT.textPrimary }}
+                    className="font-medium text-mkt-foreground underline-offset-2 transition-opacity hover:opacity-70 hover:underline"
                   >
                     Privacy Policy
                   </Link>
@@ -287,14 +280,12 @@ function SignUpForm() {
 
             <p
               data-auth-part
-              className="mt-6 text-center text-sm"
-              style={{ color: MKT.textSecondary }}
+              className="mt-6 text-center text-sm text-mkt-secondary"
             >
               Already have an account?{' '}
               <Link
                 href="/auth/login"
-                className="font-medium transition-opacity hover:opacity-70"
-                style={{ color: MKT.textPrimary }}
+                className="font-medium text-mkt-foreground transition-opacity hover:opacity-70"
               >
                 Sign in
               </Link>

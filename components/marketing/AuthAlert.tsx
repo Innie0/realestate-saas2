@@ -1,7 +1,6 @@
 'use client';
 
 import clsx from 'clsx';
-import { MKT } from '@/lib/marketing-design';
 
 type AuthAlertProps = {
   children: React.ReactNode;
@@ -14,13 +13,12 @@ export default function AuthAlert({ children, variant = 'error' }: AuthAlertProp
   return (
     <div
       role="alert"
-      className={clsx('mb-5 px-4 py-3 text-sm leading-snug')}
-      style={{
-        borderRadius: MKT.radius.button,
-        border: `1px solid ${isError ? '#e8c4c4' : MKT.border}`,
-        backgroundColor: isError ? MKT.tag.amber.bg : MKT.surfaceMuted,
-        color: isError ? MKT.tag.amber.text : MKT.textSecondary,
-      }}
+      className={clsx(
+        'mb-5 rounded-mkt-button px-4 py-3 text-sm leading-snug',
+        isError
+          ? 'border border-[var(--mkt-error-surface-border)] bg-mkt-tag-amber-bg text-mkt-tag-amber-text'
+          : 'border border-mkt-border bg-mkt-surface-muted text-mkt-secondary',
+      )}
     >
       {children}
     </div>

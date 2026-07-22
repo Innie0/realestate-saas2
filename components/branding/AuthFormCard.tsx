@@ -3,7 +3,6 @@
 import { useRef } from 'react';
 import { ensureGsapRegistered, useGSAP } from '@/lib/gsap-config';
 import { bindHoverMotion } from '@/lib/landing-motion';
-import { MKT } from '@/lib/marketing-design';
 import { useMotionReduced } from '@/lib/motion';
 
 type AuthFormCardProps = {
@@ -14,14 +13,7 @@ ensureGsapRegistered();
 
 export default function AuthFormCard({ children }: AuthFormCardProps) {
   return (
-    <div
-      className="p-6 sm:p-8"
-      style={{
-        borderRadius: MKT.radius.card,
-        border: `1px solid ${MKT.border}`,
-        backgroundColor: MKT.surface,
-      }}
-    >
+    <div className="rounded-mkt-card border border-mkt-border bg-mkt-surface p-6 sm:p-8">
       {children}
     </div>
   );
@@ -51,13 +43,7 @@ export function AuthGoogleButton({
       type="button"
       onClick={onClick}
       data-auth-part
-      className="flex w-full items-center justify-center gap-3 px-4 py-3 text-sm font-medium will-change-transform"
-      style={{
-        borderRadius: MKT.radius.button,
-        border: `1px solid ${MKT.border}`,
-        backgroundColor: MKT.surface,
-        color: MKT.textPrimary,
-      }}
+      className="flex w-full items-center justify-center gap-3 rounded-mkt-button border border-mkt-border bg-mkt-surface px-4 py-3 text-sm font-medium text-mkt-foreground will-change-transform"
     >
       <svg className="size-5 shrink-0" viewBox="0 0 24 24" aria-hidden>
         <path
@@ -86,12 +72,10 @@ export function AuthDivider({ label }: { label: string }) {
   return (
     <div className="relative my-6" data-auth-part>
       <div className="absolute inset-0 flex items-center">
-        <div className="w-full border-t" style={{ borderColor: MKT.border }} />
+        <div className="w-full border-t border-mkt-border" />
       </div>
       <div className="relative flex justify-center text-sm">
-        <span className="px-3" style={{ backgroundColor: MKT.surface, color: MKT.textSecondary }}>
-          {label}
-        </span>
+        <span className="bg-mkt-surface px-3 text-mkt-secondary">{label}</span>
       </div>
     </div>
   );

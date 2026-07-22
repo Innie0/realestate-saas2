@@ -117,17 +117,37 @@
   --champagne-800: #efe2c8;
   --champagne-900: #f8f2e6;
 
-  /* Marketing aliases */
-  --mkt-background: var(--canvas);
-  --mkt-surface: var(--surface);
-  --mkt-text-primary: var(--gray-950);
-  --mkt-text-secondary: #999999;
-  --mkt-border: var(--border);
-  --mkt-accent: var(--brand-500);
-  --mkt-accent-hover: var(--brand-600);
-  --mkt-accent-foreground: var(--brand-foreground);
-  --mkt-muted: #666666;
+  /* Marketing — Forest Canopy (warm cream canvas + deep forest accent).
+     Namespaced separately from dashboard lime; consumed via mkt-* Tailwind utilities. */
+  --mkt-background: #faf7f2;
+  --mkt-surface: #fffcf7;
+  --mkt-surface-muted: #f3f0ea;
+  --mkt-text-primary: #1a2e1a;
+  --mkt-text-secondary: #5c665c;
+  --mkt-border: #e5e0d6;
+  --mkt-accent: #15803d;
+  --mkt-accent-hover: #166534;
+  --mkt-accent-foreground: #ffffff;
+  --mkt-muted: #8a938a;
   --mkt-mock-surface: #ffffff;
+  --mkt-browser-dot: #d4cfc4;
+  --mkt-error-border: #c4a0a0;
+  --mkt-error-surface-border: #e8c4c4;
+  --mkt-tag-green-bg: #e8f0e8;
+  --mkt-tag-green-text: #1b4332;
+  --mkt-tag-blue-bg: #e8ede8;
+  --mkt-tag-blue-text: #2d4a35;
+  --mkt-tag-amber-bg: #f5efe6;
+  --mkt-tag-amber-text: #7a5c3a;
+  --mkt-nav-scrolled-bg: rgba(250, 247, 242, 0.92);
+  --mkt-nav-menu-bg: rgba(250, 247, 242, 0.96);
+  --mkt-nav-transparent-bg: rgba(250, 247, 242, 0);
+  --mkt-nav-transparent-border: rgba(229, 224, 214, 0);
+  --mkt-hero-glow: rgba(232, 240, 232, 0.9);
+  --mkt-max-content-width: 70rem;
+  --mkt-radius-button: 6px;
+  --mkt-radius-card: 12px;
+  --mkt-radius-browser: 12px;
 }
 
 /* Disable color/border transitions while flipping theme so light borders
@@ -343,18 +363,6 @@ html[data-dashboard-theme='light'] .dashboard-root,
 
   /* Marketing chrome — Geist body, editorial serif for display */
   .marketing-root {
-    --mkt-background: #faf7f2;
-    --mkt-surface: #fffcf7;
-    --mkt-surface-muted: #f3f0ea;
-    --mkt-text-primary: #1a2e1a;
-    --mkt-text-secondary: #5c665c;
-    --mkt-border: #e5e0d6;
-    --mkt-accent: #15803d;
-    --mkt-accent-hover: #166534;
-    --mkt-accent-foreground: #ffffff;
-    --mkt-muted: #8a938a;
-    --mkt-mock-surface: #ffffff;
-
     font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
     color: var(--mkt-text-primary);
     background-color: var(--mkt-background);
@@ -409,20 +417,10 @@ html[data-dashboard-theme='light'] .dashboard-root,
 }
 
 @layer components {
-  .mkt-cta {
-    background-color: var(--mkt-accent);
-    color: var(--mkt-accent-foreground);
-    transition: background-color 0.2s ease;
-  }
-
-  .mkt-cta:hover {
-    background-color: var(--mkt-accent-hover);
-  }
-
   .mkt-input {
     display: block;
     width: 100%;
-    border-radius: 6px;
+    border-radius: var(--mkt-radius-button);
     border: 1px solid var(--mkt-border);
     background-color: var(--mkt-surface);
     color: var(--mkt-text-primary);
@@ -443,7 +441,7 @@ html[data-dashboard-theme='light'] .dashboard-root,
   }
 
   .mkt-input--error {
-    border-color: #c4a0a0;
+    border-color: var(--mkt-error-border);
     background-color: var(--mkt-surface);
   }
 

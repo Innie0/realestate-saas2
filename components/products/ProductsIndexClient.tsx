@@ -15,7 +15,7 @@ import {
   getPublishedProducts,
   PRODUCTS_BY_ID,
 } from '@/lib/products';
-import { MKT, mktEnterReveal } from '@/lib/marketing-design';
+import { mktEnterReveal } from '@/lib/marketing-design';
 import { useMotionReduced } from '@/lib/motion';
 
 export default function ProductsIndexClient() {
@@ -31,30 +31,24 @@ export default function ProductsIndexClient() {
   }, [router]);
 
   return (
-    <div className="marketing-root min-h-screen font-sans" style={{ backgroundColor: MKT.background }}>
+    <div className="marketing-root min-h-screen bg-mkt-background font-sans text-mkt-foreground">
       <MarketingSubpageHeader />
 
       <main>
-        <section className="border-b py-16 lg:py-24" style={{ borderColor: MKT.border, backgroundColor: MKT.background }}>
+        <section className="border-b border-mkt-border bg-mkt-background py-16 lg:py-24">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <motion.div {...mktEnterReveal(reduced)} className="mx-auto max-w-3xl text-center">
-              <p className="mb-4 text-xs font-medium uppercase tracking-[0.12em]" style={{ color: MKT.textSecondary }}>
+              <p className="mb-4 text-xs font-medium uppercase tracking-[0.12em] text-mkt-secondary">
                 Products
               </p>
-              <h1
-                className="text-4xl font-medium tracking-[-0.02em] sm:text-5xl"
-                style={{ color: MKT.textPrimary }}
-              >
+              <h1 className="text-4xl font-medium tracking-[-0.02em] text-mkt-foreground sm:text-5xl">
                 Everything in Oikaro
               </h1>
-              <p className="mt-5 text-lg leading-[1.6]" style={{ color: MKT.textSecondary }}>
+              <p className="mt-5 text-lg leading-[1.6] text-mkt-secondary">
                 Pick a product to learn how it fits your workflow — listings, leads, CRM, deals, and more.
               </p>
               <Link href="/auth/signup" className="mt-8 inline-block">
-                <span
-                  className="mkt-cta inline-flex items-center gap-2 px-6 py-3 text-sm font-medium transition-opacity hover:opacity-90"
-                  style={{ borderRadius: MKT.radius.button }}
-                >
+                <span className="inline-flex items-center gap-2 rounded-mkt-button bg-mkt-accent px-6 py-3 text-sm font-medium text-mkt-accent-foreground transition-colors hover:bg-mkt-accent-hover">
                   Get started free
                   <ArrowRight className="h-4 w-4" />
                 </span>
@@ -63,7 +57,7 @@ export default function ProductsIndexClient() {
           </div>
         </section>
 
-        {PRODUCT_CATEGORIES.map((category, categoryIndex) => {
+        {PRODUCT_CATEGORIES.map((category) => {
           const features = category.featureIds
             .map((id) => PRODUCTS_BY_ID[id])
             .filter((f) => f && publishedIds.has(f.id));
@@ -71,22 +65,13 @@ export default function ProductsIndexClient() {
           if (features.length === 0) return null;
 
           return (
-            <section
-              key={category.id}
-              className="border-b py-16 lg:py-20"
-              style={{
-                borderColor: MKT.border,
-                backgroundColor: MKT.background,
-              }}
-            >
+            <section key={category.id} className="border-b border-mkt-border bg-mkt-background py-16 lg:py-20">
               <div className="mx-auto max-w-7xl px-6 lg:px-8">
                 <div className="mb-10 max-w-2xl">
-                  <p className="mb-2 text-xs font-medium uppercase tracking-[0.12em]" style={{ color: MKT.textSecondary }}>
+                  <p className="mb-2 text-xs font-medium uppercase tracking-[0.12em] text-mkt-secondary">
                     {category.label}
                   </p>
-                  <p className="text-lg leading-[1.6]" style={{ color: MKT.textSecondary }}>
-                    {category.description}
-                  </p>
+                  <p className="text-lg leading-[1.6] text-mkt-secondary">{category.description}</p>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -94,14 +79,9 @@ export default function ProductsIndexClient() {
                     <motion.div key={feature.id} {...mktEnterReveal(reduced, i * 0.05)}>
                       <Link
                         href={getProductHref(feature.id)}
-                        className="group flex h-full flex-col overflow-hidden transition-opacity hover:opacity-95"
-                        style={{
-                          borderRadius: MKT.radius.card,
-                          border: `1px solid ${MKT.border}`,
-                          backgroundColor: MKT.surface,
-                        }}
+                        className="group flex h-full flex-col overflow-hidden rounded-mkt-card border border-mkt-border bg-mkt-surface transition-opacity hover:opacity-95"
                       >
-                        <div className="relative aspect-[16/10] w-full overflow-hidden border-b" style={{ borderColor: MKT.border }}>
+                        <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-mkt-border">
                           <Image
                             src={feature.imageSrc}
                             alt={feature.imageAlt}
@@ -111,22 +91,16 @@ export default function ProductsIndexClient() {
                           />
                         </div>
                         <div className="flex flex-1 flex-col p-5">
-                          <p className="text-xs font-medium uppercase tracking-[0.12em]" style={{ color: MKT.textSecondary }}>
+                          <p className="text-xs font-medium uppercase tracking-[0.12em] text-mkt-secondary">
                             {feature.tag}
                           </p>
-                          <h2
-                            className="mt-2 text-lg font-medium tracking-[-0.02em] transition-opacity group-hover:opacity-80"
-                            style={{ color: MKT.textPrimary }}
-                          >
+                          <h2 className="mt-2 text-lg font-medium tracking-[-0.02em] text-mkt-foreground transition-opacity group-hover:opacity-80">
                             {feature.title}
                           </h2>
-                          <p className="mt-2 flex-1 text-sm leading-[1.6]" style={{ color: MKT.textSecondary }}>
+                          <p className="mt-2 flex-1 text-sm leading-[1.6] text-mkt-secondary">
                             {getProductCardSummary(feature)}
                           </p>
-                          <span
-                            className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium transition-opacity group-hover:opacity-80"
-                            style={{ color: MKT.textPrimary }}
-                          >
+                          <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-mkt-foreground transition-opacity group-hover:opacity-80">
                             Learn more
                             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                           </span>
@@ -140,33 +114,22 @@ export default function ProductsIndexClient() {
           );
         })}
 
-        <section className="py-20 lg:py-24" style={{ backgroundColor: MKT.background }}>
+        <section className="bg-mkt-background py-20 lg:py-24">
           <div className="mx-auto max-w-7xl px-6 text-center lg:px-8">
-            <h2 className="text-3xl font-medium tracking-[-0.02em] sm:text-4xl" style={{ color: MKT.textPrimary }}>
+            <h2 className="text-3xl font-medium tracking-[-0.02em] text-mkt-foreground sm:text-4xl">
               Ready to replace your patchwork stack?
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-lg leading-[1.6]" style={{ color: MKT.textSecondary }}>
+            <p className="mx-auto mt-4 max-w-xl text-lg leading-[1.6] text-mkt-secondary">
               Start free and run your whole business from one workspace.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               <Link href="/auth/signup">
-                <span
-                  className="mkt-cta inline-flex items-center gap-2 px-6 py-3 text-sm font-medium transition-opacity hover:opacity-90"
-                  style={{ borderRadius: MKT.radius.button }}
-                >
+                <span className="inline-flex items-center gap-2 rounded-mkt-button bg-mkt-accent px-6 py-3 text-sm font-medium text-mkt-accent-foreground transition-colors hover:bg-mkt-accent-hover">
                   Get started free
                 </span>
               </Link>
               <Link href="/pricing">
-                <span
-                  className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium transition-opacity hover:opacity-90"
-                  style={{
-                    borderRadius: MKT.radius.button,
-                    border: `1px solid ${MKT.border}`,
-                    backgroundColor: MKT.surface,
-                    color: MKT.textPrimary,
-                  }}
-                >
+                <span className="inline-flex items-center gap-2 rounded-mkt-button border border-mkt-border bg-mkt-surface px-6 py-3 text-sm font-medium text-mkt-foreground transition-opacity hover:opacity-90">
                   View pricing
                 </span>
               </Link>

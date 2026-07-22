@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { MKT } from '@/lib/marketing-design';
 
 interface AuthLogoProps {
   className?: string;
@@ -11,8 +10,7 @@ export default function AuthLogo({ centered = true }: AuthLogoProps) {
   const mark = (
     <Link
       href="/"
-      className="font-display text-3xl font-medium tracking-[-0.03em] transition-opacity hover:opacity-70 sm:text-4xl"
-      style={{ color: MKT.textPrimary }}
+      className="font-display text-3xl font-medium tracking-[-0.03em] text-mkt-foreground transition-opacity hover:opacity-70 sm:text-4xl"
     >
       Oikaro
     </Link>

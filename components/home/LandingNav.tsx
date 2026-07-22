@@ -7,7 +7,7 @@ import ProductsMegaMenu from '@/components/marketing/ProductsMegaMenu';
 import MarketingButton from '@/components/marketing/MarketingButton';
 import { ensureGsapRegistered, gsap, landingRevealDefaults, useGSAP } from '@/lib/gsap-config';
 import { bindNavScrollChrome } from '@/lib/landing-motion';
-import { MKT } from '@/lib/marketing-design';
+import { mktVar } from '@/lib/mkt-css';
 import { useMotionReduced } from '@/lib/motion';
 
 type LandingNavProps = {
@@ -60,8 +60,8 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
       if (reduced || !nav || !hero) return;
 
       return bindNavScrollChrome(nav, hero, {
-        bg: MKT.navScrolledBg,
-        border: MKT.border,
+        bg: mktVar('--mkt-nav-scrolled-bg'),
+        border: mktVar('--mkt-border'),
       });
     },
     { dependencies: [heroRef, reduced] },
@@ -74,8 +74,8 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
 
       if (menuOpen) {
         gsap.to(nav, {
-          backgroundColor: MKT.navMenuBg,
-          borderBottomColor: MKT.border,
+          backgroundColor: mktVar('--mkt-nav-menu-bg'),
+          borderBottomColor: mktVar('--mkt-border'),
           backdropFilter: 'blur(14px)',
           duration: 0.3,
           ease: landingRevealDefaults.ease,
@@ -93,12 +93,11 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
         hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0',
       )}
     >
-      <div className="mx-auto px-5 sm:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
+      <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <div className="flex h-16 items-center justify-between gap-4 sm:h-[4.5rem]">
           <Link
             href="/"
-            className="truncate text-[1.05rem] font-medium tracking-[-0.02em] transition-opacity hover:opacity-70 sm:text-lg"
-            style={{ color: MKT.textPrimary }}
+            className="truncate text-[1.05rem] font-medium tracking-[-0.02em] text-mkt-foreground transition-opacity hover:opacity-70 sm:text-lg"
           >
             Oikaro
           </Link>
@@ -107,8 +106,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
             <ProductsMegaMenu onSolidBackground={menuOpen} onOpenChange={setMenuOpen} />
             <Link
               href="/auth/login"
-              className="hidden px-3 py-2 text-sm font-medium transition-opacity hover:opacity-70 md:inline-flex"
-              style={{ color: MKT.textSecondary }}
+              className="hidden px-3 py-2 text-sm font-medium text-mkt-secondary transition-opacity hover:opacity-70 md:inline-flex"
             >
               Sign in
             </Link>

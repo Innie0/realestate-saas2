@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import BrowserWindowFrame from '@/components/home/BrowserWindowFrame';
-import { MKT, mktEnterReveal } from '@/lib/marketing-design';
+import { mktEnterReveal } from '@/lib/marketing-design';
 import { useMotionReduced } from '@/lib/motion';
 
 type ProductScreenshotFrameProps = {
@@ -17,19 +17,12 @@ type ProductScreenshotFrameProps = {
 
 function PlaceholderPanel({ label }: { label: string }) {
   return (
-    <div
-      className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center"
-      style={{ backgroundColor: MKT.background }}
-    >
-      <p className="mb-2 text-xs font-medium uppercase tracking-[0.12em]" style={{ color: MKT.textSecondary }}>
+    <div className="absolute inset-0 flex flex-col items-center justify-center bg-mkt-background p-8 text-center">
+      <p className="mb-2 text-xs font-medium uppercase tracking-[0.12em] text-mkt-secondary">
         Screenshot
       </p>
-      <p className="text-sm font-medium max-w-[220px]" style={{ color: MKT.textPrimary }}>
-        {label}
-      </p>
-      <p className="mt-2 text-[11px]" style={{ color: MKT.muted }}>
-        Replace PNG in public/landing/
-      </p>
+      <p className="max-w-[220px] text-sm font-medium text-mkt-foreground">{label}</p>
+      <p className="mt-2 text-[11px] text-mkt-muted">Replace PNG in public/landing/</p>
     </div>
   );
 }

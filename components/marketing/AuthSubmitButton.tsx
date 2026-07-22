@@ -1,7 +1,6 @@
 'use client';
 
 import clsx from 'clsx';
-import { MKT } from '@/lib/marketing-design';
 
 type AuthSubmitButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   isLoading?: boolean;
@@ -21,10 +20,9 @@ export default function AuthSubmitButton({
       type="submit"
       disabled={disabled || isLoading}
       className={clsx(
-        'mkt-cta flex w-full items-center justify-center gap-2 py-3 text-sm font-medium transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40',
+        'flex w-full items-center justify-center gap-2 rounded-mkt-button bg-mkt-accent py-3 text-sm font-medium text-mkt-accent-foreground transition-colors hover:bg-mkt-accent-hover disabled:cursor-not-allowed disabled:opacity-40',
         className,
       )}
-      style={{ borderRadius: MKT.radius.button }}
       {...props}
     >
       {isLoading ? (

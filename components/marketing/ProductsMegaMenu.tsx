@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { PRODUCT_MENU_COLUMNS } from '@/lib/product-menu';
-import { MKT } from '@/lib/marketing-design';
 import { useMotionReduced } from '@/lib/motion';
 
 type ProductsMegaMenuProps = {
@@ -123,26 +122,15 @@ export default function ProductsMegaMenu({
                     animate={reduced ? undefined : { opacity: 1, y: 0 }}
                     exit={reduced ? undefined : { opacity: 0, y: -6 }}
                     transition={{ duration: 0.28, ease: [0.25, 0.1, 0.25, 1] }}
-                    className="pointer-events-auto w-full"
-                    style={{ maxWidth: MKT.maxContentWidth }}
+                    className="pointer-events-auto w-full max-w-mkt-content"
                     onMouseEnter={handleEnter}
                     onMouseLeave={() => scheduleClose(80)}
                   >
-                    <div
-                      className="overflow-hidden p-3 sm:p-4"
-                      style={{
-                        borderRadius: MKT.radius.card,
-                        border: `1px solid ${MKT.border}`,
-                        backgroundColor: MKT.surface,
-                      }}
-                    >
+                    <div className="overflow-hidden rounded-mkt-card border border-mkt-border bg-mkt-surface p-3 sm:p-4">
                       <div className="grid gap-6 p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-4 lg:gap-4">
                         {PRODUCT_MENU_COLUMNS.map((column) => (
                           <div key={column.id} className="min-w-0">
-                            <p
-                              className="mb-3 font-mono text-[10px] font-semibold uppercase tracking-[0.14em]"
-                              style={{ color: MKT.textSecondary }}
-                            >
+                            <p className="mb-3 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-mkt-secondary">
                               {column.label}
                             </p>
                             <ul className="space-y-0.5">
@@ -151,19 +139,12 @@ export default function ProductsMegaMenu({
                                   <Link
                                     href={tool.href}
                                     onClick={handleClose}
-                                    className="group block px-3 py-2 transition-colors hover:bg-[var(--surface)]/[0.05]"
-                                    style={{ borderRadius: MKT.radius.button }}
+                                    className="group block rounded-mkt-button px-3 py-2 transition-colors hover:bg-[var(--surface)]/[0.05]"
                                   >
-                                    <span
-                                      className="block text-[14px] font-medium leading-snug transition-opacity group-hover:opacity-70"
-                                      style={{ color: MKT.textPrimary }}
-                                    >
+                                    <span className="block text-[14px] font-medium leading-snug text-mkt-foreground transition-opacity group-hover:opacity-70">
                                       {tool.name}
                                     </span>
-                                    <span
-                                      className="mt-0.5 block text-[12px] leading-snug"
-                                      style={{ color: MKT.textSecondary }}
-                                    >
+                                    <span className="mt-0.5 block text-[12px] leading-snug text-mkt-secondary">
                                       {tool.summary}
                                     </span>
                                   </Link>
@@ -193,8 +174,7 @@ export default function ProductsMegaMenu({
       >
         <Link
           href="/products"
-          className={`${triggerClass} inline-flex items-center gap-1 px-3 py-2 text-xs sm:gap-1.5 sm:text-sm`}
-          style={{ color: MKT.textSecondary }}
+          className={`${triggerClass} inline-flex items-center gap-1 px-3 py-2 text-xs text-mkt-secondary sm:gap-1.5 sm:text-sm`}
           aria-expanded={open}
           aria-haspopup="true"
         >

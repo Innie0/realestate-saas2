@@ -3,7 +3,6 @@
 import { useRef } from 'react';
 import clsx from 'clsx';
 import { ensureGsapRegistered, gsap, useGSAP } from '@/lib/gsap-config';
-import { MKT } from '@/lib/marketing-design';
 import { useMotionReduced } from '@/lib/motion';
 
 type AuthPageMotionProps = {
@@ -68,14 +67,7 @@ export function AuthFormMotion({ children, className }: AuthPageMotionProps) {
 
 export function AuthTrialBadge() {
   return (
-    <span
-      className="inline-flex items-center px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.1em]"
-      style={{
-        borderRadius: 9999,
-        backgroundColor: MKT.tag.green.bg,
-        color: MKT.tag.green.text,
-      }}
-    >
+    <span className="inline-flex items-center rounded-full bg-mkt-tag-green-bg px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.1em] text-mkt-tag-green-text">
       7-day free trial
     </span>
   );

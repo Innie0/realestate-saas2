@@ -11,7 +11,6 @@ import LandingPricingSection from '@/components/home/LandingPricingSection';
 import LandingCTABand from '@/components/home/LandingCTABand';
 import LandingFooter from '@/components/home/LandingFooter';
 import { supabase } from '@/lib/supabase';
-import { MKT } from '@/lib/marketing-design';
 
 export default function HomePageClient() {
   const router = useRouter();
@@ -43,10 +42,7 @@ export default function HomePageClient() {
   }, [router]);
 
   return (
-    <div
-      className="marketing-root min-h-screen overflow-x-hidden"
-      style={{ color: MKT.textPrimary, backgroundColor: MKT.background }}
-    >
+    <div className="marketing-root min-h-screen overflow-x-hidden bg-mkt-background text-mkt-foreground">
       <LandingNav heroRef={heroRef} />
       <LandingHero sectionRef={heroRef} />
       <LandingFeatureSections />

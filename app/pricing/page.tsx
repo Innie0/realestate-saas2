@@ -12,7 +12,7 @@ import PricingFeatureList from '@/components/PricingFeatureList';
 import PricingComparisonTable from '@/components/PricingComparisonTable';
 import { supabase } from '@/lib/supabase';
 import { hasRealStripeSubscription, isAdminEmail } from '@/lib/subscription';
-import { MKT, mktEnterReveal } from '@/lib/marketing-design';
+import { mktEnterReveal } from '@/lib/marketing-design';
 import { useMotionReduced } from '@/lib/motion';
 import {
   type BillingInterval,
@@ -91,80 +91,65 @@ export default function PricingPage() {
   }, [router]);
 
   return (
-    <div className="marketing-root min-h-screen font-sans" style={{ backgroundColor: MKT.background }}>
+    <div className="marketing-root min-h-screen bg-mkt-background font-sans text-mkt-foreground">
       <MarketingSubpageHeader />
 
       {isLoading && (
         <div className="flex items-center justify-center py-40">
-          <Loader2 className="h-8 w-8 animate-spin" style={{ color: MKT.textPrimary }} />
+          <Loader2 className="h-8 w-8 animate-spin text-mkt-foreground" />
         </div>
       )}
 
       {!isLoading && (
         <main>
-          <section className="border-b py-16 lg:py-24" style={{ borderColor: MKT.border, backgroundColor: MKT.surface }}>
-            <div className="mx-auto px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
+          <section className="border-b border-mkt-border bg-mkt-surface py-16 lg:py-24">
+            <div className="mx-auto max-w-mkt-content px-6 lg:px-8">
               <motion.div {...mktEnterReveal(reduced)} className="mx-auto max-w-3xl text-center">
-                <span
-                  className="mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-medium"
-                  style={{ borderColor: MKT.border, color: MKT.textSecondary, backgroundColor: MKT.background }}
-                >
+                <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-mkt-border bg-mkt-background px-4 py-1.5 text-xs font-medium text-mkt-secondary">
                   <Sparkles className="h-3.5 w-3.5" />
                   7-day free trial on every plan
                 </span>
-                <h1
-                  className="text-4xl font-medium tracking-[-0.02em] sm:text-5xl lg:text-6xl"
-                  style={{ color: MKT.textPrimary }}
-                >
+                <h1 className="text-4xl font-medium tracking-[-0.02em] text-mkt-foreground sm:text-5xl lg:text-6xl">
                   Choose your plan
                 </h1>
-                <p className="mx-auto mt-4 max-w-xl text-lg leading-[1.6]" style={{ color: MKT.textSecondary }}>
+                <p className="mx-auto mt-4 max-w-xl text-lg leading-[1.6] text-mkt-secondary">
                   Start your free trial today. You won&apos;t be charged until the trial ends.
                 </p>
 
                 {!isAuthenticated ? (
-                  <p className="mt-6 text-sm" style={{ color: MKT.textSecondary }}>
-                    <Link href="/auth/signup" className="font-medium underline-offset-2 hover:underline" style={{ color: MKT.textPrimary }}>
+                  <p className="mt-6 text-sm text-mkt-secondary">
+                    <Link href="/auth/signup" className="font-medium text-mkt-foreground underline-offset-2 hover:underline">
                       Sign in to subscribe
                     </Link>
                   </p>
                 ) : (
-                  <p className="mt-6 truncate text-sm" style={{ color: MKT.textSecondary }}>
-                    Signed in as {userEmail}
-                  </p>
+                  <p className="mt-6 truncate text-sm text-mkt-secondary">Signed in as {userEmail}</p>
                 )}
 
                 {showAnnual && (
-                  <div
-                    className="mt-8 inline-flex items-center gap-1 p-1"
-                    style={{ borderRadius: MKT.radius.card, border: `1px solid ${MKT.border}`, backgroundColor: MKT.background }}
-                  >
+                  <div className="mt-8 inline-flex items-center gap-1 rounded-mkt-card border border-mkt-border bg-mkt-background p-1">
                     <button
                       type="button"
                       onClick={() => setBillingInterval('monthly')}
-                      className="px-4 py-2 text-sm font-medium transition-colors"
-                      style={
+                      className={`px-4 py-2 text-sm font-medium transition-colors ${
                         billingInterval === 'monthly'
-                          ? { borderRadius: MKT.radius.button, backgroundColor: MKT.background, color: MKT.textPrimary }
-                          : { color: MKT.textSecondary }
-                      }
+                          ? 'rounded-mkt-button bg-mkt-background text-mkt-foreground'
+                          : 'text-mkt-secondary'
+                      }`}
                     >
                       Monthly
                     </button>
                     <button
                       type="button"
                       onClick={() => setBillingInterval('annual')}
-                      className="px-4 py-2 text-sm font-medium transition-colors"
-                      style={
+                      className={`px-4 py-2 text-sm font-medium transition-colors ${
                         billingInterval === 'annual'
-                          ? { borderRadius: MKT.radius.button, backgroundColor: MKT.background, color: MKT.textPrimary }
-                          : { color: MKT.textSecondary }
-                      }
+                          ? 'rounded-mkt-button bg-mkt-background text-mkt-foreground'
+                          : 'text-mkt-secondary'
+                      }`}
                     >
                       Annual
-                      <span className="ml-1.5 text-xs font-medium" style={{ color: MKT.textPrimary }}>
-                        Save 2 months
-                      </span>
+                      <span className="ml-1.5 text-xs font-medium text-mkt-foreground">Save 2 months</span>
                     </button>
                   </div>
                 )}
@@ -172,26 +157,20 @@ export default function PricingPage() {
             </div>
           </section>
 
-          <section className="py-16 lg:py-20" style={{ backgroundColor: MKT.background }}>
-            <div className="mx-auto px-6 lg:px-8" style={{ maxWidth: MKT.maxContentWidth }}>
+          <section className="bg-mkt-background py-16 lg:py-20">
+            <div className="mx-auto max-w-mkt-content px-6 lg:px-8">
               <div className="mx-auto grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2 md:items-start">
                 {PLANS.map((plan, i) => (
                   <motion.div
                     key={plan.slug}
                     {...mktEnterReveal(reduced, i * 0.08)}
-                    className="relative p-7"
-                    style={{
-                      borderRadius: MKT.radius.card,
-                      backgroundColor: MKT.background,
-                      border: plan.popular ? `2px solid ${MKT.accent}` : `1px solid ${MKT.border}`,
-                    }}
+                    className={`relative rounded-mkt-card bg-mkt-background p-7 ${
+                      plan.popular ? 'border-2 border-mkt-accent' : 'border border-mkt-border'
+                    }`}
                   >
                     {plan.popular && (
                       <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                        <span
-                          className="mkt-cta inline-flex items-center gap-1.5 px-4 py-1 text-xs font-medium"
-                          style={{ borderRadius: MKT.radius.button }}
-                        >
+                        <span className="inline-flex items-center gap-1.5 rounded-mkt-button bg-mkt-accent px-4 py-1 text-xs font-medium text-mkt-accent-foreground">
                           <Sparkles className="h-3 w-3" />
                           Most Popular
                         </span>
@@ -199,30 +178,24 @@ export default function PricingPage() {
                     )}
 
                     <div className="mb-5">
-                      <h3 className="text-xl font-medium" style={{ color: MKT.textPrimary }}>
-                        {plan.name}
-                      </h3>
-                      <p className="mt-1 text-sm leading-[1.6]" style={{ color: MKT.textSecondary }}>
-                        {plan.description}
-                      </p>
+                      <h3 className="text-xl font-medium text-mkt-foreground">{plan.name}</h3>
+                      <p className="mt-1 text-sm leading-[1.6] text-mkt-secondary">{plan.description}</p>
                     </div>
 
                     <div className="mb-6">
                       <div className="flex items-baseline gap-2">
-                        <span className="text-price text-4xl" style={{ color: MKT.textPrimary }}>
+                        <span className="text-price text-4xl text-mkt-foreground">
                           {getPlanDisplayPrice(plan.slug, billingInterval)}
                         </span>
-                        <span className="text-sm" style={{ color: MKT.textSecondary }}>
-                          {getPlanPeriodLabel(billingInterval)}
-                        </span>
+                        <span className="text-sm text-mkt-secondary">{getPlanPeriodLabel(billingInterval)}</span>
                       </div>
                       {billingInterval === 'annual' && (
-                        <p className="mt-2 text-xs font-medium" style={{ color: MKT.textSecondary }}>
+                        <p className="mt-2 text-xs font-medium text-mkt-secondary">
                           Save ${getAnnualSavings(plan.slug)}/year vs paying monthly
                         </p>
                       )}
                       {billingInterval === 'monthly' && showAnnual && (
-                        <p className="mt-2 text-xs" style={{ color: MKT.textSecondary }}>
+                        <p className="mt-2 text-xs text-mkt-secondary">
                           or {getPlanDisplayPrice(plan.slug, 'annual')}/year (2 months free)
                         </p>
                       )}
@@ -239,9 +212,9 @@ export default function PricingPage() {
                       />
                     </div>
 
-                    <div className="mb-5 border-t" style={{ borderColor: MKT.border }} />
+                    <div className="mb-5 border-t border-mkt-border" />
 
-                    <p className="mb-4 text-xs font-medium uppercase tracking-[0.12em]" style={{ color: MKT.textSecondary }}>
+                    <p className="mb-4 text-xs font-medium uppercase tracking-[0.12em] text-mkt-secondary">
                       What&apos;s included
                     </p>
                     <PricingFeatureList plan={plan.slug} icon="check" tone="marketing" />
@@ -254,29 +227,19 @@ export default function PricingPage() {
               </div>
 
               {!isAuthenticated && (
-                <div
-                  className="mx-auto mt-8 max-w-3xl p-5 text-center"
-                  style={{
-                    borderRadius: MKT.radius.card,
-                    border: `1px solid ${MKT.border}`,
-                    backgroundColor: MKT.background,
-                  }}
-                >
-                  <p className="mb-4 text-sm" style={{ color: MKT.textSecondary }}>
-                    You need an account to subscribe
-                  </p>
+                <div className="mx-auto mt-8 max-w-3xl rounded-mkt-card border border-mkt-border bg-mkt-background p-5 text-center">
+                  <p className="mb-4 text-sm text-mkt-secondary">You need an account to subscribe</p>
                   <button
                     type="button"
                     onClick={() => router.push('/auth/signup')}
-                    className="mkt-cta px-6 py-2.5 text-sm font-medium transition-opacity hover:opacity-90"
-                    style={{ borderRadius: MKT.radius.button }}
+                    className="rounded-mkt-button bg-mkt-accent px-6 py-2.5 text-sm font-medium text-mkt-accent-foreground transition-colors hover:bg-mkt-accent-hover"
                   >
                     Create your account
                   </button>
                 </div>
               )}
 
-              <p className="mt-10 text-center text-sm leading-[1.6]" style={{ color: MKT.textSecondary }}>
+              <p className="mt-10 text-center text-sm leading-[1.6] text-mkt-secondary">
                 {getPricingFootnote()}
               </p>
             </div>
