@@ -70,6 +70,31 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
 
   const events = generateTimelineEvents();
 
+  const getMilestoneStyles = (status: TransactionTimelineEvent['status']) => {
+    switch (status) {
+      case 'completed':
+        return {
+          icon: 'bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200',
+          line: 'bg-emerald-500',
+        };
+      case 'today':
+        return {
+          icon: 'bg-brand-50 text-brand-700 ring-1 ring-brand-200',
+          line: 'bg-brand-500',
+        };
+      case 'overdue':
+        return {
+          icon: 'bg-rose-50 text-rose-600 ring-1 ring-rose-200',
+          line: 'bg-rose-400',
+        };
+      default:
+        return {
+          icon: 'bg-gray-100 text-gray-600',
+          line: 'bg-gray-150',
+        };
+    }
+  };
+
   // Get icon for event type
   const getEventIcon = (type: TransactionTimelineEvent['type']) => {
     switch (type) {
@@ -111,7 +136,7 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
 
     if (!nextEvent) {
       return (
-        <div className="flex items-center text-[13px] text-teal-700">
+        <div className="flex items-center text-[13px] text-emerald-700">
           <CheckCircle2 className="w-4 h-4 mr-1" />
           All milestones completed
         </div>
@@ -137,24 +162,22 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
     <div className="relative">
       {events.map((event, index) => {
         const Icon = getEventIcon(event.type);
-        const isComplete = event.status === 'completed';
+        const styles = getMilestoneStyles(event.status);
         const isLast = index === events.length - 1;
 
         return (
           <div key={event.id + event.date} className="relative flex items-start pb-7 last:pb-0">
-            {/* Vertical line */}
+            {/* Vertical line — green below completed milestones */}
             {!isLast && (
               <div
-                className="absolute left-[17px] top-[34px] w-px bottom-0 bg-gray-150"
+                className={`absolute left-[17px] top-[34px] w-px bottom-0 ${styles.line}`}
                 style={{ transform: 'translateX(-50%)' }}
               />
             )}
 
             {/* Icon circle */}
             <div
-              className={`relative z-10 flex items-center justify-center w-[34px] h-[34px] rounded-full shrink-0 ${
-                isComplete ? 'bg-teal-50 text-teal-700' : 'bg-gray-100 text-gray-600'
-              }`}
+              className={`relative z-10 flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full ${styles.icon}`}
             >
               <Icon className="w-4 h-4" strokeWidth={1.75} />
             </div>
