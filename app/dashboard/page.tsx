@@ -10,7 +10,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/Card';
@@ -28,14 +27,8 @@ import {
 import CountUp from '@/components/motion/CountUp';
 import { fetchUpcomingItems, type UpcomingItem } from '@/components/NotificationsPanel';
 import { DASHBOARD_UPCOMING_KEY } from '@/lib/dashboard-prefetch';
-import PlanUsagePanel, { PlanUsagePanelSkeleton } from '@/components/dashboard/PlanUsagePanel';
-import {
-  ContinuePanelSkeleton,
-  MetricStripSkeleton,
-  NeedsAttentionSkeleton,
-  OpenDealsTableSkeleton,
-  TodayPanelSkeleton,
-} from '@/components/dashboard/DashboardHomeSkeletons';
+import PlanUsagePanel from '@/components/dashboard/PlanUsagePanel';
+import { DashboardHomeContentSkeleton } from '@/components/dashboard/DashboardHomeSkeletons';
 import GettingStartedPanel from '@/components/dashboard/GettingStartedPanel';
 import TransactionStatusBadge from '@/components/transactions/TransactionStatusBadge';
 import { Plus, Home } from 'lucide-react';
@@ -256,11 +249,7 @@ interface AttentionItem {
   href: string;
 }
 
-function NeedsAttention({ items, loading }: { items: AttentionItem[]; loading: boolean }) {
-  if (loading) {
-    return <NeedsAttentionSkeleton />;
-  }
-
+function NeedsAttention({ items }: { items: AttentionItem[] }) {
   if (items.length === 0) return null;
 
   return (
@@ -303,15 +292,7 @@ function formatClosing(date?: string | null): string {
   return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-function OpenDealsTable({
-  transactions,
-  loading,
-}: {
-  transactions: RecentTransaction[];
-  loading: boolean;
-}) {
-  if (loading) return <OpenDealsTableSkeleton />;
-
+function OpenDealsTable({ transactions }: { transactions: RecentTransaction[] }) {
   const deals = transactions.slice(0, 6);
 
   return (
@@ -393,30 +374,7 @@ function isPast(dateString: string): boolean {
   return new Date(dateString).getTime() < Date.now();
 }
 
-function TodayPanel() {
-  const { data: items, isLoading } = useSWR<UpcomingItem[]>(
-    DASHBOARD_UPCOMING_KEY,
-    fetchUpcomingItems,
-    { revalidateOnFocus: false, dedupingInterval: 120_000 },
-  );
-
-  const todayItems = useMemo(() => {
-    if (!items) return [];
-    const now = new Date();
-    return items
-      .filter((item) => {
-        const d = new Date(item.date);
-        return (
-          d.getDate() === now.getDate() &&
-          d.getMonth() === now.getMonth() &&
-          d.getFullYear() === now.getFullYear()
-        );
-      })
-      .slice(0, 5);
-  }, [items]);
-
-  if (isLoading) return <TodayPanelSkeleton />;
-
+function TodayPanel({ items }: { items: UpcomingItem[] }) {
   return (
     <Card className="overflow-hidden p-0" data-tour="notifications">
       <CardHeader className="flex-row items-center justify-between space-y-0">
@@ -425,13 +383,13 @@ function TodayPanel() {
           Calendar →
         </Link>
       </CardHeader>
-      {todayItems.length === 0 ? (
+      {items.length === 0 ? (
         <CardContent>
           <p className="text-sm text-muted-foreground">Nothing scheduled today.</p>
         </CardContent>
       ) : (
         <CardContent className="flex flex-col gap-0 p-0">
-          {todayItems.map((item) => {
+          {items.map((item) => {
             const overdue = item.type === 'reminder' && isPast(item.date);
             const isShowing = item.type === 'event' && item.eventType === 'showing';
             const borderClass = overdue
@@ -463,9 +421,7 @@ function TodayPanel() {
 
 /* ── Continue (right rail) ───────────────────────────────────────────── */
 
-function ContinuePanel({ items, loading }: { items: ContinueListItem[]; loading: boolean }) {
-  if (loading) return <ContinuePanelSkeleton />;
-
+function ContinuePanel({ items }: { items: ContinueListItem[] }) {
   return (
     <Card className="overflow-hidden p-0">
       <CardHeader>
@@ -552,10 +508,23 @@ export default function DashboardHomePage() {
   const { data: allContacts = [], isLoading: contactsLoading } = useApi<RecentClient[]>('/api/clients?status=all');
   const { data: allTransactions = [], isLoading: transactionsLoading } = useApi<RecentTransaction[]>('/api/transactions?status=open');
   const { data: activeReminders = [], isLoading: remindersLoading } = useApi<ReminderRow[]>('/api/reminders?include_completed=false');
+  const { data: upcomingItems, isLoading: todayLoading } = useSWR<UpcomingItem[]>(
+    DASHBOARD_UPCOMING_KEY,
+    fetchUpcomingItems,
+    { revalidateOnFocus: false, dedupingInterval: 120_000 },
+  );
 
   const usage = usageResponse?.data ?? null;
   const plan = (usageResponse?.plan as 'starter' | 'pro') ?? 'starter';
-  const loading = usageLoading && !usage;
+
+  const dashboardReady =
+    !contactsLoading &&
+    !transactionsLoading &&
+    !remindersLoading &&
+    !leadsLoading &&
+    !projectsLoading &&
+    !usageLoading &&
+    !todayLoading;
 
   const hotLeadCount = useMemo(
     () =>
@@ -609,8 +578,25 @@ export default function DashboardHomePage() {
     }).length;
   }, [activeReminders]);
 
-  const metricsLoading =
-    contactsLoading || transactionsLoading || remindersLoading || leadsLoading;
+  const continueListItems = useMemo(
+    () => buildContinueListItems(recentProjects, allTransactions),
+    [recentProjects, allTransactions],
+  );
+
+  const todayItems = useMemo(() => {
+    if (!upcomingItems) return [];
+    const now = new Date();
+    return upcomingItems
+      .filter((item) => {
+        const d = new Date(item.date);
+        return (
+          d.getDate() === now.getDate() &&
+          d.getMonth() === now.getMonth() &&
+          d.getFullYear() === now.getFullYear()
+        );
+      })
+      .slice(0, 5);
+  }, [upcomingItems]);
 
   const leadDelta = newLeads7d - newLeadsPrior7d;
 
@@ -718,15 +704,6 @@ export default function DashboardHomePage() {
     return items;
   }, [hotLeadCount, overdueReminderCount, closingSoonCount, inboxLeads.length]);
 
-  const attentionLoading = leadsLoading || remindersLoading;
-
-  const continueListItems = useMemo(
-    () => buildContinueListItems(recentProjects, allTransactions),
-    [recentProjects, allTransactions],
-  );
-
-  const continueLoading = projectsLoading || transactionsLoading;
-
   // Keyboard shortcuts for quick actions (N / R / A / C).
   const handleShortcut = useCallback(
     (e: KeyboardEvent) => {
@@ -752,7 +729,7 @@ export default function DashboardHomePage() {
 
   useTour({
     tourKey: 'tour_dashboard',
-    ready: !loading,
+    ready: dashboardReady,
     steps: [
       {
         element: '[data-tour="new-project"]',
@@ -815,14 +792,9 @@ export default function DashboardHomePage() {
     localStorage.setItem('oikaro_getting_started_dismissed', '1');
   };
 
-  // Wait for workspace lists to finish loading — otherwise empty defaults flash
-  // the Getting Started card for a frame on every refresh.
-  const workspaceListsReady =
-    !projectsLoading && !leadsLoading && !transactionsLoading;
-
   const showOnboarding =
+    dashboardReady &&
     (showWelcome || showGettingStarted) &&
-    workspaceListsReady &&
     recentProjects.length === 0 &&
     inboxLeads.length === 0 &&
     allTransactions.length === 0;
@@ -834,7 +806,7 @@ export default function DashboardHomePage() {
       subtitle={formatToday()}
       actions={
         <>
-          {overdueReminderCount > 0 && (
+          {dashboardReady && overdueReminderCount > 0 && (
             <span className="hidden sm:inline-flex items-center gap-1.5 rounded-[6px] border border-amber-100 bg-amber-50 px-2.5 py-1 text-[12px] font-medium text-amber-700">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-600" />
               {overdueReminderCount} follow-up{overdueReminderCount === 1 ? '' : 's'} overdue
@@ -849,39 +821,34 @@ export default function DashboardHomePage() {
         </>
       }
     >
-      {showOnboarding && (
-        <GettingStartedPanel
-          variant={showWelcome ? 'welcome' : 'empty'}
-          onDismiss={dismissGettingStarted}
-        />
+      {!dashboardReady ? (
+        <DashboardHomeContentSkeleton />
+      ) : (
+        <>
+          {showOnboarding && (
+            <GettingStartedPanel
+              variant={showWelcome ? 'welcome' : 'empty'}
+              onDismiss={dismissGettingStarted}
+            />
+          )}
+
+          <MetricStrip metrics={metrics} />
+          <NeedsAttention items={attentionItems} />
+
+          <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[auto_minmax(0,1fr)]">
+            <div className="flex min-h-0 w-max max-w-full flex-col self-stretch">
+              <OpenDealsTable transactions={allTransactions} />
+            </div>
+            <div className="flex min-w-0 flex-col gap-4">
+              <TodayPanel items={todayItems} />
+              <ContinuePanel items={continueListItems} />
+              <QuickActionsPanel />
+            </div>
+          </div>
+
+          {usage ? <div data-tour="plan-usage"><PlanUsagePanel usage={usage} plan={plan} layout="full" /></div> : null}
+        </>
       )}
-
-      {/* 1. Business pulse — hot leads, pipeline, new leads, follow-ups */}
-      {metricsLoading ? <MetricStripSkeleton /> : <MetricStrip metrics={metrics} />}
-
-      {/* 2. Action queue */}
-      <NeedsAttention items={attentionItems} loading={attentionLoading} />
-
-      {/* 3. Work area + right rail */}
-      <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[auto_minmax(0,1fr)]">
-        <div className="flex min-h-0 w-max max-w-full flex-col self-stretch">
-          <OpenDealsTable transactions={allTransactions} loading={transactionsLoading} />
-        </div>
-        <div className="flex min-w-0 flex-col gap-4">
-          <TodayPanel />
-          <ContinuePanel items={continueListItems} loading={continueLoading} />
-          <QuickActionsPanel />
-        </div>
-      </div>
-
-      {/* 4. Plan usage — full width */}
-      <div data-tour="plan-usage">
-        {usage ? (
-          <PlanUsagePanel usage={usage} plan={plan} layout="full" />
-        ) : usageLoading ? (
-          <PlanUsagePanelSkeleton layout="full" />
-        ) : null}
-      </div>
     </DashboardPage>
   );
 }
