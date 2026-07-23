@@ -72,8 +72,12 @@ export default function TransactionsPage() {
 
   return (
     <DashboardPage title="Transactions" subtitle="Track deals, milestones, documents, and closing dates">
+      {isLoading ? (
+        <TransactionsPageContentSkeleton />
+      ) : (
+        <>
       <PageToolbar
-        meta={!isLoading && filteredTransactions.length > 0 ? `${filteredTransactions.length} deal${filteredTransactions.length === 1 ? '' : 's'}` : undefined}
+        meta={filteredTransactions.length > 0 ? `${filteredTransactions.length} deal${filteredTransactions.length === 1 ? '' : 's'}` : undefined}
       >
         <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full">
           <SearchInput
@@ -111,9 +115,7 @@ export default function TransactionsPage() {
         </div>
       )}
 
-      {isLoading ? (
-        <TransactionsPageContentSkeleton />
-      ) : filteredTransactions.length === 0 ? (
+      {filteredTransactions.length === 0 ? (
         <Card className="p-0">
           <EmptyState
             icon={Home}
@@ -208,6 +210,8 @@ export default function TransactionsPage() {
             );
           })}
         </StaggerList>
+      )}
+        </>
       )}
     </DashboardPage>
   );

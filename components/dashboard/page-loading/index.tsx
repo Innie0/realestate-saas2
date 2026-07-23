@@ -2,19 +2,26 @@ import Link from 'next/link';
 import clsx from 'clsx';
 import DashboardPage from '@/components/layout/DashboardPage';
 import Button from '@/components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PlanUsagePanelSkeleton } from '@/components/dashboard/PlanUsagePanel';
 import { DashboardHomeContentSkeleton } from '@/components/dashboard/DashboardHomeSkeletons';
+import { ClientsListSkeleton } from '@/components/clients/ClientsListSkeletons';
+import { AdsPageBodySkeleton } from '@/components/dashboard/skeletons/AdsPageSkeleton';
+import { AccountPageBodySkeleton } from '@/components/dashboard/skeletons/AccountFormSkeleton';
+import { CalendarPageBodySkeleton } from '@/components/dashboard/skeletons/CalendarScheduleSkeleton';
+import { PropertyResearchPageBodySkeleton } from '@/components/dashboard/skeletons/PropertyResearchSkeleton';
+import { TasksChatSkeleton } from '@/components/dashboard/skeletons/TasksChatSkeleton';
 import {
   DetailHeroSkeleton,
   DetailTwoColumnSkeleton,
   FormCardsSkeleton,
-  PageToolbarSkeleton,
-  ProjectCardsSkeleton,
-  StackedCardsSkeleton,
-  TableRowsSkeleton,
 } from '@/components/dashboard/skeletons/shared';
+import {
+  LeadsInboxPageSkeleton,
+  LeadsInboxSkeleton,
+} from '@/components/leads/LeadsInboxSkeleton';
+import { ProjectsListSkeleton } from '@/components/projects/ProjectsListSkeletons';
+import { TransactionsListSkeleton } from '@/components/transactions/TransactionsListSkeletons';
 import { Plus } from 'lucide-react';
 
 /* ── Home (re-export) ─────────────────────────────────────────────────── */
@@ -52,18 +59,7 @@ export function DashboardHomeLoadingShell() {
 /* ── Clients ──────────────────────────────────────────────────────────── */
 
 export function ClientsPageContentSkeleton() {
-  return (
-    <TableRowsSkeleton
-      columns={[
-        { width: 'w-14' },
-        { width: 'w-16' },
-        { width: 'w-14' },
-        { width: 'w-20' },
-        { width: 'w-24' },
-      ]}
-      rows={10}
-    />
-  );
+  return <ClientsListSkeleton />;
 }
 
 export function ClientsPageLoading() {
@@ -78,7 +74,6 @@ export function ClientsPageLoading() {
         </Button>
       }
     >
-      <PageToolbarSkeleton filters={3} trailing={<Skeleton className="h-9 w-9 rounded-lg" />} />
       <ClientsPageContentSkeleton />
     </DashboardPage>
   );
@@ -87,7 +82,7 @@ export function ClientsPageLoading() {
 /* ── Projects ─────────────────────────────────────────────────────────── */
 
 export function ProjectsPageContentSkeleton() {
-  return <ProjectCardsSkeleton count={6} />;
+  return <ProjectsListSkeleton />;
 }
 
 export function ProjectsPageLoading() {
@@ -104,7 +99,6 @@ export function ProjectsPageLoading() {
         </Link>
       }
     >
-      <PageToolbarSkeleton searchWidth="flex-1" filters={1} />
       <ProjectsPageContentSkeleton />
     </DashboardPage>
   );
@@ -113,13 +107,12 @@ export function ProjectsPageLoading() {
 /* ── Transactions ─────────────────────────────────────────────────────── */
 
 export function TransactionsPageContentSkeleton() {
-  return <StackedCardsSkeleton count={4} />;
+  return <TransactionsListSkeleton />;
 }
 
 export function TransactionsPageLoading() {
   return (
     <DashboardPage title="Transactions" subtitle="Track deals, milestones, documents, and closing dates">
-      <PageToolbarSkeleton searchWidth="flex-1" filters={1} trailing={<Skeleton className="h-10 w-36 rounded-lg" />} />
       <TransactionsPageContentSkeleton />
     </DashboardPage>
   );
@@ -128,47 +121,11 @@ export function TransactionsPageLoading() {
 /* ── Leads ────────────────────────────────────────────────────────────── */
 
 export function LeadsInboxContentSkeleton() {
-  return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)] lg:items-start">
-      <Card className="overflow-hidden p-0">
-        <CardHeader className="border-b py-3">
-          <Skeleton className="h-4 w-16" />
-        </CardHeader>
-        <CardContent className="flex flex-col gap-0 p-0">
-          {Array.from({ length: 6 }).map((_, index) => (
-            <div key={index} className="border-b border-border px-4 py-3 last:border-0">
-              <Skeleton className="mb-1.5 h-4 w-3/4" />
-              <Skeleton className="h-3 w-1/2" />
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-      <Card className="overflow-hidden p-0">
-        <CardHeader className="border-b py-4">
-          <Skeleton className="h-5 w-40" />
-          <Skeleton className="mt-2 h-3 w-56" />
-        </CardHeader>
-        <CardContent className="space-y-4 p-5">
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-5/6" />
-          <Skeleton className="h-4 w-2/3" />
-          <div className="flex gap-2 pt-2">
-            <Skeleton className="h-9 w-28 rounded-lg" />
-            <Skeleton className="h-9 w-32 rounded-lg" />
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
+  return <LeadsInboxSkeleton />;
 }
 
 export function LeadsPageContentSkeleton() {
-  return (
-    <>
-      <Skeleton className="h-10 w-full max-w-xl rounded-lg" />
-      <LeadsInboxContentSkeleton />
-    </>
-  );
+  return <LeadsInboxPageSkeleton />;
 }
 
 export function LeadsPageLoading() {
@@ -182,28 +139,7 @@ export function LeadsPageLoading() {
 /* ── Tasks ────────────────────────────────────────────────────────────── */
 
 export function TasksPageContentSkeleton() {
-  return (
-    <div className="grid h-[calc(100dvh-7.5rem)] min-h-[560px] grid-cols-1 gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
-      <div className="space-y-3">
-        <Skeleton className="h-10 w-full rounded-lg" />
-        <div className="space-y-1">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <Skeleton key={index} className="h-[52px] w-full rounded-lg" />
-          ))}
-        </div>
-      </div>
-      <div className="flex flex-col overflow-hidden rounded-lg border border-border bg-card">
-        <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6">
-          <Skeleton className="size-14 rounded-full" />
-          <Skeleton className="h-6 w-56" />
-          <Skeleton className="h-4 w-72" />
-        </div>
-        <div className="border-t border-border p-4">
-          <Skeleton className="h-10 w-full rounded-lg" />
-        </div>
-      </div>
-    </div>
-  );
+  return <TasksChatSkeleton />;
 }
 
 export function TasksPageLoading() {
@@ -217,43 +153,7 @@ export function TasksPageLoading() {
 /* ── Ads ──────────────────────────────────────────────────────────────── */
 
 export function AdsPageContentSkeleton() {
-  return (
-    <>
-      <div className="flex gap-1 rounded-lg border border-border bg-muted/40 p-1">
-        <Skeleton className="h-10 flex-1 rounded-md" />
-        <Skeleton className="h-10 flex-1 rounded-md" />
-      </div>
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <div key={index} className="rounded-lg border border-border bg-card p-3">
-                <Skeleton className="mb-2 h-3 w-12" />
-                <Skeleton className="h-6 w-16" />
-              </div>
-            ))}
-          </div>
-          <TableRowsSkeleton
-            columns={[
-              { width: 'w-24' },
-              { width: 'w-12', align: 'right' },
-              { width: 'w-12', align: 'right' },
-              { width: 'w-12', align: 'right' },
-              { width: 'w-12', align: 'right' },
-              { width: 'w-12', align: 'right' },
-            ]}
-            rows={5}
-          />
-        </div>
-        <div className="space-y-3 rounded-lg border border-border bg-card p-4">
-          <Skeleton className="h-4 w-24" />
-          {Array.from({ length: 4 }).map((_, index) => (
-            <Skeleton key={index} className="h-16 w-full rounded-lg" />
-          ))}
-        </div>
-      </div>
-    </>
-  );
+  return <AdsPageBodySkeleton />;
 }
 
 export function AdsPageLoading() {
@@ -267,25 +167,7 @@ export function AdsPageLoading() {
 /* ── Calendar ─────────────────────────────────────────────────────────── */
 
 export function CalendarPageContentSkeleton() {
-  return (
-    <>
-      <PageToolbarSkeleton filters={2} trailing={<Skeleton className="h-10 w-28 rounded-lg" />} />
-      <div className="rounded-lg border border-border bg-card p-5 sm:p-6">
-        <div className="mb-4 flex items-center justify-between">
-          <Skeleton className="h-5 w-24" />
-          <div className="flex gap-2">
-            <Skeleton className="size-8 rounded-lg" />
-            <Skeleton className="size-8 rounded-lg" />
-          </div>
-        </div>
-        <div className="grid grid-cols-7 gap-1">
-          {Array.from({ length: 35 }).map((_, index) => (
-            <Skeleton key={index} className="aspect-square w-full rounded-md" />
-          ))}
-        </div>
-      </div>
-    </>
-  );
+  return <CalendarPageBodySkeleton />;
 }
 
 export function CalendarPageLoading() {
@@ -302,7 +184,7 @@ export function AccountPageContentSkeleton() {
   return (
     <>
       <PlanUsagePanelSkeleton layout="full" />
-      <FormCardsSkeleton count={4} />
+      <AccountPageBodySkeleton />
     </>
   );
 }
@@ -318,37 +200,7 @@ export function AccountPageLoading() {
 /* ── Property research ────────────────────────────────────────────────── */
 
 export function PropertyResearchPageContentSkeleton() {
-  return (
-    <div className="grid gap-5 lg:grid-cols-[300px_minmax(0,1fr)] lg:items-start">
-      <div className="space-y-4">
-        <div className="rounded-lg border border-border bg-card p-5 space-y-3">
-          <Skeleton className="h-4 w-28" />
-          <Skeleton className="h-10 w-full rounded-lg" />
-          <Skeleton className="h-10 w-full rounded-lg" />
-          <Skeleton className="h-10 w-full rounded-lg" />
-          <Skeleton className="h-10 w-full rounded-lg" />
-        </div>
-        <div className="rounded-lg border border-border bg-card p-5 space-y-2">
-          <Skeleton className="mb-2 h-4 w-24" />
-          {Array.from({ length: 4 }).map((_, index) => (
-            <Skeleton key={index} className="h-8 w-full rounded-md" />
-          ))}
-        </div>
-      </div>
-      <div className="rounded-lg border border-border bg-card p-5 sm:p-6">
-        <div className="mb-4 flex gap-2">
-          {Array.from({ length: 3 }).map((_, index) => (
-            <Skeleton key={index} className="h-9 w-28 rounded-lg" />
-          ))}
-        </div>
-        <div className="space-y-3">
-          <Skeleton className="h-5 w-2/3" />
-          <Skeleton className="h-32 w-full rounded-lg" />
-          <Skeleton className="h-32 w-full rounded-lg" />
-        </div>
-      </div>
-    </div>
-  );
+  return <PropertyResearchPageBodySkeleton />;
 }
 
 export function PropertyResearchPageLoading() {

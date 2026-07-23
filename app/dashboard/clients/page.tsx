@@ -291,10 +291,21 @@ export default function ClientsPage() {
         </Button>
       }
     >
-      {/* Toolbar */}
+      <Modal isOpen={showCreateForm} onClose={() => setShowCreateForm(false)} title="New Client" size="md">
+        <ClientForm
+          onSubmit={handleCreateClient}
+          onCancel={() => setShowCreateForm(false)}
+          isLoading={isSubmitting}
+        />
+      </Modal>
+
+      {isLoading ? (
+        <ClientsPageContentSkeleton />
+      ) : (
+        <>
       <PageToolbar
         meta={
-          !isLoading && sortedClients.length > 0
+          sortedClients.length > 0
             ? `Showing ${showingFrom}–${showingTo} of ${sortedClients.length} client${sortedClients.length === 1 ? '' : 's'}${statusTab !== 'all' || searchQuery ? ` (${totalCount} total)` : ''}`
             : undefined
         }
@@ -343,17 +354,7 @@ export default function ClientsPage() {
         </div>
       </PageToolbar>
 
-      <Modal isOpen={showCreateForm} onClose={() => setShowCreateForm(false)} title="New Client" size="md">
-        <ClientForm
-          onSubmit={handleCreateClient}
-          onCancel={() => setShowCreateForm(false)}
-          isLoading={isSubmitting}
-        />
-      </Modal>
-
-      {isLoading ? (
-        <ClientsPageContentSkeleton />
-      ) : sortedClients.length === 0 ? (
+      {sortedClients.length === 0 ? (
         <Card className="p-0">
           <EmptyState
             icon={Users}
@@ -429,6 +430,8 @@ export default function ClientsPage() {
               </Button>
             </div>
           </div>
+        </>
+      )}
         </>
       )}
 

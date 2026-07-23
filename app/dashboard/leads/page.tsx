@@ -14,7 +14,7 @@ import { supabase } from '@/lib/supabase';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
 import { useToast } from '@/components/providers/ToastProvider';
-import { LeadsInboxContentSkeleton } from '@/components/dashboard/page-loading';
+import { LeadsPageContentSkeleton } from '@/components/dashboard/page-loading';
 import FollowupTemplatesEditor from '@/components/dashboard/FollowupTemplatesEditor';
 import { getLeadTemperature } from '@/components/dashboard/LeadTemperatureBadge';
 import { formatFollowupScheduleHuman, type FollowupSettings } from '@/lib/followup-emails';
@@ -280,14 +280,15 @@ function LeadsPageContent() {
       subtitle={`${leads.length} in inbox · ${hotLeads.length} hot · ${thisWeek.length} this week`}
       size="medium"
     >
+      {activeTab === 'inbox' && isLoading ? (
+        <LeadsPageContentSkeleton />
+      ) : (
+        <>
         <div data-tour="leads-tabs">
           <LeadsSectionSwitcher active={activeTab} onChange={setActiveTab} />
         </div>
 
         {activeTab === 'inbox' && (
-          isLoading ? (
-            <LeadsInboxContentSkeleton />
-          ) : (
             <LeadsInbox
               leads={leads}
               filter={filter}
@@ -304,7 +305,6 @@ function LeadsPageContent() {
               onContactLead={handleContactLead}
               onGoToCapture={() => setActiveTab('capture')}
             />
-          )
         )}
 
         {/* ─── CAPTURE ───────────────────────────────────────────────────── */}
@@ -524,6 +524,8 @@ function LeadsPageContent() {
             <FollowupTemplatesEditor settings={settingsData} onSaved={() => mutateSettings()} />
           </div>
         )}
+        </>
+      )}
 
         <Modal
           isOpen={contactPrompt !== null}

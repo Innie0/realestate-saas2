@@ -101,9 +101,13 @@ export default function ProjectsPage() {
         </Link>
       }
     >
+      {isLoading ? (
+        <ProjectsPageContentSkeleton />
+      ) : (
+        <>
       <PageToolbar
         meta={
-          !isLoading && projects.length > 0
+          projects.length > 0
             ? `Showing ${filteredProjects.length} of ${projects.length} projects`
             : undefined
         }
@@ -131,9 +135,7 @@ export default function ProjectsPage() {
         </div>
       </PageToolbar>
 
-      {isLoading ? (
-        <ProjectsPageContentSkeleton />
-      ) : filteredProjects.length > 0 ? (
+      {filteredProjects.length > 0 ? (
         <StaggerList className="grid gap-[18px] [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
           {filteredProjects.map((project) => (
             <StaggerItem key={project.id}>
@@ -166,6 +168,8 @@ export default function ProjectsPage() {
             }
           />
         </Card>
+      )}
+        </>
       )}
     </DashboardPage>
   );
