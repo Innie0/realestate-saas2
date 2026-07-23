@@ -17,7 +17,6 @@ import {
 import Sparkline from '@/components/ui/Sparkline';
 import Button from '@/components/ui/Button';
 import EmptyState from '@/components/ui/EmptyState';
-import DataLoadingState from '@/components/dashboard/DataLoadingState';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
@@ -343,11 +342,40 @@ function OpenDealsTable({
       </CardHeader>
 
       {loading ? (
-        <DataLoadingState
-          title="Loading deals"
-          description="Fetching your open pipeline…"
-          className="min-h-0 flex-1 py-10"
-        />
+        <CardContent className="min-h-0 flex-1 p-0">
+          <Table className="w-auto" containerClassName="w-max max-w-full">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="whitespace-nowrap px-4 sm:px-5">Property</TableHead>
+                <TableHead className="whitespace-nowrap px-4 sm:px-5">Client</TableHead>
+                <TableHead className="whitespace-nowrap px-4 sm:px-5">Stage</TableHead>
+                <TableHead className="whitespace-nowrap px-4 sm:px-5 text-right">Price</TableHead>
+                <TableHead className="whitespace-nowrap px-4 sm:px-5 text-right">Closing</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Array.from({ length: 6 }).map((_, rowIndex) => (
+                <TableRow key={rowIndex}>
+                  <TableCell className="max-w-[14rem] px-4 sm:max-w-[18rem] sm:px-5">
+                    <Skeleton className="h-4 w-36" />
+                  </TableCell>
+                  <TableCell className="max-w-[9rem] px-4 sm:px-5">
+                    <Skeleton className="h-4 w-24" />
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-4 sm:px-5">
+                    <Skeleton className="h-5 w-20 rounded-full" />
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-4 text-right sm:px-5">
+                    <Skeleton className="ml-auto h-4 w-16" />
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-4 text-right sm:px-5">
+                    <Skeleton className="ml-auto h-4 w-14" />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
       ) : deals.length === 0 ? (
         <CardContent className="flex flex-1 flex-col justify-center py-6">
           <EmptyState
@@ -448,9 +476,16 @@ function TodayPanel() {
         </Link>
       </CardHeader>
       {isLoading ? (
-        <CardContent className="flex flex-col gap-3">
-          <Skeleton className="h-8 w-full" />
-          <Skeleton className="h-8 w-full" />
+        <CardContent className="flex flex-col gap-0 p-0">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div key={index} className="flex gap-3 px-4 py-2 sm:px-5">
+              <Skeleton className="h-4 w-11 shrink-0" />
+              <div className="flex min-w-0 flex-1 flex-col gap-1.5 border-l-2 border-transparent pl-2.5">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-3 w-1/2" />
+              </div>
+            </div>
+          ))}
         </CardContent>
       ) : todayItems.length === 0 ? (
         <CardContent>
@@ -498,9 +533,16 @@ function ContinuePanel({ items, loading }: { items: ContinueListItem[]; loading:
         <CardDescription>Pick up where you left off</CardDescription>
       </CardHeader>
       {loading ? (
-        <CardContent className="flex flex-col gap-3">
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-3/4" />
+        <CardContent className="flex flex-col gap-0 p-0">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="flex items-center gap-2.5 px-4 py-2 sm:px-5">
+              <Skeleton className="size-2 shrink-0 rounded-sm" />
+              <div className="min-w-0 flex-1 space-y-1.5">
+                <Skeleton className="h-4 w-4/5" />
+                <Skeleton className="h-3 w-1/3" />
+              </div>
+            </div>
+          ))}
         </CardContent>
       ) : items.length === 0 ? (
         <CardContent>
