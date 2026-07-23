@@ -2,6 +2,7 @@ import Link from 'next/link';
 import clsx from 'clsx';
 import Button from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface UsageItem {
   current: number;
@@ -34,19 +35,21 @@ export function PlanUsagePanelSkeleton({ layout = 'full', className }: { layout?
   return (
     <div data-tour="plan-usage" className={clsx('self-start w-full', className)} aria-hidden>
       <Card className="p-5 sm:p-6">
-        <div className="flex items-center justify-between gap-3 mb-5 animate-pulse">
+        <div className="mb-4 flex items-center justify-between gap-3">
           <div className="space-y-2">
-            <div className="h-3 bg-gray-100 rounded w-16" />
-            <div className="h-5 bg-gray-100 rounded w-20" />
+            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-5 w-20" />
           </div>
-          <div className="h-8 w-20 bg-gray-100 rounded-lg" />
+          <Skeleton className="h-8 w-20 rounded-lg" />
         </div>
         <div className={usageGridClass(layout)}>
           {USAGE_ROWS.map(({ key }) => (
-            <div key={key} className="min-w-0 animate-pulse">
-              <div className="h-3 bg-gray-100 rounded w-16 mb-2" />
-              <div className="h-5 bg-gray-100 rounded w-12 mb-2" />
-              <div className="h-1.5 bg-gray-100 rounded-full" />
+            <div key={key} className="min-w-0">
+              <div className="mb-1 flex items-baseline justify-between gap-1">
+                <Skeleton className="h-3 w-16" />
+                <Skeleton className="h-3 w-12" />
+              </div>
+              <Skeleton className="h-1.5 w-full rounded-full" />
             </div>
           ))}
         </div>

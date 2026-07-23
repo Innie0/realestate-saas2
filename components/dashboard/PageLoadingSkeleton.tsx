@@ -1,3 +1,5 @@
+import { DashboardHomeContentSkeleton } from '@/components/dashboard/DashboardHomeSkeletons';
+
 type PageLoadingVariant = 'default' | 'list' | 'detail' | 'account' | 'dashboard';
 
 function HeaderSkeleton() {
@@ -76,19 +78,7 @@ export default function PageLoadingSkeleton({ variant = 'default' }: { variant?:
           </>
         )}
 
-        {variant === 'dashboard' && (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-24 bg-[var(--surface)] rounded-[10px] border border-gray-200 animate-pulse" />
-              ))}
-            </div>
-            <div className="grid lg:grid-cols-3 gap-5">
-              <div className="lg:col-span-2 h-64 bg-[var(--surface)] rounded-[10px] border border-gray-200 animate-pulse" />
-              <div className="h-64 bg-[var(--surface)] rounded-[10px] border border-gray-200 animate-pulse" />
-            </div>
-          </>
-        )}
+        {variant === 'dashboard' && <DashboardHomeContentSkeleton />}
 
         {variant === 'default' && (
           <>
