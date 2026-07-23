@@ -5,27 +5,27 @@ import Button from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PlanUsagePanelSkeleton } from '@/components/dashboard/PlanUsagePanel';
 import { DashboardHomeContentSkeleton } from '@/components/dashboard/DashboardHomeSkeletons';
-import { ClientsListSkeleton } from '@/components/clients/ClientsListSkeletons';
-import { AdsPageBodySkeleton } from '@/components/dashboard/skeletons/AdsPageSkeleton';
-import { AccountPageBodySkeleton } from '@/components/dashboard/skeletons/AccountFormSkeleton';
-import { CalendarPageBodySkeleton } from '@/components/dashboard/skeletons/CalendarScheduleSkeleton';
-import { PropertyResearchPageBodySkeleton } from '@/components/dashboard/skeletons/PropertyResearchSkeleton';
-import { TasksChatSkeleton } from '@/components/dashboard/skeletons/TasksChatSkeleton';
 import {
+  AccountPageBodySkeleton,
+  AdsPageBodySkeleton,
+  BrandKitSkeleton,
+  CalendarPageBodySkeleton,
+  ClientsListSkeleton,
   DetailHeroSkeleton,
   DetailTwoColumnSkeleton,
-  FormCardsSkeleton,
-} from '@/components/dashboard/skeletons/shared';
-import {
   LeadsInboxPageSkeleton,
   LeadsInboxSkeleton,
-} from '@/components/leads/LeadsInboxSkeleton';
-import { ProjectsListSkeleton } from '@/components/projects/ProjectsListSkeletons';
-import {
+  LeadsSubpageContentSkeleton,
+  NewProjectFormSkeleton,
+  OpenHousesListSkeleton,
   ProjectDetailPageContentSkeleton,
   ProjectDetailPageLoadingShell,
-} from '@/components/projects/ProjectDetailSkeleton';
-import { TransactionsListSkeleton } from '@/components/transactions/TransactionsListSkeletons';
+  ProjectsListSkeleton,
+  PropertyResearchPageBodySkeleton,
+  SkeletonFormCards,
+  TasksChatSkeleton,
+  TransactionsListSkeleton,
+} from '@/components/skeletons';
 import { Plus } from 'lucide-react';
 
 /* ── Home (re-export) ─────────────────────────────────────────────────── */
@@ -108,6 +108,14 @@ export function ProjectsPageLoading() {
   );
 }
 
+export function NewProjectPageLoading() {
+  return (
+    <DashboardPage title="New Project" subtitle="Create a property listing project">
+      <NewProjectFormSkeleton />
+    </DashboardPage>
+  );
+}
+
 /* ── Transactions ─────────────────────────────────────────────────────── */
 
 export function TransactionsPageContentSkeleton() {
@@ -118,6 +126,14 @@ export function TransactionsPageLoading() {
   return (
     <DashboardPage title="Transactions" subtitle="Track deals, milestones, documents, and closing dates">
       <TransactionsPageContentSkeleton />
+    </DashboardPage>
+  );
+}
+
+export function NewTransactionPageLoading() {
+  return (
+    <DashboardPage title="New Transaction" subtitle="Track a new deal from offer to closing">
+      <NewProjectFormSkeleton />
     </DashboardPage>
   );
 }
@@ -215,6 +231,16 @@ export function PropertyResearchPageLoading() {
   );
 }
 
+/* ── Brand kit ────────────────────────────────────────────────────────── */
+
+export function BrandKitPageLoading() {
+  return (
+    <DashboardPage title="Brand Kit" subtitle="Logo, colors, and typography for your marketing">
+      <BrandKitSkeleton />
+    </DashboardPage>
+  );
+}
+
 /* ── Client detail ────────────────────────────────────────────────────── */
 
 export function ClientDetailPageContentSkeleton() {
@@ -274,7 +300,7 @@ export function TransactionDetailPageContentSkeleton() {
           </div>
         ))}
       </div>
-      <FormCardsSkeleton count={2} />
+      <SkeletonFormCards count={2} />
     </div>
   );
 }
@@ -289,10 +315,6 @@ export function TransactionDetailPageLoading() {
 
 /* ── Leads sub-pages (narrow form layout) ─────────────────────────────── */
 
-export function LeadsSubpageContentSkeleton() {
-  return <FormCardsSkeleton count={3} />;
-}
-
 export function LeadsSubpageLoading({
   title,
   subtitle,
@@ -302,7 +324,7 @@ export function LeadsSubpageLoading({
 }) {
   return (
     <DashboardPage size="narrow" inline title={title} subtitle={subtitle}>
-      <Skeleton className="h-4 w-32" />
+      <Skeleton className="h-10 w-full max-w-xl rounded-lg" />
       <LeadsSubpageContentSkeleton />
     </DashboardPage>
   );
@@ -342,20 +364,7 @@ export function UpgradePageLoading() {
 /* ── Open houses list ─────────────────────────────────────────────────── */
 
 export function OpenHousesPageContentSkeleton() {
-  return (
-    <div className="space-y-3">
-      {Array.from({ length: 3 }).map((_, index) => (
-        <div key={index} className="rounded-lg border border-border bg-card p-5">
-          <Skeleton className="mb-2 h-5 w-48" />
-          <Skeleton className="mb-4 h-3 w-32" />
-          <div className="flex gap-2">
-            <Skeleton className="h-9 w-24 rounded-lg" />
-            <Skeleton className="h-9 w-24 rounded-lg" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  return <OpenHousesListSkeleton />;
 }
 
 export function OpenHousesPageLoading() {

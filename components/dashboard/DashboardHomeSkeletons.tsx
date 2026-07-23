@@ -4,33 +4,22 @@ import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
 import { PlanUsagePanelSkeleton } from '@/components/dashboard/PlanUsagePanel';
+import { SkeletonMetricStrip } from '@/components/skeletons/StatBlock';
+import { SkeletonOpenDealTableRow } from '@/components/skeletons/TableRow';
+import { OPEN_DEALS_HEADERS, SKELETON_COUNTS } from '@/components/skeletons/constants';
 
-const OPEN_DEALS_ROWS = 6;
-const TODAY_ROWS = 5;
-const CONTINUE_ROWS = 3;
-const ATTENTION_ROWS = 3;
+const { openDealsRows: OPEN_DEALS_ROWS, todayRows: TODAY_ROWS, continueRows: CONTINUE_ROWS, attentionRows: ATTENTION_ROWS } =
+  SKELETON_COUNTS;
 
 export function MetricStripSkeleton() {
   return (
     <Card className="overflow-hidden p-0">
-      <div className="grid grid-cols-2 divide-border lg:grid-cols-4 lg:divide-x lg:divide-y-0 divide-y">
-        {[0, 1, 2, 3].map((index) => (
-          <div key={index} className="px-4 py-4 sm:px-5">
-            <Skeleton className="h-3 w-20" />
-            <div className="mt-2 flex items-end justify-between gap-2">
-              <Skeleton className="h-7 w-16" />
-              {index === 2 ? <Skeleton className="h-[26px] w-[72px] shrink-0 rounded-sm" /> : null}
-            </div>
-            <Skeleton className="mt-2 h-3 w-24" />
-          </div>
-        ))}
-      </div>
+      <SkeletonMetricStrip count={4} badgeIndex={2} />
     </Card>
   );
 }
@@ -75,31 +64,23 @@ export function OpenDealsTableSkeleton() {
         <Table className="w-auto" containerClassName="w-max max-w-full">
           <TableHeader>
             <TableRow>
-              <TableHead className="whitespace-nowrap px-4 sm:px-5">Property</TableHead>
-              <TableHead className="whitespace-nowrap px-4 sm:px-5">Client</TableHead>
-              <TableHead className="whitespace-nowrap px-4 sm:px-5">Stage</TableHead>
-              <TableHead className="whitespace-nowrap px-4 sm:px-5 text-right">Price</TableHead>
-              <TableHead className="whitespace-nowrap px-4 sm:px-5 text-right">Closing</TableHead>
+              {OPEN_DEALS_HEADERS.map((heading) => (
+                <TableHead
+                  key={heading}
+                  className={clsx(
+                    'whitespace-nowrap px-4 sm:px-5',
+                    (heading === 'Price' || heading === 'Closing') && 'text-right',
+                  )}
+                >
+                  {heading}
+                </TableHead>
+              ))}
             </TableRow>
           </TableHeader>
           <TableBody>
             {Array.from({ length: OPEN_DEALS_ROWS }).map((_, rowIndex) => (
               <TableRow key={rowIndex}>
-                <TableCell className="max-w-[14rem] px-4 sm:max-w-[18rem] sm:px-5">
-                  <Skeleton className="h-4 w-36" />
-                </TableCell>
-                <TableCell className="max-w-[9rem] px-4 sm:px-5">
-                  <Skeleton className="h-4 w-24" />
-                </TableCell>
-                <TableCell className="whitespace-nowrap px-4 sm:px-5">
-                  <Skeleton className="h-5 w-20 rounded-full" />
-                </TableCell>
-                <TableCell className="whitespace-nowrap px-4 text-right sm:px-5">
-                  <Skeleton className="ml-auto h-4 w-16" />
-                </TableCell>
-                <TableCell className="whitespace-nowrap px-4 text-right sm:px-5">
-                  <Skeleton className="ml-auto h-4 w-14" />
-                </TableCell>
+                <SkeletonOpenDealTableRow />
               </TableRow>
             ))}
           </TableBody>
