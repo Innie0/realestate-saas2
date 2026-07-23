@@ -21,6 +21,10 @@ import {
   LeadsInboxSkeleton,
 } from '@/components/leads/LeadsInboxSkeleton';
 import { ProjectsListSkeleton } from '@/components/projects/ProjectsListSkeletons';
+import {
+  ProjectDetailPageContentSkeleton,
+  ProjectDetailPageLoadingShell,
+} from '@/components/projects/ProjectDetailSkeleton';
 import { TransactionsListSkeleton } from '@/components/transactions/TransactionsListSkeletons';
 import { Plus } from 'lucide-react';
 
@@ -233,35 +237,10 @@ export function ClientDetailPageLoading() {
 
 /* ── Project detail ───────────────────────────────────────────────────── */
 
-export function ProjectDetailPageContentSkeleton() {
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
-        <Skeleton className="h-10 w-24 rounded-lg" />
-        <Skeleton className="h-10 w-20 rounded-lg" />
-        <Skeleton className="h-10 w-28 rounded-lg" />
-      </div>
-      <div className="flex gap-1 rounded-lg border border-border bg-muted/40 p-1 max-w-md">
-        {Array.from({ length: 3 }).map((_, index) => (
-          <Skeleton key={index} className="h-10 flex-1 rounded-md" />
-        ))}
-      </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, index) => (
-          <Skeleton key={index} className="aspect-[4/3] w-full rounded-lg" />
-        ))}
-      </div>
-      <FormCardsSkeleton count={2} />
-    </div>
-  );
-}
+export { ProjectDetailPageContentSkeleton };
 
 export function ProjectDetailPageLoading() {
-  return (
-    <DashboardPage title="Project">
-      <ProjectDetailPageContentSkeleton />
-    </DashboardPage>
-  );
+  return <ProjectDetailPageLoadingShell />;
 }
 
 /* ── Transaction detail ───────────────────────────────────────────────── */

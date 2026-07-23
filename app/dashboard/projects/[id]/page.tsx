@@ -7,7 +7,7 @@
 import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
-import { ProjectDetailPageContentSkeleton } from '@/components/dashboard/page-loading';
+import { ProjectDetailPageLoadingShell } from '@/components/projects/ProjectDetailSkeleton';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
@@ -1215,11 +1215,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   };
 
   if (isLoading) {
-    return (
-      <DashboardPage title="Project">
-        <ProjectDetailPageContentSkeleton />
-      </DashboardPage>
-    );
+    return <ProjectDetailPageLoadingShell />;
   }
 
   if (!project) {
