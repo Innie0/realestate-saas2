@@ -13,7 +13,7 @@ import PageToolbar from '@/components/layout/PageToolbar';
 import SearchInput from '@/components/ui/SearchInput';
 import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
-import DataLoadingState from '@/components/dashboard/DataLoadingState';
+import { ClientsPageContentSkeleton } from '@/components/dashboard/page-loading';
 import Modal from '@/components/ui/Modal';
 import SegmentedControl from '@/components/ui/SegmentedControl';
 import { Plus, Users, LayoutGrid, List } from 'lucide-react';
@@ -351,13 +351,8 @@ export default function ClientsPage() {
         />
       </Modal>
 
-      {isLoading && allClients.length === 0 ? (
-        <Card className="p-0">
-          <DataLoadingState
-            title="Loading clients"
-            description="Fetching your CRM contacts…"
-          />
-        </Card>
+      {isLoading ? (
+        <ClientsPageContentSkeleton />
       ) : sortedClients.length === 0 ? (
         <Card className="p-0">
           <EmptyState

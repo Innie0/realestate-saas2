@@ -1,5 +1,5 @@
-import DashboardPageSkeleton from '@/components/dashboard/DashboardPageSkeleton';
+import { CalendarPageLoading } from '@/components/dashboard/page-loading';
 
 export default function CalendarLoading() {
-  return <DashboardPageSkeleton />;
+  return <CalendarPageLoading />;
 }

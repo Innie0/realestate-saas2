@@ -16,6 +16,7 @@ import { useApi } from '@/lib/swr';
 import { mutate as globalMutate } from 'swr';
 import { calendarEventsPrefetchUrl } from '@/lib/dashboard-prefetch';
 import clsx from 'clsx';
+import { CalendarPageContentSkeleton } from '@/components/dashboard/page-loading';
 
 function CalendarPageContent() {
   const searchParams = useSearchParams();
@@ -43,7 +44,7 @@ function CalendarPageContent() {
     if (linkedProjectId) setShowEventModal(true);
   }, [linkedProjectId]);
 
-  const { data: connectionsData, mutate: mutateConnections } = useApi<
+  const { data: connectionsData, isLoading: connectionsLoading, mutate: mutateConnections } = useApi<
     Array<{ provider: string; is_active?: boolean; email?: string }>
   >('/api/calendar/connections');
 
@@ -171,6 +172,10 @@ function CalendarPageContent() {
         </Card>
       )}
 
+      {connectionsLoading ? (
+        <CalendarPageContentSkeleton />
+      ) : (
+        <>
       {!connections.google.connected ? (
         <Card className="p-5 sm:p-6 border-brand-200/60 bg-brand-50/30">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -241,6 +246,9 @@ function CalendarPageContent() {
           <CalendarView highlightEventId={highlightEventId} focusDate={focusDate} />
         </div>
       </Card>
+
+        </>
+      )}
 
       {showEventModal && (
         <Modal isOpen={showEventModal} onClose={() => setShowEventModal(false)} title="Create New Event">

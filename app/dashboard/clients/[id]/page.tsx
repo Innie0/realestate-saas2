@@ -8,6 +8,7 @@ import ReminderForm from '@/components/ReminderForm';
 import Button from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import Modal from '@/components/ui/Modal';
+import { ClientDetailPageContentSkeleton } from '@/components/dashboard/page-loading';
 import DashboardPage from '@/components/layout/DashboardPage';
 import {
   ArrowLeft,
@@ -326,17 +327,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   if (loading) {
     return (
       <DashboardPage title="Client" inline>
-        <div className="animate-pulse space-y-5">
-          <div className="h-4 bg-gray-100 rounded w-32" />
-          <div className="h-[176px] rounded-[10px] bg-[var(--surface)] border border-gray-200" />
-          <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-5">
-            <div className="space-y-5">
-              <div className="h-40 rounded-[10px] bg-[var(--surface)] border border-gray-200" />
-              <div className="h-40 rounded-[10px] bg-[var(--surface)] border border-gray-200" />
-            </div>
-            <div className="h-[336px] rounded-[10px] bg-[var(--surface)] border border-gray-200" />
-          </div>
-        </div>
+        <ClientDetailPageContentSkeleton />
       </DashboardPage>
     );
   }

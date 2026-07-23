@@ -1,5 +1,5 @@
-import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
+import { AccountPageLoading } from '@/components/dashboard/page-loading';
 
 export default function AccountLoading() {
-  return <PageLoadingSkeleton variant="account" />;
+  return <AccountPageLoading />;
 }

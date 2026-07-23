@@ -11,7 +11,7 @@ import { Card } from '@/components/ui/Card';
 import SearchInput from '@/components/ui/SearchInput';
 import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
-import DataLoadingState from '@/components/dashboard/DataLoadingState';
+import { ProjectsPageContentSkeleton } from '@/components/dashboard/page-loading';
 import ProjectCard from '@/components/ProjectCard';
 import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
 import { Plus, FolderKanban } from 'lucide-react';
@@ -131,13 +131,8 @@ export default function ProjectsPage() {
         </div>
       </PageToolbar>
 
-      {isLoading && projects.length === 0 ? (
-        <Card className="p-0">
-          <DataLoadingState
-            title="Loading projects"
-            description="Fetching your listing projects…"
-          />
-        </Card>
+      {isLoading ? (
+        <ProjectsPageContentSkeleton />
       ) : filteredProjects.length > 0 ? (
         <StaggerList className="grid gap-[18px] [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
           {filteredProjects.map((project) => (

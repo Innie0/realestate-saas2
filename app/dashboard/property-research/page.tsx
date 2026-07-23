@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/Card';
 import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
 import DataLoadingState from '@/components/dashboard/DataLoadingState';
+import { PropertyResearchPageLoading } from '@/components/dashboard/page-loading';
 import PanelHeader from '@/components/ui/PanelHeader';
 import AnimatedTabPanels from '@/components/motion/AnimatedTabPanels';
 import { useApi } from '@/lib/swr';
@@ -567,13 +568,7 @@ function PropertyResearchContent() {
 
 export default function PropertyResearchPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center bg-[var(--canvas)]">
-          <DataLoadingState title="Loading Property Research" className="py-10" />
-        </div>
-      }
-    >
+    <Suspense fallback={<PropertyResearchPageLoading />}>
       <PropertyResearchContent />
     </Suspense>
   );

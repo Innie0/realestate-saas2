@@ -17,6 +17,7 @@ import Select from '@/components/ui/Select';
 import { Card } from '@/components/ui/Card';
 import Modal from '@/components/ui/Modal';
 import PageShell from '@/components/layout/PageShell';
+import { TransactionDetailPageContentSkeleton } from '@/components/dashboard/page-loading';
 import DashboardPage from '@/components/layout/DashboardPage';
 import TransactionForm from '@/components/TransactionForm';
 import TransactionTimeline from '@/components/TransactionTimeline';
@@ -206,9 +207,9 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500" />
-      </div>
+      <DashboardPage title="Transaction">
+        <TransactionDetailPageContentSkeleton />
+      </DashboardPage>
     );
   }
 

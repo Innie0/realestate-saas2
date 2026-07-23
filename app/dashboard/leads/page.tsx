@@ -14,6 +14,7 @@ import { supabase } from '@/lib/supabase';
 import { useTour } from '@/hooks/useTour';
 import { useApi } from '@/lib/swr';
 import { useToast } from '@/components/providers/ToastProvider';
+import { LeadsInboxContentSkeleton } from '@/components/dashboard/page-loading';
 import FollowupTemplatesEditor from '@/components/dashboard/FollowupTemplatesEditor';
 import { getLeadTemperature } from '@/components/dashboard/LeadTemperatureBadge';
 import { formatFollowupScheduleHuman, type FollowupSettings } from '@/lib/followup-emails';
@@ -284,23 +285,26 @@ function LeadsPageContent() {
         </div>
 
         {activeTab === 'inbox' && (
-          <LeadsInbox
-            leads={leads}
-            isLoading={isLoading}
-            filter={filter}
-            onFilterChange={setFilter}
-            selectedLeadId={selectedLeadId}
-            onSelectLead={setSelectedLeadId}
-            autoFollowupEnabled={autoFollowup}
-            followupScheduleText={followupScheduleText}
-            stoppedIds={stoppedFollowupIds}
-            addingId={addingToCrmId}
-            markingContactedId={markingContactedId}
-            onAddToCrm={handleAddToCrm}
-            onMarkContacted={handleMarkContacted}
-            onContactLead={handleContactLead}
-            onGoToCapture={() => setActiveTab('capture')}
-          />
+          isLoading ? (
+            <LeadsInboxContentSkeleton />
+          ) : (
+            <LeadsInbox
+              leads={leads}
+              filter={filter}
+              onFilterChange={setFilter}
+              selectedLeadId={selectedLeadId}
+              onSelectLead={setSelectedLeadId}
+              autoFollowupEnabled={autoFollowup}
+              followupScheduleText={followupScheduleText}
+              stoppedIds={stoppedFollowupIds}
+              addingId={addingToCrmId}
+              markingContactedId={markingContactedId}
+              onAddToCrm={handleAddToCrm}
+              onMarkContacted={handleMarkContacted}
+              onContactLead={handleContactLead}
+              onGoToCapture={() => setActiveTab('capture')}
+            />
+          )
         )}
 
         {/* ─── CAPTURE ───────────────────────────────────────────────────── */}

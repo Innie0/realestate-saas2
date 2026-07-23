@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Check, X, Zap, ArrowLeft, Sparkles, Infinity as InfinityIcon } from 'lucide-react';
 import DashboardPage from '@/components/layout/DashboardPage';
-import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
+import { UpgradePageLoading } from '@/components/dashboard/page-loading';
 import UpgradeButton from '@/components/UpgradeButton';
 import SetupStarterButton from '@/components/SetupStarterButton';
 import { supabase } from '@/lib/supabase';
@@ -124,7 +124,7 @@ export default function UpgradePage() {
   }, [router]);
 
   if (isLoading) {
-    return <PageLoadingSkeleton variant="account" />;
+    return <UpgradePageLoading />;
   }
 
   if (currentPlan === 'pro') {

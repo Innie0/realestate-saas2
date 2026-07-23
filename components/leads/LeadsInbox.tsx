@@ -20,7 +20,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import EmptyState from '@/components/ui/EmptyState';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/shadcn-tabs';
 import { nameAvatarClasses } from '@/lib/accent';
 import { cn } from '@/lib/utils';
@@ -149,7 +148,6 @@ function leadHasActiveFollowup(
 
 type LeadsInboxProps = {
   leads: Lead[];
-  isLoading: boolean;
   filter: TempFilter;
   onFilterChange: (filter: TempFilter) => void;
   selectedLeadId: string | null;
@@ -167,7 +165,6 @@ type LeadsInboxProps = {
 
 export default function LeadsInbox({
   leads,
-  isLoading,
   filter,
   onFilterChange,
   selectedLeadId,
@@ -222,15 +219,7 @@ export default function LeadsInbox({
         </Tabs>
       </div>
 
-      {isLoading && leads.length === 0 ? (
-        <Card className="overflow-hidden">
-          <CardContent className="flex flex-col gap-3 p-4">
-            {[0, 1, 2].map((i) => (
-              <Skeleton key={i} className="h-14 w-full rounded-md" />
-            ))}
-          </CardContent>
-        </Card>
-      ) : filteredLeads.length === 0 ? (
+      {filteredLeads.length === 0 ? (
         <EmptyState
           icon={Inbox}
           title={filter === 'all' ? 'No leads yet' : `No ${filter} leads`}

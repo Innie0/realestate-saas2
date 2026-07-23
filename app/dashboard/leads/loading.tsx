@@ -1,5 +1,5 @@
-import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
+import { LeadsPageLoading } from '@/components/dashboard/page-loading';
 
 export default function LeadsLoading() {
-  return <PageLoadingSkeleton variant="default" />;
+  return <LeadsPageLoading />;
 }

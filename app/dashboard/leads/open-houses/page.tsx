@@ -7,7 +7,7 @@ import DashboardPage from '@/components/layout/DashboardPage';
 import LeadsSectionSwitcher from '@/components/leads/LeadsSectionSwitcher';
 import Button from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
+import { OpenHousesPageContentSkeleton, OpenHousesPageLoading } from '@/components/dashboard/page-loading';
 import { QRCodeCanvas } from 'qrcode.react';
 import {
   Plus, DoorOpen, MapPin, Clock, Download, Link2,
@@ -124,7 +124,7 @@ export default function OpenHousesPage() {
   const inputClass = 'w-full px-3 py-2.5 rounded-[10px] bg-gray-50 border border-gray-200 text-gray-900 text-[13px] placeholder-gray-450 focus:outline-none focus:border-gray-400';
 
   if (checkingPlan) {
-    return <PageLoadingSkeleton variant="list" />;
+    return <OpenHousesPageLoading />;
   }
 
   return (
@@ -182,14 +182,7 @@ export default function OpenHousesPage() {
 
         {/* List */}
         {loading ? (
-          <div className="space-y-3">
-            {[1, 2].map(i => (
-              <div key={i} className="bg-[var(--surface)] border border-gray-200 rounded-[10px] p-5 animate-pulse">
-                <div className="h-4 bg-gray-100 rounded w-1/2 mb-3" />
-                <div className="h-3 bg-gray-100 rounded w-1/3" />
-              </div>
-            ))}
-          </div>
+          <OpenHousesPageContentSkeleton />
         ) : openHouses.length === 0 ? (
           <Card className="p-10 text-center">
             <DoorOpen className="w-9 h-9 text-gray-400 mx-auto mb-3" strokeWidth={1.6} />

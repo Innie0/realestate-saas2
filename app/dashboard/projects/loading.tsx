@@ -1,5 +1,5 @@
-import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
+import { ProjectsPageLoading } from '@/components/dashboard/page-loading';
 
 export default function ProjectsLoading() {
-  return <PageLoadingSkeleton variant="list" />;
+  return <ProjectsPageLoading />;
 }

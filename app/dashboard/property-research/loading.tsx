@@ -1,5 +1,5 @@
-import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
+import { PropertyResearchPageLoading } from '@/components/dashboard/page-loading';
 
 export default function PropertyResearchLoading() {
-  return <PageLoadingSkeleton variant="detail" />;
+  return <PropertyResearchPageLoading />;
 }

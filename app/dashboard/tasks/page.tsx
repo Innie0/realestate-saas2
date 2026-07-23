@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback, Suspense } from 'react
 import { useSearchParams } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
 import DataLoadingState from '@/components/dashboard/DataLoadingState';
+import { TasksPageContentSkeleton } from '@/components/dashboard/page-loading';
 import { Sparkles, Send, Loader2, Paperclip, X, Plus, MessageSquare, Trash2, FileText, Pin, Edit3, Check, MoreVertical, PanelLeft, PanelLeftClose } from 'lucide-react';
 import { Conversation, ConversationMessage } from '@/types';
 import { useApi } from '@/lib/swr';
@@ -564,6 +565,9 @@ function TasksPageContent() {
 
   return (
     <DashboardPage title="AI Assistant" subtitle={usageSubtitle} inline className="!pb-4">
+      {isLoadingConversations ? (
+        <TasksPageContentSkeleton />
+      ) : (
       <div
         className={clsx(
           'grid gap-4 h-[calc(100dvh-7.5rem)] min-h-[560px]',
@@ -984,6 +988,7 @@ function TasksPageContent() {
         </div>
         </div>
       </div>
+      )}
     </DashboardPage>
   );
 }

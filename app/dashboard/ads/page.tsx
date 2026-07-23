@@ -16,6 +16,7 @@ import { isAdAccountReady } from '@/lib/ads/connection-status';
 import type { AdPlatform, AdPlatformConnection, AdPromotion } from '@/lib/ads/types';
 import type { AIInsight, PerformanceDashboardData } from '@/lib/ads/performance-types';
 import clsx from 'clsx';
+import { AdsPageContentSkeleton } from '@/components/dashboard/page-loading';
 import { BarChart3, ChevronDown, Megaphone, PenLine } from 'lucide-react';
 
 type AdsTab = 'create' | 'performance';
@@ -51,7 +52,7 @@ function AdsPageContent() {
   const [optimizePromotionId, setOptimizePromotionId] = useState<string | null>(null);
   const [optimizeInsight, setOptimizeInsight] = useState<AIInsight | null>(null);
 
-  const { data: connections, mutate: mutateConnections } = useApi<AdPlatformConnection[]>(
+  const { data: connections, isLoading: connectionsLoading, mutate: mutateConnections } = useApi<AdPlatformConnection[]>(
     '/api/ads/connections'
   );
 
@@ -276,6 +277,10 @@ function AdsPageContent() {
         </Card>
       )}
 
+      {connectionsLoading ? (
+        <AdsPageContentSkeleton />
+      ) : (
+        <>
       <div className="flex gap-1 p-1 rounded-[10px] bg-[var(--canvas)] border border-[var(--border)] w-fit">
         <button
           type="button"
@@ -362,7 +367,11 @@ function AdsPageContent() {
           />
         </div>
       )}
+        </>
+      )}
 
+      {!connectionsLoading && (
+      <>
       <OptimizeAdFlow
         open={Boolean(optimizePromotionId)}
         promotionId={optimizePromotionId}
@@ -413,6 +422,8 @@ function AdsPageContent() {
           </div>
         )}
       </Card>
+      </>
+      )}
     </DashboardPage>
   );
 }

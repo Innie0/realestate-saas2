@@ -16,7 +16,7 @@ import PageToolbar from '@/components/layout/PageToolbar';
 import SearchInput from '@/components/ui/SearchInput';
 import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
-import DataLoadingState from '@/components/dashboard/DataLoadingState';
+import { TransactionsPageContentSkeleton } from '@/components/dashboard/page-loading';
 import TransactionStatusBadge from '@/components/transactions/TransactionStatusBadge';
 import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
 import { TransactionWithDetails } from '@/types';
@@ -112,12 +112,7 @@ export default function TransactionsPage() {
       )}
 
       {isLoading ? (
-        <Card className="p-0">
-          <DataLoadingState
-            title="Loading transactions"
-            description="Fetching your deal pipeline…"
-          />
-        </Card>
+        <TransactionsPageContentSkeleton />
       ) : filteredTransactions.length === 0 ? (
         <Card className="p-0">
           <EmptyState

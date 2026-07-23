@@ -1,5 +1,5 @@
-import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
+import { TransactionsPageLoading } from '@/components/dashboard/page-loading';
 
 export default function TransactionsLoading() {
-  return <PageLoadingSkeleton variant="list" />;
+  return <TransactionsPageLoading />;
 }

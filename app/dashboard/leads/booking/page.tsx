@@ -8,7 +8,7 @@ import LeadsSectionSwitcher from '@/components/leads/LeadsSectionSwitcher';
 import Button from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import Switch from '@/components/ui/Switch';
-import PageLoadingSkeleton from '@/components/dashboard/PageLoadingSkeleton';
+import { LeadsSubpageLoading } from '@/components/dashboard/page-loading';
 import { useToast } from '@/components/providers/ToastProvider';
 import { supabase } from '@/lib/supabase';
 import { TIMEZONE_OPTIONS } from '@/lib/timezone';
@@ -151,7 +151,7 @@ export default function BookingSettingsPage() {
     'w-full px-3 py-2.5 rounded-[10px] bg-gray-50 border border-gray-200 text-gray-900 text-[13px] placeholder-gray-450 focus:outline-none focus:border-gray-400';
 
   if (loading || checkingPlan) {
-    return <PageLoadingSkeleton variant="account" />;
+    return <LeadsSubpageLoading title="Booking page" subtitle="Let leads schedule time with you" />;
   }
 
   const saveButton = (

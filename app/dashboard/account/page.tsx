@@ -10,6 +10,7 @@ import { Card } from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
 import Modal from '@/components/ui/Modal';
 import PlanUsagePanel, { PlanUsagePanelSkeleton } from '@/components/dashboard/PlanUsagePanel';
+import { AccountPageContentSkeleton } from '@/components/dashboard/page-loading';
 import { User, Lock, CreditCard, Sparkles } from 'lucide-react';
 import { getCurrentUser, updateUserProfile, supabase } from '@/lib/supabase';
 import { getPaidPlanName, isAdminEmail, hasRealStripeSubscription } from '@/lib/subscription';
@@ -312,16 +313,7 @@ export default function AccountPage() {
         subtitle="Manage your profile, plan, and preferences"
         size="narrow"
       >
-        {usageLoading ? <PlanUsagePanelSkeleton /> : usage ? <PlanUsagePanel usage={usage} plan={usagePlan} /> : null}
-        <Card className="p-5 sm:p-6 animate-pulse space-y-3">
-          <div className="h-5 bg-gray-200 rounded w-1/3" />
-          <div className="h-10 bg-gray-100 rounded-xl" />
-          <div className="h-10 bg-gray-100 rounded-xl" />
-        </Card>
-        <Card className="p-5 sm:p-6 animate-pulse space-y-3">
-          <div className="h-5 bg-gray-200 rounded w-1/3" />
-          <div className="h-10 bg-gray-100 rounded-xl" />
-        </Card>
+        <AccountPageContentSkeleton />
       </DashboardPage>
     );
   }
