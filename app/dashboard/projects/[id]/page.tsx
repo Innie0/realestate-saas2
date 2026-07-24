@@ -14,6 +14,7 @@ import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import Modal from '@/components/ui/Modal';
 import { getTransactionStatusBadgeVariant } from '@/lib/transaction-status';
+import { newTransactionFromProjectPath } from '@/lib/project-transaction-prefill';
 import { 
   Upload, Sparkles, Save, Trash2, Image as ImageIcon, Calendar, FileText, 
   Building2, Copy, Check, Edit3, Wand2, Eye, ChevronLeft, ChevronRight,
@@ -1248,6 +1249,14 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       <Button
         size="sm"
         variant="outline"
+        onClick={() => router.push(newTransactionFromProjectPath(project.id))}
+      >
+        <FileText className="w-4 h-4 mr-2" />
+        Create Transaction
+      </Button>
+      <Button
+        size="sm"
+        variant="outline"
         onClick={() => router.push(`/dashboard/ads?promote=${project.id}`)}
       >
         <Megaphone className="w-4 h-4 mr-2" />
@@ -1879,13 +1888,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => router.push(
-                    `/dashboard/transactions/new?project_id=${projectId}` +
-                    (project.property_info?.address ? `&address=${encodeURIComponent(project.property_info.address)}` : '') +
-                    (project.property_info?.city ? `&city=${encodeURIComponent(project.property_info.city)}` : '') +
-                    (project.property_info?.state ? `&state=${encodeURIComponent(project.property_info.state)}` : '') +
-                    (project.property_info?.price ? `&price=${project.property_info.price}` : '')
-                  )}
+                  onClick={() => router.push(newTransactionFromProjectPath(projectId))}
                 >
                   New Transaction
                 </Button>
@@ -1930,13 +1933,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
                   <FileText className="w-10 h-10 mx-auto text-gray-400 mb-3" />
                   <p className="text-[13.5px] text-gray-700 mb-4">No transactions linked to this project yet</p>
-                  <Button onClick={() => router.push(
-                    `/dashboard/transactions/new?project_id=${projectId}` +
-                    (project.property_info?.address ? `&address=${encodeURIComponent(project.property_info.address)}` : '') +
-                    (project.property_info?.city ? `&city=${encodeURIComponent(project.property_info.city)}` : '') +
-                    (project.property_info?.state ? `&state=${encodeURIComponent(project.property_info.state)}` : '') +
-                    (project.property_info?.price ? `&price=${project.property_info.price}` : '')
-                  )}>
+                  <Button onClick={() => router.push(newTransactionFromProjectPath(projectId))}>
                     Create Transaction
                   </Button>
                 </div>

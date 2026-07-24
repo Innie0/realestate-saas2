@@ -20,7 +20,10 @@ interface TransactionFormProps {
   defaultAddress?: string;
   defaultCity?: string;
   defaultState?: string;
+  defaultZip?: string;
+  defaultPropertyType?: string;
   defaultPrice?: number;
+  linkedProjectTitle?: string;
 }
 
 export default function TransactionForm({
@@ -31,7 +34,10 @@ export default function TransactionForm({
   defaultAddress,
   defaultCity,
   defaultState,
+  defaultZip,
+  defaultPropertyType,
   defaultPrice,
+  linkedProjectTitle,
 }: TransactionFormProps) {
   const router = useRouter();
   const isEditing = !!transaction;
@@ -45,8 +51,10 @@ export default function TransactionForm({
   const [propertyAddress, setPropertyAddress] = useState(transaction?.property_address || defaultAddress || '');
   const [propertyCity, setPropertyCity] = useState(transaction?.property_city || defaultCity || '');
   const [propertyState, setPropertyState] = useState(transaction?.property_state || defaultState || '');
-  const [propertyZip, setPropertyZip] = useState(transaction?.property_zip || '');
-  const [propertyType, setPropertyType] = useState(transaction?.property_type || 'house');
+  const [propertyZip, setPropertyZip] = useState(transaction?.property_zip || defaultZip || '');
+  const [propertyType, setPropertyType] = useState(
+    transaction?.property_type || defaultPropertyType || 'house',
+  );
 
   // Buyer info
   const [buyerName, setBuyerName] = useState(transaction?.buyer_name || '');
@@ -208,8 +216,16 @@ export default function TransactionForm({
       )}
 
       {!isEditing && defaultProjectId && (
-        <div className="px-4 py-2.5 rounded-[10px] bg-teal-50 text-teal-700 text-[13px]">
-          Linked to a listing project — this transaction will show up on that project&apos;s Linked tab.
+        <div className="px-4 py-2.5 rounded-[10px] bg-teal-50 border border-teal-100 text-teal-800 text-[13px]">
+          {linkedProjectTitle ? (
+            <>
+              Creating transaction for{' '}
+              <span className="font-medium">{linkedProjectTitle}</span>
+              {' '}— property details are pre-filled from the listing.
+            </>
+          ) : (
+            <>Linked to a listing project — this transaction will show up on that project&apos;s Linked tab.</>
+          )}
         </div>
       )}
 

@@ -32,6 +32,7 @@ export interface Project {
   last_synced_at?: string | null;
   created_at: string; // When the project was created
   updated_at: string; // When the project was last updated
+  linked_transactions?: LinkedTransactionSummary[]; // When fetched with embed
 }
 
 /**
@@ -292,6 +293,7 @@ export interface Transaction {
   // Links
   project_id?: string; // Link to a project
   client_id?: string; // Link to a client
+  project?: LinkedProjectSummary | null; // Joined project (when fetched with embed)
   
   // Timestamps
   created_at: string;
@@ -300,6 +302,26 @@ export interface Transaction {
   // Related data (when joined)
   checklist_items?: TransactionChecklistItem[];
   reminders?: TransactionReminder[];
+}
+
+/** Summary of a project linked to a transaction or embedded on project detail. */
+export interface LinkedProjectSummary {
+  id: string;
+  title: string;
+  status: string;
+  property_type?: string | null;
+  property_info?: PropertyInfo | null;
+}
+
+/** Summary of a transaction linked to a project. */
+export interface LinkedTransactionSummary {
+  id: string;
+  status: string;
+  property_address: string;
+  offer_price: number;
+  closing_date?: string | null;
+  buyer_name: string;
+  created_at: string;
 }
 
 /**

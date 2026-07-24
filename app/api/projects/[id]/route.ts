@@ -42,9 +42,19 @@ export async function GET(
       );
     }
 
+    const { data: linkedTransactions } = await supabase
+      .from('transactions')
+      .select('id, status, property_address, offer_price, closing_date, buyer_name, created_at')
+      .eq('user_id', user.id)
+      .eq('project_id', projectId)
+      .order('created_at', { ascending: false });
+
     return NextResponse.json({
       success: true,
-      data: project,
+      data: {
+        ...project,
+        linked_transactions: linkedTransactions ?? [],
+      },
     });
   } catch (error: any) {
     console.error('Error in GET /api/projects/[id]:', error);

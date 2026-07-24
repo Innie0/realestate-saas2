@@ -33,6 +33,9 @@ export async function GET(
       .from('transactions')
       .select(`
         *,
+        project:projects(
+          id, title, status, property_type, property_info
+        ),
         checklist_items:transaction_checklist_items(
           id, title, description, category, due_date, 
           is_completed, completed_at, order_index, created_at

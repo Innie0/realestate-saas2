@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 import { 
   ArrowLeft, Edit2, Trash2, Building2, DollarSign, 
   User, Users, Calendar, Mail, Phone, FileText,
-  Bell, CheckCircle2, Clock, AlertTriangle, ListChecks
+  Bell, CheckCircle2, Clock, AlertTriangle, ListChecks, Link2,
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Select from '@/components/ui/Select';
@@ -257,6 +257,15 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                       .filter(Boolean)
                       .join(', ')}
                   </p>
+                )}
+                {transaction.project && (
+                  <Link
+                    href={`/dashboard/projects/${transaction.project.id}`}
+                    className="inline-flex items-center gap-1.5 mt-2 text-[13px] font-medium text-teal-700 hover:text-teal-900"
+                  >
+                    <Link2 className="w-3.5 h-3.5" />
+                    Linked project: {transaction.project.title}
+                  </Link>
                 )}
               </div>
             </div>

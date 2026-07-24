@@ -190,6 +190,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (body.project_id) {
+      const { data: linkedProject, error: projectError } = await supabase
+        .from('projects')
+        .select('id')
+        .eq('id', body.project_id)
+        .eq('user_id', user.id)
+        .single();
+
+      if (projectError || !linkedProject) {
+        return NextResponse.json(
+          { success: false, error: 'Linked project not found' },
+          { status: 400 }
+        );
+      }
+    }
+
     // Create transaction data
     const transactionData = {
       user_id: user.id,
