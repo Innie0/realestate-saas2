@@ -407,6 +407,15 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                   <User className="w-3.5 h-3.5" /> Buyer
                 </h3>
                 <p className="text-[17px] font-semibold text-gray-900 mb-2">{transaction.buyer_name || '-'}</p>
+                {transaction.buyer_client && (
+                  <Link
+                    href={`/dashboard/clients/${transaction.buyer_client.id}`}
+                    className="inline-flex items-center gap-1 mb-2 text-[12.5px] font-medium text-teal-700 hover:text-teal-900"
+                  >
+                    <Link2 className="w-3 h-3" />
+                    View in CRM
+                  </Link>
+                )}
                 <div className="space-y-1.5">
                   {transaction.buyer_email && (
                     <a href={`mailto:${transaction.buyer_email}`} className="flex items-center gap-2 text-[13px] text-gray-700 hover:text-brand-600 transition-colors">
@@ -431,6 +440,15 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                   <Users className="w-3.5 h-3.5" /> Seller
                 </h3>
                 <p className="text-[17px] font-semibold text-gray-900 mb-2">{transaction.seller_name || '-'}</p>
+                {transaction.seller_client && (
+                  <Link
+                    href={`/dashboard/clients/${transaction.seller_client.id}`}
+                    className="inline-flex items-center gap-1 mb-2 text-[12.5px] font-medium text-teal-700 hover:text-teal-900"
+                  >
+                    <Link2 className="w-3 h-3" />
+                    View in CRM
+                  </Link>
+                )}
                 <div className="space-y-1.5">
                   {transaction.seller_email && (
                     <a href={`mailto:${transaction.seller_email}`} className="flex items-center gap-2 text-[13px] text-gray-700 hover:text-brand-600 transition-colors">

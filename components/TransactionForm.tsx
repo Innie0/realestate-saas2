@@ -11,6 +11,7 @@ import Select from '@/components/ui/Select';
 import { Transaction } from '@/types';
 import { TRANSACTION_STATUSES } from '@/lib/transaction-status';
 import { revalidateTransactionsCache } from '@/lib/swr';
+import ClientPartyField, { ClientSearchResult } from '@/components/transactions/ClientPartyField';
 
 interface TransactionFormProps {
   transaction?: Transaction; // Existing transaction for editing
@@ -60,6 +61,9 @@ export default function TransactionForm({
   const [buyerName, setBuyerName] = useState(transaction?.buyer_name || '');
   const [buyerEmail, setBuyerEmail] = useState(transaction?.buyer_email || '');
   const [buyerPhone, setBuyerPhone] = useState(transaction?.buyer_phone || '');
+  const [buyerClientId, setBuyerClientId] = useState<string | null>(
+    transaction?.buyer_client_id ?? transaction?.client_id ?? null,
+  );
   const [buyerAgentName, setBuyerAgentName] = useState(transaction?.buyer_agent_name || '');
   const [buyerAgentEmail, setBuyerAgentEmail] = useState(transaction?.buyer_agent_email || '');
   const [buyerAgentPhone, setBuyerAgentPhone] = useState(transaction?.buyer_agent_phone || '');
@@ -68,6 +72,9 @@ export default function TransactionForm({
   const [sellerName, setSellerName] = useState(transaction?.seller_name || '');
   const [sellerEmail, setSellerEmail] = useState(transaction?.seller_email || '');
   const [sellerPhone, setSellerPhone] = useState(transaction?.seller_phone || '');
+  const [sellerClientId, setSellerClientId] = useState<string | null>(
+    transaction?.seller_client_id ?? null,
+  );
   const [sellerAgentName, setSellerAgentName] = useState(transaction?.seller_agent_name || '');
   const [sellerAgentEmail, setSellerAgentEmail] = useState(transaction?.seller_agent_email || '');
   const [sellerAgentPhone, setSellerAgentPhone] = useState(transaction?.seller_agent_phone || '');
@@ -96,6 +103,20 @@ export default function TransactionForm({
 
   // Status
   const [status, setStatus] = useState(transaction?.status || 'active');
+
+  const linkBuyerClient = (client: ClientSearchResult) => {
+    setBuyerClientId(client.id);
+    setBuyerName(client.name);
+    setBuyerEmail(client.email || '');
+    setBuyerPhone(client.phone || '');
+  };
+
+  const linkSellerClient = (client: ClientSearchResult) => {
+    setSellerClientId(client.id);
+    setSellerName(client.name);
+    setSellerEmail(client.email || '');
+    setSellerPhone(client.phone || '');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -160,6 +181,8 @@ export default function TransactionForm({
       title_deadline: titleDeadline || null,
       closing_date: closingDate || null,
       possession_date: possessionDate || null,
+      buyer_client_id: buyerClientId,
+      seller_client_id: sellerClientId,
     };
 
     if (!isEditing) {
@@ -322,30 +345,19 @@ export default function TransactionForm({
           {/* Buyer Info */}
           <div className="space-y-4">
             <h3 className="text-[15px] font-semibold text-gray-900">Buyer Information</h3>
-            
-            <Input
-              label="Buyer Name *"
-              value={buyerName}
-              onChange={(e) => setBuyerName(e.target.value)}
-              placeholder="John Smith"
-              required
-            />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Buyer Email"
-                type="email"
-                value={buyerEmail}
-                onChange={(e) => setBuyerEmail(e.target.value)}
-                placeholder="buyer@email.com"
-              />
-              <Input
-                label="Buyer Phone"
-                value={buyerPhone}
-                onChange={(e) => setBuyerPhone(e.target.value)}
-                placeholder="(555) 123-4567"
-              />
-            </div>
+            <ClientPartyField
+              role="buyer"
+              name={buyerName}
+              email={buyerEmail}
+              phone={buyerPhone}
+              linkedClientId={buyerClientId}
+              onNameChange={setBuyerName}
+              onEmailChange={setBuyerEmail}
+              onPhoneChange={setBuyerPhone}
+              onLinkClient={linkBuyerClient}
+              onUnlinkClient={() => setBuyerClientId(null)}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Input
@@ -373,30 +385,19 @@ export default function TransactionForm({
           {/* Seller Info */}
           <div className="space-y-4 pt-4 border-t border-gray-150">
             <h3 className="text-[15px] font-semibold text-gray-900">Seller Information</h3>
-            
-            <Input
-              label="Seller Name *"
-              value={sellerName}
-              onChange={(e) => setSellerName(e.target.value)}
-              placeholder="Jane Doe"
-              required
-            />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Seller Email"
-                type="email"
-                value={sellerEmail}
-                onChange={(e) => setSellerEmail(e.target.value)}
-                placeholder="seller@email.com"
-              />
-              <Input
-                label="Seller Phone"
-                value={sellerPhone}
-                onChange={(e) => setSellerPhone(e.target.value)}
-                placeholder="(555) 123-4567"
-              />
-            </div>
+            <ClientPartyField
+              role="seller"
+              name={sellerName}
+              email={sellerEmail}
+              phone={sellerPhone}
+              linkedClientId={sellerClientId}
+              onNameChange={setSellerName}
+              onEmailChange={setSellerEmail}
+              onPhoneChange={setSellerPhone}
+              onLinkClient={linkSellerClient}
+              onUnlinkClient={() => setSellerClientId(null)}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Input

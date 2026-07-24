@@ -292,8 +292,12 @@ export interface Transaction {
   
   // Links
   project_id?: string; // Link to a project
-  client_id?: string; // Link to a client
+  client_id?: string; // Legacy link (deprecated — use buyer_client_id)
+  buyer_client_id?: string | null;
+  seller_client_id?: string | null;
   project?: LinkedProjectSummary | null; // Joined project (when fetched with embed)
+  buyer_client?: LinkedClientSummary | null;
+  seller_client?: LinkedClientSummary | null;
   
   // Timestamps
   created_at: string;
@@ -321,6 +325,25 @@ export interface LinkedTransactionSummary {
   offer_price: number;
   closing_date?: string | null;
   buyer_name: string;
+  created_at: string;
+}
+
+/** Summary of a CRM client linked to a transaction party. */
+export interface LinkedClientSummary {
+  id: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
+}
+
+/** Transaction linked to a client detail page. */
+export interface ClientLinkedTransaction {
+  id: string;
+  status: string;
+  property_address: string;
+  offer_price: number;
+  closing_date?: string | null;
+  role: 'buyer' | 'seller';
   created_at: string;
 }
 

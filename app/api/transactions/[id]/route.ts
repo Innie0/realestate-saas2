@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { updateTransactionCalendarEvents, deleteTransactionCalendarEvents } from '@/lib/transaction-calendar-sync';
+import { resolveTransactionPartyLinks } from '@/lib/transaction-client-link';
 
 /**
  * GET /api/transactions/[id]
@@ -35,6 +36,12 @@ export async function GET(
         *,
         project:projects(
           id, title, status, property_type, property_info
+        ),
+        buyer_client:clients!buyer_client_id(
+          id, name, email, phone
+        ),
+        seller_client:clients!seller_client_id(
+          id, name, email, phone
         ),
         checklist_items:transaction_checklist_items(
           id, title, description, category, due_date, 
@@ -153,7 +160,7 @@ export async function PUT(
       'offer_date', 'acceptance_date', 'inspection_date', 'inspection_deadline',
       'appraisal_date', 'appraisal_deadline', 'financing_deadline', 'title_deadline',
       'closing_date', 'possession_date',
-      'status', 'project_id', 'client_id'
+      'status', 'project_id', 'client_id', 'buyer_client_id', 'seller_client_id'
     ];
 
     for (const field of allowedFields) {
@@ -161,6 +168,15 @@ export async function PUT(
         updateData[field] = body[field];
       }
     }
+
+    const partyLinks = await resolveTransactionPartyLinks(supabase, user.id, body);
+    if (partyLinks.error) {
+      return NextResponse.json(
+        { success: false, error: partyLinks.error },
+        { status: 400 },
+      );
+    }
+    Object.assign(updateData, partyLinks.data);
 
     // Check if any date fields are being updated
     const dateFields = [

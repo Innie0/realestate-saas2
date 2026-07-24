@@ -2,6 +2,7 @@
 // API route for individual client - GET, PUT (update), DELETE
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
+import { mergeClientTransactions } from '@/lib/transaction-client-link';
 
 /**
  * GET /api/clients/[id]
@@ -60,6 +61,40 @@ export async function GET(
       r => !r.is_completed && new Date(r.reminder_date) >= new Date()
     ).length || 0;
 
+    const transactionSelect =
+      'id, status, property_address, offer_price, closing_date, created_at';
+
+    const [
+      { data: buyerTransactions },
+      { data: sellerTransactions },
+      { data: legacyTransactions },
+    ] = await Promise.all([
+      supabase
+        .from('transactions')
+        .select(transactionSelect)
+        .eq('user_id', user.id)
+        .eq('buyer_client_id', clientId)
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('transactions')
+        .select(transactionSelect)
+        .eq('user_id', user.id)
+        .eq('seller_client_id', clientId)
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('transactions')
+        .select(transactionSelect)
+        .eq('user_id', user.id)
+        .eq('client_id', clientId)
+        .order('created_at', { ascending: false }),
+    ]);
+
+    const transactions = mergeClientTransactions(
+      buyerTransactions ?? [],
+      sellerTransactions ?? [],
+      legacyTransactions ?? [],
+    );
+
     return NextResponse.json({
       success: true,
       data: {
@@ -67,6 +102,7 @@ export async function GET(
         notes: notes || [],
         reminders: reminders || [],
         upcoming_reminders_count: upcomingReminders,
+        transactions,
       },
     });
   } catch (error) {
