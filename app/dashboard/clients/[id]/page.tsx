@@ -2,9 +2,8 @@
 
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { ClientWithDetails, Reminder } from '@/types';
+import { ClientWithDetails, Reminder, ClientActivityType } from '@/types';
 import ClientForm from '@/components/ClientForm';
-import ReminderForm from '@/components/ReminderForm';
 import Button from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import Modal from '@/components/ui/Modal';
@@ -14,15 +13,16 @@ import {
   ArrowLeft,
   Pencil,
   Trash2,
-  Plus,
-  Clock,
-  CheckCircle2,
-  FileText,
-  Calendar,
   Mail,
   Phone,
   UserPlus,
   Loader2,
+  PhoneCall,
+  CalendarPlus,
+  LayoutGrid,
+  Activity,
+  FileText,
+  FolderOpen,
 } from 'lucide-react';
 import { useToast } from '@/components/providers/ToastProvider';
 import {
@@ -33,34 +33,38 @@ import {
   getClientDetailFields,
   getClientInitials,
   getClientStage,
+  buildIntakeFieldNote,
+  type ClientIntakeField,
 } from '@/lib/client-crm-display';
 import ClientLeadOriginCard from '@/components/clients/ClientLeadOriginCard';
-import ClientTransactionsSection from '@/components/clients/ClientTransactionsSection';
+import ClientProfileSection from '@/components/clients/ClientProfileSection';
+import ClientActivityTab from '@/components/clients/ClientActivityTab';
+import ClientTransactionsTab from '@/components/clients/ClientTransactionsTab';
+import ClientDocumentsTab from '@/components/clients/ClientDocumentsTab';
+import LogActivityModal from '@/components/clients/LogActivityModal';
 
-function DetailRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex flex-1 items-center justify-between">
-      <span className="text-[13px] text-muted-foreground">{label}</span>
-      <span className="text-[13px] font-semibold text-foreground">{value}</span>
-    </div>
-  );
-}
+type ClientTab = 'overview' | 'activity' | 'transactions' | 'documents';
 
-/**
- * Client detail page
- * View and manage a single client with notes and reminders
- */
+const CLIENT_TABS: { id: ClientTab; label: string; icon: React.ElementType }[] = [
+  { id: 'overview', label: 'Overview', icon: LayoutGrid },
+  { id: 'activity', label: 'Activity', icon: Activity },
+  { id: 'transactions', label: 'Transactions', icon: FileText },
+  { id: 'documents', label: 'Documents', icon: FolderOpen },
+];
+
 export default function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  // Unwrap the params Promise (Next.js 16 requirement)
   const { id: clientId } = use(params);
   const router = useRouter();
   const toast = useToast();
   const [client, setClient] = useState<ClientWithDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<ClientTab>('overview');
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showNoteForm, setShowNoteForm] = useState(false);
   const [showReminderForm, setShowReminderForm] = useState(false);
+  const [showLogActivity, setShowLogActivity] = useState(false);
+  const [logActivityType, setLogActivityType] = useState<ClientActivityType>('call');
   const [newNote, setNewNote] = useState('');
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [editingNoteContent, setEditingNoteContent] = useState('');
@@ -73,29 +77,10 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientId]);
 
-  const handleAddToCrm = async () => {
-    setAddingToCrm(true);
-    try {
-      const response = await fetch(`/api/clients/${clientId}/add-to-crm`, { method: 'POST' });
-      const result = await response.json();
-      if (result.success) {
-        fetchClient();
-      } else {
-        toast.error(result.error || 'Could not add to CRM');
-      }
-    } catch (error) {
-      console.error('Add to CRM error:', error);
-      toast.error('Could not add to CRM');
-    } finally {
-      setAddingToCrm(false);
-    }
-  };
-
   const fetchClient = async () => {
     try {
       const response = await fetch(`/api/clients/${clientId}`);
       const result = await response.json();
-
       if (result.success) {
         setClient(result.data);
       } else {
@@ -109,7 +94,24 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
     }
   };
 
-  const handleUpdateClient = async (data: any) => {
+  const handleAddToCrm = async () => {
+    setAddingToCrm(true);
+    try {
+      const response = await fetch(`/api/clients/${clientId}/add-to-crm`, { method: 'POST' });
+      const result = await response.json();
+      if (result.success) {
+        fetchClient();
+      } else {
+        toast.error(result.error || 'Could not add to CRM');
+      }
+    } catch {
+      toast.error('Could not add to CRM');
+    } finally {
+      setAddingToCrm(false);
+    }
+  };
+
+  const handleUpdateClient = async (data: { name: string; email: string; phone: string; status?: string }) => {
     setIsSubmitting(true);
     try {
       const response = await fetch(`/api/clients/${clientId}`, {
@@ -117,42 +119,87 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-
       const result = await response.json();
-
       if (result.success) {
         setIsEditing(false);
         fetchClient();
       } else {
         toast.error(result.error || 'Failed to update client');
       }
-    } catch (error) {
-      console.error('Error updating client:', error);
+    } catch {
       toast.error('Failed to update client');
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const handleSaveIntakeField = async (field: ClientIntakeField, value: string) => {
+    setIsSubmitting(true);
+    try {
+      const noteResponse = await fetch(`/api/clients/${clientId}/notes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ note: buildIntakeFieldNote(field, value) }),
+      });
+      const noteResult = await noteResponse.json();
+      if (!noteResult.success) {
+        throw new Error(noteResult.error || 'Failed to save');
+      }
+
+      if (field === 'interested_in') {
+        await fetch(`/api/clients/${clientId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: client?.name,
+            email: client?.email ?? '',
+            phone: client?.phone ?? '',
+            lead_type: value,
+          }),
+        });
+      }
+
+      fetchClient();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to save');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleLogActivity = async (payload: {
+    type: ClientActivityType;
+    title: string;
+    notes: string;
+    occurred_at: string;
+  }) => {
+    const response = await fetch(`/api/clients/${clientId}/activities`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.error || 'Failed to log activity');
+    }
+    fetchClient();
+    toast.success('Activity logged');
+  };
+
   const handleDeleteClient = async () => {
     if (!confirm('Are you sure you want to delete this client? This will also delete all notes and reminders.')) {
       return;
     }
-
     setIsDeleting(true);
     try {
-      const response = await fetch(`/api/clients/${clientId}`, {
-        method: 'DELETE',
-      });
-
+      const response = await fetch(`/api/clients/${clientId}`, { method: 'DELETE' });
       if (response.ok) {
         router.push('/dashboard/clients');
       } else {
         toast.error('Failed to delete client');
         setIsDeleting(false);
       }
-    } catch (error) {
-      console.error('Error deleting client:', error);
+    } catch {
       toast.error('Failed to delete client');
       setIsDeleting(false);
     }
@@ -160,7 +207,6 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
   const handleAddNote = async () => {
     if (!newNote.trim()) return;
-
     setIsSubmitting(true);
     try {
       const response = await fetch(`/api/clients/${clientId}/notes`, {
@@ -168,9 +214,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ note: newNote }),
       });
-
       const result = await response.json();
-
       if (result.success) {
         setNewNote('');
         setShowNoteForm(false);
@@ -178,8 +222,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       } else {
         toast.error(result.error || 'Failed to add note');
       }
-    } catch (error) {
-      console.error('Error adding note:', error);
+    } catch {
       toast.error('Failed to add note');
     } finally {
       setIsSubmitting(false);
@@ -187,29 +230,17 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   };
 
   const handleDeleteNote = async (noteId: string) => {
-    if (!confirm('Are you sure you want to delete this note?')) return;
-
+    if (!confirm('Delete this note?')) return;
     try {
-      const response = await fetch(`/api/clients/${clientId}/notes/${noteId}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        fetchClient();
-      }
+      const response = await fetch(`/api/clients/${clientId}/notes/${noteId}`, { method: 'DELETE' });
+      if (response.ok) fetchClient();
     } catch (error) {
       console.error('Error deleting note:', error);
     }
   };
 
-  const handleEditNote = (noteId: string, currentNote: string) => {
-    setEditingNoteId(noteId);
-    setEditingNoteContent(currentNote);
-  };
-
   const handleUpdateNote = async (noteId: string) => {
     if (!editingNoteContent.trim()) return;
-
     setIsSubmitting(true);
     try {
       const response = await fetch(`/api/clients/${clientId}/notes/${noteId}`, {
@@ -217,9 +248,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ note: editingNoteContent }),
       });
-
       const result = await response.json();
-
       if (result.success) {
         setEditingNoteId(null);
         setEditingNoteContent('');
@@ -227,20 +256,14 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       } else {
         toast.error(result.error || 'Failed to update note');
       }
-    } catch (error) {
-      console.error('Error updating note:', error);
+    } catch {
       toast.error('Failed to update note');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleCancelEditNote = () => {
-    setEditingNoteId(null);
-    setEditingNoteContent('');
-  };
-
-  const handleCreateReminder = async (data: any) => {
+  const handleCreateReminder = async (data: unknown) => {
     setIsSubmitting(true);
     try {
       const response = await fetch('/api/reminders', {
@@ -248,46 +271,41 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-
       const result = await response.json();
-
       if (result.success) {
         setShowReminderForm(false);
         fetchClient();
       } else {
         toast.error(result.error || 'Failed to create reminder');
       }
-    } catch (error) {
-      console.error('Error creating reminder:', error);
+    } catch {
       toast.error('Failed to create reminder');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleUpdateReminder = async (reminderId: string, data: any) => {
+  const handleUpdateReminder = async (reminderId: string, data: unknown) => {
     setIsSubmitting(true);
     try {
+      const d = data as { title: string; description?: string; reminder_date: string };
       const response = await fetch(`/api/reminders/${reminderId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: data.title,
-          description: data.description,
-          reminder_date: data.reminder_date,
+          title: d.title,
+          description: d.description,
+          reminder_date: d.reminder_date,
         }),
       });
-
       const result = await response.json();
-
       if (result.success) {
         setEditingReminderId(null);
         fetchClient();
       } else {
         toast.error(result.error || 'Failed to update reminder');
       }
-    } catch (error) {
-      console.error('Error updating reminder:', error);
+    } catch {
       toast.error('Failed to update reminder');
     } finally {
       setIsSubmitting(false);
@@ -301,29 +319,39 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_completed: true }),
       });
-
-      if (response.ok) {
-        fetchClient();
-      }
+      if (response.ok) fetchClient();
     } catch (error) {
       console.error('Error completing reminder:', error);
     }
   };
 
   const handleDeleteReminder = async (reminderId: string) => {
-    if (!confirm('Are you sure you want to delete this reminder?')) return;
-
+    if (!confirm('Delete this reminder?')) return;
     try {
-      const response = await fetch(`/api/reminders/${reminderId}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        fetchClient();
-      }
+      const response = await fetch(`/api/reminders/${reminderId}`, { method: 'DELETE' });
+      if (response.ok) fetchClient();
     } catch (error) {
       console.error('Error deleting reminder:', error);
     }
+  };
+
+  const openLogCall = () => {
+    setLogActivityType('call');
+    setShowLogActivity(true);
+  };
+
+  const handleSendEmail = () => {
+    if (!client?.email) {
+      toast.error('Add an email address first');
+      setIsEditing(true);
+      return;
+    }
+    window.location.href = `mailto:${client.email}`;
+  };
+
+  const handleScheduleFollowUp = () => {
+    setActiveTab('activity');
+    setShowReminderForm(true);
   };
 
   if (loading) {
@@ -334,15 +362,16 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
     );
   }
 
-  if (!client) {
-    return null;
-  }
+  if (!client) return null;
 
   const stage = getClientStage(client);
   const stageStyle = STAGE_BADGE[stage];
   const detail = getClientDetailFields(client);
   const lastContactAt = client.notes?.[0]?.created_at || client.updated_at || client.created_at;
   const reminders: Reminder[] = client.reminders || [];
+  const notes = client.notes || [];
+  const activities = client.activities || [];
+  const transactions = client.transactions || [];
 
   return (
     <DashboardPage title={client.name} subtitle={client.email || client.phone || undefined} inline>
@@ -370,318 +399,168 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           </div>
         )}
 
-        {client.lead_origin && (
-          <ClientLeadOriginCard
-            leadOrigin={client.lead_origin}
-            clientId={client.id}
-            inCrm={Boolean(client.in_crm)}
-          />
-        )}
-
-        {client.transactions && client.transactions.length > 0 && (
-          <ClientTransactionsSection transactions={client.transactions} />
-        )}
-
-        {/* Hero card */}
+        {/* Hero */}
         <Card className="p-5 sm:p-[26px]">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-            <div className="flex items-center gap-4 min-w-0">
-              <div
-                className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-semibold shrink-0 ${getClientAvatarClass(client.name)}`}
-              >
-                {getClientInitials(client.name) || '?'}
-              </div>
-              <div className="min-w-0">
-                <div className="flex items-center gap-2.5 flex-wrap">
-                  <h1 className="text-[24px] font-semibold text-gray-900 truncate">{client.name}</h1>
-                  <span
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium border ${stageStyle.className}`}
-                  >
-                    <span className={`w-1.5 h-1.5 rounded-full ${stageStyle.dotClassName}`} />
-                    {stageStyle.label}
-                  </span>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              <div className="flex items-center gap-4 min-w-0">
+                <div
+                  className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-semibold shrink-0 ${getClientAvatarClass(client.name)}`}
+                >
+                  {getClientInitials(client.name) || '?'}
                 </div>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-[13px] text-gray-600">
-                  {client.email && (
-                    <span className="inline-flex items-center gap-1.5">
-                      <Mail className="w-3.5 h-3.5 text-gray-600" />
-                      {client.email}
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <h1 className="text-[24px] font-semibold text-gray-900 truncate">{client.name}</h1>
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium border ${stageStyle.className}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${stageStyle.dotClassName}`} />
+                      {stageStyle.label}
                     </span>
-                  )}
-                  {client.phone && (
-                    <span className="inline-flex items-center gap-1.5">
-                      <Phone className="w-3.5 h-3.5 text-gray-600" />
-                      {client.phone}
-                    </span>
-                  )}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-[13px] text-gray-600">
+                    {client.email && (
+                      <span className="inline-flex items-center gap-1.5">
+                        <Mail className="w-3.5 h-3.5" /> {client.email}
+                      </span>
+                    )}
+                    {client.phone && (
+                      <span className="inline-flex items-center gap-1.5">
+                        <Phone className="w-3.5 h-3.5" /> {client.phone}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
-                <Pencil className="w-3.5 h-3.5 mr-1.5" />
-                Edit
-              </Button>
-              <Button
-                variant="danger"
-                size="sm"
-                onClick={handleDeleteClient}
-                disabled={isDeleting}
-                className="whitespace-nowrap"
-              >
-                <Trash2 className="w-3.5 h-3.5 mr-1.5" />
-                {isDeleting ? 'Deleting…' : 'Delete'}
-              </Button>
-            </div>
-          </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-5 border-t border-gray-150">
-            <div>
-              <p className="text-[11px] text-gray-600">Interested in</p>
-              <p className="mt-1 text-[14px] font-semibold text-gray-900">{detail.interestType}</p>
+              <div className="flex flex-wrap items-center gap-2 shrink-0">
+                <Button variant="outline" size="sm" onClick={openLogCall}>
+                  <PhoneCall className="w-3.5 h-3.5 mr-1.5" />
+                  Log call
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleSendEmail}>
+                  <Mail className="w-3.5 h-3.5 mr-1.5" />
+                  Send email
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleScheduleFollowUp}>
+                  <CalendarPlus className="w-3.5 h-3.5 mr-1.5" />
+                  Schedule follow-up
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+                  <Pencil className="w-3.5 h-3.5 mr-1.5" />
+                  Edit
+                </Button>
+                <Button variant="danger" size="sm" onClick={handleDeleteClient} disabled={isDeleting}>
+                  <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                  {isDeleting ? 'Deleting…' : 'Delete'}
+                </Button>
+              </div>
             </div>
-            <div>
-              <p className="text-[11px] text-gray-600">Budget</p>
-              <p className="mt-1 text-[14px] font-semibold text-gray-900">{detail.budget || '—'}</p>
-            </div>
-            <div>
-              <p className="text-[11px] text-gray-600">Area</p>
-              <p className="mt-1 text-[14px] font-semibold text-gray-900">{detail.area || '—'}</p>
-            </div>
-            <div>
-              <p className="text-[11px] text-gray-600">Timeline</p>
-              <p className="mt-1 text-[14px] font-semibold text-gray-900">{detail.timeline || '—'}</p>
-            </div>
+
+            {activeTab === 'overview' && (
+              <ClientProfileSection
+                detail={detail}
+                statusLabel={CLIENT_STATUS_LABEL[client.status]}
+                lastContact={formatLastContact(lastContactAt)}
+                onSaveField={handleSaveIntakeField}
+              />
+            )}
           </div>
         </Card>
 
-        {/* Edit Client modal */}
-        <Modal isOpen={isEditing} onClose={() => setIsEditing(false)} title="Edit Client" size="md">
-          <ClientForm
-            client={client}
-            onSubmit={handleUpdateClient}
-            onCancel={() => setIsEditing(false)}
-            isLoading={isSubmitting}
-          />
-        </Modal>
-
-        {/* Two-column body */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-5 items-stretch">
-          {/* Left column: Notes + Reminders stacked */}
-          <div className="flex flex-col gap-5">
-            {/* Notes card */}
-            <Card className="p-5 sm:p-[22px]">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-gray-700" />
-                  <h2 className="text-[15px] font-semibold text-gray-900">Notes</h2>
-                </div>
-                <Button variant="outline" size="sm" onClick={() => setShowNoteForm(!showNoteForm)}>
-                  <Plus className="w-3.5 h-3.5 mr-1.5" />
-                  Add Note
-                </Button>
-              </div>
-
-              {showNoteForm && (
-                <div className="mb-4 p-4 rounded-[10px] border border-gray-150 bg-gray-50">
-                  <textarea
-                    value={newNote}
-                    onChange={(e) => setNewNote(e.target.value)}
-                    placeholder="Enter your note..."
-                    rows={3}
-                    autoFocus
-                    className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-[var(--surface)] text-[13px] text-gray-900 placeholder-gray-450 focus:ring-2 focus:ring-brand-500/30 focus:outline-none resize-none"
-                  />
-                  <div className="flex gap-2 mt-3">
-                    <Button variant="primary" size="sm" onClick={handleAddNote} disabled={isSubmitting || !newNote.trim()}>
-                      Save Note
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setShowNoteForm(false);
-                        setNewNote('');
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              <div className="space-y-3">
-                {client.notes && client.notes.length > 0 ? (
-                  client.notes.map((note) => (
-                    <div key={note.id} className="relative p-3.5 rounded-[10px] bg-gray-50">
-                      {editingNoteId === note.id ? (
-                        <div>
-                          <textarea
-                            value={editingNoteContent}
-                            onChange={(e) => setEditingNoteContent(e.target.value)}
-                            rows={3}
-                            autoFocus
-                            className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-[var(--surface)] text-[13px] text-gray-900 placeholder-gray-450 focus:ring-2 focus:ring-brand-500/30 focus:outline-none resize-none"
-                          />
-                          <div className="flex gap-2 mt-3">
-                            <Button
-                              variant="primary"
-                              size="sm"
-                              onClick={() => handleUpdateNote(note.id)}
-                              disabled={isSubmitting || !editingNoteContent.trim()}
-                            >
-                              Save
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={handleCancelEditNote} disabled={isSubmitting}>
-                              Cancel
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <>
-                          <div className="absolute top-3 right-3 flex gap-1">
-                            <button
-                              onClick={() => handleEditNote(note.id, note.note)}
-                              className="p-1 rounded-md text-gray-600 hover:text-gray-700 hover:bg-gray-200/70 transition-colors"
-                              title="Edit note"
-                            >
-                              <Pencil className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteNote(note.id)}
-                              className="p-1 rounded-md text-gray-600 hover:text-rose-600 hover:bg-rose-50 transition-colors"
-                              title="Delete note"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                          <p className="text-[13.5px] text-gray-700 whitespace-pre-wrap pr-14">{note.note}</p>
-                          <p className="text-[11.5px] text-gray-600 mt-2">
-                            {new Date(note.created_at).toLocaleString()}
-                          </p>
-                        </>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-[13px] text-gray-600">No notes yet</p>
-                )}
-              </div>
-            </Card>
-
-            {/* Reminders card */}
-            <Card className="p-5 sm:p-[22px]">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-gray-700" />
-                  <h2 className="text-[15px] font-semibold text-gray-900">Reminders</h2>
-                </div>
-                <Button variant="outline" size="sm" onClick={() => setShowReminderForm(!showReminderForm)}>
-                  <Plus className="w-3.5 h-3.5 mr-1.5" />
-                  Add
-                </Button>
-              </div>
-
-              {showReminderForm && (
-                <div className="mb-4 p-4 rounded-[10px] border border-gray-150 bg-gray-50">
-                  <ReminderForm
-                    clientId={clientId}
-                    onSubmit={handleCreateReminder}
-                    onCancel={() => setShowReminderForm(false)}
-                    isLoading={isSubmitting}
-                  />
-                </div>
-              )}
-
-              <div className="space-y-3">
-                {reminders.length > 0 ? (
-                  reminders.map((reminder) => (
-                    <div
-                      key={reminder.id}
-                      className={`relative p-3.5 rounded-[10px] ${
-                        reminder.is_completed ? 'bg-gray-50 opacity-70' : 'bg-gray-50'
-                      }`}
-                    >
-                      {editingReminderId === reminder.id ? (
-                        <ReminderForm
-                          clientId={clientId}
-                          initialData={{
-                            title: reminder.title,
-                            description: reminder.description || '',
-                            reminder_date: reminder.reminder_date,
-                          }}
-                          onSubmit={(data) => handleUpdateReminder(reminder.id, data)}
-                          onCancel={() => setEditingReminderId(null)}
-                          isLoading={isSubmitting}
-                        />
-                      ) : (
-                        <>
-                          <div className="absolute top-3 right-3 flex gap-1">
-                            {!reminder.is_completed && (
-                              <button
-                                onClick={() => handleCompleteReminder(reminder.id)}
-                                className="p-1 rounded-md text-gray-600 hover:text-teal-700 hover:bg-teal-50 transition-colors"
-                                title="Mark as complete"
-                              >
-                                <CheckCircle2 className="w-3.5 h-3.5" />
-                              </button>
-                            )}
-                            <button
-                              onClick={() => setEditingReminderId(reminder.id)}
-                              className="p-1 rounded-md text-gray-600 hover:text-gray-700 hover:bg-gray-200/70 transition-colors"
-                              title="Edit reminder"
-                            >
-                              <Pencil className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteReminder(reminder.id)}
-                              className="p-1 rounded-md text-gray-600 hover:text-rose-600 hover:bg-rose-50 transition-colors"
-                              title="Delete reminder"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                          <h3 className="text-[13.5px] font-medium text-gray-900 pr-20">
-                            {reminder.title}
-                            {reminder.is_completed && (
-                              <span className="ml-2 text-[11.5px] font-medium text-emerald-600">(Completed)</span>
-                            )}
-                          </h3>
-                          {reminder.description && (
-                            <p className="text-[12.5px] text-gray-700 mt-1 whitespace-pre-wrap pr-20">
-                              {reminder.description}
-                            </p>
-                          )}
-                          <div className="flex items-center gap-1.5 text-[11.5px] text-gray-600 mt-2">
-                            <Clock className="w-3 h-3" />
-                            <span className="font-mono">{new Date(reminder.reminder_date).toLocaleString()}</span>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-[13px] text-gray-600">No reminders yet</p>
-                )}
-              </div>
-            </Card>
-          </div>
-
-          {/* Right rail: Client Details, stretched to match the left column's full height */}
-          <Card className="p-5 sm:p-[26px] flex flex-col h-full">
-            <h2 className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-gray-600 mb-1">
-              Client Details
-            </h2>
-            <div className="flex-1 flex flex-col divide-y divide-gray-150">
-              <DetailRow label="Type" value={detail.interestType} />
-              <DetailRow label="Status" value={CLIENT_STATUS_LABEL[client.status]} />
-              <DetailRow label="Area" value={detail.area || '—'} />
-              <DetailRow label="Budget" value={detail.budget || '—'} />
-              <DetailRow label="Last contact" value={formatLastContact(lastContactAt)} />
-            </div>
-          </Card>
+        {/* Tabs */}
+        <div className="border-b border-gray-200">
+          <nav className="flex gap-[26px] overflow-x-auto">
+            {CLIENT_TABS.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`relative flex items-center gap-1.5 py-3 text-[13px] font-medium whitespace-nowrap transition-colors ${
+                    isActive ? 'text-gray-900' : 'text-gray-600 hover:text-gray-700'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  {tab.label}
+                  {tab.id === 'transactions' && transactions.length > 0 && (
+                    <span className="ml-0.5 text-[11px] text-gray-500">({transactions.length})</span>
+                  )}
+                  {isActive && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-brand-500" />}
+                </button>
+              );
+            })}
+          </nav>
         </div>
+
+        {/* Tab panels */}
+        {activeTab === 'overview' && (
+          <div className="space-y-5">
+            {client.lead_origin && (
+              <ClientLeadOriginCard
+                leadOrigin={client.lead_origin}
+                clientId={client.id}
+                inCrm={Boolean(client.in_crm)}
+              />
+            )}
+          </div>
+        )}
+
+        {activeTab === 'activity' && (
+          <ClientActivityTab
+            clientId={clientId}
+            notes={notes}
+            reminders={reminders}
+            activities={activities}
+            showNoteForm={showNoteForm}
+            showReminderForm={showReminderForm}
+            newNote={newNote}
+            editingNoteId={editingNoteId}
+            editingNoteContent={editingNoteContent}
+            editingReminderId={editingReminderId}
+            isSubmitting={isSubmitting}
+            onToggleNoteForm={() => setShowNoteForm((v) => !v)}
+            onToggleReminderForm={() => setShowReminderForm((v) => !v)}
+            onNewNoteChange={setNewNote}
+            onAddNote={handleAddNote}
+            onCancelNoteForm={() => { setShowNoteForm(false); setNewNote(''); }}
+            onEditNote={(id, content) => { setEditingNoteId(id); setEditingNoteContent(content); }}
+            onUpdateNote={handleUpdateNote}
+            onCancelEditNote={() => { setEditingNoteId(null); setEditingNoteContent(''); }}
+            onDeleteNote={handleDeleteNote}
+            onEditingNoteContentChange={setEditingNoteContent}
+            onCreateReminder={handleCreateReminder}
+            onUpdateReminder={handleUpdateReminder}
+            onCompleteReminder={handleCompleteReminder}
+            onDeleteReminder={handleDeleteReminder}
+            onEditReminder={setEditingReminderId}
+            onCancelEditReminder={() => setEditingReminderId(null)}
+          />
+        )}
+
+        {activeTab === 'transactions' && (
+          <ClientTransactionsTab transactions={transactions} clientId={clientId} />
+        )}
+
+        {activeTab === 'documents' && <ClientDocumentsTab />}
       </div>
+
+      <Modal isOpen={isEditing} onClose={() => setIsEditing(false)} title="Edit Client" size="md">
+        <ClientForm
+          client={client}
+          onSubmit={handleUpdateClient}
+          onCancel={() => setIsEditing(false)}
+          isLoading={isSubmitting}
+        />
+      </Modal>
+
+      <LogActivityModal
+        isOpen={showLogActivity}
+        onClose={() => setShowLogActivity(false)}
+        defaultType={logActivityType}
+        onSubmit={handleLogActivity}
+      />
     </DashboardPage>
   );
 }

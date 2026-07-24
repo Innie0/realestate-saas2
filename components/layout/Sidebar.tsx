@@ -18,6 +18,7 @@ import { useCommandPalette } from '@/components/search/CommandPalette';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 import { useApi } from '@/lib/swr';
+import { SITE_NAME } from '@/lib/site-config';
 
 interface RecentClient {
   id: string;
@@ -208,7 +209,7 @@ export default function Sidebar() {
           <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] bg-brand-500 text-[11px] font-bold text-[var(--brand-foreground)]">
             O
           </span>
-          <span className="text-[13px] font-semibold tracking-tight text-foreground">Oikaro</span>
+          <span className="text-[13px] font-semibold tracking-tight text-foreground">{SITE_NAME}</span>
         </Link>
         <button
           type="button"
@@ -245,7 +246,7 @@ export default function Sidebar() {
           {isCollapsed ? (
             <Image
               src="/logo-collapsed.png"
-              alt="Oikaro"
+              alt={SITE_NAME}
               width={128}
               height={128}
               priority
@@ -256,7 +257,7 @@ export default function Sidebar() {
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-brand-500 text-[11px] font-bold text-[var(--brand-foreground)]">
                 O
               </span>
-              <span className="text-[13px] font-semibold tracking-tight text-foreground">Oikaro</span>
+              <span className="text-[13px] font-semibold tracking-tight text-foreground">{SITE_NAME}</span>
             </>
           )}
         </div>

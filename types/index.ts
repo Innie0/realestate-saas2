@@ -214,7 +214,22 @@ export interface ClientWithDetails extends Client {
   reminders?: Reminder[]; // Associated reminders
   upcoming_reminders_count?: number; // Count of upcoming reminders
   transactions?: ClientLinkedTransaction[];
+  activities?: ClientActivity[];
   lead_origin?: ClientLeadOrigin | null;
+}
+
+export type ClientActivityType = 'call' | 'email' | 'showing';
+
+export interface ClientActivity {
+  id: string;
+  client_id: string;
+  user_id: string;
+  type: ClientActivityType;
+  title: string;
+  notes?: string | null;
+  occurred_at: string;
+  metadata?: Record<string, unknown>;
+  created_at: string;
 }
 
 /** Lead capture metadata for clients promoted from the leads inbox. */

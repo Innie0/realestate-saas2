@@ -69,6 +69,7 @@ export async function GET(
       { data: buyerTransactions },
       { data: sellerTransactions },
       { data: legacyTransactions },
+      { data: activities },
     ] = await Promise.all([
       supabase
         .from('transactions')
@@ -88,6 +89,12 @@ export async function GET(
         .eq('user_id', user.id)
         .eq('client_id', clientId)
         .order('created_at', { ascending: false }),
+      supabase
+        .from('client_activities')
+        .select('*')
+        .eq('client_id', clientId)
+        .eq('user_id', user.id)
+        .order('occurred_at', { ascending: false }),
     ]);
 
     const transactions = mergeClientTransactions(
@@ -120,6 +127,7 @@ export async function GET(
         reminders: reminders || [],
         upcoming_reminders_count: upcomingReminders,
         transactions,
+        activities: activities ?? [],
         lead_origin: leadOrigin,
       },
     });
@@ -157,7 +165,7 @@ export async function PUT(
 
     // Parse request body
     const body = await request.json();
-    const { name, email, phone, status } = body;
+    const { name, email, phone, status, lead_type } = body;
 
     // Validate required fields
     if (!name || name.trim() === '') {
@@ -168,14 +176,19 @@ export async function PUT(
     }
 
     // Update client
+    const updatePayload: Record<string, unknown> = {
+      name: name.trim(),
+      email: email?.trim() || null,
+      phone: phone?.trim() || null,
+      status: status || 'active',
+    };
+    if (lead_type !== undefined) {
+      updatePayload.lead_type = lead_type || null;
+    }
+
     const { data: client, error } = await supabase
       .from('clients')
-      .update({
-        name: name.trim(),
-        email: email?.trim() || null,
-        phone: phone?.trim() || null,
-        status: status || 'active',
-      })
+      .update(updatePayload)
       .eq('id', clientId)
       .eq('user_id', user.id)
       .select()

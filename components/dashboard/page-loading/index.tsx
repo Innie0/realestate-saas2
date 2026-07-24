@@ -245,10 +245,15 @@ export function BrandKitPageLoading() {
 
 export function ClientDetailPageContentSkeleton() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <Skeleton className="h-4 w-32" />
       <DetailHeroSkeleton />
-      <DetailTwoColumnSkeleton />
+      <div className="flex gap-6 border-b border-border pb-3">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-4 w-24" />
+        ))}
+      </div>
+      <Skeleton className="h-32 w-full rounded-[10px]" />
     </div>
   );
 }

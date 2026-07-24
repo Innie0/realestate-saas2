@@ -44,6 +44,30 @@ function readNoteField(note: string, field: string): string | null {
   return match?.[1]?.trim() || null;
 }
 
+/** Read the most recent value for a structured intake field across message + notes. */
+function readLatestIntakeField(
+  notes: { note: string }[] | undefined,
+  message: string | null | undefined,
+  field: string,
+): string | null {
+  if (message) {
+    const fromMessage = readNoteField(message, field);
+    if (fromMessage) return fromMessage;
+  }
+  for (const entry of notes ?? []) {
+    const value = readNoteField(entry.note, field);
+    if (value) return value;
+  }
+  return null;
+}
+
+function normalizeLeadType(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const key = raw.trim().toLowerCase();
+  if (key in LEAD_TYPE_LABELS) return key;
+  return null;
+}
+
 export function getClientInitials(name: string): string {
   return name
     .split(/\s+/)
@@ -107,7 +131,7 @@ export function getClientInterest(client: ClientListRow): { headline: string; su
 }
 
 export interface ClientDetailFields {
-  interestType: string;
+  interestType: string | null;
   area: string | null;
   budget: string | null;
   timeline: string | null;
@@ -123,14 +147,36 @@ export function getClientDetailFields(client: {
   notes?: { note: string }[];
   latest_note?: { note: string } | null;
 }): ClientDetailFields {
-  const noteText = client.notes?.[0]?.note || client.latest_note?.note || client.message || '';
-  const interestType = client.lead_type ? LEAD_TYPE_LABELS[client.lead_type] || 'Client' : 'Client';
-  const area = readNoteField(noteText, 'Area');
-  const budgetRaw = readNoteField(noteText, 'Budget');
+  const notes = client.notes ?? [];
+  const parsedInterest =
+    normalizeLeadType(client.lead_type) ??
+    normalizeLeadType(readLatestIntakeField(notes, client.message, 'Interested in'));
+  const interestType = parsedInterest
+    ? LEAD_TYPE_LABELS[parsedInterest] || parsedInterest
+    : null;
+
+  const area = readLatestIntakeField(notes, client.message, 'Area');
+  const budgetRaw = readLatestIntakeField(notes, client.message, 'Budget');
   const budget = budgetRaw ? BUDGET_LABELS[budgetRaw] || budgetRaw : null;
-  const timeline = readNoteField(noteText, 'Timeline');
+  const timeline = readLatestIntakeField(notes, client.message, 'Timeline');
 
   return { interestType, area, budget, timeline };
+}
+
+export type ClientIntakeField = 'interested_in' | 'budget' | 'area' | 'timeline';
+
+const INTAKE_NOTE_LABELS: Record<Exclude<ClientIntakeField, 'interested_in'>, string> = {
+  budget: 'Budget',
+  area: 'Area',
+  timeline: 'Timeline',
+};
+
+/** Note body saved when an agent fills in a profile field inline. */
+export function buildIntakeFieldNote(field: ClientIntakeField, value: string): string {
+  if (field === 'interested_in') {
+    return `Interested in: ${value.trim()}`;
+  }
+  return `${INTAKE_NOTE_LABELS[field]}: ${value.trim()}`;
 }
 
 export function formatLastContact(dateStr: string | null | undefined): string {
@@ -263,14 +309,14 @@ export function filterClientsBySearch(clients: ClientListRow[], query: string): 
 }
 
 const AVATAR_PALETTES = [
-  'bg-[#6d5ef5] text-white',
-  'bg-green-900 text-white',
+  'bg-brand-500 text-[var(--brand-foreground)]',
+  'bg-teal-700 text-white',
   'bg-emerald-800 text-white',
   'bg-sky-700 text-white',
-  'bg-rose-700 text-white',
-  'bg-amber-700 text-white',
   'bg-stone-600 text-white',
-  'bg-indigo-700 text-white',
+  'bg-amber-800 text-white',
+  'bg-rose-800 text-white',
+  'bg-slate-700 text-white',
 ];
 
 export function getClientAvatarClass(name: string): string {
