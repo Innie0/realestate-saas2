@@ -3,6 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { checkUsageLimit, incrementUsage, usageLimitError } from '@/lib/usage';
+import { isMissingSchemaFeatureError } from '@/lib/transaction-client-link';
 
 const INBOX_SOURCES = ['lead_form', 'open_house', 'listing_page'];
 
@@ -53,7 +54,7 @@ export async function POST(
       );
     }
 
-    const { data: updated, error: updateError } = await supabase
+    let { data: updated, error: updateError } = await supabase
       .from('clients')
       .update({
         in_crm: true,
@@ -63,6 +64,16 @@ export async function POST(
       .eq('user_id', user.id)
       .select()
       .single();
+
+    if (updateError && isMissingSchemaFeatureError(updateError)) {
+      ({ data: updated, error: updateError } = await supabase
+        .from('clients')
+        .update({ in_crm: true })
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .select()
+        .single());
+    }
 
     if (updateError || !updated) {
       console.error('Error adding lead to CRM:', updateError);

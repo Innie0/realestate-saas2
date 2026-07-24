@@ -5,7 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { updateTransactionCalendarEvents, deleteTransactionCalendarEvents } from '@/lib/transaction-calendar-sync';
-import { resolveTransactionPartyLinks } from '@/lib/transaction-client-link';
+import { resolveTransactionPartyLinks, attachTransactionClientParties } from '@/lib/transaction-client-link';
 
 /**
  * GET /api/transactions/[id]
@@ -36,12 +36,6 @@ export async function GET(
         *,
         project:projects(
           id, title, status, property_type, property_info
-        ),
-        buyer_client:clients!buyer_client_id(
-          id, name, email, phone
-        ),
-        seller_client:clients!seller_client_id(
-          id, name, email, phone
         ),
         checklist_items:transaction_checklist_items(
           id, title, description, category, due_date, 
@@ -93,10 +87,16 @@ export async function GET(
       daysToClosing = Math.ceil((closingDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
     }
 
+    const transactionWithParties = await attachTransactionClientParties(
+      supabase,
+      user.id,
+      transaction,
+    );
+
     return NextResponse.json({
       success: true,
       data: {
-        ...transaction,
+        ...transactionWithParties,
         completed_items_count: completedItems,
         total_items_count: checklistItems.length,
         days_to_closing: daysToClosing,

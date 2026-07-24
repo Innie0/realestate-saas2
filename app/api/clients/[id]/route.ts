@@ -2,7 +2,7 @@
 // API route for individual client - GET, PUT (update), DELETE
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
-import { mergeClientTransactions } from '@/lib/transaction-client-link';
+import { fetchTransactionsForClient, isMissingSchemaFeatureError, resolveTransactionPartyLinks } from '@/lib/transaction-client-link';
 import { buildClientLeadOrigin, isLeadOriginSource } from '@/lib/client-lead-origin';
 
 /**
@@ -65,43 +65,23 @@ export async function GET(
     const transactionSelect =
       'id, status, property_address, offer_price, closing_date, created_at';
 
-    const [
-      { data: buyerTransactions },
-      { data: sellerTransactions },
-      { data: legacyTransactions },
-      { data: activities },
-    ] = await Promise.all([
-      supabase
-        .from('transactions')
-        .select(transactionSelect)
-        .eq('user_id', user.id)
-        .eq('buyer_client_id', clientId)
-        .order('created_at', { ascending: false }),
-      supabase
-        .from('transactions')
-        .select(transactionSelect)
-        .eq('user_id', user.id)
-        .eq('seller_client_id', clientId)
-        .order('created_at', { ascending: false }),
-      supabase
-        .from('transactions')
-        .select(transactionSelect)
-        .eq('user_id', user.id)
-        .eq('client_id', clientId)
-        .order('created_at', { ascending: false }),
-      supabase
-        .from('client_activities')
-        .select('*')
-        .eq('client_id', clientId)
-        .eq('user_id', user.id)
-        .order('occurred_at', { ascending: false }),
-    ]);
-
-    const transactions = mergeClientTransactions(
-      buyerTransactions ?? [],
-      sellerTransactions ?? [],
-      legacyTransactions ?? [],
+    const transactions = await fetchTransactionsForClient(
+      supabase,
+      user.id,
+      clientId,
+      transactionSelect,
     );
+
+    const { data: activities, error: activitiesError } = await supabase
+      .from('client_activities')
+      .select('*')
+      .eq('client_id', clientId)
+      .eq('user_id', user.id)
+      .order('occurred_at', { ascending: false });
+
+    const clientActivities = isMissingSchemaFeatureError(activitiesError)
+      ? []
+      : activities ?? [];
 
     let leadOrigin = null;
     if (isLeadOriginSource(client.source)) {
@@ -127,7 +107,7 @@ export async function GET(
         reminders: reminders || [],
         upcoming_reminders_count: upcomingReminders,
         transactions,
-        activities: activities ?? [],
+        activities: clientActivities,
         lead_origin: leadOrigin,
       },
     });

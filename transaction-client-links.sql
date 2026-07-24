@@ -18,3 +18,6 @@ UPDATE transactions
 SET buyer_client_id = client_id
 WHERE client_id IS NOT NULL
   AND buyer_client_id IS NULL;
+
+-- After running: reload the PostgREST schema cache in Supabase
+-- (Dashboard → Project Settings → API → Reload schema, or restart project)

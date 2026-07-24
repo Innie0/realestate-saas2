@@ -157,3 +157,94 @@ export function mergeClientTransactions(
 export function sanitizeClientSearchQuery(raw: string): string {
   return raw.trim().replace(/[%_,()]/g, ' ').replace(/\s+/g, ' ').slice(0, 80);
 }
+
+/** True when Supabase/PostgREST cannot resolve a column or FK relationship yet. */
+export function isMissingSchemaFeatureError(error: { message?: string; code?: string } | null): boolean {
+  if (!error?.message) return false;
+  const msg = error.message.toLowerCase();
+  return (
+    error.code === 'PGRST200' ||
+    error.code === '42703' ||
+    msg.includes('schema cache') ||
+    msg.includes('relationship') ||
+    msg.includes('buyer_client_id') ||
+    msg.includes('seller_client_id') ||
+    msg.includes('client_activities') ||
+    msg.includes('promoted_to_crm_at')
+  );
+}
+
+/** Attach buyer/seller CRM records without PostgREST embeds (works before migration). */
+export async function attachTransactionClientParties(
+  supabase: SupabaseClient,
+  userId: string,
+  transaction: Record<string, unknown>,
+): Promise<Record<string, unknown>> {
+  const buyerClientId =
+    (transaction.buyer_client_id as string | null | undefined) ??
+    (transaction.client_id as string | null | undefined);
+  const sellerClientId = transaction.seller_client_id as string | null | undefined;
+
+  const [buyerClient, sellerClient] = await Promise.all([
+    buyerClientId ? fetchClientForTransactionLink(supabase, userId, buyerClientId) : null,
+    sellerClientId ? fetchClientForTransactionLink(supabase, userId, sellerClientId) : null,
+  ]);
+
+  return {
+    ...transaction,
+    buyer_client: buyerClient,
+    seller_client: sellerClient,
+  };
+}
+
+/** Load transactions linked to a client; falls back if party columns are not migrated. */
+export async function fetchTransactionsForClient(
+  supabase: {
+    from: (table: string) => {
+      select: (columns: string) => {
+        eq: (column: string, value: string) => {
+          eq: (column: string, value: string) => {
+            order: (
+              column: string,
+              options: { ascending: boolean },
+            ) => Promise<{ data: Array<Omit<ClientLinkedTransaction, 'role'>> | null; error: { message?: string; code?: string } | null }>;
+          };
+        };
+      };
+    };
+  },
+  userId: string,
+  clientId: string,
+  select = 'id, status, property_address, offer_price, closing_date, created_at',
+): Promise<Array<Omit<ClientLinkedTransaction, 'role'>>> {
+  const legacyResult = await supabase
+    .from('transactions')
+    .select(select)
+    .eq('user_id', userId)
+    .eq('client_id', clientId)
+    .order('created_at', { ascending: false });
+
+  const buyerResult = await supabase
+    .from('transactions')
+    .select(select)
+    .eq('user_id', userId)
+    .eq('buyer_client_id', clientId)
+    .order('created_at', { ascending: false });
+
+  const sellerResult = await supabase
+    .from('transactions')
+    .select(select)
+    .eq('user_id', userId)
+    .eq('seller_client_id', clientId)
+    .order('created_at', { ascending: false });
+
+  const buyerTransactions = isMissingSchemaFeatureError(buyerResult.error)
+    ? []
+    : buyerResult.data ?? [];
+  const sellerTransactions = isMissingSchemaFeatureError(sellerResult.error)
+    ? []
+    : sellerResult.data ?? [];
+  const legacyTransactions = legacyResult.data ?? [];
+
+  return mergeClientTransactions(buyerTransactions, sellerTransactions, legacyTransactions);
+}
