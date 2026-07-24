@@ -173,6 +173,7 @@ export interface Client {
   in_crm?: boolean; // false = leads inbox only until agent adds to CRM
   lead_type?: 'buyer' | 'seller' | 'renter' | 'browsing' | null; // What a lead is interested in
   message?: string | null; // Message left by a lead via the public form
+  promoted_to_crm_at?: string | null; // When an inbox lead was promoted to CRM
   created_at: string; // When the client was created
   updated_at: string; // When the client was last updated
 }
@@ -212,6 +213,26 @@ export interface ClientWithDetails extends Client {
   notes?: ClientNote[]; // Associated notes
   reminders?: Reminder[]; // Associated reminders
   upcoming_reminders_count?: number; // Count of upcoming reminders
+  transactions?: ClientLinkedTransaction[];
+  lead_origin?: ClientLeadOrigin | null;
+}
+
+/** Lead capture metadata for clients promoted from the leads inbox. */
+export interface ClientLeadOrigin {
+  source: 'lead_form' | 'open_house' | 'listing_page';
+  source_label: string;
+  captured_at: string;
+  promoted_at: string | null;
+  lead_type: string | null;
+  lead_type_label: string | null;
+  message: string | null;
+  project_id: string | null;
+  ad_source: string | null;
+  project?: {
+    id: string;
+    title: string;
+    property_info?: PropertyInfo | null;
+  } | null;
 }
 
 /**

@@ -89,6 +89,7 @@ function LeadsPageContent() {
   });
 
   const initialTab = (searchParams.get('tab') as LeadsTab) || 'inbox';
+  const highlightId = searchParams.get('highlight');
   const [activeTab, setActiveTab] = useState<LeadsTab>(
     initialTab === 'capture' || initialTab === 'automations' ? initialTab : 'inbox'
   );
@@ -114,7 +115,14 @@ function LeadsPageContent() {
   const [bookingUrl, setBookingUrl] = useState('');
   const [copied, setCopied] = useState(false);
   const [filter, setFilter] = useState<'all' | 'hot' | 'warm' | 'cold'>('all');
-  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(highlightId);
+
+  useEffect(() => {
+    if (highlightId) {
+      setActiveTab('inbox');
+      setSelectedLeadId(highlightId);
+    }
+  }, [highlightId]);
   const [addingToCrmId, setAddingToCrmId] = useState<string | null>(null);
   const [markingContactedId, setMarkingContactedId] = useState<string | null>(null);
   const [stoppedFollowupIds, setStoppedFollowupIds] = useState<Set<string>>(new Set());

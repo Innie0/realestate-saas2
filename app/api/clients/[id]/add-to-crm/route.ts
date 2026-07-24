@@ -55,7 +55,10 @@ export async function POST(
 
     const { data: updated, error: updateError } = await supabase
       .from('clients')
-      .update({ in_crm: true })
+      .update({
+        in_crm: true,
+        promoted_to_crm_at: new Date().toISOString(),
+      })
       .eq('id', id)
       .eq('user_id', user.id)
       .select()

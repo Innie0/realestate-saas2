@@ -34,6 +34,8 @@ import {
   getClientInitials,
   getClientStage,
 } from '@/lib/client-crm-display';
+import ClientLeadOriginCard from '@/components/clients/ClientLeadOriginCard';
+import ClientTransactionsSection from '@/components/clients/ClientTransactionsSection';
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
@@ -366,6 +368,18 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
               )}
             </Button>
           </div>
+        )}
+
+        {client.lead_origin && (
+          <ClientLeadOriginCard
+            leadOrigin={client.lead_origin}
+            clientId={client.id}
+            inCrm={Boolean(client.in_crm)}
+          />
+        )}
+
+        {client.transactions && client.transactions.length > 0 && (
+          <ClientTransactionsSection transactions={client.transactions} />
         )}
 
         {/* Hero card */}

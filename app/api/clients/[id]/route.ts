@@ -3,6 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { mergeClientTransactions } from '@/lib/transaction-client-link';
+import { buildClientLeadOrigin, isLeadOriginSource } from '@/lib/client-lead-origin';
 
 /**
  * GET /api/clients/[id]
@@ -95,6 +96,22 @@ export async function GET(
       legacyTransactions ?? [],
     );
 
+    let leadOrigin = null;
+    if (isLeadOriginSource(client.source)) {
+      let project = null;
+      if (client.project_id) {
+        const { data: projectRow } = await supabase
+          .from('projects')
+          .select('id, title, property_info')
+          .eq('id', client.project_id)
+          .eq('user_id', user.id)
+          .maybeSingle();
+        project = projectRow;
+      }
+
+      leadOrigin = buildClientLeadOrigin(client, project);
+    }
+
     return NextResponse.json({
       success: true,
       data: {
@@ -103,6 +120,7 @@ export async function GET(
         reminders: reminders || [],
         upcoming_reminders_count: upcomingReminders,
         transactions,
+        lead_origin: leadOrigin,
       },
     });
   } catch (error) {
