@@ -111,13 +111,8 @@ export default function NewProjectPage() {
       title="New project"
       subtitle="Start a new property listing project"
       size="medium"
-      actions={
-        <Button type="submit" form="new-project-form" isLoading={isLoading} size="sm">
-          Create project
-        </Button>
-      }
     >
-        <form id="new-project-form" onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {/* Basic information */}
           <Card className="p-5 sm:p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic information</h2>
@@ -283,13 +278,16 @@ export default function NewProjectPage() {
             </div>
           </Card>
 
-          <div className="flex gap-3">
+          <div className="flex justify-end gap-3 border-t border-gray-150 pt-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.back()}
             >
               Cancel
+            </Button>
+            <Button type="submit" isLoading={isLoading}>
+              Create project
             </Button>
           </div>
         </form>
