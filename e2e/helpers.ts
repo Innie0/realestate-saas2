@@ -29,7 +29,7 @@ export async function apiJson<T = unknown>(
     error?: string;
     data?: unknown;
   };
-  return { ok: response.ok(), status: response.status, json };
+  return { ok: response.ok(), status: response.status(), json };
 }
 
 export async function waitForApiSuccess(
