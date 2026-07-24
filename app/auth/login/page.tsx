@@ -10,6 +10,7 @@ import AuthPageMotion, { AuthFormMotion } from '@/components/marketing/AuthPageM
 import AuthSubmitButton from '@/components/marketing/AuthSubmitButton';
 import MarketingInput from '@/components/marketing/MarketingInput';
 import { signInWithEmail, signInWithGoogle, supabase } from '@/lib/supabase';
+import { hasAppAccess, isAdminEmail } from '@/lib/subscription';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -30,7 +31,7 @@ export default function LoginPage() {
         return;
       }
 
-      const isAdmin = session.user.email === 'callon786@outlook.com';
+      const isAdmin = isAdminEmail(session.user.email);
       if (isAdmin) {
         router.replace('/dashboard');
         return;
@@ -42,11 +43,7 @@ export default function LoginPage() {
         .eq('id', session.user.id)
         .single();
 
-      const hasActive =
-        userData?.subscription_status === 'active' ||
-        userData?.subscription_status === 'trialing';
-
-      if (hasActive) {
+      if (hasAppAccess(userData?.subscription_status, session.user.email)) {
         router.replace('/dashboard');
       } else {
         setCheckingAuth(false);
@@ -74,9 +71,7 @@ export default function LoginPage() {
     }
 
     if (user) {
-      const isAdmin = user.email === 'callon786@outlook.com';
-
-      if (isAdmin) {
+      if (isAdminEmail(user.email)) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         window.location.href = '/dashboard';
         return;
@@ -89,13 +84,11 @@ export default function LoginPage() {
           .eq('id', user.id)
           .single();
 
-        const hasActiveSubscription =
-          userData?.subscription_status === 'active' ||
-          userData?.subscription_status === 'trialing';
-
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        window.location.href = hasActiveSubscription ? '/dashboard' : '/pricing';
+        window.location.href = hasAppAccess(userData?.subscription_status, user.email)
+          ? '/dashboard'
+          : '/pricing';
       } catch {
         window.location.href = '/pricing';
       }

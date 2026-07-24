@@ -13,6 +13,11 @@ import { TRANSACTION_STATUSES } from '@/lib/transaction-status';
 import { revalidateTransactionsCache } from '@/lib/swr';
 import ClientPartyField, { ClientSearchResult } from '@/components/transactions/ClientPartyField';
 
+function dateInputValue(value?: string | null): string {
+  if (!value) return '';
+  return value.includes('T') ? value.slice(0, 10) : value;
+}
+
 interface TransactionFormProps {
   transaction?: Transaction; // Existing transaction for editing
   onSuccess?: (transaction: Transaction) => void;
@@ -100,16 +105,16 @@ export default function TransactionForm({
   const [notes, setNotes] = useState(transaction?.notes || '');
 
   // Important dates
-  const [offerDate, setOfferDate] = useState(transaction?.offer_date || '');
-  const [acceptanceDate, setAcceptanceDate] = useState(transaction?.acceptance_date || '');
-  const [inspectionDate, setInspectionDate] = useState(transaction?.inspection_date || '');
-  const [inspectionDeadline, setInspectionDeadline] = useState(transaction?.inspection_deadline || '');
-  const [appraisalDate, setAppraisalDate] = useState(transaction?.appraisal_date || '');
-  const [appraisalDeadline, setAppraisalDeadline] = useState(transaction?.appraisal_deadline || '');
-  const [financingDeadline, setFinancingDeadline] = useState(transaction?.financing_deadline || '');
-  const [titleDeadline, setTitleDeadline] = useState(transaction?.title_deadline || '');
-  const [closingDate, setClosingDate] = useState(transaction?.closing_date || '');
-  const [possessionDate, setPossessionDate] = useState(transaction?.possession_date || '');
+  const [offerDate, setOfferDate] = useState(dateInputValue(transaction?.offer_date));
+  const [acceptanceDate, setAcceptanceDate] = useState(dateInputValue(transaction?.acceptance_date));
+  const [inspectionDate, setInspectionDate] = useState(dateInputValue(transaction?.inspection_date));
+  const [inspectionDeadline, setInspectionDeadline] = useState(dateInputValue(transaction?.inspection_deadline));
+  const [appraisalDate, setAppraisalDate] = useState(dateInputValue(transaction?.appraisal_date));
+  const [appraisalDeadline, setAppraisalDeadline] = useState(dateInputValue(transaction?.appraisal_deadline));
+  const [financingDeadline, setFinancingDeadline] = useState(dateInputValue(transaction?.financing_deadline));
+  const [titleDeadline, setTitleDeadline] = useState(dateInputValue(transaction?.title_deadline));
+  const [closingDate, setClosingDate] = useState(dateInputValue(transaction?.closing_date));
+  const [possessionDate, setPossessionDate] = useState(dateInputValue(transaction?.possession_date));
 
   // Status
   const [status, setStatus] = useState(transaction?.status || 'active');

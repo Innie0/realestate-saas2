@@ -5,8 +5,9 @@
 /.pnp
 .pnp.js
 
-# testing
-/coverage
+/playwright-report/
+/test-results/
+/e2e/.auth/
 
 # next.js
 /.next/

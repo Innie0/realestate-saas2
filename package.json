@@ -7,6 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report",
     "stripe:setup-prices": "node --env-file=.env.local scripts/create-stripe-prices.mjs"
   },
   "dependencies": {
@@ -50,11 +53,13 @@
     "twilio": "^6.0.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@types/node": "^20.10.5",
     "@types/pdf-parse": "^1.1.5",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "autoprefixer": "^10.4.16",
+    "dotenv": "^17.4.2",
     "eslint": "^9.39.2",
     "eslint-config-next": "^16.1.6",
     "postcss": "^8.4.32",

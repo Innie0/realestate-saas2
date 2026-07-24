@@ -27,6 +27,12 @@ export function isAdminEmail(email: string | undefined | null): boolean {
 
 export function isFreePro(email: string | undefined | null): boolean {
   if (!email) return false;
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    email.toLowerCase() === 'e2e-playwright@oikaro.test'
+  ) {
+    return true;
+  }
   return FREE_PRO_EMAILS.includes(email.toLowerCase());
 }
 
