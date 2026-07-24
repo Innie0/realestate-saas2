@@ -2,15 +2,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { rejectUnauthorizedCron } from '@/lib/cron-auth';
 import { processEmailSequences } from '@/lib/process-email-sequences';
+import { processLeadSequenceSteps } from '@/lib/lead-sequences/process';
 
 async function handleCron(request: NextRequest) {
   const denied = rejectUnauthorizedCron(request);
   if (denied) return denied;
 
   try {
-    const result = await processEmailSequences();
-    console.log(`[Cron/Emails] Sent ${result.processed}, failed ${result.failed}`);
-    return NextResponse.json({ success: true, ...result });
+    const legacy = await processEmailSequences();
+    const sequences = await processLeadSequenceSteps();
+    console.log(
+      `[Cron/Emails] Legacy sent ${legacy.processed}, sequences emails ${sequences.emailsSent}, tasks ${sequences.tasksCreated}, failed ${legacy.failed + sequences.failed}`,
+    );
+    return NextResponse.json({ success: true, legacy, sequences });
   } catch (err) {
     console.error('[Cron/Emails] Error:', err);
     const message = err instanceof Error ? err.message : 'Internal server error';

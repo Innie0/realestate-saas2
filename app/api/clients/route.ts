@@ -3,6 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { checkUsageLimit, incrementUsage, usageLimitError } from '@/lib/usage';
+import { fetchLeadSequenceSummaries } from '@/lib/lead-sequences/summary';
 
 /**
  * GET /api/clients
@@ -129,6 +130,9 @@ export async function GET(request: NextRequest) {
 
     if (view === 'inbox' && processedClients.length > 0) {
       const clientIds = processedClients.map((client) => client.id);
+
+      const sequenceSummaries = await fetchLeadSequenceSummaries(supabase, user.id, clientIds);
+
       const { data: pendingSequences } = await supabase
         .from('email_sequences')
         .select('client_id')
@@ -136,11 +140,20 @@ export async function GET(request: NextRequest) {
         .eq('agent_user_id', user.id)
         .eq('status', 'pending');
 
-      const pendingByClient = new Set(pendingSequences?.map((row) => row.client_id) ?? []);
-      processedClients = processedClients.map((client) => ({
-        ...client,
-        followup_active: pendingByClient.has(client.id),
-      }));
+      const legacyPendingByClient = new Set(pendingSequences?.map((row) => row.client_id) ?? []);
+
+      processedClients = processedClients.map((client) => {
+        const summary = sequenceSummaries.get(client.id);
+        const followupActive = summary?.followup_active || legacyPendingByClient.has(client.id);
+        return {
+          ...client,
+          followup_active: followupActive,
+          sequence_awaiting_approval: summary?.awaiting_approval ?? false,
+          lead_read: summary?.lead_read ?? null,
+          sequence_next_step: summary?.next_step ?? null,
+          sequence_temperature: summary?.temperature_at_enroll ?? null,
+        };
+      });
     }
 
     return NextResponse.json({

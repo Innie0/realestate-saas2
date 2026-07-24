@@ -12,6 +12,7 @@ import {
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import LeadTemperatureBadge, { getLeadTemperature } from '@/components/dashboard/LeadTemperatureBadge';
+import LeadSequencePanel from '@/components/leads/LeadSequencePanel';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,6 +57,13 @@ export type Lead = {
   created_at: string;
   status: string;
   followup_active?: boolean;
+  sequence_awaiting_approval?: boolean;
+  lead_read?: string | null;
+  sequence_next_step?: {
+    id: string;
+    step_type: string;
+    status: string;
+  } | null;
 };
 
 type TempFilter = 'all' | 'hot' | 'warm' | 'cold';
@@ -161,6 +169,7 @@ type LeadsInboxProps = {
   onMarkContacted: (id: string) => void;
   onContactLead: (lead: Lead, type: 'email' | 'phone') => void;
   onGoToCapture: () => void;
+  onSequenceChange?: () => void;
 };
 
 export default function LeadsInbox({
@@ -178,6 +187,7 @@ export default function LeadsInbox({
   onMarkContacted,
   onContactLead,
   onGoToCapture,
+  onSequenceChange,
 }: LeadsInboxProps) {
   const counts = {
     all: leads.length,
@@ -271,8 +281,13 @@ export default function LeadsInbox({
                         <LeadTemperatureBadge temperature={temp} />
                       </div>
                       <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                        {getLeadSummaryLine(lead)}
+                        {lead.lead_read || getLeadSummaryLine(lead)}
                       </p>
+                      {lead.sequence_awaiting_approval ? (
+                        <Badge variant="warm" className="mt-1 text-[10px]">
+                          Approve email
+                        </Badge>
+                      ) : null}
                     </div>
                     <span className="shrink-0 text-[11px] text-muted-foreground">{timeAgo(lead.created_at)}</span>
                   </button>
@@ -292,6 +307,7 @@ export default function LeadsInbox({
               onAddToCrm={onAddToCrm}
               onMarkContacted={onMarkContacted}
               onContactLead={onContactLead}
+              onSequenceChange={onSequenceChange}
             />
           ) : (
             <Card className="flex min-h-[280px] items-center justify-center p-8">
@@ -314,6 +330,7 @@ function LeadDetailPanel({
   onAddToCrm,
   onMarkContacted,
   onContactLead,
+  onSequenceChange,
 }: {
   lead: Lead;
   autoFollowupEnabled: boolean;
@@ -324,6 +341,7 @@ function LeadDetailPanel({
   onAddToCrm: (id: string) => void;
   onMarkContacted: (id: string) => void;
   onContactLead: (lead: Lead, type: 'email' | 'phone') => void;
+  onSequenceChange?: () => void;
 }) {
   const temp = getLeadTemperature(lead.created_at, lead.message);
   const isAdding = addingId === lead.id;
@@ -430,8 +448,18 @@ function LeadDetailPanel({
 
         {followupActive ? (
           <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-            Auto follow-up is scheduled ({followupScheduleText}).
+            Auto follow-up is active
+            {lead.sequence_awaiting_approval ? ' — first email needs your approval below.' : ` (${followupScheduleText}).`}
           </div>
+        ) : null}
+
+        {autoFollowupEnabled ? (
+          <LeadSequencePanel
+            leadId={lead.id}
+            leadName={lead.name}
+            autoFollowupEnabled={autoFollowupEnabled}
+            onSequenceChange={onSequenceChange}
+          />
         ) : null}
 
         {!followupActive && emailsStopped && lead.email && autoFollowupEnabled ? (

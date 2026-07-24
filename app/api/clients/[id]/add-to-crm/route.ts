@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { checkUsageLimit, incrementUsage, usageLimitError } from '@/lib/usage';
 import { isMissingSchemaFeatureError } from '@/lib/transaction-client-link';
+import { stopLeadSequence } from '@/lib/lead-sequences/stop';
 
 const INBOX_SOURCES = ['lead_form', 'open_house', 'listing_page'];
 
@@ -82,13 +83,8 @@ export async function POST(
 
     await incrementUsage(supabase, user.id, 'clients');
 
-    // Cancel any pending follow-up emails — the agent is now handling this lead personally
-    await supabase
-      .from('email_sequences')
-      .update({ status: 'cancelled' })
-      .eq('client_id', id)
-      .eq('agent_user_id', user.id)
-      .eq('status', 'pending');
+    // Cancel any pending follow-up sequence — the agent is now handling this lead personally
+    await stopLeadSequence(supabase, id, user.id);
 
     return NextResponse.json({
       success: true,

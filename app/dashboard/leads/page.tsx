@@ -16,6 +16,7 @@ import { useApi } from '@/lib/swr';
 import { useToast } from '@/components/providers/ToastProvider';
 import { LeadsPageContentSkeleton } from '@/components/dashboard/page-loading';
 import FollowupTemplatesEditor from '@/components/dashboard/FollowupTemplatesEditor';
+import SequenceTemplatesEditor from '@/components/leads/SequenceTemplatesEditor';
 import { getLeadTemperature } from '@/components/dashboard/LeadTemperatureBadge';
 import { formatFollowupScheduleHuman, type FollowupSettings } from '@/lib/followup-emails';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -44,6 +45,8 @@ interface Lead {
   created_at: string;
   status: string;
   followup_active?: boolean;
+  sequence_awaiting_approval?: boolean;
+  lead_read?: string | null;
 }
 
 function leadHasActiveFollowup(
@@ -312,6 +315,7 @@ function LeadsPageContent() {
               onMarkContacted={handleMarkContacted}
               onContactLead={handleContactLead}
               onGoToCapture={() => setActiveTab('capture')}
+              onSequenceChange={() => mutateLeads()}
             />
         )}
 
@@ -483,7 +487,7 @@ function LeadsPageContent() {
                   <h3 className="text-[15px] font-semibold tracking-tight text-gray-900">Auto follow-up</h3>
                 </div>
                 <p className="text-[12.5px] text-gray-600 mb-5">
-                  Leads with an email get 3 professional follow-ups — right away, then on your schedule. Replies go to your account email (or profile email on Pro).
+                  Leads with an email get a Hot / Warm / Cold sequence — AI-drafted first email (you approve), then emails and call reminders on schedule.
                 </p>
                 <button
                   onClick={() => {
@@ -528,6 +532,8 @@ function LeadsPageContent() {
                 </button>
               </Card>
             </div>
+
+            <SequenceTemplatesEditor />
 
             <FollowupTemplatesEditor settings={settingsData} onSaved={() => mutateSettings()} />
           </div>

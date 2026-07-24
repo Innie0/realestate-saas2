@@ -1,14 +1,10 @@
 // @ts-nocheck
-// POST /api/clients/[id]/cancel-sequence
-// Cancels all pending follow-up emails for a lead so the agent's
-// manual outreach isn't followed up by automated messages.
-
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
-import { stopLeadSequence } from '@/lib/lead-sequences/stop';
+import { pauseLeadSequenceEnrollment } from '@/lib/lead-sequences/process';
 
 export async function POST(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
@@ -20,23 +16,28 @@ export async function POST(
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Verify the client belongs to this agent
-    const { data: client, error: fetchError } = await supabase
+    const body = await request.json().catch(() => ({}));
+    const paused = body.paused !== false;
+
+    const { data: client } = await supabase
       .from('clients')
       .select('id')
       .eq('id', id)
       .eq('user_id', user.id)
       .single();
 
-    if (fetchError || !client) {
+    if (!client) {
       return NextResponse.json({ success: false, error: 'Lead not found' }, { status: 404 });
     }
 
-    await stopLeadSequence(supabase, id, user.id);
+    await pauseLeadSequenceEnrollment(supabase, id, user.id, paused);
 
-    return NextResponse.json({ success: true, message: 'Follow-up sequence cancelled' });
+    return NextResponse.json({
+      success: true,
+      message: paused ? 'Sequence paused' : 'Sequence resumed',
+    });
   } catch (error) {
-    console.error('Error in POST /api/clients/[id]/cancel-sequence:', error);
+    console.error('Error in POST /api/clients/[id]/sequence/pause:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }

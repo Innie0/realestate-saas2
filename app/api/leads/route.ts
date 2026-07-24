@@ -12,6 +12,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase-admin';
 import { scheduleLeadFollowupEmails } from '@/lib/schedule-lead-followup';
+import { enrollLeadInSequence } from '@/lib/lead-sequences/enroll';
 import { sendLeadAlertSMS } from '@/lib/twilio';
 
 const UUID_REGEX =
@@ -227,18 +228,34 @@ export async function POST(request: NextRequest) {
         .eq('user_id', agentId)
         .single();
 
-      // Schedule follow-up emails if enabled and lead has an email
+      // Schedule follow-up sequence if enabled and lead has an email
       if (settings?.auto_followup_enabled && cleanEmail) {
-        await scheduleLeadFollowupEmails({
+        const enrollResult = await enrollLeadInSequence({
           supabase,
           clientId: client.id,
           agentId,
           leadName: cleanName,
           leadEmail: cleanEmail,
           leadType: cleanLeadType,
+          message: cleanMessage || undefined,
+          source: leadSource,
           area: cleanArea,
           settings,
+          capturedAt: new Date(),
         });
+
+        if (!enrollResult.enrolled && enrollResult.reason === 'schema_missing') {
+          await scheduleLeadFollowupEmails({
+            supabase,
+            clientId: client.id,
+            agentId,
+            leadName: cleanName,
+            leadEmail: cleanEmail,
+            leadType: cleanLeadType,
+            area: cleanArea,
+            settings,
+          });
+        }
       }
 
       // Send SMS alert to agent if enabled
