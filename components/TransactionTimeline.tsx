@@ -14,9 +14,10 @@ import { Transaction, TransactionTimelineEvent } from '@/types';
 interface TransactionTimelineProps {
   transaction: Transaction;
   compact?: boolean; // For list view
+  onAddDates?: () => void;
 }
 
-export default function TransactionTimeline({ transaction, compact = false }: TransactionTimelineProps) {
+export default function TransactionTimeline({ transaction, compact = false, onAddDates }: TransactionTimelineProps) {
   // Generate timeline events from transaction dates
   const generateTimelineEvents = (): TransactionTimelineEvent[] => {
     const events: TransactionTimelineEvent[] = [];
@@ -124,7 +125,17 @@ export default function TransactionTimeline({ transaction, compact = false }: Tr
       <div className="text-center py-8 text-gray-600">
         <Calendar className="w-10 h-10 mx-auto mb-3 opacity-40" />
         <p className="text-[13.5px] text-gray-700">No dates set for this transaction.</p>
-        <p className="text-[12.5px] mt-1">Add important dates to see the timeline.</p>
+        <p className="text-[12.5px] mt-1 mb-4">Add important dates to see the timeline.</p>
+        {onAddDates && (
+          <button
+            type="button"
+            onClick={onAddDates}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-brand-500 px-3.5 py-2 text-[13px] font-medium text-[var(--brand-foreground)] hover:bg-brand-600 transition-colors"
+          >
+            <Calendar className="w-3.5 h-3.5" />
+            Add dates
+          </button>
+        )}
       </div>
     );
   }

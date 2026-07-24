@@ -43,6 +43,9 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [editInitialSection, setEditInitialSection] = useState<
+    'property' | 'parties' | 'financial' | 'dates' | undefined
+  >();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'tasks' | 'documents' | 'reminders' | 'financials'>('overview');
@@ -270,7 +273,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <Button variant="outline" onClick={() => setIsEditing(true)}>
+              <Button variant="outline" onClick={() => { setEditInitialSection(undefined); setIsEditing(true); }}>
                 <Edit2 className="w-3.5 h-3.5 mr-2" />
                 Edit
               </Button>
@@ -485,7 +488,13 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
           <div className="space-y-5">
             <Card className="p-5 sm:p-[22px]">
               <h2 className="text-[15px] font-semibold text-gray-900 mb-4">Transaction Timeline</h2>
-              <TransactionTimeline transaction={transaction} />
+              <TransactionTimeline
+                transaction={transaction}
+                onAddDates={() => {
+                  setEditInitialSection('dates');
+                  setIsEditing(true);
+                }}
+              />
             </Card>
             <Card className="p-5 sm:p-[22px]">
               <h2 className="text-[15px] font-semibold text-gray-900 mb-4">Task Checklist</h2>
@@ -571,14 +580,27 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
       </div>
 
       {/* Edit Modal */}
-      <Modal isOpen={isEditing} onClose={() => setIsEditing(false)} title="Edit Transaction" size="lg">
+      <Modal
+        isOpen={isEditing}
+        onClose={() => {
+          setIsEditing(false);
+          setEditInitialSection(undefined);
+        }}
+        title="Edit Transaction"
+        size="lg"
+      >
         <TransactionForm
           transaction={transaction}
+          initialSection={editInitialSection}
           onSuccess={() => {
             setIsEditing(false);
+            setEditInitialSection(undefined);
             fetchTransaction();
           }}
-          onCancel={() => setIsEditing(false)}
+          onCancel={() => {
+            setIsEditing(false);
+            setEditInitialSection(undefined);
+          }}
         />
       </Modal>
     </DashboardPage>

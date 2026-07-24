@@ -3,7 +3,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -25,6 +25,7 @@ interface TransactionFormProps {
   defaultPropertyType?: string;
   defaultPrice?: number;
   linkedProjectTitle?: string;
+  initialSection?: 'property' | 'parties' | 'financial' | 'dates';
 }
 
 export default function TransactionForm({
@@ -39,6 +40,7 @@ export default function TransactionForm({
   defaultPropertyType,
   defaultPrice,
   linkedProjectTitle,
+  initialSection,
 }: TransactionFormProps) {
   const router = useRouter();
   const isEditing = !!transaction;
@@ -46,7 +48,15 @@ export default function TransactionForm({
   // Form state
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [activeSection, setActiveSection] = useState<'property' | 'parties' | 'financial' | 'dates'>('property');
+  const [activeSection, setActiveSection] = useState<'property' | 'parties' | 'financial' | 'dates'>(
+    initialSection ?? 'property',
+  );
+
+  useEffect(() => {
+    if (initialSection) {
+      setActiveSection(initialSection);
+    }
+  }, [initialSection]);
 
   // Property info
   const [propertyAddress, setPropertyAddress] = useState(transaction?.property_address || defaultAddress || '');
