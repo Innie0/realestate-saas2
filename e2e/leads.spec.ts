@@ -34,7 +34,7 @@ test.describe('Leads Inbox', () => {
     ).toBe(true);
 
     await gotoDashboard(page, '/dashboard/leads');
-    await expect(page.getByText(leadName)).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole('heading', { name: leadName })).toBeVisible({ timeout: 30_000 });
 
     const inboxRes = await apiJson(request, 'GET', '/api/clients?status=all&view=inbox');
     const lead = (inboxRes.json.data as { email?: string; followup_active?: boolean }[]).find(
