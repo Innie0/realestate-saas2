@@ -1157,6 +1157,10 @@ html[data-dashboard-theme='light'] .dashboard-root,
     background-color: color-mix(in srgb, #ffffff 90%, transparent) !important;
   }
 
+  .marketing-root .bg-white\/95 {
+    background-color: color-mix(in srgb, #ffffff 95%, transparent) !important;
+  }
+
   .marketing-root .hover\:bg-white:hover {
     background-color: #ffffff !important;
   }

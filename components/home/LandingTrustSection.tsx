@@ -180,7 +180,7 @@ export default function LandingTrustSection() {
                   {INTEGRATIONS.map((item) => (
                     <div
                       key={item.id}
-                      className="flex flex-col gap-4 rounded-[1.25rem] border border-white/20 bg-white/95 p-6 shadow-[0_12px_40px_-20px_rgba(0,0,0,0.35)] backdrop-blur-sm sm:p-7"
+                      className="flex flex-col gap-4 rounded-[1.25rem] border border-white/30 bg-white p-6 shadow-[0_12px_40px_-20px_rgba(0,0,0,0.35)] sm:p-7"
                     >
                       <div className="flex size-12 items-center justify-center rounded-2xl bg-mkt-surface-muted">
                         <IntegrationLogo id={item.id} className="size-7" />
