@@ -991,6 +991,23 @@ html[data-dashboard-theme='light'] .dashboard-root,
     background-color: var(--surface) !important;
   }
 
+  /* Marketing landing uses real white fills on cobalt panels (not dashboard --surface). */
+  .marketing-root .bg-white {
+    background-color: #ffffff !important;
+  }
+
+  .marketing-root .bg-white\/90 {
+    background-color: color-mix(in srgb, #ffffff 90%, transparent) !important;
+  }
+
+  .marketing-root .hover\:bg-white:hover {
+    background-color: #ffffff !important;
+  }
+
+  .marketing-root .hover\:bg-white\/90:hover {
+    background-color: color-mix(in srgb, #ffffff 90%, transparent) !important;
+  }
+
   /* Primary CTAs — ensure label contrasts with fill in both themes */
   .bg-brand-500.text-white,
   .bg-brand-600.text-white,
