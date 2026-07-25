@@ -17,38 +17,39 @@ export default function LandingFeatureStack() {
   return (
     <div aria-label="Product features" className="bg-mkt-background">
       {SHOWCASE_SLIDES.map((slide, index) => (
-        <section key={slide.id} className="py-20 sm:py-28 lg:py-32">
+        <section key={slide.id} className="py-14 sm:py-20 lg:py-24">
           <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
-            <div className="mx-auto max-w-3xl text-center">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-mkt-accent">
+            <div className="mx-auto max-w-xl text-center">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-mkt-accent">
                 {slide.eyebrow}
               </p>
-              <h2 className="font-display mt-4 text-[clamp(2rem,4.5vw,3.25rem)] font-extrabold leading-[1.06] tracking-[-0.04em] text-mkt-foreground">
+              <h2 className="font-display mt-3 text-[clamp(1.65rem,3.2vw,2.25rem)] font-extrabold leading-[1.08] tracking-[-0.035em] text-mkt-foreground">
                 {slide.headline}
               </h2>
-              <p className="mx-auto mt-5 max-w-2xl text-base leading-[1.65] text-mkt-secondary sm:text-[17px]">
+              <p className="mx-auto mt-4 max-w-md text-sm leading-[1.6] text-mkt-secondary sm:text-[15px]">
                 {slide.description}
               </p>
-              <div className="mt-8 flex flex-col items-center gap-3">
-                <MarketingButton href="/auth/signup" variant="dark" size="lg">
+              <div className="mt-6 flex flex-col items-center gap-2.5">
+                <MarketingButton href="/auth/signup" variant="dark" size="md">
                   Start free trial
                 </MarketingButton>
                 <Link
                   href={slide.productsHref}
-                  className="text-sm font-medium text-mkt-secondary transition-colors hover:text-mkt-foreground"
+                  className="text-xs font-medium text-mkt-secondary transition-colors hover:text-mkt-foreground sm:text-sm"
                 >
                   Learn more →
                 </Link>
               </div>
             </div>
 
-            <div className="mt-12 sm:mt-16 lg:mt-20">
+            <div className="mx-auto mt-8 max-w-2xl sm:mt-10 lg:mt-12">
               <LandingGradientPanel
                 variant={GRADIENT_VARIANTS[index % GRADIENT_VARIANTS.length]}
                 mesh="static"
                 showcase
+                innerClassName="py-7 px-5 sm:py-9 sm:px-8 lg:py-10 lg:px-10"
               >
-                <div className="mx-auto w-full max-w-[640px] sm:max-w-[680px] lg:max-w-[720px]">
+                <div className="mx-auto w-full max-w-[520px]">
                   <ProductScreenshot
                     src={slide.screenshot}
                     alt={slide.screenshotAlt}
