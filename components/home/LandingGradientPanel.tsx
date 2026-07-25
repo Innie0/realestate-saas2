@@ -43,7 +43,7 @@ type LandingGradientPanelProps = {
   elevated?: 'default' | 'hero' | false;
 };
 
-const RADIUS = 'rounded-[1.75rem] sm:rounded-[2rem] lg:rounded-[2.25rem]';
+const RADIUS = 'rounded-[2rem] sm:rounded-[2.5rem] lg:rounded-[3rem]';
 
 export default function LandingGradientPanel({
   variant = 'feature',
@@ -76,7 +76,7 @@ export default function LandingGradientPanel({
         ) : null}
         <div
           className={clsx(
-            'relative',
+            'relative z-[2]',
             showcase
               ? 'py-12 px-10 sm:py-16 sm:px-14 lg:py-20 lg:px-20'
               : compact

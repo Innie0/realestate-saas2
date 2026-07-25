@@ -6,6 +6,7 @@ import { useMotionReduced } from '@/lib/motion';
 export type MeshTone = 'cobalt' | 'violet' | 'teal' | 'plum' | 'emerald';
 
 const BLOBS = ['a', 'b', 'c', 'd'] as const;
+const HIGHLIGHTS = ['e', 'f'] as const;
 
 type LandingMeshBackgroundProps = {
   className?: string;
@@ -30,7 +31,7 @@ export function meshToneForVariant(variant: string): MeshTone {
   }
 }
 
-/** Soft aurora blobs — CSS-only drift, GPU transforms, no cursor spotlight */
+/** Soft aurora mesh — base blobs + highlight glow, CSS-only drift */
 export default function LandingMeshBackground({
   className,
   animated = false,
@@ -42,7 +43,7 @@ export default function LandingMeshBackground({
   return (
     <div
       className={clsx(
-        'landing-mesh-aurora pointer-events-none absolute inset-0',
+        'landing-mesh-aurora pointer-events-none absolute inset-0 z-0',
         `landing-mesh-aurora--${tone}`,
         className,
       )}
@@ -53,6 +54,16 @@ export default function LandingMeshBackground({
           key={id}
           className={clsx(
             'landing-mesh-blob',
+            `landing-mesh-blob-${id}`,
+            motionless && 'landing-mesh-blob-static',
+          )}
+        />
+      ))}
+      {HIGHLIGHTS.map((id) => (
+        <div
+          key={id}
+          className={clsx(
+            'landing-mesh-blob landing-mesh-highlight',
             `landing-mesh-blob-${id}`,
             motionless && 'landing-mesh-blob-static',
           )}
