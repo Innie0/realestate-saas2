@@ -32,7 +32,7 @@ export default function LandingMeshBackground({
     const aurora = auroraRef.current;
     if (!aurora) return;
 
-    const panel = aurora.closest('.landing-gradient-panel');
+    const panel = aurora.closest<HTMLElement>('.landing-gradient-panel');
     if (!panel) return;
 
     let targetX = 0;
@@ -55,13 +55,17 @@ export default function LandingMeshBackground({
       targetY = ((clientY - rect.top) / rect.height - 0.5) * 28;
     };
 
-    const onMove = (e: MouseEvent) => setTargetFromPoint(e.clientX, e.clientY);
+    const onMove: EventListener = (event) => {
+      if (!(event instanceof MouseEvent)) return;
+      setTargetFromPoint(event.clientX, event.clientY);
+    };
     const onLeave = () => {
       targetX = 0;
       targetY = 0;
     };
-    const onTouch = (e: TouchEvent) => {
-      const touch = e.touches[0];
+    const onTouch: EventListener = (event) => {
+      if (!(event instanceof TouchEvent)) return;
+      const touch = event.touches[0];
       if (touch) setTargetFromPoint(touch.clientX, touch.clientY);
     };
 
