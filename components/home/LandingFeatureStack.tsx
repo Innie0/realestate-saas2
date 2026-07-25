@@ -18,10 +18,7 @@ export default function LandingFeatureStack() {
   return (
     <div aria-label="Product features" className="bg-mkt-background">
       {SHOWCASE_SLIDES.map((slide, index) => (
-        <section
-          key={slide.id}
-          className="border-t border-mkt-border py-20 sm:py-28 lg:py-32"
-        >
+        <section key={slide.id} className="py-20 sm:py-28 lg:py-32">
           <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
             <LandingStaggerReveal className="mx-auto max-w-3xl text-center">
               <p

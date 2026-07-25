@@ -49,7 +49,7 @@ export default function LandingFAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="border-t border-mkt-border bg-mkt-background py-24 lg:py-32">
+    <section className="bg-mkt-background py-24 lg:py-32">
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <LandingStaggerReveal className="mx-auto mb-14 max-w-2xl text-center">
           <p data-reveal className="text-xs font-medium uppercase tracking-[0.14em] text-mkt-secondary">
@@ -66,7 +66,7 @@ export default function LandingFAQSection() {
           </p>
         </LandingStaggerReveal>
 
-        <LandingStaggerReveal className="mx-auto max-w-2xl border-t border-mkt-border" stagger={0.05}>
+        <LandingStaggerReveal className="mx-auto max-w-2xl" stagger={0.05}>
           {MARKETING_FAQ_ITEMS.map((item, index) => (
             <FAQItem
               key={item.question}

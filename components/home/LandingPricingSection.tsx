@@ -34,7 +34,7 @@ const PLANS = [
 
 export default function LandingPricingSection() {
   return (
-    <section className="border-t border-mkt-border bg-mkt-background py-24 lg:py-32">
+    <section className="bg-mkt-background py-24 lg:py-32">
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <LandingStaggerReveal className="mx-auto mb-16 max-w-2xl text-center">
           <p data-reveal className="text-xs font-medium uppercase tracking-[0.14em] text-mkt-secondary">

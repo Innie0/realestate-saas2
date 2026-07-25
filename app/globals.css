@@ -494,6 +494,30 @@ html[data-dashboard-theme='light'] .dashboard-root,
     background: var(--mkt-cobalt-gradient-integrations);
   }
 
+  .marketing-root .landing-hero-input-box {
+    background-color: #ffffff !important;
+    color-scheme: light;
+  }
+
+  .marketing-root .landing-hero-input-box input {
+    background-color: transparent;
+    color: #111111;
+  }
+
+  .marketing-root .landing-hero-input-box input::placeholder {
+    color: #78726a;
+  }
+
+  .marketing-root .landing-hero-action-btn {
+    background-color: #ffffff !important;
+    color: #111111 !important;
+    border-color: rgba(255, 255, 255, 0.95);
+  }
+
+  .marketing-root .landing-hero-action-btn:hover {
+    background-color: #ffffff !important;
+  }
+
   .marketing-root .text-price {
     color: var(--mkt-text-primary);
   }

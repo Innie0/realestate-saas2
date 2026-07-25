@@ -50,7 +50,7 @@ function TestimonialCarousel() {
   );
 
   return (
-    <div className="border-t border-mkt-border py-24 sm:py-28 lg:py-32">
+    <div className="py-24 sm:py-28 lg:py-32">
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <div className="mx-auto mb-12 max-w-2xl text-center sm:mb-14">
           <h2 className="font-display text-3xl font-extrabold tracking-[-0.04em] text-mkt-foreground sm:text-4xl">
@@ -151,7 +151,7 @@ export default function LandingTrustSection() {
       <TestimonialCarousel />
       <LandingManifestoBand />
 
-      <div className="border-t border-mkt-border py-20 sm:py-28 lg:py-32">
+      <div className="py-20 sm:py-28 lg:py-32">
         <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
           <LandingStaggerReveal className="mx-auto max-w-2xl text-center">
             <h2

@@ -121,10 +121,8 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
               >
                 <div
                   className={clsx(
-                    'relative rounded-[1.25rem] border bg-white p-2 shadow-[0_16px_48px_-20px_rgba(0,0,0,0.35)] transition-all duration-200 sm:rounded-[1.35rem] sm:p-2.5',
-                    focused
-                      ? 'border-white ring-4 ring-white/25'
-                      : 'border-white/80',
+                    'landing-hero-input-box relative rounded-[1.25rem] border border-white p-2 shadow-[0_16px_48px_-20px_rgba(0,0,0,0.35)] transition-all duration-200 sm:rounded-[1.35rem] sm:p-2.5',
+                    focused && 'ring-4 ring-white/25',
                   )}
                 >
                   <div className="flex items-center gap-2 px-3 pt-2 sm:px-4">
@@ -143,7 +141,7 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
                       onBlur={() => setFocused(false)}
                       placeholder={placeholder}
                       aria-label="Ask Oikaro AI"
-                      className="w-full border-0 bg-transparent text-left text-base text-mkt-foreground placeholder:text-mkt-muted focus:outline-none focus:ring-0 sm:text-[17px]"
+                      className="w-full border-0 bg-transparent text-left text-base text-[#111111] placeholder:text-[#78726a] focus:outline-none focus:ring-0 sm:text-[17px]"
                     />
                   </div>
                   <button
@@ -168,7 +166,7 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
                       setQuery(action.prompt);
                       submitPrompt(action.prompt);
                     }}
-                    className="rounded-full border border-white/20 bg-white/95 px-4 py-2 text-sm font-medium text-mkt-foreground shadow-[0_8px_24px_-12px_rgba(0,0,0,0.25)] transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                    className="landing-hero-action-btn rounded-full border px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-12px_rgba(0,0,0,0.25)] transition-opacity hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
                   >
                     {action.label}
                   </button>
@@ -176,7 +174,7 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
               </div>
             </div>
 
-            <div data-hero-trust className="mt-12 border-t border-white/15 pt-8 sm:mt-14 sm:pt-10">
+            <div data-hero-trust className="mt-12 sm:mt-14">
               <p className="mb-5 text-center text-[11px] font-medium uppercase tracking-[0.16em] text-white/55">
                 Used by agents at leading brokerages
               </p>

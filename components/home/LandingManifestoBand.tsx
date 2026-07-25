@@ -40,7 +40,7 @@ export default function LandingManifestoBand() {
   return (
     <div
       ref={sectionRef}
-      className="border-t border-mkt-border bg-mkt-background py-28 sm:py-36 lg:py-44"
+      className="bg-mkt-background py-28 sm:py-36 lg:py-44"
     >
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <p
