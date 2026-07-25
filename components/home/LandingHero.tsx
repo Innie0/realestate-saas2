@@ -8,8 +8,10 @@ import { ensureGsapRegistered, gsap, landingRevealDefaults, useGSAP } from '@/li
 import {
   HERO_INPUT_PLACEHOLDERS,
   HERO_QUICK_ACTIONS,
+  HERO_TRUST_BRANDS,
   persistHeroPrompt,
 } from '@/lib/landing-hero-prompts';
+import LandingGradientPanel from '@/components/home/LandingGradientPanel';
 import { useMotionReduced } from '@/lib/motion';
 
 type LandingHeroProps = {
@@ -60,8 +62,9 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
       const subcopy = rootRef.current.querySelector('[data-hero-subcopy]');
       const inputBox = rootRef.current.querySelector('[data-hero-input]');
       const actions = rootRef.current.querySelector('[data-hero-actions]');
+      const trust = rootRef.current.querySelector('[data-hero-trust]');
 
-      gsap.set([headline, subcopy, inputBox, actions], { autoAlpha: 0, y: 20 });
+      gsap.set([headline, subcopy, inputBox, actions, trust], { autoAlpha: 0, y: 20 });
 
       const tl = gsap.timeline({
         defaults: { ease: landingRevealDefaults.ease, duration: landingRevealDefaults.duration },
@@ -70,7 +73,8 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
       tl.to(headline, { autoAlpha: 1, y: 0, duration: 0.45 })
         .to(subcopy, { autoAlpha: 1, y: 0, duration: 0.38 }, '-=0.22')
         .to(inputBox, { autoAlpha: 1, y: 0, duration: 0.42 }, '-=0.18')
-        .to(actions, { autoAlpha: 1, y: 0, duration: 0.35 }, '-=0.2');
+        .to(actions, { autoAlpha: 1, y: 0, duration: 0.35 }, '-=0.2')
+        .to(trust, { autoAlpha: 1, y: 0, duration: 0.35 }, '-=0.15');
     },
     { scope: rootRef, dependencies: [reduced] },
   );
@@ -78,95 +82,116 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
   return (
     <section
       ref={sectionRef as React.RefObject<HTMLElement>}
-      className="relative overflow-hidden bg-mkt-background pt-28 sm:pt-32 lg:pt-36"
+      className="relative bg-mkt-background pt-24 sm:pt-28 lg:pt-32"
     >
-      <div
-        ref={rootRef}
-        className="relative mx-auto w-full max-w-mkt-content px-5 pb-10 sm:px-8 sm:pb-14"
-      >
-        <div className="mx-auto max-w-4xl text-center">
-          <h1
-            data-hero-headline
-            className="font-display text-[clamp(2.5rem,6.5vw,4.75rem)] font-extrabold leading-[1.02] tracking-[-0.045em] text-mkt-foreground"
+      <div className="mx-auto max-w-[1180px] px-4 pb-8 sm:px-6 sm:pb-10 lg:px-8">
+        <div ref={rootRef}>
+          <LandingGradientPanel
+            variant="hero"
+            className="shadow-[0_48px_120px_-48px_rgba(40,52,138,0.55)]"
+            innerClassName="px-5 py-10 sm:px-10 sm:py-14 lg:px-14 lg:py-16"
           >
-            Run Your Business{' '}
-            <span className="inline-block text-mkt-accent" aria-hidden>
-              ⚡
-            </span>{' '}
-            with Oikaro
-          </h1>
-
-          <p
-            data-hero-subcopy
-            className="mx-auto mt-5 max-w-2xl text-base leading-[1.65] text-mkt-secondary sm:text-lg sm:leading-[1.6]"
-          >
-            Get more done by chatting with AI — listings, leads, CMAs, and follow-ups from one
-            workspace built for real estate agents.
-          </p>
-
-          <form
-            data-hero-input
-            className="relative mx-auto mt-10 max-w-3xl"
-            onSubmit={(e) => {
-              e.preventDefault();
-              submitPrompt(query);
-            }}
-          >
-            <div
-              className={clsx(
-                'relative rounded-[1.35rem] border bg-mkt-surface p-2 shadow-[0_20px_60px_-24px_rgba(53,72,199,0.35)] transition-all duration-200 sm:rounded-[1.5rem] sm:p-2.5',
-                focused
-                  ? 'border-mkt-accent ring-4 ring-[rgba(53,72,199,0.12)]'
-                  : 'border-mkt-border hover:border-[rgba(53,72,199,0.35)]',
-              )}
-            >
-              <div className="flex items-center gap-2 px-3 pt-2 sm:px-4">
-                <Sparkles className="size-4 shrink-0 text-mkt-accent" strokeWidth={2.2} aria-hidden />
-                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-mkt-accent">
-                  AI Assistant
-                </span>
-              </div>
-              <div className="relative mt-1 px-3 pb-14 sm:px-4 sm:pb-[3.75rem]">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onFocus={() => setFocused(true)}
-                  onBlur={() => setFocused(false)}
-                  placeholder={placeholder}
-                  aria-label="Ask Oikaro AI"
-                  className="w-full border-0 bg-transparent text-left text-base text-mkt-foreground placeholder:text-mkt-muted focus:outline-none focus:ring-0 sm:text-[17px]"
-                />
-              </div>
-              <button
-                type="submit"
-                aria-label="Submit to AI Assistant"
-                className="absolute bottom-3 right-3 flex size-11 items-center justify-center rounded-full bg-mkt-accent text-mkt-accent-foreground transition-colors hover:bg-mkt-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mkt-accent/40 focus-visible:ring-offset-2 sm:bottom-3.5 sm:right-3.5"
+            <div className="mx-auto max-w-3xl text-center">
+              <h1
+                data-hero-headline
+                className="font-display text-[clamp(2.35rem,6vw,4.5rem)] font-extrabold leading-[1.02] tracking-[-0.045em] text-white"
               >
-                <ArrowUp className="size-5" strokeWidth={2.5} />
-              </button>
-            </div>
-          </form>
+                Run Your Business{' '}
+                <span className="inline-block" aria-hidden>
+                  ⚡
+                </span>{' '}
+                with Oikaro
+              </h1>
 
-          <div
-            data-hero-actions
-            className="mt-5 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5"
-          >
-            {HERO_QUICK_ACTIONS.map((action) => (
-              <button
-                key={action.label}
-                type="button"
-                onClick={() => {
-                  setQuery(action.prompt);
-                  submitPrompt(action.prompt);
+              <p
+                data-hero-subcopy
+                className="mx-auto mt-4 max-w-xl text-base leading-[1.6] text-white/80 sm:text-lg"
+              >
+                Get more done by chatting with AI — listings, leads, CMAs, and follow-ups from one
+                workspace built for real estate agents.
+              </p>
+
+              <form
+                data-hero-input
+                className="relative mx-auto mt-8 max-w-2xl sm:mt-10"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  submitPrompt(query);
                 }}
-                className="rounded-full border border-mkt-border bg-mkt-surface px-4 py-2 text-sm font-medium text-mkt-foreground transition-colors hover:border-[rgba(53,72,199,0.35)] hover:bg-[rgba(53,72,199,0.05)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mkt-accent/30"
               >
-                {action.label}
-              </button>
-            ))}
-          </div>
+                <div
+                  className={clsx(
+                    'relative rounded-[1.25rem] border bg-white p-2 shadow-[0_16px_48px_-20px_rgba(0,0,0,0.35)] transition-all duration-200 sm:rounded-[1.35rem] sm:p-2.5',
+                    focused
+                      ? 'border-white ring-4 ring-white/25'
+                      : 'border-white/80',
+                  )}
+                >
+                  <div className="flex items-center gap-2 px-3 pt-2 sm:px-4">
+                    <Sparkles className="size-4 shrink-0 text-mkt-accent" strokeWidth={2.2} aria-hidden />
+                    <span className="text-xs font-semibold uppercase tracking-[0.12em] text-mkt-accent">
+                      AI Assistant
+                    </span>
+                  </div>
+                  <div className="relative mt-1 px-3 pb-14 sm:px-4 sm:pb-[3.75rem]">
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      onFocus={() => setFocused(true)}
+                      onBlur={() => setFocused(false)}
+                      placeholder={placeholder}
+                      aria-label="Ask Oikaro AI"
+                      className="w-full border-0 bg-transparent text-left text-base text-mkt-foreground placeholder:text-mkt-muted focus:outline-none focus:ring-0 sm:text-[17px]"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    aria-label="Submit to AI Assistant"
+                    className="absolute bottom-3 right-3 flex size-11 items-center justify-center rounded-full bg-mkt-accent text-white transition-colors hover:bg-mkt-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent sm:bottom-3.5 sm:right-3.5"
+                  >
+                    <ArrowUp className="size-5" strokeWidth={2.5} />
+                  </button>
+                </div>
+              </form>
+
+              <div
+                data-hero-actions
+                className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:mt-5 sm:gap-2.5"
+              >
+                {HERO_QUICK_ACTIONS.map((action) => (
+                  <button
+                    key={action.label}
+                    type="button"
+                    onClick={() => {
+                      setQuery(action.prompt);
+                      submitPrompt(action.prompt);
+                    }}
+                    className="rounded-full border border-white/20 bg-white/95 px-4 py-2 text-sm font-medium text-mkt-foreground shadow-[0_8px_24px_-12px_rgba(0,0,0,0.25)] transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                  >
+                    {action.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div data-hero-trust className="mt-12 border-t border-white/15 pt-8 sm:mt-14 sm:pt-10">
+              <p className="mb-5 text-center text-[11px] font-medium uppercase tracking-[0.16em] text-white/55">
+                Used by agents at leading brokerages
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 sm:gap-x-10">
+                {HERO_TRUST_BRANDS.map((brand) => (
+                  <span
+                    key={brand}
+                    className="text-sm font-semibold tracking-[-0.02em] text-white/70 sm:text-[15px]"
+                  >
+                    {brand}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </LandingGradientPanel>
         </div>
       </div>
     </section>

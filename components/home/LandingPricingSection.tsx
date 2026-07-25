@@ -42,7 +42,7 @@ export default function LandingPricingSection() {
           </p>
           <h2
             data-reveal
-            className="font-display mt-4 text-3xl font-medium tracking-[-0.03em] text-mkt-foreground sm:text-4xl"
+            className="font-display mt-4 text-3xl font-extrabold tracking-[-0.04em] text-mkt-foreground sm:text-4xl"
           >
             Simple, transparent pricing
           </h2>

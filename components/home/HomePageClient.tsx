@@ -4,8 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import LandingNav from '@/components/home/LandingNav';
 import LandingHero from '@/components/home/LandingHero';
-import LandingTrustBar from '@/components/home/LandingTrustBar';
-import LandingPinnedShowcase from '@/components/home/LandingPinnedShowcase';
+import LandingFeatureStack from '@/components/home/LandingFeatureStack';
 import LandingTrustSection from '@/components/home/LandingTrustSection';
 import LandingFAQSection from '@/components/home/LandingFAQSection';
 import LandingPricingSection from '@/components/home/LandingPricingSection';
@@ -50,8 +49,7 @@ export default function HomePageClient() {
         <MarketingAtmosphere />
         <LandingNav heroRef={heroRef} />
         <LandingHero sectionRef={heroRef} />
-        <LandingTrustBar />
-        <LandingPinnedShowcase />
+        <LandingFeatureStack />
         <LandingTrustSection />
         <LandingFAQSection />
         <LandingPricingSection />

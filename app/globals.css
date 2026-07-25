@@ -433,6 +433,33 @@ html[data-dashboard-theme='light'] .dashboard-root,
       rgba(53, 72, 199, 0.08) 45%,
       rgba(40, 52, 138, 0.16) 100%
     );
+    --mkt-cobalt-gradient-hero: linear-gradient(
+      165deg,
+      #1a2260 0%,
+      #28348a 24%,
+      #3548c7 52%,
+      #4a62d9 76%,
+      #28348a 100%
+    );
+    --mkt-cobalt-gradient-feature: linear-gradient(155deg, #232d7a 0%, #3548c7 42%, #5b74e8 100%);
+    --mkt-cobalt-gradient-feature-alt: linear-gradient(
+      155deg,
+      #1e3268 0%,
+      #3548c7 46%,
+      #4890d4 100%
+    );
+    --mkt-cobalt-gradient-feature-warm: linear-gradient(
+      155deg,
+      #2a2468 0%,
+      #3548c7 50%,
+      #6366d9 100%
+    );
+    --mkt-cobalt-gradient-integrations: linear-gradient(
+      145deg,
+      #2e2780 0%,
+      #3548c7 52%,
+      #4338ca 100%
+    );
     --mkt-radius-button: 9999px;
     --mkt-radius-card: 1.25rem;
     --mkt-radius-browser: 1.25rem;
@@ -445,6 +472,26 @@ html[data-dashboard-theme='light'] .dashboard-root,
     font-family: var(--font-mkt-display), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
     font-weight: 800;
     letter-spacing: -0.04em;
+  }
+
+  .marketing-root .landing-gradient-hero {
+    background: var(--mkt-cobalt-gradient-hero);
+  }
+
+  .marketing-root .landing-gradient-feature {
+    background: var(--mkt-cobalt-gradient-feature);
+  }
+
+  .marketing-root .landing-gradient-feature-alt {
+    background: var(--mkt-cobalt-gradient-feature-alt);
+  }
+
+  .marketing-root .landing-gradient-feature-warm {
+    background: var(--mkt-cobalt-gradient-feature-warm);
+  }
+
+  .marketing-root .landing-gradient-integrations {
+    background: var(--mkt-cobalt-gradient-integrations);
   }
 
   .marketing-root .text-price {
