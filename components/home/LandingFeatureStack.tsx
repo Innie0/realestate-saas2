@@ -57,14 +57,12 @@ export default function LandingFeatureStack() {
                 <LandingGradientPanel
                   variant={GRADIENT_VARIANTS[index % GRADIENT_VARIANTS.length]}
                   showcase
-                  className="shadow-[0_40px_100px_-40px_rgba(53,72,199,0.45)]"
                 >
                   <div className="mx-auto w-full max-w-[640px] sm:max-w-[680px] lg:max-w-[720px]">
                     <ProductScreenshot
                       src={slide.screenshot}
                       alt={slide.screenshotAlt}
                       size="showcase"
-                      className="shadow-[0_32px_80px_-32px_rgba(17,17,17,0.45)]"
                     />
                   </div>
                 </LandingGradientPanel>

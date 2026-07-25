@@ -89,7 +89,7 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
           <LandingGradientPanel
             variant="hero"
             animatedMesh
-            className="shadow-[0_48px_120px_-48px_rgba(40,52,138,0.55)]"
+            elevated="hero"
             innerClassName="px-5 py-10 sm:px-10 sm:py-14 lg:px-14 lg:py-16"
           >
             <div className="mx-auto max-w-3xl text-center">

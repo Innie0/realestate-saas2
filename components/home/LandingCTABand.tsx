@@ -10,7 +10,7 @@ export default function LandingCTABand() {
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <LandingGradientPanel
           variant="hero"
-          className="shadow-[0_48px_120px_-48px_rgba(40,52,138,0.5)]"
+          elevated="hero"
           innerClassName="px-6 py-14 sm:px-10 sm:py-16 lg:px-14 lg:py-20"
         >
           <LandingStaggerReveal className="mx-auto max-w-2xl text-center">

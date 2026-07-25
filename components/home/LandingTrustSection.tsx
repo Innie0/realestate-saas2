@@ -173,10 +173,7 @@ export default function LandingTrustSection() {
 
           <LandingStaggerReveal className="mt-12 sm:mt-16">
             <div data-reveal data-reveal-fade>
-              <LandingGradientPanel
-                variant="integrations"
-                className="shadow-[0_40px_100px_-40px_rgba(53,72,199,0.4)]"
-              >
+              <LandingGradientPanel variant="integrations">
                 <div className="grid gap-4 sm:grid-cols-2 lg:gap-5">
                   {INTEGRATIONS.map((item) => (
                     <div

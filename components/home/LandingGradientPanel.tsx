@@ -29,7 +29,11 @@ type LandingGradientPanelProps = {
   showcase?: boolean;
   /** Drifting mesh blobs (Instantly-style ambient motion) */
   animatedMesh?: boolean;
+  /** Shadow on the clip shell */
+  elevated?: 'default' | 'hero' | false;
 };
+
+const RADIUS = 'rounded-[1.75rem] sm:rounded-[2rem] lg:rounded-[2.25rem]';
 
 export default function LandingGradientPanel({
   variant = 'feature',
@@ -39,21 +43,30 @@ export default function LandingGradientPanel({
   compact = false,
   showcase = false,
   animatedMesh = false,
+  elevated = 'default',
 }: LandingGradientPanelProps) {
-  const radius = 'rounded-[1.75rem] sm:rounded-[2rem] lg:rounded-[2.25rem]';
+  const elevatedClass =
+    elevated === 'hero'
+      ? 'landing-gradient-panel-elevated-hero'
+      : elevated === 'default'
+        ? 'landing-gradient-panel-elevated'
+        : undefined;
 
   return (
-    /* Shadow on outer shell — clip + gradient on inner so corners stay clean */
-    <div className={clsx(radius, className)}>
+    <div className={clsx(RADIUS, 'overflow-hidden', elevatedClass, className)}>
       <div
         className={clsx(
-          'relative isolate overflow-hidden [transform:translateZ(0)]',
-          radius,
+          'landing-gradient-panel relative',
           !animatedMesh && VARIANT_CLASS[variant],
           animatedMesh && 'landing-gradient-hero-mesh-base',
         )}
       >
-        {animatedMesh ? <LandingMeshBackground /> : null}
+        {animatedMesh ? (
+          <>
+            <div className="pointer-events-none absolute inset-0 bg-[#141b52]" aria-hidden />
+            <LandingMeshBackground />
+          </>
+        ) : null}
         {!animatedMesh ? (
           <>
             <div

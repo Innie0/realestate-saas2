@@ -1,5 +1,6 @@
 'use client';
 
+import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
 import ProductFrame from '@/components/home/ProductFrame';
@@ -23,10 +24,16 @@ export default function ProductScreenshot({
   size = 'default',
 }: ProductScreenshotProps) {
   const image = (
-    <ProductFrame interactive={!href} className={className}>
-      <div
-        className={`relative w-full bg-[var(--mkt-mock-surface)] ${size === 'showcase' ? 'aspect-[16/9]' : 'aspect-[16/10]'}`}
-      >
+    <div
+      className={clsx(
+        'rounded-mkt-browser shadow-[0_32px_80px_-32px_rgba(17,17,17,0.45)]',
+        className,
+      )}
+    >
+      <ProductFrame interactive={!href}>
+        <div
+          className={`relative w-full bg-[var(--mkt-mock-surface)] ${size === 'showcase' ? 'aspect-[16/9]' : 'aspect-[16/10]'}`}
+        >
         <Image
           src={src}
           alt={alt}
@@ -37,6 +44,7 @@ export default function ProductScreenshot({
         />
       </div>
     </ProductFrame>
+    </div>
   );
 
   if (href) {

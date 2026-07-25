@@ -45,7 +45,7 @@ export default function HomePageClient() {
 
   return (
     <MarketingSmoothScroll>
-      <div className="marketing-root relative min-h-screen overflow-x-hidden bg-mkt-background text-mkt-foreground">
+      <div className="marketing-root relative z-[1] min-h-screen overflow-x-hidden bg-mkt-background text-mkt-foreground">
         <MarketingAtmosphere />
         <LandingNav heroRef={heroRef} />
         <LandingHero sectionRef={heroRef} />
