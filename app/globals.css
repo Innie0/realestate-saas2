@@ -400,6 +400,15 @@ html[data-dashboard-theme='light'] .dashboard-root,
   }
 
   /* Marketing chrome — warm light landing (Instantly-style energy, cobalt accent) */
+  html:has(.marketing-root) {
+    background-color: #faf8f5;
+    color-scheme: light;
+  }
+
+  html:has(.marketing-root) body {
+    background-color: #faf8f5;
+  }
+
   .marketing-root {
     color-scheme: light;
     --mkt-background: #faf8f5;
