@@ -42,14 +42,14 @@ export default function LandingFeatureStack() {
               </div>
             </div>
 
-            <div className="mx-auto mt-8 max-w-2xl sm:mt-10 lg:mt-12">
+            <div className="mx-auto mt-8 max-w-4xl sm:mt-10 lg:mt-12">
               <LandingGradientPanel
                 variant={GRADIENT_VARIANTS[index % GRADIENT_VARIANTS.length]}
                 mesh="static"
                 showcase
-                innerClassName="py-7 px-5 sm:py-9 sm:px-8 lg:py-10 lg:px-10"
+                innerClassName="py-7 px-6 sm:py-9 sm:px-10 lg:py-10 lg:px-12"
               >
-                <div className="mx-auto w-full max-w-[520px]">
+                <div className="mx-auto w-full max-w-[680px] sm:max-w-[740px] lg:max-w-[820px]">
                   <ProductScreenshot
                     src={slide.screenshot}
                     alt={slide.screenshotAlt}
