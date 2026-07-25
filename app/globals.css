@@ -543,21 +543,25 @@ html[data-dashboard-theme='light'] .dashboard-root,
   }
 
   .marketing-root .landing-gradient-hero-mesh-base {
+    --mesh-nx: 0;
+    --mesh-ny: 0;
     background-color: #4a62d9;
-    background-image: linear-gradient(165deg, #3548c7 0%, #4a62d9 38%, #6b8af0 100%);
+    background-image: linear-gradient(165deg, #3548c7 0%, #4a62d9 38%, #5b74e8 100%);
+    background-size: 130% 130%;
+    background-position: calc(50% + var(--mesh-nx) * 22%) calc(50% + var(--mesh-ny) * 18%);
   }
 
   .marketing-root .landing-mesh-aurora {
     overflow: hidden;
-    --mesh-px: 0px;
-    --mesh-py: 0px;
+    --mesh-nx: 0;
+    --mesh-ny: 0;
   }
 
   .marketing-root .landing-mesh-streak-outer {
     position: absolute;
     transform: translate(
-      calc(var(--mesh-px) * var(--streak-factor, 0.4)),
-      calc(var(--mesh-py) * var(--streak-factor, 0.4))
+      calc(var(--mesh-nx, 0) * 130px * var(--streak-dx, 1) * var(--streak-factor, 1)),
+      calc(var(--mesh-ny, 0) * 100px * var(--streak-dy, 1) * var(--streak-factor, 1))
     );
     will-change: transform;
   }
@@ -578,7 +582,7 @@ html[data-dashboard-theme='light'] .dashboard-root,
   }
 
   .marketing-root .landing-mesh-streak-a {
-    background: linear-gradient(118deg, rgba(91, 116, 232, 0.92) 0%, rgba(107, 138, 240, 0.58) 100%);
+    background: linear-gradient(118deg, rgba(74, 98, 217, 0.9) 0%, rgba(53, 72, 199, 0.65) 100%);
     animation: landing-streak-sway-a 23s ease-in-out infinite;
   }
 
@@ -590,7 +594,7 @@ html[data-dashboard-theme='light'] .dashboard-root,
   }
 
   .marketing-root .landing-mesh-streak-b {
-    background: linear-gradient(252deg, rgba(53, 72, 199, 0.82) 0%, rgba(91, 116, 232, 0.72) 100%);
+    background: linear-gradient(252deg, rgba(53, 72, 199, 0.85) 0%, rgba(74, 98, 217, 0.7) 100%);
     animation: landing-streak-sway-b 19s ease-in-out infinite;
   }
 
@@ -602,7 +606,7 @@ html[data-dashboard-theme='light'] .dashboard-root,
   }
 
   .marketing-root .landing-mesh-streak-c {
-    background: linear-gradient(95deg, rgba(74, 98, 217, 0.78) 0%, rgba(107, 138, 240, 0.82) 100%);
+    background: linear-gradient(95deg, rgba(67, 56, 202, 0.72) 0%, rgba(53, 72, 199, 0.82) 100%);
     animation: landing-streak-sway-c 27s ease-in-out infinite;
   }
 
@@ -614,7 +618,7 @@ html[data-dashboard-theme='light'] .dashboard-root,
   }
 
   .marketing-root .landing-mesh-streak-d {
-    background: linear-gradient(210deg, rgba(107, 138, 240, 0.78) 0%, rgba(53, 72, 199, 0.62) 100%);
+    background: linear-gradient(210deg, rgba(74, 98, 217, 0.75) 0%, rgba(40, 52, 138, 0.6) 100%);
     animation: landing-streak-sway-d 21s ease-in-out infinite;
   }
 
@@ -626,7 +630,7 @@ html[data-dashboard-theme='light'] .dashboard-root,
   }
 
   .marketing-root .landing-mesh-streak-e {
-    background: linear-gradient(165deg, rgba(91, 116, 232, 0.68) 0%, rgba(123, 154, 245, 0.52) 100%);
+    background: linear-gradient(165deg, rgba(53, 72, 199, 0.7) 0%, rgba(67, 56, 202, 0.55) 100%);
     animation: landing-streak-sway-e 25s ease-in-out infinite;
   }
 
