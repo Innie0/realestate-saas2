@@ -53,7 +53,7 @@ export default function LandingFeatureStack() {
             </LandingStaggerReveal>
 
             <LandingStaggerReveal className="mt-12 sm:mt-16 lg:mt-20">
-              <div data-reveal>
+              <div data-reveal data-reveal-fade>
                 <LandingGradientPanel
                   variant={GRADIENT_VARIANTS[index % GRADIENT_VARIANTS.length]}
                   showcase

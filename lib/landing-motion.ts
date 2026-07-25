@@ -69,7 +69,15 @@ export function scrollStaggerReveal(
   const items = scope.querySelectorAll<HTMLElement>('[data-reveal]');
   if (!items.length) return;
 
-  gsap.set(items, { autoAlpha: 0, y: options.y ?? LANDING_MOTION.y });
+  const fadeOnly = Array.from(items).filter((el) => el.dataset.revealFade !== undefined);
+  const motion = Array.from(items).filter((el) => el.dataset.revealFade === undefined);
+
+  if (motion.length) {
+    gsap.set(motion, { autoAlpha: 0, y: options.y ?? LANDING_MOTION.y });
+  }
+  if (fadeOnly.length) {
+    gsap.set(fadeOnly, { autoAlpha: 0 });
+  }
 
   return gsap.timeline({
     scrollTrigger: {
@@ -78,13 +86,24 @@ export function scrollStaggerReveal(
       once: true,
     },
     delay: options.delay ?? 0,
-  }).to(items, {
-    autoAlpha: 1,
-    y: 0,
-    duration: options.duration ?? LANDING_MOTION.duration,
-    stagger: options.stagger ?? LANDING_MOTION.stagger,
-    ease: LANDING_MOTION.ease,
-  });
+  })
+    .to(motion, {
+      autoAlpha: 1,
+      y: 0,
+      duration: options.duration ?? LANDING_MOTION.duration,
+      stagger: options.stagger ?? LANDING_MOTION.stagger,
+      ease: LANDING_MOTION.ease,
+    })
+    .to(
+      fadeOnly,
+      {
+        autoAlpha: 1,
+        duration: options.duration ?? LANDING_MOTION.duration,
+        stagger: options.stagger ?? LANDING_MOTION.stagger,
+        ease: LANDING_MOTION.ease,
+      },
+      motion.length ? '<' : undefined,
+    );
 }
 
 export type ParsedMetric = {
