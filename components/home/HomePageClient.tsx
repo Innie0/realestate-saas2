@@ -11,7 +11,6 @@ import LandingPricingSection from '@/components/home/LandingPricingSection';
 import LandingCTABand from '@/components/home/LandingCTABand';
 import LandingFooter from '@/components/home/LandingFooter';
 import MarketingAtmosphere from '@/components/marketing/MarketingAtmosphere';
-import MarketingSmoothScroll from '@/components/marketing/MarketingSmoothScroll';
 import { supabase } from '@/lib/supabase';
 
 export default function HomePageClient() {
@@ -44,18 +43,16 @@ export default function HomePageClient() {
   }, [router]);
 
   return (
-    <MarketingSmoothScroll>
-      <div className="marketing-root relative z-[1] min-h-screen overflow-x-hidden bg-mkt-background text-mkt-foreground">
-        <MarketingAtmosphere />
-        <LandingNav heroRef={heroRef} />
-        <LandingHero sectionRef={heroRef} />
-        <LandingFeatureStack />
-        <LandingTrustSection />
-        <LandingFAQSection />
-        <LandingPricingSection />
-        <LandingCTABand />
-        <LandingFooter />
-      </div>
-    </MarketingSmoothScroll>
+    <div className="marketing-root relative z-[1] min-h-screen overflow-x-hidden bg-mkt-background text-mkt-foreground">
+      <MarketingAtmosphere />
+      <LandingNav heroRef={heroRef} />
+      <LandingHero sectionRef={heroRef} />
+      <LandingFeatureStack />
+      <LandingTrustSection />
+      <LandingFAQSection />
+      <LandingPricingSection />
+      <LandingCTABand />
+      <LandingFooter />
+    </div>
   );
 }
