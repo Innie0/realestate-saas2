@@ -568,6 +568,27 @@ html[data-dashboard-theme='light'] .dashboard-root,
     color: #78726a;
   }
 
+  .marketing-root .landing-hero-type-cursor {
+    height: 1.05em;
+    animation: landing-hero-type-cursor 0.85s step-end infinite;
+  }
+
+  @keyframes landing-hero-type-cursor {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marketing-root .landing-hero-type-cursor {
+      animation: none;
+    }
+  }
+
   .marketing-root .landing-hero-action-btn {
     background-color: #ffffff !important;
     color: #111111 !important;

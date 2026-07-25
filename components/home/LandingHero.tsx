@@ -20,18 +20,61 @@ type LandingHeroProps = {
 
 ensureGsapRegistered();
 
-function useCyclingPlaceholder(enabled: boolean) {
-  const [index, setIndex] = useState(0);
+const TYPE_MS = 48;
+const DELETE_MS = 28;
+const PAUSE_FULL_MS = 2200;
+const PAUSE_EMPTY_MS = 420;
+
+function useTypingPlaceholder(active: boolean) {
+  const reduced = useMotionReduced();
+  const [text, setText] = useState<string>(HERO_INPUT_PLACEHOLDERS[0]);
+  const phraseIndex = useRef(0);
+  const charIndex = useRef(0);
+  const deleting = useRef(false);
 
   useEffect(() => {
-    if (!enabled) return;
-    const timer = window.setInterval(() => {
-      setIndex((i) => (i + 1) % HERO_INPUT_PLACEHOLDERS.length);
-    }, 3200);
-    return () => window.clearInterval(timer);
-  }, [enabled]);
+    if (!active || reduced) {
+      setText(HERO_INPUT_PLACEHOLDERS[phraseIndex.current]);
+      return;
+    }
 
-  return HERO_INPUT_PLACEHOLDERS[index];
+    let timeout = 0;
+
+    const tick = () => {
+      const phrase = HERO_INPUT_PLACEHOLDERS[phraseIndex.current];
+
+      if (!deleting.current) {
+        charIndex.current = Math.min(charIndex.current + 1, phrase.length);
+        setText(phrase.slice(0, charIndex.current));
+
+        if (charIndex.current >= phrase.length) {
+          deleting.current = true;
+          timeout = window.setTimeout(tick, PAUSE_FULL_MS);
+          return;
+        }
+
+        timeout = window.setTimeout(tick, TYPE_MS);
+        return;
+      }
+
+      charIndex.current = Math.max(charIndex.current - 1, 0);
+      setText(phrase.slice(0, charIndex.current));
+
+      if (charIndex.current <= 0) {
+        deleting.current = false;
+        phraseIndex.current = (phraseIndex.current + 1) % HERO_INPUT_PLACEHOLDERS.length;
+        timeout = window.setTimeout(tick, PAUSE_EMPTY_MS);
+        return;
+      }
+
+      timeout = window.setTimeout(tick, DELETE_MS);
+    };
+
+    timeout = window.setTimeout(tick, PAUSE_EMPTY_MS);
+    return () => window.clearTimeout(timeout);
+  }, [active, reduced]);
+
+  return text;
 }
 
 export default function LandingHero({ sectionRef }: LandingHeroProps) {
@@ -41,16 +84,12 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
-  const cyclingPlaceholder = useCyclingPlaceholder(!focused && !query);
-  const placeholder = focused || query ? 'Ask AI anything about listings, leads, or deals...' : cyclingPlaceholder;
+  const showTypingDemo = !focused && !query;
+  const typingPlaceholder = useTypingPlaceholder(showTypingDemo);
 
-  const submitPrompt = (prompt: string) => {
-    const trimmed = prompt.trim();
-    if (!trimmed) {
-      inputRef.current?.focus();
-      return;
-    }
-    persistHeroPrompt(trimmed);
+  const goToSignup = (prompt?: string) => {
+    const trimmed = (prompt ?? query).trim();
+    if (trimmed) persistHeroPrompt(trimmed);
     router.push('/auth/signup');
   };
 
@@ -117,14 +156,15 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
                 className="relative mx-auto mt-8 max-w-2xl sm:mt-10"
                 onSubmit={(e) => {
                   e.preventDefault();
-                  submitPrompt(query);
+                  goToSignup();
                 }}
               >
                 <div
                   className={clsx(
-                    'landing-hero-input-box relative rounded-[1.25rem] border border-white p-2 shadow-[0_16px_48px_-20px_rgba(0,0,0,0.35)] transition-all duration-200 sm:rounded-[1.35rem] sm:p-2.5',
+                    'landing-hero-input-box relative cursor-text rounded-[1.25rem] border border-white p-2 shadow-[0_16px_48px_-20px_rgba(0,0,0,0.35)] transition-all duration-200 sm:rounded-[1.35rem] sm:p-2.5',
                     focused && 'ring-4 ring-white/25',
                   )}
+                  onClick={() => inputRef.current?.focus()}
                 >
                   <div className="flex items-center gap-2 px-3 pt-2 sm:px-4">
                     <Sparkles className="size-4 shrink-0 text-mkt-accent" strokeWidth={2.2} aria-hidden />
@@ -133,6 +173,15 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
                     </span>
                   </div>
                   <div className="relative mt-1 px-3 pb-14 sm:px-4 sm:pb-[3.75rem]">
+                    {showTypingDemo ? (
+                      <p
+                        className="pointer-events-none absolute inset-x-3 top-0 text-left text-base text-[#78726a] sm:inset-x-4 sm:text-[17px]"
+                        aria-hidden
+                      >
+                        {typingPlaceholder}
+                        <span className="landing-hero-type-cursor ml-px inline-block w-[2px] translate-y-[2px] bg-[#78726a]" />
+                      </p>
+                    ) : null}
                     <input
                       ref={inputRef}
                       type="text"
@@ -140,9 +189,9 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
                       onChange={(e) => setQuery(e.target.value)}
                       onFocus={() => setFocused(true)}
                       onBlur={() => setFocused(false)}
-                      placeholder={placeholder}
+                      placeholder={showTypingDemo ? '' : 'Ask AI anything about listings, leads, or deals...'}
                       aria-label="Ask Oikaro AI"
-                      className="w-full border-0 bg-transparent text-left text-base text-[#111111] placeholder:text-[#78726a] focus:outline-none focus:ring-0 sm:text-[17px]"
+                      className="relative w-full border-0 bg-transparent text-left text-base text-[#111111] placeholder:text-[#78726a] focus:outline-none focus:ring-0 sm:text-[17px]"
                     />
                   </div>
                   <button
@@ -163,10 +212,7 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
                   <button
                     key={action.label}
                     type="button"
-                    onClick={() => {
-                      setQuery(action.prompt);
-                      submitPrompt(action.prompt);
-                    }}
+                    onClick={() => goToSignup(action.prompt)}
                     className="landing-hero-action-btn rounded-full border px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-12px_rgba(0,0,0,0.25)] transition-opacity hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
                   >
                     {action.label}
