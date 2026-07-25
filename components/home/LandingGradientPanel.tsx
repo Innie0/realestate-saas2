@@ -64,7 +64,7 @@ export default function LandingGradientPanel({
         {animatedMesh ? (
           <>
             <div className="pointer-events-none absolute inset-0 bg-[#141b52]" aria-hidden />
-            <LandingMeshBackground />
+            <LandingMeshBackground interactive />
           </>
         ) : null}
         {!animatedMesh ? (
@@ -78,12 +78,7 @@ export default function LandingGradientPanel({
               aria-hidden
             />
           </>
-        ) : (
-          <div
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.08),transparent_55%)]"
-            aria-hidden
-          />
-        )}
+        ) : null}
         <div
           className={clsx(
             'relative',
