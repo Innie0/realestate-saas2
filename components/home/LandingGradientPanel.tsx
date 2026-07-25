@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import LandingMeshBackground from '@/components/home/LandingMeshBackground';
+import LandingMeshBackground, { meshToneForVariant } from '@/components/home/LandingMeshBackground';
 
 export type LandingGradientVariant =
   | 'hero'
@@ -34,13 +34,12 @@ type LandingGradientPanelProps = {
   children: React.ReactNode;
   className?: string;
   innerClassName?: string;
-  /** Tighter padding for screenshot-only panels */
   compact?: boolean;
-  /** Generous padding so UI floats inside the gradient frame (Instantly-style) */
   showcase?: boolean;
-  /** Drifting mesh blobs (Instantly-style ambient motion) */
+  /** Aurora blobs: animated on hero/CTA, static on middle sections */
+  mesh?: 'animated' | 'static';
+  /** @deprecated Use mesh="animated" */
   animatedMesh?: boolean;
-  /** Shadow on the clip shell */
   elevated?: 'default' | 'hero' | false;
 };
 
@@ -53,9 +52,12 @@ export default function LandingGradientPanel({
   innerClassName,
   compact = false,
   showcase = false,
+  mesh,
   animatedMesh = false,
   elevated = 'default',
 }: LandingGradientPanelProps) {
+  const meshMode = mesh ?? (animatedMesh ? 'animated' : undefined);
+
   const elevatedClass =
     elevated === 'hero'
       ? 'landing-gradient-panel-elevated-hero'
@@ -65,30 +67,12 @@ export default function LandingGradientPanel({
 
   return (
     <div className={clsx(RADIUS, 'overflow-hidden', elevatedClass, className)}>
-      <div
-        className={clsx(
-          'landing-gradient-panel relative',
-          !animatedMesh && VARIANT_CLASS[variant],
-          animatedMesh && 'landing-gradient-hero-mesh-base',
-        )}
-      >
-        {animatedMesh ? (
-          <>
-            <div className="pointer-events-none absolute inset-0 bg-[#3548c7]" aria-hidden />
-            <LandingMeshBackground interactive />
-          </>
-        ) : null}
-        {!animatedMesh ? (
-          <>
-            <div
-              className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,rgba(255,255,255,0.28),transparent_42%)]"
-              aria-hidden
-            />
-            <div
-              className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_88%,rgba(255,255,255,0.12),transparent_38%)]"
-              aria-hidden
-            />
-          </>
+      <div className={clsx('landing-gradient-panel relative overflow-hidden', VARIANT_CLASS[variant])}>
+        {meshMode ? (
+          <LandingMeshBackground
+            animated={meshMode === 'animated'}
+            tone={meshToneForVariant(variant)}
+          />
         ) : null}
         <div
           className={clsx(

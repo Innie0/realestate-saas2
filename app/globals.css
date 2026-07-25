@@ -569,166 +569,178 @@ html[data-dashboard-theme='light'] .dashboard-root,
     background-color: #ffffff !important;
   }
 
-  .marketing-root .landing-gradient-hero-mesh-base {
-    --mesh-nx: 0;
-    --mesh-ny: 0;
-    background-color: #4a62d9;
-    background-image: linear-gradient(165deg, #3548c7 0%, #4a62d9 38%, #5b74e8 100%);
-    background-size: 130% 130%;
-    background-position: calc(50% + var(--mesh-nx) * 22%) calc(50% + var(--mesh-ny) * 18%);
-  }
-
   .marketing-root .landing-mesh-aurora {
     overflow: hidden;
-    --mesh-nx: 0;
-    --mesh-ny: 0;
   }
 
-  .marketing-root .landing-mesh-streak-outer {
+  .marketing-root .landing-mesh-blob {
     position: absolute;
-    transform: translate(
-      calc(var(--mesh-nx, 0) * 130px * var(--streak-dx, 1) * var(--streak-factor, 1)),
-      calc(var(--mesh-ny, 0) * 100px * var(--streak-dy, 1) * var(--streak-factor, 1))
-    );
+    border-radius: 50%;
+    filter: blur(88px);
     will-change: transform;
   }
 
-  .marketing-root .landing-mesh-streak {
-    width: 100%;
-    height: 100%;
-    border-radius: 9999px;
-    filter: blur(64px);
-    will-change: transform;
+  /* --- Cobalt (hero, feature, CTA) --- */
+  .marketing-root .landing-mesh-aurora--cobalt .landing-mesh-blob-a {
+    background: rgba(53, 72, 199, 0.55);
+  }
+  .marketing-root .landing-mesh-aurora--cobalt .landing-mesh-blob-b {
+    background: rgba(74, 98, 217, 0.45);
+  }
+  .marketing-root .landing-mesh-aurora--cobalt .landing-mesh-blob-c {
+    background: rgba(67, 56, 202, 0.4);
+  }
+  .marketing-root .landing-mesh-aurora--cobalt .landing-mesh-blob-d {
+    background: rgba(91, 116, 232, 0.38);
   }
 
-  .marketing-root .landing-mesh-streak-outer-a {
-    top: -6%;
-    left: -8%;
-    width: 72%;
-    height: 42%;
+  /* --- Violet --- */
+  .marketing-root .landing-mesh-aurora--violet .landing-mesh-blob-a {
+    background: rgba(109, 40, 217, 0.52);
+  }
+  .marketing-root .landing-mesh-aurora--violet .landing-mesh-blob-b {
+    background: rgba(139, 92, 246, 0.42);
+  }
+  .marketing-root .landing-mesh-aurora--violet .landing-mesh-blob-c {
+    background: rgba(124, 58, 237, 0.38);
+  }
+  .marketing-root .landing-mesh-aurora--violet .landing-mesh-blob-d {
+    background: rgba(167, 139, 250, 0.32);
   }
 
-  .marketing-root .landing-mesh-streak-a {
-    background: linear-gradient(118deg, rgba(74, 98, 217, 0.9) 0%, rgba(53, 72, 199, 0.65) 100%);
-    animation: landing-streak-sway-a 23s ease-in-out infinite;
+  /* --- Teal --- */
+  .marketing-root .landing-mesh-aurora--teal .landing-mesh-blob-a {
+    background: rgba(13, 148, 136, 0.52);
+  }
+  .marketing-root .landing-mesh-aurora--teal .landing-mesh-blob-b {
+    background: rgba(45, 212, 191, 0.38);
+  }
+  .marketing-root .landing-mesh-aurora--teal .landing-mesh-blob-c {
+    background: rgba(15, 118, 110, 0.42);
+  }
+  .marketing-root .landing-mesh-aurora--teal .landing-mesh-blob-d {
+    background: rgba(20, 184, 166, 0.35);
   }
 
-  .marketing-root .landing-mesh-streak-outer-b {
-    top: 4%;
-    right: -12%;
-    width: 58%;
-    height: 36%;
+  /* --- Plum --- */
+  .marketing-root .landing-mesh-aurora--plum .landing-mesh-blob-a {
+    background: rgba(162, 28, 175, 0.5);
+  }
+  .marketing-root .landing-mesh-aurora--plum .landing-mesh-blob-b {
+    background: rgba(192, 38, 211, 0.4);
+  }
+  .marketing-root .landing-mesh-aurora--plum .landing-mesh-blob-c {
+    background: rgba(134, 25, 143, 0.38);
+  }
+  .marketing-root .landing-mesh-aurora--plum .landing-mesh-blob-d {
+    background: rgba(217, 70, 239, 0.32);
   }
 
-  .marketing-root .landing-mesh-streak-b {
-    background: linear-gradient(252deg, rgba(53, 72, 199, 0.85) 0%, rgba(74, 98, 217, 0.7) 100%);
-    animation: landing-streak-sway-b 19s ease-in-out infinite;
+  /* --- Emerald (integrations) --- */
+  .marketing-root .landing-mesh-aurora--emerald .landing-mesh-blob-a {
+    background: rgba(4, 120, 87, 0.52);
+  }
+  .marketing-root .landing-mesh-aurora--emerald .landing-mesh-blob-b {
+    background: rgba(16, 185, 129, 0.4);
+  }
+  .marketing-root .landing-mesh-aurora--emerald .landing-mesh-blob-c {
+    background: rgba(6, 95, 70, 0.42);
+  }
+  .marketing-root .landing-mesh-aurora--emerald .landing-mesh-blob-d {
+    background: rgba(52, 211, 153, 0.32);
   }
 
-  .marketing-root .landing-mesh-streak-outer-c {
-    bottom: -10%;
-    left: 6%;
-    width: 64%;
-    height: 38%;
+  .marketing-root .landing-mesh-blob-a {
+    width: min(56vw, 500px);
+    height: min(56vw, 500px);
+    top: -18%;
+    left: -12%;
+    animation: landing-blob-drift-a 23s ease-in-out infinite;
+    animation-delay: 0s;
   }
 
-  .marketing-root .landing-mesh-streak-c {
-    background: linear-gradient(95deg, rgba(67, 56, 202, 0.72) 0%, rgba(53, 72, 199, 0.82) 100%);
-    animation: landing-streak-sway-c 27s ease-in-out infinite;
+  .marketing-root .landing-mesh-blob-b {
+    width: min(48vw, 440px);
+    height: min(48vw, 440px);
+    top: 6%;
+    right: -14%;
+    animation: landing-blob-drift-b 19s ease-in-out infinite;
+    animation-delay: -5s;
   }
 
-  .marketing-root .landing-mesh-streak-outer-d {
-    bottom: 8%;
-    right: -4%;
-    width: 52%;
-    height: 34%;
+  .marketing-root .landing-mesh-blob-c {
+    width: min(44vw, 400px);
+    height: min(44vw, 400px);
+    bottom: -20%;
+    left: 14%;
+    animation: landing-blob-drift-c 26s ease-in-out infinite;
+    animation-delay: -11s;
   }
 
-  .marketing-root .landing-mesh-streak-d {
-    background: linear-gradient(210deg, rgba(74, 98, 217, 0.75) 0%, rgba(40, 52, 138, 0.6) 100%);
-    animation: landing-streak-sway-d 21s ease-in-out infinite;
+  .marketing-root .landing-mesh-blob-d {
+    width: min(38vw, 340px);
+    height: min(38vw, 340px);
+    bottom: 4%;
+    right: 10%;
+    animation: landing-blob-drift-d 17s ease-in-out infinite;
+    animation-delay: -8s;
   }
 
-  .marketing-root .landing-mesh-streak-outer-e {
-    top: 32%;
-    left: 22%;
-    width: 48%;
-    height: 28%;
-  }
-
-  .marketing-root .landing-mesh-streak-e {
-    background: linear-gradient(165deg, rgba(53, 72, 199, 0.7) 0%, rgba(67, 56, 202, 0.55) 100%);
-    animation: landing-streak-sway-e 25s ease-in-out infinite;
-  }
-
-  .marketing-root .landing-mesh-streak-static {
+  .marketing-root .landing-mesh-blob-static {
     animation: none !important;
   }
 
-  @keyframes landing-streak-sway-a {
+  @keyframes landing-blob-drift-a {
     0%,
     100% {
-      transform: translate(0, 0) rotate(-26deg) scale(1);
+      transform: translate(0, 0) scale(1);
     }
     33% {
-      transform: translate(6%, 4%) rotate(-22deg) scale(1.06);
+      transform: translate(12%, 8%) scale(1.1);
     }
     66% {
-      transform: translate(3%, 8%) rotate(-29deg) scale(0.96);
+      transform: translate(5%, 14%) scale(0.94);
     }
   }
 
-  @keyframes landing-streak-sway-b {
+  @keyframes landing-blob-drift-b {
     0%,
     100% {
-      transform: translate(0, 0) rotate(18deg) scale(1);
+      transform: translate(0, 0) scale(1);
     }
     40% {
-      transform: translate(-7%, 5%) rotate(22deg) scale(1.05);
+      transform: translate(-14%, 10%) scale(1.08);
     }
-    70% {
-      transform: translate(-4%, -3%) rotate(14deg) scale(0.97);
+    72% {
+      transform: translate(-7%, -5%) scale(0.96);
     }
   }
 
-  @keyframes landing-streak-sway-c {
+  @keyframes landing-blob-drift-c {
     0%,
     100% {
-      transform: translate(0, 0) rotate(-12deg) scale(1);
+      transform: translate(0, 0) scale(1);
     }
     35% {
-      transform: translate(5%, -6%) rotate(-8deg) scale(1.04);
+      transform: translate(10%, -12%) scale(1.06);
     }
-    65% {
-      transform: translate(-5%, -4%) rotate(-16deg) scale(0.95);
+    68% {
+      transform: translate(-8%, -6%) scale(0.95);
     }
   }
 
-  @keyframes landing-streak-sway-d {
+  @keyframes landing-blob-drift-d {
     0%,
     100% {
-      transform: translate(0, 0) rotate(32deg) scale(1);
+      transform: translate(0, 0) scale(1);
     }
     50% {
-      transform: translate(-6%, -5%) rotate(28deg) scale(1.07);
-    }
-  }
-
-  @keyframes landing-streak-sway-e {
-    0%,
-    100% {
-      transform: translate(0, 0) rotate(-6deg) scale(1);
-    }
-    45% {
-      transform: translate(4%, 5%) rotate(-2deg) scale(1.03);
-    }
-    80% {
-      transform: translate(-3%, 2%) rotate(-10deg) scale(0.98);
+      transform: translate(-10%, -12%) scale(1.12);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .marketing-root .landing-mesh-streak {
+    .marketing-root .landing-mesh-blob {
       animation: none !important;
     }
   }

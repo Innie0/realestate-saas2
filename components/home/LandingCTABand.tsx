@@ -10,6 +10,7 @@ export default function LandingCTABand() {
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <LandingGradientPanel
           variant="hero"
+          mesh="animated"
           elevated="hero"
           innerClassName="px-6 py-14 sm:px-10 sm:py-16 lg:px-14 lg:py-20"
         >

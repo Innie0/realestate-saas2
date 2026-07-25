@@ -56,6 +56,7 @@ export default function LandingFeatureStack() {
               <div data-reveal data-reveal-fade>
                 <LandingGradientPanel
                   variant={GRADIENT_VARIANTS[index % GRADIENT_VARIANTS.length]}
+                  mesh="static"
                   showcase
                 >
                   <div className="mx-auto w-full max-w-[640px] sm:max-w-[680px] lg:max-w-[720px]">

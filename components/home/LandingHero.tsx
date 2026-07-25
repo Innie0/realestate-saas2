@@ -88,7 +88,7 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
         <div ref={rootRef}>
           <LandingGradientPanel
             variant="hero"
-            animatedMesh
+            mesh="animated"
             elevated="hero"
             innerClassName="px-5 py-10 sm:px-10 sm:py-14 lg:px-14 lg:py-16"
           >
