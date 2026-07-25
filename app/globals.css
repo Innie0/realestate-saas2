@@ -444,20 +444,20 @@ html[data-dashboard-theme='light'] .dashboard-root,
     );
     --mkt-cobalt-gradient-hero: linear-gradient(
       160deg,
-      #1a2f9e 0%,
-      #2438b8 18%,
-      #3d56e8 42%,
-      #5b7fff 62%,
-      #8eb4ff 78%,
-      #3a52d4 100%
+      #5270e8 0%,
+      #6382f0 22%,
+      #7a98f5 46%,
+      #9eb8ff 66%,
+      #c5d8ff 84%,
+      #7a98f5 100%
     );
     --mkt-cobalt-gradient-feature: linear-gradient(
       155deg,
-      #141f6e 0%,
-      #2434a8 28%,
-      #3d52d9 55%,
-      #6b8fff 78%,
-      #2f45c4 100%
+      #4a62d9 0%,
+      #5b74e8 30%,
+      #6b8af0 55%,
+      #9eb8ff 78%,
+      #5b74e8 100%
     );
     --mkt-cobalt-gradient-feature-violet: linear-gradient(
       155deg,
@@ -506,12 +506,12 @@ html[data-dashboard-theme='light'] .dashboard-root,
   }
 
   .marketing-root .landing-gradient-hero {
-    background-color: #2f45c8;
+    background-color: #6b8af0;
     background-image: var(--mkt-cobalt-gradient-hero);
   }
 
   .marketing-root .landing-gradient-feature {
-    background-color: #2434a8;
+    background-color: #5b74e8;
     background-image: var(--mkt-cobalt-gradient-feature);
   }
 
@@ -551,16 +551,16 @@ html[data-dashboard-theme='light'] .dashboard-root,
   .marketing-root .landing-gradient-hero::before {
     background: radial-gradient(
       ellipse 85% 72% at 50% 38%,
-      transparent 32%,
-      rgba(12, 22, 88, 0.42) 100%
+      transparent 38%,
+      rgba(74, 98, 217, 0.22) 100%
     );
   }
 
   .marketing-root .landing-gradient-feature::before {
     background: radial-gradient(
       ellipse 85% 72% at 50% 40%,
-      transparent 34%,
-      rgba(10, 18, 72, 0.4) 100%
+      transparent 38%,
+      rgba(53, 72, 199, 0.24) 100%
     );
   }
 
@@ -623,7 +623,7 @@ html[data-dashboard-theme='light'] .dashboard-root,
   }
 
   .marketing-root .landing-gradient-panel-elevated-hero {
-    box-shadow: 0 48px 100px rgba(53, 72, 199, 0.38);
+    box-shadow: 0 48px 100px rgba(91, 116, 232, 0.32);
   }
 
   .marketing-root .landing-hero-input-box {
@@ -690,22 +690,22 @@ html[data-dashboard-theme='light'] .dashboard-root,
 
   /* --- Cobalt (hero, feature, CTA) --- */
   .marketing-root .landing-mesh-aurora--cobalt .landing-mesh-blob-a {
-    background: rgba(15, 31, 122, 0.62);
+    background: rgba(74, 98, 217, 0.42);
   }
   .marketing-root .landing-mesh-aurora--cobalt .landing-mesh-blob-b {
-    background: rgba(45, 73, 220, 0.5);
+    background: rgba(107, 138, 240, 0.45);
   }
   .marketing-root .landing-mesh-aurora--cobalt .landing-mesh-blob-c {
-    background: rgba(26, 42, 140, 0.48);
+    background: rgba(91, 116, 232, 0.4);
   }
   .marketing-root .landing-mesh-aurora--cobalt .landing-mesh-blob-d {
-    background: rgba(91, 127, 255, 0.42);
+    background: rgba(142, 180, 255, 0.48);
   }
   .marketing-root .landing-mesh-aurora--cobalt .landing-mesh-blob-e {
-    background: rgba(168, 196, 255, 0.55);
+    background: rgba(197, 216, 255, 0.62);
   }
   .marketing-root .landing-mesh-aurora--cobalt .landing-mesh-blob-f {
-    background: rgba(200, 220, 255, 0.45);
+    background: rgba(224, 236, 255, 0.55);
     mix-blend-mode: screen;
   }
 
