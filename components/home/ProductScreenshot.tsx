@@ -10,6 +10,8 @@ type ProductScreenshotProps = {
   priority?: boolean;
   href?: string;
   className?: string;
+  /** Shorter aspect for feature showcase cards */
+  size?: 'default' | 'showcase';
 };
 
 export default function ProductScreenshot({
@@ -18,10 +20,13 @@ export default function ProductScreenshot({
   priority = false,
   href,
   className,
+  size = 'default',
 }: ProductScreenshotProps) {
   const image = (
     <ProductFrame interactive={!href} className={className}>
-      <div className="relative aspect-[16/10] w-full bg-[var(--mkt-mock-surface)]">
+      <div
+        className={`relative w-full bg-[var(--mkt-mock-surface)] ${size === 'showcase' ? 'aspect-[16/9]' : 'aspect-[16/10]'}`}
+      >
         <Image
           src={src}
           alt={alt}

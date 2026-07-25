@@ -11,8 +11,15 @@ type GradientShowcaseCardProps = {
 
 export default function GradientShowcaseCard({ src, alt, className }: GradientShowcaseCardProps) {
   return (
-    <LandingGradientPanel variant="feature" compact className={className}>
-      <ProductScreenshot src={src} alt={alt} className="shadow-[0_24px_60px_-28px_rgba(17,17,17,0.35)]" />
+    <LandingGradientPanel variant="feature" showcase className={className}>
+      <div className="mx-auto w-full max-w-[640px] sm:max-w-[680px] lg:max-w-[720px]">
+        <ProductScreenshot
+          src={src}
+          alt={alt}
+          size="showcase"
+          className="shadow-[0_24px_60px_-28px_rgba(17,17,17,0.35)]"
+        />
+      </div>
     </LandingGradientPanel>
   );
 }

@@ -25,6 +25,8 @@ type LandingGradientPanelProps = {
   innerClassName?: string;
   /** Tighter padding for screenshot-only panels */
   compact?: boolean;
+  /** Generous padding so UI floats inside the gradient frame (Instantly-style) */
+  showcase?: boolean;
   /** Drifting mesh blobs (Instantly-style ambient motion) */
   animatedMesh?: boolean;
 };
@@ -35,6 +37,7 @@ export default function LandingGradientPanel({
   className,
   innerClassName,
   compact = false,
+  showcase = false,
   animatedMesh = false,
 }: LandingGradientPanelProps) {
   return (
@@ -67,7 +70,11 @@ export default function LandingGradientPanel({
       <div
         className={clsx(
           'relative',
-          compact ? 'p-4 sm:p-6 lg:p-8' : 'p-6 sm:p-10 lg:p-12',
+          showcase
+            ? 'py-12 px-10 sm:py-16 sm:px-14 lg:py-20 lg:px-20'
+            : compact
+              ? 'p-4 sm:p-6 lg:p-8'
+              : 'p-6 sm:p-10 lg:p-12',
           innerClassName,
         )}
       >
