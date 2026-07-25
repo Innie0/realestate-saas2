@@ -9,9 +9,9 @@ import ProductScreenshot from '@/components/home/ProductScreenshot';
 
 const GRADIENT_VARIANTS: LandingGradientVariant[] = [
   'feature',
-  'feature-alt',
-  'feature-warm',
-  'feature',
+  'feature-violet',
+  'feature-teal',
+  'feature-plum',
 ];
 
 export default function LandingFeatureStack() {

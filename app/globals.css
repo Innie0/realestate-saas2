@@ -442,23 +442,29 @@ html[data-dashboard-theme='light'] .dashboard-root,
       #4a62d9 100%
     );
     --mkt-cobalt-gradient-feature: linear-gradient(155deg, #232d7a 0%, #3548c7 42%, #5b74e8 100%);
-    --mkt-cobalt-gradient-feature-alt: linear-gradient(
+    --mkt-cobalt-gradient-feature-violet: linear-gradient(
       155deg,
-      #1e3268 0%,
-      #3548c7 46%,
-      #4890d4 100%
+      #4c1d95 0%,
+      #6d28d9 46%,
+      #8b5cf6 100%
     );
-    --mkt-cobalt-gradient-feature-warm: linear-gradient(
+    --mkt-cobalt-gradient-feature-teal: linear-gradient(
       155deg,
-      #2a2468 0%,
-      #3548c7 50%,
-      #6366d9 100%
+      #115e59 0%,
+      #0d9488 48%,
+      #2dd4bf 100%
+    );
+    --mkt-cobalt-gradient-feature-plum: linear-gradient(
+      155deg,
+      #701a75 0%,
+      #a21caf 50%,
+      #c026d3 100%
     );
     --mkt-cobalt-gradient-integrations: linear-gradient(
       145deg,
-      #2e2780 0%,
-      #3548c7 52%,
-      #4338ca 100%
+      #14532d 0%,
+      #047857 52%,
+      #10b981 100%
     );
     --mkt-radius-button: 9999px;
     --mkt-radius-card: 1.25rem;
@@ -484,18 +490,23 @@ html[data-dashboard-theme='light'] .dashboard-root,
     background-image: var(--mkt-cobalt-gradient-feature);
   }
 
-  .marketing-root .landing-gradient-feature-alt {
-    background-color: #3548c7;
-    background-image: var(--mkt-cobalt-gradient-feature-alt);
+  .marketing-root .landing-gradient-feature-violet {
+    background-color: #6d28d9;
+    background-image: var(--mkt-cobalt-gradient-feature-violet);
   }
 
-  .marketing-root .landing-gradient-feature-warm {
-    background-color: #3548c7;
-    background-image: var(--mkt-cobalt-gradient-feature-warm);
+  .marketing-root .landing-gradient-feature-teal {
+    background-color: #0d9488;
+    background-image: var(--mkt-cobalt-gradient-feature-teal);
+  }
+
+  .marketing-root .landing-gradient-feature-plum {
+    background-color: #a21caf;
+    background-image: var(--mkt-cobalt-gradient-feature-plum);
   }
 
   .marketing-root .landing-gradient-integrations {
-    background-color: #3548c7;
+    background-color: #047857;
     background-image: var(--mkt-cobalt-gradient-integrations);
   }
 
@@ -512,6 +523,22 @@ html[data-dashboard-theme='light'] .dashboard-root,
 
   .marketing-root .landing-gradient-panel-elevated {
     box-shadow: 0 40px 80px rgba(53, 72, 199, 0.4);
+  }
+
+  .marketing-root .landing-gradient-panel-elevated-violet {
+    box-shadow: 0 40px 80px rgba(109, 40, 217, 0.38);
+  }
+
+  .marketing-root .landing-gradient-panel-elevated-teal {
+    box-shadow: 0 40px 80px rgba(13, 148, 136, 0.38);
+  }
+
+  .marketing-root .landing-gradient-panel-elevated-plum {
+    box-shadow: 0 40px 80px rgba(162, 28, 175, 0.38);
+  }
+
+  .marketing-root .landing-gradient-panel-elevated-emerald {
+    box-shadow: 0 40px 80px rgba(4, 120, 87, 0.38);
   }
 
   .marketing-root .landing-gradient-panel-elevated-hero {

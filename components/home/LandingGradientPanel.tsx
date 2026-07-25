@@ -6,16 +6,27 @@ import LandingMeshBackground from '@/components/home/LandingMeshBackground';
 export type LandingGradientVariant =
   | 'hero'
   | 'feature'
-  | 'feature-alt'
-  | 'feature-warm'
+  | 'feature-violet'
+  | 'feature-teal'
+  | 'feature-plum'
   | 'integrations';
 
 const VARIANT_CLASS: Record<LandingGradientVariant, string> = {
   hero: 'landing-gradient-hero',
   feature: 'landing-gradient-feature',
-  'feature-alt': 'landing-gradient-feature-alt',
-  'feature-warm': 'landing-gradient-feature-warm',
+  'feature-violet': 'landing-gradient-feature-violet',
+  'feature-teal': 'landing-gradient-feature-teal',
+  'feature-plum': 'landing-gradient-feature-plum',
   integrations: 'landing-gradient-integrations',
+};
+
+const ELEVATED_SHADOW: Record<LandingGradientVariant, string> = {
+  hero: 'landing-gradient-panel-elevated-hero',
+  feature: 'landing-gradient-panel-elevated',
+  'feature-violet': 'landing-gradient-panel-elevated-violet',
+  'feature-teal': 'landing-gradient-panel-elevated-teal',
+  'feature-plum': 'landing-gradient-panel-elevated-plum',
+  integrations: 'landing-gradient-panel-elevated-emerald',
 };
 
 type LandingGradientPanelProps = {
@@ -49,7 +60,7 @@ export default function LandingGradientPanel({
     elevated === 'hero'
       ? 'landing-gradient-panel-elevated-hero'
       : elevated === 'default'
-        ? 'landing-gradient-panel-elevated'
+        ? ELEVATED_SHADOW[variant]
         : undefined;
 
   return (

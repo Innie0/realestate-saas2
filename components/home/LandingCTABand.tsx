@@ -28,12 +28,7 @@ export default function LandingCTABand() {
               data-reveal
               className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row"
             >
-              <MarketingButton
-                href="/auth/signup"
-                variant="dark"
-                size="lg"
-                className="!bg-white !text-mkt-foreground hover:!bg-white/90"
-              >
+              <MarketingButton href="/auth/signup" variant="light" size="lg">
                 Start your 7-day free trial
               </MarketingButton>
               <MarketingButton
