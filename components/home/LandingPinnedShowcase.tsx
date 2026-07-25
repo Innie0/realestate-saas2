@@ -6,7 +6,7 @@ import { ensureGsapRegistered, gsap, useGSAP } from '@/lib/gsap-config';
 import { SHOWCASE_NARRATIVE, SHOWCASE_SLIDES } from '@/lib/landing-showcase';
 import { useMotionReduced } from '@/lib/motion';
 import MarketingButton from '@/components/marketing/MarketingButton';
-import ProductScreenshot from '@/components/home/ProductScreenshot';
+import GradientShowcaseCard from '@/components/home/GradientShowcaseCard';
 
 const TAG_CLASSES = [
   'bg-mkt-tag-green-bg text-mkt-tag-green-text',
@@ -102,7 +102,7 @@ export default function LandingPinnedShowcase() {
                   {slide.description}
                 </p>
                 <div className="mt-8">
-                  <ProductScreenshot src={slide.screenshot} alt={slide.screenshotAlt} />
+                  <GradientShowcaseCard src={slide.screenshot} alt={slide.screenshotAlt} />
                 </div>
               </article>
             ))}
@@ -177,11 +177,7 @@ export default function LandingPinnedShowcase() {
                   </Link>
                 </div>
                 <div className="mt-8 min-h-0 flex-1">
-                  <ProductScreenshot
-                    src={slide.screenshot}
-                    alt={slide.screenshotAlt}
-                    className="shadow-raised"
-                  />
+                  <GradientShowcaseCard src={slide.screenshot} alt={slide.screenshotAlt} />
                 </div>
               </div>
             ))}

@@ -399,16 +399,52 @@ html[data-dashboard-theme='light'] .dashboard-root,
     font-family: var(--font-serif), 'Newsreader', Georgia, serif;
   }
 
-  /* Marketing chrome — Geist body, editorial serif for display */
+  /* Marketing chrome — warm light landing (Instantly-style energy, cobalt accent) */
   .marketing-root {
-    color-scheme: dark;
+    color-scheme: light;
+    --mkt-background: #faf8f5;
+    --mkt-surface: #ffffff;
+    --mkt-surface-muted: #f3f0eb;
+    --mkt-text-primary: #111111;
+    --mkt-text-secondary: #5c5650;
+    --mkt-border: #e8e4de;
+    --mkt-accent: #3548c7;
+    --mkt-accent-hover: #28348a;
+    --mkt-accent-foreground: #ffffff;
+    --mkt-muted: #78726a;
+    --mkt-mock-surface: #ffffff;
+    --mkt-browser-dot: #c4bfb6;
+    --mkt-error-border: #f87171;
+    --mkt-error-surface-border: #fecaca;
+    --mkt-tag-green-bg: rgba(16, 185, 129, 0.1);
+    --mkt-tag-green-text: #047857;
+    --mkt-tag-blue-bg: rgba(53, 72, 199, 0.1);
+    --mkt-tag-blue-text: #28348a;
+    --mkt-tag-amber-bg: rgba(245, 158, 11, 0.12);
+    --mkt-tag-amber-text: #b45309;
+    --mkt-nav-scrolled-bg: rgba(250, 248, 245, 0.92);
+    --mkt-nav-menu-bg: rgba(250, 248, 245, 0.98);
+    --mkt-nav-transparent-bg: rgba(250, 248, 245, 0);
+    --mkt-nav-transparent-border: rgba(232, 228, 222, 0);
+    --mkt-hero-glow: rgba(53, 72, 199, 0.14);
+    --mkt-cobalt-gradient: linear-gradient(
+      145deg,
+      rgba(53, 72, 199, 0.22) 0%,
+      rgba(53, 72, 199, 0.08) 45%,
+      rgba(40, 52, 138, 0.16) 100%
+    );
+    --mkt-radius-button: 9999px;
+    --mkt-radius-card: 1.25rem;
+    --mkt-radius-browser: 1.25rem;
     font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
     color: var(--mkt-text-primary);
     background-color: var(--mkt-background);
   }
 
   .marketing-root .font-display {
-    font-family: var(--font-serif), 'Newsreader', Georgia, serif;
+    font-family: var(--font-mkt-display), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.04em;
   }
 
   .marketing-root .text-price {

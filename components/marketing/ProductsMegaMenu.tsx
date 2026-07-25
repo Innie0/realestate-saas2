@@ -139,7 +139,7 @@ export default function ProductsMegaMenu({
                                   <Link
                                     href={tool.href}
                                     onClick={handleClose}
-                                    className="group block rounded-mkt-button px-3 py-2 transition-colors hover:bg-[var(--surface)]/[0.05]"
+                                    className="group block rounded-mkt-button px-3 py-2 transition-colors hover:bg-[rgba(53,72,199,0.06)]"
                                   >
                                     <span className="block text-[14px] font-medium leading-snug text-mkt-foreground transition-opacity group-hover:opacity-70">
                                       {tool.name}

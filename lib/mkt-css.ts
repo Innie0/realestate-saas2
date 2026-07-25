@@ -1,19 +1,20 @@
-/** Read a marketing CSS custom property from :root (for GSAP / runtime animation). */
+/** Read a marketing CSS custom property (prefers `.marketing-root` when present). */
 const MKT_VAR_FALLBACKS: Record<string, string> = {
-  '--mkt-text-primary': '#ffffff',
-  '--mkt-text-secondary': '#a3a3a3',
-  '--mkt-border': '#2e2e2e',
-  '--mkt-nav-scrolled-bg': 'rgba(10, 10, 10, 0.88)',
-  '--mkt-nav-menu-bg': 'rgba(10, 10, 10, 0.94)',
-  '--mkt-nav-transparent-bg': 'rgba(10, 10, 10, 0)',
-  '--mkt-nav-transparent-border': 'rgba(46, 46, 46, 0)',
-  '--mkt-hero-glow': 'rgba(228, 247, 108, 0.14)',
+  '--mkt-text-primary': '#111111',
+  '--mkt-text-secondary': '#5c5650',
+  '--mkt-border': '#e8e4de',
+  '--mkt-nav-scrolled-bg': 'rgba(250, 248, 245, 0.92)',
+  '--mkt-nav-menu-bg': 'rgba(250, 248, 245, 0.98)',
+  '--mkt-nav-transparent-bg': 'rgba(250, 248, 245, 0)',
+  '--mkt-nav-transparent-border': 'rgba(232, 228, 222, 0)',
+  '--mkt-hero-glow': 'rgba(53, 72, 199, 0.14)',
 };
 
 export function mktVar(name: `--mkt-${string}`): string {
   if (typeof window === 'undefined') {
     return MKT_VAR_FALLBACKS[name] ?? '';
   }
-  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const el = document.querySelector('.marketing-root') ?? document.documentElement;
+  const value = getComputedStyle(el).getPropertyValue(name).trim();
   return value || MKT_VAR_FALLBACKS[name] || '';
 }

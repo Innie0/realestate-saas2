@@ -2,7 +2,7 @@
 // This is the main layout file for the Next.js app
 
 import type { Metadata } from 'next';
-import { EB_Garamond, IBM_Plex_Mono, Inter, Newsreader } from 'next/font/google';
+import { EB_Garamond, IBM_Plex_Mono, Inter, Newsreader, Plus_Jakarta_Sans } from 'next/font/google';
 import { GeistSans } from 'geist/font/sans';
 import { GlobalStructuredData } from '@/components/seo/StructuredData';
 import { SITE_NAME, SITE_NAME_ALT, SITE_DESCRIPTION, SITE_DOMAIN, SITE_URL } from '@/lib/site-config';
@@ -26,6 +26,13 @@ const newsreader = Newsreader({
   subsets: ['latin'],
   weight: ['400', '500', '600'],
   variable: '--font-serif',
+  display: 'swap',
+});
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['500', '600', '700', '800'],
+  variable: '--font-mkt-display',
   display: 'swap',
 });
 
@@ -127,8 +134,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={GeistSans.variable}>
-      <body className={`${GeistSans.className} ${plexMono.variable} ${ebGaramond.variable} ${inter.variable} ${newsreader.variable} font-sans antialiased`}>
+    <html lang="en" className={`${GeistSans.variable} ${plusJakarta.variable}`}>
+      <body className={`${GeistSans.className} ${plexMono.variable} ${ebGaramond.variable} ${inter.variable} ${newsreader.variable} ${plusJakarta.variable} font-sans antialiased`}>
         <GlobalStructuredData />
         {children}
       </body>

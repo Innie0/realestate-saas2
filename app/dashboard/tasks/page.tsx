@@ -9,6 +9,7 @@ import { Sparkles, Send, Loader2, Paperclip, X, Plus, MessageSquare, Trash2, Fil
 import { Conversation, ConversationMessage } from '@/types';
 import { useApi } from '@/lib/swr';
 import { useTour } from '@/hooks/useTour';
+import { consumeHeroPrompt } from '@/lib/landing-hero-prompts';
 import clsx from 'clsx';
 
 const STARTER_PROMPTS = [
@@ -110,7 +111,10 @@ function TasksPageContent() {
   useEffect(() => {
     if (deepLinkPrompt) {
       setInputMessage(deepLinkPrompt);
+      return;
     }
+    const pending = consumeHeroPrompt();
+    if (pending) setInputMessage(pending);
   }, [deepLinkPrompt]);
 
   useTour({

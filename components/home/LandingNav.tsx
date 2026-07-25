@@ -102,15 +102,18 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
             Oikaro
           </Link>
 
-          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-2.5">
             <ProductsMegaMenu onSolidBackground={menuOpen} onOpenChange={setMenuOpen} />
             <Link
               href="/auth/login"
-              className="hidden px-3 py-2 text-sm font-medium text-mkt-secondary transition-opacity hover:opacity-70 md:inline-flex"
+              className="hidden px-2 py-2 text-sm font-medium text-mkt-secondary transition-opacity hover:opacity-70 md:inline-flex"
             >
               Sign in
             </Link>
-            <MarketingButton href="/auth/signup" size="md" className="hidden sm:inline-flex">
+            <MarketingButton href="/products" variant="secondary" size="md" className="hidden md:inline-flex">
+              See demo
+            </MarketingButton>
+            <MarketingButton href="/auth/signup" variant="dark" size="md" className="hidden sm:inline-flex">
               Start free trial
             </MarketingButton>
           </div>

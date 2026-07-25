@@ -10,7 +10,7 @@ import { useMotionReduced } from '@/lib/motion';
 type MarketingButtonProps = {
   href: string;
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'dark' | 'ghost';
   size?: 'md' | 'lg';
   className?: string;
   showArrow?: boolean;
@@ -46,9 +46,10 @@ export default function MarketingButton({
   };
 
   const variants = {
-    primary: 'bg-mkt-accent text-mkt-accent-foreground hover:bg-mkt-accent-hover',
+    primary: 'bg-mkt-accent text-mkt-accent-foreground hover:bg-mkt-accent-hover shadow-[0_8px_24px_-12px_rgba(53,72,199,0.55)]',
     secondary:
-      'border border-mkt-border bg-mkt-surface text-mkt-foreground hover:bg-mkt-surface-muted',
+      'border border-mkt-border bg-mkt-surface text-mkt-foreground hover:border-[rgba(53,72,199,0.35)] hover:bg-[rgba(53,72,199,0.04)]',
+    dark: 'bg-[#111111] text-white hover:bg-[#262626]',
     ghost: 'text-mkt-foreground hover:bg-mkt-surface-muted',
   };
 
