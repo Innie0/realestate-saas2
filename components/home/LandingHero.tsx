@@ -88,7 +88,7 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
         <div ref={rootRef}>
           <LandingGradientPanel
             variant="hero"
-            cursorReactive
+            animatedMesh
             className="shadow-[0_48px_120px_-48px_rgba(40,52,138,0.55)]"
             innerClassName="px-5 py-10 sm:px-10 sm:py-14 lg:px-14 lg:py-16"
           >

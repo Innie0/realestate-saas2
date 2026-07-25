@@ -518,15 +518,114 @@ html[data-dashboard-theme='light'] .dashboard-root,
     background-color: #ffffff !important;
   }
 
-  .marketing-root .landing-gradient-cursor-glow {
-    --cursor-x: 50%;
-    --cursor-y: 40%;
-    background: radial-gradient(
-      circle 520px at var(--cursor-x) var(--cursor-y),
-      rgba(255, 255, 255, 0.28) 0%,
-      rgba(120, 140, 255, 0.12) 35%,
-      transparent 72%
-    );
+  .marketing-root .landing-gradient-hero-mesh-base {
+    background: linear-gradient(165deg, #141b52 0%, #1a2260 35%, #28348a 100%);
+  }
+
+  .marketing-root .landing-mesh-aurora {
+    overflow: hidden;
+  }
+
+  .marketing-root .landing-mesh-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(72px);
+    will-change: transform;
+  }
+
+  .marketing-root .landing-mesh-blob-a {
+    width: min(58vw, 520px);
+    height: min(58vw, 520px);
+    top: -18%;
+    left: -12%;
+    background: rgba(74, 98, 217, 0.95);
+    animation: landing-mesh-drift-a 24s ease-in-out infinite;
+  }
+
+  .marketing-root .landing-mesh-blob-b {
+    width: min(50vw, 460px);
+    height: min(50vw, 460px);
+    top: 8%;
+    right: -16%;
+    background: rgba(53, 72, 199, 0.9);
+    animation: landing-mesh-drift-b 20s ease-in-out infinite;
+  }
+
+  .marketing-root .landing-mesh-blob-c {
+    width: min(44vw, 400px);
+    height: min(44vw, 400px);
+    bottom: -22%;
+    left: 18%;
+    background: rgba(99, 102, 217, 0.75);
+    animation: landing-mesh-drift-c 26s ease-in-out infinite;
+  }
+
+  .marketing-root .landing-mesh-blob-d {
+    width: min(36vw, 320px);
+    height: min(36vw, 320px);
+    bottom: 5%;
+    right: 12%;
+    background: rgba(120, 160, 255, 0.55);
+    animation: landing-mesh-drift-d 18s ease-in-out infinite;
+  }
+
+  .marketing-root .landing-mesh-blob-static {
+    animation: none !important;
+  }
+
+  @keyframes landing-mesh-drift-a {
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+    33% {
+      transform: translate(14%, 10%) scale(1.12);
+    }
+    66% {
+      transform: translate(6%, 18%) scale(0.94);
+    }
+  }
+
+  @keyframes landing-mesh-drift-b {
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+    40% {
+      transform: translate(-16%, 12%) scale(1.08);
+    }
+    70% {
+      transform: translate(-8%, -6%) scale(0.96);
+    }
+  }
+
+  @keyframes landing-mesh-drift-c {
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+    35% {
+      transform: translate(12%, -14%) scale(1.1);
+    }
+    65% {
+      transform: translate(-10%, -8%) scale(0.92);
+    }
+  }
+
+  @keyframes landing-mesh-drift-d {
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+    50% {
+      transform: translate(-12%, -16%) scale(1.15);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marketing-root .landing-mesh-blob {
+      animation: none !important;
+    }
   }
 
   .marketing-root .text-price {
