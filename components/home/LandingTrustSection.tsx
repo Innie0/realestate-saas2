@@ -50,39 +50,41 @@ function TestimonialCarousel() {
   );
 
   return (
-    <div className="py-24 sm:py-28 lg:py-32">
+    <div className="py-14 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
-        <div className="mx-auto mb-12 max-w-2xl text-center sm:mb-14">
-          <h2 className="font-display text-3xl font-extrabold tracking-[-0.04em] text-mkt-foreground sm:text-4xl">
-            Customer testimonials
-          </h2>
-          <p className="mt-3 text-base text-mkt-secondary">Real results. Real agents.</p>
-        </div>
+        <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+          <div className="text-center sm:text-left">
+            <h2 className="font-display text-3xl font-extrabold tracking-[-0.04em] text-mkt-foreground sm:text-4xl">
+              Customer testimonials
+            </h2>
+            <p className="mt-2 text-base text-mkt-secondary">Real results. Real agents.</p>
+          </div>
 
-        <div className="mb-8 flex items-center justify-end gap-2">
-          <span className="text-sm tabular-nums text-mkt-secondary">
-            {index + 1} / {total}
-          </span>
-          <NavArrowButton label="Previous testimonial" onClick={goPrev}>
-            ←
-          </NavArrowButton>
-          <NavArrowButton label="Next testimonial" onClick={goNext}>
-            →
-          </NavArrowButton>
+          <div className="flex items-center justify-center gap-2 sm:justify-end">
+            <span className="text-sm tabular-nums text-mkt-secondary">
+              {index + 1} / {total}
+            </span>
+            <NavArrowButton label="Previous testimonial" onClick={goPrev}>
+              ←
+            </NavArrowButton>
+            <NavArrowButton label="Next testimonial" onClick={goNext}>
+              →
+            </NavArrowButton>
+          </div>
         </div>
 
         <div
           ref={contentRef}
-          className="rounded-[1.5rem] border border-mkt-border bg-mkt-surface p-8 sm:p-10 lg:p-12"
+          className="rounded-[1.5rem] border border-mkt-border bg-mkt-surface p-6 sm:p-8 lg:p-9"
         >
           <blockquote
             data-testimonial-part
-            className="font-display max-w-3xl text-2xl font-bold leading-[1.32] tracking-[-0.03em] text-mkt-foreground sm:text-3xl lg:text-[2rem]"
+            className="font-display max-w-3xl text-xl font-bold leading-[1.32] tracking-[-0.03em] text-mkt-foreground sm:text-2xl lg:text-[1.75rem]"
           >
             &ldquo;{testimonial.quote}&rdquo;
           </blockquote>
 
-          <div className="mt-10 grid gap-8 border-t border-mkt-border pt-8 sm:grid-cols-[1.4fr_1fr_1fr] sm:gap-0 sm:pt-10">
+          <div className="mt-6 grid gap-6 border-t border-mkt-border pt-6 sm:grid-cols-[1.4fr_1fr_1fr] sm:gap-0 sm:pt-7">
             <div data-testimonial-part className="sm:border-r sm:border-mkt-border sm:pr-10">
               <p className="text-sm font-semibold text-mkt-foreground">{testimonial.name}</p>
               <p className="mt-1 text-sm leading-snug text-mkt-secondary">{testimonial.role}</p>
@@ -151,27 +153,27 @@ export default function LandingTrustSection() {
       <TestimonialCarousel />
       <LandingManifestoBand />
 
-      <div className="py-20 sm:py-28 lg:py-32">
+      <div className="py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
           <LandingStaggerReveal className="mx-auto max-w-2xl text-center">
             <h2
               data-reveal
-              className="font-display text-[clamp(2rem,4.5vw,3.25rem)] font-extrabold leading-[1.06] tracking-[-0.04em] text-mkt-foreground"
+              className="font-display text-[clamp(1.75rem,3.5vw,2.75rem)] font-extrabold leading-[1.08] tracking-[-0.04em] text-mkt-foreground"
             >
               Connect your tools
             </h2>
-            <p data-reveal className="mt-4 text-base leading-[1.65] text-mkt-secondary sm:text-[17px]">
+            <p data-reveal className="mt-3 text-base leading-[1.6] text-mkt-secondary sm:text-[16px]">
               Oikaro works with the calendars and ad platforms you already use — no rebuilding your
               workflow from scratch.
             </p>
-            <div data-reveal className="mt-8">
-              <MarketingButton href="/auth/signup" variant="dark" size="lg">
+            <div data-reveal className="mt-6">
+              <MarketingButton href="/auth/signup" variant="dark" size="md">
                 Start free trial
               </MarketingButton>
             </div>
           </LandingStaggerReveal>
 
-          <LandingStaggerReveal className="mt-12 sm:mt-16">
+          <LandingStaggerReveal className="mt-8 sm:mt-10">
             <div data-reveal data-reveal-fade>
               <LandingGradientPanel variant="integrations" mesh="static">
                 <div className="grid gap-4 sm:grid-cols-2 lg:gap-5">

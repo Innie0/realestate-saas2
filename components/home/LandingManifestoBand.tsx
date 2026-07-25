@@ -40,11 +40,11 @@ export default function LandingManifestoBand() {
   return (
     <div
       ref={sectionRef}
-      className="bg-mkt-background py-28 sm:py-36 lg:py-44"
+      className="bg-mkt-background py-14 sm:py-16 lg:py-20"
     >
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <p
-          className={`font-display max-w-4xl text-2xl font-medium leading-[1.35] tracking-[-0.03em] sm:text-3xl lg:text-[2.35rem] lg:leading-[1.28] ${
+          className={`font-display max-w-4xl text-xl font-medium leading-[1.35] tracking-[-0.03em] sm:text-2xl lg:text-[2rem] lg:leading-[1.3] ${
             reduced ? 'text-mkt-foreground' : 'text-mkt-secondary'
           }`}
         >
