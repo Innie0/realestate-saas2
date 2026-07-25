@@ -518,6 +518,17 @@ html[data-dashboard-theme='light'] .dashboard-root,
     background-color: #ffffff !important;
   }
 
+  .marketing-root .landing-gradient-cursor-glow {
+    --cursor-x: 50%;
+    --cursor-y: 40%;
+    background: radial-gradient(
+      circle 520px at var(--cursor-x) var(--cursor-y),
+      rgba(255, 255, 255, 0.28) 0%,
+      rgba(120, 140, 255, 0.12) 35%,
+      transparent 72%
+    );
+  }
+
   .marketing-root .text-price {
     color: var(--mkt-text-primary);
   }
