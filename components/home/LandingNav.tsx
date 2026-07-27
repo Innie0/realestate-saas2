@@ -116,9 +116,6 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
             >
               Sign in
             </Link>
-            <MarketingButton href="/products" variant="secondary" size="md" className="hidden md:inline-flex">
-              See demo
-            </MarketingButton>
             <MarketingButton href="/auth/signup" variant="dark" size="md" className="hidden sm:inline-flex">
               Start free trial
             </MarketingButton>
