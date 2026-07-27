@@ -49,7 +49,6 @@ export default function HomePageClient() {
       <LandingFeatureStack />
       <LandingTrustSection />
       <LandingFAQSection />
-      <LandingPricingSection />
       <LandingCTABand />
       <LandingFooter />
     </div>
