@@ -11,7 +11,7 @@ export default function LandingCTABand() {
         variant="hero"
         mesh="animated"
         elevated="hero"
-        innerClassName="px-6 py-12 sm:px-10 sm:py-14 lg:px-14 lg:py-16"
+        innerClassName="px-6 py-16 sm:px-10 sm:py-20 lg:px-14 lg:py-24"
       >
           <LandingStaggerReveal className="mx-auto max-w-2xl text-center">
             <h2
@@ -26,7 +26,7 @@ export default function LandingCTABand() {
             </p>
             <div
               data-reveal
-              className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row"
+              className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row"
             >
               <MarketingButton href="/auth/signup" variant="light" size="lg">
                 Start your 7-day free trial
