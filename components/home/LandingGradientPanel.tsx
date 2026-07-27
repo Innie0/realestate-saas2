@@ -1,6 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
+import LandingGradientTexture from '@/components/home/LandingGradientTexture';
 import LandingMeshBackground, { meshToneForVariant } from '@/components/home/LandingMeshBackground';
 
 export type LandingGradientVariant =
@@ -65,18 +66,26 @@ export default function LandingGradientPanel({
         ? ELEVATED_SHADOW[variant]
         : undefined;
 
+  const meshTone = meshToneForVariant(variant);
+
   return (
     <div className={clsx(RADIUS, 'overflow-hidden', elevatedClass, className)}>
-      <div className={clsx('landing-gradient-panel relative overflow-hidden', VARIANT_CLASS[variant])}>
+      <div
+        className={clsx(
+          'landing-gradient-panel relative overflow-hidden',
+          VARIANT_CLASS[variant],
+          meshMode && 'landing-gradient-panel--mesh',
+        )}
+      >
         {meshMode ? (
-          <LandingMeshBackground
-            animated={meshMode === 'animated'}
-            tone={meshToneForVariant(variant)}
-          />
+          <>
+            <LandingGradientTexture tone={meshTone} animated={meshMode === 'animated'} />
+            <LandingMeshBackground animated={meshMode === 'animated'} tone={meshTone} />
+          </>
         ) : null}
         <div
           className={clsx(
-            'relative z-[2]',
+            'relative z-[3]',
             showcase
               ? 'py-12 px-10 sm:py-16 sm:px-14 lg:py-20 lg:px-20'
               : compact

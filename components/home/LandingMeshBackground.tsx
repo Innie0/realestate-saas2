@@ -43,7 +43,7 @@ export default function LandingMeshBackground({
   return (
     <div
       className={clsx(
-        'landing-mesh-aurora pointer-events-none absolute inset-0 z-0',
+        'landing-mesh-aurora pointer-events-none absolute inset-0 z-[1]',
         `landing-mesh-aurora--${tone}`,
         className,
       )}

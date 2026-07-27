@@ -444,12 +444,12 @@ html[data-dashboard-theme='light'] .dashboard-root,
     );
     --mkt-cobalt-gradient-hero: linear-gradient(
       160deg,
-      #5270e8 0%,
-      #6382f0 22%,
-      #7a98f5 46%,
-      #9eb8ff 66%,
-      #c5d8ff 84%,
-      #7a98f5 100%
+      #1a2f9e 0%,
+      #2438b8 20%,
+      #4a62d9 45%,
+      #6b8fff 65%,
+      #9eb8ff 82%,
+      #3548c7 100%
     );
     --mkt-cobalt-gradient-feature: linear-gradient(
       155deg,
@@ -506,7 +506,7 @@ html[data-dashboard-theme='light'] .dashboard-root,
   }
 
   .marketing-root .landing-gradient-hero {
-    background-color: #6b8af0;
+    background-color: #3548c7;
     background-image: var(--mkt-cobalt-gradient-hero);
   }
 
@@ -544,8 +544,42 @@ html[data-dashboard-theme='light'] .dashboard-root,
     content: '';
     position: absolute;
     inset: 0;
-    z-index: 1;
+    z-index: 2;
     pointer-events: none;
+  }
+
+  .marketing-root .landing-gradient-panel--mesh::before {
+    opacity: 0.55;
+  }
+
+  .marketing-root .landing-gradient-texture {
+    transform-origin: center center;
+  }
+
+  .marketing-root .landing-gradient-texture--animated {
+    animation: landing-texture-breathe 14s ease-in-out infinite;
+  }
+
+  @keyframes landing-texture-breathe {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.94;
+      transform: scale(1.025);
+    }
+  }
+
+  .marketing-root .landing-gradient-panel--mesh .landing-mesh-aurora {
+    opacity: 0.32;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marketing-root .landing-gradient-texture--animated {
+      animation: none;
+    }
   }
 
   .marketing-root .landing-gradient-hero::before {
