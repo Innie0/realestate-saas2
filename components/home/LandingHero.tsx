@@ -179,7 +179,6 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
                         aria-hidden
                       >
                         {typingPlaceholder}
-                        <span className="landing-hero-type-cursor ml-px inline-block w-[2px] translate-y-[2px] bg-[#78726a]" />
                       </p>
                     ) : null}
                     <input
