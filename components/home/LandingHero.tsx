@@ -121,17 +121,18 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
   return (
     <section
       ref={sectionRef as React.RefObject<HTMLElement>}
-      className="relative bg-mkt-background pt-24 sm:pt-28 lg:pt-32"
+      className="relative bg-mkt-background pt-20 sm:pt-[5.25rem] lg:pt-24"
     >
-      <div className="mx-auto max-w-[1180px] px-4 pb-8 sm:px-6 sm:pb-10 lg:px-8">
+      <div className="mx-auto w-full max-w-[1360px] px-3 pb-4 sm:px-5 sm:pb-6 lg:px-6">
         <div ref={rootRef}>
           <LandingGradientPanel
             variant="hero"
             mesh="animated"
             elevated="hero"
-            innerClassName="px-5 py-10 sm:px-10 sm:py-14 lg:px-14 lg:py-16"
+            innerClassName="flex min-h-[calc(100svh-5.25rem)] flex-col px-5 py-8 sm:min-h-[calc(100svh-5.75rem)] sm:px-8 sm:py-10 lg:px-12 lg:py-12"
           >
-            <div className="mx-auto max-w-3xl text-center">
+            <div className="flex flex-1 flex-col items-center justify-center">
+              <div className="mx-auto w-full max-w-3xl text-center">
               <h1
                 data-hero-headline
                 className="font-display text-[clamp(2.35rem,6vw,4.5rem)] font-extrabold leading-[1.02] tracking-[-0.045em] text-white"
@@ -218,9 +219,10 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
                   </button>
                 ))}
               </div>
+              </div>
             </div>
 
-            <div data-hero-trust className="mt-12 sm:mt-14">
+            <div data-hero-trust className="w-full shrink-0 pt-6 sm:pt-8">
               <p className="mb-5 text-center text-[11px] font-medium uppercase tracking-[0.16em] text-white/55">
                 Used by agents at leading brokerages
               </p>
