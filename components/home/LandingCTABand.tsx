@@ -6,13 +6,14 @@ import MarketingButton from '@/components/marketing/MarketingButton';
 
 export default function LandingCTABand() {
   return (
-    <section className="bg-mkt-background py-16 sm:py-20 lg:py-24">
-      <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
+    <section className="flex min-h-svh flex-col bg-mkt-background px-2.5 py-2.5 sm:px-3 sm:py-3">
+      <div className="flex min-h-0 flex-1 flex-col">
         <LandingGradientPanel
           variant="hero"
           mesh="animated"
           elevated="hero"
-          innerClassName="px-6 py-14 sm:px-10 sm:py-16 lg:px-14 lg:py-20"
+          fill
+          innerClassName="flex flex-1 flex-col items-center justify-center px-6 py-14 sm:px-10 sm:py-16 lg:px-14 lg:py-20"
         >
           <LandingStaggerReveal className="mx-auto max-w-2xl text-center">
             <h2
