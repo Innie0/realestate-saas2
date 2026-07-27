@@ -576,12 +576,12 @@ html[data-dashboard-theme='light'] .dashboard-root,
     opacity: 0.32;
   }
 
-  .marketing-root .landing-gradient-panel--mesh-hero-image .landing-mesh-aurora {
-    opacity: 0.22;
+  .marketing-root .landing-gradient-panel--mesh-image .landing-mesh-aurora {
+    opacity: 0.2;
   }
 
-  .marketing-root .landing-gradient-panel--mesh-hero-image::before {
-    opacity: 0.35;
+  .marketing-root .landing-gradient-panel--mesh-image::before {
+    opacity: 0.32;
   }
 
   @media (prefers-reduced-motion: reduce) {
