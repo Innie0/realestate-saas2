@@ -7,7 +7,6 @@ import LandingHero from '@/components/home/LandingHero';
 import LandingFeatureStack from '@/components/home/LandingFeatureStack';
 import LandingTrustSection from '@/components/home/LandingTrustSection';
 import LandingFAQSection from '@/components/home/LandingFAQSection';
-import LandingPricingSection from '@/components/home/LandingPricingSection';
 import LandingCTABand from '@/components/home/LandingCTABand';
 import LandingFooter from '@/components/home/LandingFooter';
 import MarketingAtmosphere from '@/components/marketing/MarketingAtmosphere';

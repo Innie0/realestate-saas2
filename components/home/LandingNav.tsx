@@ -105,6 +105,12 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
           <div className="flex shrink-0 items-center gap-2 sm:gap-2.5">
             <ProductsMegaMenu onSolidBackground={menuOpen} onOpenChange={setMenuOpen} />
             <Link
+              href="/pricing"
+              className="hidden px-2 py-2 text-sm font-medium text-mkt-secondary transition-opacity hover:opacity-70 md:inline-flex"
+            >
+              Pricing
+            </Link>
+            <Link
               href="/auth/login"
               className="hidden px-2 py-2 text-sm font-medium text-mkt-secondary transition-opacity hover:opacity-70 md:inline-flex"
             >
