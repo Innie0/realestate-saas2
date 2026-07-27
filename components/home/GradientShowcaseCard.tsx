@@ -11,8 +11,14 @@ type GradientShowcaseCardProps = {
 
 export default function GradientShowcaseCard({ src, alt, className }: GradientShowcaseCardProps) {
   return (
-    <LandingGradientPanel variant="feature" mesh="static" showcase className={className}>
-      <div className="mx-auto w-full max-w-[640px] sm:max-w-[680px] lg:max-w-[720px]">
+    <LandingGradientPanel
+      variant="feature"
+      mesh="static"
+      showcase
+      innerClassName="!py-4 !px-4 sm:!py-5 sm:!px-6 lg:!py-6 lg:!px-8"
+      className={className}
+    >
+      <div className="w-full">
         <ProductScreenshot
           src={src}
           alt={alt}

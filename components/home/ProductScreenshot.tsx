@@ -32,14 +32,16 @@ export default function ProductScreenshot({
     >
       <ProductFrame interactive={!href}>
         <div
-          className={`relative w-full bg-[var(--mkt-mock-surface)] ${size === 'showcase' ? 'aspect-[16/9]' : 'aspect-[16/10]'}`}
+          className={`relative w-full bg-[var(--mkt-mock-surface)] ${
+            size === 'showcase' ? 'aspect-[21/9]' : 'aspect-[16/10]'
+          }`}
         >
         <Image
           src={src}
           alt={alt}
           fill
           className="object-cover object-top"
-          sizes="(max-width: 768px) 100vw, 720px"
+          sizes={size === 'showcase' ? '(max-width: 768px) 100vw, 960px' : '(max-width: 768px) 100vw, 720px'}
           priority={priority}
         />
       </div>
