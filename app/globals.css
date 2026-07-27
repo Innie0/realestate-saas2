@@ -452,13 +452,13 @@ html[data-dashboard-theme='light'] .dashboard-root,
       #3548c7 100%
     );
     --mkt-cobalt-gradient-hero-light: linear-gradient(
-      160deg,
-      #4a62d9 0%,
-      #5b74e8 18%,
-      #7a9aff 42%,
-      #9eb8ff 62%,
-      #c5d8ff 80%,
-      #6b8af0 100%
+      155deg,
+      #6b8af0 0%,
+      #7a9aff 18%,
+      #9eb8ff 42%,
+      #c5d8ff 68%,
+      #b8ceff 85%,
+      #8eb4ff 100%
     );
     --mkt-cobalt-gradient-feature: linear-gradient(
       155deg,
@@ -519,9 +519,14 @@ html[data-dashboard-theme='light'] .dashboard-root,
     background-image: var(--mkt-cobalt-gradient-hero);
   }
 
+  .marketing-root .landing-gradient-hero.landing-gradient-panel--mesh-css {
+    background-color: #6b8af0;
+    background-image: var(--mkt-cobalt-gradient-feature);
+  }
+
   .marketing-root .landing-gradient-panel--interactive.landing-gradient-hero {
     background-color: #6b8af0;
-    background-image: var(--mkt-cobalt-gradient-hero-light);
+    background-image: var(--mkt-cobalt-gradient-feature);
   }
 
   .marketing-root .landing-gradient-feature {
@@ -663,6 +668,19 @@ html[data-dashboard-theme='light'] .dashboard-root,
     }
   }
 
+  .marketing-root .landing-gradient-panel--interactive.landing-gradient-panel--mesh-css .landing-mesh-aurora {
+    opacity: 0.48;
+  }
+
+  .marketing-root .landing-gradient-panel--interactive.landing-gradient-panel--mesh-css::before {
+    opacity: 0.28;
+    background: radial-gradient(
+      ellipse 88% 76% at 50% 40%,
+      transparent 44%,
+      rgba(74, 98, 217, 0.14) 100%
+    );
+  }
+
   .marketing-root .landing-gradient-panel--interactive.landing-gradient-panel--mesh-image .landing-mesh-aurora {
     opacity: 0.28;
   }
@@ -704,6 +722,14 @@ html[data-dashboard-theme='light'] .dashboard-root,
     opacity: 0.32;
   }
 
+  .marketing-root .landing-gradient-panel--mesh-css .landing-mesh-aurora {
+    opacity: 0.42;
+  }
+
+  .marketing-root .landing-gradient-panel--mesh-css::before {
+    opacity: 0.38;
+  }
+
   .marketing-root .landing-gradient-panel--mesh-image .landing-mesh-aurora {
     opacity: 0.2;
   }
@@ -732,6 +758,14 @@ html[data-dashboard-theme='light'] .dashboard-root,
       ellipse 85% 72% at 50% 38%,
       transparent 38%,
       rgba(74, 98, 217, 0.22) 100%
+    );
+  }
+
+  .marketing-root .landing-gradient-hero.landing-gradient-panel--mesh-css::before {
+    background: radial-gradient(
+      ellipse 85% 72% at 50% 40%,
+      transparent 38%,
+      rgba(53, 72, 199, 0.18) 100%
     );
   }
 
@@ -802,7 +836,7 @@ html[data-dashboard-theme='light'] .dashboard-root,
   }
 
   .marketing-root .landing-gradient-panel-elevated-hero {
-    box-shadow: 0 48px 100px rgba(91, 116, 232, 0.32);
+    box-shadow: 0 48px 100px rgba(107, 138, 240, 0.28);
   }
 
   .marketing-root .landing-hero-input-box {

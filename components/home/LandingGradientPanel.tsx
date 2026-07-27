@@ -71,6 +71,8 @@ export default function LandingGradientPanel({
         : undefined;
 
   const meshTone = meshToneForVariant(variant);
+  /** Hero + bottom CTA: CSS gradient + aurora only (no baked WebP). */
+  const useMeshTexture = Boolean(meshMode && variant !== 'hero');
 
   return (
     <div className={clsx(RADIUS, 'overflow-hidden', elevatedClass, className)}>
@@ -82,19 +84,20 @@ export default function LandingGradientPanel({
           'landing-gradient-panel relative overflow-hidden',
           VARIANT_CLASS[variant],
           meshMode && 'landing-gradient-panel--mesh',
-          meshMode && 'landing-gradient-panel--mesh-image',
+          useMeshTexture && 'landing-gradient-panel--mesh-image',
+          meshMode && !useMeshTexture && 'landing-gradient-panel--mesh-css',
           isInteractive && 'landing-gradient-panel--interactive',
         )}
       >
         {meshMode ? (
           <>
-            <LandingGradientTexture
-              tone={meshTone}
-              priority={variant === 'hero'}
-              animated={meshMode === 'animated'}
-              light={isInteractive}
-              interactive={isInteractive}
-            />
+            {useMeshTexture ? (
+              <LandingGradientTexture
+                tone={meshTone}
+                priority={variant === 'hero'}
+                animated={meshMode === 'animated'}
+              />
+            ) : null}
             <LandingMeshBackground
               animated={meshMode === 'animated'}
               tone={meshTone}
