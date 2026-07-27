@@ -121,15 +121,16 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
   return (
     <section
       ref={sectionRef as React.RefObject<HTMLElement>}
-      className="relative bg-mkt-background pt-20 sm:pt-[5.25rem] lg:pt-24"
+      className="relative flex min-h-svh flex-col bg-mkt-background pt-16 sm:pt-[4.5rem]"
     >
-      <div className="mx-auto w-full max-w-[1360px] px-3 pb-4 sm:px-5 sm:pb-6 lg:px-6">
-        <div ref={rootRef}>
+      <div className="flex flex-1 flex-col px-2.5 pb-2.5 sm:px-3 sm:pb-3">
+        <div ref={rootRef} className="flex min-h-0 flex-1 flex-col">
           <LandingGradientPanel
             variant="hero"
             mesh="animated"
             elevated="hero"
-            innerClassName="flex min-h-[calc(100svh-5.25rem)] flex-col px-5 py-8 sm:min-h-[calc(100svh-5.75rem)] sm:px-8 sm:py-10 lg:px-12 lg:py-12"
+            fill
+            innerClassName="flex flex-1 flex-col px-5 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-12"
           >
             <div className="flex flex-1 flex-col items-center justify-center">
               <div className="mx-auto w-full max-w-3xl text-center">

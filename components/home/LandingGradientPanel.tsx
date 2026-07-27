@@ -43,6 +43,8 @@ type LandingGradientPanelProps = {
   /** @deprecated Use mesh="animated" */
   animatedMesh?: boolean;
   elevated?: 'default' | 'hero' | false;
+  /** Stretch panel to fill remaining flex space (hero). */
+  fill?: boolean;
 };
 
 const RADIUS = 'rounded-[2rem] sm:rounded-[2.5rem] lg:rounded-[3rem]';
@@ -57,6 +59,7 @@ export default function LandingGradientPanel({
   mesh,
   animatedMesh = false,
   elevated = 'default',
+  fill = false,
 }: LandingGradientPanelProps) {
   const meshMode = mesh ?? (animatedMesh ? 'animated' : undefined);
   const isInteractive = meshMode === 'animated' && variant === 'hero';
@@ -75,13 +78,14 @@ export default function LandingGradientPanel({
   const useMeshTexture = Boolean(meshMode && variant !== 'hero');
 
   return (
-    <div className={clsx(RADIUS, 'overflow-hidden', elevatedClass, className)}>
+    <div className={clsx(RADIUS, 'overflow-hidden', elevatedClass, fill && 'flex min-h-0 flex-1 flex-col', className)}>
       <div
         ref={panelRef}
         onPointerMove={pointerActive ? onPointerMove : undefined}
         onPointerLeave={pointerActive ? onPointerLeave : undefined}
         className={clsx(
           'landing-gradient-panel relative overflow-hidden',
+          fill && 'flex min-h-full flex-1 flex-col',
           VARIANT_CLASS[variant],
           meshMode && 'landing-gradient-panel--mesh',
           useMeshTexture && 'landing-gradient-panel--mesh-image',
@@ -109,6 +113,7 @@ export default function LandingGradientPanel({
         <div
           className={clsx(
             'relative z-[3]',
+            fill && 'flex min-h-full flex-1 flex-col',
             showcase
               ? 'py-12 px-10 sm:py-16 sm:px-14 lg:py-20 lg:px-20'
               : compact
