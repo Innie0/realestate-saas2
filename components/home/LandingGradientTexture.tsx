@@ -3,17 +3,37 @@
 import clsx from 'clsx';
 import type { MeshTone } from '@/components/home/LandingMeshBackground';
 
+type GradientPanelVariant =
+  | 'hero'
+  | 'feature'
+  | 'feature-violet'
+  | 'feature-teal'
+  | 'feature-plum'
+  | 'integrations';
+
 type LandingGradientTextureProps = {
   tone?: MeshTone;
+  panelVariant?: GradientPanelVariant;
   /** Subtle scale/opacity drift on hero + CTA */
   animated?: boolean;
 };
 
-/** Authored SVG mesh — Instantly-style baked gradient (hybrid with CSS blobs on top) */
+const HERO_MESH_SRCSET = [
+  '/landing/mesh/hero-cobalt-500.webp 500w',
+  '/landing/mesh/hero-cobalt-800.webp 800w',
+  '/landing/mesh/hero-cobalt-1080.webp 1080w',
+  '/landing/mesh/hero-cobalt-1600.webp 1600w',
+  '/landing/mesh/hero-cobalt-1920.webp 1920w',
+].join(', ');
+
+/** Authored mesh — hero uses baked WebP (Instantly reference); others use SVG */
 export default function LandingGradientTexture({
   tone = 'cobalt',
+  panelVariant,
   animated = false,
 }: LandingGradientTextureProps) {
+  const useHeroImage = panelVariant === 'hero' && tone === 'cobalt';
+
   return (
     <div
       className={clsx(
@@ -22,12 +42,34 @@ export default function LandingGradientTexture({
       )}
       aria-hidden
     >
-      {tone === 'cobalt' && <CobaltMesh />}
-      {tone === 'violet' && <VioletMesh />}
-      {tone === 'teal' && <TealMesh />}
-      {tone === 'plum' && <PlumMesh />}
-      {tone === 'emerald' && <EmeraldMesh />}
+      {useHeroImage ? (
+        <HeroCobaltImageMesh />
+      ) : (
+        <>
+          {tone === 'cobalt' && <CobaltMesh />}
+          {tone === 'violet' && <VioletMesh />}
+          {tone === 'teal' && <TealMesh />}
+          {tone === 'plum' && <PlumMesh />}
+          {tone === 'emerald' && <EmeraldMesh />}
+        </>
+      )}
     </div>
+  );
+}
+
+function HeroCobaltImageMesh() {
+  return (
+    <picture className="block h-full w-full">
+      <source type="image/webp" srcSet={HERO_MESH_SRCSET} sizes="(max-width: 1919px) 100vw, 1920px" />
+      <img
+        src="/landing/mesh/hero-cobalt-1920.webp"
+        alt=""
+        className="h-full w-full object-cover object-center"
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
+      />
+    </picture>
   );
 }
 

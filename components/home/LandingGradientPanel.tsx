@@ -75,11 +75,16 @@ export default function LandingGradientPanel({
           'landing-gradient-panel relative overflow-hidden',
           VARIANT_CLASS[variant],
           meshMode && 'landing-gradient-panel--mesh',
+          meshMode && variant === 'hero' && 'landing-gradient-panel--mesh-hero-image',
         )}
       >
         {meshMode ? (
           <>
-            <LandingGradientTexture tone={meshTone} animated={meshMode === 'animated'} />
+            <LandingGradientTexture
+              tone={meshTone}
+              panelVariant={variant}
+              animated={meshMode === 'animated'}
+            />
             <LandingMeshBackground animated={meshMode === 'animated'} tone={meshTone} />
           </>
         ) : null}
