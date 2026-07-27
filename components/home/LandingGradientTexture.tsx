@@ -9,6 +9,10 @@ type LandingGradientTextureProps = {
   priority?: boolean;
   /** Subtle scale/opacity drift on hero + CTA */
   animated?: boolean;
+  /** Lift brightness for hero / bottom CTA */
+  light?: boolean;
+  /** Cursor parallax on the texture layer */
+  interactive?: boolean;
 };
 
 const MESH_SIZES = [500, 800, 1080, 1600, 1920] as const;
@@ -30,6 +34,8 @@ export default function LandingGradientTexture({
   tone = 'cobalt',
   priority = false,
   animated = false,
+  light = false,
+  interactive = false,
 }: LandingGradientTextureProps) {
   const prefix = priority && tone === 'cobalt' ? 'hero-cobalt' : MESH_PREFIX[tone];
 
@@ -38,6 +44,8 @@ export default function LandingGradientTexture({
       className={clsx(
         'landing-gradient-texture pointer-events-none absolute inset-0 z-0',
         animated && 'landing-gradient-texture--animated',
+        light && 'landing-gradient-texture--light',
+        interactive && 'landing-gradient-texture--interactive',
       )}
       aria-hidden
     >

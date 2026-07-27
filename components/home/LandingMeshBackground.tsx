@@ -14,6 +14,8 @@ type LandingMeshBackgroundProps = {
   animated?: boolean;
   /** Color family matched to the panel variant */
   tone?: MeshTone;
+  /** Cursor parallax on aurora blobs */
+  interactive?: boolean;
 };
 
 export function meshToneForVariant(variant: string): MeshTone {
@@ -36,6 +38,7 @@ export default function LandingMeshBackground({
   className,
   animated = false,
   tone = 'cobalt',
+  interactive = false,
 }: LandingMeshBackgroundProps) {
   const reduced = useMotionReduced();
   const motionless = reduced || !animated;
@@ -45,6 +48,7 @@ export default function LandingMeshBackground({
       className={clsx(
         'landing-mesh-aurora pointer-events-none absolute inset-0 z-[1]',
         `landing-mesh-aurora--${tone}`,
+        interactive && 'landing-mesh-aurora--interactive',
         className,
       )}
       aria-hidden

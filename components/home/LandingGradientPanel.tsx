@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import LandingGradientTexture from '@/components/home/LandingGradientTexture';
 import LandingMeshBackground, { meshToneForVariant } from '@/components/home/LandingMeshBackground';
+import { useInteractiveMeshPointer } from '@/lib/use-interactive-mesh-pointer';
 
 export type LandingGradientVariant =
   | 'hero'
@@ -58,6 +59,9 @@ export default function LandingGradientPanel({
   elevated = 'default',
 }: LandingGradientPanelProps) {
   const meshMode = mesh ?? (animatedMesh ? 'animated' : undefined);
+  const isInteractive = meshMode === 'animated' && variant === 'hero';
+  const { panelRef, onPointerMove, onPointerLeave, active: pointerActive } =
+    useInteractiveMeshPointer(isInteractive);
 
   const elevatedClass =
     elevated === 'hero'
@@ -71,11 +75,15 @@ export default function LandingGradientPanel({
   return (
     <div className={clsx(RADIUS, 'overflow-hidden', elevatedClass, className)}>
       <div
+        ref={panelRef}
+        onPointerMove={pointerActive ? onPointerMove : undefined}
+        onPointerLeave={pointerActive ? onPointerLeave : undefined}
         className={clsx(
           'landing-gradient-panel relative overflow-hidden',
           VARIANT_CLASS[variant],
           meshMode && 'landing-gradient-panel--mesh',
           meshMode && 'landing-gradient-panel--mesh-image',
+          isInteractive && 'landing-gradient-panel--interactive',
         )}
       >
         {meshMode ? (
@@ -84,8 +92,15 @@ export default function LandingGradientPanel({
               tone={meshTone}
               priority={variant === 'hero'}
               animated={meshMode === 'animated'}
+              light={isInteractive}
+              interactive={isInteractive}
             />
-            <LandingMeshBackground animated={meshMode === 'animated'} tone={meshTone} />
+            <LandingMeshBackground
+              animated={meshMode === 'animated'}
+              tone={meshTone}
+              interactive={isInteractive}
+            />
+            {isInteractive ? <div className="landing-mesh-cursor-glow" aria-hidden /> : null}
           </>
         ) : null}
         <div
