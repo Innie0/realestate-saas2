@@ -524,7 +524,7 @@ html[data-dashboard-theme='light'] .dashboard-root,
     background-image: var(--mkt-cobalt-gradient-feature);
   }
 
-  /* Landing hero only — .hero-gradient-bg + 3 animated blobs */
+  /* Landing hero only — .hero-gradient-bg with ::before / ::after glow layers */
   .marketing-root .landing-gradient-panel.hero-has-animated-gradient {
     background-color: transparent;
     background-image: none;
@@ -540,78 +540,58 @@ html[data-dashboard-theme='light'] .dashboard-root,
     overflow: hidden;
     z-index: 0;
     pointer-events: none;
-    background: linear-gradient(135deg, #2e3f9e 0%, #3548c7 100%);
+    background: #1e3a8a;
   }
 
-  .marketing-root .hero-gradient-bg .blob {
+  .marketing-root .hero-gradient-bg::before,
+  .marketing-root .hero-gradient-bg::after {
+    content: '';
     position: absolute;
-    border-radius: 9999px;
-    filter: blur(80px);
-    opacity: 0.55;
-    will-change: transform;
+    width: 150%;
+    height: 150%;
+    border-radius: 50%;
+    filter: blur(120px);
   }
 
-  .marketing-root .hero-gradient-bg .blob-1 {
-    width: 500px;
-    height: 500px;
-    top: -10%;
-    left: -10%;
-    background: #3548c7;
-    animation: float1 18s ease-in-out infinite;
+  .marketing-root .hero-gradient-bg::before {
+    background: radial-gradient(circle, #6d8cf7 0%, transparent 65%);
+    top: -40%;
+    left: -30%;
+    opacity: 0.7;
+    animation: drift1 24s ease-in-out infinite;
   }
 
-  .marketing-root .hero-gradient-bg .blob-2 {
-    width: 600px;
-    height: 600px;
-    top: 20%;
-    right: -15%;
-    background: #5b74e8;
-    animation: float2 22s ease-in-out infinite;
-    animation-delay: -4s;
+  .marketing-root .hero-gradient-bg::after {
+    background: radial-gradient(circle, #3548c7 0%, transparent 65%);
+    bottom: -50%;
+    right: -30%;
+    opacity: 0.6;
+    animation: drift2 28s ease-in-out infinite;
   }
 
-  .marketing-root .hero-gradient-bg .blob-3 {
-    width: 450px;
-    height: 450px;
-    bottom: -15%;
-    left: 25%;
-    background: #6b8af0;
-    animation: float3 25s ease-in-out infinite;
-    animation-delay: -9s;
-  }
-
-  @keyframes float1 {
+  @keyframes drift1 {
     0%,
     100% {
-      transform: translate(0, 0) scale(1);
+      transform: translate(0, 0);
     }
     50% {
-      transform: translate(80px, 60px) scale(1.15);
+      transform: translate(10%, 8%);
     }
   }
 
-  @keyframes float2 {
+  @keyframes drift2 {
     0%,
     100% {
-      transform: translate(0, 0) scale(1);
+      transform: translate(0, 0);
     }
     50% {
-      transform: translate(-70px, 40px) scale(0.9);
-    }
-  }
-
-  @keyframes float3 {
-    0%,
-    100% {
-      transform: translate(0, 0) scale(1);
-    }
-    50% {
-      transform: translate(50px, -60px) scale(1.1);
+      transform: translate(-8%, -10%);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .marketing-root .hero-gradient-bg .blob {
+    .marketing-root .hero-gradient-bg::before,
+    .marketing-root .hero-gradient-bg::after {
       animation: none !important;
     }
   }

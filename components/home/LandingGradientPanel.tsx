@@ -100,13 +100,7 @@ export default function LandingGradientPanel({
           isInteractive && 'landing-gradient-panel--interactive',
         )}
       >
-        {animatedHeroGradient ? (
-          <div className="hero-gradient-bg" aria-hidden>
-            <div className="blob blob-1" />
-            <div className="blob blob-2" />
-            <div className="blob blob-3" />
-          </div>
-        ) : null}
+        {animatedHeroGradient ? <div className="hero-gradient-bg" aria-hidden /> : null}
         {meshMode && !animatedHeroGradient ? (
           <>
             {useMeshTexture ? (
