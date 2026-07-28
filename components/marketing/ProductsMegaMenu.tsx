@@ -80,7 +80,7 @@ export default function ProductsMegaMenu({ onOpenChange }: ProductsMegaMenuProps
                 animate={reduced ? undefined : { opacity: 1, y: 0 }}
                 exit={reduced ? undefined : { opacity: 0, y: -4 }}
                 transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
-                className="fixed inset-x-0 top-16 z-[59] -mt-3 pt-3 sm:top-[4.5rem]"
+                className="marketing-root fixed inset-x-0 top-16 z-[59] -mt-3 bg-mkt-background pt-3 text-mkt-foreground sm:top-[4.5rem]"
                 onMouseEnter={handleEnter}
                 onMouseLeave={scheduleClose}
               >
