@@ -143,7 +143,7 @@
   --mkt-nav-transparent-border: rgba(46, 46, 46, 0);
   --mkt-hero-glow: rgba(228, 247, 108, 0.14);
   --mkt-champagne: #a87c43;
-  --mkt-max-content-width: 70rem;
+  --mkt-max-content-width: 80rem;
   --mkt-radius-button: 6px;
   --mkt-radius-card: 12px;
   --mkt-radius-browser: 12px;
@@ -555,18 +555,38 @@ html[data-dashboard-theme='light'] .dashboard-root,
       #a7f3d0 82%,
       #059669 100%
     );
-    --mkt-radius-button: 9999px;
-    --mkt-radius-card: 1.25rem;
-    --mkt-radius-browser: 1.25rem;
-    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    --mkt-radius-button: 6px;
+    --mkt-radius-card: 12px;
+    --mkt-radius-browser: 12px;
+    --mkt-spacing: 0.25rem;
+    --mkt-nav-height: 52px;
+    --mkt-section-pt: calc(var(--mkt-spacing) * 20);
+    --mkt-section-pb: calc(var(--mkt-spacing) * 12);
+    --mkt-section-gap: calc(var(--mkt-spacing) * 12);
+    --mkt-shadow-card: 0 20px 50px -24px rgba(17, 17, 17, 0.12);
+    --mkt-shadow-card-ring: 0 0 0 1px rgba(17, 17, 17, 0.04);
+    --mkt-shadow-cta: 0 0 40px -8px rgba(53, 72, 199, 0.45);
+    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: 'ss03' on;
     color: var(--mkt-text-primary);
     background-color: var(--mkt-background);
   }
 
-  .marketing-root .font-display {
-    font-family: var(--font-mkt-display), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-    font-weight: 800;
-    letter-spacing: -0.04em;
+  .marketing-root .font-display,
+  .marketing-root .font-mkt-display {
+    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: 'ss03' on;
+    font-weight: 600;
+    letter-spacing: -0.05em;
+  }
+
+  .marketing-root .font-mkt-serif {
+    font-family: var(--font-tiempos), var(--font-serif), Georgia, serif;
+  }
+
+  .marketing-root .font-mkt-mono,
+  .marketing-root .text-mkt-label {
+    font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
   }
 
   .marketing-root .landing-gradient-hero {
@@ -647,6 +667,13 @@ html[data-dashboard-theme='light'] .dashboard-root,
   @media (prefers-reduced-motion: reduce) {
     .marketing-root .hero-gradient-bg::before,
     .marketing-root .hero-gradient-bg::after {
+      animation: none !important;
+    }
+
+    .marketing-root .animate-marquee,
+    .marketing-root .animate-marquee-vertical,
+    .marketing-root .animate-shimmer-slide,
+    .marketing-root .animate-spin-around {
       animation: none !important;
     }
   }
@@ -1313,6 +1340,12 @@ html[data-dashboard-theme='light'] .dashboard-root,
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+  .theme {
+    --animate-shimmer-slide: shimmer-slide var(--speed) ease-in-out infinite alternate;
+    --animate-spin-around: spin-around calc(var(--speed) * 2) infinite linear;
+    --animate-marquee: marquee var(--duration) infinite linear;
+    --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  }
 }
 
 @layer components {
@@ -1700,3 +1733,41 @@ html[data-dashboard-theme='light'] .dashboard-root,
 .driver-popover-arrow-side-right .driver-popover-arrow { border-left-color: #1c1c1c !important; }
 .driver-popover-arrow-side-top .driver-popover-arrow { border-bottom-color: #1c1c1c !important; }
 .driver-popover-arrow-side-bottom .driver-popover-arrow { border-top-color: #1c1c1c !important; }
+
+@theme inline {
+  @keyframes shimmer-slide {
+  to {
+    transform: translate(calc(100cqw - 100%), 0);
+    }
+  }
+  @keyframes spin-around {
+  0% {
+    transform: translateZ(0) rotate(0);
+    }
+  15%, 35% {
+    transform: translateZ(0) rotate(90deg);
+    }
+  65%, 85% {
+    transform: translateZ(0) rotate(270deg);
+    }
+  100% {
+    transform: translateZ(0) rotate(360deg);
+    }
+  }
+  @keyframes marquee {
+  from {
+    transform: translateX(0);
+    }
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-vertical {
+  from {
+    transform: translateY(0);
+    }
+  to {
+    transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+}

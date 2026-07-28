@@ -2,7 +2,7 @@
 // This is the main layout file for the Next.js app
 
 import type { Metadata } from 'next';
-import { EB_Garamond, IBM_Plex_Mono, Inter, Newsreader, Plus_Jakarta_Sans } from 'next/font/google';
+import { EB_Garamond, IBM_Plex_Mono, Inter, JetBrains_Mono, Newsreader } from 'next/font/google';
 import { GeistSans } from 'geist/font/sans';
 import { GlobalStructuredData } from '@/components/seo/StructuredData';
 import { SITE_NAME, SITE_NAME_ALT, SITE_DESCRIPTION, SITE_DOMAIN, SITE_URL } from '@/lib/site-config';
@@ -15,9 +15,15 @@ const plexMono = IBM_Plex_Mono({
   display: 'swap',
 });
 
-const inter = Inter({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   weight: ['400', '500'],
+  variable: '--font-jetbrains-mono',
+  display: 'swap',
+});
+
+const inter = Inter({
+  subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
 });
@@ -25,18 +31,19 @@ const inter = Inter({
 const newsreader = Newsreader({
   subsets: ['latin'],
   weight: ['400', '500', '600'],
+  style: ['normal', 'italic'],
   variable: '--font-serif',
   display: 'swap',
 });
 
-const plusJakarta = Plus_Jakarta_Sans({
+const tiempos = Newsreader({
   subsets: ['latin'],
-  weight: ['500', '600', '700', '800'],
-  variable: '--font-mkt-display',
+  weight: ['400', '500', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-tiempos',
   display: 'swap',
 });
 
-// Serif display — dashboard/app only; not used on Framer-style marketing pages.
 const ebGaramond = EB_Garamond({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
@@ -134,8 +141,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${plusJakarta.variable}`}>
-      <body className={`${GeistSans.className} ${plexMono.variable} ${ebGaramond.variable} ${inter.variable} ${newsreader.variable} ${plusJakarta.variable} font-sans antialiased`}>
+    <html lang="en" className={GeistSans.variable}>
+      <body
+        className={`${GeistSans.className} ${plexMono.variable} ${ebGaramond.variable} ${inter.variable} ${newsreader.variable} ${tiempos.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+      >
         <GlobalStructuredData />
         {children}
       </body>

@@ -35,7 +35,7 @@ function ShowcaseChatBar() {
       <p className="min-w-0 flex-1 truncate text-[12px] text-gray-400 sm:text-[13px]">
         Ask about listings, leads, or comps…
       </p>
-      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-900 text-white sm:h-8 sm:w-8">
+      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-500 text-white sm:h-8 sm:w-8">
         <Send className="h-3 w-3 sm:h-3.5 sm:w-3.5" strokeWidth={2} />
       </div>
     </div>

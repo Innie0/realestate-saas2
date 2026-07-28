@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import MarketingHeaderNav from '@/components/marketing/MarketingHeaderNav';
 import { ensureGsapRegistered, gsap, landingRevealDefaults, useGSAP } from '@/lib/gsap-config';
@@ -11,6 +11,7 @@ ensureGsapRegistered();
 export default function LandingNav() {
   const reduced = useMotionReduced();
   const navRef = useRef<HTMLElement>(null);
+  const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const lastScrollY = useRef(0);
@@ -18,6 +19,7 @@ export default function LandingNav() {
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
+      setScrolled(y > 8);
       if (y > 120 && y > lastScrollY.current && !menuOpen) {
         setHidden(true);
       } else {
@@ -49,13 +51,15 @@ export default function LandingNav() {
     <header
       ref={navRef as React.RefObject<HTMLElement>}
       className={clsx(
-        'fixed inset-x-0 top-0 z-[60] border-b bg-mkt-background transition-[transform,border-color] duration-300 ease-out',
-        menuOpen ? 'border-[rgba(17,17,17,0.14)]' : 'border-mkt-border',
+        'fixed inset-x-0 top-0 z-[60] border-b transition-[transform,background-color,border-color,backdrop-filter] duration-300 ease-out',
+        scrolled
+          ? 'border-mkt-border bg-mkt-nav-scrolled-bg backdrop-blur-md'
+          : 'border-transparent bg-mkt-nav-transparent-bg',
         hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0',
       )}
     >
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
-        <div className="flex h-16 items-center sm:h-[4.5rem]">
+        <div className="flex h-[var(--mkt-nav-height)] items-center">
           <MarketingHeaderNav onProductsMenuChange={setMenuOpen} />
         </div>
       </div>

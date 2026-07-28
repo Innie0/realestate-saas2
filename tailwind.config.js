@@ -15,6 +15,23 @@ module.exports = {
   				'system-ui',
   				'sans-serif'
   			],
+  			'mkt-sans': [
+  				'var(--font-inter)',
+  				'ui-sans-serif',
+  				'system-ui',
+  				'sans-serif'
+  			],
+  			'mkt-mono': [
+  				'var(--font-jetbrains-mono)',
+  				'ui-monospace',
+  				'monospace'
+  			],
+  			'mkt-serif': [
+  				'var(--font-tiempos)',
+  				'var(--font-serif)',
+  				'Georgia',
+  				'serif'
+  			],
   			mono: [
   				'var(--font-mono)',
   				'ui-monospace',

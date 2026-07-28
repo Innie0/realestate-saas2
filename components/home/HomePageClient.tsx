@@ -3,13 +3,12 @@
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import LandingNav from '@/components/home/LandingNav';
-import LandingHero from '@/components/home/LandingHero';
-import LandingFeatureStack from '@/components/home/LandingFeatureStack';
+import LandingHeroAttio from '@/components/home/LandingHeroAttio';
+import LandingShowcaseCarousel from '@/components/home/LandingShowcaseCarousel';
 import LandingTrustSection from '@/components/home/LandingTrustSection';
 import LandingFAQSection from '@/components/home/LandingFAQSection';
 import LandingCTABand from '@/components/home/LandingCTABand';
 import LandingFooter from '@/components/home/LandingFooter';
-import MarketingAtmosphere from '@/components/marketing/MarketingAtmosphere';
 import { supabase } from '@/lib/supabase';
 
 export default function HomePageClient() {
@@ -43,10 +42,9 @@ export default function HomePageClient() {
 
   return (
     <div className="marketing-root relative z-[1] min-h-screen overflow-x-hidden bg-mkt-background text-mkt-foreground">
-      <MarketingAtmosphere />
       <LandingNav />
-      <LandingHero sectionRef={heroRef} />
-      <LandingFeatureStack />
+      <LandingHeroAttio sectionRef={heroRef} />
+      <LandingShowcaseCarousel />
       <LandingTrustSection />
       <LandingFAQSection />
       <LandingCTABand />
