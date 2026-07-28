@@ -11,6 +11,7 @@ export default function LandingCTABand() {
         variant="hero"
         mesh="animated"
         elevated={false}
+        interactive
         innerClassName="px-6 py-16 sm:px-10 sm:py-20 lg:px-14 lg:py-24"
       >
           <LandingStaggerReveal className="mx-auto max-w-2xl text-center">

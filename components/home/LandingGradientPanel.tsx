@@ -45,6 +45,8 @@ type LandingGradientPanelProps = {
   elevated?: 'default' | 'hero' | false;
   /** Stretch panel to fill remaining flex space (hero). */
   fill?: boolean;
+  /** Cursor-reactive mesh parallax + glow */
+  interactive?: boolean;
 };
 
 const RADIUS = 'rounded-[2rem] sm:rounded-[2.5rem] lg:rounded-[3rem]';
@@ -60,10 +62,10 @@ export default function LandingGradientPanel({
   animatedMesh = false,
   elevated = 'default',
   fill = false,
+  interactive = false,
 }: LandingGradientPanelProps) {
   const meshMode = mesh ?? (animatedMesh ? 'animated' : undefined);
-  /** Cursor parallax on bottom CTA only — not the top hero panel. */
-  const isInteractive = meshMode === 'animated' && variant === 'hero' && !fill;
+  const isInteractive = Boolean(interactive && meshMode === 'animated');
   const { panelRef, onPointerMove, onPointerLeave, active: pointerActive } =
     useInteractiveMeshPointer(isInteractive);
 
