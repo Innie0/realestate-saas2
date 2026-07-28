@@ -84,7 +84,7 @@ export default function ProductsMegaMenu({ onOpenChange }: ProductsMegaMenuProps
                 onMouseEnter={handleEnter}
                 onMouseLeave={scheduleClose}
               >
-                <div className="border-b border-mkt-border bg-mkt-background shadow-[0_16px_48px_-20px_rgba(17,17,17,0.14)]">
+                <div className="border-b border-[rgba(17,17,17,0.12)] border-t border-[rgba(17,17,17,0.14)] bg-mkt-background shadow-[0_16px_48px_-20px_rgba(17,17,17,0.14)]">
                   <div className="mx-auto max-w-mkt-content px-5 py-8 sm:px-8 sm:py-9 lg:py-10">
                     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_260px] lg:gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_280px] xl:gap-8">
                       {PRODUCT_MENU_COLUMNS.map((column) => (

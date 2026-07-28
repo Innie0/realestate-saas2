@@ -51,7 +51,8 @@ export default function LandingNav() {
     <nav
       ref={navRef}
       className={clsx(
-        'fixed inset-x-0 top-0 z-[60] border-b border-mkt-border bg-mkt-background transition-transform duration-300 ease-out',
+        'fixed inset-x-0 top-0 z-[60] border-b bg-mkt-background transition-[transform,border-color] duration-300 ease-out',
+        menuOpen ? 'border-[rgba(17,17,17,0.14)]' : 'border-mkt-border',
         hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0',
       )}
     >
