@@ -6,17 +6,11 @@ import clsx from 'clsx';
 import ProductsMegaMenu from '@/components/marketing/ProductsMegaMenu';
 import MarketingButton from '@/components/marketing/MarketingButton';
 import { ensureGsapRegistered, gsap, landingRevealDefaults, useGSAP } from '@/lib/gsap-config';
-import { bindNavScrollChrome } from '@/lib/landing-motion';
-import { mktVar } from '@/lib/mkt-css';
 import { useMotionReduced } from '@/lib/motion';
-
-type LandingNavProps = {
-  heroRef: React.RefObject<HTMLElement | null>;
-};
 
 ensureGsapRegistered();
 
-export default function LandingNav({ heroRef }: LandingNavProps) {
+export default function LandingNav() {
   const reduced = useMotionReduced();
   const navRef = useRef<HTMLElement>(null);
   const [hidden, setHidden] = useState(false);
@@ -53,43 +47,11 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
     { scope: navRef, dependencies: [reduced] },
   );
 
-  useGSAP(
-    () => {
-      const nav = navRef.current;
-      const hero = heroRef.current;
-      if (reduced || !nav || !hero) return;
-
-      return bindNavScrollChrome(nav, hero, {
-        bg: mktVar('--mkt-nav-scrolled-bg'),
-        border: mktVar('--mkt-border'),
-      });
-    },
-    { dependencies: [heroRef, reduced] },
-  );
-
-  useGSAP(
-    () => {
-      const nav = navRef.current;
-      if (reduced || !nav) return;
-
-      if (menuOpen) {
-        gsap.to(nav, {
-          backgroundColor: mktVar('--mkt-nav-menu-bg'),
-          borderBottomColor: mktVar('--mkt-border'),
-          backdropFilter: 'blur(14px)',
-          duration: 0.3,
-          ease: landingRevealDefaults.ease,
-        });
-      }
-    },
-    { dependencies: [menuOpen, reduced] },
-  );
-
   return (
     <nav
       ref={navRef}
       className={clsx(
-        'fixed inset-x-0 top-0 z-[60] border-b border-transparent transition-transform duration-300 ease-out',
+        'fixed inset-x-0 top-0 z-[60] border-b border-mkt-border bg-mkt-background transition-transform duration-300 ease-out',
         hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0',
       )}
     >
@@ -103,7 +65,7 @@ export default function LandingNav({ heroRef }: LandingNavProps) {
           </Link>
 
           <div className="flex shrink-0 items-center gap-2 sm:gap-2.5">
-            <ProductsMegaMenu onSolidBackground={menuOpen} onOpenChange={setMenuOpen} />
+            <ProductsMegaMenu onOpenChange={setMenuOpen} />
             <Link
               href="/pricing"
               className="hidden px-2 py-2 text-sm font-medium text-mkt-secondary transition-opacity hover:opacity-70 md:inline-flex"
