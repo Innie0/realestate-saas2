@@ -62,7 +62,8 @@ export default function LandingGradientPanel({
   fill = false,
 }: LandingGradientPanelProps) {
   const meshMode = mesh ?? (animatedMesh ? 'animated' : undefined);
-  const isInteractive = meshMode === 'animated' && variant === 'hero';
+  /** Cursor parallax on bottom CTA only — not the top hero panel. */
+  const isInteractive = meshMode === 'animated' && variant === 'hero' && !fill;
   const { panelRef, onPointerMove, onPointerLeave, active: pointerActive } =
     useInteractiveMeshPointer(isInteractive);
 
