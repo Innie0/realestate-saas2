@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import DashboardPage from '@/components/layout/DashboardPage';
-import PageToolbar from '@/components/layout/PageToolbar';
+import ListPageToolbar from '@/components/layout/ListPageToolbar';
 import Button from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import SearchInput from '@/components/ui/SearchInput';
@@ -92,27 +92,13 @@ export default function ProjectsPage() {
     <DashboardPage
       title="Projects"
       subtitle="Manage your property listing projects"
-      actions={
-        <Link data-tour="projects-new" href="/dashboard/projects/new">
-          <Button size="sm">
-            <Plus className="w-4 h-4 mr-2" />
-            New Project
-          </Button>
-        </Link>
-      }
     >
       {isLoading ? (
         <ProjectsPageContentSkeleton />
       ) : (
         <>
-      <PageToolbar
-        meta={
-          projects.length > 0
-            ? `Showing ${filteredProjects.length} of ${projects.length} projects`
-            : undefined
-        }
-      >
-        <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full">
+      <ListPageToolbar
+        search={
           <SearchInput
             data-tour="projects-search"
             placeholder="Search projects…"
@@ -120,20 +106,36 @@ export default function ProjectsPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
             containerClassName="flex-1"
           />
+        }
+        sort={
           <Select
             value={filterStatus}
             onChange={setFilterStatus}
             className="sm:min-w-[160px]"
             data-tour="projects-filter"
+            triggerClassName="py-2 text-[13px]"
             options={[
-              { value: 'all', label: 'All status' },
+              { value: 'all', label: 'Newest first' },
               { value: 'draft', label: 'Draft' },
               { value: 'in_progress', label: 'In progress' },
               { value: 'completed', label: 'Completed' },
             ]}
           />
-        </div>
-      </PageToolbar>
+        }
+        addButton={
+          <Link data-tour="projects-new" href="/dashboard/projects/new">
+            <Button size="sm" className="whitespace-nowrap">
+              <Plus className="size-4" />
+              New Project
+            </Button>
+          </Link>
+        }
+        meta={
+          projects.length > 0
+            ? `Showing ${filteredProjects.length} of ${projects.length} projects`
+            : undefined
+        }
+      />
 
       {filteredProjects.length > 0 ? (
         <StaggerList className="grid gap-[18px] [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">

@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     const { data: userData } = await supabase
       .from('users')
-      .select('subscription_plan, subscription_status')
+      .select('subscription_plan, subscription_status, subscription_current_period_end')
       .eq('id', user.id)
       .single();
 
@@ -33,6 +33,7 @@ export async function GET(request: NextRequest) {
       data: usage,
       plan,
       subscription_status: userData?.subscription_status ?? null,
+      subscription_current_period_end: userData?.subscription_current_period_end ?? null,
       hasAccess,
       hasProLeadTools,
     });

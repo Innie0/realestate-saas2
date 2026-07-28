@@ -10,34 +10,32 @@ import {
 } from 'react';
 import {
   DASHBOARD_THEME_STORAGE_KEY,
+  readStoredPreference,
+  resolveDashboardTheme,
   type DashboardTheme,
+  type DashboardThemePreference,
 } from '@/lib/dashboard-theme';
 
-export type { DashboardTheme };
+export type { DashboardTheme, DashboardThemePreference };
 
 type DashboardThemeContextValue = {
+  /** Resolved theme applied to the UI */
   theme: DashboardTheme;
+  /** Stored user preference (light / dark / system) */
+  preference: DashboardThemePreference;
+  setPreference: (preference: DashboardThemePreference) => void;
+  /** @deprecated Use setPreference instead */
   setTheme: (theme: DashboardTheme) => void;
+  /** @deprecated Use setPreference instead */
   toggleTheme: () => void;
 };
 
 const DashboardThemeContext = createContext<DashboardThemeContextValue | null>(null);
 
-function readStoredTheme(): DashboardTheme {
-  if (typeof window === 'undefined') return 'dark';
-  try {
-    return window.localStorage.getItem(DASHBOARD_THEME_STORAGE_KEY) === 'light'
-      ? 'light'
-      : 'dark';
-  } catch {
-    return 'dark';
-  }
-}
-
-/** Apply theme to <html> for CSS vars + first-paint background (see globals.css). */
-function applyDocumentTheme(theme: DashboardTheme) {
+function applyDocumentTheme(theme: DashboardTheme, preference: DashboardThemePreference) {
   if (typeof document === 'undefined') return;
   document.documentElement.setAttribute('data-dashboard-theme', theme);
+  document.documentElement.setAttribute('data-dashboard-theme-pref', preference);
 }
 
 function withThemeSwitchGuard(apply: () => void) {
@@ -48,7 +46,6 @@ function withThemeSwitchGuard(apply: () => void) {
   const root = document.documentElement;
   root.classList.add('dashboard-theme-switching');
   apply();
-  // Two frames so the browser commits the new tokens before transitions resume.
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       root.classList.remove('dashboard-theme-switching');
@@ -57,26 +54,41 @@ function withThemeSwitchGuard(apply: () => void) {
 }
 
 export function DashboardThemeProvider({ children }: { children: React.ReactNode }) {
-  // Match blocking script / localStorage on the client so hydration class is correct.
-  const [theme, setThemeState] = useState<DashboardTheme>(readStoredTheme);
+  const [preference, setPreferenceState] = useState<DashboardThemePreference>(readStoredPreference);
+  const [theme, setThemeState] = useState<DashboardTheme>(() => resolveDashboardTheme(readStoredPreference()));
 
-  // Keep <html> in sync (blocking script may already have set this on first paint).
   useEffect(() => {
-    applyDocumentTheme(theme);
-  }, [theme]);
+    applyDocumentTheme(theme, preference);
+  }, [theme, preference]);
 
-  // Only clear when leaving the dashboard — not on every theme change.
+  useEffect(() => {
+    if (preference !== 'system') return;
+
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange = () => {
+      const resolved = resolveDashboardTheme('system');
+      setThemeState(resolved);
+      applyDocumentTheme(resolved, 'system');
+    };
+
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, [preference]);
+
   useEffect(() => {
     return () => {
       document.documentElement.removeAttribute('data-dashboard-theme');
+      document.documentElement.removeAttribute('data-dashboard-theme-pref');
       document.documentElement.classList.remove('dashboard-theme-switching');
     };
   }, []);
 
-  const setTheme = useCallback((next: DashboardTheme) => {
+  const setPreference = useCallback((next: DashboardThemePreference) => {
     withThemeSwitchGuard(() => {
-      setThemeState(next);
-      applyDocumentTheme(next);
+      const resolved = resolveDashboardTheme(next);
+      setPreferenceState(next);
+      setThemeState(resolved);
+      applyDocumentTheme(resolved, next);
       try {
         window.localStorage.setItem(DASHBOARD_THEME_STORAGE_KEY, next);
       } catch {
@@ -85,24 +97,20 @@ export function DashboardThemeProvider({ children }: { children: React.ReactNode
     });
   }, []);
 
+  const setTheme = useCallback(
+    (next: DashboardTheme) => {
+      setPreference(next);
+    },
+    [setPreference],
+  );
+
   const toggleTheme = useCallback(() => {
-    withThemeSwitchGuard(() => {
-      setThemeState((prev) => {
-        const next: DashboardTheme = prev === 'dark' ? 'light' : 'dark';
-        applyDocumentTheme(next);
-        try {
-          window.localStorage.setItem(DASHBOARD_THEME_STORAGE_KEY, next);
-        } catch {
-          /* ignore */
-        }
-        return next;
-      });
-    });
-  }, []);
+    setPreference(theme === 'dark' ? 'light' : 'dark');
+  }, [setPreference, theme]);
 
   const value = useMemo(
-    () => ({ theme, setTheme, toggleTheme }),
-    [theme, setTheme, toggleTheme],
+    () => ({ theme, preference, setPreference, setTheme, toggleTheme }),
+    [theme, preference, setPreference, setTheme, toggleTheme],
   );
 
   return (

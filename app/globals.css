@@ -177,23 +177,23 @@ html.dashboard-theme-switching * {
   transition: none !important;
 }
 
-/* Light dashboard — warm cream canvas, black CTAs (inverse of Framer dark) */
+/* Light dashboard — warm neutral canvas, cobalt accent (matches landing) */
 html[data-dashboard-theme='light'],
 .theme-light {
   color-scheme: light;
-  --canvas: #faf7f2;
-  --surface: #fffcf7;
-  --sidebar: #f3f0ea;
-  --ink: #1c1c1a;
-  --brand: #0a0a0a;
-  --border: #e5e0d6;
+  --canvas: #faf8f5;
+  --surface: #ffffff;
+  --sidebar: #f7f6f4;
+  --ink: #111111;
+  --brand: #3548c7;
+  --border: #e8e4de;
   --brand-foreground: #ffffff;
   --champagne: #444039;
 
-  --gray-50: #faf7f2;
-  --gray-100: #f3f0ea;
+  --gray-50: #faf8f5;
+  --gray-100: #f3f0eb;
   --gray-150: #ebe6de;
-  --gray-200: #e5e0d6;
+  --gray-200: #e8e4de;
   --gray-300: #d4cfc4;
   --gray-400: #b8b2a8;
   --gray-450: #9a948a;
@@ -201,20 +201,26 @@ html[data-dashboard-theme='light'],
   --gray-600: #5c5650;
   --gray-700: #444039;
   --gray-800: #302c28;
-  --gray-900: #1c1c1a;
+  --gray-900: #111111;
   --gray-950: #111111;
 
-  /* Primary CTAs — black on light (inverse of white-on-dark brand scale) */
-  --brand-50: #f3f0ea;
-  --brand-100: #ebe6de;
-  --brand-200: #e5e0d6;
-  --brand-300: #999999;
-  --brand-400: #1a1a1a;
-  --brand-500: #0a0a0a;
-  --brand-600: #262626;
-  --brand-700: #444039;
+  /* Cobalt brand scale — primary actions & active states */
+  --brand-50: #eef1fc;
+  --brand-100: #dce2f9;
+  --brand-200: #b9c5f3;
+  --brand-300: #8fa0ea;
+  --brand-400: #4a62d9;
+  --brand-500: #3548c7;
+  --brand-600: #28348a;
+  --brand-700: #1f2868;
   --brand-800: #5c5650;
-  --brand-900: #8c8680;
+  --brand-900: #78726a;
+
+  --primary: #3548c7;
+  --primary-foreground: #ffffff;
+  --accent: #eef1fc;
+  --accent-foreground: #111111;
+  --ring: #4a62d9;
 
   /* Status chips on light chrome: soft tint bg + deep label (same families as dark) */
   --amber-50: #fffbeb;
@@ -286,11 +292,11 @@ html[data-dashboard-theme='light'],
 
 /* First paint / overscroll match stored dashboard theme before React mounts */
 html[data-dashboard-theme='light'] {
-  background-color: #faf7f2;
+  background-color: #faf8f5;
 }
 
 html[data-dashboard-theme='light'] body {
-  background-color: #faf7f2;
+  background-color: #faf8f5;
 }
 
 html[data-dashboard-theme='dark'] {

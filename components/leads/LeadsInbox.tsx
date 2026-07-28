@@ -21,7 +21,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import EmptyState from '@/components/ui/EmptyState';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/shadcn-tabs';
+import FilterSidebar from '@/components/layout/FilterSidebar';
+import { Flame } from 'lucide-react';
 import { nameAvatarClasses } from '@/lib/accent';
 import { cn } from '@/lib/utils';
 import {
@@ -203,31 +204,49 @@ export default function LeadsInbox({
   const selectedLead = filteredLeads.find((l) => l.id === selectedLeadId) ?? null;
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+      <FilterSidebar
+        title="Filters"
+        className="lg:sticky lg:top-24"
+        groups={[
+          {
+            id: 'temperature',
+            label: 'Temperature',
+            icon: Flame,
+            defaultOpen: true,
+            children: (
+              <div className="space-y-1" data-tour="leads-filter">
+                {(['all', 'hot', 'warm', 'cold'] as const).map((key) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => onFilterChange(key)}
+                    className={cn(
+                      'flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-[13px] font-medium transition-colors',
+                      filter === key
+                        ? 'bg-brand-50 text-brand-600'
+                        : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
+                    )}
+                  >
+                    <span className="capitalize">{key === 'all' ? 'All leads' : key}</span>
+                    <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold tabular-nums">
+                      {counts[key]}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ),
+          },
+        ]}
+      />
+
+      <div className="min-w-0 flex-1 space-y-4">
         <div>
           <h2 className="text-base font-semibold tracking-tight text-foreground">Inbox</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             New captures stay here until you add them to your CRM.
           </p>
         </div>
-        <Tabs
-          value={filter}
-          onValueChange={(v) => onFilterChange(v as TempFilter)}
-          data-tour="leads-filter"
-        >
-          <TabsList className="w-full sm:w-auto">
-            {(['all', 'hot', 'warm', 'cold'] as const).map((key) => (
-              <TabsTrigger key={key} value={key} className="gap-1.5 capitalize">
-                {key === 'all' ? 'All' : key}
-                <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-muted-foreground">
-                  {counts[key]}
-                </span>
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
-      </div>
 
       {filteredLeads.length === 0 ? (
         <EmptyState
@@ -316,6 +335,7 @@ export default function LeadsInbox({
           )}
         </div>
       )}
+      </div>
     </div>
   );
 }

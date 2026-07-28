@@ -12,7 +12,7 @@ import {
 import Button from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import DashboardPage from '@/components/layout/DashboardPage';
-import PageToolbar from '@/components/layout/PageToolbar';
+import ListPageToolbar from '@/components/layout/ListPageToolbar';
 import SearchInput from '@/components/ui/SearchInput';
 import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
@@ -76,21 +76,22 @@ export default function TransactionsPage() {
         <TransactionsPageContentSkeleton />
       ) : (
         <>
-      <PageToolbar
-        meta={filteredTransactions.length > 0 ? `${filteredTransactions.length} deal${filteredTransactions.length === 1 ? '' : 's'}` : undefined}
-      >
-        <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full">
+      <ListPageToolbar
+        search={
           <SearchInput
             placeholder="Search by address, buyer, or seller..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
+        }
+        sort={
           <Select
             value={statusFilter}
             onChange={setStatusFilter}
             className="sm:min-w-[180px]"
+            triggerClassName="py-2 text-[13px]"
             options={[
-              { value: 'open', label: 'In progress' },
+              { value: 'open', label: 'Newest first' },
               { value: 'all', label: 'All deals' },
               { value: 'active', label: 'Active' },
               { value: 'pending', label: 'Pending' },
@@ -100,14 +101,11 @@ export default function TransactionsPage() {
               { value: 'expired', label: 'Expired' },
             ]}
           />
-        </div>
-        <Link href="/dashboard/transactions/new" className="w-full sm:w-auto shrink-0">
-          <Button className="w-full sm:w-auto">
-            <Plus className="w-4 h-4 mr-2" />
-            New Transaction
-          </Button>
-        </Link>
-      </PageToolbar>
+        }
+        addHref="/dashboard/transactions/new"
+        addLabel="New Transaction"
+        meta={filteredTransactions.length > 0 ? `${filteredTransactions.length} deal${filteredTransactions.length === 1 ? '' : 's'}` : undefined}
+      />
 
       {error && (
         <div className="p-4 bg-red-50 rounded-xl text-red-700 text-sm">

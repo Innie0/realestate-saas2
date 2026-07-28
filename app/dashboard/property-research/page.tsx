@@ -7,7 +7,9 @@ import DashboardPage from '@/components/layout/DashboardPage';
 import Button from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import Select from '@/components/ui/Select';
+import AiSearchHero from '@/components/ui/AiSearchHero';
 import EmptyState from '@/components/ui/EmptyState';
+import FilterSidebar from '@/components/layout/FilterSidebar';
 import DataLoadingState from '@/components/dashboard/DataLoadingState';
 import { PropertyResearchPageLoading } from '@/components/dashboard/page-loading';
 import PanelHeader from '@/components/ui/PanelHeader';
@@ -303,81 +305,105 @@ function PropertyResearchContent() {
     >
       {/* Search form — only shown before a search has been run */}
       {!researchSearched && (
-        <Card data-tour="research-search" className="p-5 sm:p-6">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-[12.5px] font-medium text-gray-700 mb-1.5">Street address *</label>
-              <div className="relative">
-                <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
-                <input
-                  type="text"
-                  value={street}
-                  onChange={(e) => setStreet(e.target.value)}
-                  placeholder="e.g. 123 W Main Street"
-                  className={`${inputClass} pl-10 pr-4 py-2.5 text-[14px]`}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div>
-                <label className="block text-[12.5px] font-medium text-gray-700 mb-1.5">City</label>
-                <input
-                  type="text"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  placeholder="Austin"
-                  className={`${inputClass} px-3 py-2.5`}
-                />
-              </div>
-              <div>
-                <Select
-                  label="State *"
-                  value={state}
-                  onChange={setState}
-                  placeholder="Select state"
-                  triggerClassName={`${inputClass} py-2.5`}
-                  options={[
-                    { value: '', label: 'Select state' },
-                    ...US_STATES.map((s) => ({ value: s.value, label: s.label })),
-                  ]}
-                />
-              </div>
-              <div>
-                <label className="block text-[12.5px] font-medium text-gray-700 mb-1.5">ZIP</label>
-                <input
-                  type="text"
-                  value={zip}
-                  onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
-                  placeholder="93291"
-                  className={`${inputClass} px-3 py-2.5`}
-                />
-              </div>
-            </div>
-            <p className="text-[12px] text-gray-600">
-              Demo: 123 W Main Street, Austin, TX — sample owner + CMA (no real PII).
-            </p>
-            <div className="flex flex-wrap items-center gap-3">
-              <Button
-                type="button"
-                onClick={handleResearchAddress}
-                disabled={!street.trim() || !state || lookupLoading}
-                className="inline-flex items-center gap-2"
-              >
-                {lookupLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-                {lookupLoading ? 'Researching…' : 'Research address'}
-              </Button>
-              {(street || city || state || zip) && (
-                <button
-                  type="button"
-                  onClick={clearForm}
-                  className="flex items-center gap-1.5 px-3 py-2 text-[13px] text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  <X className="w-4 h-4" /> Clear
-                </button>
-              )}
-            </div>
-          </div>
-        </Card>
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+          <FilterSidebar
+            title="Filters"
+            className="lg:sticky lg:top-24"
+            groups={[
+              {
+                id: 'location',
+                label: 'Location',
+                icon: MapPin,
+                defaultOpen: true,
+                children: (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="mb-1 block text-[11px] font-medium text-muted-foreground">City</label>
+                      <input
+                        type="text"
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        placeholder="Austin"
+                        className={`${inputClass} px-3 py-2`}
+                      />
+                    </div>
+                    <div>
+                      <Select
+                        label="State *"
+                        value={state}
+                        onChange={setState}
+                        placeholder="Select state"
+                        triggerClassName={`${inputClass} py-2`}
+                        options={[
+                          { value: '', label: 'Select state' },
+                          ...US_STATES.map((s) => ({ value: s.value, label: s.label })),
+                        ]}
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-[11px] font-medium text-muted-foreground">ZIP</label>
+                      <input
+                        type="text"
+                        value={zip}
+                        onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
+                        placeholder="78701"
+                        className={`${inputClass} px-3 py-2`}
+                      />
+                    </div>
+                  </div>
+                ),
+              },
+              {
+                id: 'history',
+                label: 'Recent searches',
+                icon: History,
+                defaultOpen: history.length > 0,
+                children: history.length === 0 ? (
+                  <p className="text-[12px] text-muted-foreground">No recent searches</p>
+                ) : (
+                  <div className="space-y-1">
+                    {history.map((entry) => (
+                      <button
+                        key={entry.id}
+                        type="button"
+                        onClick={() => loadHistory(entry)}
+                        className="w-full rounded-lg px-2 py-1.5 text-left text-[12px] text-foreground hover:bg-muted/50"
+                      >
+                        {entry.label}
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={clearHistory}
+                      className="mt-1 flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground"
+                    >
+                      <Trash2 className="size-3" /> Clear history
+                    </button>
+                  </div>
+                ),
+              },
+            ]}
+          />
+
+          <Card data-tour="research-search" className="min-w-0 flex-1 border-border p-0 shadow-none">
+            <AiSearchHero
+              headline="Start your property research with AI"
+              description="Enter an address to look up owners, property details, and run a comp-based CMA."
+              placeholder="e.g. 123 W Main Street, Austin, TX"
+              value={street}
+              onChange={setStreet}
+              onSubmit={handleResearchAddress}
+              actionLabel="Research"
+              loading={lookupLoading}
+              disabled={!state}
+              footer={
+                <p className="text-center text-[12px] text-muted-foreground">
+                  Demo: 123 W Main Street, Austin, TX — sample owner + CMA (no real PII).
+                </p>
+              }
+            />
+          </Card>
+        </div>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-5">

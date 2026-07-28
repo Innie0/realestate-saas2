@@ -5,15 +5,16 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  LayoutDashboard, FolderKanban, Calendar, User, LogOut, Users, FileText,
+  LayoutDashboard, FolderKanban, Calendar, LogOut, Users, FileText,
   Menu, X, ChevronsLeft, ChevronsRight, Search, Inbox, Sparkles, ChevronDown, Megaphone,
-  Sun, Moon,
+  Settings,
 } from 'lucide-react';
 import clsx from 'clsx';
 import { signOut, getCurrentUser } from '@/lib/supabase';
 import { prefetchDashboardRoute } from '@/lib/dashboard-prefetch';
 import { useToast } from '@/components/providers/ToastProvider';
 import { useDashboardTheme } from '@/components/providers/DashboardThemeProvider';
+import ThemePillToggle from '@/components/ui/ThemePillToggle';
 import { useCommandPalette } from '@/components/search/CommandPalette';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
@@ -88,15 +89,17 @@ function NavLink({
       onFocus={() => onPrefetch(item.href)}
       title={isCollapsed ? item.name : undefined}
       className={clsx(
-        'group relative flex items-center rounded-md text-[13px] font-medium transition-colors duration-100',
-        isCollapsed ? 'justify-center px-2 py-2' : 'gap-[9px] px-2.5 py-[6px]',
-        active ? 'bg-accent text-foreground' : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground',
+        'group relative flex items-center rounded-lg text-[13px] font-medium transition-colors duration-100',
+        isCollapsed ? 'justify-center px-2 py-2' : 'gap-2.5 px-2.5 py-[7px]',
+        active
+          ? 'bg-brand-50 text-brand-600'
+          : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
       )}
     >
       <Icon
         className={clsx(
           'relative z-10 h-[14px] w-[14px] flex-shrink-0',
-          active ? 'text-foreground' : 'text-muted-foreground'
+          active ? 'text-brand-600' : 'text-muted-foreground'
         )}
         strokeWidth={1.8}
       />
@@ -114,7 +117,7 @@ function NavLink({
         </span>
       )}
       {isCollapsed && (
-        <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-gray-900 ring-1 ring-gray-900 text-white text-xs font-medium rounded-md whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none transition-all duration-150 z-50">
+        <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-lg whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none transition-all duration-150 z-50 shadow-md">
           {item.name}
         </div>
       )}
@@ -127,7 +130,7 @@ export default function Sidebar() {
   const router = useRouter();
   const toast = useToast();
   const { open: openCommandPalette } = useCommandPalette();
-  const { theme, toggleTheme } = useDashboardTheme();
+  const { preference, setPreference } = useDashboardTheme();
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -289,7 +292,7 @@ export default function Sidebar() {
           {navGroups.map((group) => (
             <div key={group.label} className={clsx('mb-[18px] last:mb-2', isCollapsed && 'mb-3')}>
               {!isCollapsed && (
-                <p className="px-2.5 mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                <p className="px-2.5 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground/80">
                   {group.label}
                 </p>
               )}
@@ -312,53 +315,64 @@ export default function Sidebar() {
 
         <div className="relative border-t border-border p-2.5" ref={userMenuRef}>
           {isUserMenuOpen && !isCollapsed && (
-            <div className="absolute bottom-full left-2.5 right-2.5 mb-1.5 overflow-hidden rounded-[8px] border border-border bg-[var(--surface)] py-1 shadow-overlay">
-              <Link
-                href="/dashboard/account"
-                onClick={() => {
-                  setIsUserMenuOpen(false);
-                  closeMobile();
-                }}
-                className="flex items-center gap-2.5 px-3 py-[7px] text-[13px] font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-              >
-                <User className="h-[14px] w-[14px]" strokeWidth={1.8} />
-                Account
-              </Link>
-              <button
-                type="button"
-                onClick={toggleTheme}
-                className="flex w-full items-center gap-2.5 px-3 py-[7px] text-[13px] font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-              >
-                {theme === 'dark' ? (
-                  <Sun className="h-[14px] w-[14px]" strokeWidth={1.8} />
-                ) : (
-                  <Moon className="h-[14px] w-[14px]" strokeWidth={1.8} />
-                )}
-                {theme === 'dark' ? 'Light mode' : 'Dark mode'}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsUserMenuOpen(false);
-                  setShowSignOutModal(true);
-                }}
-                disabled={isSigningOut}
-                className="flex w-full items-center gap-2.5 px-3 py-[7px] text-[13px] font-medium text-muted-foreground hover:bg-rose-50 hover:text-rose-600 disabled:opacity-50"
-              >
-                <LogOut className="h-[14px] w-[14px]" strokeWidth={1.8} />
-                Sign out
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsUserMenuOpen(false);
-                  toggleCollapsed();
-                }}
-                className="hidden w-full items-center gap-2.5 px-3 py-[7px] text-[13px] font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground lg:flex"
-              >
-                <ChevronsLeft className="h-[14px] w-[14px]" strokeWidth={1.8} />
-                Collapse sidebar
-              </button>
+            <div className="absolute bottom-full left-2.5 right-2.5 mb-1.5 overflow-hidden rounded-xl border border-border bg-card py-2 shadow-overlay">
+              <div className="border-b border-border px-3.5 py-3">
+                <div className="flex items-center gap-2.5">
+                  <span
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-500 text-[11px] font-semibold text-white"
+                  >
+                    {initials}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="truncate text-[13px] font-semibold text-foreground">{userName || 'Your account'}</p>
+                    <p className="truncate text-[11px] text-muted-foreground">{userEmail}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="px-2 py-1">
+                <ThemePillToggle value={preference} onChange={setPreference} className="px-1 py-2" />
+              </div>
+
+              <div className="border-t border-border px-1 py-1">
+                <Link
+                  href="/dashboard/account"
+                  onClick={() => {
+                    setIsUserMenuOpen(false);
+                    closeMobile();
+                  }}
+                  className="flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                >
+                  <Settings className="h-[14px] w-[14px]" strokeWidth={1.8} />
+                  Settings
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsUserMenuOpen(false);
+                    setShowSignOutModal(true);
+                  }}
+                  disabled={isSigningOut}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium text-muted-foreground hover:bg-rose-50 hover:text-rose-600 disabled:opacity-50"
+                >
+                  <LogOut className="h-[14px] w-[14px]" strokeWidth={1.8} />
+                  Log out
+                </button>
+              </div>
+
+              <div className="hidden border-t border-border px-1 py-1 lg:block">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsUserMenuOpen(false);
+                    toggleCollapsed();
+                  }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                >
+                  <ChevronsLeft className="h-[14px] w-[14px]" strokeWidth={1.8} />
+                  Collapse sidebar
+                </button>
+              </div>
             </div>
           )}
           <button
@@ -370,8 +384,7 @@ export default function Sidebar() {
             )}
           >
             <span
-              className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full text-[10px] font-semibold text-white"
-              style={{ background: 'linear-gradient(135deg, #1c1c1a, #4a4a4e)' }}
+              className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full bg-brand-500 text-[10px] font-semibold text-white"
             >
               {initials}
             </span>

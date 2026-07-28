@@ -802,10 +802,10 @@ function TasksPageContent() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-brand-200/80 bg-brand-50 mb-5">
                   <Sparkles className="w-5 h-5 text-brand-600" strokeWidth={1.75} />
                 </div>
-                <h2 className="font-display text-[22px] font-medium tracking-[-0.02em] text-gray-900">
-                  How can I help you today?
+                <h2 className="font-display text-2xl font-medium tracking-[-0.02em] text-foreground">
+                  Start your conversation with AI
                 </h2>
-                <p className="text-[13.5px] text-gray-700 mt-2 max-w-md leading-relaxed">
+                <p className="text-sm text-muted-foreground mt-2 max-w-md leading-relaxed">
                   Ask about listings, follow-ups, social posts, or upload a photo or PDF for analysis.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full max-w-xl mt-8">

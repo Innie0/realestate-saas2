@@ -13,6 +13,7 @@ import {
   getClientStage,
 } from '@/lib/client-crm-display';
 import StaggerList, { StaggerItem } from '@/components/motion/StaggerList';
+import StatusPill from '@/components/ui/StatusPill';
 import { Card } from '@/components/ui/Card';
 import {
   Table,
@@ -28,11 +29,11 @@ interface ClientsTableProps {
 
 export default function ClientsTable({ clients }: ClientsTableProps) {
   return (
-    <Card className="overflow-hidden p-0">
+    <Card className="overflow-hidden border-border p-0 shadow-none">
       <div className="overflow-x-auto">
         <Table className="min-w-[760px]">
           <TableHeader>
-            <TableRow>
+            <TableRow className="hover:bg-transparent">
               {['Client', 'Interest', 'Stage', 'Last contact', 'Next follow-up'].map((heading) => (
                 <TableHead key={heading}>{heading}</TableHead>
               ))}
@@ -57,7 +58,7 @@ export default function ClientsTable({ clients }: ClientsTableProps) {
                         {getClientInitials(client.name) || '?'}
                       </div>
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-foreground transition-colors group-hover/link:text-foreground">
+                        <p className="truncate text-sm font-semibold text-foreground transition-colors group-hover/link:text-brand-600">
                           {client.name}
                         </p>
                         <p className="truncate text-xs text-muted-foreground">{client.email || client.phone || '—'}</p>
@@ -71,12 +72,16 @@ export default function ClientsTable({ clients }: ClientsTableProps) {
                     )}
                   </TableCell>
                   <TableCell>
-                    <span
-                      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${stageStyle.className}`}
-                    >
-                      <span className={`size-1.5 rounded-full ${stageStyle.dotClassName}`} />
-                      {stageStyle.label}
-                    </span>
+                    {stage === 'active' ? (
+                      <StatusPill tone="active">{stageStyle.label}</StatusPill>
+                    ) : (
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${stageStyle.className}`}
+                      >
+                        <span className={`size-1.5 rounded-full ${stageStyle.dotClassName}`} />
+                        {stageStyle.label}
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">

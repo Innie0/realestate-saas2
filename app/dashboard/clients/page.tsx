@@ -9,7 +9,7 @@ import ReminderForm from '@/components/ReminderForm';
 import Button from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import DashboardPage from '@/components/layout/DashboardPage';
-import PageToolbar from '@/components/layout/PageToolbar';
+import ListPageToolbar from '@/components/layout/ListPageToolbar';
 import SearchInput from '@/components/ui/SearchInput';
 import Select from '@/components/ui/Select';
 import EmptyState from '@/components/ui/EmptyState';
@@ -284,12 +284,6 @@ export default function ClientsPage() {
     <DashboardPage
       title="Clients"
       subtitle={subtitle}
-      actions={
-        <Button data-tour="clients-add" onClick={() => setShowCreateForm(true)} size="sm">
-          <Plus className="w-4 h-4 mr-2" />
-          New Client
-        </Button>
-      }
     >
       <Modal isOpen={showCreateForm} onClose={() => setShowCreateForm(false)} title="New Client" size="md">
         <ClientForm
@@ -303,14 +297,8 @@ export default function ClientsPage() {
         <ClientsPageContentSkeleton />
       ) : (
         <>
-      <PageToolbar
-        meta={
-          sortedClients.length > 0
-            ? `Showing ${showingFrom}–${showingTo} of ${sortedClients.length} client${sortedClients.length === 1 ? '' : 's'}${statusTab !== 'all' || searchQuery ? ` (${totalCount} total)` : ''}`
-            : undefined
-        }
-      >
-        <div className="flex flex-col lg:flex-row lg:items-center gap-3 flex-1 w-full">
+      <ListPageToolbar
+        search={
           <SearchInput
             data-tour="clients-search"
             placeholder="Search name, email, phone…"
@@ -318,8 +306,9 @@ export default function ClientsPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
             containerClassName="lg:max-w-md"
           />
-
-          <div className="flex flex-wrap items-center gap-2 lg:ml-auto">
+        }
+        filters={
+          <div className="flex flex-wrap items-center gap-2">
             <div data-tour="clients-filter">
               <SegmentedControl
                 layoutId="clients-status-filter"
@@ -328,19 +317,6 @@ export default function ClientsPage() {
                 onChange={setStatusTab}
               />
             </div>
-
-            <Select
-              value={sortKey}
-              onChange={(value) => setSortKey(value as ClientSortKey)}
-              className="w-[152px]"
-              triggerClassName="py-2 text-[13px]"
-              options={[
-                { value: 'followup', label: 'Sort: Follow-up' },
-                { value: 'name', label: 'Sort: Name' },
-                { value: 'last_contact', label: 'Sort: Last contact' },
-              ]}
-            />
-
             <SegmentedControl
               layoutId="clients-view-mode"
               segments={[
@@ -351,8 +327,32 @@ export default function ClientsPage() {
               onChange={setViewMode}
             />
           </div>
-        </div>
-      </PageToolbar>
+        }
+        sort={
+          <Select
+            value={sortKey}
+            onChange={(value) => setSortKey(value as ClientSortKey)}
+            className="w-[152px]"
+            triggerClassName="py-2 text-[13px]"
+            options={[
+              { value: 'followup', label: 'Newest first' },
+              { value: 'name', label: 'Sort: Name' },
+              { value: 'last_contact', label: 'Sort: Last contact' },
+            ]}
+          />
+        }
+        addButton={
+          <Button data-tour="clients-add" size="sm" onClick={() => setShowCreateForm(true)} className="whitespace-nowrap">
+            <Plus className="size-4" />
+            New Client
+          </Button>
+        }
+        meta={
+          sortedClients.length > 0
+            ? `Showing ${showingFrom}–${showingTo} of ${sortedClients.length} client${sortedClients.length === 1 ? '' : 's'}${statusTab !== 'all' || searchQuery ? ` (${totalCount} total)` : ''}`
+            : undefined
+        }
+      />
 
       {sortedClients.length === 0 ? (
         <Card className="p-0">

@@ -11,22 +11,21 @@ export type BadgeVariant =
   | 'neutral'
   | 'graphite'
   | 'info'
-  | 'ad';
+  | 'ad'
+  | 'active';
 
 const variantStyles: Record<BadgeVariant, string> = {
-  default: 'bg-gray-100 text-gray-700 border-gray-200',
+  default: 'bg-muted text-muted-foreground border-border',
   hot: 'bg-rose-50 text-rose-700 border-rose-200',
   warm: 'bg-amber-50 text-amber-700 border-amber-200',
   cold: 'bg-sky-50 text-sky-700 border-sky-200',
-  pro: 'bg-brand-100 text-gray-900 border-brand-200',
+  pro: 'bg-brand-50 text-brand-600 border-brand-200',
   success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  neutral: 'bg-gray-50 text-gray-600 border-gray-200',
-  // Solid brand-tint pill, no border (e.g. "Under contract").
-  graphite: 'bg-brand-100 text-gray-900 border-transparent',
-  // Teal "active" pill — theme-aware via CSS vars.
+  neutral: 'bg-muted text-muted-foreground border-border',
+  graphite: 'bg-brand-50 text-brand-600 border-transparent',
   info: 'bg-teal-50 text-teal-700 border-teal-200',
-  // Paid-ad / Meta source chip.
   ad: 'bg-sky-50 text-sky-700 border-sky-200',
+  active: 'bg-brand-500 text-white border-transparent',
 }
 
 interface BadgeProps {

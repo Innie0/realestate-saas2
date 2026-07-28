@@ -29,7 +29,7 @@ interface SegmentedControlProps<T extends string> {
 }
 
 const ACTIVE_PILL =
-  'absolute inset-0 rounded-md border border-border bg-card shadow-sm dark:bg-gray-200 dark:shadow-none';
+  'absolute inset-0 rounded-md border border-border bg-card shadow-sm';
 
 const sizeStyles = {
   sm: {
