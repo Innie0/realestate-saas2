@@ -131,6 +131,7 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
             elevated="hero"
             fill
             interactive={false}
+            animatedHeroGradient
             innerClassName="flex flex-1 flex-col px-5 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-12"
           >
             <div className="flex flex-1 flex-col items-center justify-center">

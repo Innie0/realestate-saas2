@@ -524,6 +524,37 @@ html[data-dashboard-theme='light'] .dashboard-root,
     background-image: var(--mkt-cobalt-gradient-feature);
   }
 
+  /* Landing hero only — animated CSS gradient layer (.hero-gradient-bg) */
+  .marketing-root .landing-gradient-panel.hero-has-animated-gradient {
+    background-color: transparent;
+    background-image: none;
+  }
+
+  .marketing-root .hero-gradient-bg {
+    background-color: #6b8af0;
+    background-image: linear-gradient(155deg, #5b74e8 0%, #9eb8ff 100%);
+    background-size: 400% 400%;
+    background-position: 0% 50%;
+    animation: hero-gradient-drift 18s ease-in-out infinite alternate;
+  }
+
+  @keyframes hero-gradient-drift {
+    from {
+      background-position: 0% 50%;
+    }
+    to {
+      background-position: 100% 50%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marketing-root .hero-gradient-bg {
+      animation: none;
+      background-size: 100% 100%;
+      background-position: 50% 50%;
+    }
+  }
+
   .marketing-root .landing-gradient-panel--interactive.landing-gradient-hero {
     background-color: #6b8af0;
     background-image: var(--mkt-cobalt-gradient-feature);

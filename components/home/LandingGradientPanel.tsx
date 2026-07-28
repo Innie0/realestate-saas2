@@ -47,6 +47,8 @@ type LandingGradientPanelProps = {
   fill?: boolean;
   /** Cursor-reactive mesh parallax + glow */
   interactive?: boolean;
+  /** Slow CSS gradient drift — landing hero only */
+  animatedHeroGradient?: boolean;
 };
 
 const RADIUS = 'rounded-[2rem] sm:rounded-[2.5rem] lg:rounded-[3rem]';
@@ -63,6 +65,7 @@ export default function LandingGradientPanel({
   elevated = 'default',
   fill = false,
   interactive = false,
+  animatedHeroGradient = false,
 }: LandingGradientPanelProps) {
   const meshMode = mesh ?? (animatedMesh ? 'animated' : undefined);
   const isInteractive = Boolean(interactive && meshMode === 'animated');
@@ -93,9 +96,13 @@ export default function LandingGradientPanel({
           meshMode && 'landing-gradient-panel--mesh',
           useMeshTexture && 'landing-gradient-panel--mesh-image',
           meshMode && !useMeshTexture && 'landing-gradient-panel--mesh-css',
+          animatedHeroGradient && 'hero-has-animated-gradient',
           isInteractive && 'landing-gradient-panel--interactive',
         )}
       >
+        {animatedHeroGradient ? (
+          <div className="hero-gradient-bg pointer-events-none absolute inset-0 z-0" aria-hidden />
+        ) : null}
         {meshMode ? (
           <>
             {useMeshTexture ? (
