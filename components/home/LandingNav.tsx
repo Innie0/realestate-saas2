@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
 import clsx from 'clsx';
-import ProductsMegaMenu from '@/components/marketing/ProductsMegaMenu';
-import MarketingButton from '@/components/marketing/MarketingButton';
+import MarketingHeaderNav from '@/components/marketing/MarketingHeaderNav';
 import { ensureGsapRegistered, gsap, landingRevealDefaults, useGSAP } from '@/lib/gsap-config';
 import { useMotionReduced } from '@/lib/motion';
 
@@ -48,8 +46,8 @@ export default function LandingNav() {
   );
 
   return (
-    <nav
-      ref={navRef}
+    <header
+      ref={navRef as React.RefObject<HTMLElement>}
       className={clsx(
         'fixed inset-x-0 top-0 z-[60] border-b bg-mkt-background transition-[transform,border-color] duration-300 ease-out',
         menuOpen ? 'border-[rgba(17,17,17,0.14)]' : 'border-mkt-border',
@@ -57,34 +55,10 @@ export default function LandingNav() {
       )}
     >
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
-        <div className="flex h-16 items-center justify-between gap-4 sm:h-[4.5rem]">
-          <Link
-            href="/"
-            className="truncate text-[1.05rem] font-medium tracking-[-0.02em] text-mkt-foreground transition-opacity hover:opacity-70 sm:text-lg"
-          >
-            Oikaro
-          </Link>
-
-          <div className="flex shrink-0 items-center gap-2 sm:gap-2.5">
-            <ProductsMegaMenu onOpenChange={setMenuOpen} />
-            <Link
-              href="/pricing"
-              className="hidden px-2 py-2 text-sm font-medium text-mkt-secondary transition-opacity hover:opacity-70 md:inline-flex"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/auth/login"
-              className="hidden px-2 py-2 text-sm font-medium text-mkt-secondary transition-opacity hover:opacity-70 md:inline-flex"
-            >
-              Sign in
-            </Link>
-            <MarketingButton href="/auth/signup" variant="dark" size="md" className="hidden sm:inline-flex">
-              Start free trial
-            </MarketingButton>
-          </div>
+        <div className="flex h-16 items-center sm:h-[4.5rem]">
+          <MarketingHeaderNav onProductsMenuChange={setMenuOpen} />
         </div>
       </div>
-    </nav>
+    </header>
   );
 }

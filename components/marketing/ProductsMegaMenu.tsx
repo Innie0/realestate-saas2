@@ -164,7 +164,7 @@ export default function ProductsMegaMenu({ onOpenChange }: ProductsMegaMenuProps
       >
         <button
           type="button"
-          className={`inline-flex items-center gap-1 px-2 py-2 text-sm transition-colors sm:gap-1.5 ${
+          className={`inline-flex items-center gap-1 px-3 py-2 text-sm transition-colors sm:gap-1.5 ${
             open ? 'font-semibold text-mkt-accent' : 'font-medium text-mkt-secondary hover:opacity-70'
           }`}
           aria-expanded={open}
