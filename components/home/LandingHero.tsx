@@ -138,11 +138,7 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
                 data-hero-headline
                 className="font-display text-[clamp(2.35rem,6vw,4.5rem)] font-extrabold leading-[1.02] tracking-[-0.045em] text-white"
               >
-                Run Your Business{' '}
-                <span className="inline-block" aria-hidden>
-                  ⚡
-                </span>{' '}
-                with Oikaro
+                Run Your Business with Oikaro
               </h1>
 
               <p
