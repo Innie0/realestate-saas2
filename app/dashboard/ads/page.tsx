@@ -3,11 +3,12 @@
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
+import FilterSidebar from '@/components/layout/FilterSidebar';
 import PanelHeader from '@/components/ui/PanelHeader';
 import { Card } from '@/components/ui/Card';
 import AdsConnectionsPanel from '@/components/ads/AdsConnectionsPanel';
 import WizardShell from '@/components/ads/wizard/WizardShell';
-import PerformanceDashboard from '@/components/ads/PerformanceDashboard';
+import PerformanceDashboard, { ADS_DATE_RANGES } from '@/components/ads/PerformanceDashboard';
 import AIInsightsFeed from '@/components/ads/AIInsightsFeed';
 import AdDetailView from '@/components/ads/AdDetailView';
 import OptimizeAdFlow from '@/components/ads/OptimizeAdFlow';
@@ -15,9 +16,11 @@ import { useApi } from '@/lib/swr';
 import { isAdAccountReady } from '@/lib/ads/connection-status';
 import type { AdPlatform, AdPlatformConnection, AdPromotion } from '@/lib/ads/types';
 import type { AIInsight, PerformanceDashboardData } from '@/lib/ads/performance-types';
+import { AD_TYPE_OPTIONS } from '@/lib/ads/ad-type-config';
 import clsx from 'clsx';
 import { AdsPageContentSkeleton } from '@/components/dashboard/page-loading';
-import { BarChart3, ChevronDown, Megaphone, PenLine } from 'lucide-react';
+import { BarChart3, Calendar, Filter, Megaphone, PenLine, Tag } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 type AdsTab = 'create' | 'performance';
 
@@ -41,7 +44,6 @@ function AdsPageContent() {
   const [connecting, setConnecting] = useState<AdPlatform | null>(null);
   const [disconnecting, setDisconnecting] = useState<AdPlatform | null>(null);
   const [refreshingConnection, setRefreshingConnection] = useState<AdPlatform | null>(null);
-  const [showAccounts, setShowAccounts] = useState(false);
   const [pageMessage, setPageMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(
     null
   );
@@ -94,13 +96,11 @@ function AdsPageContent() {
           type: 'error',
           text: 'Google signed in, but we could not verify an ads account. Create one at ads.google.com with this email, then click “Check again” under Ad accounts.',
         });
-        setShowAccounts(true);
       } else {
         setPageMessage({
           type: 'error',
           text: 'Google signed in, but no Google Ads account exists on this login yet. Create one at ads.google.com, then click “Check again” under Ad accounts.',
         });
-        setShowAccounts(true);
       }
       void mutateConnections();
     } else if (connected === 'meta') {
@@ -111,7 +111,6 @@ function AdsPageContent() {
           type: 'error',
           text: 'Meta signed in, but no ad account was found. Create one in Meta Ads Manager, add billing, then click “Check again” under Ad accounts.',
         });
-        setShowAccounts(true);
       }
       void mutateConnections();
     } else if (error) {
@@ -281,15 +280,15 @@ function AdsPageContent() {
         <AdsPageContentSkeleton />
       ) : (
         <>
-      <div className="flex gap-1 p-1 rounded-[10px] bg-[var(--canvas)] border border-[var(--border)] w-fit">
+      <div className="flex gap-1 rounded-lg border border-border bg-muted/40 p-1 w-fit">
         <button
           type="button"
           onClick={() => setTab('create')}
           className={clsx(
-            'inline-flex items-center gap-1.5 rounded-[8px] px-4 py-2 text-[13px] font-medium transition-colors',
+            'inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-[13px] font-medium transition-colors',
             tab === 'create'
               ? 'bg-brand-500 text-[var(--brand-foreground)]'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-[var(--surface)]',
+              : 'text-muted-foreground hover:bg-card hover:text-foreground',
           )}
         >
           <PenLine className="h-3.5 w-3.5" />
@@ -299,10 +298,10 @@ function AdsPageContent() {
           type="button"
           onClick={() => setTab('performance')}
           className={clsx(
-            'inline-flex items-center gap-1.5 rounded-[8px] px-4 py-2 text-[13px] font-medium transition-colors',
+            'inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-[13px] font-medium transition-colors',
             tab === 'performance'
               ? 'bg-brand-500 text-[var(--brand-foreground)]'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-[var(--surface)]',
+              : 'text-muted-foreground hover:bg-card hover:text-foreground',
           )}
         >
           <BarChart3 className="h-3.5 w-3.5" />
@@ -311,60 +310,178 @@ function AdsPageContent() {
       </div>
 
       {tab === 'create' ? (
-        <WizardShell
-          initialProjectId={promoteProjectId}
-          metaConnected={metaConnected}
-          metaReady={metaReady}
-          googleConnected={googleConnected}
-          googleReady={googleReady}
-          onConnectMeta={() => void handleConnect('meta')}
-          connectingMeta={connecting === 'meta'}
-          onLaunched={() => {
-            void mutatePromotions();
-            setTab('performance');
-          }}
-          onMessage={setPageMessage}
-        />
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+          <FilterSidebar
+            title="Filters"
+            className="lg:sticky lg:top-24"
+            groups={[
+              {
+                id: 'accounts',
+                label: 'Ad accounts',
+                icon: Megaphone,
+                defaultOpen: true,
+                children: (
+                  <div className="space-y-3">
+                    <p className="text-[12px] leading-relaxed text-muted-foreground">
+                      Connect Meta to publish ads. Google is optional for reporting.
+                    </p>
+                    <AdsConnectionsPanel
+                      connections={connections ?? []}
+                      connecting={connecting}
+                      disconnecting={disconnecting}
+                      refreshing={refreshingConnection}
+                      onConnect={handleConnect}
+                      onDisconnect={handleDisconnect}
+                      onRefresh={handleRefreshConnection}
+                    />
+                  </div>
+                ),
+              },
+            ]}
+          />
+          <div className="min-w-0 flex-1">
+            <WizardShell
+              initialProjectId={promoteProjectId}
+              metaConnected={metaConnected}
+              metaReady={metaReady}
+              googleConnected={googleConnected}
+              googleReady={googleReady}
+              onConnectMeta={() => void handleConnect('meta')}
+              connectingMeta={connecting === 'meta'}
+              onLaunched={() => {
+                void mutatePromotions();
+                setTab('performance');
+              }}
+              onMessage={setPageMessage}
+            />
+          </div>
+        </div>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,1fr)]">
-          <div className="space-y-5">
-            <Card className="overflow-hidden">
-              <PanelHeader
-                title="Campaign performance"
-                meta={performance?.ads.length ? `${performance.ads.length} ads` : undefined}
-              />
-              <div className="p-4 sm:p-5">
-                <PerformanceDashboard
-                  data={performance ?? null}
-                  loading={performanceLoading}
-                  selectedAdId={selectedAdId}
-                  onSelectAd={setSelectedAdId}
-                  onFilterChange={({ adType, days }) => {
-                    setPerfAdType(adType);
-                    setPerfDays(days);
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+          <FilterSidebar
+            title="Filters"
+            className="lg:sticky lg:top-24"
+            groups={[
+              {
+                id: 'date-range',
+                label: 'Date range',
+                icon: Calendar,
+                defaultOpen: true,
+                children: (
+                  <div className="space-y-1">
+                    {ADS_DATE_RANGES.map((range) => (
+                      <button
+                        key={range.days}
+                        type="button"
+                        onClick={() => setPerfDays(range.days)}
+                        className={cn(
+                          'flex w-full items-center rounded-lg px-2.5 py-2 text-[13px] font-medium transition-colors',
+                          perfDays === range.days
+                            ? 'bg-brand-50 text-brand-600'
+                            : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
+                        )}
+                      >
+                        {range.label}
+                      </button>
+                    ))}
+                  </div>
+                ),
+              },
+              {
+                id: 'ad-type',
+                label: 'Ad type',
+                icon: Tag,
+                defaultOpen: true,
+                children: (
+                  <div className="space-y-1">
+                    <button
+                      type="button"
+                      onClick={() => setPerfAdType('')}
+                      className={cn(
+                        'flex w-full items-center rounded-lg px-2.5 py-2 text-[13px] font-medium transition-colors',
+                        perfAdType === ''
+                          ? 'bg-brand-50 text-brand-600'
+                          : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
+                      )}
+                    >
+                      All ad types
+                    </button>
+                    {AD_TYPE_OPTIONS.map((option) => (
+                      <button
+                        key={option.id}
+                        type="button"
+                        onClick={() => setPerfAdType(option.id)}
+                        className={cn(
+                          'flex w-full items-center rounded-lg px-2.5 py-2 text-[13px] font-medium transition-colors',
+                          perfAdType === option.id
+                            ? 'bg-brand-50 text-brand-600'
+                            : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
+                        )}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                ),
+              },
+              {
+                id: 'accounts',
+                label: 'Ad accounts',
+                icon: Filter,
+                defaultOpen: false,
+                children: (
+                  <AdsConnectionsPanel
+                    connections={connections ?? []}
+                    connecting={connecting}
+                    disconnecting={disconnecting}
+                    refreshing={refreshingConnection}
+                    onConnect={handleConnect}
+                    onDisconnect={handleDisconnect}
+                    onRefresh={handleRefreshConnection}
+                  />
+                ),
+              },
+            ]}
+          />
+
+          <div className="grid min-w-0 flex-1 gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,1fr)]">
+            <div className="space-y-5">
+              <Card className="overflow-hidden border-border shadow-none">
+                <PanelHeader
+                  title="Campaign performance"
+                  meta={performance?.ads.length ? `${performance.ads.length} ads` : undefined}
+                />
+                <div className="p-4 sm:p-5">
+                  <PerformanceDashboard
+                    data={performance ?? null}
+                    loading={performanceLoading}
+                    selectedAdId={selectedAdId}
+                    onSelectAd={setSelectedAdId}
+                    adType={perfAdType}
+                    days={perfDays}
+                  />
+                </div>
+              </Card>
+              {selectedAd && (
+                <AdDetailView
+                  ad={selectedAd}
+                  onClose={() => setSelectedAdId(null)}
+                  onOptimize={() => {
+                    setOptimizePromotionId(selectedAd.promotionId);
+                    setOptimizeInsight(null);
                   }}
                 />
-              </div>
-            </Card>
-            {selectedAd && (
-              <AdDetailView
-                ad={selectedAd}
-                onClose={() => setSelectedAdId(null)}
-                onOptimize={() => {
-                  setOptimizePromotionId(selectedAd.promotionId);
-                  setOptimizeInsight(null);
-                }}
-              />
-            )}
+              )}
+            </div>
+            <AIInsightsFeed
+              insights={insights}
+              loading={insightsLoading}
+              refreshing={refreshingInsights}
+              onRefresh={() => void refreshInsights()}
+              onDismiss={(id) => void dismissInsight(id)}
+              onOptimize={openOptimize}
+            />
           </div>
-          <AIInsightsFeed
-            insights={insights}
-            loading={insightsLoading}
-            refreshing={refreshingInsights}
-            onRefresh={() => void refreshInsights()}
-            onDismiss={(id) => void dismissInsight(id)}
-            onOptimize={openOptimize}
-          />
         </div>
       )}
         </>
@@ -389,39 +506,6 @@ function AdsPageContent() {
         }}
       />
 
-      <Card className="overflow-hidden">
-        <button
-          type="button"
-          onClick={() => setShowAccounts((v) => !v)}
-          className="flex w-full items-center justify-between gap-2 px-4 py-[11px] text-left hover:bg-[var(--canvas)] transition-colors"
-        >
-          <span className="flex items-center gap-2 text-[12.5px] font-semibold text-gray-900">
-            <Megaphone className="h-3.5 w-3.5 text-brand-600" />
-            Ad accounts
-          </span>
-          <ChevronDown
-            className={clsx('h-4 w-4 text-gray-500 transition-transform', showAccounts && 'rotate-180')}
-          />
-        </button>
-        {showAccounts && (
-          <div className="border-t border-[var(--border)] p-4 sm:p-5 space-y-3 bg-[var(--canvas)]/40">
-            <p className="text-[13px] text-gray-700 max-w-2xl leading-relaxed">
-              Connect Meta to publish ads on your own ad account. If you only see “Setup required,”
-              create an ad account in Meta Ads Manager with the same login, add billing, then click
-              Check again. Google login is optional and used for reporting when configured.
-            </p>
-            <AdsConnectionsPanel
-              connections={connections ?? []}
-              connecting={connecting}
-              disconnecting={disconnecting}
-              refreshing={refreshingConnection}
-              onConnect={handleConnect}
-              onDisconnect={handleDisconnect}
-              onRefresh={handleRefreshConnection}
-            />
-          </div>
-        )}
-      </Card>
       </>
       )}
     </DashboardPage>

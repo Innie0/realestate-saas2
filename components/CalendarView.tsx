@@ -3,7 +3,7 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Clock, Trash2, CalendarDays } from 'lucide-react';
 import { CalendarEvent } from '@/types';
@@ -36,9 +36,11 @@ function eventStyle(eventType: string) {
 export default function CalendarView({
   highlightEventId,
   focusDate,
+  eventTypeFilter = '',
 }: {
   highlightEventId?: string;
   focusDate?: Date;
+  eventTypeFilter?: string;
 } = {}) {
   const toast = useToast();
   const [currentDate, setCurrentDate] = useState(focusDate ?? new Date());
@@ -97,12 +99,22 @@ export default function CalendarView({
   const getDaysInMonth = (y: number, m: number) => new Date(y, m + 1, 0).getDate();
   const getFirstDayOfMonth = (y: number, m: number) => new Date(y, m, 1).getDay();
 
+  const visibleEvents = useMemo(
+    () =>
+      eventTypeFilter
+        ? events.filter((event) => event.event_type === eventTypeFilter)
+        : events,
+    [events, eventTypeFilter],
+  );
+
   const getEventsForDay = (day: number) => {
-    return events.filter(event => {
+    return visibleEvents.filter((event) => {
       const eventDate = new Date(event.start_time);
-      return eventDate.getDate() === day &&
-             eventDate.getMonth() === month &&
-             eventDate.getFullYear() === year;
+      return (
+        eventDate.getDate() === day &&
+        eventDate.getMonth() === month &&
+        eventDate.getFullYear() === year
+      );
     });
   };
 
@@ -249,11 +261,13 @@ export default function CalendarView({
         </AnimatePresence>
       )}
 
-      {!isLoading && events.length === 0 && (
-        <div className="text-center py-8 text-gray-400">
-          <CalendarDays className="w-8 h-8 mx-auto mb-2 opacity-40" />
-          <p className="text-sm text-gray-700">No events scheduled for this month</p>
-          <p className="text-xs mt-1">Create your first event or connect a calendar to sync events</p>
+      {!isLoading && visibleEvents.length === 0 && (
+        <div className="py-8 text-center text-muted-foreground">
+          <CalendarDays className="mx-auto mb-2 size-8 opacity-40" />
+          <p className="text-sm text-foreground">
+            {eventTypeFilter ? 'No events match this filter' : 'No events scheduled for this month'}
+          </p>
+          <p className="mt-1 text-xs">Create your first event or connect a calendar to sync events</p>
         </div>
       )}
     </div>
