@@ -555,6 +555,10 @@ html[data-dashboard-theme='light'] .dashboard-root,
     }
   }
 
+  .marketing-root .hero-has-animated-gradient .landing-mesh-aurora {
+    opacity: 0.22;
+  }
+
   .marketing-root .landing-gradient-panel--interactive.landing-gradient-hero {
     background-color: #6b8af0;
     background-image: var(--mkt-cobalt-gradient-feature);
