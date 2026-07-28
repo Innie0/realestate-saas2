@@ -55,13 +55,13 @@ export function NeedsAttentionSkeleton() {
 
 export function OpenDealsTableSkeleton() {
   return (
-    <Card className="flex h-full min-h-0 w-max max-w-full flex-col overflow-hidden p-0">
+    <Card className="flex h-full min-h-0 w-full flex-col overflow-hidden p-0">
       <CardHeader className="flex-row items-center justify-between gap-8 space-y-0">
         <CardTitle>Open deals</CardTitle>
         <Skeleton className="h-3 w-28 shrink-0" />
       </CardHeader>
       <CardContent className="min-h-0 flex-1 p-0">
-        <Table className="w-auto" containerClassName="w-max max-w-full">
+        <Table className="w-full">
           <TableHeader>
             <TableRow>
               {OPEN_DEALS_HEADERS.map((heading) => (
@@ -155,8 +155,8 @@ export function QuickActionsPanelSkeleton() {
 
 export function DashboardWorkAreaSkeleton() {
   return (
-    <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[auto_minmax(0,1fr)]">
-      <div className="flex min-h-0 w-max max-w-full flex-col self-stretch">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,340px)]">
+      <div className="flex min-h-0 min-w-0 flex-col self-stretch">
         <OpenDealsTableSkeleton />
       </div>
       <div className="flex min-w-0 flex-col gap-4">

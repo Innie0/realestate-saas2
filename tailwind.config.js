@@ -68,9 +68,9 @@ module.exports = {
   			]
   		},
   		boxShadow: {
-  			surface: '0 1px 2px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.25)',
-  			raised: '0 2px 4px rgba(0,0,0,0.45), 0 12px 24px -4px rgba(0,0,0,0.35)',
-  			overlay: '0 24px 48px -12px rgba(0,0,0,0.55), 0 8px 16px -8px rgba(0,0,0,0.4)'
+  			surface: '0 1px 2px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.04)',
+  			raised: '0 2px 4px rgba(0,0,0,0.06), 0 8px 24px -4px rgba(0,0,0,0.08)',
+  			overlay: '0 16px 40px -8px rgba(0,0,0,0.12), 0 4px 12px -4px rgba(0,0,0,0.08)'
   		},
   		maxWidth: {
   			'mkt-content': 'var(--mkt-max-content-width)'

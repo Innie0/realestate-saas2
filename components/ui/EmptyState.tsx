@@ -34,9 +34,9 @@ export default function EmptyState({
 
   const textBlock = (
     <>
-      <h3 className="text-base font-semibold tracking-tight text-gray-900 mb-1">{title}</h3>
+      <h3 className="text-base font-semibold tracking-tight text-foreground mb-1">{title}</h3>
       {description && (
-        <p className="text-sm text-gray-700 max-w-sm mx-auto mb-5">{description}</p>
+        <p className="text-sm text-muted-foreground max-w-sm mx-auto mb-5">{description}</p>
       )}
       {action}
     </>

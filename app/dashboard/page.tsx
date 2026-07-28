@@ -202,10 +202,10 @@ function MetricStrip({ metrics }: { metrics: Metric[] }) {
             href={m.href}
             className={clsx(
               'group px-4 py-4 transition-colors hover:bg-muted/40 sm:px-5',
-              m.accent && 'bg-accent/30',
+              m.accent && 'bg-brand-50/60',
             )}
           >
-            <p className={clsx('text-label', m.accent && 'text-accent-foreground')}>{m.label}</p>
+            <p className={clsx('text-label', m.accent && 'text-brand-600')}>{m.label}</p>
             <div className="mt-2 flex items-end justify-between gap-2">
               <p
                 className={clsx(
@@ -216,7 +216,7 @@ function MetricStrip({ metrics }: { metrics: Metric[] }) {
                 {m.placeholder ?? <CountUp value={m.value} format={m.format} />}
               </p>
               {m.series && m.series.some((v) => v > 0) && (
-                <span className="shrink-0 text-foreground">
+                <span className="shrink-0 text-brand-500">
                   <Sparkline data={m.series} width={72} height={26} />
                 </span>
               )}
@@ -296,7 +296,7 @@ function OpenDealsTable({ transactions }: { transactions: RecentTransaction[] })
   const deals = transactions.slice(0, 6);
 
   return (
-    <Card className="flex h-full min-h-0 w-max max-w-full flex-col overflow-hidden p-0">
+    <Card className="flex h-full min-h-0 w-full flex-col overflow-hidden p-0">
       <CardHeader className="flex-row items-center justify-between gap-8 space-y-0">
         <CardTitle>Open deals</CardTitle>
         <Link href="/dashboard/transactions" className="shrink-0 text-xs font-medium text-primary hover:underline">
@@ -323,7 +323,7 @@ function OpenDealsTable({ transactions }: { transactions: RecentTransaction[] })
         </CardContent>
       ) : (
         <CardContent className="min-h-0 flex-1 p-0">
-          <Table className="w-auto" containerClassName="w-max max-w-full">
+          <Table className="w-full">
             <TableHeader>
               <TableRow>
                 <TableHead className="whitespace-nowrap px-4 sm:px-5">Property</TableHead>
@@ -694,7 +694,7 @@ export default function DashboardHomePage() {
     if (items.length === 0 && inboxLeads.length > 0) {
       items.push({
         key: 'inbox-leads',
-        dotClass: 'bg-gray-300',
+        dotClass: 'bg-muted-foreground/50',
         lead: `${inboxLeads.length} new inbox lead${inboxLeads.length === 1 ? '' : 's'}`,
         rest: 'to review',
         actionLabel: 'Open inbox',
@@ -815,7 +815,7 @@ export default function DashboardHomePage() {
           <Link href="/dashboard/projects/new" data-tour="new-project">
             <Button size="sm" className="gap-2">
               New listing
-              <span className="rounded bg-[var(--surface)]/[0.18] px-1 font-mono text-[10px] font-medium">N</span>
+              <span className="rounded bg-primary-foreground/20 px-1 font-mono text-[10px] font-medium text-primary-foreground">N</span>
             </Button>
           </Link>
         </>
@@ -835,8 +835,8 @@ export default function DashboardHomePage() {
           <MetricStrip metrics={metrics} />
           <NeedsAttention items={attentionItems} />
 
-          <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[auto_minmax(0,1fr)]">
-            <div className="flex min-h-0 w-max max-w-full flex-col self-stretch">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,340px)]">
+            <div className="flex min-h-0 min-w-0 flex-col self-stretch">
               <OpenDealsTable transactions={allTransactions} />
             </div>
             <div className="flex min-w-0 flex-col gap-4">

@@ -93,13 +93,13 @@ function NavLink({
         isCollapsed ? 'justify-center px-2 py-2' : 'gap-2.5 px-2.5 py-[7px]',
         active
           ? 'bg-brand-50 text-brand-600'
-          : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
+          : 'text-gray-600 hover:bg-muted/50 hover:text-foreground',
       )}
     >
       <Icon
         className={clsx(
           'relative z-10 h-[14px] w-[14px] flex-shrink-0',
-          active ? 'text-brand-600' : 'text-muted-foreground'
+          active ? 'text-brand-600' : 'text-gray-600 group-hover:text-foreground'
         )}
         strokeWidth={1.8}
       />
@@ -292,7 +292,7 @@ export default function Sidebar() {
           {navGroups.map((group) => (
             <div key={group.label} className={clsx('mb-[18px] last:mb-2', isCollapsed && 'mb-3')}>
               {!isCollapsed && (
-                <p className="px-2.5 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground/80">
+                <p className="px-2.5 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-gray-500">
                   {group.label}
                 </p>
               )}

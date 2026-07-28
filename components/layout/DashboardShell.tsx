@@ -17,7 +17,7 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
     <div
       className={clsx(
         'dashboard-root flex h-screen overflow-hidden bg-[var(--canvas)]',
-        theme === 'light' && 'theme-light',
+        theme === 'light' ? 'theme-light' : 'theme-dark',
       )}
       data-theme={theme}
       suppressHydrationWarning

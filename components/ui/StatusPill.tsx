@@ -12,7 +12,7 @@ const toneStyles: Record<StatusPillTone, string> = {
   active: 'bg-brand-500 text-white',
   success: 'bg-emerald-500 text-white',
   warning: 'bg-amber-500 text-white',
-  neutral: 'bg-gray-200 text-gray-700',
+  neutral: 'bg-muted text-muted-foreground',
   danger: 'bg-rose-500 text-white',
   info: 'bg-sky-500 text-white',
 };

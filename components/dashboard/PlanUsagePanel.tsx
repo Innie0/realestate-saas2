@@ -70,7 +70,7 @@ export default function PlanUsagePanel({ usage, plan, className, layout = 'full'
       <Card className="p-5 sm:p-6">
         <div className="flex items-center justify-between gap-3 mb-4">
           <p className="text-label">
-            Plan usage · <span className="capitalize text-gray-600">{plan}</span>
+            Plan usage · <span className="capitalize text-muted-foreground">{plan}</span>
           </p>
           {plan !== 'pro' && (
             <Link href="/dashboard/upgrade">
@@ -94,27 +94,27 @@ export default function PlanUsagePanel({ usage, plan, className, layout = 'full'
               <div key={key} className={layout === 'sidebar' ? 'min-w-0 flex items-center gap-3' : 'min-w-0'}>
                 <div className={layout === 'sidebar' ? 'flex-1 min-w-0' : ''}>
                   <div className="flex items-baseline justify-between gap-1 mb-1">
-                    <span className="text-caption text-gray-700 truncate">{label}</span>
+                    <span className="text-caption text-muted-foreground truncate">{label}</span>
                     <span
                       className={`text-caption tabular-nums shrink-0 ${
                         isAtLimit
                           ? 'text-red-600 font-medium'
                           : isNearLimit
                             ? 'text-amber-600 font-medium'
-                            : 'text-gray-600'
+                            : 'text-muted-foreground'
                       }`}
                     >
                       {isUnlimited ? '∞' : `${item.current}/${item.limit}`}
                       {period && !isUnlimited && (
-                        <span className="text-gray-400 font-normal"> {period}</span>
+                        <span className="text-muted-foreground/70 font-normal"> {period}</span>
                       )}
                     </span>
                   </div>
                   {!isUnlimited && (
-                    <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-1 bg-muted rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all ${
-                          isAtLimit ? 'bg-red-500' : isNearLimit ? 'bg-amber-500' : 'bg-gray-300'
+                          isAtLimit ? 'bg-red-500' : isNearLimit ? 'bg-amber-500' : 'bg-brand-400'
                         }`}
                         style={{ width: `${pct}%` }}
                       />

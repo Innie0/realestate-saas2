@@ -46,7 +46,7 @@ export default function GettingStartedPanel({ variant, onDismiss }: GettingStart
       <button
         type="button"
         onClick={onDismiss}
-        className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 transition-colors"
+        className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
         aria-label="Dismiss"
       >
         <X className="w-4 h-4" />
@@ -57,11 +57,11 @@ export default function GettingStartedPanel({ variant, onDismiss }: GettingStart
           <Sparkles className="w-4 h-4 text-champagne-600" />
         </div>
         <div>
-          <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600 mb-1">
+          <p className="text-label mb-1">
             {variant === 'welcome' ? 'Welcome' : 'Getting started'}
           </p>
-          <h2 className="text-[15px] font-semibold tracking-[-0.01em] text-gray-900">{title}</h2>
-          <p className="text-[12.5px] text-gray-600 mt-1 leading-relaxed">{subtitle}</p>
+          <h2 className="text-[15px] font-semibold tracking-[-0.01em] text-foreground">{title}</h2>
+          <p className="text-[12.5px] text-muted-foreground mt-1 leading-relaxed">{subtitle}</p>
         </div>
       </div>
 
@@ -70,14 +70,14 @@ export default function GettingStartedPanel({ variant, onDismiss }: GettingStart
           <Link
             key={href}
             href={href}
-            className="flex flex-col gap-2 rounded-[10px] border border-gray-200 bg-gray-50/50 px-4 py-3 hover:bg-gray-50 transition-colors group"
+            className="flex flex-col gap-2 rounded-[10px] border border-border bg-muted/30 px-4 py-3 hover:bg-muted/50 transition-colors group"
           >
             <div className="flex items-center gap-2">
-              <Icon className="w-4 h-4 text-gray-600" strokeWidth={1.75} />
-              <span className="text-[13px] font-medium text-gray-900">{label}</span>
+              <Icon className="w-4 h-4 text-muted-foreground" strokeWidth={1.75} />
+              <span className="text-[13px] font-medium text-foreground">{label}</span>
             </div>
-            <p className="text-[12px] text-gray-600 leading-snug">{description}</p>
-            <span className="inline-flex items-center gap-1 text-[11.5px] font-medium text-gray-900 mt-auto">
+            <p className="text-[12px] text-muted-foreground leading-snug">{description}</p>
+            <span className="inline-flex items-center gap-1 text-[11.5px] font-medium text-foreground mt-auto">
               Open <ArrowRight className="w-3 h-3 opacity-50 group-hover:opacity-100 transition-opacity" />
             </span>
           </Link>

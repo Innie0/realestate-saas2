@@ -222,6 +222,22 @@ html[data-dashboard-theme='light'],
   --accent-foreground: #111111;
   --ring: #4a62d9;
 
+  /* shadcn/ui — explicit values so nested var() does not resolve against dark :root */
+  --background: #faf8f5;
+  --foreground: #111111;
+  --card: #ffffff;
+  --card-foreground: #111111;
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+  --secondary: #f3f0eb;
+  --secondary-foreground: #111111;
+  --muted: #f3f0eb;
+  --muted-foreground: #5c5650;
+  --destructive: #e11d48;
+  --destructive-foreground: #ffffff;
+  --input: #e8e4de;
+  --radius: 0.625rem;
+
   /* Status chips on light chrome: soft tint bg + deep label (same families as dark) */
   --amber-50: #fffbeb;
   --amber-100: #fef3c7;
@@ -288,6 +304,39 @@ html[data-dashboard-theme='light'],
   --champagne-700: #302c28;
   --champagne-800: #1c1c1a;
   --champagne-900: #111111;
+}
+
+/* Dark dashboard — explicit palette + shadcn tokens on dashboard subtree */
+html[data-dashboard-theme='dark'],
+.theme-dark {
+  color-scheme: dark;
+  --canvas: #0a0a0a;
+  --surface: #1c1c1c;
+  --sidebar: #111111;
+  --ink: #ffffff;
+  --brand: #ffffff;
+  --border: #2e2e2e;
+  --brand-foreground: #0a0a0a;
+  --champagne: #a87c43;
+
+  --background: #0a0a0a;
+  --foreground: #f4f4f5;
+  --card: #1c1c1c;
+  --card-foreground: #f4f4f5;
+  --popover: #1c1c1c;
+  --popover-foreground: #f4f4f5;
+  --secondary: #1c1c1c;
+  --secondary-foreground: #f4f4f5;
+  --muted: #1c1c1c;
+  --muted-foreground: #a3a3a3;
+  --accent: #2e2e2e;
+  --accent-foreground: #f4f4f5;
+  --primary: #ffffff;
+  --primary-foreground: #0a0a0a;
+  --destructive: #f43f5e;
+  --destructive-foreground: #ffffff;
+  --input: #2e2e2e;
+  --ring: #e5e5e5;
 }
 
 /* First paint / overscroll match stored dashboard theme before React mounts */
@@ -1519,12 +1568,17 @@ html[data-dashboard-theme='light'] .dashboard-root,
   }
 
   .text-label {
-    @apply font-mono text-[0.6875rem] leading-4 font-medium uppercase tracking-wide text-gray-600;
+    @apply font-mono text-[0.6875rem] leading-4 font-medium uppercase tracking-wide text-muted-foreground;
+  }
+
+  .dashboard-root.theme-light .text-label,
+  html[data-dashboard-theme='light'] .dashboard-root .text-label {
+    @apply text-muted-foreground;
   }
 
   /* Dashboard-style currency and metric numbers (Geist Sans, not mono). */
   .text-price {
-    @apply font-semibold tracking-[-0.02em] tabular-nums text-gray-900;
+    @apply font-semibold tracking-[-0.02em] tabular-nums text-foreground;
   }
 
   /* Sparkline draw-in: line traces left→right, area fades up under it. */

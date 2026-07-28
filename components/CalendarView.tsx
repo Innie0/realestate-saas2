@@ -15,7 +15,7 @@ const EVENT_STYLES: Record<string, { dot: string; pill: string }> = {
   showing: { dot: 'bg-sky-500', pill: 'bg-sky-50 text-sky-700 border-sky-200' },
   open_house: { dot: 'bg-emerald-500', pill: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
   meeting: { dot: 'bg-brand-500', pill: 'bg-brand-50 text-brand-700 border-brand-200' },
-  other: { dot: 'bg-gray-400', pill: 'bg-gray-100 text-gray-600 border-gray-200' },
+  other: { dot: 'bg-muted-foreground/60', pill: 'bg-muted text-muted-foreground border-border' },
 };
 
 const LEGEND = [
@@ -132,7 +132,7 @@ export default function CalendarView({
   const days = [];
 
   for (let i = 0; i < firstDay; i++) {
-    days.push(<div key={`empty-${i}`} className="min-h-[92px] sm:min-h-[110px] bg-gray-50/60" />);
+    days.push(<div key={`empty-${i}`} className="min-h-[92px] sm:min-h-[110px] bg-muted/30" />);
   }
 
   for (let day = 1; day <= daysInMonth; day++) {
@@ -145,13 +145,13 @@ export default function CalendarView({
     days.push(
       <div
         key={day}
-        className={`min-h-[92px] sm:min-h-[110px] border-t border-l border-gray-200 p-1.5 sm:p-2 transition-colors hover:bg-gray-50 ${
-          isToday ? 'bg-brand-50/60' : 'bg-[var(--surface)]'
+        className={`min-h-[92px] sm:min-h-[110px] border-t border-l border-border p-1.5 sm:p-2 transition-colors hover:bg-muted/30 ${
+          isToday ? 'bg-brand-50/60' : 'bg-card'
         }`}
       >
         <div
           className={`inline-flex items-center justify-center h-5 w-5 rounded-full text-xs font-semibold mb-1 ${
-            isToday ? 'bg-brand-500 text-[var(--brand-foreground)]' : 'text-gray-700'
+            isToday ? 'bg-brand-500 text-[var(--brand-foreground)]' : 'text-muted-foreground'
           }`}
         >
           {day}
@@ -194,7 +194,7 @@ export default function CalendarView({
             );
           })}
           {dayEvents.length > 3 && (
-            <p className="text-[10px] text-gray-400 pl-0.5">+{dayEvents.length - 3} more</p>
+            <p className="text-[10px] text-muted-foreground/70 pl-0.5">+{dayEvents.length - 3} more</p>
           )}
         </div>
       </div>
@@ -205,7 +205,7 @@ export default function CalendarView({
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <div className="flex items-center gap-3">
-          <h3 className="text-title font-semibold tracking-tight text-gray-900 min-w-[9rem] sm:min-w-[11rem]">
+          <h3 className="text-title font-semibold tracking-tight text-foreground min-w-[9rem] sm:min-w-[11rem]">
             {monthNames[month]} {year}
           </h3>
           <Button size="sm" variant="outline" onClick={goToToday}>
@@ -222,7 +222,7 @@ export default function CalendarView({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-4 text-xs text-gray-700">
+      <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-4 text-xs text-muted-foreground">
         {LEGEND.map((item) => (
           <div key={item.key} className="flex items-center gap-1.5">
             <span className={`h-2 w-2 rounded-full ${eventStyle(item.key).dot}`} />
@@ -232,9 +232,9 @@ export default function CalendarView({
       </div>
 
       {isLoading ? (
-        <div className="grid grid-cols-7 gap-px rounded-[10px] border border-gray-200 overflow-hidden animate-pulse">
+        <div className="grid grid-cols-7 gap-px rounded-[10px] border border-border overflow-hidden animate-pulse">
           {Array.from({ length: 35 }).map((_, i) => (
-            <div key={i} className="min-h-[92px] sm:min-h-[110px] bg-gray-50" />
+            <div key={i} className="min-h-[92px] sm:min-h-[110px] bg-muted/30" />
           ))}
         </div>
       ) : (
@@ -248,13 +248,13 @@ export default function CalendarView({
           >
             <div className="grid grid-cols-7 mb-1">
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                <div key={day} className="text-center text-xs font-semibold text-gray-400 py-1.5">
+                <div key={day} className="text-center text-xs font-semibold text-muted-foreground/70 py-1.5">
                   {day}
                 </div>
               ))}
             </div>
 
-            <div className="grid grid-cols-7 border-r border-b border-gray-200 rounded-[10px] overflow-hidden">
+            <div className="grid grid-cols-7 border-r border-b border-border rounded-[10px] overflow-hidden">
               {days}
             </div>
           </motion.div>
