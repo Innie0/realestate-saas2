@@ -9,6 +9,7 @@ import { PRODUCT_MENU_COLUMNS } from '@/lib/product-menu';
 import { useMotionReduced } from '@/lib/motion';
 
 const NEW_TOOL_IDS = new Set(['ai-assistant']);
+const CLOSE_DELAY_MS = 280;
 
 type ProductsMegaMenuProps = {
   onOpenChange?: (open: boolean) => void;
@@ -37,9 +38,9 @@ export default function ProductsMegaMenu({ onOpenChange }: ProductsMegaMenuProps
     }
   };
 
-  const scheduleClose = (delay = 100) => {
+  const scheduleClose = () => {
     clearCloseTimer();
-    closeTimer.current = setTimeout(() => setMenuOpen(false), delay);
+    closeTimer.current = setTimeout(() => setMenuOpen(false), CLOSE_DELAY_MS);
   };
 
   const handleEnter = () => {
@@ -52,15 +53,6 @@ export default function ProductsMegaMenu({ onOpenChange }: ProductsMegaMenuProps
     setMenuOpen(false);
   };
 
-  const isPointerOverMenu = useCallback((x: number, y: number) => {
-    const target = document.elementFromPoint(x, y);
-    if (!target) return false;
-    return (
-      Boolean(triggerRef.current?.contains(target)) ||
-      Boolean(panelRef.current?.contains(target))
-    );
-  }, []);
-
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
@@ -70,21 +62,9 @@ export default function ProductsMegaMenu({ onOpenChange }: ProductsMegaMenuProps
       if (event.key === 'Escape') handleClose();
     };
 
-    const onMouseMove = (event: MouseEvent) => {
-      if (isPointerOverMenu(event.clientX, event.clientY)) {
-        clearCloseTimer();
-        return;
-      }
-      scheduleClose(80);
-    };
-
     window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('mousemove', onMouseMove);
-    return () => {
-      window.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('mousemove', onMouseMove);
-    };
-  }, [open, isPointerOverMenu]);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [open]);
 
   useEffect(() => () => clearCloseTimer(), []);
 
@@ -93,30 +73,18 @@ export default function ProductsMegaMenu({ onOpenChange }: ProductsMegaMenuProps
       ? createPortal(
           <AnimatePresence>
             {open ? (
-              <>
-                <motion.button
-                  key="products-menu-backdrop"
-                  type="button"
-                  aria-label="Close products menu"
-                  initial={reduced ? false : { opacity: 0 }}
-                  animate={reduced ? undefined : { opacity: 1 }}
-                  exit={reduced ? undefined : { opacity: 0 }}
-                  transition={{ duration: 0.15 }}
-                  className="fixed inset-0 z-[54] cursor-default bg-transparent"
-                  onClick={handleClose}
-                />
-
-                <motion.div
-                  ref={panelRef}
-                  key="products-menu-panel"
-                  initial={reduced ? false : { opacity: 0, y: -6 }}
-                  animate={reduced ? undefined : { opacity: 1, y: 0 }}
-                  exit={reduced ? undefined : { opacity: 0, y: -4 }}
-                  transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
-                  className="fixed inset-x-0 top-16 z-[55] border-b border-mkt-border bg-mkt-background shadow-[0_16px_48px_-20px_rgba(17,17,17,0.14)] sm:top-[4.5rem]"
-                  onMouseEnter={handleEnter}
-                  onMouseLeave={() => scheduleClose(80)}
-                >
+              <motion.div
+                ref={panelRef}
+                key="products-menu-panel"
+                initial={reduced ? false : { opacity: 0, y: -6 }}
+                animate={reduced ? undefined : { opacity: 1, y: 0 }}
+                exit={reduced ? undefined : { opacity: 0, y: -4 }}
+                transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
+                className="fixed inset-x-0 top-16 z-[59] -mt-3 pt-3 sm:top-[4.5rem]"
+                onMouseEnter={handleEnter}
+                onMouseLeave={scheduleClose}
+              >
+                <div className="border-b border-mkt-border bg-mkt-background shadow-[0_16px_48px_-20px_rgba(17,17,17,0.14)]">
                   <div className="mx-auto max-w-mkt-content px-5 py-8 sm:px-8 sm:py-9 lg:py-10">
                     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_260px] lg:gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_280px] xl:gap-8">
                       {PRODUCT_MENU_COLUMNS.map((column) => (
@@ -178,8 +146,8 @@ export default function ProductsMegaMenu({ onOpenChange }: ProductsMegaMenuProps
                       </Link>
                     </div>
                   </div>
-                </motion.div>
-              </>
+                </div>
+              </motion.div>
             ) : null}
           </AnimatePresence>,
           document.body,
@@ -192,7 +160,7 @@ export default function ProductsMegaMenu({ onOpenChange }: ProductsMegaMenuProps
         ref={triggerRef}
         className="relative hidden md:block"
         onMouseEnter={handleEnter}
-        onMouseLeave={() => scheduleClose(150)}
+        onMouseLeave={scheduleClose}
       >
         <button
           type="button"
@@ -201,7 +169,7 @@ export default function ProductsMegaMenu({ onOpenChange }: ProductsMegaMenuProps
           }`}
           aria-expanded={open}
           aria-haspopup="true"
-          onClick={() => setMenuOpen(!open)}
+          onClick={() => (open ? handleClose() : handleEnter())}
         >
           Products
           <ChevronDown
