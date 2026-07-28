@@ -47,6 +47,7 @@ export default function LandingFeatureStack() {
                 variant={GRADIENT_VARIANTS[index % GRADIENT_VARIANTS.length]}
                 mesh="static"
                 showcase
+                elevated={false}
                 innerClassName="!py-4 !px-4 sm:!py-5 sm:!px-6 lg:!py-6 lg:!px-8"
               >
                 <div className="w-full">
