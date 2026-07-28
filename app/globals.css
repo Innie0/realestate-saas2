@@ -524,39 +524,96 @@ html[data-dashboard-theme='light'] .dashboard-root,
     background-image: var(--mkt-cobalt-gradient-feature);
   }
 
-  /* Landing hero only — animated CSS gradient layer (.hero-gradient-bg) */
+  /* Landing hero only — .hero-gradient-bg + 3 animated blobs */
   .marketing-root .landing-gradient-panel.hero-has-animated-gradient {
     background-color: transparent;
     background-image: none;
   }
 
-  .marketing-root .hero-gradient-bg {
-    background-color: #3d52c4;
-    background-image: linear-gradient(155deg, #3548c7 0%, #5b74e8 100%);
-    background-size: 400% 400%;
-    background-position: 0% 0%;
-    animation: hero-gradient-drift 8s ease-in-out infinite alternate;
+  .marketing-root .landing-gradient-panel.hero-has-animated-gradient::before {
+    opacity: 0;
   }
 
-  @keyframes hero-gradient-drift {
-    from {
-      background-position: 0% 0%;
+  .marketing-root .hero-gradient-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(135deg, #2e3f9e 0%, #3548c7 100%);
+  }
+
+  .marketing-root .hero-gradient-bg .blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(80px);
+    opacity: 0.55;
+    will-change: transform;
+  }
+
+  .marketing-root .hero-gradient-bg .blob-1 {
+    width: 500px;
+    height: 500px;
+    top: -10%;
+    left: -10%;
+    background: #3548c7;
+    animation: float1 18s ease-in-out infinite;
+  }
+
+  .marketing-root .hero-gradient-bg .blob-2 {
+    width: 600px;
+    height: 600px;
+    top: 20%;
+    right: -15%;
+    background: #5b74e8;
+    animation: float2 22s ease-in-out infinite;
+    animation-delay: -4s;
+  }
+
+  .marketing-root .hero-gradient-bg .blob-3 {
+    width: 450px;
+    height: 450px;
+    bottom: -15%;
+    left: 25%;
+    background: #6b8af0;
+    animation: float3 25s ease-in-out infinite;
+    animation-delay: -9s;
+  }
+
+  @keyframes float1 {
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
     }
-    to {
-      background-position: 100% 100%;
+    50% {
+      transform: translate(80px, 60px) scale(1.15);
+    }
+  }
+
+  @keyframes float2 {
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+    50% {
+      transform: translate(-70px, 40px) scale(0.9);
+    }
+  }
+
+  @keyframes float3 {
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+    50% {
+      transform: translate(50px, -60px) scale(1.1);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .marketing-root .hero-gradient-bg {
-      animation: none;
-      background-size: 100% 100%;
-      background-position: 50% 50%;
+    .marketing-root .hero-gradient-bg .blob {
+      animation: none !important;
     }
-  }
-
-  .marketing-root .hero-has-animated-gradient .landing-mesh-aurora {
-    opacity: 0.22;
   }
 
   .marketing-root .landing-gradient-panel--interactive.landing-gradient-hero {

@@ -127,12 +127,11 @@ export default function LandingHero({ sectionRef }: LandingHeroProps) {
         <div ref={rootRef} className="flex min-h-0 flex-1 flex-col">
           <LandingGradientPanel
             variant="hero"
-            mesh="static"
             elevated="hero"
             fill
             interactive={false}
             animatedHeroGradient
-            innerClassName="flex flex-1 flex-col px-5 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-12"
+            innerClassName="relative z-[1] flex flex-1 flex-col px-5 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-12"
           >
             <div className="flex flex-1 flex-col items-center justify-center">
               <div className="mx-auto w-full max-w-3xl text-center">
