@@ -72,50 +72,77 @@ type LandingHeroAttioProps = {
 
 export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) {
   const reduced = useMotionReduced();
-  const pinRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
-      const pin = pinRef.current;
+      const track = trackRef.current;
+      const content = contentRef.current;
       const copy = copyRef.current;
       const preview = previewRef.current;
       const stage = stageRef.current;
-      if (reduced || !pin || !copy || !preview || !stage) return;
+      if (reduced || !track || !content || !copy || !preview || !stage) return;
 
       const sideCards = gsap.utils.toArray<HTMLElement>('[data-hero-side]', stage);
 
-      gsap.set(sideCards, { autoAlpha: 0, y: 56, scale: 0.92 });
-      gsap.set(preview, { scale: 1, y: 0 });
+      gsap.set(sideCards, { autoAlpha: 0, y: 32, scale: 0.96 });
+      gsap.set(preview, { scale: 1 });
+      gsap.set(content, { y: 0 });
       gsap.set(copy, { autoAlpha: 1, y: 0 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: pin,
+          trigger: track,
           start: 'top top',
-          end: () => `+=${Math.round(window.innerHeight * 0.85)}`,
-          pin: true,
-          scrub: 0.65,
-          anticipatePin: 1,
+          end: 'bottom bottom',
+          scrub: 1.1,
           invalidateOnRefresh: true,
         },
       });
 
-      tl.to(copy, { autoAlpha: 0, y: -36, duration: 0.32, ease: 'power2.in' }, 0)
-        .to(preview, { scale: 1.05, y: -56, duration: 0.5, ease: 'power2.out' }, 0.12)
+      tl.to(
+        copy,
+        {
+          autoAlpha: 0,
+          y: -16,
+          duration: 0.35,
+          ease: 'power1.inOut',
+        },
+        0,
+      )
+        .to(
+          content,
+          {
+            y: -88,
+            duration: 0.58,
+            ease: 'power1.inOut',
+          },
+          0.04,
+        )
+        .to(
+          preview,
+          {
+            scale: 1.02,
+            duration: 0.5,
+            ease: 'power1.inOut',
+          },
+          0.08,
+        )
         .to(
           sideCards,
           {
             autoAlpha: 1,
             y: 0,
             scale: 1,
-            duration: 0.42,
-            stagger: 0.1,
+            duration: 0.48,
+            stagger: 0.12,
             ease: 'power2.out',
           },
-          0.28,
+          0.24,
         );
 
       return () => {
@@ -123,17 +150,18 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
         tl.kill();
       };
     },
-    { scope: pinRef, dependencies: [reduced] },
+    { scope: trackRef, dependencies: [reduced] },
   );
 
   return (
     <section
       ref={sectionRef as React.RefObject<HTMLElement>}
-      className="relative bg-mkt-background pt-[var(--mkt-nav-height)]"
+      className="relative bg-mkt-background"
     >
-      <div ref={pinRef} className="relative">
-        <div className="mx-auto max-w-mkt-content px-5 pt-[var(--mkt-section-pt)] sm:px-8">
-          <div ref={copyRef} data-hero-copy className="mx-auto max-w-3xl text-center">
+      <div ref={trackRef} className="relative h-[175vh] xl:h-[185vh]">
+        <div className="sticky top-[var(--mkt-nav-height)] flex min-h-[calc(100dvh-var(--mkt-nav-height))] flex-col justify-center">
+          <div ref={contentRef} className="mx-auto w-full max-w-mkt-content px-5 pt-8 sm:px-8 lg:pt-10">
+          <div ref={copyRef} data-hero-copy className="mx-auto max-w-3xl text-center will-change-transform">
             <MarketingBlurFade delay={0}>
               <h1 className="font-mkt-display text-[clamp(2.75rem,6vw,4.5rem)] font-semibold leading-[1.06] tracking-[-0.05em] text-mkt-foreground">
                 Welcome to Oikaro
@@ -166,7 +194,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
 
           <div
             ref={stageRef}
-            className="relative mx-auto mt-12 w-full max-w-[880px] sm:mt-14"
+            className="relative mx-auto mt-10 w-full max-w-[1120px] sm:mt-12"
           >
             {reduced ? (
               <div className="mb-6 grid gap-4 sm:grid-cols-2">
@@ -179,10 +207,8 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
                 <div
                   key={card.id}
                   data-hero-side={card.side}
-                  className={`pointer-events-none absolute top-1/2 z-[1] hidden w-[min(240px,28vw)] -translate-y-1/2 lg:block ${
-                    card.side === 'left'
-                      ? 'left-0 -translate-x-[38%] xl:-translate-x-[42%]'
-                      : 'right-0 translate-x-[38%] xl:translate-x-[42%]'
+                  className={`pointer-events-none absolute top-1/2 z-[1] hidden w-[200px] -translate-y-1/2 will-change-transform xl:block ${
+                    card.side === 'left' ? 'left-0' : 'right-0'
                   }`}
                 >
                   <HeroSideCard {...card} />
@@ -190,7 +216,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
               ))
             )}
 
-            <MarketingBlurFade delay={0.24} inView className="relative z-[2]">
+            <MarketingBlurFade delay={0.24} inView className="relative z-[2] mx-auto w-full max-w-[760px]">
               <div
                 ref={previewRef}
                 data-hero-preview
@@ -202,10 +228,11 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
               </div>
             </MarketingBlurFade>
           </div>
+          </div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-mkt-content px-5 pb-[var(--mkt-section-pb)] sm:px-8">
+      <div className="mx-auto max-w-mkt-content px-5 pb-[var(--mkt-section-pb)] pt-4 sm:px-8">
         <MarketingBlurFade delay={0.3} inView className="mt-12 sm:mt-14">
           <p className="mb-5 text-center text-mkt-label text-[10px] font-medium uppercase tracking-[0.12em] text-mkt-muted">
             Used by agents at leading brokerages
