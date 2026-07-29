@@ -14,7 +14,6 @@ ensureGsapRegistered();
 export default function LandingNav() {
   const reduced = useMotionReduced();
   const navRef = useRef<HTMLElement>(null);
-  const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkNav, setDarkNav] = useState(false);
@@ -23,7 +22,6 @@ export default function LandingNav() {
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
-      setScrolled(y > 8);
       if (y > 120 && y > lastScrollY.current && !menuOpen) {
         setHidden(true);
       } else {
@@ -61,12 +59,10 @@ export default function LandingNav() {
     <header
       ref={navRef as React.RefObject<HTMLElement>}
       className={clsx(
-        'fixed inset-x-0 top-0 z-[60] border-b transition-[transform,background-color,border-color,backdrop-filter,color] duration-300 ease-out',
+        'fixed inset-x-0 top-0 z-[60] border-b transition-[transform,background-color,border-color,color] duration-300 ease-out',
         darkNav
-          ? 'border-white/10 bg-[#0a0a0a]/90 text-white backdrop-blur-md'
-          : scrolled
-            ? 'border-mkt-border bg-mkt-nav-scrolled-bg text-mkt-foreground backdrop-blur-md'
-            : 'border-transparent bg-mkt-nav-transparent-bg text-mkt-foreground',
+          ? 'border-white/10 bg-[#0a0a0a] text-white'
+          : 'border-mkt-border bg-mkt-background text-mkt-foreground',
         hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0',
       )}
     >
