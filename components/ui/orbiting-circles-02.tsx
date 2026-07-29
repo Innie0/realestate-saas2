@@ -80,7 +80,9 @@ export default function OrbitingCirclesIntegrations({
         const isCW = index % 2 === 0;
         const orbitAnim = reduced ? undefined : isCW ? 'orbit-cw' : 'orbit-ccw';
         const counterAnim = reduced ? undefined : isCW ? 'counter-cw' : 'counter-ccw';
-        const iconData = orbit.icon;
+        const orbitIcons = reduced
+          ? [orbit.icon]
+          : [orbit.icon, { ...orbit.icon, angle: orbit.icon.angle + 180 }];
 
         return (
           <div
@@ -91,37 +93,40 @@ export default function OrbitingCirclesIntegrations({
               orbit.size,
             )}
           >
-            <div
-              className="absolute left-1/2 top-0 -ml-10 flex h-1/2 origin-bottom flex-col items-center justify-start md:-ml-12"
-              style={
-                reduced
-                  ? { transform: `rotate(${iconData.angle}deg)` }
-                  : ({
-                      '--start-angle': `${iconData.angle}deg`,
-                      animation: `${orbitAnim} ${orbit.duration}s linear infinite`,
-                    } as React.CSSProperties)
-              }
-            >
+            {orbitIcons.map((iconData, iconIndex) => (
               <div
-                className={clsx(
-                  'relative z-10 -mt-10 rounded-full border p-3.5 sm:p-5 md:-mt-12',
-                  isDark
-                    ? 'border-white/15 bg-[#141414]'
-                    : 'border-mkt-border bg-mkt-surface',
-                )}
+                key={`${iconData.id}-${iconData.angle}-${iconIndex}`}
+                className="absolute left-1/2 top-0 -ml-10 flex h-1/2 origin-bottom flex-col items-center justify-start md:-ml-12"
                 style={
                   reduced
-                    ? { transform: `rotate(${-iconData.angle}deg)` }
+                    ? { transform: `rotate(${iconData.angle}deg)` }
                     : ({
-                        '--counter-offset': `${-iconData.angle}deg`,
-                        animation: `${counterAnim} ${orbit.duration}s linear infinite`,
+                        '--start-angle': `${iconData.angle}deg`,
+                        animation: `${orbitAnim} ${orbit.duration}s linear infinite`,
                       } as React.CSSProperties)
                 }
-                title={INTEGRATION_LABELS[iconData.id]}
               >
-                <IntegrationLogo id={iconData.id} className="size-7 md:size-9 lg:size-10" />
+                <div
+                  className={clsx(
+                    'relative z-10 -mt-10 rounded-full border p-3.5 sm:p-5 md:-mt-12',
+                    isDark
+                      ? 'border-white/15 bg-[#141414]'
+                      : 'border-mkt-border bg-mkt-surface',
+                  )}
+                  style={
+                    reduced
+                      ? { transform: `rotate(${-iconData.angle}deg)` }
+                      : ({
+                          '--counter-offset': `${-iconData.angle}deg`,
+                          animation: `${counterAnim} ${orbit.duration}s linear infinite`,
+                        } as React.CSSProperties)
+                  }
+                  title={INTEGRATION_LABELS[iconData.id]}
+                >
+                  <IntegrationLogo id={iconData.id} className="size-7 md:size-9 lg:size-10" />
+                </div>
               </div>
-            </div>
+            ))}
           </div>
         );
       })}
