@@ -207,8 +207,10 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
                 <div
                   key={card.id}
                   data-hero-side={card.side}
-                  className={`pointer-events-none absolute top-1/2 z-[1] hidden w-[200px] -translate-y-1/2 will-change-transform xl:block ${
-                    card.side === 'left' ? 'left-0' : 'right-0'
+                  className={`pointer-events-none absolute z-[1] hidden w-[200px] will-change-transform xl:block ${
+                    card.side === 'left'
+                      ? 'left-0 top-[26%] -translate-y-1/2 translate-x-[46%]'
+                      : 'right-0 top-[68%] -translate-y-1/2 -translate-x-[40%]'
                   }`}
                 >
                   <HeroSideCard {...card} />
