@@ -10,20 +10,24 @@ const MANIFESTO =
 
 ensureGsapRegistered();
 
-export default function LandingManifestoBand() {
+export default function LandingManifestoBand({ variant = 'light' }: { variant?: 'light' | 'dark' }) {
   const reduced = useMotionReduced();
   const sectionRef = useRef<HTMLDivElement>(null);
   const words = useMemo(() => MANIFESTO.split(/\s+/), []);
+  const isDark = variant === 'dark';
 
   useGSAP(
     () => {
       if (reduced || !sectionRef.current) return;
 
       const spans = sectionRef.current.querySelectorAll('[data-word]');
-      gsap.set(spans, { color: mktVar('--mkt-text-secondary') });
+      gsap.set(
+        spans,
+        { color: isDark ? 'rgba(255, 255, 255, 0.42)' : mktVar('--mkt-text-secondary') },
+      );
 
       gsap.to(spans, {
-        color: mktVar('--mkt-text-primary'),
+        color: isDark ? '#ffffff' : mktVar('--mkt-text-primary'),
         stagger: 0.08,
         ease: 'none',
         scrollTrigger: {
@@ -34,18 +38,28 @@ export default function LandingManifestoBand() {
         },
       });
     },
-    { scope: sectionRef, dependencies: [reduced] },
+    { scope: sectionRef, dependencies: [reduced, isDark] },
   );
 
   return (
     <div
       ref={sectionRef}
-      className="bg-mkt-background py-14 sm:py-16 lg:py-20"
+      className={
+        isDark
+          ? 'border-t border-white/10 py-14 sm:py-16 lg:py-20'
+          : 'bg-mkt-background py-14 sm:py-16 lg:py-20'
+      }
     >
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <p
           className={`font-display max-w-4xl text-xl font-medium leading-[1.35] tracking-[-0.03em] sm:text-2xl lg:text-[2rem] lg:leading-[1.3] ${
-            reduced ? 'text-mkt-foreground' : 'text-mkt-secondary'
+            reduced
+              ? isDark
+                ? 'text-white/85'
+                : 'text-mkt-foreground'
+              : isDark
+                ? 'text-white/45'
+                : 'text-mkt-secondary'
           }`}
         >
           {words.map((word, index) => (

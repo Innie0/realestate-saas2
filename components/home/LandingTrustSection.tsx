@@ -152,7 +152,6 @@ export default function LandingTrustSection() {
     <>
       <section className="bg-mkt-background">
         <TestimonialCarousel />
-        <LandingManifestoBand />
       </section>
 
       <section id={CONNECT_TOOLS_SECTION_ID} className="bg-[#0a0a0a] text-white">
@@ -207,6 +206,8 @@ export default function LandingTrustSection() {
             </LandingStaggerReveal>
           </div>
         </div>
+
+        <LandingManifestoBand variant="dark" />
       </section>
     </>
   );
