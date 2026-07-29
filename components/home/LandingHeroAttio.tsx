@@ -141,7 +141,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
 
       const sideCards = gsap.utils.toArray<HTMLElement>('[data-hero-side]', stage);
 
-      gsap.set(sideCards, { autoAlpha: 0, y: 32, scale: 0.96 });
+      gsap.set(sideCards, { autoAlpha: 0, y: 20, scale: 0.94 });
       gsap.set(preview, {
         scale: HERO_PREVIEW_SCALE_START,
         transformOrigin: '50% 18%',
@@ -193,11 +193,11 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
             autoAlpha: 1,
             y: 0,
             scale: 1,
-            duration: 0.18,
-            stagger: 0.04,
+            duration: 0.07,
+            stagger: 0,
             ease: 'power2.out',
           },
-          0.1,
+          0.04,
         );
 
       ScrollTrigger.refresh();
@@ -275,7 +275,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
                 <div
                   key={card.id}
                   data-hero-side={card.side}
-                  className={`pointer-events-none absolute hidden w-[200px] invisible opacity-0 translate-y-8 scale-[0.96] will-change-transform xl:block ${
+                  className={`pointer-events-none absolute hidden w-[200px] invisible opacity-0 translate-y-5 scale-[0.94] will-change-transform xl:block ${
                     card.side === 'left'
                       ? 'left-[-3rem] top-[24%] z-[3] -translate-y-1/2 translate-x-0'
                       : 'right-[-3rem] top-[70%] z-[1] -translate-y-1/2 translate-x-0'
