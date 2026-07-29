@@ -1,5 +1,6 @@
 export const CONNECT_TOOLS_NAV_SENTINEL_ID = 'connect-tools-sentinel';
 export const CONNECT_TOOLS_SECTION_ID = 'connect-tools-section';
+export const CONNECT_TOOLS_CURTAIN_ID = 'connect-tools-curtain';
 
 export function getLandingNavHeight(): number {
   if (typeof window === 'undefined') return 72;
@@ -10,12 +11,12 @@ export function getLandingNavHeight(): number {
 
 export function isConnectToolsNavDark(): boolean {
   const sentinel = document.getElementById(CONNECT_TOOLS_NAV_SENTINEL_ID);
-  const section = document.getElementById(CONNECT_TOOLS_SECTION_ID);
-  if (!sentinel || !section) return false;
+  const curtain = document.getElementById(CONNECT_TOOLS_CURTAIN_ID);
+  if (!sentinel || !curtain) return false;
 
   const navHeight = getLandingNavHeight();
   const sentinelTop = sentinel.getBoundingClientRect().top;
-  const sectionBottom = section.getBoundingClientRect().bottom;
+  const curtainBottom = curtain.getBoundingClientRect().bottom;
 
-  return sentinelTop <= navHeight && sectionBottom > navHeight;
+  return sentinelTop <= navHeight && curtainBottom > navHeight;
 }
