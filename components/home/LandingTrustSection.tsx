@@ -3,9 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ensureGsapRegistered, gsap, landingRevealDefaults, useGSAP } from '@/lib/gsap-config';
 import { INTEGRATIONS, TESTIMONIALS } from '@/lib/landing-showcase';
-import { IntegrationLogo } from '@/components/home/IntegrationLogos';
 import CountUpMetric from '@/components/home/CountUpMetric';
-import LandingGradientPanel from '@/components/home/LandingGradientPanel';
+import OrbitingCirclesIntegrations from '@/components/ui/orbiting-circles-02';
 import LandingManifestoBand from '@/components/home/LandingManifestoBand';
 import LandingStaggerReveal from '@/components/home/LandingStaggerReveal';
 import MarketingButton from '@/components/marketing/MarketingButton';
@@ -173,34 +172,23 @@ export default function LandingTrustSection() {
             </div>
           </LandingStaggerReveal>
 
-          <LandingStaggerReveal className="mt-8 sm:mt-10">
+          <LandingStaggerReveal className="mt-10 sm:mt-12">
             <div data-reveal data-reveal-fade>
-              <LandingGradientPanel variant="integrations" mesh="static" elevated={false}>
-                <div className="grid gap-4 sm:grid-cols-2 lg:gap-5">
-                  {INTEGRATIONS.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex flex-col gap-4 rounded-[1.25rem] border border-white/30 bg-white p-6 shadow-[0_12px_40px_-20px_rgba(0,0,0,0.35)] sm:p-7"
-                    >
-                      <div className="flex size-12 items-center justify-center rounded-2xl bg-mkt-surface-muted">
-                        <IntegrationLogo id={item.id} className="size-7" />
-                      </div>
-                      <div>
-                        <p className="text-base font-semibold text-mkt-foreground">{item.name}</p>
-                        <p className="mt-2 text-sm leading-[1.55] text-mkt-secondary">
-                          {item.description}
-                        </p>
-                      </div>
-                      <div className="mt-auto pt-2">
-                        <span className="inline-flex rounded-full bg-mkt-accent px-4 py-2 text-xs font-semibold text-white">
-                          Connect
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </LandingGradientPanel>
+              <OrbitingCirclesIntegrations />
             </div>
+            <ul
+              data-reveal
+              className="mx-auto mt-8 flex max-w-2xl flex-wrap items-center justify-center gap-2 sm:gap-3"
+            >
+              {INTEGRATIONS.map((item) => (
+                <li
+                  key={item.id}
+                  className="rounded-full border border-mkt-border bg-mkt-surface px-3 py-1.5 text-xs font-medium text-mkt-secondary sm:text-sm"
+                >
+                  {item.name}
+                </li>
+              ))}
+            </ul>
           </LandingStaggerReveal>
         </div>
       </div>
