@@ -30,16 +30,20 @@ export default function LandingConnectToolsReveal() {
       const manifesto = manifestoRef.current;
       if (reduced || !track || !curtain || !manifesto) return;
 
-      const getRevealDistance = () =>
-        Math.max(window.innerHeight * 0.75, manifesto.offsetHeight + 64);
+      const manifestoHeight = manifesto.offsetHeight;
+      const revealDistance = Math.max(manifestoHeight, window.innerHeight * 0.42);
 
-      gsap.set(manifesto, { autoAlpha: 0.4, y: 24 });
+      gsap.set(manifesto, {
+        marginTop: -manifestoHeight,
+        autoAlpha: 0.45,
+        y: 20,
+      });
 
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: track,
+          trigger: curtain,
           start: 'bottom bottom',
-          end: () => `+=${getRevealDistance()}`,
+          end: () => `+=${revealDistance}`,
           scrub: 0.75,
           pin: curtain,
           pinSpacing: true,
@@ -63,6 +67,7 @@ export default function LandingConnectToolsReveal() {
         {
           autoAlpha: 1,
           y: 0,
+          marginTop: 0,
           ease: 'none',
           duration: 1,
         },
@@ -70,6 +75,7 @@ export default function LandingConnectToolsReveal() {
       );
 
       return () => {
+        gsap.set(manifesto, { clearProps: 'marginTop,y,opacity,visibility' });
         tl.scrollTrigger?.kill();
         tl.kill();
       };
@@ -92,13 +98,6 @@ export default function LandingConnectToolsReveal() {
     <section ref={sectionRef} id={CONNECT_TOOLS_SECTION_ID} className="relative">
       <div ref={trackRef} className="relative">
         <div
-          ref={manifestoRef}
-          className="absolute inset-x-0 bottom-0 z-0 bg-mkt-background will-change-[transform,opacity]"
-        >
-          <LandingManifestoBand />
-        </div>
-
-        <div
           ref={curtainRef}
           id={CONNECT_TOOLS_CURTAIN_ID}
           className="relative z-10 bg-[#0a0a0a] text-white will-change-transform"
@@ -106,7 +105,12 @@ export default function LandingConnectToolsReveal() {
           <ConnectToolsCurtain />
         </div>
 
-        <div className="h-[min(80vh,640px)]" aria-hidden />
+        <div
+          ref={manifestoRef}
+          className="relative z-0 bg-mkt-background will-change-[transform,opacity]"
+        >
+          <LandingManifestoBand />
+        </div>
       </div>
     </section>
   );
