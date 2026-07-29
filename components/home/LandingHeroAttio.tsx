@@ -99,7 +99,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
           trigger: track,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 1.1,
+          scrub: 0.55,
           invalidateOnRefresh: true,
         },
       });
@@ -109,8 +109,8 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
         {
           autoAlpha: 0,
           y: -16,
-          duration: 0.35,
-          ease: 'power1.inOut',
+          duration: 0.18,
+          ease: 'power2.in',
         },
         0,
       )
@@ -118,19 +118,19 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
           content,
           {
             y: -88,
-            duration: 0.58,
-            ease: 'power1.inOut',
+            duration: 0.28,
+            ease: 'power2.out',
           },
-          0.04,
+          0.02,
         )
         .to(
           preview,
           {
             scale: 1.02,
-            duration: 0.5,
-            ease: 'power1.inOut',
+            duration: 0.22,
+            ease: 'power2.out',
           },
-          0.08,
+          0.04,
         )
         .to(
           sideCards,
@@ -138,11 +138,11 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
             autoAlpha: 1,
             y: 0,
             scale: 1,
-            duration: 0.48,
-            stagger: 0.12,
+            duration: 0.22,
+            stagger: 0.05,
             ease: 'power2.out',
           },
-          0.24,
+          0.1,
         );
 
       return () => {
@@ -158,7 +158,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
       ref={sectionRef as React.RefObject<HTMLElement>}
       className="relative bg-mkt-background"
     >
-      <div ref={trackRef} className="relative h-[175vh] xl:h-[185vh]">
+      <div ref={trackRef} className="relative h-[120vh] xl:h-[130vh]">
         <div className="sticky top-[var(--mkt-nav-height)] flex min-h-[calc(100dvh-var(--mkt-nav-height))] flex-col justify-center">
           <div ref={contentRef} className="mx-auto w-full max-w-mkt-content px-5 pt-8 sm:px-8 lg:pt-10">
           <div ref={copyRef} data-hero-copy className="mx-auto max-w-3xl text-center will-change-transform">
