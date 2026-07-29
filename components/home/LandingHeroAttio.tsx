@@ -164,8 +164,8 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
         {
           autoAlpha: 0,
           y: -16,
-          duration: 0.22,
-          ease: 'power1.inOut',
+          duration: 0.12,
+          ease: 'power2.in',
         },
         0,
       )
@@ -173,19 +173,19 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
           content,
           {
             y: -88,
-            duration: 0.42,
-            ease: 'power1.inOut',
+            duration: 0.22,
+            ease: 'power2.out',
           },
-          0.06,
+          0.02,
         )
         .to(
           preview,
           {
             scale: HERO_PREVIEW_SCALE_END,
-            duration: 0.38,
-            ease: 'power1.inOut',
+            duration: 0.2,
+            ease: 'power2.out',
           },
-          0.1,
+          0.04,
         )
         .to(
           sideCards,
@@ -193,11 +193,11 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
             autoAlpha: 1,
             y: 0,
             scale: 1,
-            duration: 0.26,
-            stagger: 0.06,
+            duration: 0.18,
+            stagger: 0.04,
             ease: 'power2.out',
           },
-          0.28,
+          0.1,
         );
 
       ScrollTrigger.refresh();
