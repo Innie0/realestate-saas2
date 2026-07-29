@@ -4,7 +4,6 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import LandingNav from '@/components/home/LandingNav';
 import LandingHeroAttio from '@/components/home/LandingHeroAttio';
-import LandingContentRails from '@/components/home/LandingContentRails';
 import LandingShowcaseCarousel from '@/components/home/LandingShowcaseCarousel';
 import LandingTrustSection from '@/components/home/LandingTrustSection';
 import LandingFAQSection from '@/components/home/LandingFAQSection';
@@ -45,13 +44,11 @@ export default function HomePageClient() {
     <div className="marketing-root relative z-[1] min-h-screen overflow-x-hidden bg-mkt-background text-mkt-foreground">
       <LandingNav />
       <LandingHeroAttio sectionRef={heroRef} />
-      <LandingContentRails>
-        <LandingShowcaseCarousel />
-        <LandingTrustSection />
-        <LandingFAQSection />
-        <LandingCTABand />
-        <LandingFooter />
-      </LandingContentRails>
+      <LandingShowcaseCarousel />
+      <LandingTrustSection />
+      <LandingFAQSection />
+      <LandingCTABand />
+      <LandingFooter />
     </div>
   );
 }
