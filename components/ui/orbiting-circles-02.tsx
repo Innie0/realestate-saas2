@@ -15,22 +15,22 @@ type OrbitIcon = {
 const ORBITS: { size: string; duration: number; icon: OrbitIcon }[] = [
   {
     size: 'h-[360px] w-[360px] md:h-[480px] md:w-[480px]',
-    duration: 20,
+    duration: 10,
     icon: { id: 'google-calendar', angle: -35 },
   },
   {
     size: 'h-[500px] w-[500px] md:h-[640px] md:w-[640px]',
-    duration: 26,
+    duration: 13,
     icon: { id: 'google-ads', angle: 20 },
   },
   {
     size: 'h-[640px] w-[640px] md:h-[800px] md:w-[800px]',
-    duration: 32,
+    duration: 16,
     icon: { id: 'meta-ads', angle: -10 },
   },
   {
     size: 'h-[780px] w-[780px] md:h-[960px] md:w-[960px]',
-    duration: 38,
+    duration: 19,
     icon: { id: 'lead-forms', angle: 45 },
   },
 ];
