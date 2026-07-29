@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
+import { ShadcnButton } from '@/components/ui/shadcn-button';
 import { cn } from '@/lib/utils';
 import { useMotionReduced } from '@/lib/motion';
 
@@ -158,7 +158,7 @@ export function BackgroundPaths({ title = 'Background Paths' }: { title?: string
           </h1>
 
           <div className="group relative inline-block overflow-hidden rounded-2xl bg-gradient-to-b from-black/10 to-white/10 p-px shadow-lg backdrop-blur-lg transition-shadow duration-300 hover:shadow-xl">
-            <Button
+            <ShadcnButton
               variant="ghost"
               className="rounded-[1.15rem] border border-mkt-border bg-mkt-surface/95 px-8 py-6 text-lg font-semibold text-mkt-foreground backdrop-blur-md transition-all duration-300 hover:bg-mkt-surface hover:shadow-md group-hover:-translate-y-0.5"
             >
@@ -168,7 +168,7 @@ export function BackgroundPaths({ title = 'Background Paths' }: { title?: string
               <span className="ml-3 opacity-70 transition-all duration-300 group-hover:translate-x-1.5 group-hover:opacity-100">
                 →
               </span>
-            </Button>
+            </ShadcnButton>
           </div>
         </motion.div>
       </div>
