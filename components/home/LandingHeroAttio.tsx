@@ -8,7 +8,7 @@ import HeroAssistantPreview from '@/components/home/HeroAssistantPreview';
 import MarketingBlurFade from '@/components/marketing/MarketingBlurFade';
 import MarketingShimmerCta from '@/components/marketing/MarketingShimmerCta';
 import { Marquee } from '@/components/ui/marquee';
-import { ensureGsapRegistered, gsap, useGSAP } from '@/lib/gsap-config';
+import { ensureGsapRegistered, gsap, ScrollTrigger, useGSAP } from '@/lib/gsap-config';
 import { HERO_TRUST_BRANDS } from '@/lib/landing-hero-prompts';
 import { useMotionReduced } from '@/lib/motion';
 
@@ -145,6 +145,11 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
           0.1,
         );
 
+      ScrollTrigger.refresh();
+      if (tl.scrollTrigger) {
+        tl.progress(tl.scrollTrigger.progress);
+      }
+
       return () => {
         tl.scrollTrigger?.kill();
         tl.kill();
@@ -207,7 +212,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
                 <div
                   key={card.id}
                   data-hero-side={card.side}
-                  className={`pointer-events-none absolute z-[1] hidden w-[200px] will-change-transform xl:block ${
+                  className={`pointer-events-none absolute z-[1] hidden w-[200px] invisible opacity-0 translate-y-8 scale-[0.96] will-change-transform xl:block ${
                     card.side === 'left'
                       ? 'left-0 top-[26%] -translate-y-1/2 translate-x-[46%]'
                       : 'right-0 top-[68%] -translate-y-1/2 -translate-x-[40%]'
