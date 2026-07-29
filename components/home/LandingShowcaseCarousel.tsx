@@ -10,12 +10,14 @@ import {
   type ShowcaseAnimationId,
 } from '@/components/home/showcase-animations/ShowcaseAnimations';
 import MarketingShimmerCta from '@/components/marketing/MarketingShimmerCta';
-import { ensureGsapRegistered, gsap, ScrollTrigger, useGSAP } from '@/lib/gsap-config';
+import { ensureGsapRegistered, ScrollTrigger, useGSAP } from '@/lib/gsap-config';
 import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
 
 const indicatorSpring = { type: 'spring' as const, stiffness: 280, damping: 32, mass: 0.8 };
+const PANEL_CLASS =
+  'flex min-h-[calc(100dvh-var(--mkt-nav-height))] flex-col justify-center py-16 lg:py-20';
 
 function isShowcaseAnimationId(id: string): id is ShowcaseAnimationId {
   return ['ask-once', 'win-listing', 'never-lose-lead', 'close-confidence'].includes(id);
@@ -83,18 +85,26 @@ function ShowcaseNavRail({
 function ShowcaseSlidePanel({
   slide,
   reduced,
+  showEyebrow = false,
 }: {
   slide: ShowcaseSlide;
   reduced: boolean;
+  showEyebrow?: boolean;
 }) {
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex flex-col">
+      {showEyebrow ? (
+        <p className="mb-4 text-mkt-label text-[10px] font-medium uppercase tracking-[0.1em] text-mkt-secondary lg:hidden">
+          {slide.eyebrow}
+        </p>
+      ) : null}
+
       <h3 className="font-mkt-display max-w-xl text-[clamp(1.75rem,3vw,2.25rem)] font-semibold leading-[1.12] tracking-[-0.03em] text-mkt-foreground">
         {slide.headline}
       </h3>
       <p className="mt-4 max-w-lg text-base leading-relaxed text-mkt-secondary">{slide.description}</p>
 
-      <div className="relative mt-8 min-h-[min(380px,52vw)] flex-1 lg:min-h-[420px]">
+      <div className="relative mt-8 min-h-[min(340px,50vw)] lg:min-h-[400px]">
         {isShowcaseAnimationId(slide.id) ? (
           <ShowcaseAnimation id={slide.id} reduced={reduced} />
         ) : null}
@@ -128,64 +138,39 @@ function ShowcaseSlidePanel({
 export default function LandingShowcaseCarousel() {
   const reduced = useMotionReduced();
   const sectionRef = useRef<HTMLElement>(null);
-  const pinRef = useRef<HTMLDivElement>(null);
-  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+  const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [active, setActive] = useState(0);
 
   const scrollToSlide = useCallback((index: number) => {
-    const st = scrollTriggerRef.current;
-    if (!st || SHOWCASE_SLIDES.length < 2) return;
-    const progress = index / (SHOWCASE_SLIDES.length - 1);
-    const y = st.start + progress * (st.end - st.start);
+    const panel = panelRefs.current[index];
+    if (!panel) return;
+
+    const navHeight =
+      parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--mkt-nav-height')) || 52;
+    const y = panel.getBoundingClientRect().top + window.scrollY - navHeight - 24;
     window.scrollTo({ top: y, behavior: 'smooth' });
   }, []);
 
   useGSAP(
     () => {
-      const pin = pinRef.current;
-      if (reduced || !pin) return;
+      if (reduced || !sectionRef.current) return;
 
-      const slides = gsap.utils.toArray<HTMLElement>('[data-showcase-slide]', pin);
-      if (slides.length < 2) return;
+      const panels = panelRefs.current.filter(Boolean) as HTMLElement[];
+      if (panels.length === 0) return;
 
-      gsap.set(slides, { autoAlpha: 0, zIndex: 0 });
-      gsap.set(slides[0], { autoAlpha: 1, zIndex: 1 });
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: pin,
-          start: 'top top',
-          end: () => `+=${window.innerHeight * (slides.length - 1) * 0.92}`,
-          pin: true,
-          scrub: 0.65,
-          anticipatePin: 1,
+      const triggers = panels.map((panel, index) =>
+        ScrollTrigger.create({
+          trigger: panel,
+          start: 'top 42%',
+          end: 'bottom 42%',
+          onEnter: () => setActive(index),
+          onEnterBack: () => setActive(index),
           invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            const idx = Math.min(
-              slides.length - 1,
-              Math.round(self.progress * (slides.length - 1)),
-            );
-            setActive(idx);
-          },
-        },
-      });
-
-      scrollTriggerRef.current = tl.scrollTrigger ?? null;
-
-      slides.forEach((slide, index) => {
-        if (index === 0) return;
-
-        const prev = slides[index - 1];
-
-        tl.to(prev, { autoAlpha: 0, duration: 0.45, ease: 'power2.inOut' })
-          .set(slide, { zIndex: index + 1 })
-          .fromTo(slide, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.45, ease: 'power2.out' });
-      });
+        }),
+      );
 
       return () => {
-        scrollTriggerRef.current = null;
-        tl.scrollTrigger?.kill();
-        tl.kill();
+        triggers.forEach((trigger) => trigger.kill());
       };
     },
     { scope: sectionRef, dependencies: [reduced] },
@@ -204,7 +189,7 @@ export default function LandingShowcaseCarousel() {
                 <p className="text-mkt-label text-[10px] font-medium uppercase tracking-[0.1em] text-mkt-secondary">
                   {slide.eyebrow}
                 </p>
-                <ShowcaseSlidePanel slide={slide} reduced />
+                <ShowcaseSlidePanel slide={slide} reduced showEyebrow={false} />
               </article>
             ))}
           </div>
@@ -219,24 +204,26 @@ export default function LandingShowcaseCarousel() {
       aria-label="Product features"
       className="relative z-10 border-t border-mkt-border bg-mkt-background"
     >
-      <div ref={pinRef} className="relative min-h-[calc(100dvh-var(--mkt-nav-height))]">
-        <div className="mx-auto flex h-[calc(100dvh-var(--mkt-nav-height))] max-w-mkt-content flex-col justify-center px-5 pb-16 pt-[var(--mkt-nav-height)] sm:px-8 lg:grid lg:grid-cols-12 lg:items-center lg:gap-12 lg:py-0 xl:gap-16">
-          <div className="mb-8 shrink-0 lg:col-span-4 lg:mb-0 lg:pr-4 xl:col-span-4">
-            <ShowcaseNavRail active={active} onSelect={scrollToSlide} />
-            <p className="mt-8 hidden text-xs text-mkt-muted lg:block">
-              Scroll to walk through each workflow
-            </p>
+      <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
+        <div className="lg:grid lg:grid-cols-12 lg:gap-12 xl:gap-16">
+          <div className="hidden lg:col-span-4 lg:block">
+            <div className="sticky top-[calc(var(--mkt-nav-height)+1.5rem)] pb-16 pt-[var(--mkt-section-gap)]">
+              <ShowcaseNavRail active={active} onSelect={scrollToSlide} />
+              <p className="mt-8 text-xs text-mkt-muted">Scroll to walk through each workflow</p>
+            </div>
           </div>
 
-          <div className="relative min-h-[min(520px,72vh)] flex-1 overflow-hidden lg:col-span-8 xl:col-span-8">
+          <div className="lg:col-span-8">
             {SHOWCASE_SLIDES.map((slide, index) => (
               <div
                 key={slide.id}
-                data-showcase-slide
-                className="absolute inset-0 overflow-y-auto"
-                style={{ zIndex: index === 0 ? 1 : 0 }}
+                ref={(node) => {
+                  panelRefs.current[index] = node;
+                }}
+                data-showcase-panel
+                className={PANEL_CLASS}
               >
-                <ShowcaseSlidePanel slide={slide} reduced={false} />
+                <ShowcaseSlidePanel slide={slide} reduced={false} showEyebrow />
               </div>
             ))}
           </div>
