@@ -25,27 +25,19 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
       <div className="mx-auto max-w-mkt-content px-5 pb-[var(--mkt-section-pb)] pt-[var(--mkt-section-pt)] sm:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <MarketingBlurFade delay={0}>
-            <p className="text-mkt-label text-[11px] font-medium uppercase tracking-[0.08em] text-mkt-secondary">
-              Built for real estate agents
-            </p>
-          </MarketingBlurFade>
-
-          <MarketingBlurFade delay={0.06}>
-            <h1 className="font-mkt-display mt-4 text-[clamp(2.5rem,5.5vw,4rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-mkt-foreground">
-              Your entire business,
-              <br />
-              <span className="font-mkt-serif font-normal italic text-mkt-secondary">one workspace</span>
+            <h1 className="font-mkt-display text-[clamp(2.75rem,6vw,4.5rem)] font-semibold leading-[1.06] tracking-[-0.05em] text-mkt-foreground">
+              Welcome to Oikaro
             </h1>
           </MarketingBlurFade>
 
-          <MarketingBlurFade delay={0.12}>
-            <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-mkt-secondary sm:text-[17px]">
-              Listings, leads, research, and deals — finally in one place. Stop juggling spreadsheets,
-              forms, and five different apps.
+          <MarketingBlurFade delay={0.08}>
+            <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-mkt-secondary sm:text-xl sm:leading-[1.5]">
+              The all-in-one workflow for real estate agents — listings, leads, clients, and deals in
+              one place.
             </p>
           </MarketingBlurFade>
 
-          <MarketingBlurFade delay={0.18}>
+          <MarketingBlurFade delay={0.14}>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <MarketingShimmerCta href="/auth/signup" size="lg">
                 Start free trial
