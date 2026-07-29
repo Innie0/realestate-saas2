@@ -156,7 +156,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
           trigger: track,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 0.55,
+          scrub: 1.45,
           invalidateOnRefresh: true,
         },
       });
@@ -166,8 +166,8 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
         {
           autoAlpha: 0,
           y: -16,
-          duration: 0.18,
-          ease: 'power2.in',
+          duration: 0.22,
+          ease: 'power1.inOut',
         },
         0,
       )
@@ -175,19 +175,19 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
           content,
           {
             y: -88,
-            duration: 0.28,
-            ease: 'power2.out',
+            duration: 0.42,
+            ease: 'power1.inOut',
           },
-          0.02,
+          0.06,
         )
         .to(
           preview,
           {
             scale: HERO_PREVIEW_SCALE_END,
-            duration: 0.32,
-            ease: 'power2.inOut',
+            duration: 0.55,
+            ease: 'power1.inOut',
           },
-          0.04,
+          0.12,
         )
         .to(
           sideCards,
@@ -195,11 +195,11 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
             autoAlpha: 1,
             y: 0,
             scale: 1,
-            duration: 0.28,
-            stagger: 0.06,
+            duration: 0.32,
+            stagger: 0.08,
             ease: 'power2.out',
           },
-          0.12,
+          0.38,
         );
 
       ScrollTrigger.refresh();
@@ -228,7 +228,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
         <BackgroundPathsLayer className="h-full w-full" />
       </div>
 
-      <div ref={trackRef} className="relative z-[1] h-[120vh] xl:h-[130vh]">
+      <div ref={trackRef} className="relative z-[1] h-[145vh] xl:h-[160vh]">
         <div className="sticky top-[var(--mkt-nav-height)] flex min-h-[calc(100dvh-var(--mkt-nav-height))] flex-col justify-center">
           <div ref={contentRef} className="mx-auto w-full max-w-mkt-content px-5 pt-8 sm:px-8 lg:pt-10">
           <div ref={copyRef} data-hero-copy className="mx-auto max-w-3xl text-center will-change-transform">
