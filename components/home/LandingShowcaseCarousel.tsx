@@ -138,7 +138,7 @@ export default function LandingShowcaseCarousel() {
     if (!st || SHOWCASE_SLIDES.length < 2) return;
     const progress = index / (SHOWCASE_SLIDES.length - 1);
     const y = st.start + progress * (st.end - st.start);
-    window.scrollTo({ top: y, behavior: 'smooth' });
+    window.scrollTo({ top: y, behavior: 'auto' });
   }, []);
 
   useGSAP(
@@ -161,7 +161,7 @@ export default function LandingShowcaseCarousel() {
           start: 'top top',
           end: () => `+=${getScrollDistance()}`,
           pin: true,
-          scrub: 0.55,
+          scrub: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
