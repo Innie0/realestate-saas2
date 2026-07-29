@@ -44,9 +44,9 @@ export default function MarketingShimmerCta({
     <ShimmerButton
       type="button"
       onClick={() => router.push(href)}
-      background="#3548C7"
+      background="#111111"
       shimmerColor="#ffffff"
-      borderRadius="6px"
+      borderRadius="10px"
       shimmerDuration="3s"
       className={clsx(
         'font-medium shadow-[var(--mkt-shadow-cta)]',

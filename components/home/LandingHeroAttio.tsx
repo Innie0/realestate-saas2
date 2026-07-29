@@ -252,7 +252,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
                 </MarketingShimmerCta>
                 <Link
                   href="/products"
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-mkt-button border border-mkt-border bg-mkt-surface px-7 text-[15px] font-medium text-mkt-foreground transition-colors duration-200 hover:bg-mkt-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mkt-accent/30"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-mkt-button border border-mkt-border bg-mkt-surface px-7 text-[15px] font-medium text-mkt-foreground transition-colors duration-200 hover:border-mkt-foreground hover:bg-mkt-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mkt-foreground/30"
                 >
                   See demo
                   <ArrowRight className="size-4" strokeWidth={1.75} />

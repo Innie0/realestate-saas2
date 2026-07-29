@@ -30,7 +30,7 @@ export default function LandingCTABand() {
                 </MarketingShimmerCta>
                 <a
                   href="/pricing"
-                  className="inline-flex h-12 items-center justify-center rounded-mkt-button border border-mkt-border bg-mkt-surface px-7 text-[15px] font-medium text-mkt-foreground transition-colors duration-200 hover:bg-mkt-surface-muted"
+                  className="inline-flex h-12 items-center justify-center rounded-mkt-button border border-mkt-border bg-mkt-surface px-7 text-[15px] font-medium text-mkt-foreground transition-colors duration-200 hover:border-mkt-foreground hover:bg-mkt-surface"
                 >
                   See pricing
                 </a>

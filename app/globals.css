@@ -454,28 +454,28 @@ html[data-dashboard-theme='light'] .dashboard-root,
     font-family: var(--font-serif), 'Newsreader', Georgia, serif;
   }
 
-  /* Marketing chrome — warm light landing (Instantly-style energy, cobalt accent) */
+  /* Marketing chrome — warm off-white landing, cobalt accent (single source of truth: 2026-07-28 rebuild) */
   html:has(.marketing-root) {
-    background-color: #faf8f5;
+    background-color: #F7F5F1;
     color-scheme: light;
   }
 
   html:has(.marketing-root) body {
-    background-color: #faf8f5;
+    background-color: #F7F5F1;
   }
 
   .marketing-root {
     color-scheme: light;
-    --mkt-background: #faf8f5;
+    --mkt-background: #F7F5F1;
     --mkt-surface: #ffffff;
-    --mkt-surface-muted: #f3f0eb;
-    --mkt-text-primary: #111111;
-    --mkt-text-secondary: #5c5650;
-    --mkt-border: #e8e4de;
-    --mkt-accent: #3548c7;
-    --mkt-accent-hover: #28348a;
+    --mkt-surface-muted: #F0EDE6;
+    --mkt-text-primary: #1C1D22;
+    --mkt-text-secondary: #6B6D76;
+    --mkt-border: #E4E1DA;
+    --mkt-accent: #111111;
+    --mkt-accent-hover: #262626;
     --mkt-accent-foreground: #ffffff;
-    --mkt-muted: #78726a;
+    --mkt-muted: #6B6D76;
     --mkt-mock-surface: #ffffff;
     --mkt-browser-dot: #c4bfb6;
     --mkt-error-border: #f87171;
@@ -486,10 +486,10 @@ html[data-dashboard-theme='light'] .dashboard-root,
     --mkt-tag-blue-text: #28348a;
     --mkt-tag-amber-bg: rgba(245, 158, 11, 0.12);
     --mkt-tag-amber-text: #b45309;
-    --mkt-nav-scrolled-bg: rgba(250, 248, 245, 0.92);
-    --mkt-nav-menu-bg: rgba(250, 248, 245, 0.98);
-    --mkt-nav-transparent-bg: rgba(250, 248, 245, 0);
-    --mkt-nav-transparent-border: rgba(232, 228, 222, 0);
+    --mkt-nav-scrolled-bg: rgba(247, 245, 241, 0.92);
+    --mkt-nav-menu-bg: rgba(247, 245, 241, 0.98);
+    --mkt-nav-transparent-bg: rgba(247, 245, 241, 0);
+    --mkt-nav-transparent-border: rgba(228, 225, 218, 0);
     --mkt-hero-glow: rgba(53, 72, 199, 0.14);
     --mkt-cobalt-gradient: linear-gradient(
       145deg,
@@ -555,29 +555,33 @@ html[data-dashboard-theme='light'] .dashboard-root,
       #a7f3d0 82%,
       #059669 100%
     );
-    --mkt-radius-button: 6px;
-    --mkt-radius-card: 12px;
-    --mkt-radius-browser: 12px;
+    /* Radius scale — one family, three steps. sm: inputs/small controls, md: buttons, lg: cards/panels/browser chrome */
+    --mkt-radius-sm: 8px;
+    --mkt-radius-md: 10px;
+    --mkt-radius-lg: 16px;
+    --mkt-radius-button: var(--mkt-radius-md);
+    --mkt-radius-card: var(--mkt-radius-lg);
+    --mkt-radius-browser: var(--mkt-radius-lg);
     --mkt-spacing: 0.25rem;
     --mkt-nav-height: 52px;
     --mkt-section-pt: calc(var(--mkt-spacing) * 20);
     --mkt-section-pb: calc(var(--mkt-spacing) * 12);
     --mkt-section-gap: calc(var(--mkt-spacing) * 12);
-    --mkt-shadow-card: 0 20px 50px -24px rgba(17, 17, 17, 0.12);
-    --mkt-shadow-card-ring: 0 0 0 1px rgba(17, 17, 17, 0.04);
-    --mkt-shadow-cta: 0 0 40px -8px rgba(53, 72, 199, 0.45);
-    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-    font-feature-settings: 'ss03' on;
+    /* Single soft-shadow recipe for every elevated surface — cards, popovers, the browser mock, hovered buttons */
+    --mkt-shadow-soft: 0 1px 2px rgba(28, 29, 34, 0.04), 0 12px 32px -12px rgba(28, 29, 34, 0.14);
+    --mkt-shadow-card: var(--mkt-shadow-soft);
+    --mkt-shadow-card-ring: 0 0 0 1px rgba(28, 29, 34, 0.05);
+    --mkt-shadow-cta: 0 0 40px -8px rgba(17, 17, 17, 0.35);
+    font-family: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
     color: var(--mkt-text-primary);
     background-color: var(--mkt-background);
   }
 
   .marketing-root .font-display,
   .marketing-root .font-mkt-display {
-    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-    font-feature-settings: 'ss03' on;
-    font-weight: 600;
-    letter-spacing: -0.05em;
+    font-family: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.03em;
   }
 
   .marketing-root .font-mkt-serif {
