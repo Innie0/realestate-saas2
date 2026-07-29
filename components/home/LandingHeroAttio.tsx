@@ -14,6 +14,9 @@ import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
 
+const HERO_PREVIEW_SCALE_START = 1.12;
+const HERO_PREVIEW_SCALE_END = 1;
+
 const HERO_SIDE_CARDS = [
   {
     id: 'lead',
@@ -90,7 +93,10 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
       const sideCards = gsap.utils.toArray<HTMLElement>('[data-hero-side]', stage);
 
       gsap.set(sideCards, { autoAlpha: 0, y: 32, scale: 0.96 });
-      gsap.set(preview, { scale: 1 });
+      gsap.set(preview, {
+        scale: HERO_PREVIEW_SCALE_START,
+        transformOrigin: '50% 18%',
+      });
       gsap.set(content, { y: 0 });
       gsap.set(copy, { autoAlpha: 1, y: 0 });
 
@@ -126,9 +132,9 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
         .to(
           preview,
           {
-            scale: 1.02,
-            duration: 0.22,
-            ease: 'power2.out',
+            scale: HERO_PREVIEW_SCALE_END,
+            duration: 0.32,
+            ease: 'power2.inOut',
           },
           0.04,
         )
@@ -138,11 +144,11 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
             autoAlpha: 1,
             y: 0,
             scale: 1,
-            duration: 0.22,
-            stagger: 0.05,
+            duration: 0.28,
+            stagger: 0.06,
             ease: 'power2.out',
           },
-          0.1,
+          0.12,
         );
 
       ScrollTrigger.refresh();
@@ -199,7 +205,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
 
           <div
             ref={stageRef}
-            className="relative mx-auto mt-10 w-full max-w-[1120px] sm:mt-12"
+            className="relative mx-auto mt-8 w-full max-w-[1180px] sm:mt-10"
           >
             {reduced ? (
               <div className="mb-6 grid gap-4 sm:grid-cols-2">
@@ -223,11 +229,13 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
               ))
             )}
 
-            <MarketingBlurFade delay={0.24} inView className="relative z-[2] mx-auto w-full max-w-[760px]">
+            <MarketingBlurFade delay={0.24} inView className="relative z-[2] mx-auto w-full max-w-[920px]">
               <div
                 ref={previewRef}
                 data-hero-preview
-                className="overflow-hidden rounded-mkt-browser bg-mkt-surface shadow-[var(--mkt-shadow-card)] ring-1 ring-black/[0.04]"
+                className={`origin-[50%_18%] overflow-hidden rounded-mkt-browser bg-mkt-surface shadow-[var(--mkt-shadow-card)] ring-1 ring-black/[0.04] will-change-transform ${
+                  reduced ? '' : 'scale-[1.12]'
+                }`}
               >
                 <BrowserWindowFrame>
                   <HeroAssistantPreview animateWhenVisible compactChrome />
