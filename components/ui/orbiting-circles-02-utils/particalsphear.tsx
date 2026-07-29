@@ -23,7 +23,11 @@ function fibonacciSphere(count: number, radius: number): Point3D[] {
   return points;
 }
 
-export default function ParticleSphereAnimation() {
+export default function ParticleSphereAnimation({
+  variant = 'dark',
+}: {
+  variant?: 'dark' | 'light';
+}) {
   const reduced = useMotionReduced();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -79,7 +83,10 @@ export default function ParticleSphereAnimation() {
         const alpha = 0.15 + depth * 0.55;
         const radius = 1 + depth * 2.2;
         ctx.beginPath();
-        ctx.fillStyle = `rgba(28, 29, 34, ${alpha})`;
+        ctx.fillStyle =
+          variant === 'light'
+            ? `rgba(255, 255, 255, ${alpha})`
+            : `rgba(28, 29, 34, ${alpha})`;
         ctx.arc(cx + p.x * scale, cy + p.y * scale, radius, 0, Math.PI * 2);
         ctx.fill();
       }
@@ -94,7 +101,7 @@ export default function ParticleSphereAnimation() {
       window.removeEventListener('resize', resize);
       window.cancelAnimationFrame(raf);
     };
-  }, [reduced]);
+  }, [reduced, variant]);
 
   return (
     <canvas

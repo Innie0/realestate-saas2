@@ -13,9 +13,10 @@ const CLOSE_DELAY_MS = 280;
 
 type ProductsMegaMenuProps = {
   onOpenChange?: (open: boolean) => void;
+  inverted?: boolean;
 };
 
-export default function ProductsMegaMenu({ onOpenChange }: ProductsMegaMenuProps) {
+export default function ProductsMegaMenu({ onOpenChange, inverted = false }: ProductsMegaMenuProps) {
   const reduced = useMotionReduced();
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -84,7 +85,7 @@ export default function ProductsMegaMenu({ onOpenChange }: ProductsMegaMenuProps
                 onMouseEnter={handleEnter}
                 onMouseLeave={scheduleClose}
               >
-                <div className="border-b border-[rgba(17,17,17,0.12)] border-t border-[rgba(17,17,17,0.14)] bg-mkt-background shadow-[0_16px_48px_-20px_rgba(17,17,17,0.14)]">
+                <div className="border-b border-[rgba(28,29,34,0.10)] border-t border-[rgba(28,29,34,0.12)] bg-mkt-background shadow-[var(--mkt-shadow-soft)]">
                   <div className="mx-auto max-w-mkt-content px-5 py-8 sm:px-8 sm:py-9 lg:py-10">
                     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_260px] lg:gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_280px] xl:gap-8">
                       {PRODUCT_MENU_COLUMNS.map((column) => (
@@ -165,7 +166,13 @@ export default function ProductsMegaMenu({ onOpenChange }: ProductsMegaMenuProps
         <button
           type="button"
           className={`inline-flex items-center gap-1 px-3 py-2 text-sm transition-colors sm:gap-1.5 ${
-            open ? 'font-semibold text-mkt-accent' : 'font-medium text-mkt-secondary hover:opacity-70'
+            open
+              ? inverted
+                ? 'font-semibold text-white'
+                : 'font-semibold text-mkt-accent'
+              : inverted
+                ? 'font-medium text-white/70 hover:text-white'
+                : 'font-medium text-mkt-secondary hover:opacity-70'
           }`}
           aria-expanded={open}
           aria-haspopup="true"
@@ -173,7 +180,9 @@ export default function ProductsMegaMenu({ onOpenChange }: ProductsMegaMenuProps
         >
           Products
           <ChevronDown
-            className={`size-4 transition-transform duration-300 ${open ? 'rotate-180 text-mkt-accent' : ''}`}
+            className={`size-4 transition-transform duration-300 ${
+              open ? `rotate-180 ${inverted ? 'text-white' : 'text-mkt-accent'}` : ''
+            }`}
             strokeWidth={2}
           />
         </button>

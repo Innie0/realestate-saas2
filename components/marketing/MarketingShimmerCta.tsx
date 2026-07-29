@@ -8,14 +8,16 @@ type MarketingShimmerCtaProps = {
   children: React.ReactNode;
   className?: string;
   size?: 'md' | 'lg';
+  inverted?: boolean;
 };
 
-/** Solid black primary CTA for marketing pages. */
+/** Solid primary CTA for marketing pages. */
 export default function MarketingShimmerCta({
   href,
   children,
   className,
   size = 'md',
+  inverted = false,
 }: MarketingShimmerCtaProps) {
   const router = useRouter();
 
@@ -26,7 +28,10 @@ export default function MarketingShimmerCta({
       type="button"
       onClick={() => router.push(href)}
       className={clsx(
-        'inline-flex items-center justify-center rounded-mkt-button bg-mkt-accent font-medium text-mkt-accent-foreground transition-colors hover:bg-mkt-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mkt-foreground/40 focus-visible:ring-offset-2 focus-visible:ring-offset-mkt-background',
+        'inline-flex items-center justify-center rounded-mkt-button font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+        inverted
+          ? 'bg-white text-[#111111] hover:bg-white/90 focus-visible:ring-white/40 focus-visible:ring-offset-[#0a0a0a]'
+          : 'bg-mkt-accent text-mkt-accent-foreground hover:bg-mkt-accent-hover focus-visible:ring-mkt-foreground/40 focus-visible:ring-offset-mkt-background',
         sizeClass,
         className,
       )}

@@ -4,6 +4,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import MarketingHeaderNav from '@/components/marketing/MarketingHeaderNav';
 import { ensureGsapRegistered, gsap, landingRevealDefaults, useGSAP } from '@/lib/gsap-config';
+import {
+  isConnectToolsNavDark,
+} from '@/lib/landing-nav-theme';
 import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
@@ -14,6 +17,7 @@ export default function LandingNav() {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [darkNav, setDarkNav] = useState(false);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -26,11 +30,17 @@ export default function LandingNav() {
         setHidden(false);
       }
       lastScrollY.current = y;
+
+      setDarkNav(isConnectToolsNavDark());
     };
 
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
   }, [menuOpen]);
 
   useGSAP(
@@ -51,16 +61,18 @@ export default function LandingNav() {
     <header
       ref={navRef as React.RefObject<HTMLElement>}
       className={clsx(
-        'fixed inset-x-0 top-0 z-[60] border-b transition-[transform,background-color,border-color,backdrop-filter] duration-300 ease-out',
-        scrolled
-          ? 'border-mkt-border bg-mkt-nav-scrolled-bg backdrop-blur-md'
-          : 'border-transparent bg-mkt-nav-transparent-bg',
+        'fixed inset-x-0 top-0 z-[60] border-b transition-[transform,background-color,border-color,backdrop-filter,color] duration-300 ease-out',
+        darkNav
+          ? 'border-white/10 bg-[#0a0a0a]/90 text-white backdrop-blur-md'
+          : scrolled
+            ? 'border-mkt-border bg-mkt-nav-scrolled-bg text-mkt-foreground backdrop-blur-md'
+            : 'border-transparent bg-mkt-nav-transparent-bg text-mkt-foreground',
         hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0',
       )}
     >
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <div className="flex h-[var(--mkt-nav-height)] items-center">
-          <MarketingHeaderNav onProductsMenuChange={setMenuOpen} />
+          <MarketingHeaderNav inverted={darkNav} onProductsMenuChange={setMenuOpen} />
         </div>
       </div>
     </header>
