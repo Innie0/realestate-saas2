@@ -205,7 +205,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
 
           <div
             ref={stageRef}
-            className="relative mx-auto mt-8 w-full max-w-[1180px] sm:mt-10"
+            className="relative mx-auto mt-8 w-full max-w-[1180px] overflow-visible sm:mt-10"
           >
             {reduced ? (
               <div className="mb-6 grid gap-4 sm:grid-cols-2">
@@ -218,10 +218,10 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
                 <div
                   key={card.id}
                   data-hero-side={card.side}
-                  className={`pointer-events-none absolute z-[1] hidden w-[200px] invisible opacity-0 translate-y-8 scale-[0.96] will-change-transform xl:block ${
+                  className={`pointer-events-none absolute hidden w-[200px] invisible opacity-0 translate-y-8 scale-[0.96] will-change-transform xl:block ${
                     card.side === 'left'
-                      ? 'left-0 top-[26%] -translate-y-1/2 translate-x-[46%]'
-                      : 'right-0 top-[68%] -translate-y-1/2 -translate-x-[40%]'
+                      ? 'left-[-3rem] top-[24%] z-[3] -translate-y-1/2 translate-x-0'
+                      : 'right-[-3rem] top-[70%] z-[1] -translate-y-1/2 translate-x-0'
                   }`}
                 >
                   <HeroSideCard {...card} />
