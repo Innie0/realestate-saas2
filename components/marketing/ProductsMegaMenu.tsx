@@ -165,7 +165,7 @@ export default function ProductsMegaMenu({ onOpenChange, inverted = false }: Pro
       >
         <button
           type="button"
-          className={`inline-flex items-center gap-1 px-3 py-2 text-sm transition-colors sm:gap-1.5 ${
+          className={`inline-flex items-center gap-1 px-3 py-2.5 text-[15px] transition-colors sm:gap-1.5 ${
             open
               ? inverted
                 ? 'font-semibold text-white'

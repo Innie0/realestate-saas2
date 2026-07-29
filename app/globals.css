@@ -563,7 +563,7 @@ html[data-dashboard-theme='light'] .dashboard-root,
     --mkt-radius-card: var(--mkt-radius-lg);
     --mkt-radius-browser: var(--mkt-radius-lg);
     --mkt-spacing: 0.25rem;
-    --mkt-nav-height: 52px;
+    --mkt-nav-height: 72px;
     --mkt-section-pt: calc(var(--mkt-spacing) * 20);
     --mkt-section-pb: calc(var(--mkt-spacing) * 12);
     --mkt-section-gap: calc(var(--mkt-spacing) * 12);

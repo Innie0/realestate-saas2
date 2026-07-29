@@ -6,7 +6,7 @@ import ProductsMegaMenu from '@/components/marketing/ProductsMegaMenu';
 import MarketingShimmerCta from '@/components/marketing/MarketingShimmerCta';
 
 const NAV_LINK_CLASS =
-  'inline-flex items-center px-3 py-2 text-sm font-medium text-mkt-secondary transition-colors duration-200 hover:text-mkt-foreground';
+  'inline-flex items-center px-3 py-2.5 text-[15px] font-medium text-mkt-secondary transition-colors duration-200 hover:text-mkt-foreground';
 
 type MarketingHeaderNavProps = {
   onProductsMenuChange?: (open: boolean) => void;
@@ -18,7 +18,7 @@ export default function MarketingHeaderNav({
   inverted = false,
 }: MarketingHeaderNavProps) {
   const navLinkClass = inverted
-    ? 'inline-flex items-center px-3 py-2 text-sm font-medium text-white/70 transition-colors duration-200 hover:text-white'
+    ? 'inline-flex items-center px-3 py-2.5 text-[15px] font-medium text-white/70 transition-colors duration-200 hover:text-white'
     : NAV_LINK_CLASS;
 
   return (
@@ -26,7 +26,7 @@ export default function MarketingHeaderNav({
       <Link
         href="/"
         className={clsx(
-          'shrink-0 text-[15px] font-bold tracking-[-0.02em] transition-opacity duration-200 hover:opacity-70',
+          'shrink-0 text-[17px] font-bold tracking-[-0.02em] transition-opacity duration-200 hover:opacity-70',
           inverted ? 'text-white' : 'text-mkt-foreground',
         )}
       >
@@ -47,7 +47,7 @@ export default function MarketingHeaderNav({
         <Link href="/auth/login" className={`${navLinkClass} hidden sm:inline-flex`}>
           Sign in
         </Link>
-        <MarketingShimmerCta href="/auth/signup" inverted={inverted}>
+        <MarketingShimmerCta href="/auth/signup" inverted={inverted} size="lg">
           Start free trial
         </MarketingShimmerCta>
       </div>
