@@ -156,7 +156,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
           trigger: track,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 1.45,
+          scrub: 0.95,
           invalidateOnRefresh: true,
         },
       });
@@ -184,10 +184,10 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
           preview,
           {
             scale: HERO_PREVIEW_SCALE_END,
-            duration: 0.55,
+            duration: 0.38,
             ease: 'power1.inOut',
           },
-          0.12,
+          0.1,
         )
         .to(
           sideCards,
@@ -195,11 +195,11 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
             autoAlpha: 1,
             y: 0,
             scale: 1,
-            duration: 0.32,
-            stagger: 0.08,
+            duration: 0.26,
+            stagger: 0.06,
             ease: 'power2.out',
           },
-          0.38,
+          0.28,
         );
 
       ScrollTrigger.refresh();
@@ -228,7 +228,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
         <BackgroundPathsLayer className="h-full w-full" />
       </div>
 
-      <div ref={trackRef} className="relative z-[1] h-[145vh] xl:h-[160vh]">
+      <div ref={trackRef} className="relative z-[1] h-[130vh] xl:h-[140vh]">
         <div className="sticky top-[var(--mkt-nav-height)] flex min-h-[calc(100dvh-var(--mkt-nav-height))] flex-col justify-center">
           <div ref={contentRef} className="mx-auto w-full max-w-mkt-content px-5 pt-8 sm:px-8 lg:pt-10">
           <div ref={copyRef} data-hero-copy className="mx-auto max-w-3xl text-center will-change-transform">
@@ -264,7 +264,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
 
           <div
             ref={stageRef}
-            className="relative mx-auto mt-8 w-full max-w-[1180px] overflow-visible sm:mt-10"
+            className="relative mx-auto mt-12 w-full max-w-[1180px] overflow-visible sm:mt-14 lg:mt-16"
           >
             {reduced ? (
               <div className="mb-6 grid gap-4 sm:grid-cols-2">
