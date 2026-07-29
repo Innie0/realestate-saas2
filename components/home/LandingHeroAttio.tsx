@@ -1,12 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { ArrowRight, Inbox, Sparkles } from 'lucide-react';
 import BrowserWindowFrame from '@/components/home/BrowserWindowFrame';
 import HeroAssistantPreview from '@/components/home/HeroAssistantPreview';
 import MarketingBlurFade from '@/components/marketing/MarketingBlurFade';
 import MarketingShimmerCta from '@/components/marketing/MarketingShimmerCta';
+import { BackgroundPathsLayer } from '@/components/ui/background-paths';
 import { Marquee } from '@/components/ui/marquee';
 import { ensureGsapRegistered, gsap, ScrollTrigger, useGSAP } from '@/lib/gsap-config';
 import { HERO_TRUST_BRANDS } from '@/lib/landing-hero-prompts';
@@ -80,6 +81,56 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
   const copyRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
+  const trustRef = useRef<HTMLDivElement>(null);
+  const pathsWrapRef = useRef<HTMLDivElement>(null);
+  const sectionElRef = useRef<HTMLElement | null>(null);
+
+  const mergeSectionRef = (node: HTMLElement | null) => {
+    sectionElRef.current = node;
+    if (sectionRef) {
+      (sectionRef as React.MutableRefObject<HTMLElement | null>).current = node;
+    }
+  };
+
+  useLayoutEffect(() => {
+    if (reduced) return;
+
+    const updatePathsBounds = () => {
+      const section = sectionElRef.current;
+      const preview = previewRef.current;
+      const pathsWrap = pathsWrapRef.current;
+      const trust = trustRef.current;
+      if (!section || !preview || !pathsWrap) return;
+
+      const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+      const previewRect = preview.getBoundingClientRect();
+      const pathsTop = previewRect.top + window.scrollY + previewRect.height / 2 - sectionTop;
+
+      let pathsBottom = section.offsetHeight;
+      if (trust) {
+        pathsBottom = trust.getBoundingClientRect().top + window.scrollY - sectionTop;
+      }
+
+      pathsWrap.style.top = `${Math.max(0, pathsTop)}px`;
+      pathsWrap.style.height = `${Math.max(0, pathsBottom - pathsTop)}px`;
+    };
+
+    updatePathsBounds();
+    window.addEventListener('resize', updatePathsBounds);
+
+    const syncTrigger = ScrollTrigger.create({
+      trigger: trackRef.current ?? sectionElRef.current,
+      start: 'top top',
+      end: 'bottom bottom',
+      onUpdate: updatePathsBounds,
+      invalidateOnRefresh: true,
+    });
+
+    return () => {
+      window.removeEventListener('resize', updatePathsBounds);
+      syncTrigger.kill();
+    };
+  }, [reduced]);
 
   useGSAP(
     () => {
@@ -166,10 +217,18 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
 
   return (
     <section
-      ref={sectionRef as React.RefObject<HTMLElement>}
-      className="relative bg-mkt-background"
+      ref={mergeSectionRef}
+      className="relative overflow-hidden bg-mkt-background"
     >
-      <div ref={trackRef} className="relative h-[120vh] xl:h-[130vh]">
+      <div
+        ref={pathsWrapRef}
+        className="pointer-events-none absolute inset-x-0 z-0"
+        aria-hidden
+      >
+        <BackgroundPathsLayer className="h-full w-full" />
+      </div>
+
+      <div ref={trackRef} className="relative z-[1] h-[120vh] xl:h-[130vh]">
         <div className="sticky top-[var(--mkt-nav-height)] flex min-h-[calc(100dvh-var(--mkt-nav-height))] flex-col justify-center">
           <div ref={contentRef} className="mx-auto w-full max-w-mkt-content px-5 pt-8 sm:px-8 lg:pt-10">
           <div ref={copyRef} data-hero-copy className="mx-auto max-w-3xl text-center will-change-transform">
@@ -247,7 +306,10 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
         </div>
       </div>
 
-      <div className="mx-auto max-w-mkt-content px-5 pb-[var(--mkt-section-pb)] pt-4 sm:px-8">
+      <div
+        ref={trustRef}
+        className="relative z-[1] mx-auto max-w-mkt-content px-5 pb-[var(--mkt-section-pb)] pt-4 sm:px-8"
+      >
         <MarketingBlurFade delay={0.3} inView className="mt-12 sm:mt-14">
           <p className="mb-5 text-center text-mkt-label text-[10px] font-medium uppercase tracking-[0.12em] text-mkt-muted">
             Used by agents at leading brokerages
