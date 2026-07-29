@@ -8,9 +8,7 @@ import HeroAssistantPreview from '@/components/home/HeroAssistantPreview';
 import MarketingBlurFade from '@/components/marketing/MarketingBlurFade';
 import MarketingShimmerCta from '@/components/marketing/MarketingShimmerCta';
 import { BackgroundPathsLayer } from '@/components/ui/background-paths';
-import { Marquee } from '@/components/ui/marquee';
 import { ensureGsapRegistered, gsap, ScrollTrigger, useGSAP } from '@/lib/gsap-config';
-import { HERO_TRUST_BRANDS } from '@/lib/landing-hero-prompts';
 import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
@@ -81,7 +79,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
   const copyRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
-  const trustRef = useRef<HTMLDivElement>(null);
+  const dividerRef = useRef<HTMLDivElement>(null);
   const pathsWrapRef = useRef<HTMLDivElement>(null);
   const sectionElRef = useRef<HTMLElement | null>(null);
 
@@ -99,7 +97,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
       const section = sectionElRef.current;
       const preview = previewRef.current;
       const pathsWrap = pathsWrapRef.current;
-      const trust = trustRef.current;
+      const divider = dividerRef.current;
       if (!section || !preview || !pathsWrap) return;
 
       const sectionTop = section.getBoundingClientRect().top + window.scrollY;
@@ -107,8 +105,8 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
       const pathsTop = previewRect.top + window.scrollY + previewRect.height / 2 - sectionTop;
 
       let pathsBottom = section.offsetHeight;
-      if (trust) {
-        pathsBottom = trust.getBoundingClientRect().top + window.scrollY - sectionTop;
+      if (divider) {
+        pathsBottom = divider.getBoundingClientRect().top + window.scrollY - sectionTop;
       }
 
       pathsWrap.style.top = `${Math.max(0, pathsTop)}px`;
@@ -307,37 +305,10 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
       </div>
 
       <div
-        ref={trustRef}
-        className="relative z-[1] mx-auto max-w-mkt-content px-5 pb-[var(--mkt-section-pb)] pt-4 sm:px-8"
+        ref={dividerRef}
+        className="relative z-[1] mx-auto max-w-mkt-content px-5 pb-[var(--mkt-section-pb)] pt-10 sm:px-8 sm:pt-12"
       >
-        <MarketingBlurFade delay={0.3} inView className="mt-12 sm:mt-14">
-          <p className="mb-5 text-center text-mkt-label text-[10px] font-medium uppercase tracking-[0.12em] text-mkt-muted">
-            Used by agents at leading brokerages
-          </p>
-          {reduced ? (
-            <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3">
-              {HERO_TRUST_BRANDS.map((brand) => (
-                <span
-                  key={brand}
-                  className="text-sm font-medium tracking-[-0.02em] text-mkt-secondary"
-                >
-                  {brand}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <Marquee pauseOnHover className="[--duration:32s] [--gap:2.5rem]">
-              {HERO_TRUST_BRANDS.map((brand) => (
-                <span
-                  key={brand}
-                  className="text-sm font-medium tracking-[-0.02em] text-mkt-secondary"
-                >
-                  {brand}
-                </span>
-              ))}
-            </Marquee>
-          )}
-        </MarketingBlurFade>
+        <div className="border-t border-mkt-border" aria-hidden />
       </div>
     </section>
   );
