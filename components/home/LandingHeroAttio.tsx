@@ -218,8 +218,6 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
       ref={mergeSectionRef}
       className="relative overflow-hidden bg-mkt-background"
     >
-      <div className="hero-lined-bg" aria-hidden />
-
       <div
         ref={pathsWrapRef}
         className="pointer-events-none absolute inset-x-0 z-0"
@@ -228,7 +226,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
         <BackgroundPathsLayer className="h-full w-full" />
       </div>
 
-      <div ref={trackRef} className="relative z-10 h-[130vh] xl:h-[140vh]">
+      <div ref={trackRef} className="relative z-[1] h-[130vh] xl:h-[140vh]">
         <div className="sticky top-[var(--mkt-nav-height)] flex min-h-[calc(100dvh-var(--mkt-nav-height))] flex-col justify-center">
           <div ref={contentRef} className="mx-auto w-full max-w-mkt-content px-5 pt-8 sm:px-8 lg:pt-10">
           <div ref={copyRef} data-hero-copy className="mx-auto max-w-3xl text-center will-change-transform">
@@ -307,7 +305,7 @@ export default function LandingHeroAttio({ sectionRef }: LandingHeroAttioProps) 
 
       <div
         ref={dividerRef}
-        className="relative z-10 mx-auto max-w-mkt-content px-5 pb-[var(--mkt-section-pb)] pt-10 sm:px-8 sm:pt-12"
+        className="relative z-[1] mx-auto max-w-mkt-content px-5 pb-[var(--mkt-section-pb)] pt-10 sm:px-8 sm:pt-12"
       >
         <div className="border-t border-mkt-border" aria-hidden />
       </div>
