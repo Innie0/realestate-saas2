@@ -613,6 +613,35 @@ html[data-dashboard-theme='light'] .dashboard-root,
     opacity: 0;
   }
 
+  .marketing-root .hero-lined-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-color: var(--mkt-background);
+    background-image: repeating-linear-gradient(
+      to right,
+      transparent,
+      transparent 63px,
+      rgb(0 0 0 / 0.06) 63px,
+      rgb(0 0 0 / 0.06) 64px
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      black 12%,
+      black 88%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      black 12%,
+      black 88%,
+      transparent 100%
+    );
+  }
+
   .marketing-root .hero-gradient-bg {
     position: absolute;
     inset: 0;
