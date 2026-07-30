@@ -26,14 +26,14 @@ type StackItem = {
 };
 
 const STACK_ITEMS: StackItem[] = [
-  { id: 'leads', label: 'Lead capture forms', icon: FileText, scatter: { x: -280, y: -100, rotate: -22 } },
-  { id: 'spreadsheet', label: 'Spreadsheet pipeline', icon: Table2, scatter: { x: 210, y: -150, rotate: 16 } },
-  { id: 'listing-copy', label: 'AI / listing copy', icon: Sparkles, scatter: { x: 320, y: 30, rotate: -11 } },
-  { id: 'ads', label: 'Meta & Google ads', icon: Megaphone, scatter: { x: -310, y: 70, rotate: 24 } },
-  { id: 'calendar', label: 'Google Calendar', icon: CalendarDays, scatter: { x: -100, y: 170, rotate: -16 } },
-  { id: 'crm', label: 'CRM & follow-ups', icon: Users, scatter: { x: 90, y: 190, rotate: 19 } },
-  { id: 'checklists', label: 'Transaction checklists', icon: ClipboardCheck, scatter: { x: 260, y: -190, rotate: -28 } },
-  { id: 'research', label: 'Property research', icon: Search, scatter: { x: -30, y: -230, rotate: 13 } },
+  { id: 'leads', label: 'Lead capture forms', icon: FileText, scatter: { x: -300, y: -80, rotate: -24 } },
+  { id: 'spreadsheet', label: 'Spreadsheet pipeline', icon: Table2, scatter: { x: 280, y: -120, rotate: 18 } },
+  { id: 'listing-copy', label: 'AI / listing copy', icon: Sparkles, scatter: { x: 340, y: 60, rotate: -14 } },
+  { id: 'ads', label: 'Meta & Google ads', icon: Megaphone, scatter: { x: -340, y: 90, rotate: 26 } },
+  { id: 'calendar', label: 'Google Calendar', icon: CalendarDays, scatter: { x: -160, y: 200, rotate: -18 } },
+  { id: 'crm', label: 'CRM & follow-ups', icon: Users, scatter: { x: 120, y: 210, rotate: 20 } },
+  { id: 'checklists', label: 'Transaction checklists', icon: ClipboardCheck, scatter: { x: 300, y: -200, rotate: -30 } },
+  { id: 'research', label: 'Property research', icon: Search, scatter: { x: 20, y: -240, rotate: 12 } },
 ];
 
 const CHAOS_LINKS: [number, number][] = [
@@ -44,33 +44,78 @@ const CHAOS_LINKS: [number, number][] = [
   [3, 6],
 ];
 
-function getLinePositions(count: number, stageWidth: number) {
-  if (stageWidth < 640) {
-    const cols = 4;
-    const gapX = Math.min(78, Math.max(64, (stageWidth - 32) / cols));
-    const gapY = 48;
-    return Array.from({ length: count }, (_, i) => {
-      const col = i % cols;
-      const row = Math.floor(i / cols);
-      return {
-        x: (col - (cols - 1) / 2) * gapX,
-        y: (row - 0.5) * gapY,
-        rotate: 0,
-      };
-    });
-  }
+type Point = { x: number; y: number; rotate: number };
 
-  const gap = Math.min(138, Math.max(96, (stageWidth - 48) / Math.max(count - 1, 1)));
-  return Array.from({ length: count }, (_, i) => ({
-    x: (i - (count - 1) / 2) * gap,
-    y: 0,
-    rotate: 0,
-  }));
+function measureFlexLinePositions(stage: HTMLElement, items: HTMLElement[]): Point[] {
+  const measurer = document.createElement('div');
+  measurer.className =
+    'pointer-events-none absolute left-1/2 top-1/2 flex w-full max-w-[min(100%,920px)] -translate-x-1/2 -translate-y-1/2 flex-wrap items-center justify-center gap-2.5 sm:gap-3';
+  measurer.style.visibility = 'hidden';
+  stage.appendChild(measurer);
+
+  const clones = items.map((item) => {
+    const clone = item.cloneNode(true) as HTMLElement;
+    clone.style.position = 'relative';
+    clone.style.opacity = '1';
+    clone.style.transform = 'none';
+    measurer.appendChild(clone);
+    return clone;
+  });
+
+  const stageRect = stage.getBoundingClientRect();
+  const positions = clones.map((clone) => {
+    const rect = clone.getBoundingClientRect();
+    return {
+      x: rect.left + rect.width / 2 - (stageRect.left + stageRect.width / 2),
+      y: rect.top + rect.height / 2 - (stageRect.top + stageRect.height / 2),
+      rotate: 0,
+    };
+  });
+
+  measurer.remove();
+  return positions;
+}
+
+function addSwirlMotion(
+  tl: gsap.core.Timeline,
+  el: HTMLElement,
+  index: number,
+  total: number,
+  startAt: number,
+) {
+  const loops = index % 2 === 0 ? 3.2 : -2.6;
+  const baseRadius = 88 + (index % 5) * 28;
+  const startAngle = (index / total) * Math.PI * 2;
+  const proxy = { p: 0 };
+
+  tl.to(
+    proxy,
+    {
+      p: 1,
+      duration: 2.1,
+      ease: 'none',
+      onUpdate: () => {
+        const angle = startAngle + proxy.p * Math.PI * 2 * loops;
+        const pulse = Math.sin(proxy.p * Math.PI * 5) * 22;
+        const radius = baseRadius + pulse;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius * 0.72;
+
+        gsap.set(el, {
+          x,
+          y,
+          rotate: angle * (180 / Math.PI) * 0.08 + (index % 2 === 0 ? 1 : -1) * 12,
+          zIndex: Math.round(y),
+        });
+      },
+    },
+    startAt,
+  );
 }
 
 function StaticLineLayout() {
   return (
-    <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+    <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
       {STACK_ITEMS.map((item) => (
         <div
           key={item.id}
@@ -105,7 +150,7 @@ export default function LandingStackReplaceSection() {
         if (played) return;
         played = true;
 
-        const linePositions = getLinePositions(STACK_ITEMS.length, stage.offsetWidth);
+        const linePositions = measureFlexLinePositions(stage, items);
 
         items.forEach((el, i) => {
           gsap.set(el, {
@@ -113,6 +158,7 @@ export default function LandingStackReplaceSection() {
             y: STACK_ITEMS[i].scatter.y,
             rotate: STACK_ITEMS[i].scatter.rotate,
             opacity: 1,
+            zIndex: Math.round(STACK_ITEMS[i].scatter.y),
           });
         });
 
@@ -127,29 +173,13 @@ export default function LandingStackReplaceSection() {
         const tl = gsap.timeline();
 
         items.forEach((el, i) => {
-          tl.to(
-            el,
-            {
-              x: `+=${gsap.utils.random(-36, 36)}`,
-              y: `+=${gsap.utils.random(-28, 28)}`,
-              rotate: `+=${gsap.utils.random(-18, 18)}`,
-              duration: 0.28,
-              repeat: 4,
-              yoyo: true,
-              ease: 'sine.inOut',
-            },
-            i * 0.04,
-          );
+          addSwirlMotion(tl, el, i, items.length, i * 0.06);
         });
 
-        tl.to(
-          lines,
-          { opacity: 0, duration: 0.35, ease: 'power1.out' },
-          0.9,
-        );
+        tl.to(lines, { opacity: 0, duration: 0.45, ease: 'power1.out' }, 0.35);
 
         if (linesRef.current) {
-          tl.to(linesRef.current, { opacity: 0, duration: 0.35, ease: 'power1.out' }, 0.9);
+          tl.to(linesRef.current, { opacity: 0, duration: 0.45, ease: 'power1.out' }, 0.35);
         }
 
         tl.to(
@@ -158,15 +188,17 @@ export default function LandingStackReplaceSection() {
             x: (i) => linePositions[i].x,
             y: (i) => linePositions[i].y,
             rotate: 0,
-            duration: 0.85,
+            duration: 0.95,
             ease: 'power3.out',
-            stagger: 0.04,
+            stagger: { each: 0.05, from: 'center' },
           },
-          1.15,
+          2.05,
         );
+
+        tl.set(items, { zIndex: 1 }, 2.05);
       };
 
-      ScrollTrigger.create({
+      const trigger = ScrollTrigger.create({
         trigger: stage,
         start: 'top 82%',
         once: true,
@@ -174,9 +206,7 @@ export default function LandingStackReplaceSection() {
       });
 
       return () => {
-        ScrollTrigger.getAll().forEach((st) => {
-          if (st.trigger === stage) st.kill();
-        });
+        trigger.kill();
       };
     },
     { scope: sectionRef, dependencies: [reduced] },
@@ -209,7 +239,7 @@ export default function LandingStackReplaceSection() {
 
         <div
           ref={stageRef}
-          className="relative mt-10 flex min-h-[220px] items-center justify-center sm:mt-12 sm:min-h-[260px]"
+          className="relative mt-10 flex min-h-[300px] items-center justify-center overflow-hidden sm:mt-12 sm:min-h-[340px]"
         >
           {reduced ? (
             <StaticLineLayout />
@@ -218,7 +248,7 @@ export default function LandingStackReplaceSection() {
               <svg
                 ref={linesRef}
                 className="pointer-events-none absolute inset-0 h-full w-full opacity-0"
-                viewBox="-380 -280 760 560"
+                viewBox="-400 -300 800 600"
                 preserveAspectRatio="xMidYMid meet"
                 aria-hidden
               >
