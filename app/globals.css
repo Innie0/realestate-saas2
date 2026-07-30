@@ -1525,6 +1525,17 @@ html[data-dashboard-theme='light'] .dashboard-root,
     background-color: color-mix(in srgb, #ffffff 90%, transparent) !important;
   }
 
+  /* Attio-style column grid — white field with thin vertical rules */
+  .marketing-root .mkt-grid-lines-bg {
+    background-color: #ffffff;
+    background-image: linear-gradient(
+      to right,
+      rgb(0 0 0 / 0.08) 1px,
+      transparent 1px
+    );
+    background-size: calc(100% / 12) 100%;
+  }
+
   /* Primary CTAs — ensure label contrasts with fill in both themes */
   .bg-brand-500.text-white,
   .bg-brand-600.text-white,
