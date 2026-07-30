@@ -13,81 +13,27 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import LandingStaggerReveal from '@/components/home/LandingStaggerReveal';
-import { ensureGsapRegistered, gsap, ScrollTrigger, useGSAP } from '@/lib/gsap-config';
+import { ensureGsapRegistered, gsap, useGSAP } from '@/lib/gsap-config';
 import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
-
-const PILL_GAP_X = 14;
-const PILL_GAP_Y = 18;
 
 type StackItem = {
   id: string;
   label: string;
   icon: LucideIcon;
-  row: number;
 };
 
 const STACK_ITEMS: StackItem[] = [
-  { id: 'leads', label: 'Lead capture forms', icon: FileText, row: 0 },
-  { id: 'spreadsheet', label: 'Spreadsheet pipeline', icon: Table2, row: 0 },
-  { id: 'listing-copy', label: 'AI / listing copy', icon: Sparkles, row: 0 },
-  { id: 'ads', label: 'Meta & Google ads', icon: Megaphone, row: 0 },
-  { id: 'calendar', label: 'Google Calendar', icon: CalendarDays, row: 1 },
-  { id: 'crm', label: 'CRM & follow-ups', icon: Users, row: 1 },
-  { id: 'checklists', label: 'Transaction checklists', icon: ClipboardCheck, row: 1 },
-  { id: 'research', label: 'Property research', icon: Search, row: 1 },
+  { id: 'leads', label: 'Lead capture forms', icon: FileText },
+  { id: 'spreadsheet', label: 'Spreadsheet pipeline', icon: Table2 },
+  { id: 'listing-copy', label: 'AI / listing copy', icon: Sparkles },
+  { id: 'ads', label: 'Meta & Google ads', icon: Megaphone },
+  { id: 'calendar', label: 'Google Calendar', icon: CalendarDays },
+  { id: 'crm', label: 'CRM & follow-ups', icon: Users },
+  { id: 'checklists', label: 'Transaction checklists', icon: ClipboardCheck },
+  { id: 'research', label: 'Property research', icon: Search },
 ];
-
-function computeLinePositions(
-  elements: HTMLDivElement[],
-  rowByIndex: number[],
-  gapX: number,
-  gapY: number,
-) {
-  const positions = new Array<{ x: number; y: number; rotate: number }>(elements.length);
-  const rowIndices = new Map<number, number[]>();
-
-  rowByIndex.forEach((row, index) => {
-    const indices = rowIndices.get(row) ?? [];
-    indices.push(index);
-    rowIndices.set(row, indices);
-  });
-
-  const sortedRows = [...rowIndices.keys()].sort((a, b) => a - b);
-  const rowMetrics = sortedRows.map((row) => {
-    const indices = rowIndices.get(row)!;
-    const rowElements = indices.map((index) => elements[index]);
-    const widths = rowElements.map((el) => el.offsetWidth);
-    const maxHeight = Math.max(...rowElements.map((el) => el.offsetHeight));
-    const totalWidth = widths.reduce((sum, width) => sum + width, 0) + gapX * (widths.length - 1);
-
-    let cursor = -totalWidth / 2;
-    const rowPositions: { index: number; x: number }[] = [];
-
-    indices.forEach((index, columnIndex) => {
-      const width = widths[columnIndex];
-      rowPositions.push({ index, x: cursor + width / 2 });
-      cursor += width + gapX;
-    });
-
-    return { maxHeight, rowPositions };
-  });
-
-  const totalHeight =
-    rowMetrics.reduce((sum, row) => sum + row.maxHeight, 0) + gapY * (rowMetrics.length - 1);
-
-  let yCursor = -totalHeight / 2;
-  rowMetrics.forEach(({ maxHeight, rowPositions }) => {
-    const centerY = yCursor + maxHeight / 2;
-    rowPositions.forEach(({ index, x }) => {
-      positions[index] = { x, y: centerY, rotate: 0 };
-    });
-    yCursor += maxHeight + gapY;
-  });
-
-  return positions;
-}
 
 const SCRAMBLE_WAYPOINTS: { x: number; y: number; rotate: number }[][] = [
   [
@@ -132,36 +78,11 @@ const SCRAMBLE_WAYPOINTS: { x: number; y: number; rotate: number }[][] = [
   ],
 ];
 
-function StaticLineLayout() {
-  const pillClass =
-    'flex items-center gap-2 rounded-full border border-white/10 bg-[#141414] px-3 py-2 sm:px-4 sm:py-2.5';
-  const rowClass = 'flex flex-wrap items-center justify-center gap-3.5 sm:gap-4';
-
-  return (
-    <div className="flex flex-col items-center gap-3.5 sm:gap-4">
-      <div className={rowClass}>
-        {STACK_ITEMS.slice(0, 4).map((item) => (
-          <div key={item.id} className={pillClass}>
-            <item.icon className="size-4 text-white/70" strokeWidth={1.75} />
-            <span className="text-xs text-white/80 sm:text-sm">{item.label}</span>
-          </div>
-        ))}
-      </div>
-      <div className={rowClass}>
-        {STACK_ITEMS.slice(4).map((item) => (
-          <div key={item.id} className={pillClass}>
-            <item.icon className="size-4 text-white/70" strokeWidth={1.75} />
-            <span className="text-xs text-white/80 sm:text-sm">{item.label}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+const PILL_CLASS =
+  'flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 whitespace-nowrap';
 
 export default function LandingStackReplaceSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const reduced = useMotionReduced();
 
@@ -170,20 +91,12 @@ export default function LandingStackReplaceSection() {
       if (reduced || !sectionRef.current) return;
 
       const items = itemRefs.current.filter(Boolean) as HTMLDivElement[];
-      const linePositions = computeLinePositions(
-        items,
-        STACK_ITEMS.map((item) => item.row),
-        PILL_GAP_X,
-        PILL_GAP_Y,
-      );
 
       items.forEach((el, i) => {
-        const start = SCRAMBLE_WAYPOINTS[i][0];
         gsap.set(el, {
-          x: start.x,
-          y: start.y,
-          rotate: start.rotate,
-          opacity: 1,
+          x: SCRAMBLE_WAYPOINTS[i][0].x,
+          y: SCRAMBLE_WAYPOINTS[i][0].y,
+          rotate: SCRAMBLE_WAYPOINTS[i][0].rotate,
         });
       });
 
@@ -221,8 +134,8 @@ export default function LandingStackReplaceSection() {
         ).to(
           el,
           {
-            x: linePositions[i].x,
-            y: linePositions[i].y,
+            x: 0,
+            y: 0,
             rotate: 0,
             duration: 0.55,
             ease: 'back.out(1.5)',
@@ -264,28 +177,21 @@ export default function LandingStackReplaceSection() {
           </p>
         </LandingStaggerReveal>
 
-        <div
-          ref={stageRef}
-          className="relative mt-10 flex min-h-[300px] items-center justify-center overflow-hidden sm:mt-12 sm:min-h-[340px]"
-        >
-          {reduced ? (
-            <StaticLineLayout />
-          ) : (
-            <div className="relative h-0 w-0 scale-[0.58] sm:scale-[0.78] lg:scale-100">
-              {STACK_ITEMS.map((item, i) => (
-                <div
-                  key={item.id}
-                  ref={(el) => {
-                    itemRefs.current[i] = el;
-                  }}
-                  className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-[#141414] px-3 py-2 opacity-0 sm:px-4 sm:py-2.5"
-                >
-                  <item.icon className="size-4 text-white/70" strokeWidth={1.75} />
-                  <span className="text-xs text-white/80 sm:text-sm">{item.label}</span>
-                </div>
-              ))}
-            </div>
-          )}
+        <div className="relative mt-10 sm:mt-12">
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
+            {STACK_ITEMS.map((item, i) => (
+              <div
+                key={item.id}
+                ref={(el) => {
+                  itemRefs.current[i] = el;
+                }}
+                className={PILL_CLASS}
+              >
+                <item.icon className="h-4 w-4 text-white/70" strokeWidth={1.75} />
+                <span className="text-sm text-white/80">{item.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
