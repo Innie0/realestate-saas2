@@ -18,7 +18,14 @@ import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
 
-const LINE_SPACING = 155;
+const COL_SPACING = 235;
+const ROW_GAP = 52;
+
+const linePos = (col: number, row: number) => ({
+  x: (col - 1.5) * COL_SPACING,
+  y: (row - 0.5) * ROW_GAP,
+  rotate: 0,
+});
 
 type StackItem = {
   id: string;
@@ -32,49 +39,49 @@ const STACK_ITEMS: StackItem[] = [
     id: 'leads',
     label: 'Lead capture forms',
     icon: FileText,
-    line: { x: -4 * LINE_SPACING + LINE_SPACING / 2, y: 0, rotate: 0 },
+    line: linePos(0, 0),
   },
   {
     id: 'spreadsheet',
     label: 'Spreadsheet pipeline',
     icon: Table2,
-    line: { x: -3 * LINE_SPACING + LINE_SPACING / 2, y: 0, rotate: 0 },
+    line: linePos(1, 0),
   },
   {
     id: 'listing-copy',
     label: 'AI / listing copy',
     icon: Sparkles,
-    line: { x: -2 * LINE_SPACING + LINE_SPACING / 2, y: 0, rotate: 0 },
+    line: linePos(2, 0),
   },
   {
     id: 'ads',
     label: 'Meta & Google ads',
     icon: Megaphone,
-    line: { x: -1 * LINE_SPACING + LINE_SPACING / 2, y: 0, rotate: 0 },
+    line: linePos(3, 0),
   },
   {
     id: 'calendar',
     label: 'Google Calendar',
     icon: CalendarDays,
-    line: { x: 0 * LINE_SPACING + LINE_SPACING / 2, y: 0, rotate: 0 },
+    line: linePos(0, 1),
   },
   {
     id: 'crm',
     label: 'CRM & follow-ups',
     icon: Users,
-    line: { x: 1 * LINE_SPACING + LINE_SPACING / 2, y: 0, rotate: 0 },
+    line: linePos(1, 1),
   },
   {
     id: 'checklists',
     label: 'Transaction checklists',
     icon: ClipboardCheck,
-    line: { x: 2 * LINE_SPACING + LINE_SPACING / 2, y: 0, rotate: 0 },
+    line: linePos(2, 1),
   },
   {
     id: 'research',
     label: 'Property research',
     icon: Search,
-    line: { x: 3 * LINE_SPACING + LINE_SPACING / 2, y: 0, rotate: 0 },
+    line: linePos(3, 1),
   },
 ];
 
@@ -122,17 +129,28 @@ const SCRAMBLE_WAYPOINTS: { x: number; y: number; rotate: number }[][] = [
 ];
 
 function StaticLineLayout() {
+  const pillClass =
+    'flex items-center gap-2 rounded-full border border-white/10 bg-[#141414] px-3 py-2 sm:px-4 sm:py-2.5';
+  const rowClass = 'flex flex-wrap items-center justify-center gap-2.5 sm:gap-3';
+
   return (
-    <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
-      {STACK_ITEMS.map((item) => (
-        <div
-          key={item.id}
-          className="flex items-center gap-2 rounded-full border border-white/10 bg-[#141414] px-3 py-2 sm:px-4 sm:py-2.5"
-        >
-          <item.icon className="size-4 text-white/70" strokeWidth={1.75} />
-          <span className="text-xs text-white/80 sm:text-sm">{item.label}</span>
-        </div>
-      ))}
+    <div className="flex flex-col items-center gap-3">
+      <div className={rowClass}>
+        {STACK_ITEMS.slice(0, 4).map((item) => (
+          <div key={item.id} className={pillClass}>
+            <item.icon className="size-4 text-white/70" strokeWidth={1.75} />
+            <span className="text-xs text-white/80 sm:text-sm">{item.label}</span>
+          </div>
+        ))}
+      </div>
+      <div className={rowClass}>
+        {STACK_ITEMS.slice(4).map((item) => (
+          <div key={item.id} className={pillClass}>
+            <item.icon className="size-4 text-white/70" strokeWidth={1.75} />
+            <span className="text-xs text-white/80 sm:text-sm">{item.label}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -238,12 +256,12 @@ export default function LandingStackReplaceSection() {
 
         <div
           ref={stageRef}
-          className="relative mt-10 flex min-h-[280px] items-center justify-center overflow-hidden sm:mt-12 sm:min-h-[320px]"
+          className="relative mt-10 flex min-h-[300px] items-center justify-center overflow-hidden sm:mt-12 sm:min-h-[340px]"
         >
           {reduced ? (
             <StaticLineLayout />
           ) : (
-            <div className="relative h-0 w-0 scale-[0.55] sm:scale-75 lg:scale-100">
+            <div className="relative h-0 w-0 scale-[0.58] sm:scale-[0.78] lg:scale-100">
               {STACK_ITEMS.map((item, i) => (
                 <div
                   key={item.id}
