@@ -6,6 +6,7 @@ import { INTEGRATIONS, TESTIMONIALS } from '@/lib/landing-showcase';
 import CountUpMetric from '@/components/home/CountUpMetric';
 import OrbitingCirclesIntegrations from '@/components/ui/orbiting-circles-02';
 import LandingManifestoBand from '@/components/home/LandingManifestoBand';
+import LandingStackReplaceSection from '@/components/home/LandingStackReplaceSection';
 import LandingStaggerReveal from '@/components/home/LandingStaggerReveal';
 import MarketingButton from '@/components/marketing/MarketingButton';
 import { CONNECT_TOOLS_NAV_SENTINEL_ID, CONNECT_TOOLS_SECTION_ID } from '@/lib/landing-nav-theme';
@@ -162,6 +163,8 @@ export default function LandingTrustSection() {
         >
           <div className="border-t border-mkt-border" />
         </div>
+
+        <LandingStackReplaceSection />
 
         <div className="py-14 sm:py-16 lg:py-20">
           <div className="mx-auto max-w-mkt-content px-5 sm:px-8">

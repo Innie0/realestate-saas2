@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import LandingNav from '@/components/home/LandingNav';
 import LandingHeroAttio from '@/components/home/LandingHeroAttio';
 import LandingShowcaseCarousel from '@/components/home/LandingShowcaseCarousel';
-import LandingStackReplaceSection from '@/components/home/LandingStackReplaceSection';
 import LandingTrustSection from '@/components/home/LandingTrustSection';
 import LandingFAQSection from '@/components/home/LandingFAQSection';
 import LandingCTABand from '@/components/home/LandingCTABand';
@@ -46,7 +45,6 @@ export default function HomePageClient() {
       <LandingNav />
       <LandingHeroAttio sectionRef={heroRef} />
       <LandingShowcaseCarousel />
-      <LandingStackReplaceSection />
       <LandingTrustSection />
       <LandingFAQSection />
       <LandingCTABand />

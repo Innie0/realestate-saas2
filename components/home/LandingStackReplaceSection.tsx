@@ -126,7 +126,7 @@ function ReducedMotionBeforeAfter() {
 }
 
 export default function LandingStackReplaceSection() {
-  const sectionRef = useRef<HTMLElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const lineRefs = useRef<(SVGLineElement | null)[]>([]);
   const labelBeforeRef = useRef<HTMLSpanElement>(null);
@@ -212,10 +212,10 @@ export default function LandingStackReplaceSection() {
   );
 
   return (
-    <section
+    <div
       ref={sectionRef}
       aria-label="Replace your stack"
-      className="relative overflow-hidden border-t border-mkt-border bg-[#0a0a0a] py-14 sm:py-16 lg:py-20"
+      className="relative overflow-hidden border-b border-white/10 py-14 sm:py-16 lg:py-20"
     >
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <LandingStaggerReveal className="mx-auto max-w-2xl text-center">
@@ -301,6 +301,6 @@ export default function LandingStackReplaceSection() {
           )}
         </div>
       </div>
-    </section>
+    </div>
   );
 }
