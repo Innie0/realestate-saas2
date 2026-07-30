@@ -18,100 +18,108 @@ import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
 
+const LINE_SPACING = 155;
+
 type StackItem = {
   id: string;
   label: string;
   icon: LucideIcon;
-  scatter: { x: number; y: number; rotate: number };
+  line: { x: number; y: number; rotate: number };
 };
 
 const STACK_ITEMS: StackItem[] = [
-  { id: 'leads', label: 'Lead capture forms', icon: FileText, scatter: { x: -300, y: -80, rotate: -24 } },
-  { id: 'spreadsheet', label: 'Spreadsheet pipeline', icon: Table2, scatter: { x: 280, y: -120, rotate: 18 } },
-  { id: 'listing-copy', label: 'AI / listing copy', icon: Sparkles, scatter: { x: 340, y: 60, rotate: -14 } },
-  { id: 'ads', label: 'Meta & Google ads', icon: Megaphone, scatter: { x: -340, y: 90, rotate: 26 } },
-  { id: 'calendar', label: 'Google Calendar', icon: CalendarDays, scatter: { x: -160, y: 200, rotate: -18 } },
-  { id: 'crm', label: 'CRM & follow-ups', icon: Users, scatter: { x: 120, y: 210, rotate: 20 } },
-  { id: 'checklists', label: 'Transaction checklists', icon: ClipboardCheck, scatter: { x: 300, y: -200, rotate: -30 } },
-  { id: 'research', label: 'Property research', icon: Search, scatter: { x: 20, y: -240, rotate: 12 } },
+  {
+    id: 'leads',
+    label: 'Lead capture forms',
+    icon: FileText,
+    line: { x: -4 * LINE_SPACING + LINE_SPACING / 2, y: 0, rotate: 0 },
+  },
+  {
+    id: 'spreadsheet',
+    label: 'Spreadsheet pipeline',
+    icon: Table2,
+    line: { x: -3 * LINE_SPACING + LINE_SPACING / 2, y: 0, rotate: 0 },
+  },
+  {
+    id: 'listing-copy',
+    label: 'AI / listing copy',
+    icon: Sparkles,
+    line: { x: -2 * LINE_SPACING + LINE_SPACING / 2, y: 0, rotate: 0 },
+  },
+  {
+    id: 'ads',
+    label: 'Meta & Google ads',
+    icon: Megaphone,
+    line: { x: -1 * LINE_SPACING + LINE_SPACING / 2, y: 0, rotate: 0 },
+  },
+  {
+    id: 'calendar',
+    label: 'Google Calendar',
+    icon: CalendarDays,
+    line: { x: 0 * LINE_SPACING + LINE_SPACING / 2, y: 0, rotate: 0 },
+  },
+  {
+    id: 'crm',
+    label: 'CRM & follow-ups',
+    icon: Users,
+    line: { x: 1 * LINE_SPACING + LINE_SPACING / 2, y: 0, rotate: 0 },
+  },
+  {
+    id: 'checklists',
+    label: 'Transaction checklists',
+    icon: ClipboardCheck,
+    line: { x: 2 * LINE_SPACING + LINE_SPACING / 2, y: 0, rotate: 0 },
+  },
+  {
+    id: 'research',
+    label: 'Property research',
+    icon: Search,
+    line: { x: 3 * LINE_SPACING + LINE_SPACING / 2, y: 0, rotate: 0 },
+  },
 ];
 
-const CHAOS_LINKS: [number, number][] = [
-  [0, 3],
-  [1, 6],
-  [2, 5],
-  [4, 7],
-  [3, 6],
+const SCRAMBLE_WAYPOINTS: { x: number; y: number; rotate: number }[][] = [
+  [
+    { x: -260, y: -140, rotate: -18 },
+    { x: 140, y: 80, rotate: 25 },
+    { x: -180, y: 60, rotate: -30 },
+  ],
+  [
+    { x: 180, y: -170, rotate: 12 },
+    { x: -220, y: 100, rotate: -22 },
+    { x: 60, y: -60, rotate: 18 },
+  ],
+  [
+    { x: 320, y: 40, rotate: -9 },
+    { x: -100, y: -180, rotate: 20 },
+    { x: 200, y: 120, rotate: -25 },
+  ],
+  [
+    { x: -320, y: 90, rotate: 22 },
+    { x: 90, y: -140, rotate: -16 },
+    { x: -60, y: 180, rotate: 28 },
+  ],
+  [
+    { x: -140, y: 190, rotate: -14 },
+    { x: 260, y: -60, rotate: 19 },
+    { x: -220, y: -100, rotate: -20 },
+  ],
+  [
+    { x: 60, y: 210, rotate: 17 },
+    { x: -180, y: -80, rotate: -24 },
+    { x: 140, y: 140, rotate: 15 },
+  ],
+  [
+    { x: 250, y: -240, rotate: -25 },
+    { x: -80, y: 60, rotate: 21 },
+    { x: 220, y: -20, rotate: -18 },
+  ],
+  [
+    { x: -40, y: -260, rotate: 15 },
+    { x: 180, y: 160, rotate: -19 },
+    { x: -140, y: -40, rotate: 23 },
+  ],
 ];
-
-type Point = { x: number; y: number; rotate: number };
-
-function measureFlexLinePositions(stage: HTMLElement, items: HTMLElement[]): Point[] {
-  const measurer = document.createElement('div');
-  measurer.className =
-    'pointer-events-none absolute left-1/2 top-1/2 flex w-full max-w-[min(100%,920px)] -translate-x-1/2 -translate-y-1/2 flex-wrap items-center justify-center gap-2.5 sm:gap-3';
-  measurer.style.visibility = 'hidden';
-  stage.appendChild(measurer);
-
-  const clones = items.map((item) => {
-    const clone = item.cloneNode(true) as HTMLElement;
-    clone.style.position = 'relative';
-    clone.style.opacity = '1';
-    clone.style.transform = 'none';
-    measurer.appendChild(clone);
-    return clone;
-  });
-
-  const stageRect = stage.getBoundingClientRect();
-  const positions = clones.map((clone) => {
-    const rect = clone.getBoundingClientRect();
-    return {
-      x: rect.left + rect.width / 2 - (stageRect.left + stageRect.width / 2),
-      y: rect.top + rect.height / 2 - (stageRect.top + stageRect.height / 2),
-      rotate: 0,
-    };
-  });
-
-  measurer.remove();
-  return positions;
-}
-
-function addSwirlMotion(
-  tl: gsap.core.Timeline,
-  el: HTMLElement,
-  index: number,
-  total: number,
-  startAt: number,
-) {
-  const loops = index % 2 === 0 ? 3.2 : -2.6;
-  const baseRadius = 88 + (index % 5) * 28;
-  const startAngle = (index / total) * Math.PI * 2;
-  const proxy = { p: 0 };
-
-  tl.to(
-    proxy,
-    {
-      p: 1,
-      duration: 2.1,
-      ease: 'none',
-      onUpdate: () => {
-        const angle = startAngle + proxy.p * Math.PI * 2 * loops;
-        const pulse = Math.sin(proxy.p * Math.PI * 5) * 22;
-        const radius = baseRadius + pulse;
-        const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius * 0.72;
-
-        gsap.set(el, {
-          x,
-          y,
-          rotate: angle * (180 / Math.PI) * 0.08 + (index % 2 === 0 ? 1 : -1) * 12,
-          zIndex: Math.round(y),
-        });
-      },
-    },
-    startAt,
-  );
-}
 
 function StaticLineLayout() {
   return (
@@ -133,80 +141,71 @@ export default function LandingStackReplaceSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const lineRefs = useRef<(SVGLineElement | null)[]>([]);
-  const linesRef = useRef<SVGSVGElement>(null);
   const reduced = useMotionReduced();
 
   useGSAP(
     () => {
-      const stage = stageRef.current;
-      if (reduced || !stage) return;
+      if (reduced || !sectionRef.current) return;
 
       const items = itemRefs.current.filter(Boolean) as HTMLDivElement[];
-      const lines = lineRefs.current.filter(Boolean) as SVGLineElement[];
-      let played = false;
 
-      const playSequence = () => {
-        if (played) return;
-        played = true;
-
-        const linePositions = measureFlexLinePositions(stage, items);
-
-        items.forEach((el, i) => {
-          gsap.set(el, {
-            x: STACK_ITEMS[i].scatter.x,
-            y: STACK_ITEMS[i].scatter.y,
-            rotate: STACK_ITEMS[i].scatter.rotate,
-            opacity: 1,
-            zIndex: Math.round(STACK_ITEMS[i].scatter.y),
-          });
+      items.forEach((el, i) => {
+        const start = SCRAMBLE_WAYPOINTS[i][0];
+        gsap.set(el, {
+          x: start.x,
+          y: start.y,
+          rotate: start.rotate,
+          opacity: 1,
         });
+      });
 
-        lines.forEach((line) => {
-          const length = line.getTotalLength?.() ?? 200;
-          gsap.set(line, { strokeDasharray: length, strokeDashoffset: 0, opacity: 0.35 });
-        });
-        if (linesRef.current) {
-          gsap.set(linesRef.current, { opacity: 1 });
-        }
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 70%',
+          toggleActions: 'play none none none',
+          once: true,
+        },
+      });
 
-        const tl = gsap.timeline();
-
-        items.forEach((el, i) => {
-          addSwirlMotion(tl, el, i, items.length, i * 0.06);
-        });
-
-        tl.to(lines, { opacity: 0, duration: 0.45, ease: 'power1.out' }, 0.35);
-
-        if (linesRef.current) {
-          tl.to(linesRef.current, { opacity: 0, duration: 0.45, ease: 'power1.out' }, 0.35);
-        }
-
+      items.forEach((el, i) => {
+        const waypoints = SCRAMBLE_WAYPOINTS[i];
         tl.to(
-          items,
+          el,
           {
-            x: (i) => linePositions[i].x,
-            y: (i) => linePositions[i].y,
-            rotate: 0,
-            duration: 0.95,
-            ease: 'power3.out',
-            stagger: { each: 0.05, from: 'center' },
+            keyframes: [
+              {
+                x: waypoints[1].x,
+                y: waypoints[1].y,
+                rotate: waypoints[1].rotate,
+                duration: 0.28,
+              },
+              {
+                x: waypoints[2].x,
+                y: waypoints[2].y,
+                rotate: waypoints[2].rotate,
+                duration: 0.28,
+              },
+            ],
+            ease: 'power1.inOut',
           },
-          2.05,
+          i * 0.03,
+        ).to(
+          el,
+          {
+            x: STACK_ITEMS[i].line.x,
+            y: STACK_ITEMS[i].line.y,
+            rotate: 0,
+            duration: 0.55,
+            ease: 'back.out(1.5)',
+          },
+          '>-0.05',
         );
-
-        tl.set(items, { zIndex: 1 }, 2.05);
-      };
-
-      const trigger = ScrollTrigger.create({
-        trigger: stage,
-        start: 'top 82%',
-        once: true,
-        onEnter: playSequence,
       });
 
       return () => {
-        trigger.kill();
+        tl.scrollTrigger?.kill();
+        tl.kill();
       };
     },
     { scope: sectionRef, dependencies: [reduced] },
@@ -239,51 +238,25 @@ export default function LandingStackReplaceSection() {
 
         <div
           ref={stageRef}
-          className="relative mt-10 flex min-h-[300px] items-center justify-center overflow-hidden sm:mt-12 sm:min-h-[340px]"
+          className="relative mt-10 flex min-h-[280px] items-center justify-center overflow-hidden sm:mt-12 sm:min-h-[320px]"
         >
           {reduced ? (
             <StaticLineLayout />
           ) : (
-            <>
-              <svg
-                ref={linesRef}
-                className="pointer-events-none absolute inset-0 h-full w-full opacity-0"
-                viewBox="-400 -300 800 600"
-                preserveAspectRatio="xMidYMid meet"
-                aria-hidden
-              >
-                {CHAOS_LINKS.map(([a, b], i) => (
-                  <line
-                    key={`${a}-${b}`}
-                    ref={(el) => {
-                      lineRefs.current[i] = el;
-                    }}
-                    x1={STACK_ITEMS[a].scatter.x}
-                    y1={STACK_ITEMS[a].scatter.y}
-                    x2={STACK_ITEMS[b].scatter.x}
-                    y2={STACK_ITEMS[b].scatter.y}
-                    stroke="rgba(255,255,255,0.22)"
-                    strokeWidth={1}
-                    strokeDasharray="4 5"
-                  />
-                ))}
-              </svg>
-
-              <div className="relative h-0 w-0">
-                {STACK_ITEMS.map((item, i) => (
-                  <div
-                    key={item.id}
-                    ref={(el) => {
-                      itemRefs.current[i] = el;
-                    }}
-                    className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-[#141414] px-3 py-2 opacity-0 sm:px-4 sm:py-2.5"
-                  >
-                    <item.icon className="size-4 text-white/70" strokeWidth={1.75} />
-                    <span className="text-xs text-white/80 sm:text-sm">{item.label}</span>
-                  </div>
-                ))}
-              </div>
-            </>
+            <div className="relative h-0 w-0 scale-[0.55] sm:scale-75 lg:scale-100">
+              {STACK_ITEMS.map((item, i) => (
+                <div
+                  key={item.id}
+                  ref={(el) => {
+                    itemRefs.current[i] = el;
+                  }}
+                  className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-[#141414] px-3 py-2 opacity-0 sm:px-4 sm:py-2.5"
+                >
+                  <item.icon className="size-4 text-white/70" strokeWidth={1.75} />
+                  <span className="text-xs text-white/80 sm:text-sm">{item.label}</span>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
