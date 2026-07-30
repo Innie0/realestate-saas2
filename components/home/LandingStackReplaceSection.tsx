@@ -18,72 +18,76 @@ import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
 
-const COL_SPACING = 235;
-const ROW_GAP = 52;
-
-const linePos = (col: number, row: number) => ({
-  x: (col - 1.5) * COL_SPACING,
-  y: (row - 0.5) * ROW_GAP,
-  rotate: 0,
-});
+const PILL_GAP_X = 14;
+const PILL_GAP_Y = 18;
 
 type StackItem = {
   id: string;
   label: string;
   icon: LucideIcon;
-  line: { x: number; y: number; rotate: number };
+  row: number;
 };
 
 const STACK_ITEMS: StackItem[] = [
-  {
-    id: 'leads',
-    label: 'Lead capture forms',
-    icon: FileText,
-    line: linePos(0, 0),
-  },
-  {
-    id: 'spreadsheet',
-    label: 'Spreadsheet pipeline',
-    icon: Table2,
-    line: linePos(1, 0),
-  },
-  {
-    id: 'listing-copy',
-    label: 'AI / listing copy',
-    icon: Sparkles,
-    line: linePos(2, 0),
-  },
-  {
-    id: 'ads',
-    label: 'Meta & Google ads',
-    icon: Megaphone,
-    line: linePos(3, 0),
-  },
-  {
-    id: 'calendar',
-    label: 'Google Calendar',
-    icon: CalendarDays,
-    line: linePos(0, 1),
-  },
-  {
-    id: 'crm',
-    label: 'CRM & follow-ups',
-    icon: Users,
-    line: linePos(1, 1),
-  },
-  {
-    id: 'checklists',
-    label: 'Transaction checklists',
-    icon: ClipboardCheck,
-    line: linePos(2, 1),
-  },
-  {
-    id: 'research',
-    label: 'Property research',
-    icon: Search,
-    line: linePos(3, 1),
-  },
+  { id: 'leads', label: 'Lead capture forms', icon: FileText, row: 0 },
+  { id: 'spreadsheet', label: 'Spreadsheet pipeline', icon: Table2, row: 0 },
+  { id: 'listing-copy', label: 'AI / listing copy', icon: Sparkles, row: 0 },
+  { id: 'ads', label: 'Meta & Google ads', icon: Megaphone, row: 0 },
+  { id: 'calendar', label: 'Google Calendar', icon: CalendarDays, row: 1 },
+  { id: 'crm', label: 'CRM & follow-ups', icon: Users, row: 1 },
+  { id: 'checklists', label: 'Transaction checklists', icon: ClipboardCheck, row: 1 },
+  { id: 'research', label: 'Property research', icon: Search, row: 1 },
 ];
+
+function computeLinePositions(
+  elements: HTMLDivElement[],
+  rowByIndex: number[],
+  gapX: number,
+  gapY: number,
+) {
+  const positions = new Array<{ x: number; y: number; rotate: number }>(elements.length);
+  const rowIndices = new Map<number, number[]>();
+
+  rowByIndex.forEach((row, index) => {
+    const indices = rowIndices.get(row) ?? [];
+    indices.push(index);
+    rowIndices.set(row, indices);
+  });
+
+  const sortedRows = [...rowIndices.keys()].sort((a, b) => a - b);
+  const rowMetrics = sortedRows.map((row) => {
+    const indices = rowIndices.get(row)!;
+    const rowElements = indices.map((index) => elements[index]);
+    const widths = rowElements.map((el) => el.offsetWidth);
+    const maxHeight = Math.max(...rowElements.map((el) => el.offsetHeight));
+    const totalWidth = widths.reduce((sum, width) => sum + width, 0) + gapX * (widths.length - 1);
+
+    let cursor = -totalWidth / 2;
+    const rowPositions: { index: number; x: number }[] = [];
+
+    indices.forEach((index, columnIndex) => {
+      const width = widths[columnIndex];
+      rowPositions.push({ index, x: cursor + width / 2 });
+      cursor += width + gapX;
+    });
+
+    return { maxHeight, rowPositions };
+  });
+
+  const totalHeight =
+    rowMetrics.reduce((sum, row) => sum + row.maxHeight, 0) + gapY * (rowMetrics.length - 1);
+
+  let yCursor = -totalHeight / 2;
+  rowMetrics.forEach(({ maxHeight, rowPositions }) => {
+    const centerY = yCursor + maxHeight / 2;
+    rowPositions.forEach(({ index, x }) => {
+      positions[index] = { x, y: centerY, rotate: 0 };
+    });
+    yCursor += maxHeight + gapY;
+  });
+
+  return positions;
+}
 
 const SCRAMBLE_WAYPOINTS: { x: number; y: number; rotate: number }[][] = [
   [
@@ -131,10 +135,10 @@ const SCRAMBLE_WAYPOINTS: { x: number; y: number; rotate: number }[][] = [
 function StaticLineLayout() {
   const pillClass =
     'flex items-center gap-2 rounded-full border border-white/10 bg-[#141414] px-3 py-2 sm:px-4 sm:py-2.5';
-  const rowClass = 'flex flex-wrap items-center justify-center gap-2.5 sm:gap-3';
+  const rowClass = 'flex flex-wrap items-center justify-center gap-3.5 sm:gap-4';
 
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className="flex flex-col items-center gap-3.5 sm:gap-4">
       <div className={rowClass}>
         {STACK_ITEMS.slice(0, 4).map((item) => (
           <div key={item.id} className={pillClass}>
@@ -166,6 +170,12 @@ export default function LandingStackReplaceSection() {
       if (reduced || !sectionRef.current) return;
 
       const items = itemRefs.current.filter(Boolean) as HTMLDivElement[];
+      const linePositions = computeLinePositions(
+        items,
+        STACK_ITEMS.map((item) => item.row),
+        PILL_GAP_X,
+        PILL_GAP_Y,
+      );
 
       items.forEach((el, i) => {
         const start = SCRAMBLE_WAYPOINTS[i][0];
@@ -211,8 +221,8 @@ export default function LandingStackReplaceSection() {
         ).to(
           el,
           {
-            x: STACK_ITEMS[i].line.x,
-            y: STACK_ITEMS[i].line.y,
+            x: linePositions[i].x,
+            y: linePositions[i].y,
             rotate: 0,
             duration: 0.55,
             ease: 'back.out(1.5)',
