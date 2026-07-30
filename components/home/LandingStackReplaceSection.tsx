@@ -8,7 +8,6 @@ import {
   Megaphone,
   Search,
   Sparkles,
-  Table2,
   Users,
   type LucideIcon,
 } from 'lucide-react';
@@ -26,7 +25,6 @@ type StackItem = {
 
 const STACK_ITEMS: StackItem[] = [
   { id: 'leads', label: 'Lead capture forms', icon: FileText },
-  { id: 'spreadsheet', label: 'Spreadsheet pipeline', icon: Table2 },
   { id: 'listing-copy', label: 'AI / listing copy', icon: Sparkles },
   { id: 'ads', label: 'Meta & Google ads', icon: Megaphone },
   { id: 'calendar', label: 'Google Calendar', icon: CalendarDays },
@@ -40,11 +38,6 @@ const SCRAMBLE_WAYPOINTS: { x: number; y: number; rotate: number }[][] = [
     { x: -260, y: -140, rotate: -18 },
     { x: 140, y: 80, rotate: 25 },
     { x: -180, y: 60, rotate: -30 },
-  ],
-  [
-    { x: 180, y: -170, rotate: 12 },
-    { x: -220, y: 100, rotate: -22 },
-    { x: 60, y: -60, rotate: 18 },
   ],
   [
     { x: 320, y: 40, rotate: -9 },
