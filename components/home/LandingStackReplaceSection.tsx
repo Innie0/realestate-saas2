@@ -13,7 +13,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import LandingStaggerReveal from '@/components/home/LandingStaggerReveal';
-import { ensureGsapRegistered, gsap, useGSAP } from '@/lib/gsap-config';
+import { ensureGsapRegistered, gsap, ScrollTrigger, useGSAP } from '@/lib/gsap-config';
 import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
@@ -22,72 +22,18 @@ type StackItem = {
   id: string;
   label: string;
   icon: LucideIcon;
-  before: { x: number; y: number; rotate: number };
+  scatter: { x: number; y: number; rotate: number };
 };
 
-function ringAfter(index: number, total: number, radius: number) {
-  const angle = -Math.PI / 2 + (index * 2 * Math.PI) / total;
-  return {
-    x: Math.round(Math.cos(angle) * radius),
-    y: Math.round(Math.sin(angle) * radius),
-    rotate: 0,
-  };
-}
-
-function getRingRadius() {
-  if (typeof window === 'undefined') return 168;
-  return window.innerWidth < 640 ? 128 : window.innerWidth < 1024 ? 148 : 168;
-}
-
 const STACK_ITEMS: StackItem[] = [
-  {
-    id: 'leads',
-    label: 'Lead capture forms',
-    icon: FileText,
-    before: { x: -300, y: -120, rotate: -22 },
-  },
-  {
-    id: 'spreadsheet',
-    label: 'Spreadsheet pipeline',
-    icon: Table2,
-    before: { x: 220, y: -180, rotate: 16 },
-  },
-  {
-    id: 'listing-copy',
-    label: 'AI / listing copy',
-    icon: Sparkles,
-    before: { x: 340, y: 20, rotate: -11 },
-  },
-  {
-    id: 'ads',
-    label: 'Meta & Google ads',
-    icon: Megaphone,
-    before: { x: -340, y: 80, rotate: 24 },
-  },
-  {
-    id: 'calendar',
-    label: 'Google Calendar',
-    icon: CalendarDays,
-    before: { x: -120, y: 200, rotate: -16 },
-  },
-  {
-    id: 'crm',
-    label: 'CRM & follow-ups',
-    icon: Users,
-    before: { x: 80, y: 220, rotate: 19 },
-  },
-  {
-    id: 'checklists',
-    label: 'Transaction checklists',
-    icon: ClipboardCheck,
-    before: { x: 280, y: -220, rotate: -28 },
-  },
-  {
-    id: 'research',
-    label: 'Property research',
-    icon: Search,
-    before: { x: -20, y: -280, rotate: 13 },
-  },
+  { id: 'leads', label: 'Lead capture forms', icon: FileText, scatter: { x: -280, y: -100, rotate: -22 } },
+  { id: 'spreadsheet', label: 'Spreadsheet pipeline', icon: Table2, scatter: { x: 210, y: -150, rotate: 16 } },
+  { id: 'listing-copy', label: 'AI / listing copy', icon: Sparkles, scatter: { x: 320, y: 30, rotate: -11 } },
+  { id: 'ads', label: 'Meta & Google ads', icon: Megaphone, scatter: { x: -310, y: 70, rotate: 24 } },
+  { id: 'calendar', label: 'Google Calendar', icon: CalendarDays, scatter: { x: -100, y: 170, rotate: -16 } },
+  { id: 'crm', label: 'CRM & follow-ups', icon: Users, scatter: { x: 90, y: 190, rotate: 19 } },
+  { id: 'checklists', label: 'Transaction checklists', icon: ClipboardCheck, scatter: { x: 260, y: -190, rotate: -28 } },
+  { id: 'research', label: 'Property research', icon: Search, scatter: { x: -30, y: -230, rotate: 13 } },
 ];
 
 const CHAOS_LINKS: [number, number][] = [
@@ -96,55 +42,44 @@ const CHAOS_LINKS: [number, number][] = [
   [2, 5],
   [4, 7],
   [3, 6],
-  [0, 7],
 ];
 
-function AfterRingPreview({ radius }: { radius: number }) {
-  return (
-    <div className="relative mx-auto h-[300px] w-full max-w-lg sm:h-[340px]">
-      <div className="absolute left-1/2 top-1/2 flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/10">
-        <span className="font-display text-sm text-white">Oikaro</span>
-      </div>
-      {STACK_ITEMS.map((item, i) => {
-        const pos = ringAfter(i, STACK_ITEMS.length, radius);
-        return (
-          <div
-            key={item.id}
-            className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 whitespace-nowrap rounded-full border border-white/10 bg-white/5 px-3 py-1.5"
-            style={{ left: `calc(50% + ${pos.x}px)`, top: `calc(50% + ${pos.y}px)` }}
-          >
-            <item.icon className="size-3.5 text-white/70" strokeWidth={1.75} />
-            <span className="text-xs text-white/80">{item.label}</span>
-          </div>
-        );
-      })}
-    </div>
-  );
+function getLinePositions(count: number, stageWidth: number) {
+  if (stageWidth < 640) {
+    const cols = 4;
+    const gapX = Math.min(78, Math.max(64, (stageWidth - 32) / cols));
+    const gapY = 48;
+    return Array.from({ length: count }, (_, i) => {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      return {
+        x: (col - (cols - 1) / 2) * gapX,
+        y: (row - 0.5) * gapY,
+        rotate: 0,
+      };
+    });
+  }
+
+  const gap = Math.min(138, Math.max(96, (stageWidth - 48) / Math.max(count - 1, 1)));
+  return Array.from({ length: count }, (_, i) => ({
+    x: (i - (count - 1) / 2) * gap,
+    y: 0,
+    rotate: 0,
+  }));
 }
 
-function ReducedMotionBeforeAfter() {
-  const radius = typeof window !== 'undefined' && window.innerWidth < 640 ? 128 : 148;
-
+function StaticLineLayout() {
   return (
-    <div className="grid gap-10 lg:grid-cols-2 lg:gap-12">
-      <div>
-        <p className="mb-4 text-xs uppercase tracking-wide text-white/40">Before Oikaro</p>
-        <div className="flex flex-wrap gap-2">
-          {STACK_ITEMS.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5"
-            >
-              <item.icon className="size-3.5 text-white/60" strokeWidth={1.75} />
-              <span className="text-xs text-white/70">{item.label}</span>
-            </div>
-          ))}
+    <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+      {STACK_ITEMS.map((item) => (
+        <div
+          key={item.id}
+          className="flex items-center gap-2 rounded-full border border-white/10 bg-[#141414] px-3 py-2 sm:px-4 sm:py-2.5"
+        >
+          <item.icon className="size-4 text-white/70" strokeWidth={1.75} />
+          <span className="text-xs text-white/80 sm:text-sm">{item.label}</span>
         </div>
-      </div>
-      <div>
-        <p className="mb-4 text-xs uppercase tracking-wide text-white/70">After Oikaro</p>
-        <AfterRingPreview radius={radius} />
-      </div>
+      ))}
     </div>
   );
 }
@@ -154,10 +89,7 @@ export default function LandingStackReplaceSection() {
   const stageRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const lineRefs = useRef<(SVGLineElement | null)[]>([]);
-  const ringRef = useRef<HTMLDivElement>(null);
-  const labelBeforeRef = useRef<HTMLSpanElement>(null);
-  const labelAfterRef = useRef<HTMLSpanElement>(null);
-  const wordmarkRef = useRef<HTMLDivElement>(null);
+  const linesRef = useRef<SVGSVGElement>(null);
   const reduced = useMotionReduced();
 
   useGSAP(
@@ -167,78 +99,84 @@ export default function LandingStackReplaceSection() {
 
       const items = itemRefs.current.filter(Boolean) as HTMLDivElement[];
       const lines = lineRefs.current.filter(Boolean) as SVGLineElement[];
-      const radius = getRingRadius();
+      let played = false;
 
-      items.forEach((el, i) => {
-        gsap.set(el, {
-          x: STACK_ITEMS[i].before.x,
-          y: STACK_ITEMS[i].before.y,
-          rotate: STACK_ITEMS[i].before.rotate,
-          scale: 1,
-          opacity: 0.9,
+      const playSequence = () => {
+        if (played) return;
+        played = true;
+
+        const linePositions = getLinePositions(STACK_ITEMS.length, stage.offsetWidth);
+
+        items.forEach((el, i) => {
+          gsap.set(el, {
+            x: STACK_ITEMS[i].scatter.x,
+            y: STACK_ITEMS[i].scatter.y,
+            rotate: STACK_ITEMS[i].scatter.rotate,
+            opacity: 1,
+          });
         });
-      });
 
-      lines.forEach((line) => {
-        const length = line.getTotalLength?.() ?? 200;
-        gsap.set(line, { strokeDasharray: length, strokeDashoffset: 0, opacity: 0.4 });
-      });
+        lines.forEach((line) => {
+          const length = line.getTotalLength?.() ?? 200;
+          gsap.set(line, { strokeDasharray: length, strokeDashoffset: 0, opacity: 0.35 });
+        });
+        if (linesRef.current) {
+          gsap.set(linesRef.current, { opacity: 1 });
+        }
 
-      if (wordmarkRef.current) {
-        gsap.set(wordmarkRef.current, { opacity: 0, scale: 0.85 });
-      }
-      if (ringRef.current) {
-        gsap.set(ringRef.current, { opacity: 0, scale: 0.92 });
-      }
-      if (labelAfterRef.current) {
-        gsap.set(labelAfterRef.current, { opacity: 0 });
-      }
+        const tl = gsap.timeline();
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: stage,
-          start: 'top bottom',
-          end: 'top 38%',
-          scrub: true,
-          invalidateOnRefresh: true,
-        },
-      });
+        items.forEach((el, i) => {
+          tl.to(
+            el,
+            {
+              x: `+=${gsap.utils.random(-36, 36)}`,
+              y: `+=${gsap.utils.random(-28, 28)}`,
+              rotate: `+=${gsap.utils.random(-18, 18)}`,
+              duration: 0.28,
+              repeat: 4,
+              yoyo: true,
+              ease: 'sine.inOut',
+            },
+            i * 0.04,
+          );
+        });
 
-      tl.to(
-        items,
-        {
-          x: (i) => ringAfter(i, STACK_ITEMS.length, radius).x,
-          y: (i) => ringAfter(i, STACK_ITEMS.length, radius).y,
-          rotate: 0,
-          scale: 0.92,
-          opacity: 1,
-          duration: 1,
-          ease: 'power2.out',
-        },
-        0,
-      )
-        .to(
+        tl.to(
           lines,
+          { opacity: 0, duration: 0.35, ease: 'power1.out' },
+          0.9,
+        );
+
+        if (linesRef.current) {
+          tl.to(linesRef.current, { opacity: 0, duration: 0.35, ease: 'power1.out' }, 0.9);
+        }
+
+        tl.to(
+          items,
           {
-            strokeDashoffset: (i) => lineRefs.current[i]?.getTotalLength?.() ?? 200,
-            opacity: 0,
-            duration: 0.35,
-            ease: 'power1.out',
+            x: (i) => linePositions[i].x,
+            y: (i) => linePositions[i].y,
+            rotate: 0,
+            duration: 0.85,
+            ease: 'power3.out',
+            stagger: 0.04,
           },
-          0,
-        )
-        .to(
-          wordmarkRef.current,
-          { opacity: 1, scale: 1, duration: 0.4, ease: 'power2.out' },
-          0.35,
-        )
-        .to(ringRef.current, { opacity: 1, scale: 1, duration: 0.45, ease: 'power2.out' }, 0.4)
-        .to(labelBeforeRef.current, { opacity: 0, duration: 0.2 }, 0.25)
-        .to(labelAfterRef.current, { opacity: 1, duration: 0.2 }, 0.45);
+          1.15,
+        );
+      };
+
+      ScrollTrigger.create({
+        trigger: stage,
+        start: 'top 82%',
+        once: true,
+        onEnter: playSequence,
+      });
 
       return () => {
-        tl.scrollTrigger?.kill();
-        tl.kill();
+        ScrollTrigger.getAll().forEach((st) => {
+          if (st.trigger === stage) st.kill();
+        });
       };
     },
     { scope: sectionRef, dependencies: [reduced] },
@@ -269,26 +207,18 @@ export default function LandingStackReplaceSection() {
           </p>
         </LandingStaggerReveal>
 
-        <div ref={stageRef} className="relative mt-10 h-[360px] sm:mt-12 sm:h-[400px] lg:h-[420px]">
+        <div
+          ref={stageRef}
+          className="relative mt-10 flex min-h-[220px] items-center justify-center sm:mt-12 sm:min-h-[260px]"
+        >
           {reduced ? (
-            <ReducedMotionBeforeAfter />
+            <StaticLineLayout />
           ) : (
             <>
-              <div className="relative z-10 mb-4 text-center text-xs uppercase tracking-wide">
-                <span ref={labelBeforeRef} className="text-white/40">
-                  Before Oikaro
-                </span>
-                <span
-                  ref={labelAfterRef}
-                  className="pointer-events-none absolute inset-x-0 opacity-0 text-white/70"
-                >
-                  After Oikaro
-                </span>
-              </div>
-
               <svg
-                className="pointer-events-none absolute inset-0 h-full w-full"
-                viewBox="-380 -320 760 640"
+                ref={linesRef}
+                className="pointer-events-none absolute inset-0 h-full w-full opacity-0"
+                viewBox="-380 -280 760 560"
                 preserveAspectRatio="xMidYMid meet"
                 aria-hidden
               >
@@ -298,10 +228,10 @@ export default function LandingStackReplaceSection() {
                     ref={(el) => {
                       lineRefs.current[i] = el;
                     }}
-                    x1={STACK_ITEMS[a].before.x}
-                    y1={STACK_ITEMS[a].before.y}
-                    x2={STACK_ITEMS[b].before.x}
-                    y2={STACK_ITEMS[b].before.y}
+                    x1={STACK_ITEMS[a].scatter.x}
+                    y1={STACK_ITEMS[a].scatter.y}
+                    x2={STACK_ITEMS[b].scatter.x}
+                    y2={STACK_ITEMS[b].scatter.y}
                     stroke="rgba(255,255,255,0.22)"
                     strokeWidth={1}
                     strokeDasharray="4 5"
@@ -309,27 +239,14 @@ export default function LandingStackReplaceSection() {
                 ))}
               </svg>
 
-              <div
-                ref={ringRef}
-                className="pointer-events-none absolute left-1/2 top-[calc(50%+12px)] size-[280px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 sm:size-[320px] lg:size-[360px]"
-                aria-hidden
-              />
-
-              <div
-                ref={wordmarkRef}
-                className="absolute left-1/2 top-[calc(50%+12px)] z-10 flex size-[4.5rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/10 shadow-[0_0_40px_-8px_rgba(255,255,255,0.35)] sm:size-20"
-              >
-                <span className="font-display text-sm text-white">Oikaro</span>
-              </div>
-
-              <div className="absolute left-1/2 top-[calc(50%+12px)] z-[5] h-0 w-0">
+              <div className="relative h-0 w-0">
                 {STACK_ITEMS.map((item, i) => (
                   <div
                     key={item.id}
                     ref={(el) => {
                       itemRefs.current[i] = el;
                     }}
-                    className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-[#141414] px-3 py-2 sm:px-4 sm:py-2.5"
+                    className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-[#141414] px-3 py-2 opacity-0 sm:px-4 sm:py-2.5"
                   >
                     <item.icon className="size-4 text-white/70" strokeWidth={1.75} />
                     <span className="text-xs text-white/80 sm:text-sm">{item.label}</span>
