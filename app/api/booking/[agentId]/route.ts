@@ -21,7 +21,7 @@ import {
 } from '@/lib/booking-availability';
 import { formatDateLabel, formatTimeInZone } from '@/lib/timezone';
 import { SITE_FONT_STACK } from '@/lib/site-config';
-import { SUPPORT_FROM } from '@/lib/support-email';
+import { getSupportFrom } from '@/lib/support-email';
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -256,7 +256,7 @@ export async function POST(
         const dateLabel = formatDateLabel(startDate.toISOString().slice(0, 10));
         const timeLabel = formatTimeInZone(startDate.toISOString(), timezone);
         await sendEmail({
-          from: SUPPORT_FROM,
+          from: getSupportFrom(),
           to: cleanEmail,
           subject: `Showing confirmed with ${agent.name} — ${dateLabel} at ${timeLabel}`,
           html: `

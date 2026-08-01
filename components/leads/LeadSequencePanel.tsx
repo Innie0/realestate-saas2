@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Loader2, Sparkles, CheckCircle2, SkipForward, Pause, Play } from 'lucide-react';
+import { Loader2, Sparkles, CheckCircle2, SkipForward, Pause, Play, RotateCcw } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useToast } from '@/components/providers/ToastProvider';
@@ -19,6 +19,7 @@ type StepInstance = {
   body?: string | null;
   task_title?: string | null;
   agent_approved_at?: string | null;
+  error_message?: string | null;
 };
 
 type SequenceApiData = {
@@ -182,6 +183,29 @@ export default function LeadSequencePanel({
     }
   };
 
+  const handleRetry = async (instanceId: string) => {
+    setBusy(true);
+    try {
+      const res = await fetch(`/api/clients/${leadId}/sequence/retry`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ instanceId }),
+      });
+      const result = await res.json();
+      if (result.success) {
+        toast.success('Email sent successfully');
+        mutate();
+        onSequenceChange?.();
+      } else {
+        toast.error(result.error || 'Could not retry email');
+      }
+    } catch {
+      toast.error('Could not retry email');
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4">
       {typeof insight?.lead_read === 'string' && insight.lead_read.trim() ? (
@@ -262,18 +286,39 @@ export default function LeadSequencePanel({
             <li
               key={step.id}
               className={cn(
-                'flex items-start justify-between gap-2 rounded-md border px-3 py-2 text-sm',
+                'rounded-md border px-3 py-2 text-sm',
                 step.status === 'awaiting_approval' && 'border-amber-200 bg-amber-50/50',
+                step.status === 'failed' && 'border-rose-200 bg-rose-50/50',
                 step.status === 'sent' || step.status === 'completed'
                   ? 'border-emerald-200/80 bg-emerald-50/40'
-                  : 'border-border bg-muted/30',
+                  : step.status !== 'failed' && step.status !== 'awaiting_approval'
+                    ? 'border-border bg-muted/30'
+                    : '',
               )}
             >
-              <div className="min-w-0">
-                <span className="font-medium capitalize">{step.step_type}</span>
-                <span className="text-muted-foreground"> — {stepLabel(step)}</span>
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <span className="font-medium capitalize">{step.step_type}</span>
+                  <span className="text-muted-foreground"> — {stepLabel(step)}</span>
+                </div>
+                <span className="shrink-0 text-xs text-muted-foreground">{statusLabel(step.status)}</span>
               </div>
-              <span className="shrink-0 text-xs text-muted-foreground">{statusLabel(step.status)}</span>
+              {step.status === 'failed' && step.error_message ? (
+                <p className="mt-1.5 text-xs text-rose-700">{step.error_message}</p>
+              ) : null}
+              {step.status === 'failed' && step.step_type === 'email' ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="mt-2 h-7 gap-1 text-xs"
+                  onClick={() => handleRetry(step.id)}
+                  disabled={busy}
+                  isLoading={busy}
+                >
+                  <RotateCcw className="size-3" />
+                  Retry send
+                </Button>
+              ) : null}
             </li>
           ))}
         </ol>

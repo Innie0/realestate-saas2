@@ -1,9 +1,9 @@
 import { formatReplyToHeader } from '@/lib/agent-reply-email';
 import type { OutboundEmail } from '@/lib/resend';
 import { SITE_FONT_STACK } from '@/lib/site-config';
-import { SUPPORT_FROM } from '@/lib/support-email';
+import { getSupportFrom } from '@/lib/support-email';
 
-const FROM_EMAIL = SUPPORT_FROM;
+const FROM_EMAIL = getSupportFrom();
 
 export type FollowupTemplateKey = 'welcome' | 'follow_up_1' | 'follow_up_2';
 

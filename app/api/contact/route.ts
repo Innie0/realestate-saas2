@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendEmail } from '@/lib/resend';
 import { SITE_FONT_STACK } from '@/lib/site-config';
-import { SUPPORT_FROM, getSupportEmail } from '@/lib/support-email';
+import { getSupportEmail, getSupportFrom } from '@/lib/support-email';
 
 const TOPICS = ['general', 'sales', 'support', 'billing'] as const;
 type ContactTopic = (typeof TOPICS)[number];
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     const subject = `[Oikaro Contact] ${topicLabel} — ${cleanName}`;
 
     await sendEmail({
-      from: SUPPORT_FROM,
+      from: getSupportFrom(),
       to: getSupportEmail(),
       reply_to: cleanEmail,
       subject,

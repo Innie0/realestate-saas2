@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
-import { approveSequenceStep, processLeadSequenceSteps } from '@/lib/lead-sequences/process';
+import { retryFailedSequenceStep } from '@/lib/lead-sequences/process';
 
 export async function POST(
   request: NextRequest,
@@ -17,7 +17,7 @@ export async function POST(
     }
 
     const body = await request.json().catch(() => ({}));
-    const { instanceId, subject, body: emailBody } = body;
+    const { instanceId } = body;
 
     if (!instanceId) {
       return NextResponse.json({ success: false, error: 'instanceId is required' }, { status: 400 });
@@ -34,41 +34,19 @@ export async function POST(
       return NextResponse.json({ success: false, error: 'Lead not found' }, { status: 404 });
     }
 
-    const result = await approveSequenceStep({
+    const result = await retryFailedSequenceStep({
       supabase,
       instanceId,
       agentId: user.id,
-      subject,
-      body: emailBody,
     });
 
     if (!result.success) {
       return NextResponse.json({ success: false, error: result.error }, { status: 400 });
     }
 
-    // Send approved email immediately via admin client cron logic
-    try {
-      const sendResult = await processLeadSequenceSteps();
-      if (sendResult.failed > 0) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'Email approved but could not be sent. Check your Resend domain configuration.',
-          },
-          { status: 502 },
-        );
-      }
-    } catch (cronErr) {
-      console.error('[Sequence] post-approve send failed:', cronErr);
-      return NextResponse.json(
-        { success: false, error: 'Email approved but could not be sent.' },
-        { status: 502 },
-      );
-    }
-
-    return NextResponse.json({ success: true, message: 'Email approved and queued to send' });
+    return NextResponse.json({ success: true, message: 'Email sent successfully' });
   } catch (error) {
-    console.error('Error in POST /api/clients/[id]/sequence/approve:', error);
+    console.error('Error in POST /api/clients/[id]/sequence/retry:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }

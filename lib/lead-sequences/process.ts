@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin';
-import { resolveAgentReplyEmail } from '@/lib/agent-reply-email';
+import { formatReplyToHeader, resolveAgentReplyEmail } from '@/lib/agent-reply-email';
 import {
   generatePersonalizedSequenceEmail,
 } from '@/lib/ai-lead-insights';
@@ -11,9 +11,9 @@ import {
 import { parseLeadFieldsFromMessage } from '@/lib/lead-sequences/defaults';
 import { getTemplateStepsForEnrollment, scheduleNextSequenceStep } from '@/lib/lead-sequences/schedule-next';
 import type { LeadSequenceContext } from '@/lib/lead-sequences/types';
-import { sendEmail } from '@/lib/resend';
+import { getResendErrorMessage, sendEmail } from '@/lib/resend';
 import { SITE_FONT_STACK } from '@/lib/site-config';
-import { SUPPORT_FROM } from '@/lib/support-email';
+import { getSupportFrom } from '@/lib/support-email';
 
 export type ProcessLeadSequencesResult = {
   emailsSent: number;
@@ -248,11 +248,13 @@ export async function processLeadSequenceSteps(): Promise<ProcessLeadSequencesRe
 
       const html = wrapEmailHtml(textToEmailHtml(body), agentName);
       await sendEmail({
-        from: SUPPORT_FROM,
+        from: getSupportFrom(),
         to: client.email,
         subject,
         html,
-        reply_to: agentReplyEmail || undefined,
+        reply_to: agentReplyEmail
+          ? formatReplyToHeader(agentReplyEmail, agentName)
+          : undefined,
       });
 
       await supabase
@@ -275,12 +277,13 @@ export async function processLeadSequenceSteps(): Promise<ProcessLeadSequencesRe
       );
       emailsSent++;
     } catch (err) {
-      console.error(`[Cron/Sequences] Failed step ${row.id}:`, err);
+      const message = getResendErrorMessage(err);
+      console.error(`[Cron/Sequences] Failed step ${row.id}:`, message);
       await supabase
         .from('lead_sequence_step_instances')
         .update({
           status: 'failed',
-          error_message: err instanceof Error ? err.message : 'Unknown error',
+          error_message: message,
           updated_at: new Date().toISOString(),
         })
         .eq('id', row.id);
@@ -395,6 +398,72 @@ export async function skipSequenceStep(options: {
   }
 
   return { success: true };
+}
+
+export async function retryFailedSequenceStep(options: {
+  supabase: { from: (table: string) => any };
+  instanceId: string;
+  agentId: string;
+}): Promise<{ success: boolean; error?: string; sendError?: string }> {
+  const { supabase, instanceId, agentId } = options;
+  const now = new Date().toISOString();
+
+  const { data: instance, error } = await supabase
+    .from('lead_sequence_step_instances')
+    .select(`
+      id, status, enrollment_id,
+      lead_sequence_enrollments!inner ( agent_user_id, status )
+    `)
+    .eq('id', instanceId)
+    .single();
+
+  if (error || !instance) return { success: false, error: 'Step not found' };
+
+  const enrollment = Array.isArray(instance.lead_sequence_enrollments)
+    ? instance.lead_sequence_enrollments[0]
+    : instance.lead_sequence_enrollments;
+
+  if (enrollment?.agent_user_id !== agentId) {
+    return { success: false, error: 'Unauthorized' };
+  }
+
+  if (instance.status !== 'failed') {
+    return { success: false, error: 'Only failed steps can be retried' };
+  }
+
+  if (enrollment?.status !== 'active') {
+    return { success: false, error: 'Sequence is not active' };
+  }
+
+  const { error: updateError } = await supabase
+    .from('lead_sequence_step_instances')
+    .update({
+      status: 'pending',
+      due_at: now,
+      error_message: null,
+      updated_at: now,
+    })
+    .eq('id', instanceId);
+
+  if (updateError) {
+    return { success: false, error: updateError.message };
+  }
+
+  try {
+    const result = await processLeadSequenceSteps();
+    if (result.failed > 0) {
+      return {
+        success: false,
+        error: 'Email could not be sent. Check your Resend domain configuration.',
+      };
+    }
+    if (result.emailsSent === 0 && result.tasksCreated === 0) {
+      return { success: false, error: 'Step was queued but not processed yet. Try again in a moment.' };
+    }
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: getResendErrorMessage(err) };
+  }
 }
 
 export async function pauseLeadSequenceEnrollment(

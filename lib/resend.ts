@@ -8,6 +8,15 @@ export type OutboundEmail = {
   reply_to?: string;
 };
 
+export function getResendErrorMessage(error: unknown): string {
+  if (error instanceof Error && error.message) return error.message;
+  if (typeof error === 'object' && error !== null && 'message' in error) {
+    const message = (error as { message?: unknown }).message;
+    if (typeof message === 'string' && message.trim()) return message;
+  }
+  return 'Unknown error';
+}
+
 function getResendClient(): Resend | null {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return null;
@@ -17,13 +26,12 @@ function getResendClient(): Resend | null {
 export async function sendEmail(emailData: OutboundEmail) {
   const resend = getResendClient();
   if (!resend) {
-    console.warn('[Resend] RESEND_API_KEY not set — skipping email send');
-    return null;
+    throw new Error('RESEND_API_KEY is not configured');
   }
   const { data, error } = await resend.emails.send(emailData);
   if (error) {
     console.error('[Resend] Error sending email:', error);
-    throw error;
+    throw new Error(getResendErrorMessage(error));
   }
   return data;
 }
