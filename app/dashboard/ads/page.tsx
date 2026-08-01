@@ -264,6 +264,7 @@ function AdsPageContent() {
           ? 'Create and publish ads in a few guided steps'
           : 'Track performance and improve with AI'
       }
+      className="max-w-none"
     >
       {pageMessage && (
         <Card className={clsx(
@@ -310,10 +311,10 @@ function AdsPageContent() {
       </div>
 
       {tab === 'create' ? (
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+        <div className="flex flex-col gap-6 xl:flex-row xl:items-start">
           <FilterSidebar
             title="Filters"
-            className="lg:sticky lg:top-24"
+            className="xl:sticky xl:top-24"
             groups={[
               {
                 id: 'accounts',
@@ -357,10 +358,10 @@ function AdsPageContent() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+        <div className="flex flex-col gap-6 xl:flex-row xl:items-start">
           <FilterSidebar
             title="Filters"
-            className="lg:sticky lg:top-24"
+            className="xl:sticky xl:top-24"
             groups={[
               {
                 id: 'date-range',

@@ -92,7 +92,7 @@ export default function AdsConnectionsPanel({
   onRefresh,
 }: AdsConnectionsPanelProps) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid grid-cols-1 gap-3">
       {PLATFORMS.map((platform) => {
         const conn = connectionFor(connections, platform.id);
         const status = getConnectionStatus(connections, platform.id);
@@ -102,7 +102,7 @@ export default function AdsConnectionsPanel({
         const setupHint = setupMessage(platform.id, status, conn);
 
         return (
-          <Card key={platform.id} className="p-5 sm:p-6">
+          <Card key={platform.id} className="p-4">
             <div className="flex items-start gap-3">
               <div
                 className={clsx(

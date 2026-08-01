@@ -16,8 +16,8 @@ export default function StepSidebar({ currentStep, maxStepIndex, onStepClick }: 
 
   return (
     <>
-      {/* Desktop sidebar */}
-      <nav className="hidden lg:block space-y-1" aria-label="Ad creation steps">
+      {/* Desktop step list — only when the wizard has room for three columns */}
+      <nav className="hidden xl:block space-y-1" aria-label="Ad creation steps">
         {WIZARD_STEPS.map((step, index) => {
           const isActive = step.key === currentStep;
           const isComplete = index < currentIndex;
@@ -59,8 +59,8 @@ export default function StepSidebar({ currentStep, maxStepIndex, onStepClick }: 
         })}
       </nav>
 
-      {/* Mobile step pills */}
-      <div className="lg:hidden flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
+      {/* Step pills when the desktop step column is hidden */}
+      <div className="xl:hidden flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
         {WIZARD_STEPS.map((step, index) => {
           const isActive = step.key === currentStep;
           const isClickable = index <= maxStepIndex;

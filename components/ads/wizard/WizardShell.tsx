@@ -295,7 +295,7 @@ export default function WizardShell({
         </div>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-[210px_minmax(0,1fr)_minmax(260px,300px)] lg:items-start">
+      <div className="grid gap-6 xl:grid-cols-[210px_minmax(0,1fr)_minmax(260px,300px)] xl:items-start">
       <StepSidebar
         currentStep={currentStep}
         maxStepIndex={maxStepIndex}
