@@ -16,20 +16,25 @@ import UsageStatusPill from '@/components/dashboard/UsageStatusPill';
 interface HeaderProps {
   title: string;
   subtitle?: string;
+  eyebrow?: string;
   actions?: React.ReactNode;
   /** Baseline-aligned title + subtitle on one line (e.g. dashboard home greeting). */
   inline?: boolean;
+  /** Larger marketing-style title stack (eyebrow + headline). */
+  hero?: boolean;
 }
 
 const titleClass =
-  'dashboard-page-title font-display text-[1.125rem] font-medium tracking-[-0.02em] text-foreground truncate sm:text-title sm:font-semibold';
+  'dashboard-page-title font-display text-[1.125rem] font-semibold tracking-[-0.03em] text-foreground truncate sm:text-title';
+const heroTitleClass =
+  'dashboard-page-title font-display text-2xl font-semibold tracking-[-0.04em] text-foreground sm:text-[1.75rem]';
 const subtitleInlineClass = 'text-caption text-muted-foreground truncate';
 
 /**
  * Header component
  * Top bar that shows the current page title and user actions
  */
-export default function Header({ title, subtitle, actions, inline = false }: HeaderProps) {
+export default function Header({ title, subtitle, eyebrow, actions, inline = false, hero = false }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
 
@@ -108,9 +113,21 @@ export default function Header({ title, subtitle, actions, inline = false }: Hea
   };
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-[var(--canvas)]/95 backdrop-blur-md">
-      <div className="px-4 sm:px-7 py-2.5 sm:h-[52px] sm:py-0">
+      <div className={hero ? 'px-4 py-4 sm:px-7 sm:py-5' : 'px-4 py-2.5 sm:h-[52px] sm:px-7 sm:py-0'}>
         <div className="flex h-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          {inline ? (
+          {hero ? (
+            <div className="min-w-0 flex-1">
+              {eyebrow ? (
+                <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-muted-foreground">
+                  {eyebrow}
+                </p>
+              ) : null}
+              <h1 className={heroTitleClass}>{title}</h1>
+              {subtitle ? (
+                <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
+              ) : null}
+            </div>
+          ) : inline ? (
             <div className="flex min-w-0 flex-1 items-baseline gap-2.5">
               <h1 className={titleClass}>{title}</h1>
               {subtitle && <span className={subtitleInlineClass}>{subtitle}</span>}

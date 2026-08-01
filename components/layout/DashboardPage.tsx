@@ -6,6 +6,7 @@ import clsx from 'clsx';
 interface DashboardPageProps {
   title: string;
   subtitle?: string;
+  eyebrow?: string;
   actions?: React.ReactNode;
   children: React.ReactNode;
   size?: 'default' | 'narrow' | 'medium';
@@ -14,6 +15,8 @@ interface DashboardPageProps {
   ambient?: 'default' | 'tool';
   /** Baseline-aligned title + subtitle on one line, passed through to Header. */
   inline?: boolean;
+  /** Faint vertical line texture (light mode only) */
+  lined?: boolean;
 }
 
 const ambientClasses = {
@@ -24,16 +27,28 @@ const ambientClasses = {
 export default function DashboardPage({
   title,
   subtitle,
+  eyebrow,
   actions,
   children,
   size = 'default',
   className,
   ambient = 'default',
   inline = false,
+  lined = false,
 }: DashboardPageProps) {
   return (
-    <div className={clsx('min-h-screen relative', ambientClasses[ambient])}>
-      <Header title={title} subtitle={subtitle} actions={actions} inline={inline} />
+    <div className={clsx('relative min-h-screen', ambientClasses[ambient])}>
+      {lined ? (
+        <div className="dashboard-lined-bg pointer-events-none absolute inset-0 z-0" aria-hidden />
+      ) : null}
+      <Header
+        title={title}
+        subtitle={subtitle}
+        eyebrow={eyebrow}
+        actions={actions}
+        inline={inline}
+        hero={!!eyebrow}
+      />
       <PageShell size={size} className={clsx('relative z-[1]', className)}>
         <PageTransition className="space-y-5">{children}</PageTransition>
       </PageShell>

@@ -177,34 +177,34 @@ html.dashboard-theme-switching * {
   transition: none !important;
 }
 
-/* Light dashboard — warm neutral canvas, cobalt accent (matches landing) */
+/* Light dashboard — cool neutral canvas aligned with marketing (#FAFAFA) */
 html[data-dashboard-theme='light'],
 .theme-light {
   color-scheme: light;
-  --canvas: #faf8f5;
+  --canvas: #fafafa;
   --surface: #ffffff;
-  --sidebar: #f7f6f4;
-  --ink: #111111;
+  --sidebar: #fafafa;
+  --ink: #1c1d22;
   --brand: #3548c7;
-  --border: #e8e4de;
+  --border: #eaeaea;
   --brand-foreground: #ffffff;
   --champagne: #444039;
 
-  --gray-50: #faf8f5;
-  --gray-100: #f3f0eb;
-  --gray-150: #ebe6de;
-  --gray-200: #e8e4de;
-  --gray-300: #d4cfc4;
-  --gray-400: #b8b2a8;
-  --gray-450: #9a948a;
-  --gray-500: #78726a;
-  --gray-600: #5c5650;
-  --gray-700: #444039;
-  --gray-800: #302c28;
-  --gray-900: #111111;
+  --gray-50: #fafafa;
+  --gray-100: #f4f4f5;
+  --gray-150: #ececee;
+  --gray-200: #eaeaea;
+  --gray-300: #d4d4d8;
+  --gray-400: #a1a1aa;
+  --gray-450: #8b8d96;
+  --gray-500: #6b6d76;
+  --gray-600: #52525b;
+  --gray-700: #3f3f46;
+  --gray-800: #27272a;
+  --gray-900: #1c1d22;
   --gray-950: #111111;
 
-  /* Cobalt brand scale — primary actions & active states */
+  /* Cobalt brand scale — links, badges, accents (not primary buttons) */
   --brand-50: #eef1fc;
   --brand-100: #dce2f9;
   --brand-200: #b9c5f3;
@@ -213,29 +213,29 @@ html[data-dashboard-theme='light'],
   --brand-500: #3548c7;
   --brand-600: #28348a;
   --brand-700: #1f2868;
-  --brand-800: #5c5650;
-  --brand-900: #78726a;
+  --brand-800: #52525b;
+  --brand-900: #6b6d76;
 
-  --primary: #3548c7;
+  --primary: #111111;
   --primary-foreground: #ffffff;
-  --accent: #eef1fc;
-  --accent-foreground: #111111;
-  --ring: #4a62d9;
+  --accent: #f4f4f5;
+  --accent-foreground: #1c1d22;
+  --ring: #111111;
 
   /* shadcn/ui — explicit values so nested var() does not resolve against dark :root */
-  --background: #faf8f5;
-  --foreground: #111111;
+  --background: #fafafa;
+  --foreground: #1c1d22;
   --card: #ffffff;
-  --card-foreground: #111111;
+  --card-foreground: #1c1d22;
   --popover: #ffffff;
-  --popover-foreground: #111111;
-  --secondary: #f3f0eb;
-  --secondary-foreground: #111111;
-  --muted: #f3f0eb;
-  --muted-foreground: #5c5650;
+  --popover-foreground: #1c1d22;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #1c1d22;
+  --muted: #f4f4f5;
+  --muted-foreground: #6b6d76;
   --destructive: #e11d48;
   --destructive-foreground: #ffffff;
-  --input: #e8e4de;
+  --input: #eaeaea;
   --radius: 0.625rem;
 
   /* Status chips on light chrome: soft tint bg + deep label (same families as dark) */
@@ -341,11 +341,11 @@ html[data-dashboard-theme='dark'],
 
 /* First paint / overscroll match stored dashboard theme before React mounts */
 html[data-dashboard-theme='light'] {
-  background-color: #faf8f5;
+  background-color: #fafafa;
 }
 
 html[data-dashboard-theme='light'] body {
-  background-color: #faf8f5;
+  background-color: #fafafa;
 }
 
 html[data-dashboard-theme='dark'] {
@@ -444,14 +444,48 @@ html[data-dashboard-theme='light'] .dashboard-root,
     stroke-width: 1.75;
   }
 
-  /* Dashboard workspace — sans for dense UI; serif reserved for page titles via .font-display */
+  /* Dashboard workspace — Geist sans body; Space Grotesk display (matches marketing) */
   .dashboard-root {
     font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   }
 
   .dashboard-root .font-display,
   .dashboard-root .dashboard-page-title {
-    font-family: var(--font-serif), 'Newsreader', Georgia, serif;
+    font-family: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+
+  /* Marketing-style card elevation in light dashboard */
+  .dashboard-root.theme-light .shadow-surface {
+    box-shadow:
+      0 1px 2px rgba(28, 29, 34, 0.04),
+      0 12px 32px -12px rgba(28, 29, 34, 0.1);
+  }
+
+  /* Subtle vertical rules — dashboard home / lined pages only */
+  .dashboard-root.theme-light .dashboard-lined-bg {
+    background-image: repeating-linear-gradient(
+      to right,
+      transparent,
+      transparent 63px,
+      rgb(0 0 0 / 0.05) 63px,
+      rgb(0 0 0 / 0.05) 64px
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      black 10%,
+      black 90%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      black 10%,
+      black 90%,
+      transparent 100%
+    );
   }
 
   /* Marketing chrome — light white landing (single source of truth: 2026-07-28 rebuild) */

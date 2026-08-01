@@ -92,14 +92,14 @@ function NavLink({
         'group relative flex items-center rounded-lg text-[13px] font-medium transition-colors duration-100',
         isCollapsed ? 'justify-center px-2 py-2' : 'gap-2.5 px-2.5 py-[7px]',
         active
-          ? 'bg-brand-50 text-brand-600'
-          : 'text-gray-600 hover:bg-muted/50 hover:text-foreground',
+          ? 'bg-foreground text-background'
+          : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground',
       )}
     >
       <Icon
         className={clsx(
           'relative z-10 h-[14px] w-[14px] flex-shrink-0',
-          active ? 'text-brand-600' : 'text-gray-600 group-hover:text-foreground'
+          active ? 'text-inherit' : 'text-muted-foreground group-hover:text-foreground',
         )}
         strokeWidth={1.8}
       />
@@ -112,7 +112,14 @@ function NavLink({
         {item.name}
       </span>
       {!isCollapsed && !!count && count > 0 && (
-        <span className="relative z-10 rounded-full bg-brand-500 px-[6px] py-[1px] font-mono text-[10px] font-semibold text-[var(--brand-foreground)]">
+        <span
+          className={clsx(
+            'relative z-10 rounded-full px-[6px] py-[1px] font-mono text-[10px] font-semibold',
+            active
+              ? 'bg-background/20 text-background'
+              : 'bg-foreground text-background',
+          )}
+        >
           {count}
         </span>
       )}
@@ -209,7 +216,7 @@ export default function Sidebar() {
     <>
       <div className="fixed left-0 right-0 top-0 z-50 flex h-16 items-center justify-between border-b border-border bg-[var(--canvas)] px-4 lg:hidden">
         <Link href="/dashboard" className="flex items-center gap-2 min-h-0">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] bg-brand-500 text-[11px] font-bold text-[var(--brand-foreground)]">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] bg-foreground text-[11px] font-bold text-background">
             O
           </span>
           <span className="text-[13px] font-semibold tracking-tight text-foreground">{SITE_NAME}</span>
@@ -257,7 +264,7 @@ export default function Sidebar() {
             />
           ) : (
             <>
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-brand-500 text-[11px] font-bold text-[var(--brand-foreground)]">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-foreground text-[11px] font-bold text-background">
                 O
               </span>
               <span className="text-[13px] font-semibold tracking-tight text-foreground">{SITE_NAME}</span>
@@ -292,7 +299,7 @@ export default function Sidebar() {
           {navGroups.map((group) => (
             <div key={group.label} className={clsx('mb-[18px] last:mb-2', isCollapsed && 'mb-3')}>
               {!isCollapsed && (
-                <p className="px-2.5 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-gray-500">
+                <p className="px-2.5 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
                   {group.label}
                 </p>
               )}
@@ -319,7 +326,7 @@ export default function Sidebar() {
               <div className="border-b border-border px-3.5 py-3">
                 <div className="flex items-center gap-2.5">
                   <span
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-500 text-[11px] font-semibold text-white"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-foreground text-[11px] font-semibold text-background"
                   >
                     {initials}
                   </span>

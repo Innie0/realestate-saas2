@@ -16,7 +16,7 @@ module.exports = {
   				'sans-serif'
   			],
   			'mkt-sans': [
-  				'var(--font-inter)',
+  				'var(--font-space-grotesk)',
   				'ui-sans-serif',
   				'system-ui',
   				'sans-serif'
@@ -82,6 +82,44 @@ module.exports = {
   					letterSpacing: '0.04em',
   					fontWeight: '500'
   				}
+  			],
+  			'mkt-h1': [
+  				'4rem',
+  				{
+  					lineHeight: '1.05',
+  					letterSpacing: '-0.03em',
+  					fontWeight: '700'
+  				}
+  			],
+  			'mkt-h2': [
+  				'2.75rem',
+  				{
+  					lineHeight: '1.1',
+  					letterSpacing: '-0.025em',
+  					fontWeight: '700'
+  				}
+  			],
+  			'mkt-h3': [
+  				'1.75rem',
+  				{
+  					lineHeight: '1.2',
+  					letterSpacing: '-0.02em',
+  					fontWeight: '600'
+  				}
+  			],
+  			'mkt-body': [
+  				'1.0625rem',
+  				{
+  					lineHeight: '1.6',
+  					fontWeight: '400'
+  				}
+  			],
+  			'mkt-small': [
+  				'0.875rem',
+  				{
+  					lineHeight: '1.5',
+  					fontWeight: '400'
+  				}
   			]
   		},
   		boxShadow: {
@@ -117,7 +155,7 @@ module.exports = {
   				'700': 'var(--brand-700)',
   				'800': 'var(--brand-800)',
   				'900': 'var(--brand-900)',
-  				DEFAULT: 'var(--brand-500)',
+  				DEFAULT: 'var(--primary)',
   				foreground: 'var(--primary-foreground)',
   			},
   			secondary: {
