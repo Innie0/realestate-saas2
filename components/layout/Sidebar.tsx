@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
@@ -146,6 +146,12 @@ export default function Sidebar() {
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const userMenuTriggerRef = useRef<HTMLButtonElement>(null);
+  const [userMenuPosition, setUserMenuPosition] = useState<{
+    left: number;
+    width: number;
+    bottom: number;
+  } | null>(null);
 
   const { data: inboxLeads = [] } = useApi<RecentClient[]>('/api/clients?status=all&view=inbox');
 
@@ -179,6 +185,32 @@ export default function Sidebar() {
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [isUserMenuOpen]);
+
+  useLayoutEffect(() => {
+    if (!isUserMenuOpen || isCollapsed) {
+      setUserMenuPosition(null);
+      return;
+    }
+
+    const updatePosition = () => {
+      const trigger = userMenuTriggerRef.current;
+      if (!trigger) return;
+      const rect = trigger.getBoundingClientRect();
+      setUserMenuPosition({
+        left: rect.left,
+        width: rect.width,
+        bottom: window.innerHeight - rect.top + 8,
+      });
+    };
+
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
+    return () => {
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
+    };
+  }, [isUserMenuOpen, isCollapsed]);
 
   const toggleCollapsed = () => {
     const newState = !isCollapsed;
@@ -320,25 +352,32 @@ export default function Sidebar() {
           ))}
         </nav>
 
-        <div className="relative border-t border-border p-2.5" ref={userMenuRef}>
-          {isUserMenuOpen && !isCollapsed && (
-            <div className="absolute bottom-full left-2.5 right-2.5 mb-1.5 overflow-hidden rounded-xl border border-border bg-card py-2 shadow-overlay">
+        <div className="relative z-20 shrink-0 border-t border-border p-2.5" ref={userMenuRef}>
+          {isUserMenuOpen && !isCollapsed && userMenuPosition ? (
+            <div
+              className="fixed z-[200] overflow-hidden rounded-xl border border-border bg-card py-2 shadow-overlay ring-1 ring-black/[0.04]"
+              style={{
+                left: userMenuPosition.left,
+                width: userMenuPosition.width,
+                bottom: userMenuPosition.bottom,
+              }}
+            >
               <div className="border-b border-border px-3.5 py-3">
                 <div className="flex items-center gap-2.5">
-                  <span
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-foreground text-[11px] font-semibold text-background"
-                  >
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-foreground text-[11px] font-semibold text-background">
                     {initials}
                   </span>
-                  <div className="min-w-0">
-                    <p className="truncate text-[13px] font-semibold text-foreground">{userName || 'Your account'}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[13px] font-semibold text-foreground">
+                      {userName || 'Your account'}
+                    </p>
                     <p className="truncate text-[11px] text-muted-foreground">{userEmail}</p>
                   </div>
                 </div>
               </div>
 
               <div className="px-2 py-1">
-                <ThemePillToggle value={preference} onChange={setPreference} className="px-1 py-2" />
+                <ThemePillToggle value={preference} onChange={setPreference} compact className="px-1 py-2" />
               </div>
 
               <div className="border-t border-border px-1 py-1">
@@ -381,18 +420,18 @@ export default function Sidebar() {
                 </button>
               </div>
             </div>
-          )}
+          ) : null}
           <button
+            ref={userMenuTriggerRef}
             type="button"
             onClick={() => (isCollapsed ? toggleCollapsed() : setIsUserMenuOpen((v) => !v))}
             className={clsx(
               'flex w-full items-center rounded-[7px] transition-colors hover:bg-muted/60',
-              isCollapsed ? 'justify-center py-2' : 'gap-[9px] px-1.5 py-1.5'
+              isCollapsed ? 'justify-center py-2' : 'gap-[9px] px-1.5 py-1.5',
+              isUserMenuOpen && !isCollapsed && 'bg-muted/60',
             )}
           >
-            <span
-              className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full bg-brand-500 text-[10px] font-semibold text-white"
-            >
+            <span className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full bg-foreground text-[10px] font-semibold text-background">
               {initials}
             </span>
             {!isCollapsed && (

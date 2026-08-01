@@ -14,10 +14,12 @@ interface ThemePillToggleProps {
   value: DashboardThemePreference;
   onChange: (value: DashboardThemePreference) => void;
   className?: string;
+  /** Icon-only labels for narrow panels (e.g. sidebar account menu) */
+  compact?: boolean;
 }
 
 /** Instantly-style Light / Dark / System segmented theme control. */
-export default function ThemePillToggle({ value, onChange, className }: ThemePillToggleProps) {
+export default function ThemePillToggle({ value, onChange, className, compact }: ThemePillToggleProps) {
   return (
     <div className={clsx('space-y-2', className)}>
       <p className="px-1 text-[11px] font-medium text-muted-foreground">Theme</p>
@@ -37,13 +39,14 @@ export default function ThemePillToggle({ value, onChange, className }: ThemePil
               onClick={() => onChange(optionValue)}
               className={clsx(
                 'flex flex-1 items-center justify-center gap-1 rounded-md px-2 py-1.5 text-[11.5px] font-medium transition-all',
+                compact && 'px-1.5',
                 active
                   ? 'bg-card text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground',
               )}
             >
               <Icon className="size-3 shrink-0" strokeWidth={1.75} />
-              {label}
+              {compact ? <span className="sr-only">{label}</span> : label}
             </button>
           );
         })}
