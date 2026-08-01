@@ -359,10 +359,10 @@ function AdsPageContent() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col gap-6 xl:flex-row xl:items-start">
+        <div className="flex flex-col gap-8">
           <FilterSidebar
             title="Filters"
-            className="xl:sticky xl:top-24"
+            className="w-full xl:w-full"
             groups={[
               {
                 id: 'date-range',
@@ -370,14 +370,14 @@ function AdsPageContent() {
                 icon: Calendar,
                 defaultOpen: true,
                 children: (
-                  <div className="space-y-1">
+                  <div className="flex flex-wrap gap-2">
                     {ADS_DATE_RANGES.map((range) => (
                       <button
                         key={range.days}
                         type="button"
                         onClick={() => setPerfDays(range.days)}
                         className={cn(
-                          'flex w-full items-center rounded-lg px-2.5 py-2 text-[13px] font-medium transition-colors',
+                          'rounded-lg px-3 py-2 text-[13px] font-medium transition-colors',
                           perfDays === range.days
                             ? 'bg-brand-50 text-brand-600'
                             : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
@@ -395,12 +395,12 @@ function AdsPageContent() {
                 icon: Tag,
                 defaultOpen: true,
                 children: (
-                  <div className="space-y-1">
+                  <div className="grid grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-4">
                     <button
                       type="button"
                       onClick={() => setPerfAdType('')}
                       className={cn(
-                        'flex w-full items-center rounded-lg px-2.5 py-2 text-[13px] font-medium transition-colors',
+                        'rounded-lg px-2.5 py-2 text-left text-[13px] font-medium transition-colors',
                         perfAdType === ''
                           ? 'bg-brand-50 text-brand-600'
                           : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
@@ -414,7 +414,7 @@ function AdsPageContent() {
                         type="button"
                         onClick={() => setPerfAdType(option.id)}
                         className={cn(
-                          'flex w-full items-center rounded-lg px-2.5 py-2 text-[13px] font-medium transition-colors',
+                          'rounded-lg px-2.5 py-2 text-left text-[13px] font-medium transition-colors',
                           perfAdType === option.id
                             ? 'bg-brand-50 text-brand-600'
                             : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
@@ -433,6 +433,7 @@ function AdsPageContent() {
                 defaultOpen: false,
                 children: (
                   <AdsConnectionsPanel
+                    className="md:grid-cols-2"
                     connections={connections ?? []}
                     connecting={connecting}
                     disconnecting={disconnecting}
@@ -446,7 +447,7 @@ function AdsPageContent() {
             ]}
           />
 
-          <div className="grid min-w-0 flex-1 gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,1fr)]">
+          <div className="grid min-w-0 gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(300px,360px)] xl:items-start">
             <div className="space-y-5">
               <Card className="overflow-hidden border-border shadow-none">
                 <PanelHeader
@@ -476,6 +477,7 @@ function AdsPageContent() {
               )}
             </div>
             <AIInsightsFeed
+              className="xl:sticky xl:top-24"
               insights={insights}
               loading={insightsLoading}
               refreshing={refreshingInsights}

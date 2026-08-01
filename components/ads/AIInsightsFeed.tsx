@@ -51,6 +51,7 @@ interface AIInsightsFeedProps {
   onDismiss?: (id: string) => void;
   onOptimize?: (insight: AIInsight) => void;
   compact?: boolean;
+  className?: string;
 }
 
 export default function AIInsightsFeed({
@@ -61,10 +62,11 @@ export default function AIInsightsFeed({
   onDismiss,
   onOptimize,
   compact,
+  className,
 }: AIInsightsFeedProps) {
   if (loading) {
     return (
-      <div className="flex items-center gap-2 text-caption text-gray-700 py-3">
+      <div className={clsx('flex items-center gap-2 text-caption text-gray-700 py-3', className)}>
         <Loader2 className="h-4 w-4 animate-spin" />
         Loading insights…
       </div>
@@ -72,7 +74,7 @@ export default function AIInsightsFeed({
   }
 
   return (
-    <section>
+    <section className={clsx('min-w-0', className)}>
       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
         <p className="text-label flex items-center gap-1.5">
           <Sparkles className="h-3.5 w-3.5 text-brand-600" />

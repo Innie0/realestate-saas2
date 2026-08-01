@@ -117,7 +117,7 @@ export default function AdsConnectionsPanel({
                 {platform.accent}
               </div>
               <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex flex-col items-start gap-1.5 sm:flex-row sm:items-start sm:justify-between sm:gap-2">
                   <h3 className="text-[13px] font-semibold text-gray-900">{platform.name}</h3>
                   <StatusBadge status={status} />
                 </div>

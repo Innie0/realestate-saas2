@@ -60,26 +60,26 @@ export default function PerformanceDashboard({
   const hasAds = data.ads.length > 0;
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-        {[
-          { label: 'Impressions', value: totals.impressions.toLocaleString() },
-          { label: 'Clicks', value: totals.clicks.toLocaleString() },
-          { label: 'CTR', value: `${totals.ctr.toFixed(2)}%` },
-          { label: 'Spend', value: formatMoney(totals.spendCents) },
-          { label: 'Leads', value: totals.leads.toLocaleString() },
-          {
-            label: 'Cost / lead',
-            value: totals.costPerLead != null ? formatMoney(totals.costPerLead) : '—',
-          },
-        ].map((stat) => (
-          <Card key={stat.label} className="border-border p-4 shadow-none sm:p-5">
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
-              {stat.label}
-            </p>
-            <p className="mt-0.5 text-[15px] font-semibold tabular-nums text-foreground">{stat.value}</p>
-          </Card>
-        ))}
+    <div className="space-y-5">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-6">
+          {[
+            { label: 'Impressions', value: totals.impressions.toLocaleString() },
+            { label: 'Clicks', value: totals.clicks.toLocaleString() },
+            { label: 'CTR', value: `${totals.ctr.toFixed(2)}%` },
+            { label: 'Spend', value: formatMoney(totals.spendCents) },
+            { label: 'Leads', value: totals.leads.toLocaleString() },
+            {
+              label: 'Cost / lead',
+              value: totals.costPerLead != null ? formatMoney(totals.costPerLead) : '—',
+            },
+          ].map((stat) => (
+            <Card key={stat.label} className="min-w-0 border-border p-3 shadow-none sm:p-4">
+              <p className="text-[10.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                {stat.label}
+              </p>
+              <p className="mt-1 text-[15px] font-semibold tabular-nums text-foreground">{stat.value}</p>
+            </Card>
+          ))}
       </div>
 
       {!hasAds ? (
