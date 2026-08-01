@@ -30,32 +30,39 @@ export function useTour({ tourKey, steps, delayMs = 800, ready = true }: UseTour
     let timeout: ReturnType<typeof setTimeout>;
 
     const run = async () => {
-      const { driver: driverFn } = await import('driver.js');
+      try {
+        const missingStep = steps.some((step) => !document.querySelector(step.element));
+        if (missingStep) return;
 
-      driver = driverFn({
-        animate: true,
-        smoothScroll: true,
-        showProgress: true,
-        progressText: '{{current}} of {{total}}',
-        nextBtnText: 'Next',
-        prevBtnText: 'Back',
-        doneBtnText: 'Got it',
-        overlayColor: 'rgba(0,0,0,0.55)',
-        onDestroyed: () => {
-          localStorage.setItem(tourKey, '1');
-        },
-        steps: steps.map(s => ({
-          element: s.element,
-          popover: {
-            title: s.popover.title,
-            description: s.popover.description,
-            side: s.popover.side ?? 'bottom',
-            align: s.popover.align ?? 'start',
+        const { driver: driverFn } = await import('driver.js');
+
+        driver = driverFn({
+          animate: true,
+          smoothScroll: true,
+          showProgress: true,
+          progressText: '{{current}} of {{total}}',
+          nextBtnText: 'Next',
+          prevBtnText: 'Back',
+          doneBtnText: 'Got it',
+          overlayColor: 'rgba(0,0,0,0.55)',
+          onDestroyed: () => {
+            localStorage.setItem(tourKey, '1');
           },
-        })),
-      });
+          steps: steps.map(s => ({
+            element: s.element,
+            popover: {
+              title: s.popover.title,
+              description: s.popover.description,
+              side: s.popover.side ?? 'bottom',
+              align: s.popover.align ?? 'start',
+            },
+          })),
+        });
 
-      driver.drive();
+        driver.drive();
+      } catch (error) {
+        console.error('Product tour failed to start:', error);
+      }
     };
 
     timeout = setTimeout(run, delayMs);

@@ -191,14 +191,16 @@ export default function LeadsInbox({
   onGoToCapture,
   onSequenceChange,
 }: LeadsInboxProps) {
+  const inboxLeads = Array.isArray(leads) ? leads : [];
+
   const counts = {
-    all: leads.length,
-    hot: leads.filter((l) => getLeadTemperature(l.created_at, l.message) === 'hot').length,
-    warm: leads.filter((l) => getLeadTemperature(l.created_at, l.message) === 'warm').length,
-    cold: leads.filter((l) => getLeadTemperature(l.created_at, l.message) === 'cold').length,
+    all: inboxLeads.length,
+    hot: inboxLeads.filter((l) => getLeadTemperature(l.created_at, l.message) === 'hot').length,
+    warm: inboxLeads.filter((l) => getLeadTemperature(l.created_at, l.message) === 'warm').length,
+    cold: inboxLeads.filter((l) => getLeadTemperature(l.created_at, l.message) === 'cold').length,
   };
 
-  const filteredLeads = leads.filter(
+  const filteredLeads = inboxLeads.filter(
     (l) => filter === 'all' || getLeadTemperature(l.created_at, l.message) === filter,
   );
 

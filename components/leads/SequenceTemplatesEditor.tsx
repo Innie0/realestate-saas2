@@ -60,7 +60,9 @@ export default function SequenceTemplatesEditor() {
     if (!activeTemplate) return [];
     const key = activeTemplate.id;
     if (drafts[key]) return drafts[key];
-    return activeTemplate.sequence_template_steps;
+    return Array.isArray(activeTemplate.sequence_template_steps)
+      ? activeTemplate.sequence_template_steps
+      : [];
   }, [activeTemplate, drafts]);
 
   const updateStep = (stepId: string, patch: Partial<TemplateStep>) => {

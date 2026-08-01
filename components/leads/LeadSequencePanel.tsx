@@ -180,7 +180,7 @@ export default function LeadSequencePanel({
 
   return (
     <div className="flex flex-col gap-4">
-      {insight?.lead_read ? (
+      {typeof insight?.lead_read === 'string' && insight.lead_read.trim() ? (
         <div className="rounded-lg border border-violet-200 bg-violet-50/80 px-3 py-2.5">
           <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-violet-700">
             <Sparkles className="size-3.5" />
@@ -212,7 +212,9 @@ export default function LeadSequencePanel({
       {approvalStep ? (
         <Card className="border-amber-200 bg-amber-50/50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Approve first email to {leadName.split(' ')[0]}</CardTitle>
+            <CardTitle className="text-base">
+              Approve first email to {(leadName || 'lead').split(' ')[0]}
+            </CardTitle>
             <CardDescription>Review AI-drafted copy before it sends.</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">

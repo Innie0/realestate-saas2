@@ -153,7 +153,8 @@ export default function Sidebar() {
     bottom: number;
   } | null>(null);
 
-  const { data: inboxLeads = [] } = useApi<RecentClient[]>('/api/clients?status=all&view=inbox');
+  const { data: inboxLeadsData } = useApi<RecentClient[]>('/api/clients?status=all&view=inbox');
+  const inboxLeadCount = Array.isArray(inboxLeadsData) ? inboxLeadsData.length : 0;
 
   useEffect(() => {
     const saved = localStorage.getItem('sidebar-collapsed');
@@ -344,7 +345,7 @@ export default function Sidebar() {
                     isCollapsed={isCollapsed}
                     onNavigate={closeMobile}
                     onPrefetch={(href) => prefetchDashboardRoute(href, router)}
-                    count={item.href === '/dashboard/leads' ? inboxLeads.length : undefined}
+                    count={item.href === '/dashboard/leads' ? inboxLeadCount : undefined}
                   />
                 ))}
               </div>

@@ -38,7 +38,7 @@ export function useApi<T = unknown>(
 
   return {
     response: data,
-    data: data?.data as T | undefined,
+    data: (data?.data == null ? undefined : data.data) as T | undefined,
     error,
     /** True only when there is no cached data yet (first visit). */
     isLoading: isLoading && data === undefined,

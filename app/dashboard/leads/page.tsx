@@ -270,12 +270,13 @@ function LeadsPageContent() {
     a.click();
   };
 
+  const safeLeads = useMemo(() => (Array.isArray(leads) ? leads : []), [leads]);
   const now = Date.now();
-  const thisWeek = leads.filter(l => now - new Date(l.created_at).getTime() < 7 * 86_400_000);
-  const hotLeads = leads.filter(l => getLeadTemp(l) === 'hot');
+  const thisWeek = safeLeads.filter(l => now - new Date(l.created_at).getTime() < 7 * 86_400_000);
+  const hotLeads = safeLeads.filter(l => getLeadTemp(l) === 'hot');
   const filteredLeads = useMemo(
-    () => leads.filter((l) => filter === 'all' || getLeadTemp(l) === filter),
-    [leads, filter],
+    () => safeLeads.filter((l) => filter === 'all' || getLeadTemp(l) === filter),
+    [safeLeads, filter],
   );
 
   useEffect(() => {
@@ -291,7 +292,7 @@ function LeadsPageContent() {
   return (
     <DashboardPage
       title="Leads"
-      subtitle={`${leads.length} in inbox · ${hotLeads.length} hot · ${thisWeek.length} this week`}
+      subtitle={`${safeLeads.length} in inbox · ${hotLeads.length} hot · ${thisWeek.length} this week`}
       size="medium"
     >
       {activeTab === 'inbox' && isLoading ? (
@@ -304,7 +305,7 @@ function LeadsPageContent() {
 
         {activeTab === 'inbox' && (
             <LeadsInbox
-              leads={leads}
+              leads={safeLeads}
               filter={filter}
               onFilterChange={setFilter}
               selectedLeadId={selectedLeadId}

@@ -89,16 +89,17 @@ export const AVATAR: Record<Accent, string> = {
 const AVATAR_POOL: Accent[] = ['champagne', 'sky', 'teal', 'emerald', 'amber', 'rose'];
 
 /** Deterministic accent for a person's name — same name, same color. */
-export function nameAccent(name: string): Accent {
+export function nameAccent(name?: string | null): Accent {
+  const safeName = name ?? '';
   let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = (hash * 31 + name.charCodeAt(i)) | 0;
+  for (let i = 0; i < safeName.length; i++) {
+    hash = (hash * 31 + safeName.charCodeAt(i)) | 0;
   }
   return AVATAR_POOL[Math.abs(hash) % AVATAR_POOL.length];
 }
 
 /** Avatar classes for a person's name. */
-export function nameAvatarClasses(name: string): string {
+export function nameAvatarClasses(name?: string | null): string {
   return AVATAR[nameAccent(name)];
 }
 

@@ -55,7 +55,8 @@ export async function GET(
       .eq('agent_user_id', user.id)
       .maybeSingle();
 
-    const steps = (enrollment?.lead_sequence_step_instances || []).sort(
+    const rawSteps = enrollment?.lead_sequence_step_instances;
+    const steps = (Array.isArray(rawSteps) ? rawSteps : []).sort(
       (a, b) => a.step_index - b.step_index,
     );
 
