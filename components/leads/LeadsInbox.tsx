@@ -22,7 +22,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import EmptyState from '@/components/ui/EmptyState';
 import RelativeTime from '@/components/ui/RelativeTime';
-import { nameAvatarClasses } from '@/lib/accent';
 import { coerceLeadMessage } from '@/lib/lead-temperature';
 import { cn } from '@/lib/utils';
 import {
@@ -267,12 +266,7 @@ export default function LeadsInbox({
                       selected && 'bg-muted',
                     )}
                   >
-                    <div
-                      className={cn(
-                        'flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold',
-                        nameAvatarClasses(lead.name),
-                      )}
-                    >
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
                       {leadInitials(lead.name)}
                     </div>
                     <div className="min-w-0 flex-1">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Loader2, Sparkles, CheckCircle2, SkipForward, Pause, Play, RotateCcw } from 'lucide-react';
+import { Loader2, CheckCircle2, SkipForward, Pause, Play, RotateCcw } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useToast } from '@/components/providers/ToastProvider';
@@ -209,14 +209,13 @@ export default function LeadSequencePanel({
   return (
     <div className="flex flex-col gap-4">
       {typeof insight?.lead_read === 'string' && insight.lead_read.trim() ? (
-        <div className="rounded-lg border border-violet-200 bg-violet-50/80 px-3 py-2.5">
-          <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-violet-700">
-            <Sparkles className="size-3.5" />
-            AI lead read
-          </div>
-          <p className="mt-1 text-sm text-violet-950">{insight.lead_read}</p>
+        <div className="rounded-lg border border-border bg-muted/40 px-3 py-2.5">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Lead summary
+          </p>
+          <p className="mt-1 text-sm text-foreground">{insight.lead_read}</p>
           {insight.recommended_tone ? (
-            <p className="mt-1 text-xs text-violet-700">Tone: {insight.recommended_tone}</p>
+            <p className="mt-1 text-xs text-muted-foreground">Suggested tone: {insight.recommended_tone}</p>
           ) : null}
         </div>
       ) : null}

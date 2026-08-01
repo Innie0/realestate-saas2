@@ -10,17 +10,17 @@ const CONFIG: Record<
   hot: {
     label: 'Hot',
     dot: 'bg-rose-500',
-    badge: 'bg-rose-100 text-rose-800 ring-1 ring-inset ring-rose-200/80',
+    badge: 'bg-rose-100 text-rose-800',
   },
   warm: {
     label: 'Warm',
     dot: 'bg-amber-500',
-    badge: 'bg-amber-100 text-amber-900 ring-1 ring-inset ring-amber-200/80',
+    badge: 'bg-amber-100 text-amber-900',
   },
   cold: {
     label: 'Cold',
     dot: 'bg-gray-400',
-    badge: 'bg-gray-100 text-gray-600 ring-1 ring-inset ring-gray-200/80',
+    badge: 'bg-gray-100 text-gray-600',
   },
 };
 
