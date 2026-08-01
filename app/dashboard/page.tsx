@@ -801,7 +801,6 @@ export default function DashboardHomePage() {
 
   return (
     <DashboardPage
-      lined
       eyebrow="Overview"
       title={`${getGreeting()}${firstName ? `, ${firstName}` : ''}`}
       subtitle={formatToday()}

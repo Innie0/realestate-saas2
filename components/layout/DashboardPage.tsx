@@ -15,8 +15,6 @@ interface DashboardPageProps {
   ambient?: 'default' | 'tool';
   /** Baseline-aligned title + subtitle on one line, passed through to Header. */
   inline?: boolean;
-  /** Faint vertical line texture (light mode only) */
-  lined?: boolean;
 }
 
 const ambientClasses = {
@@ -34,13 +32,9 @@ export default function DashboardPage({
   className,
   ambient = 'default',
   inline = false,
-  lined = false,
 }: DashboardPageProps) {
   return (
     <div className={clsx('relative min-h-screen', ambientClasses[ambient])}>
-      {lined ? (
-        <div className="dashboard-lined-bg pointer-events-none absolute inset-0 z-0" aria-hidden />
-      ) : null}
       <Header
         title={title}
         subtitle={subtitle}

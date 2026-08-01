@@ -463,7 +463,7 @@ html[data-dashboard-theme='light'] .dashboard-root,
       0 12px 32px -12px rgba(28, 29, 34, 0.1);
   }
 
-  /* Subtle vertical rules — dashboard home / lined pages only */
+  /* Subtle vertical rules — all light dashboard pages (via DashboardShell) */
   .dashboard-root.theme-light .dashboard-lined-bg {
     background-image: repeating-linear-gradient(
       to right,
