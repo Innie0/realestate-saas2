@@ -463,31 +463,6 @@ html[data-dashboard-theme='light'] .dashboard-root,
       0 12px 32px -12px rgba(28, 29, 34, 0.1);
   }
 
-  /* Subtle vertical rules — all light dashboard pages (via DashboardShell) */
-  .dashboard-root.theme-light .dashboard-lined-bg {
-    background-image: repeating-linear-gradient(
-      to right,
-      transparent,
-      transparent 63px,
-      rgb(0 0 0 / 0.05) 63px,
-      rgb(0 0 0 / 0.05) 64px
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      transparent 0%,
-      black 10%,
-      black 90%,
-      transparent 100%
-    );
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      transparent 0%,
-      black 10%,
-      black 90%,
-      transparent 100%
-    );
-  }
-
   /* Marketing chrome — light white landing (single source of truth: 2026-07-28 rebuild) */
   html:has(.marketing-root) {
     background-color: #FAFAFA;
