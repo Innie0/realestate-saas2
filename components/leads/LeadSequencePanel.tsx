@@ -63,6 +63,10 @@ function statusLabel(status: string): string {
   return labels[status] || status;
 }
 
+function asCopy(value: unknown): string {
+  return typeof value === 'string' ? value : '';
+}
+
 export default function LeadSequencePanel({
   leadId,
   leadName,
@@ -104,8 +108,8 @@ export default function LeadSequencePanel({
     );
   }
 
-  const currentSubject = subject || approvalStep?.subject || '';
-  const currentBody = body || approvalStep?.body || '';
+  const currentSubject = subject || asCopy(approvalStep?.subject);
+  const currentBody = body || asCopy(approvalStep?.body);
 
   const handleApprove = async () => {
     if (!approvalStep) return;

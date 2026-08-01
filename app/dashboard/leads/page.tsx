@@ -12,6 +12,7 @@ import Badge from '@/components/ui/Badge';
 import Modal from '@/components/ui/Modal';
 import { supabase } from '@/lib/supabase';
 import { useTour } from '@/hooks/useTour';
+import { useMounted } from '@/hooks/useMounted';
 import { useApi } from '@/lib/swr';
 import { useToast } from '@/components/providers/ToastProvider';
 import { LeadsPageContentSkeleton } from '@/components/dashboard/page-loading';
@@ -69,6 +70,7 @@ function getLeadTemp(lead: Lead): 'hot' | 'warm' | 'cold' {
 function LeadsPageContent() {
   const toast = useToast();
   const searchParams = useSearchParams();
+  const mounted = useMounted();
 
   const initialTab = (searchParams.get('tab') as LeadsTab) || 'inbox';
   const highlightId = searchParams.get('highlight');
@@ -80,7 +82,7 @@ function LeadsPageContent() {
 
   useTour({
     tourKey: 'tour_leads',
-    ready: !(activeTab === 'inbox' && isLoading),
+    ready: mounted && !(activeTab === 'inbox' && isLoading),
     steps: [
       {
         element: '[data-tour="leads-tabs"]',
@@ -271,13 +273,20 @@ function LeadsPageContent() {
   };
 
   const safeLeads = useMemo(() => (Array.isArray(leads) ? leads : []), [leads]);
-  const now = Date.now();
-  const thisWeek = safeLeads.filter(l => now - new Date(l.created_at).getTime() < 7 * 86_400_000);
-  const hotLeads = safeLeads.filter(l => getLeadTemp(l) === 'hot');
+  const statsSubtitle = useMemo(() => {
+    if (!mounted) return 'Inbox, capture, and automations';
+    const now = Date.now();
+    const thisWeek = safeLeads.filter(
+      (l) => now - new Date(l.created_at).getTime() < 7 * 86_400_000,
+    );
+    const hotLeads = safeLeads.filter((l) => getLeadTemp(l) === 'hot');
+    return `${safeLeads.length} in inbox · ${hotLeads.length} hot · ${thisWeek.length} this week`;
+  }, [mounted, safeLeads]);
   const filteredLeads = useMemo(
     () => safeLeads.filter((l) => filter === 'all' || getLeadTemp(l) === filter),
     [safeLeads, filter],
   );
+  const showInboxSkeleton = !mounted || (activeTab === 'inbox' && isLoading);
 
   useEffect(() => {
     if (filteredLeads.length === 0) {
@@ -292,10 +301,10 @@ function LeadsPageContent() {
   return (
     <DashboardPage
       title="Leads"
-      subtitle={`${safeLeads.length} in inbox · ${hotLeads.length} hot · ${thisWeek.length} this week`}
+      subtitle={statsSubtitle}
       size="medium"
     >
-      {activeTab === 'inbox' && isLoading ? (
+      {showInboxSkeleton ? (
         <LeadsPageContentSkeleton />
       ) : (
         <>

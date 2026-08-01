@@ -21,7 +21,7 @@ export default function LeadsError({
           The leads page hit an unexpected error. Your captured leads are still saved — try reloading
           this page.
         </p>
-        {process.env.NODE_ENV !== 'production' && error.message ? (
+        {error.message ? (
           <p className="mt-3 break-words font-mono text-[11px] text-rose-700">{error.message}</p>
         ) : null}
         <div className="mt-5 flex justify-center gap-2">

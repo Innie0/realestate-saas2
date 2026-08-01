@@ -22,8 +22,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import EmptyState from '@/components/ui/EmptyState';
 import FilterSidebar from '@/components/layout/FilterSidebar';
+import RelativeTime from '@/components/ui/RelativeTime';
 import { Flame } from 'lucide-react';
 import { nameAvatarClasses } from '@/lib/accent';
+import { coerceLeadMessage } from '@/lib/lead-temperature';
 import { cn } from '@/lib/utils';
 import {
   DoorOpen,
@@ -100,22 +102,13 @@ function leadInitials(name?: string | null): string {
   );
 }
 
-function timeAgo(dateStr: string): string {
-  const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
-  if (seconds < 60) return 'just now';
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
-
 function getAdSourceLabel(adSource?: string | null): string | null {
   if (!adSource) return null;
   return AD_SOURCE_LABELS[adSource] ?? null;
 }
 
 function parseLeadDetail(lead: Lead) {
-  const msg = lead.message || '';
+  const msg = coerceLeadMessage(lead.message);
   const infoLines = msg.split('\n').filter((l) =>
     l.startsWith('Timeline:') || l.startsWith('Budget:') || l.startsWith('Area:'),
   );
@@ -313,7 +306,7 @@ export default function LeadsInbox({
                         </Badge>
                       ) : null}
                     </div>
-                    <span className="shrink-0 text-[11px] text-muted-foreground">{timeAgo(lead.created_at)}</span>
+                    <RelativeTime dateStr={lead.created_at} className="shrink-0 text-[11px] text-muted-foreground" />
                   </button>
                 );
               })}
@@ -507,7 +500,7 @@ function LeadDetailPanel({
       </CardContent>
 
       <CardFooter className="text-xs text-muted-foreground">
-        Captured {timeAgo(lead.created_at)}
+        Captured <RelativeTime dateStr={lead.created_at} />
       </CardFooter>
     </Card>
   );
