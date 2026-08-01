@@ -1,5 +1,10 @@
 export type LeadTemperature = 'hot' | 'warm' | 'cold';
 
+export function coerceLeadTemperature(value: unknown): LeadTemperature {
+  if (value === 'hot' || value === 'warm' || value === 'cold') return value;
+  return 'warm';
+}
+
 /** Score lead temperature from recency and timeline signals in the message. */
 export function getLeadTemperature(createdAt: string, message = ''): LeadTemperature {
   const hoursAgo = (Date.now() - new Date(createdAt).getTime()) / 3_600_000;

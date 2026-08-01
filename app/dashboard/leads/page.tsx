@@ -69,8 +69,18 @@ function getLeadTemp(lead: Lead): 'hot' | 'warm' | 'cold' {
 function LeadsPageContent() {
   const toast = useToast();
   const searchParams = useSearchParams();
+
+  const initialTab = (searchParams.get('tab') as LeadsTab) || 'inbox';
+  const highlightId = searchParams.get('highlight');
+  const [activeTab, setActiveTab] = useState<LeadsTab>(
+    initialTab === 'capture' || initialTab === 'automations' ? initialTab : 'inbox'
+  );
+  const router = useRouter();
+  const { data: leads = [], isLoading, mutate: mutateLeads } = useApi<Lead[]>('/api/clients?status=all&view=inbox');
+
   useTour({
     tourKey: 'tour_leads',
+    ready: !(activeTab === 'inbox' && isLoading),
     steps: [
       {
         element: '[data-tour="leads-tabs"]',
@@ -91,13 +101,6 @@ function LeadsPageContent() {
     ],
   });
 
-  const initialTab = (searchParams.get('tab') as LeadsTab) || 'inbox';
-  const highlightId = searchParams.get('highlight');
-  const [activeTab, setActiveTab] = useState<LeadsTab>(
-    initialTab === 'capture' || initialTab === 'automations' ? initialTab : 'inbox'
-  );
-  const router = useRouter();
-  const { data: leads = [], isLoading, mutate: mutateLeads } = useApi<Lead[]>('/api/clients?status=all&view=inbox');
   const { response: usageResponse } = useApi('/api/usage');
   const { response: profileResponse } = useApi('/api/agent-profile');
   const { data: settingsData, mutate: mutateSettings } = useApi<FollowupSettings & { auto_followup_enabled?: boolean; booking_enabled?: boolean }>('/api/agent-settings');

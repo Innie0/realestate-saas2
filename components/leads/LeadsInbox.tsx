@@ -87,9 +87,10 @@ const AD_SOURCE_LABELS: Record<string, string> = {
   google_ad: 'From ad',
 };
 
-function leadInitials(name: string): string {
+function leadInitials(name?: string | null): string {
+  const safeName = (name ?? '').trim();
   return (
-    name
+    safeName
       .split(/\s+/)
       .filter(Boolean)
       .map((part) => part[0])
@@ -300,7 +301,9 @@ export default function LeadsInbox({
                         <LeadTemperatureBadge temperature={temp} />
                       </div>
                       <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                        {lead.lead_read || getLeadSummaryLine(lead)}
+                        {typeof lead.lead_read === 'string' && lead.lead_read.trim()
+                          ? lead.lead_read
+                          : getLeadSummaryLine(lead)}
                       </p>
                       {lead.sequence_awaiting_approval ? (
                         <Badge variant="warm" className="mt-1 text-[10px]">

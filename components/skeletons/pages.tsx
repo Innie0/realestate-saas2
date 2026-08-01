@@ -1,7 +1,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/Card';
@@ -84,9 +83,9 @@ export function LeadsInboxSkeleton() {
         <Card className="overflow-hidden p-0">
           <CardHeader className="border-b py-3">
             <CardTitle className="text-sm">Leads</CardTitle>
-            <CardDescription>
+            <div className="text-sm text-muted-foreground">
               <Skeleton className="inline-block h-3 w-16" />
-            </CardDescription>
+            </div>
           </CardHeader>
           <CardContent className="flex flex-col gap-0 p-0">
             {Array.from({ length: SKELETON_COUNTS.leadsInboxRows }).map((_, index) => (

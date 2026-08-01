@@ -129,31 +129,35 @@ export async function GET(request: NextRequest) {
     }) || [];
 
     if (view === 'inbox' && processedClients.length > 0) {
-      const clientIds = processedClients.map((client) => client.id);
+      try {
+        const clientIds = processedClients.map((client) => client.id);
 
-      const sequenceSummaries = await fetchLeadSequenceSummaries(supabase, user.id, clientIds);
+        const sequenceSummaries = await fetchLeadSequenceSummaries(supabase, user.id, clientIds);
 
-      const { data: pendingSequences } = await supabase
-        .from('email_sequences')
-        .select('client_id')
-        .in('client_id', clientIds)
-        .eq('agent_user_id', user.id)
-        .eq('status', 'pending');
+        const { data: pendingSequences } = await supabase
+          .from('email_sequences')
+          .select('client_id')
+          .in('client_id', clientIds)
+          .eq('agent_user_id', user.id)
+          .eq('status', 'pending');
 
-      const legacyPendingByClient = new Set(pendingSequences?.map((row) => row.client_id) ?? []);
+        const legacyPendingByClient = new Set(pendingSequences?.map((row) => row.client_id) ?? []);
 
-      processedClients = processedClients.map((client) => {
-        const summary = sequenceSummaries.get(client.id);
-        const followupActive = summary?.followup_active || legacyPendingByClient.has(client.id);
-        return {
-          ...client,
-          followup_active: followupActive,
-          sequence_awaiting_approval: summary?.awaiting_approval ?? false,
-          lead_read: summary?.lead_read ?? null,
-          sequence_next_step: summary?.next_step ?? null,
-          sequence_temperature: summary?.temperature_at_enroll ?? null,
-        };
-      });
+        processedClients = processedClients.map((client) => {
+          const summary = sequenceSummaries.get(client.id);
+          const followupActive = summary?.followup_active || legacyPendingByClient.has(client.id);
+          return {
+            ...client,
+            followup_active: followupActive,
+            sequence_awaiting_approval: summary?.awaiting_approval ?? false,
+            lead_read: summary?.lead_read ?? null,
+            sequence_next_step: summary?.next_step ?? null,
+            sequence_temperature: summary?.temperature_at_enroll ?? null,
+          };
+        });
+      } catch (sequenceSummaryError) {
+        console.error('Inbox sequence summary enrichment failed:', sequenceSummaryError);
+      }
     }
 
     return NextResponse.json({

@@ -80,7 +80,9 @@ export default function LeadSequencePanel({
 
   const enrollment = sequence?.enrollment;
   const insight = sequence?.insight;
-  const steps = enrollment?.lead_sequence_step_instances || [];
+  const steps = Array.isArray(enrollment?.lead_sequence_step_instances)
+    ? enrollment.lead_sequence_step_instances
+    : [];
   const approvalStep = steps.find((s) => s.status === 'awaiting_approval');
 
   if (!autoFollowupEnabled) return null;
@@ -192,7 +194,7 @@ export default function LeadSequencePanel({
       ) : null}
 
       <div className="flex flex-wrap items-center gap-2">
-        <LeadTemperatureBadge temperature={enrollment.temperature_at_enroll} />
+        <LeadTemperatureBadge temperature={enrollment.temperature_at_enroll ?? 'warm'} />
         <span className="text-xs text-muted-foreground capitalize">{enrollment.status} sequence</span>
         {enrollment.status === 'active' ? (
           <Button size="sm" variant="outline" className="ml-auto h-7 gap-1 text-xs" onClick={() => handlePause(true)} disabled={busy}>

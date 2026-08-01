@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { getLeadTemperature, type LeadTemperature } from '@/lib/lead-temperature';
+import { getLeadTemperature, coerceLeadTemperature, type LeadTemperature } from '@/lib/lead-temperature';
 
 export type { LeadTemperature };
 
@@ -38,7 +38,7 @@ export default function LeadTemperatureBadge({
   showDot = true,
   className,
 }: LeadTemperatureBadgeProps) {
-  const { label, dot, badge } = CONFIG[temperature];
+  const { label, dot, badge } = CONFIG[coerceLeadTemperature(temperature)];
 
   return (
     <span

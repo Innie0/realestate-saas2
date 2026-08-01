@@ -58,7 +58,8 @@ export async function fetchLeadSequenceSummaries(
   );
 
   for (const enrollment of enrollments || []) {
-    const steps = (enrollment.lead_sequence_step_instances || []).sort(
+    const rawSteps = enrollment.lead_sequence_step_instances;
+    const steps = (Array.isArray(rawSteps) ? rawSteps : []).sort(
       (a: { step_index: number }, b: { step_index: number }) => a.step_index - b.step_index,
     );
     const activeStep =
