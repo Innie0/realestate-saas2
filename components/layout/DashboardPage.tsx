@@ -9,7 +9,7 @@ interface DashboardPageProps {
   eyebrow?: string;
   actions?: React.ReactNode;
   children: React.ReactNode;
-  size?: 'default' | 'narrow' | 'medium';
+  size?: 'default' | 'narrow' | 'medium' | 'full';
   className?: string;
   /** Subtle background atmosphere for tool-style pages */
   ambient?: 'default' | 'tool';

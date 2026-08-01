@@ -150,7 +150,7 @@ export function LeadsPageContentSkeleton() {
 
 export function LeadsPageLoading() {
   return (
-    <DashboardPage size="default" title="Leads" subtitle="Inbox, capture, and automations">
+    <DashboardPage size="full" title="Leads" subtitle="Inbox, capture, and automations">
       <LeadsPageContentSkeleton />
     </DashboardPage>
   );

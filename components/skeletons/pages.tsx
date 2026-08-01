@@ -70,25 +70,14 @@ export function LeadsSectionSwitcherSkeleton() {
 
 export function LeadsInboxSkeleton() {
   return (
-    <div className="flex flex-col gap-5">
-      <div className="space-y-1.5">
-        <Skeleton className="h-5 w-16" />
-        <Skeleton className="h-4 w-72 max-w-full" />
+    <div className="flex w-full flex-col gap-4">
+      <div className="flex flex-wrap gap-2">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <Skeleton key={index} className="h-8 w-24 rounded-full" />
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[220px_minmax(260px,320px)_minmax(0,1fr)] xl:items-start">
-        <Card className="overflow-hidden p-0">
-          <CardHeader className="border-b py-3">
-            <CardTitle className="text-sm">Filters</CardTitle>
-            <Skeleton className="h-3 w-20" />
-          </CardHeader>
-          <CardContent className="space-y-2 p-4">
-            <Skeleton className="h-8 w-full rounded-lg" />
-            <Skeleton className="h-8 w-full rounded-lg" />
-            <Skeleton className="h-8 w-full rounded-lg" />
-          </CardContent>
-        </Card>
-
+      <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-[minmax(300px,360px)_minmax(0,1fr)] lg:items-start">
         <Card className="overflow-hidden p-0">
           <CardHeader className="border-b py-3">
             <CardTitle className="text-sm">Leads</CardTitle>

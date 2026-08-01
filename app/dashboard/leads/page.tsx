@@ -302,7 +302,7 @@ function LeadsPageContent() {
     <DashboardPage
       title="Leads"
       subtitle={statsSubtitle}
-      size="default"
+      size="full"
     >
       {showInboxSkeleton ? (
         <LeadsPageContentSkeleton />
