@@ -58,6 +58,7 @@ export type Lead = {
   status: string;
   followup_active?: boolean;
   sequence_awaiting_approval?: boolean;
+  sequence_temperature?: 'hot' | 'warm' | 'cold' | null;
   lead_read?: string | null;
   sequence_next_step?: {
     id: string;
@@ -144,6 +145,22 @@ function leadHasActiveFollowup(
   return Boolean(
     autoFollowupEnabled && lead.email && lead.followup_active && !stoppedIds.has(lead.id),
   );
+}
+
+function followupBannerText(
+  lead: Lead,
+  followupScheduleText: string,
+): string {
+  if (lead.sequence_awaiting_approval) {
+    return 'Auto follow-up is active — first email needs your approval below.';
+  }
+
+  if (lead.sequence_temperature) {
+    const label = `${lead.sequence_temperature.charAt(0).toUpperCase()}${lead.sequence_temperature.slice(1)} lead sequence`;
+    return `Auto follow-up is active — ${label} scheduled below.`;
+  }
+
+  return `Auto follow-up is active (${followupScheduleText}).`;
 }
 
 type LeadsInboxProps = {
@@ -444,8 +461,7 @@ function LeadDetailPanel({
 
         {followupActive ? (
           <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-            Auto follow-up is active
-            {lead.sequence_awaiting_approval ? ' — first email needs your approval below.' : ` (${followupScheduleText}).`}
+            {followupBannerText(lead, followupScheduleText)}
           </div>
         ) : null}
 

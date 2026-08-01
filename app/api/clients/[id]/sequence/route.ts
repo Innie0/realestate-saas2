@@ -1,7 +1,9 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
+import { buildSchedulePreview } from '@/lib/lead-sequences/schedule-preview';
 import { isMissingLeadSequenceSchemaError } from '@/lib/lead-sequences/templates';
+import type { SequenceTemplateStepRow } from '@/lib/lead-sequences/types';
 
 export async function GET(
   _request: NextRequest,
@@ -31,7 +33,14 @@ export async function GET(
       .from('lead_sequence_enrollments')
       .select(`
         id, status, temperature_at_enroll, enrolled_at, completed_at,
-        sequence_templates ( id, temperature, name ),
+        sequence_templates (
+          id, temperature, name,
+          sequence_template_steps (
+            id, template_id, step_order, step_type, delay_minutes,
+            subject_template, body_template, task_title, task_description,
+            requires_agent_approval
+          )
+        ),
         lead_sequence_step_instances (
           id, step_index, step_type, status, due_at, sent_at, completed_at,
           subject, body, task_title, task_description, agent_approved_at, error_message
@@ -60,6 +69,21 @@ export async function GET(
       (a, b) => a.step_index - b.step_index,
     );
 
+    const rawTemplateSteps = enrollment?.sequence_templates?.sequence_template_steps;
+    const templateSteps = (Array.isArray(rawTemplateSteps) ? rawTemplateSteps : []).sort(
+      (a: SequenceTemplateStepRow, b: SequenceTemplateStepRow) => a.step_order - b.step_order,
+    );
+
+    const schedule =
+      enrollment && templateSteps.length > 0
+        ? buildSchedulePreview({
+            enrolledAt: enrollment.enrolled_at,
+            enrollmentStatus: enrollment.status,
+            templateSteps,
+            instances: steps,
+          })
+        : [];
+
     return NextResponse.json({
       success: true,
       data: {
@@ -69,6 +93,7 @@ export async function GET(
               lead_sequence_step_instances: steps,
             }
           : null,
+        schedule,
         insight: insight || null,
       },
     });

@@ -1,12 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { Loader2, CheckCircle2, SkipForward, Pause, Play, RotateCcw } from 'lucide-react';
+import { Loader2, CheckCircle2, SkipForward, Pause, Play, RotateCcw, Mail, PhoneCall } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useToast } from '@/components/providers/ToastProvider';
 import { useApi } from '@/lib/swr';
 import LeadTemperatureBadge, { type LeadTemperature } from '@/components/dashboard/LeadTemperatureBadge';
+import {
+  formatScheduleStepDate,
+  formatScheduleSummary,
+  scheduleStepTypeLabel,
+  type SchedulePreviewStep,
+} from '@/lib/lead-sequences/schedule-preview';
 import { cn } from '@/lib/utils';
 
 type StepInstance = {
@@ -30,6 +36,7 @@ type SequenceApiData = {
     enrolled_at: string;
     lead_sequence_step_instances: StepInstance[];
   } | null;
+  schedule: SchedulePreviewStep[];
   insight: {
     lead_read?: string | null;
     recommended_tone?: string | null;
@@ -46,15 +53,12 @@ type LeadSequencePanelProps = {
   onSequenceChange?: () => void;
 };
 
-function stepLabel(step: StepInstance): string {
-  if (step.step_type === 'task') return step.task_title || 'Task reminder';
-  return step.subject || 'Email';
-}
-
-function statusLabel(status: string): string {
+function statusLabel(status: SchedulePreviewStep['status'], projected: boolean): string {
+  if (projected && status === 'upcoming') return 'Planned';
   const labels: Record<string, string> = {
     awaiting_approval: 'Needs approval',
     pending: 'Scheduled',
+    upcoming: 'Planned',
     sent: 'Sent',
     completed: 'Done',
     skipped: 'Skipped',
@@ -66,6 +70,10 @@ function statusLabel(status: string): string {
 
 function asCopy(value: unknown): string {
   return typeof value === 'string' ? value : '';
+}
+
+function stepIcon(stepType: SchedulePreviewStep['step_type']) {
+  return stepType === 'task' ? PhoneCall : Mail;
 }
 
 export default function LeadSequencePanel({
@@ -85,10 +93,16 @@ export default function LeadSequencePanel({
 
   const enrollment = sequence?.enrollment;
   const insight = sequence?.insight;
+  const schedule = Array.isArray(sequence?.schedule) ? sequence.schedule : [];
   const steps = Array.isArray(enrollment?.lead_sequence_step_instances)
     ? enrollment.lead_sequence_step_instances
     : [];
   const approvalStep = steps.find((s) => s.status === 'awaiting_approval');
+
+  const scheduleSummary =
+    enrollment && schedule.length > 0
+      ? formatScheduleSummary(schedule, enrollment.temperature_at_enroll)
+      : null;
 
   if (!autoFollowupEnabled) return null;
 
@@ -96,7 +110,7 @@ export default function LeadSequencePanel({
     return (
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Loader2 className="size-4 animate-spin" />
-        Loading sequence…
+        Loading schedule…
       </div>
     );
   }
@@ -277,49 +291,91 @@ export default function LeadSequencePanel({
       ) : null}
 
       <div>
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-          Sequence timeline
-        </p>
-        <ol className="flex flex-col gap-1.5">
-          {steps.map((step) => (
-            <li
-              key={step.id}
-              className={cn(
-                'rounded-md border px-3 py-2 text-sm',
-                step.status === 'awaiting_approval' && 'border-amber-200 bg-amber-50/50',
-                step.status === 'failed' && 'border-rose-200 bg-rose-50/50',
-                step.status === 'sent' || step.status === 'completed'
-                  ? 'border-emerald-200/80 bg-emerald-50/40'
-                  : step.status !== 'failed' && step.status !== 'awaiting_approval'
-                    ? 'border-border bg-muted/30'
-                    : '',
-              )}
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <span className="font-medium capitalize">{step.step_type}</span>
-                  <span className="text-muted-foreground"> — {stepLabel(step)}</span>
-                </div>
-                <span className="shrink-0 text-xs text-muted-foreground">{statusLabel(step.status)}</span>
-              </div>
-              {step.status === 'failed' && step.error_message ? (
-                <p className="mt-1.5 text-xs text-rose-700">{step.error_message}</p>
-              ) : null}
-              {step.status === 'failed' && step.step_type === 'email' ? (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="mt-2 h-7 gap-1 text-xs"
-                  onClick={() => handleRetry(step.id)}
-                  disabled={busy}
-                  isLoading={busy}
+        <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Follow-up schedule
+          </p>
+          {scheduleSummary ? (
+            <p className="text-xs text-muted-foreground">{scheduleSummary}</p>
+          ) : null}
+        </div>
+        <ol className="relative flex flex-col gap-0">
+          {schedule.map((step, index) => {
+            const Icon = stepIcon(step.step_type);
+            const isLast = index === schedule.length - 1;
+            const isDone = step.status === 'sent' || step.status === 'completed';
+            const isFailed = step.status === 'failed';
+
+            return (
+              <li key={`${step.step_index}-${step.instance_id ?? 'planned'}`} className="relative flex gap-3 pb-4 last:pb-0">
+                {!isLast ? (
+                  <span
+                    aria-hidden
+                    className={cn(
+                      'absolute left-[11px] top-6 bottom-0 w-px',
+                      isDone ? 'bg-emerald-300/80' : 'bg-border',
+                    )}
+                  />
+                ) : null}
+                <div
+                  className={cn(
+                    'relative z-[1] mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border border-border bg-background text-foreground',
+                    isFailed && 'border-rose-300 bg-rose-50 text-rose-700',
+                    step.status === 'awaiting_approval' && 'border-amber-300 bg-amber-50 text-amber-800',
+                    isDone && 'border-emerald-300 bg-emerald-50 text-emerald-700',
+                    step.projected && 'border-dashed bg-muted/40 text-muted-foreground',
+                    step.status === 'skipped' && 'bg-muted text-muted-foreground',
+                  )}
                 >
-                  <RotateCcw className="size-3" />
-                  Retry send
-                </Button>
-              ) : null}
-            </li>
-          ))}
+                  <Icon className="size-3" />
+                </div>
+                <div
+                  className={cn(
+                    'min-w-0 flex-1 rounded-md border px-3 py-2.5',
+                    step.status === 'awaiting_approval' && 'border-amber-200 bg-amber-50/50',
+                    isFailed && 'border-rose-200 bg-rose-50/50',
+                    isDone && 'border-emerald-200/80 bg-emerald-50/40',
+                    step.projected && 'border-dashed border-border bg-muted/20',
+                    !step.projected && !isDone && !isFailed && step.status !== 'awaiting_approval'
+                      ? 'border-border bg-muted/30'
+                      : '',
+                  )}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium text-muted-foreground">
+                        {scheduleStepTypeLabel(step.step_type)}
+                      </p>
+                      <p className="mt-0.5 text-sm font-medium text-foreground">{step.label}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {formatScheduleStepDate(step.due_at)}
+                        {step.projected ? ' · estimated' : ''}
+                      </p>
+                    </div>
+                    <span className="shrink-0 text-xs text-muted-foreground">
+                      {statusLabel(step.status, step.projected)}
+                    </span>
+                  </div>
+                  {step.status === 'failed' && step.error_message ? (
+                    <p className="mt-2 text-xs text-rose-700">{step.error_message}</p>
+                  ) : null}
+                  {step.status === 'failed' && step.step_type === 'email' && step.instance_id ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="mt-2 h-7 gap-1 text-xs"
+                      onClick={() => handleRetry(step.instance_id!)}
+                      disabled={busy}
+                      isLoading={busy}
+                    >
+                      <RotateCcw className="size-3" />
+                      Retry send
+                    </Button>
+                  ) : null}
+                </div>
+              </li>
+            );
+          })}
         </ol>
       </div>
     </div>
