@@ -16,6 +16,7 @@ interface AdsConnectionsPanelProps {
   onConnect: (platform: AdPlatform) => void;
   onDisconnect: (platform: AdPlatform) => void;
   onRefresh: (platform: AdPlatform) => void;
+  className?: string;
 }
 
 const PLATFORMS: Array<{
@@ -90,9 +91,10 @@ export default function AdsConnectionsPanel({
   onConnect,
   onDisconnect,
   onRefresh,
+  className,
 }: AdsConnectionsPanelProps) {
   return (
-    <div className="grid grid-cols-1 gap-3">
+    <div className={clsx('grid grid-cols-1 gap-3', className)}>
       {PLATFORMS.map((platform) => {
         const conn = connectionFor(connections, platform.id);
         const status = getConnectionStatus(connections, platform.id);
@@ -102,8 +104,8 @@ export default function AdsConnectionsPanel({
         const setupHint = setupMessage(platform.id, status, conn);
 
         return (
-          <Card key={platform.id} className="p-4">
-            <div className="flex items-start gap-3">
+          <Card key={platform.id} className="min-w-0 p-4">
+            <div className="flex min-w-0 items-start gap-3">
               <div
                 className={clsx(
                   'flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] text-sm font-semibold',

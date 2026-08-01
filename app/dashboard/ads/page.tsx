@@ -311,10 +311,10 @@ function AdsPageContent() {
       </div>
 
       {tab === 'create' ? (
-        <div className="flex flex-col gap-6 xl:flex-row xl:items-start">
+        <div className="flex flex-col gap-8">
           <FilterSidebar
-            title="Filters"
-            className="xl:sticky xl:top-24"
+            title="Setup"
+            className="w-full xl:w-full"
             groups={[
               {
                 id: 'accounts',
@@ -327,6 +327,7 @@ function AdsPageContent() {
                       Connect Meta to publish ads. Google is optional for reporting.
                     </p>
                     <AdsConnectionsPanel
+                      className="md:grid-cols-2"
                       connections={connections ?? []}
                       connecting={connecting}
                       disconnecting={disconnecting}
@@ -340,7 +341,7 @@ function AdsPageContent() {
               },
             ]}
           />
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0">
             <WizardShell
               initialProjectId={promoteProjectId}
               metaConnected={metaConnected}

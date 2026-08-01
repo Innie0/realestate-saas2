@@ -15,9 +15,9 @@ export default function StepSidebar({ currentStep, maxStepIndex, onStepClick }: 
   const currentIndex = WIZARD_STEPS.findIndex((s) => s.key === currentStep);
 
   return (
-    <>
+    <div className="min-w-0">
       {/* Desktop step list — only when the wizard has room for three columns */}
-      <nav className="hidden xl:block space-y-1" aria-label="Ad creation steps">
+      <nav className="hidden 2xl:block space-y-1" aria-label="Ad creation steps">
         {WIZARD_STEPS.map((step, index) => {
           const isActive = step.key === currentStep;
           const isComplete = index < currentIndex;
@@ -60,7 +60,7 @@ export default function StepSidebar({ currentStep, maxStepIndex, onStepClick }: 
       </nav>
 
       {/* Step pills when the desktop step column is hidden */}
-      <div className="xl:hidden flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
+      <div className="2xl:hidden flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
         {WIZARD_STEPS.map((step, index) => {
           const isActive = step.key === currentStep;
           const isClickable = index <= maxStepIndex;
@@ -84,6 +84,6 @@ export default function StepSidebar({ currentStep, maxStepIndex, onStepClick }: 
           );
         })}
       </div>
-    </>
+    </div>
   );
 }

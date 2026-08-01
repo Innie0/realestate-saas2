@@ -37,7 +37,7 @@ export default function FilterSidebar({ title = 'Filters', groups, className }: 
   return (
     <aside
       className={clsx(
-        'w-full shrink-0 rounded-xl border border-border bg-card xl:w-[240px]',
+        'w-full min-w-0 shrink-0 overflow-hidden rounded-xl border border-border bg-card xl:w-[240px]',
         className,
       )}
     >

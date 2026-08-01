@@ -295,12 +295,14 @@ export default function WizardShell({
         </div>
       )}
 
-      <div className="grid gap-6 xl:grid-cols-[210px_minmax(0,1fr)_minmax(260px,300px)] xl:items-start">
-      <StepSidebar
-        currentStep={currentStep}
-        maxStepIndex={maxStepIndex}
-        onStepClick={goToStep}
-      />
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(280px,320px)] lg:items-start 2xl:grid-cols-[220px_minmax(0,1fr)_minmax(280px,320px)]">
+      <div className="min-w-0 lg:col-span-full 2xl:col-auto">
+        <StepSidebar
+          currentStep={currentStep}
+          maxStepIndex={maxStepIndex}
+          onStepClick={goToStep}
+        />
+      </div>
 
       <Card className="p-5 sm:p-6 min-w-0">
         <div className="flex items-center justify-between gap-3 mb-5">

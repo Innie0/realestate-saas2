@@ -56,7 +56,7 @@ export default function AdPreviewPane({
   }
 
   return (
-    <div className={clsx('space-y-4 xl:sticky xl:top-20', className)}>
+    <div className={clsx('min-w-0 space-y-4 lg:sticky lg:top-24', className)}>
       {showMeta && (
         <AdPreviewMockup
           platform={previewPlatform}
