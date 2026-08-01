@@ -199,71 +199,79 @@ export default function LeadsInbox({
 
   const selectedLead = filteredLeads.find((l) => l.id === selectedLeadId) ?? null;
 
-  return (
-    <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-      <FilterSidebar
-        title="Filters"
-        className="lg:sticky lg:top-24"
-        groups={[
-          {
-            id: 'temperature',
-            label: 'Temperature',
-            icon: Flame,
-            defaultOpen: true,
-            children: (
-              <div className="space-y-1" data-tour="leads-filter">
-                {(['all', 'hot', 'warm', 'cold'] as const).map((key) => (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => onFilterChange(key)}
-                    className={cn(
-                      'flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-[13px] font-medium transition-colors',
-                      filter === key
-                        ? 'bg-brand-50 text-brand-600'
-                        : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
-                    )}
-                  >
-                    <span className="capitalize">{key === 'all' ? 'All leads' : key}</span>
-                    <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold tabular-nums">
-                      {counts[key]}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            ),
-          },
-        ]}
-      />
-
-      <div className="min-w-0 flex-1 space-y-4">
-        <div>
-          <h2 className="text-base font-semibold tracking-tight text-foreground">Inbox</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            New captures stay here until you add them to your CRM.
-          </p>
+  const filterGroups = [
+    {
+      id: 'temperature',
+      label: 'Temperature',
+      icon: Flame,
+      defaultOpen: true,
+      children: (
+        <div className="space-y-1" data-tour="leads-filter">
+          {(['all', 'hot', 'warm', 'cold'] as const).map((key) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => onFilterChange(key)}
+              className={cn(
+                'flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-[13px] font-medium transition-colors',
+                filter === key
+                  ? 'bg-brand-50 text-brand-600'
+                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
+              )}
+            >
+              <span className="capitalize">{key === 'all' ? 'All leads' : key}</span>
+              <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold tabular-nums">
+                {counts[key]}
+              </span>
+            </button>
+          ))}
         </div>
+      ),
+    },
+  ];
+
+  return (
+    <div className="flex flex-col gap-5">
+      <div>
+        <h2 className="text-base font-semibold tracking-tight text-foreground">Inbox</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          New captures stay here until you add them to your CRM.
+        </p>
+      </div>
 
       {filteredLeads.length === 0 ? (
-        <EmptyState
-          icon={Inbox}
-          title={filter === 'all' ? 'No leads yet' : `No ${filter} leads`}
-          description={
-            filter === 'all'
-              ? 'Share your lead form or run an open house to start collecting leads.'
-              : 'Try a different filter to see more leads.'
-          }
-          action={
-            filter === 'all' ? (
-              <Button variant="secondary" size="sm" onClick={onGoToCapture}>
-                Go to Capture
-              </Button>
-            ) : undefined
-          }
-        />
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[220px_minmax(0,1fr)] xl:items-start">
+          <FilterSidebar
+            title="Filters"
+            className="xl:sticky xl:top-24 xl:w-[220px] xl:max-w-[220px]"
+            groups={filterGroups}
+          />
+          <EmptyState
+            icon={Inbox}
+            title={filter === 'all' ? 'No leads yet' : `No ${filter} leads`}
+            description={
+              filter === 'all'
+                ? 'Share your lead form or run an open house to start collecting leads.'
+                : 'Try a different filter to see more leads.'
+            }
+            action={
+              filter === 'all' ? (
+                <Button variant="secondary" size="sm" onClick={onGoToCapture}>
+                  Go to Capture
+                </Button>
+              ) : undefined
+            }
+          />
+        </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)] lg:items-start">
-          <Card className="overflow-hidden p-0">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[220px_minmax(260px,320px)_minmax(0,1fr)] xl:items-start">
+          <FilterSidebar
+            title="Filters"
+            className="xl:sticky xl:top-24 xl:w-[220px] xl:max-w-[220px]"
+            groups={filterGroups}
+          />
+
+          <Card className="min-w-0 overflow-hidden p-0">
             <CardHeader className="border-b py-3">
               <CardTitle className="text-sm">Leads</CardTitle>
               <CardDescription>{filteredLeads.length} in view</CardDescription>
@@ -327,13 +335,12 @@ export default function LeadsInbox({
               onSequenceChange={onSequenceChange}
             />
           ) : (
-            <Card className="flex min-h-[280px] items-center justify-center p-8">
+            <Card className="flex min-h-[280px] min-w-0 items-center justify-center p-8">
               <p className="text-sm text-muted-foreground">Select a lead to view details</p>
             </Card>
           )}
         </div>
       )}
-      </div>
     </div>
   );
 }
@@ -371,7 +378,7 @@ function LeadDetailPanel({
   const primaryContact = lead.phone ? 'phone' : lead.email ? 'email' : null;
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="min-w-0 overflow-hidden">
       <CardHeader className="gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -385,7 +392,7 @@ function LeadDetailPanel({
           </div>
           <CardDescription className="mt-1">{getLeadSummaryLine(lead)}</CardDescription>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
           {primaryContact ? (
             <Button
               size="sm"

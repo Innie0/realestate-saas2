@@ -225,7 +225,7 @@ export default function LeadSequencePanel({
             <label className="flex flex-col gap-1 text-sm">
               <span className="font-medium text-foreground">Subject</span>
               <input
-                className="rounded-md border border-border bg-background px-3 py-2 text-sm"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
                 value={currentSubject}
                 onChange={(e) => setSubject(e.target.value)}
               />
@@ -234,7 +234,7 @@ export default function LeadSequencePanel({
               <span className="font-medium text-foreground">Body</span>
               <textarea
                 rows={6}
-                className="rounded-md border border-border bg-background px-3 py-2 text-sm"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
                 value={currentBody}
                 onChange={(e) => setBody(e.target.value)}
               />
