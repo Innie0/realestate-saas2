@@ -185,7 +185,7 @@ html[data-dashboard-theme='light'],
   --surface: #ffffff;
   --sidebar: #fafafa;
   --ink: #1c1d22;
-  --brand: #3548c7;
+  --brand: #111111;
   --border: #eaeaea;
   --brand-foreground: #ffffff;
   --champagne: #444039;
@@ -204,15 +204,15 @@ html[data-dashboard-theme='light'],
   --gray-900: #1c1d22;
   --gray-950: #111111;
 
-  /* Cobalt brand scale — links, badges, accents (not primary buttons) */
-  --brand-50: #eef1fc;
-  --brand-100: #dce2f9;
-  --brand-200: #b9c5f3;
-  --brand-300: #8fa0ea;
-  --brand-400: #4a62d9;
-  --brand-500: #3548c7;
-  --brand-600: #28348a;
-  --brand-700: #1f2868;
+  /* Neutral brand scale — selection tints and accent text (primary buttons use --primary) */
+  --brand-50: #f4f4f5;
+  --brand-100: #ececee;
+  --brand-200: #d4d4d8;
+  --brand-300: #a1a1aa;
+  --brand-400: #71717a;
+  --brand-500: #111111;
+  --brand-600: #1c1d22;
+  --brand-700: #27272a;
   --brand-800: #52525b;
   --brand-900: #6b6d76;
 
