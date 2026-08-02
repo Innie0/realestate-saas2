@@ -6,8 +6,14 @@ import BrowserWindowFrame from '@/components/home/BrowserWindowFrame';
 import { SITE_DOMAIN, SITE_NAME } from '@/lib/site-config';
 import { useMotionReduced } from '@/lib/motion';
 
+/** Scroll travel while the section is pinned (3 equal segments). */
+const WRAPPER_HEIGHT = 2400;
+const PINNED_HEIGHT = 560;
 const STICKY_TOP = 120;
 const SEGMENT = 1 / 3;
+
+/** Pixels per step in the scrolling text strip (must match step slot height). */
+const STEP_SLOT = 200;
 
 const STEPS = [
   {
@@ -35,24 +41,6 @@ const STEPS = [
     label: '03 Transactions',
   },
 ] as const;
-
-function StickyPreview({ activeIndex }: { activeIndex: number }) {
-  return (
-    <div className="overflow-hidden rounded-[20px] bg-gradient-to-b from-[#E6F0FE] to-[#CFE3FE] p-5">
-      <div className="relative h-[260px] w-full">
-        {STEPS.map((step, index) => (
-          <ScreenshotPanel
-            key={step.kicker}
-            src={step.src}
-            alt={step.title}
-            url={step.url}
-            active={activeIndex === index}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
 
 function ScreenshotPanel({
   src,
@@ -98,7 +86,6 @@ function ScreenshotPanel({
                 Screenshot
               </p>
               <p className="max-w-[220px] text-sm font-medium text-[#111111]">{alt}</p>
-              <p className="mt-2 text-[11px] text-[#6B6D76]">Replace PNG in public/landing/</p>
             </div>
           )}
         </div>
@@ -123,8 +110,11 @@ function ProgressRow({
       <span className="shrink-0 text-[15px] font-medium text-[#111111]">{label}</span>
       <div className="h-[2px] min-w-[80px] flex-1 overflow-hidden rounded-full bg-[#EAEAEA] sm:min-w-[130px]">
         <div
-          className="h-full origin-left rounded-full bg-[#0668E1] transition-transform duration-150 ease-out motion-reduce:transition-none"
-          style={{ transform: `scaleX(${progress})` }}
+          className="h-full origin-left rounded-full bg-[#0668E1] motion-reduce:transition-none"
+          style={{
+            transform: `scaleX(${progress})`,
+            transition: 'transform 0.15s ease-out',
+          }}
         />
       </div>
     </div>
@@ -154,51 +144,37 @@ function StaticStepRow({ step }: { step: (typeof STEPS)[number] }) {
 
 export default function LandingWhySwitcher() {
   const reduced = useMotionReduced();
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const stepRefs = useRef<(HTMLElement | null)[]>([]);
-  const [active, setActive] = useState(0);
-  const [scrollProg, setScrollProg] = useState(0);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [prog, setProg] = useState(0);
 
-  const updateFromScroll = useCallback(() => {
-    const section = sectionRef.current;
-    if (!section) return;
+  const updateProgress = useCallback(() => {
+    const el = wrapRef.current;
+    if (!el) return;
 
-    const triggerY = window.innerHeight * 0.38;
-    let nextActive = 0;
-
-    stepRefs.current.forEach((el, index) => {
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      if (rect.top <= triggerY) nextActive = index;
-    });
-
-    const first = stepRefs.current[0];
-    const last = stepRefs.current[STEPS.length - 1];
-    if (first && last) {
-      const sectionTop = first.getBoundingClientRect().top;
-      const sectionBottom = last.getBoundingClientRect().bottom;
-      const span = Math.max(sectionBottom - sectionTop, 1);
-      const progress = (triggerY - sectionTop) / span;
-      setScrollProg(Math.min(1, Math.max(0, progress)));
-    }
-
-    setActive(nextActive);
+    const rect = el.getBoundingClientRect();
+    const travel = Math.max(1, el.offsetHeight - PINNED_HEIGHT);
+    const scrolled = Math.min(Math.max(-rect.top + STICKY_TOP, 0), travel);
+    setProg(scrolled / travel);
   }, []);
 
   useEffect(() => {
     if (reduced) return;
 
-    updateFromScroll();
-    window.addEventListener('scroll', updateFromScroll, { passive: true });
-    window.addEventListener('resize', updateFromScroll);
+    updateProgress();
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress);
     return () => {
-      window.removeEventListener('scroll', updateFromScroll);
-      window.removeEventListener('resize', updateFromScroll);
+      window.removeEventListener('scroll', updateProgress);
+      window.removeEventListener('resize', updateProgress);
     };
-  }, [reduced, updateFromScroll]);
+  }, [reduced, updateProgress]);
 
+  const active = prog >= 2 * SEGMENT ? 2 : prog >= SEGMENT ? 1 : 0;
   const segProgress = (index: number) =>
-    Math.min(1, Math.max(0, (scrollProg - index * SEGMENT) / SEGMENT));
+    Math.min(1, Math.max(0, (prog - index * SEGMENT) / SEGMENT));
+
+  /** Left copy scrolls upward through stacked steps while the section is pinned. */
+  const textScrollOffset = prog * (STEPS.length - 1) * STEP_SLOT;
 
   return (
     <section className="bg-white text-[#111111]">
@@ -225,53 +201,98 @@ export default function LandingWhySwitcher() {
           ))}
         </div>
       ) : (
-        <div ref={sectionRef} className="mx-auto max-w-mkt-content px-5 pb-24 sm:px-8">
-          {/* Flex + stretch keeps the right rail as tall as the left scroll column. */}
-          <div className="lg:flex lg:items-stretch lg:gap-14">
-            <div className="min-w-0 flex-1">
-              {STEPS.map((step, index) => (
-                <article
-                  key={step.kicker}
-                  ref={(el) => {
-                    stepRefs.current[index] = el;
-                  }}
-                  className="flex min-h-[70vh] flex-col justify-center py-16 lg:min-h-[75vh] lg:py-20"
-                >
-                  <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
-                    {step.kicker}
-                  </p>
-                  <h3 className="mt-4 max-w-[18ch] text-[clamp(28px,3.2vw,40px)] font-semibold leading-[1.08] tracking-[-0.035em] text-[#111111]">
-                    {step.title}
-                  </h3>
-                  <p className="mt-4 max-w-[42ch] text-[18px] leading-[1.55] text-[#6B6D76]">
-                    {step.body}
-                  </p>
-
-                  <div className="mt-8 lg:hidden">
-                    <StickyPreview activeIndex={index} />
+        <>
+          <div
+            ref={wrapRef}
+            className="relative mx-auto hidden max-w-mkt-content px-5 sm:px-8 lg:block"
+            style={{ height: WRAPPER_HEIGHT }}
+          >
+            <div
+              className="sticky mx-auto w-full max-w-mkt-content"
+              style={{ top: STICKY_TOP, height: PINNED_HEIGHT }}
+            >
+              <div className="grid h-full grid-cols-2 items-center gap-14">
+                <div className="flex min-w-0 flex-col justify-center">
+                  <div className="overflow-hidden" style={{ height: STEP_SLOT }}>
+                    <div
+                      className="will-change-transform motion-reduce:transition-none"
+                      style={{
+                        transform: `translateY(-${textScrollOffset}px)`,
+                        transition: 'transform 0.12s linear',
+                      }}
+                    >
+                      {STEPS.map((step) => (
+                        <div
+                          key={step.kicker}
+                          className="flex flex-col justify-center"
+                          style={{ height: STEP_SLOT }}
+                        >
+                          <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
+                            {step.kicker}
+                          </p>
+                          <h3 className="mt-3 max-w-[18ch] text-[clamp(26px,3vw,36px)] font-semibold leading-[1.08] tracking-[-0.035em] text-[#111111]">
+                            {step.title}
+                          </h3>
+                          <p className="mt-3 max-w-[42ch] text-[17px] leading-[1.55] text-[#6B6D76]">
+                            {step.body}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </article>
-              ))}
 
-              <div className="border-t border-[#EAEAEA] pt-2 lg:pb-8">
-                {STEPS.map((step, index) => (
-                  <ProgressRow
-                    key={step.kicker}
-                    label={step.label}
-                    progress={segProgress(index)}
-                    isFirst={index === 0}
-                  />
-                ))}
-              </div>
-            </div>
+                  <div className="mt-4 border-t border-[#EAEAEA] pt-1">
+                    {STEPS.map((step, index) => (
+                      <ProgressRow
+                        key={step.kicker}
+                        label={step.label}
+                        progress={segProgress(index)}
+                        isFirst={index === 0}
+                      />
+                    ))}
+                  </div>
+                </div>
 
-            <div className="relative hidden w-full max-w-[480px] shrink-0 lg:block lg:w-[46%]">
-              <div className="sticky" style={{ top: STICKY_TOP }}>
-                <StickyPreview activeIndex={active} />
+                <div className="flex items-center justify-end">
+                  <div className="w-full max-w-[480px] overflow-hidden rounded-[20px] bg-gradient-to-b from-[#E6F0FE] to-[#CFE3FE] p-5">
+                    <div className="relative h-[260px] w-full">
+                      {STEPS.map((step, index) => (
+                        <ScreenshotPanel
+                          key={step.kicker}
+                          src={step.src}
+                          alt={step.title}
+                          url={step.url}
+                          active={active === index}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+
+          <div className="pb-16 lg:hidden">
+            <div className="mx-auto max-w-mkt-content space-y-12 px-5 sm:px-8">
+              {STEPS.map((step) => (
+                <div key={step.kicker}>
+                  <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
+                    {step.kicker}
+                  </p>
+                  <h3 className="mt-3 text-[28px] font-semibold leading-[1.08] tracking-[-0.035em] text-[#111111]">
+                    {step.title}
+                  </h3>
+                  <p className="mt-3 text-[17px] leading-[1.55] text-[#6B6D76]">{step.body}</p>
+                  <div className="mt-6 overflow-hidden rounded-[20px] bg-gradient-to-b from-[#E6F0FE] to-[#CFE3FE] p-4">
+                    <div className="relative h-[248px]">
+                      <ScreenshotPanel src={step.src} alt={step.title} url={step.url} active />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
       )}
     </section>
   );
