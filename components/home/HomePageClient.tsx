@@ -3,7 +3,8 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import LandingNav from '@/components/home/LandingNav';
-import LandingHeroNotion from '@/components/home/LandingHeroNotion';
+import LandingHeroFade from '@/components/home/LandingHeroFade';
+import LandingWhySwitcher from '@/components/home/LandingWhySwitcher';
 import LandingFeatureCards from '@/components/home/LandingFeatureCards';
 import LandingTestimonials from '@/components/home/LandingTestimonials';
 import LandingFAQSection from '@/components/home/LandingFAQSection';
@@ -42,7 +43,8 @@ export default function HomePageClient() {
   return (
     <div className="marketing-root relative z-[1] min-h-screen overflow-x-hidden bg-white text-mkt-foreground">
       <LandingNav />
-      <LandingHeroNotion />
+      <LandingHeroFade />
+      <LandingWhySwitcher />
       <LandingFeatureCards />
       <LandingTestimonials />
       <LandingFAQSection />

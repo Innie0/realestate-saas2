@@ -4,12 +4,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import MarketingHeaderNav from '@/components/marketing/MarketingHeaderNav';
 import { ensureGsapRegistered, gsap, landingRevealDefaults, useGSAP } from '@/lib/gsap-config';
-import {
-  isConnectToolsNavDark,
-} from '@/lib/landing-nav-theme';
+import { isConnectToolsNavDark } from '@/lib/landing-nav-theme';
 import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
+
+const HERO_NAV_SCROLL_MAX = 640;
 
 export default function LandingNav() {
   const reduced = useMotionReduced();
@@ -17,6 +17,7 @@ export default function LandingNav() {
   const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkNav, setDarkNav] = useState(false);
+  const [heroNav, setHeroNav] = useState(true);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -30,6 +31,7 @@ export default function LandingNav() {
       lastScrollY.current = y;
 
       setDarkNav(isConnectToolsNavDark());
+      setHeroNav(y < HERO_NAV_SCROLL_MAX);
     };
 
     onScroll();
@@ -55,20 +57,28 @@ export default function LandingNav() {
     { scope: navRef, dependencies: [reduced] },
   );
 
+  const onHeroBlue = heroNav && !darkNav;
+
   return (
     <header
       ref={navRef as React.RefObject<HTMLElement>}
       className={clsx(
         'fixed inset-x-0 top-0 z-[60] border-b transition-[transform,background-color,border-color,color] duration-300 ease-out',
-        darkNav
-          ? 'border-white/10 bg-[#0a0a0a] text-white'
-          : 'border-mkt-border bg-mkt-background text-mkt-foreground',
+        onHeroBlue
+          ? 'border-transparent bg-[#0668E1] text-white'
+          : darkNav
+            ? 'border-white/10 bg-[#0a0a0a] text-white'
+            : 'border-mkt-border bg-white text-mkt-foreground',
         hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0',
       )}
     >
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <div className="flex h-[var(--mkt-nav-height)] items-center">
-          <MarketingHeaderNav inverted={darkNav} onProductsMenuChange={setMenuOpen} />
+          <MarketingHeaderNav
+            inverted={onHeroBlue || darkNav}
+            heroFade={onHeroBlue}
+            onProductsMenuChange={setMenuOpen}
+          />
         </div>
       </div>
     </header>

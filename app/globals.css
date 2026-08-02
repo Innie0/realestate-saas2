@@ -485,6 +485,7 @@ html[data-dashboard-theme='light'] .dashboard-root,
     --mkt-accent-hover: #262626;
     --mkt-accent-foreground: #ffffff;
     --mkt-muted: #6B6D76;
+    --mkt-blue: #0668E1;
     --mkt-mock-surface: #ffffff;
     --mkt-browser-dot: #c4bfb6;
     --mkt-error-border: #f87171;
