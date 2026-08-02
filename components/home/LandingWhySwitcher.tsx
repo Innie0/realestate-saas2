@@ -6,10 +6,7 @@ import BrowserWindowFrame from '@/components/home/BrowserWindowFrame';
 import { SITE_DOMAIN, SITE_NAME } from '@/lib/site-config';
 import { useMotionReduced } from '@/lib/motion';
 
-const INNER_HEIGHT = 720;
-const WRAPPER_HEIGHT = 2100;
 const STICKY_TOP = 120;
-const SEGMENT = 1 / 3;
 
 const STEPS = [
   {
@@ -56,27 +53,27 @@ function ScreenshotPanel({
       className="absolute inset-0 motion-reduce:transition-none"
       style={{
         opacity: active ? 1 : 0,
-        transform: active ? 'translateY(0)' : 'translateY(28px)',
+        transform: active ? 'translateY(0)' : 'translateY(20px)',
         pointerEvents: active ? 'auto' : 'none',
         transition: 'opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
-      <BrowserWindowFrame className="h-full shadow-[var(--mkt-shadow-soft)]">
+      <BrowserWindowFrame className="shadow-[var(--mkt-shadow-soft)]">
         <div className="border-b border-mkt-border bg-white px-3 py-1.5">
           <p className="truncate font-mkt-mono text-[11px] text-[#6B6D76]">{url}</p>
         </div>
-        <div className="relative aspect-[16/10] w-full bg-white">
+        <div className="relative aspect-[16/9] w-full max-h-[200px] bg-white sm:max-h-[220px]">
           {!failed ? (
             <Image
               src={src}
               alt={alt}
               fill
               className="object-cover object-top"
-              sizes="(min-width: 1024px) 540px, 100vw"
+              sizes="(min-width: 1024px) 480px, 100vw"
               onError={() => setFailed(true)}
             />
           ) : (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-8 text-center">
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-6 text-center">
               <p className="mb-2 font-mkt-mono text-[11px] font-medium uppercase tracking-[0.12em] text-[#6B6D76]">
                 Screenshot
               </p>
@@ -101,14 +98,24 @@ function ProgressRow({
 }) {
   return (
     <div
-      className={`flex items-center gap-6 border-t border-[#EAEAEA] py-4 ${isFirst ? 'border-t-0' : ''}`}
+      className={`flex items-center gap-6 border-t border-[#EAEAEA] py-3.5 ${isFirst ? 'border-t-0' : ''}`}
     >
       <span className="shrink-0 text-[15px] font-medium text-[#111111]">{label}</span>
-      <div className="h-[2px] flex-1 overflow-hidden rounded-full bg-[#EAEAEA]">
+      <div className="h-[2px] min-w-[80px] flex-1 overflow-hidden rounded-full bg-[#EAEAEA] sm:min-w-[130px]">
         <div
           className="h-full origin-left rounded-full bg-[#0668E1] transition-transform duration-150 ease-out motion-reduce:transition-none"
           style={{ transform: `scaleX(${progress})` }}
         />
+      </div>
+    </div>
+  );
+}
+
+function InlineScreenshot({ step }: { step: (typeof STEPS)[number] }) {
+  return (
+    <div className="mt-8 overflow-hidden rounded-[20px] bg-gradient-to-b from-[#E6F0FE] to-[#CFE3FE] p-4 lg:hidden">
+      <div className="relative h-[248px]">
+        <ScreenshotPanel src={step.src} alt={step.title} url={step.url} active />
       </div>
     </div>
   );
@@ -126,8 +133,8 @@ function StaticStepRow({ step }: { step: (typeof STEPS)[number] }) {
         </h3>
         <p className="mt-4 text-[18px] leading-[1.55] text-[#6B6D76]">{step.body}</p>
       </div>
-      <div className="overflow-hidden rounded-[20px] bg-gradient-to-b from-[#E6F0FE] to-[#CFE3FE] p-4 sm:p-6">
-        <div className="relative min-h-[280px]">
+      <div className="overflow-hidden rounded-[20px] bg-gradient-to-b from-[#E6F0FE] to-[#CFE3FE] p-4">
+        <div className="relative h-[248px]">
           <ScreenshotPanel src={step.src} alt={step.title} url={step.url} active />
         </div>
       </div>
@@ -137,36 +144,59 @@ function StaticStepRow({ step }: { step: (typeof STEPS)[number] }) {
 
 export default function LandingWhySwitcher() {
   const reduced = useMotionReduced();
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const [prog, setProg] = useState(0);
+  const stepRefs = useRef<(HTMLElement | null)[]>([]);
+  const [active, setActive] = useState(0);
+  const [barProgress, setBarProgress] = useState<number[]>([0, 0, 0]);
 
-  const updateProgress = useCallback(() => {
-    const el = wrapRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const travel = Math.max(1, el.offsetHeight - INNER_HEIGHT);
-    const scrolled = Math.min(Math.max(-rect.top + STICKY_TOP, 0), travel);
-    setProg(scrolled / travel);
+  const updateFromScroll = useCallback(() => {
+    const triggerLine = window.innerHeight * 0.42;
+    let nextActive = 0;
+    const nextBars = STEPS.map((_, index) => {
+      const el = stepRefs.current[index];
+      if (!el) return 0;
+
+      const rect = el.getBoundingClientRect();
+      if (rect.top <= triggerLine && rect.bottom > triggerLine) {
+        nextActive = index;
+        const traveled = (triggerLine - rect.top) / Math.max(rect.height, 1);
+        return Math.min(1, Math.max(0, traveled));
+      }
+      if (rect.bottom <= triggerLine) return 1;
+      return 0;
+    });
+
+    for (let i = STEPS.length - 1; i >= 0; i -= 1) {
+      const el = stepRefs.current[i];
+      if (el && el.getBoundingClientRect().top <= triggerLine) {
+        nextActive = i;
+        break;
+      }
+    }
+
+    setActive(nextActive);
+    setBarProgress(nextBars);
   }, []);
 
   useEffect(() => {
     if (reduced) return;
-    updateProgress();
-    window.addEventListener('scroll', updateProgress, { passive: true });
-    window.addEventListener('resize', updateProgress);
+    updateFromScroll();
+    window.addEventListener('scroll', updateFromScroll, { passive: true });
+    window.addEventListener('resize', updateFromScroll);
     return () => {
-      window.removeEventListener('scroll', updateProgress);
-      window.removeEventListener('resize', updateProgress);
+      window.removeEventListener('scroll', updateFromScroll);
+      window.removeEventListener('resize', updateFromScroll);
     };
-  }, [reduced, updateProgress]);
+  }, [reduced, updateFromScroll]);
 
-  const active = prog >= 2 * SEGMENT ? 2 : prog >= SEGMENT ? 1 : 0;
-  const segProgress = (index: number) =>
-    Math.min(1, Math.max(0, (prog - index * SEGMENT) / SEGMENT));
+  const segProgress = (index: number) => {
+    if (index < active) return 1;
+    if (index > active) return 0;
+    return barProgress[index] ?? 0;
+  };
 
   return (
     <section className="bg-white text-[#111111]">
-      <div className="mx-auto max-w-mkt-content px-5 pb-16 pt-20 sm:px-8 sm:pb-20 lg:pt-24">
+      <div className="mx-auto max-w-mkt-content px-5 pb-12 pt-20 sm:px-8 sm:pb-16 lg:pt-24">
         <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
           WHY {SITE_NAME.toUpperCase()}
         </p>
@@ -189,68 +219,62 @@ export default function LandingWhySwitcher() {
           ))}
         </div>
       ) : (
-        <div ref={wrapRef} className="relative" style={{ height: WRAPPER_HEIGHT }}>
-          <div
-            className="sticky mx-auto max-w-mkt-content px-5 sm:px-8"
-            style={{ top: STICKY_TOP, height: INNER_HEIGHT }}
-          >
-            <div className="grid h-full grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-14">
-              <div className="flex h-full flex-col">
-                <div className="relative min-h-[280px] flex-1">
-                  {STEPS.map((step, index) => {
-                    const isActive = active === index;
-                    const offset = active > index ? -24 : active < index ? 24 : 0;
-                    return (
-                      <div
-                        key={step.kicker}
-                        className="absolute inset-0 motion-reduce:transition-none"
-                        style={{
-                          opacity: isActive ? 1 : 0,
-                          transform: `translateY(${isActive ? 0 : offset}px)`,
-                          pointerEvents: isActive ? 'auto' : 'none',
-                          transition: 'opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
-                        }}
-                      >
-                        <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
-                          {step.kicker}
-                        </p>
-                        <h3 className="mt-4 text-[clamp(28px,3.2vw,40px)] font-semibold leading-[1.08] tracking-[-0.035em] text-[#111111]">
-                          {step.title}
-                        </h3>
-                        <p className="mt-4 max-w-[42ch] text-[18px] leading-[1.55] text-[#6B6D76]">
-                          {step.body}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
+        <div className="mx-auto max-w-mkt-content px-5 pb-24 sm:px-8">
+          <div className="lg:grid lg:grid-cols-2 lg:gap-14 lg:items-start">
+            <div>
+              {STEPS.map((step, index) => (
+                <article
+                  key={step.kicker}
+                  ref={(el) => {
+                    stepRefs.current[index] = el;
+                  }}
+                  className="flex min-h-[72vh] flex-col justify-center py-14 sm:min-h-[68vh] sm:py-16 lg:min-h-[78vh] lg:py-20"
+                >
+                  <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
+                    {step.kicker}
+                  </p>
+                  <h3 className="mt-4 max-w-[18ch] text-[clamp(28px,3.2vw,40px)] font-semibold leading-[1.08] tracking-[-0.035em] text-[#111111]">
+                    {step.title}
+                  </h3>
+                  <p className="mt-4 max-w-[42ch] text-[18px] leading-[1.55] text-[#6B6D76]">
+                    {step.body}
+                  </p>
+                  <InlineScreenshot step={step} />
+                </article>
+              ))}
 
-                <div className="mt-auto pt-8">
-                  {STEPS.map((step, index) => (
-                    <ProgressRow
-                      key={step.kicker}
-                      label={step.label}
-                      progress={segProgress(index)}
-                      isFirst={index === 0}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <div className="relative h-full min-h-[360px] overflow-hidden rounded-[20px] bg-gradient-to-b from-[#E6F0FE] to-[#CFE3FE] p-4 sm:p-6">
-                <div className="relative h-full min-h-[320px]">
-                  {STEPS.map((step, index) => (
-                    <ScreenshotPanel
-                      key={step.kicker}
-                      src={step.src}
-                      alt={step.title}
-                      url={step.url}
-                      active={active === index}
-                    />
-                  ))}
-                </div>
+              <div className="border-t border-[#EAEAEA] pt-2 lg:pb-8">
+                {STEPS.map((step, index) => (
+                  <ProgressRow
+                    key={step.kicker}
+                    label={step.label}
+                    progress={segProgress(index)}
+                    isFirst={index === 0}
+                  />
+                ))}
               </div>
             </div>
+
+            <aside className="hidden lg:block">
+              <div
+                className="sticky flex flex-col"
+                style={{ top: STICKY_TOP }}
+              >
+                <div className="overflow-hidden rounded-[20px] bg-gradient-to-b from-[#E6F0FE] to-[#CFE3FE] p-5">
+                  <div className="relative h-[268px] w-full">
+                    {STEPS.map((step, index) => (
+                      <ScreenshotPanel
+                        key={step.kicker}
+                        src={step.src}
+                        alt={step.title}
+                        url={step.url}
+                        active={active === index}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </aside>
           </div>
         </div>
       )}
