@@ -8,6 +8,8 @@ interface AnimatedTabPanelsProps<T extends string> {
   activeTab: T;
   panels: { id: T; content: React.ReactNode }[];
   className?: string;
+  /** Vertical slide distance in px when motion is enabled. */
+  slideOffset?: number;
 }
 
 /** Keeps all tab panels mounted while crossfading the active one. */
@@ -15,6 +17,7 @@ export default function AnimatedTabPanels<T extends string>({
   activeTab,
   panels,
   className,
+  slideOffset = 10,
 }: AnimatedTabPanelsProps<T>) {
   const reduced = useMotionReduced();
 
@@ -30,7 +33,7 @@ export default function AnimatedTabPanels<T extends string>({
             initial={false}
             animate={{
               opacity: active ? 1 : 0,
-              y: reduced || active ? 0 : 8,
+              y: reduced || active ? 0 : slideOffset,
             }}
             transition={reduced ? { duration: 0.01 } : tabPanelTransition}
             className={clsx(!active && 'pointer-events-none absolute inset-x-0 top-0')}

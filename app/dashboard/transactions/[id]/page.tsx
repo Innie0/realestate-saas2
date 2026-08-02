@@ -19,6 +19,8 @@ import Modal from '@/components/ui/Modal';
 import PageShell from '@/components/layout/PageShell';
 import { TransactionDetailPageContentSkeleton } from '@/components/dashboard/page-loading';
 import DashboardPage from '@/components/layout/DashboardPage';
+import DetailPageTabNav from '@/components/layout/DetailPageTabNav';
+import AnimatedTabPanels from '@/components/motion/AnimatedTabPanels';
 import TransactionForm from '@/components/TransactionForm';
 import TransactionTimeline from '@/components/TransactionTimeline';
 import TransactionChecklist from '@/components/TransactionChecklist';
@@ -273,55 +275,51 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
   ) || [];
 
   return (
-    <DashboardPage title={transaction.property_address}>
+    <DashboardPage
+      title={transaction.property_address}
+      subtitle={
+        [transaction.property_city, transaction.property_state, transaction.property_zip]
+          .filter(Boolean)
+          .join(', ') || undefined
+      }
+      actions={
+        <>
+          <Button variant="outline" size="sm" onClick={() => { setEditInitialSection(undefined); setIsEditing(true); }}>
+            <Edit2 className="mr-2 size-3.5" />
+            Edit
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleDelete}
+            isLoading={isDeleting}
+            className="!text-rose-700 hover:!bg-rose-50 hover:!ring-rose-200"
+          >
+            <Trash2 className="mr-2 size-3.5" />
+            Delete
+          </Button>
+        </>
+      }
+    >
       <div className="space-y-5">
-        <div className="flex flex-col gap-4 pb-5 border-b border-gray-200">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-            <div className="flex items-start gap-3 min-w-0">
-              <Link
-                href="/dashboard/transactions"
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors mt-0.5 shrink-0"
-              >
-                <ArrowLeft className="w-5 h-5 text-gray-700" />
-              </Link>
-              <div className="min-w-0">
-                <h1 className="text-[22px] font-semibold text-gray-900 truncate">
-                  {transaction.property_address}
-                </h1>
-                {(transaction.property_city || transaction.property_state) && (
-                  <p className="text-gray-600 text-[13px] mt-0.5">
-                    {[transaction.property_city, transaction.property_state, transaction.property_zip]
-                      .filter(Boolean)
-                      .join(', ')}
-                  </p>
-                )}
-                {transaction.project && (
-                  <Link
-                    href={`/dashboard/projects/${transaction.project.id}`}
-                    className="inline-flex items-center gap-1.5 mt-2 text-[13px] font-medium text-teal-700 hover:text-teal-900"
-                  >
-                    <Link2 className="w-3.5 h-3.5" />
-                    Linked project: {transaction.project.title}
-                  </Link>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <Button variant="outline" onClick={() => { setEditInitialSection(undefined); setIsEditing(true); }}>
-                <Edit2 className="w-3.5 h-3.5 mr-2" />
-                Edit
-              </Button>
-              <Button
-                variant="outline"
-                onClick={handleDelete}
-                isLoading={isDeleting}
-                className="!text-rose-700 hover:!bg-rose-50 hover:!ring-rose-200"
-              >
-                <Trash2 className="w-3.5 h-3.5 mr-2" />
-                Delete
-              </Button>
-            </div>
-          </div>
+        <div className="flex flex-col gap-4 border-b border-border pb-5">
+          <Link
+            href="/dashboard/transactions"
+            className="inline-flex w-fit items-center gap-1.5 rounded-lg p-2 text-[13px] text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+          >
+            <ArrowLeft className="size-4" />
+            Back to transactions
+          </Link>
+
+          {transaction.project && (
+            <Link
+              href={`/dashboard/projects/${transaction.project.id}`}
+              className="inline-flex w-fit items-center gap-1.5 text-[13px] font-medium text-teal-700 hover:text-teal-900"
+            >
+              <Link2 className="size-3.5" />
+              Linked project: {transaction.project.title}
+            </Link>
+          )}
 
           <div className="sm:max-w-[340px]">
             <Select
@@ -331,7 +329,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
               value={transaction.status}
               disabled={isUpdatingStatus || isEditing}
               onChange={(value) => handleStatusChange(value as TransactionStatus)}
-              triggerClassName="w-full px-3 py-2 bg-[var(--surface)] border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-50"
+              triggerClassName="w-full rounded-lg border border-border bg-[var(--surface)] px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-50"
               options={TRANSACTION_STATUSES.map((option) => ({
                 value: option.value,
                 label: option.label,
@@ -374,35 +372,19 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
         </div>
       )}
 
-      {/* Tab navigation */}
-      <div className="border-b border-border">
-        <nav className="flex gap-[26px] overflow-x-auto">
-          {DETAIL_TABS.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id)}
-                className={`relative flex items-center gap-1.5 py-3 text-[13px] font-medium whitespace-nowrap transition-colors ${
-                  isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <Icon className="w-3.5 h-3.5" />
-                {tab.label}
-                {isActive && (
-                  <span className="absolute inset-x-0 -bottom-px h-0.5 bg-brand-500" />
-                )}
-              </button>
-            );
-          })}
-        </nav>
-      </div>
+      <DetailPageTabNav
+        tabs={DETAIL_TABS.map((tab) => ({ id: tab.id, label: tab.label, icon: tab.icon }))}
+        activeTab={activeTab}
+        onChange={setActiveTab}
+      />
 
-      {/* Tab Content */}
-      <div>
-        {activeTab === 'overview' && (
+      <AnimatedTabPanels
+        activeTab={activeTab}
+        className="pt-5"
+        panels={[
+          {
+            id: 'overview',
+            content: (
           <div className="space-y-5">
             {/* Key Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -516,9 +498,11 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
               </Card>
             )}
           </div>
-        )}
-
-        {activeTab === 'tasks' && (
+            ),
+          },
+          {
+            id: 'tasks',
+            content: (
           <div className="space-y-5">
             <Card className="p-5 sm:p-[22px]">
               <h2 className="text-[15px] font-semibold text-gray-900 mb-4">Transaction Timeline</h2>
@@ -540,12 +524,14 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
               />
             </Card>
           </div>
-        )}
-
-        <div className={activeTab === 'documents' ? '' : 'hidden'}>
+            ),
+          },
+          {
+            id: 'documents',
+            content: (
           <Card className="p-5 sm:p-[22px]">
-            <h2 className="text-[15px] font-semibold text-gray-900 mb-1">Deal Documents</h2>
-            <p className="text-[13px] text-gray-600 mb-5">
+            <h2 className="mb-1 text-[15px] font-semibold text-foreground">Deal Documents</h2>
+            <p className="mb-5 text-[13px] text-muted-foreground">
               Store contracts, disclosures, inspection reports, and other files for this transaction.
             </p>
             <TransactionDocuments
@@ -555,9 +541,11 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
               documentsReady={documentsReady}
             />
           </Card>
-        </div>
-
-        {activeTab === 'reminders' && (
+            ),
+          },
+          {
+            id: 'reminders',
+            content: (
           <Card className="p-5 sm:p-[22px]">
             <div className="mb-4 flex items-center justify-between gap-3">
               <h2 className="text-[15px] font-semibold text-gray-900">Reminders</h2>
@@ -620,9 +608,11 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
               </div>
             ) : null}
           </Card>
-        )}
-
-        {activeTab === 'financials' && (
+            ),
+          },
+          {
+            id: 'financials',
+            content: (
           <Card className="p-5 sm:p-[22px]">
             <h2 className="text-[15px] font-semibold text-gray-900 mb-4">Financial Details</h2>
             <div className="divide-y divide-gray-150">
@@ -639,8 +629,10 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
               ))}
             </div>
           </Card>
-        )}
-      </div>
+            ),
+          },
+        ]}
+      />
       </div>
 
       {/* Edit Modal */}

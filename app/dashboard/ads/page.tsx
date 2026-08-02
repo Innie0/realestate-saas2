@@ -3,6 +3,7 @@
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
+import AnimatedTabPanels from '@/components/motion/AnimatedTabPanels';
 import FilterSidebar from '@/components/layout/FilterSidebar';
 import PanelHeader from '@/components/ui/PanelHeader';
 import { Card } from '@/components/ui/Card';
@@ -310,7 +311,12 @@ function AdsPageContent() {
         </button>
       </div>
 
-      {tab === 'create' ? (
+      <AnimatedTabPanels
+        activeTab={tab}
+        panels={[
+          {
+            id: 'create',
+            content: (
         <div className="flex flex-col gap-8">
           <FilterSidebar
             title="Setup"
@@ -358,7 +364,11 @@ function AdsPageContent() {
             />
           </div>
         </div>
-      ) : (
+            ),
+          },
+          {
+            id: 'performance',
+            content: (
         <div className="flex flex-col gap-8">
           <FilterSidebar
             title="Filters"
@@ -487,7 +497,10 @@ function AdsPageContent() {
             />
           </div>
         </div>
-      )}
+            ),
+          },
+        ]}
+      />
         </>
       )}
 

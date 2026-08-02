@@ -9,6 +9,8 @@ import { Card } from '@/components/ui/Card';
 import Modal from '@/components/ui/Modal';
 import { ClientDetailPageContentSkeleton } from '@/components/dashboard/page-loading';
 import DashboardPage from '@/components/layout/DashboardPage';
+import DetailPageTabNav from '@/components/layout/DetailPageTabNav';
+import AnimatedTabPanels from '@/components/motion/AnimatedTabPanels';
 import {
   ArrowLeft,
   Pencil,
@@ -378,7 +380,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       <div className="space-y-5">
         <button
           onClick={() => router.push(client.in_crm ? '/dashboard/clients' : '/dashboard/leads')}
-          className="inline-flex items-center gap-1.5 text-[13px] text-gray-600 hover:text-gray-700 transition-colors"
+          className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           {client.in_crm ? 'Back to Clients' : 'Back to Leads inbox'}
@@ -468,34 +470,24 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         </Card>
 
         {/* Tabs */}
-        <div className="border-b border-gray-200">
-          <nav className="flex gap-[26px] overflow-x-auto">
-            {CLIENT_TABS.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`relative flex items-center gap-1.5 py-3 text-[13px] font-medium whitespace-nowrap transition-colors ${
-                    isActive ? 'text-gray-900' : 'text-gray-600 hover:text-gray-700'
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5" />
-                  {tab.label}
-                  {tab.id === 'transactions' && transactions.length > 0 && (
-                    <span className="ml-0.5 text-[11px] text-gray-500">({transactions.length})</span>
-                  )}
-                  {isActive && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-brand-500" />}
-                </button>
-              );
-            })}
-          </nav>
-        </div>
+        <DetailPageTabNav
+          tabs={CLIENT_TABS.map((tab) => ({
+            id: tab.id,
+            label: tab.label,
+            icon: tab.icon,
+            badge: tab.id === 'transactions' && transactions.length > 0 ? transactions.length : undefined,
+          }))}
+          activeTab={activeTab}
+          onChange={setActiveTab}
+        />
 
-        {/* Tab panels */}
-        {activeTab === 'overview' && (
+        <AnimatedTabPanels
+          activeTab={activeTab}
+          className="pt-5"
+          panels={[
+            {
+              id: 'overview',
+              content: (
           <div className="space-y-5">
             {client.lead_origin && (
               <ClientLeadOriginCard
@@ -505,9 +497,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
               />
             )}
           </div>
-        )}
-
-        {activeTab === 'activity' && (
+              ),
+            },
+            {
+              id: 'activity',
+              content: (
           <ClientActivityTab
             clientId={clientId}
             notes={notes}
@@ -537,13 +531,18 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
             onEditReminder={setEditingReminderId}
             onCancelEditReminder={() => setEditingReminderId(null)}
           />
-        )}
-
-        {activeTab === 'transactions' && (
-          <ClientTransactionsTab transactions={transactions} clientId={clientId} />
-        )}
-
-        {activeTab === 'documents' && <ClientDocumentsTab />}
+              ),
+            },
+            {
+              id: 'transactions',
+              content: <ClientTransactionsTab transactions={transactions} clientId={clientId} />,
+            },
+            {
+              id: 'documents',
+              content: <ClientDocumentsTab />,
+            },
+          ]}
+        />
       </div>
 
       <Modal isOpen={isEditing} onClose={() => setIsEditing(false)} title="Edit Client" size="md">

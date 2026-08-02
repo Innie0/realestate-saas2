@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
 import LeadsSectionSwitcher, { type LeadsTab } from '@/components/leads/LeadsSectionSwitcher';
+import AnimatedTabPanels from '@/components/motion/AnimatedTabPanels';
 import LeadsInbox from '@/components/leads/LeadsInbox';
 import Button from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -312,7 +313,12 @@ function LeadsPageContent() {
           <LeadsSectionSwitcher active={activeTab} onChange={setActiveTab} />
         </div>
 
-        {activeTab === 'inbox' && (
+        <AnimatedTabPanels
+          activeTab={activeTab}
+          panels={[
+            {
+              id: 'inbox',
+              content: (
             <LeadsInbox
               leads={safeLeads}
               filter={filter}
@@ -330,12 +336,13 @@ function LeadsPageContent() {
               onGoToCapture={() => setActiveTab('capture')}
               onSequenceChange={() => mutateLeads()}
             />
-        )}
-
-        {/* ─── CAPTURE ───────────────────────────────────────────────────── */}
-        {activeTab === 'capture' && (
+              ),
+            },
+            {
+              id: 'capture',
+              content: (
           <div className="space-y-5">
-            <p className="text-[13.5px] text-gray-600">
+            <p className="text-[13.5px] text-muted-foreground">
               Tools to collect leads — share your form, run open houses, and publish your profile.
             </p>
 
@@ -482,12 +489,13 @@ function LeadsPageContent() {
               ))}
             </div>
           </div>
-        )}
-
-        {/* ─── AUTOMATIONS ───────────────────────────────────────────────── */}
-        {activeTab === 'automations' && (
+              ),
+            },
+            {
+              id: 'automations',
+              content: (
           <div className="space-y-5">
-            <p className="text-[13.5px] text-gray-600">
+            <p className="text-[13.5px] text-muted-foreground">
               Set up once — these run automatically when someone becomes a lead.
             </p>
 
@@ -550,7 +558,10 @@ function LeadsPageContent() {
 
             <FollowupTemplatesEditor settings={settingsData} onSaved={() => mutateSettings()} />
           </div>
-        )}
+              ),
+            },
+          ]}
+        />
         </>
       )}
 
