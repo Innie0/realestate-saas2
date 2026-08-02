@@ -150,6 +150,7 @@ export default function LandingWhySwitcher() {
   const triggerRef = useRef<HTMLDivElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
   const [prog, setProg] = useState(0);
+  const [pastPin, setPastPin] = useState(false);
 
   useGSAP(
     () => {
@@ -158,40 +159,24 @@ export default function LandingWhySwitcher() {
       const mm = gsap.matchMedia();
 
       mm.add('(min-width: 1024px)', () => {
-        const syncPinLayout = () => {
-          const trigger = triggerRef.current;
-          const pin = pinRef.current;
-          if (!trigger || !pin) return;
-
-          const travel = getScrollTravel();
-          trigger.style.height = `${pin.offsetHeight + travel}px`;
-        };
-
-        syncPinLayout();
-
         const st = ScrollTrigger.create({
           trigger: triggerRef.current,
           start: `top top+=${STICKY_TOP}`,
-          end: `bottom top+=${STICKY_TOP}`,
+          end: () => `+=${getScrollTravel()}`,
           pin: pinRef.current,
-          pinSpacing: false,
+          pinSpacing: true,
           anticipatePin: 1,
           scrub: 0.35,
           invalidateOnRefresh: true,
-          onUpdate: (self) => setProg(self.progress),
+          onUpdate: (self) => {
+            setProg(self.progress);
+            if (pinRef.current) pinRef.current.style.zIndex = self.isActive ? '1' : '0';
+          },
+          onLeave: () => setPastPin(true),
+          onEnterBack: () => setPastPin(false),
         });
 
-        const onResize = () => {
-          syncPinLayout();
-          ScrollTrigger.refresh();
-        };
-        window.addEventListener('resize', onResize);
-
-        return () => {
-          window.removeEventListener('resize', onResize);
-          if (triggerRef.current) triggerRef.current.style.height = '';
-          st.kill();
-        };
+        return () => st.kill();
       });
 
       return () => mm.revert();
@@ -205,7 +190,7 @@ export default function LandingWhySwitcher() {
   const textScrollOffset = prog * (STEPS.length - 1) * STEP_SLOT;
 
   return (
-    <section className="bg-white pb-0 text-[#111111]">
+    <section className="relative isolate bg-white pb-0 text-[#111111]">
       <div className="mx-auto max-w-mkt-content px-5 pb-6 pt-20 sm:px-8 sm:pb-8 lg:pt-24">
         <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
           WHY {SITE_NAME.toUpperCase()}
@@ -230,8 +215,13 @@ export default function LandingWhySwitcher() {
         </div>
       ) : (
         <>
-          <div ref={triggerRef} className="relative mx-auto hidden max-w-mkt-content px-5 sm:px-8 lg:block">
-            <div ref={pinRef} className="w-full">
+          <div ref={triggerRef} className="relative z-0 mx-auto hidden max-w-mkt-content px-5 sm:px-8 lg:block">
+            <div
+              ref={pinRef}
+              className={`w-full bg-white transition-opacity duration-200 ${
+                pastPin ? 'pointer-events-none opacity-0' : 'opacity-100'
+              }`}
+            >
               <div className="grid grid-cols-2 items-start gap-14">
                 <div className="flex min-w-0 flex-col justify-center">
                 <div className="overflow-hidden" style={{ height: STEP_SLOT }}>
