@@ -4,7 +4,7 @@ import { SITE_NAME } from '@/lib/site-config';
 
 export default function LandingFooter() {
   return (
-    <footer className="border-t border-mkt-border bg-[#F7F5F1]">
+    <footer className="border-t border-mkt-border bg-[#C9E0FE]">
       <div className="mx-auto max-w-mkt-content px-5 py-14 sm:px-8 lg:py-16">
         <MarketingFooterColumns
           brand={
