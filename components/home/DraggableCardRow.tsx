@@ -3,7 +3,7 @@
 import { motion, useMotionValue } from 'framer-motion';
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import clsx from 'clsx';
-import DragHintBadge from '@/components/home/DragHintBadge';
+import DragCursor from '@/components/home/DragCursor';
 import { useMotionReduced } from '@/lib/motion';
 
 type DraggableCardRowProps = {
@@ -24,11 +24,16 @@ export function DraggableCardRow({
   const dragConstraintRef = useRef(0);
   const [dragConstraint, setDragConstraint] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [showHint, setShowHint] = useState(true);
+  const [isHovering, setIsHovering] = useState(false);
+  const [cursor, setCursor] = useState({ x: 0, y: 0 });
+  const cursorRef = useRef({ x: 0, y: 0 });
   const prefersReducedMotion = useMotionReduced();
   const x = useMotionValue(0);
 
-  const dismissHint = () => setShowHint(false);
+  const updateCursor = (clientX: number, clientY: number) => {
+    cursorRef.current = { x: clientX, y: clientY };
+    setCursor({ x: clientX, y: clientY });
+  };
 
   useEffect(() => {
     const updateConstraint = () => {
@@ -66,7 +71,6 @@ export function DraggableCardRow({
       if (Math.abs(event.deltaX) < 0.5) return;
 
       event.preventDefault();
-      dismissHint();
       const next = Math.max(
         dragConstraintRef.current,
         Math.min(0, x.get() - event.deltaX),
@@ -78,6 +82,27 @@ export function DraggableCardRow({
     return () => container.removeEventListener('wheel', onWheel);
   }, [prefersReducedMotion, x, children]);
 
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const onPointerMove = (event: PointerEvent) => {
+      updateCursor(event.clientX, event.clientY);
+    };
+
+    window.addEventListener('pointermove', onPointerMove);
+    return () => window.removeEventListener('pointermove', onPointerMove);
+  }, [isDragging]);
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+    const container = containerRef.current;
+    if (!container) return;
+
+    const { x: cx, y: cy } = cursorRef.current;
+    const target = document.elementFromPoint(cx, cy);
+    setIsHovering(Boolean(target && container.contains(target)));
+  };
+
   if (prefersReducedMotion) {
     return (
       <div className={clsx('flex flex-col gap-7 px-10', className)} style={style}>
@@ -86,35 +111,54 @@ export function DraggableCardRow({
     );
   }
 
-  return (
-    <div
-      ref={containerRef}
-      className={clsx('relative overflow-hidden overscroll-x-contain', className)}
-      style={style}
-      aria-label="Drag or swipe horizontally to browse cards"
-    >
-      <DragHintBadge visible={showHint} isDragging={isDragging} />
+  const showCustomCursor = isHovering || isDragging;
 
-      <motion.div
-        ref={contentRef}
-        className={clsx('flex w-max gap-7 px-10', contentClassName)}
-        drag="x"
-        dragConstraints={{ left: dragConstraint, right: 0 }}
-        dragElastic={0.08}
-        dragTransition={{ power: 0.3, timeConstant: 250 }}
-        onDragStart={() => {
-          setIsDragging(true);
-          dismissHint();
+  return (
+    <>
+      <div
+        ref={containerRef}
+        className={clsx(
+          'relative overflow-hidden overscroll-x-contain',
+          showCustomCursor && 'cursor-none [&_*]:cursor-none',
+          className,
+        )}
+        style={style}
+        aria-label="Drag or swipe horizontally to browse cards"
+        onPointerEnter={(event) => {
+          setIsHovering(true);
+          updateCursor(event.clientX, event.clientY);
         }}
-        onDragEnd={() => setIsDragging(false)}
-        style={{
-          x,
-          cursor: isDragging ? 'grabbing' : 'grab',
-          userSelect: isDragging ? 'none' : 'auto',
+        onPointerLeave={() => {
+          if (!isDragging) setIsHovering(false);
+        }}
+        onPointerMove={(event) => {
+          updateCursor(event.clientX, event.clientY);
         }}
       >
-        {children}
-      </motion.div>
-    </div>
+        <motion.div
+          ref={contentRef}
+          className={clsx('flex w-max gap-7 px-10', contentClassName)}
+          drag="x"
+          dragConstraints={{ left: dragConstraint, right: 0 }}
+          dragElastic={0.08}
+          dragTransition={{ power: 0.3, timeConstant: 250 }}
+          onDragStart={() => setIsDragging(true)}
+          onDragEnd={handleDragEnd}
+          style={{
+            x,
+            userSelect: isDragging ? 'none' : 'auto',
+          }}
+        >
+          {children}
+        </motion.div>
+      </div>
+
+      <DragCursor
+        x={cursor.x}
+        y={cursor.y}
+        visible={showCustomCursor}
+        dragging={isDragging}
+      />
+    </>
   );
 }
