@@ -59,7 +59,7 @@ function HowToPanel({ step }: { step: (typeof STEPS)[number] }) {
   return (
     <div
       className={clsx(
-        'box-border flex w-[880px] max-w-[calc(100vw-3rem)] flex-none snap-start flex-col overflow-hidden rounded-[24px] px-12 pt-12 sm:max-w-none',
+        'box-border flex w-[880px] max-w-[calc(100vw-3rem)] flex-none flex-col overflow-hidden rounded-[24px] px-12 pt-12 sm:max-w-none',
         step.dark ? 'bg-[#0A0A0A]' : 'bg-[#EAF2FE]',
       )}
     >
