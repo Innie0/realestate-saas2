@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 import { 
   ArrowLeft, Edit2, Trash2, Building2, DollarSign, 
   User, Users, Calendar, Mail, Phone, FileText,
-  Bell, CheckCircle2, Clock, AlertTriangle, ListChecks, Link2,
+  Bell, CheckCircle2, Clock, AlertTriangle, ListChecks, Link2, Plus,
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Select from '@/components/ui/Select';
@@ -23,6 +23,9 @@ import TransactionForm from '@/components/TransactionForm';
 import TransactionTimeline from '@/components/TransactionTimeline';
 import TransactionChecklist from '@/components/TransactionChecklist';
 import TransactionDocuments from '@/components/TransactionDocuments';
+import TransactionReminderForm, {
+  type TransactionReminderFormData,
+} from '@/components/transactions/TransactionReminderForm';
 import { TransactionWithDetails, Contract } from '@/types';
 import {
   TRANSACTION_STATUSES,
@@ -52,6 +55,8 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
   const [prefetchedDocuments, setPrefetchedDocuments] = useState<Contract[]>([]);
   const [documentsSetupError, setDocumentsSetupError] = useState('');
   const [documentsReady, setDocumentsReady] = useState(false);
+  const [showReminderForm, setShowReminderForm] = useState(false);
+  const [isCreatingReminder, setIsCreatingReminder] = useState(false);
 
   // Optimistic update for checklist items
   const handleChecklistItemToggle = (itemId: string, isCompleted: boolean) => {
@@ -157,6 +162,35 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
       fetchTransaction();
     } catch (error) {
       console.error('Error dismissing reminder:', error);
+    }
+  };
+
+  const handleCreateReminder = async (data: TransactionReminderFormData) => {
+    if (!transaction) return;
+
+    setIsCreatingReminder(true);
+    setError('');
+    try {
+      const response = await fetch('/api/transactions/reminders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          transaction_id: transaction.id,
+          title: data.title,
+          description: data.description,
+          reminder_date: data.reminder_date,
+        }),
+      });
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to create reminder');
+      }
+      setShowReminderForm(false);
+      fetchTransaction();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to create reminder');
+    } finally {
+      setIsCreatingReminder(false);
     }
   };
 
@@ -525,7 +559,26 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
 
         {activeTab === 'reminders' && (
           <Card className="p-5 sm:p-[22px]">
-            <h2 className="text-[15px] font-semibold text-gray-900 mb-4">Reminders</h2>
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h2 className="text-[15px] font-semibold text-gray-900">Reminders</h2>
+              {!showReminderForm ? (
+                <Button variant="outline" size="sm" onClick={() => setShowReminderForm(true)}>
+                  <Plus className="mr-1.5 h-3.5 w-3.5" />
+                  Add reminder
+                </Button>
+              ) : null}
+            </div>
+
+            {showReminderForm ? (
+              <div className="mb-5 rounded-[10px] border border-gray-150 bg-gray-50 p-4">
+                <TransactionReminderForm
+                  onSubmit={handleCreateReminder}
+                  onCancel={() => setShowReminderForm(false)}
+                  isLoading={isCreatingReminder}
+                />
+              </div>
+            ) : null}
+
             {transaction.reminders && transaction.reminders.filter(r => !r.is_dismissed).length > 0 ? (
               <div className="space-y-2.5">
                 {transaction.reminders
@@ -552,9 +605,20 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
                     </div>
                   ))}
               </div>
-            ) : (
-              <p className="text-gray-600 text-[13px] text-center py-8">No reminders set</p>
-            )}
+            ) : !showReminderForm ? (
+              <div className="py-8 text-center">
+                <p className="text-[13px] text-gray-600">No reminders set</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-4"
+                  onClick={() => setShowReminderForm(true)}
+                >
+                  <Plus className="mr-1.5 h-3.5 w-3.5" />
+                  Add reminder
+                </Button>
+              </div>
+            ) : null}
           </Card>
         )}
 
