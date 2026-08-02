@@ -250,7 +250,7 @@ export default function Sidebar() {
       <div className="fixed left-0 right-0 top-0 z-50 flex h-16 items-center justify-between border-b border-border bg-[var(--canvas)] px-4 lg:hidden">
         <Link href="/dashboard" className="flex items-center gap-2 min-h-0">
           <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] bg-foreground text-[11px] font-bold text-background">
-            O
+            {SITE_NAME.charAt(0)}
           </span>
           <span className="text-[13px] font-semibold tracking-tight text-foreground">{SITE_NAME}</span>
         </Link>
@@ -298,7 +298,7 @@ export default function Sidebar() {
           ) : (
             <>
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-foreground text-[11px] font-bold text-background">
-                O
+                {SITE_NAME.charAt(0)}
               </span>
               <span className="text-[13px] font-semibold tracking-tight text-foreground">{SITE_NAME}</span>
             </>

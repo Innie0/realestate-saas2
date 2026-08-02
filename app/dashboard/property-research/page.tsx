@@ -11,6 +11,8 @@ import { PropertyResearchPageLoading } from '@/components/dashboard/page-loading
 import PanelHeader from '@/components/ui/PanelHeader';
 import AnimatedTabPanels from '@/components/motion/AnimatedTabPanels';
 import PropertyResearchSearchCard from '@/components/property-research/PropertyResearchSearchCard';
+import PropertyResearchTips from '@/components/property-research/PropertyResearchTips';
+import { SITE_NAME } from '@/lib/site-config';
 import { useApi } from '@/lib/swr';
 import { useTour } from '@/hooks/useTour';
 import { CmaPanel, type CmaAnalysisResult } from '@/components/property-research/CmaPanel';
@@ -121,7 +123,7 @@ function PropertyResearchContent() {
   });
 
   useEffect(() => {
-    document.title = 'Property Research - Oikaro';
+    document.title = `Property Research - ${SITE_NAME}`;
   }, []);
 
   useEffect(() => {
@@ -178,14 +180,6 @@ function PropertyResearchContent() {
     } catch {}
   }, []);
 
-  const handleLookupComplete = useCallback((data: LookupResponse | null) => {
-    setLookupData(data);
-  }, []);
-
-  const handleCmaComplete = useCallback((data: CmaAnalysisResult | null) => {
-    setCmaResult(data);
-  }, []);
-
   const addressLabel = [street, city, state, zip].filter(Boolean).join(', ');
 
   const saveToHistory = useCallback(() => {
@@ -209,9 +203,31 @@ function PropertyResearchContent() {
     });
   }, [street, city, state, zip, addressLabel]);
 
+  const handleLookupComplete = useCallback(
+    (data: LookupResponse | null) => {
+      setLookupData(data);
+      if (data?.found) saveToHistory();
+    },
+    [saveToHistory],
+  );
+
+  const handleCmaComplete = useCallback(
+    (data: CmaAnalysisResult | null) => {
+      setCmaResult(data);
+      if (data) saveToHistory();
+    },
+    [saveToHistory],
+  );
+
+  const fillDemoAddress = () => {
+    setStreet('123 W Main Street');
+    setCity('Austin');
+    setState('TX');
+    setZip('78701');
+  };
+
   const handleLookUp = () => {
     if (!street.trim() || !state) return;
-    saveToHistory();
     setActiveTab('owner');
     setResearchSearched(true);
     setLookupTrigger((n) => n + 1);
@@ -219,7 +235,6 @@ function PropertyResearchContent() {
 
   const handleResearchAddress = () => {
     if (!street.trim() || !state) return;
-    saveToHistory();
     setActiveTab('overview');
     setResearchSearched(true);
     setLookupTrigger((n) => n + 1);
@@ -227,7 +242,6 @@ function PropertyResearchContent() {
 
   const handleRunCma = () => {
     if (!street.trim() || !state) return;
-    saveToHistory();
     setActiveTab('cma');
     setResearchSearched(true);
     setCmaTrigger((n) => n + 1);
@@ -298,6 +312,9 @@ function PropertyResearchContent() {
                 <span className="text-[13px] font-medium text-foreground">{formatUsage(cmaUsage)}</span>
               </div>
             </div>
+            <p className="mt-3 border-t border-border pt-3 text-[11.5px] leading-relaxed text-muted-foreground">
+              Counts new API lookups only. Demo searches and cached reloads are free and do not increase this total.
+            </p>
           </Card>
 
           <Card data-tour="research-history" className="overflow-hidden p-0">
@@ -320,7 +337,7 @@ function PropertyResearchContent() {
               <EmptyState
                 icon={History}
                 title="No recent searches"
-                description="Addresses you research appear here so you can reload cached results without using another lookup."
+                description="Successful searches appear here so you can reload cached results without using another lookup."
                 className="py-8"
               />
             ) : (
@@ -345,19 +362,23 @@ function PropertyResearchContent() {
 
         <div className="min-w-0 space-y-4">
           {!researchSearched ? (
-            <PropertyResearchSearchCard
-              street={street}
-              city={city}
-              state={state}
-              zip={zip}
-              states={US_STATES}
-              loading={lookupLoading}
-              onStreetChange={setStreet}
-              onCityChange={setCity}
-              onStateChange={setState}
-              onZipChange={setZip}
-              onSubmit={handleResearchAddress}
-            />
+            <>
+              <PropertyResearchSearchCard
+                street={street}
+                city={city}
+                state={state}
+                zip={zip}
+                states={US_STATES}
+                loading={lookupLoading}
+                onStreetChange={setStreet}
+                onCityChange={setCity}
+                onStateChange={setState}
+                onZipChange={setZip}
+                onSubmit={handleResearchAddress}
+                onTryDemo={fillDemoAddress}
+              />
+              <PropertyResearchTips />
+            </>
           ) : (
             <>
               {addressLabel ? (
