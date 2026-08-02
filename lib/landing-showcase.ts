@@ -41,18 +41,6 @@ export type PersonaCard = {
   description: string;
 };
 
-export type Testimonial = {
-  id: string;
-  quote: string;
-  name: string;
-  initials: string;
-  role: string;
-  metric: string;
-  metricLabel: string;
-  metric2: string;
-  metricLabel2: string;
-};
-
 export const SHOWCASE_NARRATIVE = {
   eyebrow: 'How it works',
   headlineLead: 'Close the loop from lead',
@@ -150,45 +138,6 @@ export const PERSONA_CARDS: PersonaCard[] = [
     title: 'See the whole pipeline',
     description:
       'Dashboard, scored leads, and transaction checklists give you visibility across every deal and agent on your team.',
-  },
-];
-
-export const TESTIMONIALS: Testimonial[] = [
-  {
-    id: '1',
-    quote:
-      'I finally stopped juggling five different tools. Listings, leads, and follow-ups all live in one place — and the AI actually saves me hours every week.',
-    name: 'Sarah Mitchell',
-    initials: 'SM',
-    role: 'Listing Agent · Compass, Austin TX',
-    metric: '5+',
-    metricLabel: 'Hours saved per week',
-    metric2: '5',
-    metricLabel2: 'Apps replaced',
-  },
-  {
-    id: '2',
-    quote:
-      'Open house sign-in alone changed how I work. Every visitor becomes a scored lead in my inbox before I leave the property.',
-    name: 'James Rodriguez',
-    initials: 'JR',
-    role: 'Buyer\'s Agent · RE/MAX, Denver CO',
-    metric: '10+',
-    metricLabel: 'More leads captured',
-    metric2: '0',
-    metricLabel2: 'Missed open house visitors',
-  },
-  {
-    id: '3',
-    quote:
-      'Property research and CMA used to take an hour. Now I pull comps and a price range in one search while I\'m still on the call.',
-    name: 'Maria Lopez',
-    initials: 'ML',
-    role: 'Team Lead · Douglas Elliman, Miami FL',
-    metric: '10x',
-    metricLabel: 'Faster listing prep',
-    metric2: '60',
-    metricLabel2: 'Minutes saved per CMA',
   },
 ];
 
