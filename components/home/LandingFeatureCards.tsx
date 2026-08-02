@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { LANDING_FEATURE_CARDS, LANDING_TOOL_LINKS } from '@/lib/landing-showcase';
+import { SITE_NAME } from '@/lib/site-config';
 import LandingStaggerReveal from '@/components/home/LandingStaggerReveal';
 
 export default function LandingFeatureCards() {
@@ -33,7 +34,7 @@ export default function LandingFeatureCards() {
 
         <div className="mt-14 sm:mt-16">
           <h3 className="font-display text-xl font-bold tracking-[-0.03em] text-[#1C1D22] sm:text-2xl">
-            See what Realestic can do
+            See what {SITE_NAME} can do
           </h3>
           <ul className="mt-4 divide-y divide-[#EAEAEA] rounded-[1rem] border border-[#EAEAEA] bg-white px-4 sm:px-5">
             {LANDING_TOOL_LINKS.map((item) => {

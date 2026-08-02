@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { SITE_NAME } from '@/lib/site-config';
 import { TESTIMONIALS } from '@/lib/landing-showcase';
 import LandingStaggerReveal from '@/components/home/LandingStaggerReveal';
 
@@ -20,7 +21,7 @@ export default function LandingTestimonials() {
               Agents who switched stay for the workflow
             </h2>
             <p className="mt-3 text-base text-[#6B6D76] sm:text-lg">
-              Real results from agents using Realestic every day.
+              Real results from agents using {SITE_NAME} every day.
             </p>
           </div>
 

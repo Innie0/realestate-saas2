@@ -146,7 +146,7 @@ export const SHOWCASE_NARRATIVE = {
   headlineLead: 'Close the loop from lead',
   headlineFade: ' to closing',
   subheadline:
-    'Realestic unifies listings, leads, clients, and deals in one workspace — so every conversation, task, and deadline moves your pipeline forward.',
+    'Oikaro unifies listings, leads, clients, and deals in one workspace — so every conversation, task, and deadline moves your pipeline forward.',
 };
 
 export const SHOWCASE_SLIDES: ShowcaseSlide[] = [
