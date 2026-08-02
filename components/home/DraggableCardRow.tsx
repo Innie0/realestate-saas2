@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useMotionValue } from 'framer-motion';
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import clsx from 'clsx';
 import { useMotionReduced } from '@/lib/motion';
@@ -20,9 +20,11 @@ export function DraggableCardRow({
 }: DraggableCardRowProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const dragConstraintRef = useRef(0);
   const [dragConstraint, setDragConstraint] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const prefersReducedMotion = useMotionReduced();
+  const x = useMotionValue(0);
 
   useEffect(() => {
     const updateConstraint = () => {
@@ -30,9 +32,10 @@ export function DraggableCardRow({
       const content = contentRef.current;
       if (!container || !content) return;
 
-      const containerWidth = container.offsetWidth;
-      const contentWidth = content.scrollWidth;
-      setDragConstraint(Math.min(0, containerWidth - contentWidth));
+      const constraint = Math.min(0, container.offsetWidth - content.scrollWidth);
+      dragConstraintRef.current = constraint;
+      setDragConstraint(constraint);
+      x.set(Math.max(constraint, Math.min(0, x.get())));
     };
 
     updateConstraint();
@@ -48,21 +51,27 @@ export function DraggableCardRow({
       window.removeEventListener('resize', updateConstraint);
       observer.disconnect();
     };
-  }, [children]);
+  }, [children, x]);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container || prefersReducedMotion) return;
 
-    const blockHorizontalWheel = (event: WheelEvent) => {
-      if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
-        event.preventDefault();
-      }
+    const onWheel = (event: WheelEvent) => {
+      if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
+      if (Math.abs(event.deltaX) < 0.5) return;
+
+      event.preventDefault();
+      const next = Math.max(
+        dragConstraintRef.current,
+        Math.min(0, x.get() - event.deltaX),
+      );
+      x.set(next);
     };
 
-    container.addEventListener('wheel', blockHorizontalWheel, { passive: false });
-    return () => container.removeEventListener('wheel', blockHorizontalWheel);
-  }, [prefersReducedMotion]);
+    container.addEventListener('wheel', onWheel, { passive: false });
+    return () => container.removeEventListener('wheel', onWheel);
+  }, [prefersReducedMotion, x, children]);
 
   if (prefersReducedMotion) {
     return (
@@ -89,6 +98,7 @@ export function DraggableCardRow({
         onDragStart={() => setIsDragging(true)}
         onDragEnd={() => setIsDragging(false)}
         style={{
+          x,
           cursor: isDragging ? 'grabbing' : 'grab',
           userSelect: isDragging ? 'none' : 'auto',
         }}
