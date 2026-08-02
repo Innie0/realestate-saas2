@@ -6,14 +6,20 @@ import BrowserWindowFrame from '@/components/home/BrowserWindowFrame';
 import { SITE_DOMAIN, SITE_NAME } from '@/lib/site-config';
 import { useMotionReduced } from '@/lib/motion';
 
-/** Scroll travel while the section is pinned (3 equal segments). */
-const WRAPPER_HEIGHT = 2400;
-const PINNED_HEIGHT = 560;
 const STICKY_TOP = 120;
 const SEGMENT = 1 / 3;
-
-/** Pixels per step in the scrolling text strip (must match step slot height). */
 const STEP_SLOT = 200;
+
+/** Pixels of page scroll consumed while pinned (one third per step). */
+function getScrollTravel() {
+  if (typeof window === 'undefined') return 900;
+  return Math.round(window.innerHeight * 0.65);
+}
+
+function getPinnedHeight() {
+  if (typeof window === 'undefined') return 520;
+  return Math.max(480, window.innerHeight - STICKY_TOP - 32);
+}
 
 const STEPS = [
   {
@@ -146,16 +152,36 @@ export default function LandingWhySwitcher() {
   const reduced = useMotionReduced();
   const wrapRef = useRef<HTMLDivElement>(null);
   const [prog, setProg] = useState(0);
+  const [layout, setLayout] = useState({
+    scrollTravel: 900,
+    pinnedHeight: 520,
+    wrapperHeight: 1420,
+  });
+
+  useEffect(() => {
+    const syncLayout = () => {
+      const scrollTravel = getScrollTravel();
+      const pinnedHeight = getPinnedHeight();
+      setLayout({
+        scrollTravel,
+        pinnedHeight,
+        wrapperHeight: scrollTravel + pinnedHeight,
+      });
+    };
+    syncLayout();
+    window.addEventListener('resize', syncLayout);
+    return () => window.removeEventListener('resize', syncLayout);
+  }, []);
 
   const updateProgress = useCallback(() => {
     const el = wrapRef.current;
     if (!el) return;
 
     const rect = el.getBoundingClientRect();
-    const travel = Math.max(1, el.offsetHeight - PINNED_HEIGHT);
+    const travel = layout.scrollTravel;
     const scrolled = Math.min(Math.max(-rect.top + STICKY_TOP, 0), travel);
     setProg(scrolled / travel);
-  }, []);
+  }, [layout.scrollTravel]);
 
   useEffect(() => {
     if (reduced) return;
@@ -173,12 +199,11 @@ export default function LandingWhySwitcher() {
   const segProgress = (index: number) =>
     Math.min(1, Math.max(0, (prog - index * SEGMENT) / SEGMENT));
 
-  /** Left copy scrolls upward through stacked steps while the section is pinned. */
   const textScrollOffset = prog * (STEPS.length - 1) * STEP_SLOT;
 
   return (
     <section className="bg-white text-[#111111]">
-      <div className="mx-auto max-w-mkt-content px-5 pb-12 pt-20 sm:px-8 sm:pb-16 lg:pt-24">
+      <div className="mx-auto max-w-mkt-content px-5 pb-8 pt-20 sm:px-8 sm:pb-10 lg:pt-24">
         <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
           WHY {SITE_NAME.toUpperCase()}
         </p>
@@ -195,7 +220,7 @@ export default function LandingWhySwitcher() {
       </div>
 
       {reduced ? (
-        <div className="mx-auto max-w-mkt-content px-5 pb-20 sm:px-8">
+        <div className="mx-auto max-w-mkt-content px-5 pb-16 sm:px-8">
           {STEPS.map((step) => (
             <StaticStepRow key={step.kicker} step={step} />
           ))}
@@ -205,13 +230,13 @@ export default function LandingWhySwitcher() {
           <div
             ref={wrapRef}
             className="relative mx-auto hidden max-w-mkt-content px-5 sm:px-8 lg:block"
-            style={{ height: WRAPPER_HEIGHT }}
+            style={{ height: layout.wrapperHeight }}
           >
             <div
-              className="sticky mx-auto w-full max-w-mkt-content"
-              style={{ top: STICKY_TOP, height: PINNED_HEIGHT }}
+              className="sticky mx-auto flex w-full max-w-mkt-content items-center"
+              style={{ top: STICKY_TOP, height: layout.pinnedHeight }}
             >
-              <div className="grid h-full grid-cols-2 items-center gap-14">
+              <div className="grid w-full grid-cols-2 items-center gap-14">
                 <div className="flex min-w-0 flex-col justify-center">
                   <div className="overflow-hidden" style={{ height: STEP_SLOT }}>
                     <div
@@ -272,7 +297,7 @@ export default function LandingWhySwitcher() {
             </div>
           </div>
 
-          <div className="pb-16 lg:hidden">
+          <div className="pb-12 lg:hidden">
             <div className="mx-auto max-w-mkt-content space-y-12 px-5 sm:px-8">
               {STEPS.map((step) => (
                 <div key={step.kicker}>

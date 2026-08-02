@@ -8,7 +8,7 @@ import LandingStaggerReveal from '@/components/home/LandingStaggerReveal';
 
 export default function LandingFeatureCards() {
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
+    <section className="bg-white pb-16 pt-10 sm:pb-20 sm:pt-12 lg:pb-20 lg:pt-14">
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <LandingStaggerReveal>
           <div className="grid gap-4 lg:grid-cols-3 lg:gap-5">
