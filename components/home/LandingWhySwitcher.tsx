@@ -147,33 +147,56 @@ function StaticStepRow({ step }: { step: (typeof STEPS)[number] }) {
 
 export default function LandingWhySwitcher() {
   const reduced = useMotionReduced();
+  const triggerRef = useRef<HTMLDivElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
   const [prog, setProg] = useState(0);
 
   useGSAP(
     () => {
-      if (reduced || !pinRef.current) return;
+      if (reduced || !triggerRef.current || !pinRef.current) return;
 
       const mm = gsap.matchMedia();
 
       mm.add('(min-width: 1024px)', () => {
-        const trigger = ScrollTrigger.create({
-          trigger: pinRef.current,
+        const syncPinLayout = () => {
+          const trigger = triggerRef.current;
+          const pin = pinRef.current;
+          if (!trigger || !pin) return;
+
+          const travel = getScrollTravel();
+          trigger.style.height = `${pin.offsetHeight + travel}px`;
+        };
+
+        syncPinLayout();
+
+        const st = ScrollTrigger.create({
+          trigger: triggerRef.current,
           start: `top top+=${STICKY_TOP}`,
-          end: () => `+=${getScrollTravel()}`,
-          pin: true,
-          pinSpacing: true,
+          end: `bottom top+=${STICKY_TOP}`,
+          pin: pinRef.current,
+          pinSpacing: false,
           anticipatePin: 1,
           scrub: 0.35,
+          invalidateOnRefresh: true,
           onUpdate: (self) => setProg(self.progress),
         });
 
-        return () => trigger.kill();
+        const onResize = () => {
+          syncPinLayout();
+          ScrollTrigger.refresh();
+        };
+        window.addEventListener('resize', onResize);
+
+        return () => {
+          window.removeEventListener('resize', onResize);
+          if (triggerRef.current) triggerRef.current.style.height = '';
+          st.kill();
+        };
       });
 
       return () => mm.revert();
     },
-    { scope: pinRef, dependencies: [reduced], revertOnUpdate: true },
+    { scope: triggerRef, dependencies: [reduced], revertOnUpdate: true },
   );
 
   const active = prog >= 2 * SEGMENT ? 2 : prog >= SEGMENT ? 1 : 0;
@@ -182,8 +205,8 @@ export default function LandingWhySwitcher() {
   const textScrollOffset = prog * (STEPS.length - 1) * STEP_SLOT;
 
   return (
-    <section className="bg-white text-[#111111]">
-      <div className="mx-auto max-w-mkt-content px-5 pb-8 pt-20 sm:px-8 sm:pb-10 lg:pt-24">
+    <section className="bg-white pb-0 text-[#111111]">
+      <div className="mx-auto max-w-mkt-content px-5 pb-6 pt-20 sm:px-8 sm:pb-8 lg:pt-24">
         <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
           WHY {SITE_NAME.toUpperCase()}
         </p>
@@ -207,9 +230,10 @@ export default function LandingWhySwitcher() {
         </div>
       ) : (
         <>
-          <div ref={pinRef} className="mx-auto hidden max-w-mkt-content px-5 sm:px-8 lg:block">
-            <div className="grid grid-cols-2 items-center gap-14 py-2">
-              <div className="flex min-w-0 flex-col justify-center">
+          <div ref={triggerRef} className="relative mx-auto hidden max-w-mkt-content px-5 sm:px-8 lg:block">
+            <div ref={pinRef} className="w-full">
+              <div className="grid grid-cols-2 items-start gap-14">
+                <div className="flex min-w-0 flex-col justify-center">
                 <div className="overflow-hidden" style={{ height: STEP_SLOT }}>
                   <div
                     className="will-change-transform"
@@ -247,7 +271,7 @@ export default function LandingWhySwitcher() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end">
+              <div className="flex items-start justify-end">
                 <div className="w-full max-w-[480px] overflow-hidden rounded-[20px] bg-gradient-to-b from-[#E6F0FE] to-[#CFE3FE] p-5">
                   <div className="relative h-[260px] w-full">
                     {STEPS.map((step, index) => (
@@ -261,6 +285,7 @@ export default function LandingWhySwitcher() {
                     ))}
                   </div>
                 </div>
+              </div>
               </div>
             </div>
           </div>
