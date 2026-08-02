@@ -1,27 +1,41 @@
 'use client';
 
-/** Bottom tint from the hero fade — used for section bg and curved transition. */
-export const LANDING_HERO_FADE_COLOR = '#C9E0FE';
+/** Height of the blue gradient layer (extends well below the headline area). */
+export const LANDING_HERO_GRADIENT_HEIGHT = 1180;
 
-const GRADIENT_HEIGHT = 980;
+const W = 1440;
+const H = LANDING_HERO_GRADIENT_HEIGHT;
+
+/** Y on the left/right edges where blue meets the white scoop. */
+const EDGE_Y = 968;
+
+/** Ellipse radii for the Pitch-style upward white arc (wide, gentle scoop). */
+const ARC_RX = 860;
+const ARC_RY = 300;
 
 /**
- * Blue wash with a circular scoop at the bottom: the fade color rises in a
- * smooth arc (not a flat line), matching Pitch-style hero transitions.
+ * Blue hero wash clipped to a shape whose bottom is an elliptical arc.
+ * White (`bg-white` on the section) shows through below the arc — the arc
+ * bulges upward in the center, matching Pitch's purple → white transition.
  */
 export function LandingHeroGradient() {
+  const blueShape = `
+    M 0 0
+    H ${W}
+    V ${EDGE_Y}
+    A ${ARC_RX} ${ARC_RY} 0 0 1 0 ${EDGE_Y}
+    Z
+  `;
+
   return (
     <div
       className="pointer-events-none absolute inset-x-0 top-0 w-full"
-      style={{ height: `${GRADIENT_HEIGHT}px` }}
+      style={{ height: `${H}px` }}
       aria-hidden
     >
-      {/* Base fill so everything below the curve matches the fade tint */}
-      <div className="absolute inset-0" style={{ backgroundColor: LANDING_HERO_FADE_COLOR }} />
-
       <svg
-        className="absolute inset-0 h-full w-full"
-        viewBox={`0 0 1440 ${GRADIENT_HEIGHT}`}
+        className="h-full w-full"
+        viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="none"
       >
         <defs>
@@ -30,26 +44,32 @@ export function LandingHeroGradient() {
             x1="0"
             y1="0"
             x2="0"
-            y2={GRADIENT_HEIGHT}
+            y2={H}
             gradientUnits="userSpaceOnUse"
           >
             <stop offset="0%" stopColor="#0668E1" />
-            <stop offset="16%" stopColor="#0668E1" />
-            <stop offset="28%" stopColor="#2E86FB" />
-            <stop offset="48%" stopColor="#7FB4FD" />
-            <stop offset="68%" stopColor="#A8CCFE" />
-            <stop offset="82%" stopColor="#C9E0FE" />
+            <stop offset="24%" stopColor="#0668E1" />
+            <stop offset="38%" stopColor="#2E86FB" />
+            <stop offset="54%" stopColor="#4B93FC" />
+            <stop offset="68%" stopColor="#7FB4FD" />
+            <stop offset="82%" stopColor="#A8CCFE" />
             <stop offset="100%" stopColor="#C9E0FE" />
           </linearGradient>
+          <filter id="landingHeroArcFeather" x="-8%" y="-4%" width="116%" height="112%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="22" />
+          </filter>
         </defs>
-        {/*
-          Bottom edge: sides stay lower; center curves upward in a smooth arc
-          so the fade tint scoops in with a circular indent (not a flat cut).
-        */}
+
+        {/* Soft feather where blue meets white (Pitch-style blurred edge) */}
         <path
-          d="M 0 0 H 1440 V 0 H 1440 L 1440 890 C 1140 890 900 640 720 640 C 540 640 300 890 0 890 Z"
-          fill="url(#landingHeroBlueGrad)"
+          d={blueShape}
+          fill="#FFFFFF"
+          opacity={0.85}
+          filter="url(#landingHeroArcFeather)"
+          transform="translate(0, 14)"
         />
+
+        <path d={blueShape} fill="url(#landingHeroBlueGrad)" />
       </svg>
     </div>
   );

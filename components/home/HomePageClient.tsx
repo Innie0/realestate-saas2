@@ -40,7 +40,7 @@ export default function HomePageClient() {
   }, [router]);
 
   return (
-    <div className="marketing-root relative z-[1] min-h-screen overflow-x-hidden bg-[#C9E0FE] text-mkt-foreground">
+    <div className="marketing-root relative z-[1] min-h-screen overflow-x-hidden bg-white text-mkt-foreground">
       <LandingNav />
       <LandingHeroNotion />
       <LandingFeatureCards />
