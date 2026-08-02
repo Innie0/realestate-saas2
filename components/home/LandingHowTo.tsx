@@ -3,8 +3,8 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCallback, useRef, useState } from 'react';
-import { useMotionReduced } from '@/lib/motion';
+import { useState } from 'react';
+import { DraggableCardRow } from '@/components/home/DraggableCardRow';
 
 const STEPS = [
   {
@@ -59,7 +59,7 @@ function HowToPanel({ step }: { step: (typeof STEPS)[number] }) {
   return (
     <div
       className={clsx(
-        'box-border flex w-[880px] max-w-[calc(100vw-3rem)] flex-none snap-start flex-col overflow-hidden rounded-[24px] px-12 pt-12 sm:max-w-none',
+        'box-border flex w-[880px] max-w-[calc(100vw-3rem)] flex-none flex-col overflow-hidden rounded-[24px] px-12 pt-12 sm:max-w-none',
         step.dark ? 'bg-[#0A0A0A]' : 'bg-[#EAF2FE]',
       )}
     >
@@ -98,42 +98,6 @@ function HowToPanel({ step }: { step: (typeof STEPS)[number] }) {
 }
 
 export default function LandingHowTo() {
-  const reduced = useMotionReduced();
-  const clipRef = useRef<HTMLDivElement>(null);
-  const dragRef = useRef({ active: false, startX: 0, scrollLeft: 0 });
-  const [dragging, setDragging] = useState(false);
-
-  const handlePointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
-    const clip = clipRef.current;
-    if (!clip || event.button !== 0) return;
-
-    dragRef.current = {
-      active: true,
-      startX: event.clientX,
-      scrollLeft: clip.scrollLeft,
-    };
-    setDragging(true);
-    clip.setPointerCapture(event.pointerId);
-  }, []);
-
-  const handlePointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
-    const clip = clipRef.current;
-    if (!clip || !dragRef.current.active) return;
-
-    event.preventDefault();
-    const deltaX = event.clientX - dragRef.current.startX;
-    clip.scrollLeft = dragRef.current.scrollLeft - deltaX;
-  }, []);
-
-  const endDrag = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
-    const clip = clipRef.current;
-    if (!clip || !dragRef.current.active) return;
-
-    dragRef.current.active = false;
-    setDragging(false);
-    clip.releasePointerCapture(event.pointerId);
-  }, []);
-
   return (
     <section className="relative bg-white pt-10 text-[#111111]">
       <div className="mx-auto max-w-[1120px] px-10">
@@ -149,33 +113,11 @@ export default function LandingHowTo() {
         </p>
       </div>
 
-      {reduced ? (
-        <div className="mx-auto mt-14 flex max-w-[1120px] flex-col gap-7 px-10">
-          {STEPS.map((step) => (
-            <HowToPanel key={step.n} step={step} />
-          ))}
-        </div>
-      ) : (
-        <div
-          ref={clipRef}
-          className={clsx(
-            'mt-14 overflow-x-auto overflow-y-hidden touch-pan-y snap-x snap-mandatory scroll-pl-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
-            dragging ? 'cursor-grabbing select-none' : 'cursor-grab',
-          )}
-          style={{ height: CLIP_H }}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={endDrag}
-          onPointerCancel={endDrag}
-          aria-label="Drag horizontally to browse the three steps"
-        >
-          <div className="flex h-full w-max gap-7 px-10">
-            {STEPS.map((step) => (
-              <HowToPanel key={step.n} step={step} />
-            ))}
-          </div>
-        </div>
-      )}
+      <DraggableCardRow className="mt-14" style={{ height: CLIP_H }} contentClassName="h-full">
+        {STEPS.map((step) => (
+          <HowToPanel key={step.n} step={step} />
+        ))}
+      </DraggableCardRow>
 
       <div className="mx-auto flex max-w-[1120px] flex-wrap items-center gap-5 px-10 pb-[120px] pt-14">
         <Link
