@@ -398,14 +398,14 @@ function TodayPanel({ items }: { items: UpcomingItem[] }) {
                 ? 'border-foreground'
                 : 'border-muted-foreground/40';
             return (
-              <div key={item.id} className="flex gap-3 px-4 py-2 transition-colors hover:bg-muted/40 sm:px-5">
+              <div key={item.id} className="flex gap-3 px-4 py-2.5 transition-colors hover:bg-muted/40 sm:px-5">
                 <span className="w-11 shrink-0 pt-px font-mono text-xs font-medium text-muted-foreground">
                   {timeLabel(item.date)}
                 </span>
-                <div className={clsx('border-l-2 pl-2.5', borderClass)}>
-                  <p className="text-sm font-medium text-foreground">{item.title}</p>
+                <div className={clsx('min-w-0 flex-1 border-l-2 pl-2.5', borderClass)}>
+                  <p className="break-words text-sm font-medium leading-snug text-foreground">{item.title}</p>
                   {(item.description || item.clientName || item.location) && (
-                    <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                    <p className="mt-0.5 break-words text-xs leading-relaxed text-muted-foreground">
                       {item.description || item.clientName || item.location}
                     </p>
                   )}
@@ -835,7 +835,7 @@ export default function DashboardHomePage() {
           <MetricStrip metrics={metrics} />
           <NeedsAttention items={attentionItems} />
 
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,340px)]">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(300px,380px)]">
             <div className="flex min-h-0 min-w-0 flex-col self-stretch">
               <OpenDealsTable transactions={allTransactions} />
             </div>
