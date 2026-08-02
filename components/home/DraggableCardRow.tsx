@@ -3,6 +3,7 @@
 import { motion, useMotionValue } from 'framer-motion';
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import clsx from 'clsx';
+import DragHintBadge from '@/components/home/DragHintBadge';
 import { useMotionReduced } from '@/lib/motion';
 
 type DraggableCardRowProps = {
@@ -23,8 +24,11 @@ export function DraggableCardRow({
   const dragConstraintRef = useRef(0);
   const [dragConstraint, setDragConstraint] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [showHint, setShowHint] = useState(true);
   const prefersReducedMotion = useMotionReduced();
   const x = useMotionValue(0);
+
+  const dismissHint = () => setShowHint(false);
 
   useEffect(() => {
     const updateConstraint = () => {
@@ -62,6 +66,7 @@ export function DraggableCardRow({
       if (Math.abs(event.deltaX) < 0.5) return;
 
       event.preventDefault();
+      dismissHint();
       const next = Math.max(
         dragConstraintRef.current,
         Math.min(0, x.get() - event.deltaX),
@@ -84,10 +89,12 @@ export function DraggableCardRow({
   return (
     <div
       ref={containerRef}
-      className={clsx('overflow-hidden overscroll-x-contain', className)}
+      className={clsx('relative overflow-hidden overscroll-x-contain', className)}
       style={style}
       aria-label="Drag or swipe horizontally to browse cards"
     >
+      <DragHintBadge visible={showHint} isDragging={isDragging} />
+
       <motion.div
         ref={contentRef}
         className={clsx('flex w-max gap-7 px-10', contentClassName)}
@@ -95,7 +102,10 @@ export function DraggableCardRow({
         dragConstraints={{ left: dragConstraint, right: 0 }}
         dragElastic={0.08}
         dragTransition={{ power: 0.3, timeConstant: 250 }}
-        onDragStart={() => setIsDragging(true)}
+        onDragStart={() => {
+          setIsDragging(true);
+          dismissHint();
+        }}
         onDragEnd={() => setIsDragging(false)}
         style={{
           x,
