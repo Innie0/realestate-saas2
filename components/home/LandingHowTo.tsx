@@ -3,7 +3,7 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useMotionReduced } from '@/lib/motion';
 
 const STEPS = [
@@ -34,8 +34,6 @@ const STEPS = [
 ] as const;
 
 const CLIP_H = 760;
-const WRAPPER_H = 1680;
-const TOP_OFFSET = 90;
 
 function PanelMock({ src, fallbackSrc, alt }: { src: string; fallbackSrc: string; alt: string }) {
   const [activeSrc, setActiveSrc] = useState(src);
@@ -46,7 +44,8 @@ function PanelMock({ src, fallbackSrc, alt }: { src: string; fallbackSrc: string
         src={activeSrc}
         alt={alt}
         fill
-        className="object-cover object-top"
+        draggable={false}
+        className="pointer-events-none object-cover object-top select-none"
         sizes="880px"
         onError={() => {
           if (activeSrc !== fallbackSrc) setActiveSrc(fallbackSrc);
@@ -60,7 +59,7 @@ function HowToPanel({ step }: { step: (typeof STEPS)[number] }) {
   return (
     <div
       className={clsx(
-        'box-border flex w-[880px] flex-none flex-col overflow-hidden rounded-[24px] px-12 pt-12',
+        'box-border flex w-[880px] max-w-[calc(100vw-3rem)] flex-none snap-start flex-col overflow-hidden rounded-[24px] px-12 pt-12 sm:max-w-none',
         step.dark ? 'bg-[#0A0A0A]' : 'bg-[#EAF2FE]',
       )}
     >
@@ -100,34 +99,40 @@ function HowToPanel({ step }: { step: (typeof STEPS)[number] }) {
 
 export default function LandingHowTo() {
   const reduced = useMotionReduced();
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const rowRef = useRef<HTMLDivElement>(null);
-  const [y, setY] = useState(0);
-  const [prog, setProg] = useState(0);
-  const [travel, setTravel] = useState(0);
+  const clipRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef({ active: false, startX: 0, scrollLeft: 0 });
+  const [dragging, setDragging] = useState(false);
 
-  useEffect(() => {
-    if (reduced) return;
+  const handlePointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    const clip = clipRef.current;
+    if (!clip || event.button !== 0) return;
 
-    let raf = 0;
-    const loop = () => {
-      const wrap = wrapRef.current;
-      const row = rowRef.current;
-      const clip = row?.parentElement;
-      if (wrap && row && clip) {
-        const rect = wrap.getBoundingClientRect();
-        const vTravel = Math.max(1, rect.height - CLIP_H);
-        const nextY = Math.min(Math.max(-rect.top + TOP_OFFSET, 0), vTravel);
-        setY(nextY);
-        setProg(nextY / vTravel);
-        setTravel(Math.max(0, row.scrollWidth - clip.clientWidth));
-      }
-      raf = requestAnimationFrame(loop);
+    dragRef.current = {
+      active: true,
+      startX: event.clientX,
+      scrollLeft: clip.scrollLeft,
     };
+    setDragging(true);
+    clip.setPointerCapture(event.pointerId);
+  }, []);
 
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, [reduced]);
+  const handlePointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    const clip = clipRef.current;
+    if (!clip || !dragRef.current.active) return;
+
+    event.preventDefault();
+    const deltaX = event.clientX - dragRef.current.startX;
+    clip.scrollLeft = dragRef.current.scrollLeft - deltaX;
+  }, []);
+
+  const endDrag = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    const clip = clipRef.current;
+    if (!clip || !dragRef.current.active) return;
+
+    dragRef.current.active = false;
+    setDragging(false);
+    clip.releasePointerCapture(event.pointerId);
+  }, []);
 
   return (
     <section className="relative bg-white pt-10 text-[#111111]">
@@ -151,23 +156,23 @@ export default function LandingHowTo() {
           ))}
         </div>
       ) : (
-        <div ref={wrapRef} className="relative mt-14" style={{ height: WRAPPER_H }}>
-          <div
-            className="overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            style={{ height: CLIP_H, transform: `translateY(${y}px)` }}
-          >
-            <div
-              ref={rowRef}
-              className="flex h-full gap-7 px-10"
-              style={{
-                transform: `translateX(${-Math.round(prog * travel)}px)`,
-                transition: 'transform 0.12s linear',
-              }}
-            >
-              {STEPS.map((step) => (
-                <HowToPanel key={step.n} step={step} />
-              ))}
-            </div>
+        <div
+          ref={clipRef}
+          className={clsx(
+            'mt-14 overflow-x-auto overflow-y-hidden touch-pan-y snap-x snap-mandatory scroll-pl-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+            dragging ? 'cursor-grabbing select-none' : 'cursor-grab',
+          )}
+          style={{ height: CLIP_H }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          aria-label="Drag horizontally to browse the three steps"
+        >
+          <div className="flex h-full w-max gap-7 px-10">
+            {STEPS.map((step) => (
+              <HowToPanel key={step.n} step={step} />
+            ))}
           </div>
         </div>
       )}
