@@ -1,11 +1,11 @@
 'use client';
 
-import { BarChart2, RefreshCw, UserSearch } from 'lucide-react';
+import { BarChart2, RefreshCw, User } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 
 const TIPS = [
   {
-    icon: UserSearch,
+    icon: User,
     title: 'Verified owner contact',
     description:
       'Pull county-record owner names plus phone and email matches so you can reach out with confidence before a listing appointment.',
