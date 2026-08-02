@@ -7,6 +7,7 @@ import { SITE_DOMAIN, SITE_NAME } from '@/lib/site-config';
 import { useMotionReduced } from '@/lib/motion';
 
 const STICKY_TOP = 120;
+const SEGMENT = 1 / 3;
 
 const STEPS = [
   {
@@ -35,6 +36,24 @@ const STEPS = [
   },
 ] as const;
 
+function StickyPreview({ activeIndex }: { activeIndex: number }) {
+  return (
+    <div className="overflow-hidden rounded-[20px] bg-gradient-to-b from-[#E6F0FE] to-[#CFE3FE] p-5">
+      <div className="relative h-[260px] w-full">
+        {STEPS.map((step, index) => (
+          <ScreenshotPanel
+            key={step.kicker}
+            src={step.src}
+            alt={step.title}
+            url={step.url}
+            active={activeIndex === index}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ScreenshotPanel({
   src,
   alt,
@@ -55,6 +74,7 @@ function ScreenshotPanel({
         opacity: active ? 1 : 0,
         transform: active ? 'translateY(0)' : 'translateY(20px)',
         pointerEvents: active ? 'auto' : 'none',
+        zIndex: active ? 2 : 1,
         transition: 'opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
@@ -62,7 +82,7 @@ function ScreenshotPanel({
         <div className="border-b border-mkt-border bg-white px-3 py-1.5">
           <p className="truncate font-mkt-mono text-[11px] text-[#6B6D76]">{url}</p>
         </div>
-        <div className="relative aspect-[16/9] w-full max-h-[200px] bg-white sm:max-h-[220px]">
+        <div className="relative h-[196px] w-full bg-white">
           {!failed ? (
             <Image
               src={src}
@@ -111,16 +131,6 @@ function ProgressRow({
   );
 }
 
-function InlineScreenshot({ step }: { step: (typeof STEPS)[number] }) {
-  return (
-    <div className="mt-8 overflow-hidden rounded-[20px] bg-gradient-to-b from-[#E6F0FE] to-[#CFE3FE] p-4 lg:hidden">
-      <div className="relative h-[248px]">
-        <ScreenshotPanel src={step.src} alt={step.title} url={step.url} active />
-      </div>
-    </div>
-  );
-}
-
 function StaticStepRow({ step }: { step: (typeof STEPS)[number] }) {
   return (
     <div className="grid gap-8 border-t border-[#EAEAEA] py-12 first:border-t-0 lg:grid-cols-2 lg:items-center">
@@ -144,41 +154,40 @@ function StaticStepRow({ step }: { step: (typeof STEPS)[number] }) {
 
 export default function LandingWhySwitcher() {
   const reduced = useMotionReduced();
+  const sectionRef = useRef<HTMLDivElement>(null);
   const stepRefs = useRef<(HTMLElement | null)[]>([]);
   const [active, setActive] = useState(0);
-  const [barProgress, setBarProgress] = useState<number[]>([0, 0, 0]);
+  const [scrollProg, setScrollProg] = useState(0);
 
   const updateFromScroll = useCallback(() => {
-    const triggerLine = window.innerHeight * 0.42;
-    let nextActive = 0;
-    const nextBars = STEPS.map((_, index) => {
-      const el = stepRefs.current[index];
-      if (!el) return 0;
+    const section = sectionRef.current;
+    if (!section) return;
 
+    const triggerY = window.innerHeight * 0.38;
+    let nextActive = 0;
+
+    stepRefs.current.forEach((el, index) => {
+      if (!el) return;
       const rect = el.getBoundingClientRect();
-      if (rect.top <= triggerLine && rect.bottom > triggerLine) {
-        nextActive = index;
-        const traveled = (triggerLine - rect.top) / Math.max(rect.height, 1);
-        return Math.min(1, Math.max(0, traveled));
-      }
-      if (rect.bottom <= triggerLine) return 1;
-      return 0;
+      if (rect.top <= triggerY) nextActive = index;
     });
 
-    for (let i = STEPS.length - 1; i >= 0; i -= 1) {
-      const el = stepRefs.current[i];
-      if (el && el.getBoundingClientRect().top <= triggerLine) {
-        nextActive = i;
-        break;
-      }
+    const first = stepRefs.current[0];
+    const last = stepRefs.current[STEPS.length - 1];
+    if (first && last) {
+      const sectionTop = first.getBoundingClientRect().top;
+      const sectionBottom = last.getBoundingClientRect().bottom;
+      const span = Math.max(sectionBottom - sectionTop, 1);
+      const progress = (triggerY - sectionTop) / span;
+      setScrollProg(Math.min(1, Math.max(0, progress)));
     }
 
     setActive(nextActive);
-    setBarProgress(nextBars);
   }, []);
 
   useEffect(() => {
     if (reduced) return;
+
     updateFromScroll();
     window.addEventListener('scroll', updateFromScroll, { passive: true });
     window.addEventListener('resize', updateFromScroll);
@@ -188,11 +197,8 @@ export default function LandingWhySwitcher() {
     };
   }, [reduced, updateFromScroll]);
 
-  const segProgress = (index: number) => {
-    if (index < active) return 1;
-    if (index > active) return 0;
-    return barProgress[index] ?? 0;
-  };
+  const segProgress = (index: number) =>
+    Math.min(1, Math.max(0, (scrollProg - index * SEGMENT) / SEGMENT));
 
   return (
     <section className="bg-white text-[#111111]">
@@ -219,16 +225,17 @@ export default function LandingWhySwitcher() {
           ))}
         </div>
       ) : (
-        <div className="mx-auto max-w-mkt-content px-5 pb-24 sm:px-8">
-          <div className="lg:grid lg:grid-cols-2 lg:gap-14 lg:items-start">
-            <div>
+        <div ref={sectionRef} className="mx-auto max-w-mkt-content px-5 pb-24 sm:px-8">
+          {/* Flex + stretch keeps the right rail as tall as the left scroll column. */}
+          <div className="lg:flex lg:items-stretch lg:gap-14">
+            <div className="min-w-0 flex-1">
               {STEPS.map((step, index) => (
                 <article
                   key={step.kicker}
                   ref={(el) => {
                     stepRefs.current[index] = el;
                   }}
-                  className="flex min-h-[72vh] flex-col justify-center py-14 sm:min-h-[68vh] sm:py-16 lg:min-h-[78vh] lg:py-20"
+                  className="flex min-h-[70vh] flex-col justify-center py-16 lg:min-h-[75vh] lg:py-20"
                 >
                   <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
                     {step.kicker}
@@ -239,7 +246,10 @@ export default function LandingWhySwitcher() {
                   <p className="mt-4 max-w-[42ch] text-[18px] leading-[1.55] text-[#6B6D76]">
                     {step.body}
                   </p>
-                  <InlineScreenshot step={step} />
+
+                  <div className="mt-8 lg:hidden">
+                    <StickyPreview activeIndex={index} />
+                  </div>
                 </article>
               ))}
 
@@ -255,26 +265,11 @@ export default function LandingWhySwitcher() {
               </div>
             </div>
 
-            <aside className="hidden lg:block">
-              <div
-                className="sticky flex flex-col"
-                style={{ top: STICKY_TOP }}
-              >
-                <div className="overflow-hidden rounded-[20px] bg-gradient-to-b from-[#E6F0FE] to-[#CFE3FE] p-5">
-                  <div className="relative h-[268px] w-full">
-                    {STEPS.map((step, index) => (
-                      <ScreenshotPanel
-                        key={step.kicker}
-                        src={step.src}
-                        alt={step.title}
-                        url={step.url}
-                        active={active === index}
-                      />
-                    ))}
-                  </div>
-                </div>
+            <div className="relative hidden w-full max-w-[480px] shrink-0 lg:block lg:w-[46%]">
+              <div className="sticky" style={{ top: STICKY_TOP }}>
+                <StickyPreview activeIndex={active} />
               </div>
-            </aside>
+            </div>
           </div>
         </div>
       )}
