@@ -41,12 +41,112 @@ export type PersonaCard = {
   description: string;
 };
 
+export type Testimonial = {
+  id: string;
+  quote: string;
+  name: string;
+  initials: string;
+  role: string;
+  metric: string;
+  metricLabel: string;
+  metric2: string;
+  metricLabel2: string;
+};
+
+export type LandingFeatureCard = {
+  id: string;
+  category: string;
+  headline: string;
+  href: string;
+};
+
+export type LandingToolLink = {
+  id: string;
+  label: string;
+  href: string;
+  icon: LucideIcon;
+};
+
+/** Hero copy — swap headlineAccent to try alternate highlights. */
+export const LANDING_HERO = {
+  headlineLead: 'Where agents',
+  headlineAccent: 'close faster',
+  subheadline:
+    'Listings, leads, clients, and transactions in one workspace — with AI that drafts copy, scores leads, and keeps every deadline on track.',
+};
+
+export const LANDING_FEATURE_CARDS: LandingFeatureCard[] = [
+  {
+    id: 'capture-leads',
+    category: 'Leads & CRM',
+    headline: 'Capture every lead',
+    href: '/products/leads-inbox',
+  },
+  {
+    id: 'draft-listings',
+    category: 'Listings & Research',
+    headline: 'Draft listings instantly',
+    href: '/products/projects',
+  },
+  {
+    id: 'never-miss-deadline',
+    category: 'Transactions & Calendar',
+    headline: 'Never miss a deadline',
+    href: '/products/transactions',
+  },
+];
+
+export const LANDING_TOOL_LINKS: LandingToolLink[] = [
+  { id: 'ads', label: 'Ads campaigns for listings and brand', href: '/products/ads', icon: Megaphone },
+  { id: 'cma', label: 'CMA valuations and property research', href: '/products/property-research', icon: Search },
+  { id: 'ai', label: 'AI Assistant automations and follow-ups', href: '/products/ai-assistant', icon: Sparkles },
+];
+
+export const TESTIMONIALS: Testimonial[] = [
+  {
+    id: '1',
+    quote:
+      'I finally stopped juggling five different tools. Listings, leads, and follow-ups all live in one place — and the AI actually saves me hours every week.',
+    name: 'Sarah Mitchell',
+    initials: 'SM',
+    role: 'Listing Agent · Compass, Austin TX',
+    metric: '5+',
+    metricLabel: 'Hours saved per week',
+    metric2: '5',
+    metricLabel2: 'Apps replaced',
+  },
+  {
+    id: '2',
+    quote:
+      'Open house sign-in alone changed how I work. Every visitor becomes a scored lead in my inbox before I leave the property.',
+    name: 'James Rodriguez',
+    initials: 'JR',
+    role: "Buyer's Agent · RE/MAX, Denver CO",
+    metric: '10+',
+    metricLabel: 'More leads captured',
+    metric2: '0',
+    metricLabel2: 'Missed open house visitors',
+  },
+  {
+    id: '3',
+    quote:
+      "Property research and CMA used to take an hour. Now I pull comps and a price range in one search while I'm still on the call.",
+    name: 'Maria Lopez',
+    initials: 'ML',
+    role: 'Team Lead · Douglas Elliman, Miami FL',
+    metric: '10x',
+    metricLabel: 'Faster listing prep',
+    metric2: '60',
+    metricLabel2: 'Minutes saved per CMA',
+  },
+];
+
 export const SHOWCASE_NARRATIVE = {
   eyebrow: 'How it works',
   headlineLead: 'Close the loop from lead',
   headlineFade: ' to closing',
   subheadline:
-    'Oikaro unifies listings, leads, clients, and deals in one workspace — so every conversation, task, and deadline moves your pipeline forward.',
+    'Realestic unifies listings, leads, clients, and deals in one workspace — so every conversation, task, and deadline moves your pipeline forward.',
 };
 
 export const SHOWCASE_SLIDES: ShowcaseSlide[] = [

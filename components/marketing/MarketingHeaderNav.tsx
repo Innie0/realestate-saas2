@@ -4,6 +4,7 @@ import Link from 'next/link';
 import clsx from 'clsx';
 import ProductsMegaMenu from '@/components/marketing/ProductsMegaMenu';
 import MarketingShimmerCta from '@/components/marketing/MarketingShimmerCta';
+import { SITE_NAME } from '@/lib/site-config';
 
 const NAV_LINK_CLASS =
   'inline-flex items-center px-3 py-2.5 text-[15px] font-medium text-mkt-secondary transition-colors duration-200 hover:text-mkt-foreground';
@@ -30,7 +31,7 @@ export default function MarketingHeaderNav({
           inverted ? 'text-white' : 'text-mkt-foreground',
         )}
       >
-        Oikaro
+        {SITE_NAME}
       </Link>
 
       <nav

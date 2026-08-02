@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import MarketingFooterColumns from '@/components/marketing/MarketingFooterColumns';
+import { SITE_NAME } from '@/lib/site-config';
 
 export default function LandingFooter() {
   return (
-    <footer className="border-t border-mkt-border bg-mkt-background">
+    <footer className="border-t border-mkt-border bg-[#F7F5F1]">
       <div className="mx-auto max-w-mkt-content px-5 py-14 sm:px-8 lg:py-16">
         <MarketingFooterColumns
           brand={
@@ -12,7 +13,7 @@ export default function LandingFooter() {
                 href="/"
                 className="font-display text-3xl font-medium tracking-[-0.03em] text-mkt-foreground transition-opacity hover:opacity-70 sm:text-4xl"
               >
-                Oikaro
+                {SITE_NAME}
               </Link>
               <p className="mt-3 max-w-xs text-sm leading-[1.6] text-mkt-secondary">
                 One workspace for listings, leads, clients, and transactions.

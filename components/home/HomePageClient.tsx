@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import LandingNav from '@/components/home/LandingNav';
-import LandingHeroAttio from '@/components/home/LandingHeroAttio';
-import LandingShowcaseCarousel from '@/components/home/LandingShowcaseCarousel';
-import LandingTrustSection from '@/components/home/LandingTrustSection';
+import LandingHeroNotion from '@/components/home/LandingHeroNotion';
+import LandingFeatureCards from '@/components/home/LandingFeatureCards';
+import LandingTestimonials from '@/components/home/LandingTestimonials';
 import LandingFAQSection from '@/components/home/LandingFAQSection';
 import LandingCTABand from '@/components/home/LandingCTABand';
 import LandingFooter from '@/components/home/LandingFooter';
@@ -13,7 +13,6 @@ import { supabase } from '@/lib/supabase';
 
 export default function HomePageClient() {
   const router = useRouter();
-  const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
@@ -41,11 +40,11 @@ export default function HomePageClient() {
   }, [router]);
 
   return (
-    <div className="marketing-root relative z-[1] min-h-screen overflow-x-hidden bg-mkt-background text-mkt-foreground">
+    <div className="marketing-root relative z-[1] min-h-screen overflow-x-hidden bg-[#F7F5F1] text-mkt-foreground">
       <LandingNav />
-      <LandingHeroAttio sectionRef={heroRef} />
-      <LandingShowcaseCarousel />
-      <LandingTrustSection />
+      <LandingHeroNotion />
+      <LandingFeatureCards />
+      <LandingTestimonials />
       <LandingFAQSection />
       <LandingCTABand />
       <LandingFooter />

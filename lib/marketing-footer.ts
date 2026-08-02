@@ -24,6 +24,12 @@ export const FOOTER_COMPANY_LINKS = [
   { href: '/contact', label: 'Contact' },
 ] as const;
 
+export const FOOTER_RESOURCES_LINKS = [
+  { href: '/for-agents', label: 'For agents' },
+  { href: '/products', label: 'All products' },
+  { href: '/pricing', label: 'Pricing' },
+] as const;
+
 export const FOOTER_LEGAL_LINKS = [
   { href: '/privacy', label: 'Privacy' },
   { href: '/terms', label: 'Terms' },

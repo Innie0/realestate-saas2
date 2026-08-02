@@ -465,17 +465,17 @@ html[data-dashboard-theme='light'] .dashboard-root,
 
   /* Marketing chrome — light white landing (single source of truth: 2026-07-28 rebuild) */
   html:has(.marketing-root) {
-    background-color: #FAFAFA;
+    background-color: #F7F5F1;
     color-scheme: light;
   }
 
   html:has(.marketing-root) body {
-    background-color: #FAFAFA;
+    background-color: #F7F5F1;
   }
 
   .marketing-root {
     color-scheme: light;
-    --mkt-background: #FAFAFA;
+    --mkt-background: #F7F5F1;
     --mkt-surface: #ffffff;
     --mkt-surface-muted: #F4F4F5;
     --mkt-text-primary: #1C1D22;
@@ -495,9 +495,9 @@ html[data-dashboard-theme='light'] .dashboard-root,
     --mkt-tag-blue-text: #28348a;
     --mkt-tag-amber-bg: rgba(245, 158, 11, 0.12);
     --mkt-tag-amber-text: #b45309;
-    --mkt-nav-scrolled-bg: rgba(250, 250, 250, 0.92);
-    --mkt-nav-menu-bg: rgba(250, 250, 250, 0.98);
-    --mkt-nav-transparent-bg: rgba(250, 250, 250, 0);
+    --mkt-nav-scrolled-bg: rgba(247, 245, 241, 0.92);
+    --mkt-nav-menu-bg: rgba(247, 245, 241, 0.98);
+    --mkt-nav-transparent-bg: rgba(247, 245, 241, 0);
     --mkt-nav-transparent-border: rgba(234, 234, 234, 0);
     --mkt-hero-glow: rgba(53, 72, 199, 0.14);
     --mkt-cobalt-gradient: linear-gradient(
