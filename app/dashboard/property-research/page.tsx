@@ -2,18 +2,15 @@
 
 import { useCallback, useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { motion } from 'framer-motion';
 import DashboardPage from '@/components/layout/DashboardPage';
-import Button from '@/components/ui/Button';
+import DetailPageTabNav from '@/components/layout/DetailPageTabNav';
 import { Card } from '@/components/ui/Card';
-import Select from '@/components/ui/Select';
-import AiSearchHero from '@/components/ui/AiSearchHero';
 import EmptyState from '@/components/ui/EmptyState';
-import FilterSidebar from '@/components/layout/FilterSidebar';
 import DataLoadingState from '@/components/dashboard/DataLoadingState';
 import { PropertyResearchPageLoading } from '@/components/dashboard/page-loading';
 import PanelHeader from '@/components/ui/PanelHeader';
 import AnimatedTabPanels from '@/components/motion/AnimatedTabPanels';
+import PropertyResearchSearchCard from '@/components/property-research/PropertyResearchSearchCard';
 import { useApi } from '@/lib/swr';
 import { useTour } from '@/hooks/useTour';
 import { CmaPanel, type CmaAnalysisResult } from '@/components/property-research/CmaPanel';
@@ -26,11 +23,7 @@ import {
   getLocalResearchCache,
   lookupLocalCacheKey,
 } from '@/lib/research-local-cache';
-import {
-  Search, MapPin, Loader2, History, Trash2, X,
-  User, BarChart2, LayoutGrid, Pencil,
-} from 'lucide-react';
-import clsx from 'clsx';
+import { History, Trash2, Pencil, User, BarChart2, LayoutGrid } from 'lucide-react';
 
 type TabId = 'overview' | 'owner' | 'cma';
 
@@ -73,9 +66,6 @@ const TABS: { id: TabId; label: string; icon: React.ElementType }[] = [
   { id: 'cma', label: 'Market / CMA', icon: BarChart2 },
 ];
 
-const inputClass =
-  'w-full rounded-[10px] border border-[var(--border)] bg-[var(--canvas)] text-gray-900 placeholder:text-gray-600 focus:outline-none focus:border-brand-400 text-[13px]';
-
 function PropertyResearchContent() {
   const searchParams = useSearchParams();
   const initialTab = (searchParams.get('tab') as TabId) || 'overview';
@@ -85,7 +75,7 @@ function PropertyResearchContent() {
   const [state, setState] = useState('');
   const [zip, setZip] = useState('');
   const [activeTab, setActiveTab] = useState<TabId>(
-    ['overview', 'owner', 'cma'].includes(initialTab) ? initialTab : 'overview'
+    ['overview', 'owner', 'cma'].includes(initialTab) ? initialTab : 'overview',
   );
   const [lookupTrigger, setLookupTrigger] = useState(0);
   const [cmaTrigger, setCmaTrigger] = useState(0);
@@ -212,7 +202,9 @@ function PropertyResearchContent() {
     setHistory((prev) => {
       const deduped = prev.filter((h) => h.label.toLowerCase() !== entry.label.toLowerCase());
       const updated = [entry, ...deduped].slice(0, MAX_HISTORY);
-      try { localStorage.setItem(HISTORY_KEY, JSON.stringify(updated)); } catch {}
+      try {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
+      } catch {}
       return updated;
     });
   }, [street, city, state, zip, addressLabel]);
@@ -263,16 +255,6 @@ function PropertyResearchContent() {
     if (cachedCma) setCmaTrigger((n) => n + 1);
   };
 
-  const clearForm = () => {
-    setStreet('');
-    setCity('');
-    setState('');
-    setZip('');
-    setLookupData(null);
-    setCmaResult(null);
-    setResearchSearched(false);
-  };
-
   const handleSearchAnother = () => {
     setResearchSearched(false);
   };
@@ -299,142 +281,37 @@ function PropertyResearchContent() {
     <DashboardPage
       title="Property Research"
       subtitle={usageMeta ?? 'Look up owners, property details, and run comp-based CMA'}
-      size="default"
-      inline
-      ambient="tool"
     >
-      {/* Search form — only shown before a search has been run */}
-      {!researchSearched && (
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-          <FilterSidebar
-            title="Filters"
-            className="lg:sticky lg:top-24"
-            groups={[
-              {
-                id: 'location',
-                label: 'Location',
-                icon: MapPin,
-                defaultOpen: true,
-                children: (
-                  <div className="space-y-3">
-                    <div>
-                      <label className="mb-1 block text-[11px] font-medium text-muted-foreground">City</label>
-                      <input
-                        type="text"
-                        value={city}
-                        onChange={(e) => setCity(e.target.value)}
-                        placeholder="Austin"
-                        className={`${inputClass} px-3 py-2`}
-                      />
-                    </div>
-                    <div>
-                      <Select
-                        label="State *"
-                        value={state}
-                        onChange={setState}
-                        placeholder="Select state"
-                        triggerClassName={`${inputClass} py-2`}
-                        options={[
-                          { value: '', label: 'Select state' },
-                          ...US_STATES.map((s) => ({ value: s.value, label: s.label })),
-                        ]}
-                      />
-                    </div>
-                    <div>
-                      <label className="mb-1 block text-[11px] font-medium text-muted-foreground">ZIP</label>
-                      <input
-                        type="text"
-                        value={zip}
-                        onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
-                        placeholder="78701"
-                        className={`${inputClass} px-3 py-2`}
-                      />
-                    </div>
-                  </div>
-                ),
-              },
-              {
-                id: 'history',
-                label: 'Recent searches',
-                icon: History,
-                defaultOpen: history.length > 0,
-                children: history.length === 0 ? (
-                  <p className="text-[12px] text-muted-foreground">No recent searches</p>
-                ) : (
-                  <div className="space-y-1">
-                    {history.map((entry) => (
-                      <button
-                        key={entry.id}
-                        type="button"
-                        onClick={() => loadHistory(entry)}
-                        className="w-full rounded-lg px-2 py-1.5 text-left text-[12px] text-foreground hover:bg-muted/50"
-                      >
-                        {entry.label}
-                      </button>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={clearHistory}
-                      className="mt-1 flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground"
-                    >
-                      <Trash2 className="size-3" /> Clear history
-                    </button>
-                  </div>
-                ),
-              },
-            ]}
-          />
-
-          <Card data-tour="research-search" className="min-w-0 flex-1 border-border p-0 shadow-none">
-            <AiSearchHero
-              headline="Start your property research with AI"
-              description="Enter an address to look up owners, property details, and run a comp-based CMA."
-              placeholder="e.g. 123 W Main Street, Austin, TX"
-              value={street}
-              onChange={setStreet}
-              onSubmit={handleResearchAddress}
-              actionLabel="Research"
-              loading={lookupLoading}
-              disabled={!state}
-              footer={
-                <p className="text-center text-[12px] text-muted-foreground">
-                  Demo: 123 W Main Street, Austin, TX — sample owner + CMA (no real PII).
-                </p>
-              }
-            />
-          </Card>
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-5">
-        {/* Context rail */}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <Card className="p-4">
-            <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600 mb-3">Usage this month</p>
+            <p className="mb-3 font-mono text-[10.5px] uppercase tracking-[0.06em] text-muted-foreground">
+              Usage this month
+            </p>
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[13px] text-gray-600">Lookups</span>
-                <span className="text-[13px] font-medium text-gray-900">{formatUsage(lookupUsage)}</span>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-[13px] text-muted-foreground">Lookups</span>
+                <span className="text-[13px] font-medium text-foreground">{formatUsage(lookupUsage)}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[13px] text-gray-600">CMA runs</span>
-                <span className="text-[13px] font-medium text-gray-900">{formatUsage(cmaUsage)}</span>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-[13px] text-muted-foreground">CMA runs</span>
+                <span className="text-[13px] font-medium text-foreground">{formatUsage(cmaUsage)}</span>
               </div>
             </div>
           </Card>
 
-          <Card data-tour="research-history" className="overflow-hidden">
+          <Card data-tour="research-history" className="overflow-hidden p-0">
             <PanelHeader
-              title="Recent"
+              title="Recent searches"
               meta={history.length > 0 ? `${history.length} saved` : undefined}
               action={
                 history.length > 0 ? (
                   <button
                     type="button"
                     onClick={clearHistory}
-                    className="text-[12px] text-gray-600 hover:text-rose-600 flex items-center gap-1 transition-colors"
+                    className="flex items-center gap-1 text-[12px] text-muted-foreground transition-colors hover:text-rose-600"
                   >
-                    <Trash2 className="w-3.5 h-3.5" /> Clear
+                    <Trash2 className="size-3.5" /> Clear
                   </button>
                 ) : undefined
               }
@@ -447,16 +324,16 @@ function PropertyResearchContent() {
                 className="py-8"
               />
             ) : (
-              <div className="divide-y divide-[var(--border)] max-h-64 overflow-y-auto">
+              <div className="max-h-72 divide-y divide-border overflow-y-auto">
                 {history.map((entry) => (
                   <button
                     key={entry.id}
                     type="button"
                     onClick={() => loadHistory(entry)}
-                    className="w-full text-left px-4 py-3 hover:bg-[var(--canvas)] transition-colors"
+                    className="w-full px-4 py-3 text-left transition-colors hover:bg-muted/40"
                   >
-                    <p className="text-[13px] text-gray-900 truncate">{entry.label}</p>
-                    <p className="text-[11.5px] text-gray-600 mt-0.5">
+                    <p className="break-words text-[13px] font-medium text-foreground">{entry.label}</p>
+                    <p className="mt-0.5 text-[11.5px] text-muted-foreground">
                       {new Date(entry.lookedUpAt).toLocaleDateString()}
                     </p>
                   </button>
@@ -466,126 +343,119 @@ function PropertyResearchContent() {
           </Card>
         </aside>
 
-        {/* Results canvas */}
-        <div className="space-y-4 min-w-0">
-          {lookupLoading && activeTab !== 'owner' && (
-            <Card>
-              <DataLoadingState
-                title="Researching this address"
-                description="Fetching county records and owner contact data. First lookup usually takes 5–10 seconds."
-                className="py-10"
-              />
-            </Card>
-          )}
-
-          {researchSearched && addressLabel && (
-            <motion.div
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-center justify-between gap-3 rounded-[10px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3"
-            >
-              <div>
-                <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-gray-600 mb-0.5">Current property</p>
-                <p className="text-[15px] font-semibold text-gray-900 truncate">{addressLabel}</p>
-              </div>
-              <button
-                type="button"
-                onClick={handleSearchAnother}
-                className="shrink-0 flex items-center gap-1.5 text-[12.5px] font-medium text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                <Pencil className="w-3.5 h-3.5" />
-                Search another
-              </button>
-            </motion.div>
-          )}
-
-          {/* Tab bar + panel share one bordered card (square join per handoff) */}
-          <div className="rounded-[10px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden" data-tour="research-tabs">
-            <div
-              className="flex items-stretch gap-1 bg-[var(--canvas)] p-1 border-b border-[var(--border)]"
-              role="tablist"
-            >
-              {TABS.map(({ id, label, icon: Icon }) => {
-                const isActive = activeTab === id;
-                return (
-                  <button
-                    key={id}
-                    type="button"
-                    role="tab"
-                    aria-selected={isActive}
-                    onClick={() => setActiveTab(id)}
-                    className={clsx(
-                      'flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-[8px] text-[13px] font-medium transition-colors',
-                      isActive
-                        ? 'bg-brand-500 text-[var(--brand-foreground)] shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-[var(--surface)]',
-                    )}
-                  >
-                    <Icon className="w-3.5 h-3.5" strokeWidth={1.9} />
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-
-            <AnimatedTabPanels
-              activeTab={activeTab}
-              panels={[
-                {
-                  id: 'overview',
-                  content: (
-                    <PropertyOverviewCard
-                      addressLabel={addressLabel || 'No address entered'}
-                      person={firstPerson}
-                      cmaResult={cmaResult}
-                      hasLookup={!!firstPerson}
-                      onLookUpOwner={() => {
-                        setActiveTab('owner');
-                        if (!firstPerson) handleLookUp();
-                      }}
-                      onRunCma={() => {
-                        setActiveTab('cma');
-                        if (!cmaResult) handleRunCma();
-                      }}
-                    />
-                  ),
-                },
-                {
-                  id: 'owner',
-                  content: (
-                    <div className="p-5 sm:p-6">
-                      <OwnerContactPanel
-                        street={street}
-                        city={city}
-                        state={state}
-                        zip={zip}
-                        lookupTrigger={lookupTrigger}
-                        initialData={lookupData}
-                        onComplete={handleLookupComplete}
-                        onLoadingChange={setLookupLoading}
-                      />
-                    </div>
-                  ),
-                },
-                {
-                  id: 'cma',
-                  content: (
-                    <div className="p-5 sm:p-6">
-                      <CmaPanel
-                        street={street}
-                        city={city}
-                        state={state}
-                        zip={zip}
-                        runTrigger={cmaTrigger}
-                        initialResult={cmaResult}
-                        onComplete={handleCmaComplete}
-                      />
-                    </div>
-                  ),
-                },
-              ]}
+        <div className="min-w-0 space-y-4">
+          {!researchSearched ? (
+            <PropertyResearchSearchCard
+              street={street}
+              city={city}
+              state={state}
+              zip={zip}
+              states={US_STATES}
+              loading={lookupLoading}
+              onStreetChange={setStreet}
+              onCityChange={setCity}
+              onStateChange={setState}
+              onZipChange={setZip}
+              onSubmit={handleResearchAddress}
             />
-          </div>
+          ) : (
+            <>
+              {addressLabel ? (
+                <div className="flex flex-col gap-3 rounded-[10px] border border-border bg-card px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0">
+                    <p className="mb-0.5 font-mono text-[10.5px] uppercase tracking-[0.06em] text-muted-foreground">
+                      Current property
+                    </p>
+                    <p className="break-words text-[15px] font-semibold text-foreground">{addressLabel}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSearchAnother}
+                    className="inline-flex shrink-0 items-center gap-1.5 self-start text-[12.5px] font-medium text-muted-foreground transition-colors hover:text-foreground sm:self-auto"
+                  >
+                    <Pencil className="size-3.5" />
+                    Search another
+                  </button>
+                </div>
+              ) : null}
+
+              {lookupLoading && activeTab !== 'owner' ? (
+                <Card>
+                  <DataLoadingState
+                    title="Researching this address"
+                    description="Fetching county records and owner contact data. First lookup usually takes 5–10 seconds."
+                    className="py-10"
+                  />
+                </Card>
+              ) : null}
+
+              <Card className="overflow-hidden p-0" data-tour="research-tabs">
+                <DetailPageTabNav
+                  tabs={TABS.map((tab) => ({ id: tab.id, label: tab.label, icon: tab.icon }))}
+                  activeTab={activeTab}
+                  onChange={setActiveTab}
+                  className="px-4 sm:px-5"
+                />
+                <AnimatedTabPanels
+                  activeTab={activeTab}
+                  panels={[
+                    {
+                      id: 'overview',
+                      content: (
+                        <PropertyOverviewCard
+                          addressLabel={addressLabel || 'No address entered'}
+                          person={firstPerson}
+                          cmaResult={cmaResult}
+                          hasLookup={!!firstPerson}
+                          onLookUpOwner={() => {
+                            setActiveTab('owner');
+                            if (!firstPerson) handleLookUp();
+                          }}
+                          onRunCma={() => {
+                            setActiveTab('cma');
+                            if (!cmaResult) handleRunCma();
+                          }}
+                        />
+                      ),
+                    },
+                    {
+                      id: 'owner',
+                      content: (
+                        <div className="p-5 sm:p-[22px]">
+                          <OwnerContactPanel
+                            street={street}
+                            city={city}
+                            state={state}
+                            zip={zip}
+                            lookupTrigger={lookupTrigger}
+                            initialData={lookupData}
+                            onComplete={handleLookupComplete}
+                            onLoadingChange={setLookupLoading}
+                          />
+                        </div>
+                      ),
+                    },
+                    {
+                      id: 'cma',
+                      content: (
+                        <div className="p-5 sm:p-[22px]">
+                          <CmaPanel
+                            street={street}
+                            city={city}
+                            state={state}
+                            zip={zip}
+                            runTrigger={cmaTrigger}
+                            initialResult={cmaResult}
+                            onComplete={handleCmaComplete}
+                          />
+                        </div>
+                      ),
+                    },
+                  ]}
+                />
+              </Card>
+            </>
+          )}
         </div>
       </div>
     </DashboardPage>
