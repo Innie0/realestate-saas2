@@ -1,24 +1,21 @@
 'use client';
 
 import Image from 'next/image';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import BrowserWindowFrame from '@/components/home/BrowserWindowFrame';
+import { ensureGsapRegistered, gsap, ScrollTrigger, useGSAP } from '@/lib/gsap-config';
 import { SITE_DOMAIN, SITE_NAME } from '@/lib/site-config';
 import { useMotionReduced } from '@/lib/motion';
 
+ensureGsapRegistered();
+
 const STICKY_TOP = 120;
 const SEGMENT = 1 / 3;
-const STEP_SLOT = 200;
+const STEP_SLOT = 228;
 
-/** Pixels of page scroll consumed while pinned (one third per step). */
 function getScrollTravel() {
-  if (typeof window === 'undefined') return 900;
-  return Math.round(window.innerHeight * 0.65);
-}
-
-function getPinnedHeight() {
-  if (typeof window === 'undefined') return 520;
-  return Math.max(480, window.innerHeight - STICKY_TOP - 32);
+  if (typeof window === 'undefined') return 960;
+  return Math.round(window.innerHeight * 1);
 }
 
 const STEPS = [
@@ -66,10 +63,10 @@ function ScreenshotPanel({
       className="absolute inset-0 motion-reduce:transition-none"
       style={{
         opacity: active ? 1 : 0,
-        transform: active ? 'translateY(0)' : 'translateY(20px)',
+        transform: active ? 'translateY(0)' : 'translateY(16px)',
         pointerEvents: active ? 'auto' : 'none',
         zIndex: active ? 2 : 1,
-        transition: 'opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+        transition: 'opacity 0.35s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
       <BrowserWindowFrame className="shadow-[var(--mkt-shadow-soft)]">
@@ -119,7 +116,7 @@ function ProgressRow({
           className="h-full origin-left rounded-full bg-[#0668E1] motion-reduce:transition-none"
           style={{
             transform: `scaleX(${progress})`,
-            transition: 'transform 0.15s ease-out',
+            transition: 'transform 0.12s linear',
           }}
         />
       </div>
@@ -150,55 +147,38 @@ function StaticStepRow({ step }: { step: (typeof STEPS)[number] }) {
 
 export default function LandingWhySwitcher() {
   const reduced = useMotionReduced();
-  const wrapRef = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
   const [prog, setProg] = useState(0);
-  const [layout, setLayout] = useState({
-    scrollTravel: 900,
-    pinnedHeight: 520,
-    wrapperHeight: 1420,
-  });
 
-  useEffect(() => {
-    const syncLayout = () => {
-      const scrollTravel = getScrollTravel();
-      const pinnedHeight = getPinnedHeight();
-      setLayout({
-        scrollTravel,
-        pinnedHeight,
-        wrapperHeight: scrollTravel + pinnedHeight,
+  useGSAP(
+    () => {
+      if (reduced || !pinRef.current) return;
+
+      const mm = gsap.matchMedia();
+
+      mm.add('(min-width: 1024px)', () => {
+        const trigger = ScrollTrigger.create({
+          trigger: pinRef.current,
+          start: `top top+=${STICKY_TOP}`,
+          end: () => `+=${getScrollTravel()}`,
+          pin: true,
+          pinSpacing: true,
+          anticipatePin: 1,
+          scrub: 0.35,
+          onUpdate: (self) => setProg(self.progress),
+        });
+
+        return () => trigger.kill();
       });
-    };
-    syncLayout();
-    window.addEventListener('resize', syncLayout);
-    return () => window.removeEventListener('resize', syncLayout);
-  }, []);
 
-  const updateProgress = useCallback(() => {
-    const el = wrapRef.current;
-    if (!el) return;
-
-    const rect = el.getBoundingClientRect();
-    const travel = layout.scrollTravel;
-    const scrolled = Math.min(Math.max(-rect.top + STICKY_TOP, 0), travel);
-    setProg(scrolled / travel);
-  }, [layout.scrollTravel]);
-
-  useEffect(() => {
-    if (reduced) return;
-
-    updateProgress();
-    window.addEventListener('scroll', updateProgress, { passive: true });
-    window.addEventListener('resize', updateProgress);
-    return () => {
-      window.removeEventListener('scroll', updateProgress);
-      window.removeEventListener('resize', updateProgress);
-    };
-  }, [reduced, updateProgress]);
+      return () => mm.revert();
+    },
+    { scope: pinRef, dependencies: [reduced], revertOnUpdate: true },
+  );
 
   const active = prog >= 2 * SEGMENT ? 2 : prog >= SEGMENT ? 1 : 0;
   const segProgress = (index: number) =>
     Math.min(1, Math.max(0, (prog - index * SEGMENT) / SEGMENT));
-
   const textScrollOffset = prog * (STEPS.length - 1) * STEP_SLOT;
 
   return (
@@ -227,70 +207,58 @@ export default function LandingWhySwitcher() {
         </div>
       ) : (
         <>
-          <div
-            ref={wrapRef}
-            className="relative mx-auto hidden max-w-mkt-content px-5 sm:px-8 lg:block"
-            style={{ height: layout.wrapperHeight }}
-          >
-            <div
-              className="sticky mx-auto flex w-full max-w-mkt-content items-center"
-              style={{ top: STICKY_TOP, height: layout.pinnedHeight }}
-            >
-              <div className="grid w-full grid-cols-2 items-center gap-14">
-                <div className="flex min-w-0 flex-col justify-center">
-                  <div className="overflow-hidden" style={{ height: STEP_SLOT }}>
-                    <div
-                      className="will-change-transform motion-reduce:transition-none"
-                      style={{
-                        transform: `translateY(-${textScrollOffset}px)`,
-                        transition: 'transform 0.12s linear',
-                      }}
-                    >
-                      {STEPS.map((step) => (
-                        <div
-                          key={step.kicker}
-                          className="flex flex-col justify-center"
-                          style={{ height: STEP_SLOT }}
-                        >
-                          <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
-                            {step.kicker}
-                          </p>
-                          <h3 className="mt-3 max-w-[18ch] text-[clamp(26px,3vw,36px)] font-semibold leading-[1.08] tracking-[-0.035em] text-[#111111]">
-                            {step.title}
-                          </h3>
-                          <p className="mt-3 max-w-[42ch] text-[17px] leading-[1.55] text-[#6B6D76]">
-                            {step.body}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mt-4 border-t border-[#EAEAEA] pt-1">
-                    {STEPS.map((step, index) => (
-                      <ProgressRow
+          <div ref={pinRef} className="mx-auto hidden max-w-mkt-content px-5 sm:px-8 lg:block">
+            <div className="grid grid-cols-2 items-center gap-14 py-2">
+              <div className="flex min-w-0 flex-col justify-center">
+                <div className="overflow-hidden" style={{ height: STEP_SLOT }}>
+                  <div
+                    className="will-change-transform"
+                    style={{ transform: `translateY(-${textScrollOffset}px)` }}
+                  >
+                    {STEPS.map((step) => (
+                      <div
                         key={step.kicker}
-                        label={step.label}
-                        progress={segProgress(index)}
-                        isFirst={index === 0}
-                      />
+                        className="flex flex-col justify-center"
+                        style={{ height: STEP_SLOT }}
+                      >
+                        <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
+                          {step.kicker}
+                        </p>
+                        <h3 className="mt-3 max-w-[18ch] text-[clamp(26px,3vw,36px)] font-semibold leading-[1.08] tracking-[-0.035em] text-[#111111]">
+                          {step.title}
+                        </h3>
+                        <p className="mt-3 max-w-[42ch] text-[17px] leading-[1.55] text-[#6B6D76]">
+                          {step.body}
+                        </p>
+                      </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="flex items-center justify-end">
-                  <div className="w-full max-w-[480px] overflow-hidden rounded-[20px] bg-gradient-to-b from-[#E6F0FE] to-[#CFE3FE] p-5">
-                    <div className="relative h-[260px] w-full">
-                      {STEPS.map((step, index) => (
-                        <ScreenshotPanel
-                          key={step.kicker}
-                          src={step.src}
-                          alt={step.title}
-                          url={step.url}
-                          active={active === index}
-                        />
-                      ))}
-                    </div>
+                <div className="mt-4 border-t border-[#EAEAEA] pt-1">
+                  {STEPS.map((step, index) => (
+                    <ProgressRow
+                      key={step.kicker}
+                      label={step.label}
+                      progress={segProgress(index)}
+                      isFirst={index === 0}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end">
+                <div className="w-full max-w-[480px] overflow-hidden rounded-[20px] bg-gradient-to-b from-[#E6F0FE] to-[#CFE3FE] p-5">
+                  <div className="relative h-[260px] w-full">
+                    {STEPS.map((step, index) => (
+                      <ScreenshotPanel
+                        key={step.kicker}
+                        src={step.src}
+                        alt={step.title}
+                        url={step.url}
+                        active={active === index}
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
