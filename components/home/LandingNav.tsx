@@ -10,7 +10,8 @@ import { useMotionReduced } from '@/lib/motion';
 ensureGsapRegistered();
 
 const NAV_BLUE = '#0668E1';
-const NAV_BLUE_HERO = '#0452AD';
+/** Headline within this distance of the nav bar triggers the solid header. */
+const HERO_TEXT_NEAR_OFFSET = 120;
 
 export default function LandingNav() {
   const reduced = useMotionReduced();
@@ -18,7 +19,7 @@ export default function LandingNav() {
   const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkNav, setDarkNav] = useState(false);
-  const [nearHeroText, setNearHeroText] = useState(true);
+  const [solidNavBlue, setSolidNavBlue] = useState(false);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -36,9 +37,10 @@ export default function LandingNav() {
       const headline = document.getElementById('landing-hero-headline');
       if (headline) {
         const navHeight = getLandingNavHeight();
-        setNearHeroText(headline.getBoundingClientRect().bottom > navHeight + 12);
+        const headlineTop = headline.getBoundingClientRect().top;
+        setSolidNavBlue(headlineTop <= navHeight + HERO_TEXT_NEAR_OFFSET);
       } else {
-        setNearHeroText(y < 520);
+        setSolidNavBlue(y > 80);
       }
     };
 
@@ -66,7 +68,6 @@ export default function LandingNav() {
   );
 
   const onHeroBlue = !darkNav;
-  const navBlue = onHeroBlue && nearHeroText ? NAV_BLUE_HERO : NAV_BLUE;
 
   return (
     <header
@@ -80,7 +81,11 @@ export default function LandingNav() {
             : 'border-mkt-border bg-white text-mkt-foreground',
         hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0',
       )}
-      style={onHeroBlue ? { backgroundColor: navBlue } : undefined}
+      style={
+        onHeroBlue
+          ? { backgroundColor: solidNavBlue ? NAV_BLUE : 'transparent' }
+          : undefined
+      }
     >
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <div className="flex h-[var(--mkt-nav-height)] items-center">
