@@ -9,15 +9,12 @@ import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
 
-const HERO_NAV_SCROLL_MAX = 640;
-
 export default function LandingNav() {
   const reduced = useMotionReduced();
   const navRef = useRef<HTMLElement>(null);
   const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkNav, setDarkNav] = useState(false);
-  const [heroNav, setHeroNav] = useState(true);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -31,7 +28,6 @@ export default function LandingNav() {
       lastScrollY.current = y;
 
       setDarkNav(isConnectToolsNavDark());
-      setHeroNav(y < HERO_NAV_SCROLL_MAX);
     };
 
     onScroll();
@@ -57,7 +53,7 @@ export default function LandingNav() {
     { scope: navRef, dependencies: [reduced] },
   );
 
-  const onHeroBlue = heroNav && !darkNav;
+  const onHeroBlue = !darkNav;
 
   return (
     <header
