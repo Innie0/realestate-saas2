@@ -150,7 +150,6 @@ export default function LandingWhySwitcher() {
   const triggerRef = useRef<HTMLDivElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
   const [prog, setProg] = useState(0);
-  const [pastPin, setPastPin] = useState(false);
 
   useGSAP(
     () => {
@@ -172,8 +171,6 @@ export default function LandingWhySwitcher() {
             setProg(self.progress);
             if (pinRef.current) pinRef.current.style.zIndex = self.isActive ? '1' : '0';
           },
-          onLeave: () => setPastPin(true),
-          onEnterBack: () => setPastPin(false),
         });
 
         return () => st.kill();
@@ -216,12 +213,7 @@ export default function LandingWhySwitcher() {
       ) : (
         <>
           <div ref={triggerRef} className="relative z-0 mx-auto hidden max-w-mkt-content px-5 sm:px-8 lg:block">
-            <div
-              ref={pinRef}
-              className={`w-full bg-white transition-opacity duration-200 ${
-                pastPin ? 'pointer-events-none opacity-0' : 'opacity-100'
-              }`}
-            >
+            <div ref={pinRef} className="w-full bg-white">
               <div className="grid grid-cols-2 items-start gap-14">
                 <div className="flex min-w-0 flex-col justify-center">
                 <div className="overflow-hidden" style={{ height: STEP_SLOT }}>
