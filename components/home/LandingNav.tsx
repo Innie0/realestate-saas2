@@ -11,20 +11,22 @@ ensureGsapRegistered();
 
 const NAV_BLUE = '#0668E1';
 const NAV_BLUE_HERO = '#0452AD';
-const HERO_TEXT_NEAR_OFFSET = 120;
+const HERO_SCROLL_MIN = 40;
+const HERO_TEXT_NEAR_OFFSET = 32;
 
 type HeroNavBg = 'transparent' | 'hero' | 'solid';
 
 function getHeroNavBackground(headline: HTMLElement | null, scrollY: number): HeroNavBg {
-  if (!headline) return scrollY > 80 ? 'solid' : 'transparent';
+  if (scrollY < HERO_SCROLL_MIN) return 'transparent';
+
+  if (!headline) return 'solid';
 
   const navHeight = getLandingNavHeight();
   const { top, bottom } = headline.getBoundingClientRect();
-  const nearHeroText = top <= navHeight + HERO_TEXT_NEAR_OFFSET;
 
-  if (!nearHeroText) return 'transparent';
-  if (bottom > navHeight) return 'hero';
-  return 'solid';
+  if (top <= navHeight + HERO_TEXT_NEAR_OFFSET && bottom > navHeight) return 'hero';
+  if (bottom <= navHeight) return 'solid';
+  return 'transparent';
 }
 
 export default function LandingNav() {
