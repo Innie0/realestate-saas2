@@ -34,6 +34,7 @@ export default function LandingHeroFade() {
       >
         <div className="mx-auto max-w-mkt-content px-5 pb-[230px] pt-[calc(var(--mkt-nav-height)+4.5rem)] sm:px-8 sm:pt-[calc(var(--mkt-nav-height)+5.5rem)]">
           <h1
+            id="landing-hero-headline"
             className={clsx(
               'mx-auto max-w-[15ch] font-semibold leading-[0.9] tracking-[-0.055em] text-white',
               ENTRANCE,
