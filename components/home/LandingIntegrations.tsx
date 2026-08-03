@@ -2,7 +2,6 @@
 
 import clsx from 'clsx';
 import Image from 'next/image';
-import Link from 'next/link';
 import { SITE_NAME } from '@/lib/site-config';
 import { useMotionReduced } from '@/lib/motion';
 
@@ -60,12 +59,7 @@ export default function LandingIntegrations() {
       <section className="relative overflow-hidden bg-white px-5 pb-[130px] text-[#111111] sm:px-8">
         <div className="mx-auto max-w-[1120px] pt-24">
           <div className="flex flex-col items-center text-center">
-            <div className="inline-flex items-center gap-2.5 rounded-full border border-[#EAEAEA] px-4 py-2 font-mkt-mono text-[11.5px] font-medium tracking-[0.14em] text-[#6B6D76]">
-              <span className="inline-block size-1.5 rounded-full bg-[#0668E1]" aria-hidden />
-              INTEGRATIONS
-            </div>
-
-            <h2 className="font-display mt-[34px] max-w-[17ch] text-[64px] font-extrabold leading-[1.02] tracking-[-0.038em] text-[#111111]">
+            <h2 className="font-display max-w-[17ch] text-[64px] font-extrabold leading-[1.02] tracking-[-0.038em] text-[#111111]">
               Fits the tools you already run on
             </h2>
 
@@ -111,14 +105,6 @@ export default function LandingIntegrations() {
                 </div>
               </div>
             </div>
-
-            <Link
-              href="/products"
-              className="mt-10 inline-flex items-center gap-2.5 text-[17px] font-semibold text-[#111111] transition-colors hover:text-[#0668E1]"
-            >
-              Explore integrations
-              <span aria-hidden>→</span>
-            </Link>
           </div>
         </div>
       </section>
