@@ -10,8 +10,22 @@ import { useMotionReduced } from '@/lib/motion';
 ensureGsapRegistered();
 
 const NAV_BLUE = '#0668E1';
-/** Headline within this distance of the nav bar triggers the solid header. */
+const NAV_BLUE_HERO = '#0452AD';
 const HERO_TEXT_NEAR_OFFSET = 120;
+
+type HeroNavBg = 'transparent' | 'hero' | 'solid';
+
+function getHeroNavBackground(headline: HTMLElement | null, scrollY: number): HeroNavBg {
+  if (!headline) return scrollY > 80 ? 'solid' : 'transparent';
+
+  const navHeight = getLandingNavHeight();
+  const { top, bottom } = headline.getBoundingClientRect();
+  const nearHeroText = top <= navHeight + HERO_TEXT_NEAR_OFFSET;
+
+  if (!nearHeroText) return 'transparent';
+  if (bottom > navHeight) return 'hero';
+  return 'solid';
+}
 
 export default function LandingNav() {
   const reduced = useMotionReduced();
@@ -19,7 +33,7 @@ export default function LandingNav() {
   const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkNav, setDarkNav] = useState(false);
-  const [solidNavBlue, setSolidNavBlue] = useState(false);
+  const [heroNavBg, setHeroNavBg] = useState<HeroNavBg>('transparent');
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -35,13 +49,7 @@ export default function LandingNav() {
       setDarkNav(isConnectToolsNavDark());
 
       const headline = document.getElementById('landing-hero-headline');
-      if (headline) {
-        const navHeight = getLandingNavHeight();
-        const headlineTop = headline.getBoundingClientRect().top;
-        setSolidNavBlue(headlineTop <= navHeight + HERO_TEXT_NEAR_OFFSET);
-      } else {
-        setSolidNavBlue(y > 80);
-      }
+      setHeroNavBg(getHeroNavBackground(headline, y));
     };
 
     onScroll();
@@ -68,6 +76,8 @@ export default function LandingNav() {
   );
 
   const onHeroBlue = !darkNav;
+  const heroNavBackground =
+    heroNavBg === 'hero' ? NAV_BLUE_HERO : heroNavBg === 'solid' ? NAV_BLUE : 'transparent';
 
   return (
     <header
@@ -81,11 +91,7 @@ export default function LandingNav() {
             : 'border-mkt-border bg-white text-mkt-foreground',
         hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0',
       )}
-      style={
-        onHeroBlue
-          ? { backgroundColor: solidNavBlue ? NAV_BLUE : 'transparent' }
-          : undefined
-      }
+      style={onHeroBlue ? { backgroundColor: heroNavBackground } : undefined}
     >
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <div className="flex h-[var(--mkt-nav-height)] items-center">
