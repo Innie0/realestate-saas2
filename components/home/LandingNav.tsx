@@ -16,17 +16,35 @@ const HERO_TEXT_NEAR_OFFSET = 32;
 
 type HeroNavBg = 'transparent' | 'hero' | 'solid';
 
-function getHeroNavBackground(headline: HTMLElement | null, scrollY: number): HeroNavBg {
-  if (scrollY < HERO_SCROLL_MIN) return 'transparent';
+function resolveHeroNavBackground(
+  headline: HTMLElement | null,
+  scrollY: number,
+  latched: boolean,
+): { bg: HeroNavBg; latched: boolean } {
+  if (scrollY < HERO_SCROLL_MIN) {
+    return { bg: 'transparent', latched: false };
+  }
 
-  if (!headline) return 'solid';
+  if (latched) {
+    return { bg: 'solid', latched: true };
+  }
+
+  if (!headline) {
+    return { bg: 'solid', latched: true };
+  }
 
   const navHeight = getLandingNavHeight();
   const { top, bottom } = headline.getBoundingClientRect();
 
-  if (top <= navHeight + HERO_TEXT_NEAR_OFFSET && bottom > navHeight) return 'hero';
-  if (bottom <= navHeight) return 'solid';
-  return 'transparent';
+  if (bottom <= navHeight) {
+    return { bg: 'solid', latched: true };
+  }
+
+  if (top <= navHeight + HERO_TEXT_NEAR_OFFSET) {
+    return { bg: 'hero', latched: false };
+  }
+
+  return { bg: 'transparent', latched: false };
 }
 
 export default function LandingNav() {
@@ -36,6 +54,7 @@ export default function LandingNav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkNav, setDarkNav] = useState(false);
   const [heroNavBg, setHeroNavBg] = useState<HeroNavBg>('transparent');
+  const heroNavLatchedRef = useRef(false);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -51,7 +70,13 @@ export default function LandingNav() {
       setDarkNav(isConnectToolsNavDark());
 
       const headline = document.getElementById('landing-hero-headline');
-      setHeroNavBg(getHeroNavBackground(headline, y));
+      const { bg, latched } = resolveHeroNavBackground(
+        headline,
+        y,
+        heroNavLatchedRef.current,
+      );
+      heroNavLatchedRef.current = latched;
+      setHeroNavBg(bg);
     };
 
     onScroll();
