@@ -36,7 +36,7 @@ export default function LandingHeroFade() {
           <h1
             id="landing-hero-headline"
             className={clsx(
-              'mx-auto max-w-[15ch] font-semibold leading-[0.9] tracking-[-0.055em] text-white',
+              'font-display mx-auto max-w-[15ch] font-extrabold leading-[0.9] tracking-[-0.055em] text-white',
               ENTRANCE,
               !reduced && '[animation-delay:0ms]',
             )}

@@ -40,8 +40,9 @@ module.exports = {
   			],
   			display: [
   				'var(--font-display)',
-  				'Georgia',
-  				'serif'
+  				'ui-sans-serif',
+  				'system-ui',
+  				'sans-serif'
   			]
   		},
   		fontSize: {

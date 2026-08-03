@@ -75,7 +75,7 @@ function HowToPanel({ step }: { step: (typeof STEPS)[number] }) {
         <div className="flex-1">
           <h3
             className={clsx(
-              'text-[56px] font-semibold leading-[0.98] tracking-[-0.045em]',
+              'font-display text-[56px] font-extrabold leading-[0.98] tracking-[-0.045em]',
               step.dark ? 'text-white' : 'text-[#0668E1]',
             )}
           >
@@ -104,7 +104,7 @@ export default function LandingHowTo() {
         <p className="font-mkt-mono text-[13px] font-semibold tracking-[0.22em] text-[#0668E1]">
           HOW TO
         </p>
-        <h2 className="mt-[34px] max-w-[24ch] text-[64px] font-semibold leading-[1.04] tracking-[-0.048em] text-[#111111]">
+        <h2 className="font-display mt-[34px] max-w-[24ch] text-[64px] font-extrabold leading-[1.04] tracking-[-0.048em] text-[#111111]">
           From first inquiry to closed deal, and beyond
         </h2>
         <p className="mt-[30px] max-w-[48ch] text-[19.5px] leading-[1.6] text-[#6B6D76]">

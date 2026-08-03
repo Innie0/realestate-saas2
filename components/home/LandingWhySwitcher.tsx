@@ -131,7 +131,7 @@ function StaticStepRow({ step }: { step: (typeof STEPS)[number] }) {
         <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
           {step.kicker}
         </p>
-        <h3 className="mt-4 text-[32px] font-semibold leading-[1.08] tracking-[-0.035em] text-[#111111]">
+        <h3 className="font-display mt-4 text-[32px] font-bold leading-[1.08] tracking-[-0.035em] text-[#111111]">
           {step.title}
         </h3>
         <p className="mt-4 text-[18px] leading-[1.55] text-[#6B6D76]">{step.body}</p>
@@ -196,7 +196,7 @@ export default function LandingWhySwitcher() {
           WHY {SITE_NAME.toUpperCase()}
         </p>
         <h2
-          className="mt-4 max-w-[22ch] font-semibold leading-[1.06] tracking-[-0.045em] text-[#111111]"
+          className="font-display mt-4 max-w-[22ch] font-extrabold leading-[1.06] tracking-[-0.045em] text-[#111111]"
           style={{ fontSize: 'clamp(40px, 5vw, 60px)' }}
         >
           {SITE_NAME} is your real estate workspace
@@ -238,7 +238,7 @@ export default function LandingWhySwitcher() {
                         <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
                           {step.kicker}
                         </p>
-                        <h3 className="mt-3 max-w-[18ch] text-[clamp(26px,3vw,36px)] font-semibold leading-[1.08] tracking-[-0.035em] text-[#111111]">
+                        <h3 className="font-display mt-3 max-w-[18ch] text-[clamp(26px,3vw,36px)] font-bold leading-[1.08] tracking-[-0.035em] text-[#111111]">
                           {step.title}
                         </h3>
                         <p className="mt-3 max-w-[42ch] text-[17px] leading-[1.55] text-[#6B6D76]">
@@ -287,7 +287,7 @@ export default function LandingWhySwitcher() {
                   <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
                     {step.kicker}
                   </p>
-                  <h3 className="mt-3 text-[28px] font-semibold leading-[1.08] tracking-[-0.035em] text-[#111111]">
+                  <h3 className="font-display mt-3 text-[28px] font-bold leading-[1.08] tracking-[-0.035em] text-[#111111]">
                     {step.title}
                   </h3>
                   <p className="mt-3 text-[17px] leading-[1.55] text-[#6B6D76]">{step.body}</p>

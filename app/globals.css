@@ -444,15 +444,15 @@ html[data-dashboard-theme='light'] .dashboard-root,
     stroke-width: 1.75;
   }
 
-  /* Dashboard workspace — Geist sans body; Space Grotesk display (matches marketing) */
+  /* Dashboard workspace — Geist sans body; Plus Jakarta Sans display headlines */
   .dashboard-root {
     font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   }
 
   .dashboard-root .font-display,
   .dashboard-root .dashboard-page-title {
-    font-family: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
-    font-weight: 600;
+    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
     letter-spacing: -0.03em;
   }
 
@@ -589,9 +589,9 @@ html[data-dashboard-theme='light'] .dashboard-root,
 
   .marketing-root .font-display,
   .marketing-root .font-mkt-display {
-    font-family: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.03em;
+    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.035em;
   }
 
   .marketing-root .font-mkt-serif {
