@@ -6,8 +6,6 @@ import LandingNav from '@/components/home/LandingNav';
 import LandingHeroFade from '@/components/home/LandingHeroFade';
 import LandingWhySwitcher from '@/components/home/LandingWhySwitcher';
 import LandingHowTo from '@/components/home/LandingHowTo';
-import LandingFeatureCards from '@/components/home/LandingFeatureCards';
-import LandingTestimonials from '@/components/home/LandingTestimonials';
 import LandingFAQSection from '@/components/home/LandingFAQSection';
 import LandingCTABand from '@/components/home/LandingCTABand';
 import LandingFooter from '@/components/home/LandingFooter';
@@ -47,8 +45,6 @@ export default function HomePageClient() {
       <LandingHeroFade />
       <LandingWhySwitcher />
       <LandingHowTo />
-      <LandingFeatureCards />
-      <LandingTestimonials />
       <LandingFAQSection />
       <LandingCTABand />
       <LandingFooter />
