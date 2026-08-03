@@ -99,7 +99,7 @@ function HowToPanel({ step }: { step: (typeof STEPS)[number] }) {
 
 export default function LandingHowTo() {
   return (
-    <section className="relative bg-white pt-10 text-[#111111]">
+    <section className="relative bg-white pt-16 text-[#111111] sm:pt-20 lg:pt-28">
       <div className="mx-auto max-w-[1120px] px-10">
         <p className="font-mkt-mono text-[13px] font-semibold tracking-[0.22em] text-[#0668E1]">
           HOW TO
@@ -113,7 +113,7 @@ export default function LandingHowTo() {
         </p>
       </div>
 
-      <DraggableCardRow className="mt-14" style={{ height: CLIP_H }} contentClassName="h-full">
+      <DraggableCardRow className="mt-20 lg:mt-28" style={{ height: CLIP_H }} contentClassName="h-full">
         {STEPS.map((step) => (
           <HowToPanel key={step.n} step={step} />
         ))}

@@ -187,7 +187,7 @@ export default function LandingWhySwitcher() {
   const textScrollOffset = prog * (STEPS.length - 1) * STEP_SLOT;
 
   return (
-    <section className="relative isolate bg-white pb-0 text-[#111111]">
+    <section className="relative isolate bg-white pb-16 text-[#111111] sm:pb-20 lg:pb-28">
       <div className="mx-auto max-w-mkt-content px-5 pb-6 pt-20 sm:px-8 sm:pb-8 lg:pt-24">
         <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
           WHY {SITE_NAME.toUpperCase()}
@@ -212,7 +212,7 @@ export default function LandingWhySwitcher() {
         </div>
       ) : (
         <>
-          <div ref={triggerRef} className="relative z-0 mx-auto hidden max-w-mkt-content px-5 sm:px-8 lg:block">
+          <div ref={triggerRef} className="relative z-0 mx-auto hidden max-w-mkt-content px-5 pb-12 sm:px-8 lg:block lg:pb-20">
             <div ref={pinRef} className="w-full bg-white">
               <div className="grid grid-cols-2 items-start gap-14">
                 <div className="flex min-w-0 flex-col justify-center">
@@ -272,7 +272,7 @@ export default function LandingWhySwitcher() {
             </div>
           </div>
 
-          <div className="pb-12 lg:hidden">
+          <div className="pb-16 sm:pb-20 lg:hidden">
             <div className="mx-auto max-w-mkt-content space-y-12 px-5 sm:px-8">
               {STEPS.map((step) => (
                 <div key={step.kicker}>
