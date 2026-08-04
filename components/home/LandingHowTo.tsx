@@ -6,12 +6,50 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { DraggableCardRow } from '@/components/home/DraggableCardRow';
 
+type PanelTheme = 'light' | 'deep' | 'brand';
+
+const PANEL_THEMES: Record<
+  PanelTheme,
+  {
+    background: string;
+    number: string;
+    title: string;
+    body: string;
+    mockShell?: string;
+    mockShadow: string;
+  }
+> = {
+  light: {
+    background: 'linear-gradient(180deg,#F5F9FF 0%,#EAF2FE 52%,#DCEBFE 100%)',
+    number: 'text-[#0668E1]/35',
+    title: 'text-[#0452AD]',
+    body: 'text-[#6B6D76]',
+    mockShadow: 'shadow-[0_-6px_50px_-20px_rgba(6,104,225,0.22)]',
+  },
+  deep: {
+    background: 'linear-gradient(180deg,#022654 0%,#0452AD 58%,#0668E1 100%)',
+    number: 'text-white/35',
+    title: 'text-white',
+    body: 'text-white/65',
+    mockShell:
+      'rounded-t-[16px] border border-dashed border-white/25 bg-[#0668E1]/20 p-1.5 backdrop-blur-[1px]',
+    mockShadow: 'shadow-[0_-6px_50px_-20px_rgba(0,0,0,0.35)]',
+  },
+  brand: {
+    background: 'linear-gradient(145deg,#0668E1 0%,#2E86FB 58%,#0668E1 100%)',
+    number: 'text-white/35',
+    title: 'text-white',
+    body: 'text-white/72',
+    mockShadow: 'shadow-[0_-8px_56px_-18px_rgba(2,38,84,0.45)]',
+  },
+};
+
 const STEPS = [
   {
     n: '01',
     title: 'Capture',
     body: 'Open-house sign-ins, website forms, and portal inquiries all land in one inbox — deduped, scored, and attached to the property they asked about.',
-    dark: false,
+    theme: 'light' as const,
     src: '/landing/leads-inbox.png',
     fallbackSrc: '/landing/leads-inbox.png',
   },
@@ -19,7 +57,7 @@ const STEPS = [
     n: '02',
     title: 'Qualify',
     body: 'Oikaro reads the history and tells you who is actually ready. Draft the follow-up, book the showing, and log the call without leaving the row.',
-    dark: true,
+    theme: 'deep' as const,
     src: '/landing/lead-detail.png',
     fallbackSrc: '/landing/lead-capture.png',
   },
@@ -27,7 +65,7 @@ const STEPS = [
     n: '03',
     title: 'Close',
     body: 'Every deadline, document, and signature tracked to closing day — with reminders that fire before the escrow officer has to ask.',
-    dark: false,
+    theme: 'brand' as const,
     src: '/landing/transactions.png',
     fallbackSrc: '/landing/transactions.png',
   },
@@ -35,11 +73,28 @@ const STEPS = [
 
 const CLIP_H = 760;
 
-function PanelMock({ src, fallbackSrc, alt }: { src: string; fallbackSrc: string; alt: string }) {
+function PanelMock({
+  src,
+  fallbackSrc,
+  alt,
+  theme,
+}: {
+  src: string;
+  fallbackSrc: string;
+  alt: string;
+  theme: PanelTheme;
+}) {
   const [activeSrc, setActiveSrc] = useState(src);
+  const styles = PANEL_THEMES[theme];
 
-  return (
-    <div className="relative mt-[38px] min-h-[300px] flex-1 overflow-hidden rounded-t-[14px] bg-white shadow-[0_-6px_50px_-20px_rgba(0,0,0,0.35)]">
+  const mock = (
+    <div
+      className={clsx(
+        'relative min-h-[300px] flex-1 overflow-hidden rounded-t-[14px] bg-white',
+        !styles.mockShell && 'mt-[38px]',
+        styles.mockShadow,
+      )}
+    >
       <Image
         src={activeSrc}
         alt={alt}
@@ -53,21 +108,25 @@ function PanelMock({ src, fallbackSrc, alt }: { src: string; fallbackSrc: string
       />
     </div>
   );
+
+  if (!styles.mockShell) return mock;
+
+  return <div className={clsx('mt-[38px] flex-1', styles.mockShell)}>{mock}</div>;
 }
 
 function HowToPanel({ step }: { step: (typeof STEPS)[number] }) {
+  const styles = PANEL_THEMES[step.theme];
+
   return (
     <div
-      className={clsx(
-        'box-border flex w-[880px] max-w-[calc(100vw-3rem)] flex-none flex-col overflow-hidden rounded-[24px] px-12 pt-12 sm:max-w-none',
-        step.dark ? 'bg-[#0A0A0A]' : 'bg-[#EAF2FE]',
-      )}
+      className="box-border flex w-[880px] max-w-[calc(100vw-3rem)] flex-none flex-col overflow-hidden rounded-[24px] px-12 pt-12 sm:max-w-none"
+      style={{ background: styles.background }}
     >
       <div className="flex h-[210px] flex-none items-start gap-[22px]">
         <span
           className={clsx(
             'flex-none font-mkt-mono text-[34px] font-semibold leading-none tracking-[-0.03em]',
-            step.dark ? 'text-white/30' : 'text-[#0668E1]/30',
+            styles.number,
           )}
         >
           ({step.n})
@@ -76,23 +135,23 @@ function HowToPanel({ step }: { step: (typeof STEPS)[number] }) {
           <h3
             className={clsx(
               'font-display text-[56px] font-extrabold leading-[0.98] tracking-[-0.045em]',
-              step.dark ? 'text-white' : 'text-[#0668E1]',
+              styles.title,
             )}
           >
             {step.title}
           </h3>
-          <p
-            className={clsx(
-              'mt-[18px] max-w-[44ch] text-[17px] leading-[1.6]',
-              step.dark ? 'text-white/60' : 'text-[#6B6D76]',
-            )}
-          >
+          <p className={clsx('mt-[18px] max-w-[44ch] text-[17px] leading-[1.6]', styles.body)}>
             {step.body}
           </p>
         </div>
       </div>
 
-      <PanelMock src={step.src} fallbackSrc={step.fallbackSrc} alt={step.title} />
+      <PanelMock
+        src={step.src}
+        fallbackSrc={step.fallbackSrc}
+        alt={step.title}
+        theme={step.theme}
+      />
     </div>
   );
 }
@@ -113,11 +172,21 @@ export default function LandingHowTo() {
         </p>
       </div>
 
-      <DraggableCardRow className="mt-20 lg:mt-28" style={{ height: CLIP_H }} contentClassName="h-full">
-        {STEPS.map((step) => (
-          <HowToPanel key={step.n} step={step} />
-        ))}
-      </DraggableCardRow>
+      <div className="relative mt-20 lg:mt-28">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white via-[#F5F9FF] to-white"
+        />
+        <DraggableCardRow
+          className="relative z-[1]"
+          style={{ height: CLIP_H }}
+          contentClassName="h-full"
+        >
+          {STEPS.map((step) => (
+            <HowToPanel key={step.n} step={step} />
+          ))}
+        </DraggableCardRow>
+      </div>
 
       <div className="mx-auto flex max-w-[1120px] flex-wrap items-center gap-5 px-10 pb-[120px] pt-14">
         <Link
