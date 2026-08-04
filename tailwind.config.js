@@ -344,7 +344,7 @@ module.exports = {
   			}
   		},
   		animation: {
-  			marquee: 'marquee 40s linear infinite'
+  			marquee: 'marquee var(--duration, 40s) linear infinite'
   		}
   	}
   },

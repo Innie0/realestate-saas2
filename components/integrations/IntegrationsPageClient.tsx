@@ -2,19 +2,23 @@
 
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import clsx from 'clsx';
 import MarketingSubpageHeader from '@/components/marketing/MarketingSubpageHeader';
 import MarketingSubpageFooter from '@/components/marketing/MarketingSubpageFooter';
 import LandingStaggerReveal from '@/components/home/LandingStaggerReveal';
+import { Marquee } from '@/components/ui/marquee';
 import { IntegrationLogo } from '@/components/home/IntegrationLogos';
 import { getCategoryLabel, getIntegrationsFlat, type Integration } from '@/lib/integrations';
 import { SITE_NAME } from '@/lib/site-config';
 
-function IntegrationCard({ integration }: { integration: Integration }) {
+function IntegrationCard({ integration, className }: { integration: Integration; className?: string }) {
   return (
     <Link
-      data-reveal
       href={`/integrations/${integration.slug}`}
-      className="group flex flex-col gap-4 rounded-mkt-card border border-mkt-border bg-mkt-surface p-6 shadow-[0_1px_2px_rgba(28,29,34,0.03),0_6px_16px_-12px_rgba(28,29,34,0.10)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#0668E1]/40 hover:shadow-[var(--mkt-shadow-soft)]"
+      className={clsx(
+        'group flex w-[280px] shrink-0 flex-col gap-4 rounded-mkt-card border border-mkt-border bg-mkt-surface p-6 shadow-[0_1px_2px_rgba(28,29,34,0.03),0_6px_16px_-12px_rgba(28,29,34,0.10)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#0668E1]/40 hover:shadow-[var(--mkt-shadow-soft)]',
+        className,
+      )}
     >
       <div className="flex items-start justify-between gap-3">
         <span className="flex size-14 shrink-0 items-center justify-center rounded-xl border border-mkt-border bg-mkt-surface-muted">
@@ -75,16 +79,20 @@ export default function IntegrationsPageClient() {
           </div>
         </section>
 
-        <section className="bg-white pb-16 pt-4 lg:pb-20 lg:pt-6">
-          <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
-            <LandingStaggerReveal stagger={0.04}>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {getIntegrationsFlat().map((integration) => (
-                  <IntegrationCard key={integration.slug} integration={integration} />
-                ))}
-              </div>
-            </LandingStaggerReveal>
-          </div>
+        <section className="relative bg-white pb-16 pt-4 lg:pb-20 lg:pt-6">
+          <Marquee pauseOnHover className="[--duration:34s] [--gap:1rem] py-2">
+            {getIntegrationsFlat().map((integration) => (
+              <IntegrationCard key={integration.slug} integration={integration} />
+            ))}
+          </Marquee>
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-white to-transparent sm:w-32"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-white to-transparent sm:w-32"
+          />
         </section>
 
         <section className="bg-mkt-surface-muted py-16 lg:py-20">
