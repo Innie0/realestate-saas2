@@ -82,9 +82,10 @@ export function BackgroundGradientGlow({
 }
 
 /** Outer gradient frame + screenshot chrome — keep heights in sync across breakpoints. */
-export const PREVIEW_FRAME_PADDING = 24;
-export const PREVIEW_URL_BAR_HEIGHT = 28;
-export const PREVIEW_IMAGE_HEIGHT = 196;
+export const PREVIEW_MAX_WIDTH = 580;
+export const PREVIEW_FRAME_PADDING = 32;
+export const PREVIEW_URL_BAR_HEIGHT = 32;
+export const PREVIEW_IMAGE_HEIGHT = 280;
 export const PREVIEW_BROWSER_CHROME = 32;
 
 export const PREVIEW_CARD_HEIGHT =

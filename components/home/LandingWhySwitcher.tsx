@@ -8,6 +8,7 @@ import {
   PREVIEW_CARD_HEIGHT,
   PREVIEW_FRAME_PADDING,
   PREVIEW_IMAGE_HEIGHT,
+  PREVIEW_MAX_WIDTH,
 } from '@/components/ui/background-gradient-glow';
 import { ensureGsapRegistered, gsap, ScrollTrigger, useGSAP } from '@/lib/gsap-config';
 import { SITE_DOMAIN, SITE_NAME } from '@/lib/site-config';
@@ -81,7 +82,7 @@ function ScreenshotPanel({
       }}
     >
       <div
-        className="relative w-full overflow-hidden rounded-[24px]"
+        className="relative w-full overflow-hidden rounded-[28px]"
         style={{ padding: PREVIEW_FRAME_PADDING }}
       >
         <BackgroundGradientGlow variant={glow} />
@@ -99,7 +100,7 @@ function ScreenshotPanel({
                   alt={alt}
                   fill
                   className="object-cover object-top"
-                  sizes="(min-width: 1024px) 480px, 100vw"
+                  sizes="(min-width: 1024px) 580px, 100vw"
                   onError={() => setFailed(true)}
                 />
               ) : (
@@ -279,8 +280,8 @@ export default function LandingWhySwitcher() {
 
               <div className="flex items-start justify-end">
                 <div
-                  className="relative w-full max-w-[480px]"
-                  style={{ height: PREVIEW_CARD_HEIGHT }}
+                  className="relative w-full"
+                  style={{ maxWidth: PREVIEW_MAX_WIDTH, height: PREVIEW_CARD_HEIGHT }}
                 >
                   {STEPS.map((step, index) => (
                     <ScreenshotPanel
