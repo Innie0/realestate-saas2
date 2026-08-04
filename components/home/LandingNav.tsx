@@ -9,7 +9,7 @@ import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
 
-const HEADER_BLUE = 'var(--header-blue)';
+const NAV_BLUE = '#0668E1';
 const NAV_BLUE_HERO = '#0452AD';
 const HERO_SCROLL_MIN = 40;
 const HERO_TEXT_NEAR_OFFSET = 32;
@@ -104,7 +104,7 @@ export default function LandingNav() {
 
   const onHeroBlue = !darkNav;
   const heroNavBackground =
-    heroNavBg === 'hero' ? NAV_BLUE_HERO : heroNavBg === 'solid' ? HEADER_BLUE : 'transparent';
+    heroNavBg === 'hero' ? NAV_BLUE_HERO : heroNavBg === 'solid' ? NAV_BLUE : 'transparent';
 
   return (
     <header

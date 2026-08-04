@@ -159,7 +159,7 @@ function HowToPanel({ step }: { step: (typeof STEPS)[number] }) {
 export default function LandingHowTo() {
   return (
     <section className="relative bg-white pt-16 text-[#111111] sm:pt-20 lg:pt-28">
-      <div className="relative z-[1] mx-auto max-w-[1120px] px-10">
+      <div className="mx-auto max-w-[1120px] px-10">
         <p className="font-mkt-mono text-[13px] font-semibold tracking-[0.22em] text-[#0668E1]">
           HOW TO
         </p>
@@ -173,7 +173,10 @@ export default function LandingHowTo() {
       </div>
 
       <div className="relative mt-20 lg:mt-28">
-        <div className="section-ambient-glow" aria-hidden />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white via-[#F5F9FF] to-white"
+        />
         <DraggableCardRow
           className="relative z-[1]"
           style={{ height: CLIP_H }}
@@ -185,7 +188,7 @@ export default function LandingHowTo() {
         </DraggableCardRow>
       </div>
 
-      <div className="relative z-[1] mx-auto flex max-w-[1120px] flex-wrap items-center gap-5 px-10 pb-[120px] pt-14">
+      <div className="mx-auto flex max-w-[1120px] flex-wrap items-center gap-5 px-10 pb-[120px] pt-14">
         <Link
           href="/auth/signup"
           className="inline-flex h-[52px] items-center rounded-[10px] bg-[#0668E1] px-[26px] text-[15.5px] font-semibold text-white transition-colors hover:bg-[#0450b0]"
