@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import MarketingSubpageHeader from '@/components/marketing/MarketingSubpageHeader';
 import MarketingSubpageFooter from '@/components/marketing/MarketingSubpageFooter';
 import { IntegrationLogo } from '@/components/home/IntegrationLogos';
-import type { Integration } from '@/lib/integrations';
+import { INTEGRATION_CATEGORIES, type Integration } from '@/lib/integrations';
 import { SITE_NAME } from '@/lib/site-config';
 
 type IntegrationDetailClientProps = {
@@ -13,8 +13,10 @@ type IntegrationDetailClientProps = {
 };
 
 export default function IntegrationDetailClient({ integration }: IntegrationDetailClientProps) {
+  const category = INTEGRATION_CATEGORIES.find((c) => c.id === integration.category);
+
   return (
-    <div className="marketing-root min-h-screen bg-white font-sans text-mkt-foreground">
+    <div className="marketing-root min-h-screen bg-white text-mkt-foreground">
       <MarketingSubpageHeader background="white" />
 
       <main>
@@ -32,7 +34,12 @@ export default function IntegrationDetailClient({ integration }: IntegrationDeta
               <span className="mx-auto flex size-14 items-center justify-center rounded-2xl border border-mkt-border bg-mkt-surface">
                 <IntegrationLogo id={integration.logo} className="h-7 w-7" />
               </span>
-              <h1 className="font-display mt-6 text-4xl font-extrabold tracking-[-0.03em] text-mkt-foreground sm:text-5xl">
+              {category ? (
+                <p className="font-mkt-mono mt-5 text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
+                  {category.label}
+                </p>
+              ) : null}
+              <h1 className="font-display mt-3 text-4xl font-extrabold tracking-[-0.03em] text-mkt-foreground sm:text-5xl">
                 {integration.name}
               </h1>
               <p className="mt-5 text-lg leading-[1.6] text-mkt-secondary">
