@@ -3,11 +3,24 @@
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 import BrowserWindowFrame from '@/components/home/BrowserWindowFrame';
+import { GradientMesh, type GradientMeshProps } from '@/components/ui/gradient-mesh';
 import { ensureGsapRegistered, gsap, ScrollTrigger, useGSAP } from '@/lib/gsap-config';
 import { SITE_DOMAIN, SITE_NAME } from '@/lib/site-config';
 import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
+
+type StepMeshConfig = Pick<
+  GradientMeshProps,
+  'colors' | 'distortion' | 'swirl' | 'scale' | 'offsetX' | 'offsetY' | 'rotation' | 'grain'
+>;
+
+const STATIC_MESH: Pick<GradientMeshProps, 'animated' | 'speed' | 'waveSpeed' | 'waveAmp'> = {
+  animated: false,
+  speed: 0,
+  waveSpeed: 0,
+  waveAmp: 0,
+};
 
 const STICKY_TOP = 120;
 const SEGMENT = 1 / 3;
@@ -26,6 +39,16 @@ const STEPS = [
     src: '/landing/projects.png',
     url: `${SITE_DOMAIN}/dashboard/projects`,
     label: '01 Listings',
+    mesh: {
+      colors: ['#0668E1', '#A8CCFE', '#FFFFFF'],
+      distortion: 4,
+      swirl: 0.28,
+      scale: 1.25,
+      offsetX: 0.12,
+      offsetY: -0.15,
+      rotation: 0.35,
+      grain: 0.035,
+    } satisfies StepMeshConfig,
   },
   {
     kicker: 'LEADS',
@@ -34,6 +57,16 @@ const STEPS = [
     src: '/landing/leads-inbox.png',
     url: `${SITE_DOMAIN}/dashboard/leads`,
     label: '02 Leads',
+    mesh: {
+      colors: ['#0452AD', '#7FB4FD', '#EAF2FE'],
+      distortion: 6,
+      swirl: 0.72,
+      scale: 1.08,
+      offsetX: -0.18,
+      offsetY: 0.08,
+      rotation: 1.15,
+      grain: 0.05,
+    } satisfies StepMeshConfig,
   },
   {
     kicker: 'TRANSACTIONS',
@@ -42,6 +75,16 @@ const STEPS = [
     src: '/landing/transactions.png',
     url: `${SITE_DOMAIN}/dashboard/transactions`,
     label: '03 Transactions',
+    mesh: {
+      colors: ['#2E86FB', '#DCEBFE', '#FFFFFF'],
+      distortion: 5,
+      swirl: 1.05,
+      scale: 0.92,
+      offsetX: 0.06,
+      offsetY: 0.14,
+      rotation: 2.35,
+      grain: 0.03,
+    } satisfies StepMeshConfig,
   },
 ] as const;
 
@@ -50,11 +93,13 @@ function ScreenshotPanel({
   alt,
   url,
   active,
+  mesh,
 }: {
   src: string;
   alt: string;
   url: string;
   active: boolean;
+  mesh: StepMeshConfig;
 }) {
   const [failed, setFailed] = useState(false);
 
@@ -69,30 +114,35 @@ function ScreenshotPanel({
         transition: 'opacity 0.35s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
-      <BrowserWindowFrame className="shadow-[var(--mkt-shadow-soft)]">
-        <div className="border-b border-mkt-border bg-white px-3 py-1.5">
-          <p className="truncate font-mkt-mono text-[11px] text-[#6B6D76]">{url}</p>
-        </div>
-        <div className="relative h-[196px] w-full bg-white">
-          {!failed ? (
-            <Image
-              src={src}
-              alt={alt}
-              fill
-              className="object-cover object-top"
-              sizes="(min-width: 1024px) 480px, 100vw"
-              onError={() => setFailed(true)}
-            />
-          ) : (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-6 text-center">
-              <p className="mb-2 font-mkt-mono text-[11px] font-medium uppercase tracking-[0.12em] text-[#6B6D76]">
-                Screenshot
-              </p>
-              <p className="max-w-[220px] text-sm font-medium text-[#111111]">{alt}</p>
+      <div className="relative h-full w-full overflow-hidden rounded-[20px]">
+        <GradientMesh {...STATIC_MESH} {...mesh} />
+        <div className="relative z-[1] h-full p-4">
+          <BrowserWindowFrame className="shadow-[var(--mkt-shadow-soft)]">
+            <div className="border-b border-mkt-border bg-white px-3 py-1.5">
+              <p className="truncate font-mkt-mono text-[11px] text-[#6B6D76]">{url}</p>
             </div>
-          )}
+            <div className="relative h-[196px] w-full bg-white">
+              {!failed ? (
+                <Image
+                  src={src}
+                  alt={alt}
+                  fill
+                  className="object-cover object-top"
+                  sizes="(min-width: 1024px) 480px, 100vw"
+                  onError={() => setFailed(true)}
+                />
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-6 text-center">
+                  <p className="mb-2 font-mkt-mono text-[11px] font-medium uppercase tracking-[0.12em] text-[#6B6D76]">
+                    Screenshot
+                  </p>
+                  <p className="max-w-[220px] text-sm font-medium text-[#111111]">{alt}</p>
+                </div>
+              )}
+            </div>
+          </BrowserWindowFrame>
         </div>
-      </BrowserWindowFrame>
+      </div>
     </div>
   );
 }
@@ -136,10 +186,14 @@ function StaticStepRow({ step }: { step: (typeof STEPS)[number] }) {
         </h3>
         <p className="mt-4 text-[18px] leading-[1.55] text-[#6B6D76]">{step.body}</p>
       </div>
-      <div className="overflow-hidden rounded-[20px] bg-gradient-to-b from-[#E6F0FE] to-[#CFE3FE] p-4">
-        <div className="relative h-[248px]">
-          <ScreenshotPanel src={step.src} alt={step.title} url={step.url} active />
-        </div>
+      <div className="relative h-[248px]">
+        <ScreenshotPanel
+          src={step.src}
+          alt={step.title}
+          url={step.url}
+          mesh={step.mesh}
+          active
+        />
       </div>
     </div>
   );
@@ -254,18 +308,17 @@ export default function LandingWhySwitcher() {
               </div>
 
               <div className="flex items-start justify-end">
-                <div className="w-full max-w-[480px] overflow-hidden rounded-[20px] bg-gradient-to-b from-[#E6F0FE] to-[#CFE3FE] p-5">
-                  <div className="relative h-[260px] w-full">
-                    {STEPS.map((step, index) => (
-                      <ScreenshotPanel
-                        key={step.kicker}
-                        src={step.src}
-                        alt={step.title}
-                        url={step.url}
-                        active={active === index}
-                      />
-                    ))}
-                  </div>
+                <div className="relative h-[260px] w-full max-w-[480px]">
+                  {STEPS.map((step, index) => (
+                    <ScreenshotPanel
+                      key={step.kicker}
+                      src={step.src}
+                      alt={step.title}
+                      url={step.url}
+                      mesh={step.mesh}
+                      active={active === index}
+                    />
+                  ))}
                 </div>
               </div>
               </div>
@@ -283,10 +336,14 @@ export default function LandingWhySwitcher() {
                     {step.title}
                   </h3>
                   <p className="mt-3 text-[17px] leading-[1.55] text-[#6B6D76]">{step.body}</p>
-                  <div className="mt-6 overflow-hidden rounded-[20px] bg-gradient-to-b from-[#E6F0FE] to-[#CFE3FE] p-4">
-                    <div className="relative h-[248px]">
-                      <ScreenshotPanel src={step.src} alt={step.title} url={step.url} active />
-                    </div>
+                  <div className="relative mt-6 h-[248px]">
+                    <ScreenshotPanel
+                      src={step.src}
+                      alt={step.title}
+                      url={step.url}
+                      mesh={step.mesh}
+                      active
+                    />
                   </div>
                 </div>
               ))}
