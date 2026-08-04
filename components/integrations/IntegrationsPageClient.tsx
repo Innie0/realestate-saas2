@@ -44,7 +44,7 @@ export default function IntegrationsPageClient() {
             <LandingStaggerReveal className="mx-auto max-w-2xl text-center">
               <p
                 data-reveal
-                className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-mkt-accent"
+                className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]"
               >
                 INTEGRATIONS
               </p>
@@ -97,7 +97,7 @@ export default function IntegrationsPageClient() {
             </p>
             <div className="mt-7">
               <Link href="/contact">
-                <span className="inline-flex items-center gap-2 rounded-mkt-button bg-mkt-accent px-6 py-3 text-sm font-medium text-mkt-accent-foreground transition-colors hover:bg-mkt-accent-hover">
+                <span className="inline-flex items-center gap-2 rounded-mkt-button bg-[#0668E1] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#0450b0]">
                   Request an integration
                 </span>
               </Link>

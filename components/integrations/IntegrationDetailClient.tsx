@@ -47,7 +47,7 @@ export default function IntegrationDetailClient({ integration }: IntegrationDeta
               </p>
               <div className="mt-8">
                 <Link href="/auth/signup">
-                  <span className="inline-flex items-center gap-2 rounded-mkt-button bg-mkt-accent px-6 py-3 text-sm font-medium text-mkt-accent-foreground transition-colors hover:bg-mkt-accent-hover">
+                  <span className="inline-flex items-center gap-2 rounded-mkt-button bg-[#0668E1] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#0450b0]">
                     Get started free
                     <ArrowRight className="h-4 w-4" />
                   </span>
