@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 
 export const LANDING_TYPING_EXAMPLES = [
   'Generate a listing description for 456 Oak Ave',
-  'Find leads in Austin with a hot score',
   'Run a CMA for 123 Maple St',
   'Draft a follow-up email for Sarah Chen',
   'Schedule a showing for tomorrow at 2pm',
