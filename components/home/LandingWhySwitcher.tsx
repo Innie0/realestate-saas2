@@ -3,32 +3,12 @@
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 import BrowserWindowFrame from '@/components/home/BrowserWindowFrame';
-import { GradientMesh, type GradientMeshProps } from '@/components/ui/gradient-mesh';
+import { BackgroundGradientGlow } from '@/components/ui/background-gradient-glow';
 import { ensureGsapRegistered, gsap, ScrollTrigger, useGSAP } from '@/lib/gsap-config';
 import { SITE_DOMAIN, SITE_NAME } from '@/lib/site-config';
 import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
-
-type StepMeshConfig = Pick<
-  GradientMeshProps,
-  | 'colors'
-  | 'baseColor'
-  | 'distortion'
-  | 'swirl'
-  | 'scale'
-  | 'offsetX'
-  | 'offsetY'
-  | 'rotation'
-  | 'grain'
->;
-
-const STATIC_MESH: Pick<GradientMeshProps, 'animated' | 'speed' | 'waveSpeed' | 'waveAmp'> = {
-  animated: false,
-  speed: 0,
-  waveSpeed: 0,
-  waveAmp: 0,
-};
 
 const STICKY_TOP = 120;
 const SEGMENT = 1 / 3;
@@ -47,17 +27,7 @@ const STEPS = [
     src: '/landing/projects.png',
     url: `${SITE_DOMAIN}/dashboard/projects`,
     label: '01 Listings',
-    mesh: {
-      baseColor: '#0452AD',
-      colors: ['#0452AD', '#0668E1', '#C8DFF8'],
-      distortion: 5,
-      swirl: 0.42,
-      scale: 1.12,
-      offsetX: 0.08,
-      offsetY: -0.06,
-      rotation: 0.55,
-      grain: 0.012,
-    } satisfies StepMeshConfig,
+    glow: 'listings' as const,
   },
   {
     kicker: 'LEADS',
@@ -66,17 +36,7 @@ const STEPS = [
     src: '/landing/leads-inbox.png',
     url: `${SITE_DOMAIN}/dashboard/leads`,
     label: '02 Leads',
-    mesh: {
-      baseColor: '#0668E1',
-      colors: ['#0668E1', '#0452AD', '#2E86FB'],
-      distortion: 5.5,
-      swirl: 0.78,
-      scale: 1.05,
-      offsetX: -0.12,
-      offsetY: 0.04,
-      rotation: 1.35,
-      grain: 0.012,
-    } satisfies StepMeshConfig,
+    glow: 'leads' as const,
   },
   {
     kicker: 'TRANSACTIONS',
@@ -85,17 +45,7 @@ const STEPS = [
     src: '/landing/transactions.png',
     url: `${SITE_DOMAIN}/dashboard/transactions`,
     label: '03 Transactions',
-    mesh: {
-      baseColor: '#0452AD',
-      colors: ['#0452AD', '#2E86FB', '#0668E1'],
-      distortion: 6,
-      swirl: 1.12,
-      scale: 0.98,
-      offsetX: 0.04,
-      offsetY: 0.1,
-      rotation: 2.1,
-      grain: 0.01,
-    } satisfies StepMeshConfig,
+    glow: 'transactions' as const,
   },
 ] as const;
 
@@ -104,13 +54,13 @@ function ScreenshotPanel({
   alt,
   url,
   active,
-  mesh,
+  glow,
 }: {
   src: string;
   alt: string;
   url: string;
   active: boolean;
-  mesh: StepMeshConfig;
+  glow: (typeof STEPS)[number]['glow'];
 }) {
   const [failed, setFailed] = useState(false);
 
@@ -126,7 +76,7 @@ function ScreenshotPanel({
       }}
     >
       <div className="relative h-full w-full overflow-hidden rounded-[20px]">
-        <GradientMesh {...STATIC_MESH} {...mesh} />
+        <BackgroundGradientGlow variant={glow} />
         <div className="relative z-[1] h-full p-4">
           <BrowserWindowFrame className="shadow-[var(--mkt-shadow-soft)]">
             <div className="border-b border-mkt-border bg-white px-3 py-1.5">
@@ -202,7 +152,7 @@ function StaticStepRow({ step }: { step: (typeof STEPS)[number] }) {
           src={step.src}
           alt={step.title}
           url={step.url}
-          mesh={step.mesh}
+          glow={step.glow}
           active
         />
       </div>
@@ -326,7 +276,7 @@ export default function LandingWhySwitcher() {
                       src={step.src}
                       alt={step.title}
                       url={step.url}
-                      mesh={step.mesh}
+                      glow={step.glow}
                       active={active === index}
                     />
                   ))}
@@ -352,7 +302,7 @@ export default function LandingWhySwitcher() {
                       src={step.src}
                       alt={step.title}
                       url={step.url}
-                      mesh={step.mesh}
+                      glow={step.glow}
                       active
                     />
                   </div>
