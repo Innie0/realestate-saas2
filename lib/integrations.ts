@@ -87,3 +87,12 @@ export function getAllIntegrationSlugs(): string[] {
 export function getIntegrationsByCategory(categoryId: IntegrationCategoryId): Integration[] {
   return INTEGRATIONS.filter((integration) => integration.category === categoryId);
 }
+
+export function getCategoryLabel(categoryId: IntegrationCategoryId): string {
+  return INTEGRATION_CATEGORIES.find((category) => category.id === categoryId)?.label ?? '';
+}
+
+/** All integrations, grouped by category order but flattened into a single list for grid display. */
+export function getIntegrationsFlat(): Integration[] {
+  return INTEGRATION_CATEGORIES.flatMap((category) => getIntegrationsByCategory(category.id));
+}
