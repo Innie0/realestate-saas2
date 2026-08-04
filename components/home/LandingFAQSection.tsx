@@ -10,12 +10,69 @@ function FAQItem({
   answer,
   isOpen,
   onToggle,
+  card = false,
 }: {
   question: string;
   answer: string;
   isOpen: boolean;
   onToggle: () => void;
+  card?: boolean;
 }) {
+  const toggleIcon = (
+    <span
+      className={clsx(
+        'flex size-9 shrink-0 items-center justify-center rounded-full text-lg leading-none tabular-nums transition-colors',
+        card
+          ? 'border border-white/25 bg-white/10 text-white group-hover:border-white/40 group-hover:bg-white/[0.16]'
+          : 'mt-0.5 text-white/60',
+      )}
+      aria-hidden
+    >
+      {isOpen ? '−' : '+'}
+    </span>
+  );
+
+  const answerBlock = (
+    <div
+      className={clsx(
+        'grid transition-[grid-template-rows] duration-300 ease-out',
+        isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+      )}
+    >
+      <div className="overflow-hidden">
+        <p
+          className={clsx(
+            'text-base leading-[1.65] text-white/75',
+            card ? 'pt-4' : 'pb-6 pr-8',
+          )}
+        >
+          {answer}
+        </p>
+      </div>
+    </div>
+  );
+
+  if (card) {
+    return (
+      <div
+        data-reveal
+        className="group rounded-[18px] bg-white/10 p-7 transition-colors hover:bg-white/[0.14] sm:p-8"
+      >
+        <button
+          type="button"
+          onClick={onToggle}
+          className="flex w-full items-start justify-between gap-5 text-left"
+        >
+          <span className="text-lg font-semibold leading-snug text-white sm:text-[19px]">
+            {question}
+          </span>
+          {toggleIcon}
+        </button>
+        {answerBlock}
+      </div>
+    );
+  }
+
   return (
     <div data-reveal className="border-b border-white/15">
       <button
@@ -24,23 +81,9 @@ function FAQItem({
         className="flex w-full items-start justify-between gap-6 py-6 text-left transition-colors hover:opacity-80"
       >
         <span className="text-base font-medium leading-snug text-white">{question}</span>
-        <span
-          className="mt-0.5 shrink-0 text-lg leading-none tabular-nums text-white/60"
-          aria-hidden
-        >
-          {isOpen ? '−' : '+'}
-        </span>
+        {toggleIcon}
       </button>
-      <div
-        className={clsx(
-          'grid transition-[grid-template-rows] duration-300 ease-out',
-          isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
-        )}
-      >
-        <div className="overflow-hidden">
-          <p className="pb-6 pr-8 text-base leading-[1.65] text-white/75">{answer}</p>
-        </div>
-      </div>
+      {answerBlock}
     </div>
   );
 }
@@ -68,13 +111,15 @@ export default function LandingFAQSection() {
 
         <LandingStaggerReveal className="mx-auto max-w-2xl" stagger={0.05}>
           {MARKETING_FAQ_ITEMS.map((item, index) => (
-            <FAQItem
-              key={item.question}
-              question={item.question}
-              answer={item.answer}
-              isOpen={openIndex === index}
-              onToggle={() => setOpenIndex(openIndex === index ? null : index)}
-            />
+            <div key={item.question} className={index === 0 ? 'mb-5' : undefined}>
+              <FAQItem
+                question={item.question}
+                answer={item.answer}
+                isOpen={openIndex === index}
+                onToggle={() => setOpenIndex(openIndex === index ? null : index)}
+                card={index === 0}
+              />
+            </div>
           ))}
         </LandingStaggerReveal>
       </div>
