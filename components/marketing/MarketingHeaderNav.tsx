@@ -14,12 +14,15 @@ type MarketingHeaderNavProps = {
   inverted?: boolean;
   /** Blue hero bar: mono wordmark, white sign-in pill, black trial CTA */
   heroFade?: boolean;
+  /** 'blue' uses the header brand blue for the trial CTA instead of the default black. */
+  ctaColor?: 'default' | 'blue';
 };
 
 export default function MarketingHeaderNav({
   onProductsMenuChange,
   inverted = false,
   heroFade = false,
+  ctaColor = 'default',
 }: MarketingHeaderNavProps) {
   const navLinkClass = inverted
     ? 'inline-flex items-center px-3 py-2.5 text-[15px] font-medium text-white/75 transition-colors duration-200 hover:text-white'
@@ -79,7 +82,7 @@ export default function MarketingHeaderNav({
             <Link href="/auth/login" className={`${navLinkClass} hidden sm:inline-flex`}>
               Sign in
             </Link>
-            <MarketingShimmerCta href="/auth/signup" inverted={inverted} size="lg">
+            <MarketingShimmerCta href="/auth/signup" inverted={inverted} color={ctaColor} size="lg">
               Start free trial
             </MarketingShimmerCta>
           </>

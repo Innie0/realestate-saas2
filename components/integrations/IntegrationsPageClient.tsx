@@ -36,11 +36,19 @@ function IntegrationCard({ integration }: { integration: Integration }) {
 export default function IntegrationsPageClient() {
   return (
     <div className="marketing-root min-h-screen bg-white text-mkt-foreground">
-      <MarketingSubpageHeader background="white" />
+      <MarketingSubpageHeader background="white" ctaColor="blue" />
 
       <main>
-        <section className="border-b border-mkt-border bg-white py-16 lg:py-24">
-          <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
+        <section className="relative overflow-hidden bg-white py-16 lg:py-24">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-0 h-[420px] w-[720px] -translate-x-1/2 -translate-y-1/3 rounded-full"
+            style={{
+              background: 'radial-gradient(circle, rgba(6,104,225,0.28) 0%, rgba(6,104,225,0) 70%)',
+              filter: 'blur(90px)',
+            }}
+          />
+          <div className="relative z-[1] mx-auto max-w-mkt-content px-5 sm:px-8">
             <LandingStaggerReveal className="mx-auto max-w-2xl text-center">
               <p
                 data-reveal
@@ -87,7 +95,7 @@ export default function IntegrationsPageClient() {
           </div>
         </section>
 
-        <section className="border-t border-mkt-border bg-white py-16 lg:py-20">
+        <section className="bg-white py-16 lg:py-20">
           <div className="mx-auto max-w-mkt-content px-5 text-center sm:px-8">
             <h2 className="font-display text-3xl font-extrabold tracking-[-0.03em] text-mkt-foreground sm:text-4xl">
               Don&apos;t see what you need?

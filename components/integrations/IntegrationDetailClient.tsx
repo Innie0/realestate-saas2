@@ -17,11 +17,19 @@ export default function IntegrationDetailClient({ integration }: IntegrationDeta
 
   return (
     <div className="marketing-root min-h-screen bg-white text-mkt-foreground">
-      <MarketingSubpageHeader background="white" />
+      <MarketingSubpageHeader background="white" ctaColor="blue" />
 
       <main>
-        <section className="border-b border-mkt-border bg-white py-16 lg:py-24">
-          <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
+        <section className="relative overflow-hidden bg-white py-16 lg:py-24">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-0 h-[420px] w-[720px] -translate-x-1/2 -translate-y-1/3 rounded-full"
+            style={{
+              background: 'radial-gradient(circle, rgba(6,104,225,0.28) 0%, rgba(6,104,225,0) 70%)',
+              filter: 'blur(90px)',
+            }}
+          />
+          <div className="relative z-[1] mx-auto max-w-mkt-content px-5 sm:px-8">
             <Link
               href="/integrations"
               className="inline-flex items-center gap-1.5 text-sm font-medium text-mkt-secondary transition-colors hover:text-mkt-foreground"

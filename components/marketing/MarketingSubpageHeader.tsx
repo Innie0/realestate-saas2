@@ -6,9 +6,14 @@ import MarketingHeaderNav from '@/components/marketing/MarketingHeaderNav';
 type MarketingSubpageHeaderProps = {
   /** 'default' is the marketing-root cream background; 'white' matches the landing page's white sections. */
   background?: 'default' | 'white';
+  /** 'blue' uses the header brand blue for the trial CTA instead of the default black. */
+  ctaColor?: 'default' | 'blue';
 };
 
-export default function MarketingSubpageHeader({ background = 'default' }: MarketingSubpageHeaderProps) {
+export default function MarketingSubpageHeader({
+  background = 'default',
+  ctaColor = 'default',
+}: MarketingSubpageHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const bgClass = background === 'white' ? 'bg-white' : 'bg-mkt-background';
 
@@ -19,7 +24,7 @@ export default function MarketingSubpageHeader({ background = 'default' }: Marke
       }`}
     >
       <div className="mx-auto flex h-16 max-w-mkt-content items-center px-5 sm:h-[4.5rem] sm:px-8">
-        <MarketingHeaderNav onProductsMenuChange={setMenuOpen} />
+        <MarketingHeaderNav onProductsMenuChange={setMenuOpen} ctaColor={ctaColor} />
       </div>
     </header>
   );
