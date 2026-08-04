@@ -2,11 +2,13 @@
 
 import clsx from 'clsx';
 import { useLandingTypingLoop } from '@/lib/use-landing-typing-loop';
+import {
+  HERO_BASE_GRADIENT,
+  HERO_FADE_HEIGHT,
+  HERO_FADE_OVERLAY,
+} from '@/lib/landing-page-gradients';
 import { SITE_NAME } from '@/lib/site-config';
 import { useMotionReduced } from '@/lib/motion';
-
-const HERO_GRADIENT =
-  'linear-gradient(180deg,#0668E1 0%,#0668E1 38%,#2E86FB 54%,#4B93FC 68%,#7FB4FD 82%,#A8CCFE 91%,#DCEBFE 97%,#FFFFFF 100%)';
 
 const ENTRANCE =
   'motion-safe:animate-[landing-fade-up_0.7s_cubic-bezier(0.16,1,0.3,1)_both] motion-reduce:animate-none';
@@ -28,11 +30,18 @@ export default function LandingHeroFade() {
         }
       `}</style>
 
-      <section
-        className="relative text-center text-[#111111]"
-        style={{ background: HERO_GRADIENT }}
-      >
-        <div className="mx-auto max-w-mkt-content px-5 pb-[280px] pt-[calc(var(--mkt-nav-height)+4.5rem)] sm:px-8 sm:pt-[calc(var(--mkt-nav-height)+5.5rem)]">
+      <section className="relative overflow-hidden bg-[#0668E1] text-center text-[#111111]">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{ background: HERO_BASE_GRADIENT }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0"
+          style={{ height: HERO_FADE_HEIGHT, background: HERO_FADE_OVERLAY }}
+        />
+        <div className="relative z-[1] mx-auto max-w-mkt-content px-5 pb-[280px] pt-[calc(var(--mkt-nav-height)+4.5rem)] sm:px-8 sm:pt-[calc(var(--mkt-nav-height)+5.5rem)]">
           <h1
             id="landing-hero-headline"
             className={clsx(

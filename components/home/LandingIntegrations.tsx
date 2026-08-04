@@ -2,6 +2,10 @@
 
 import clsx from 'clsx';
 import Image from 'next/image';
+import {
+  PAGE_BOTTOM_FADE_HEIGHT,
+  PAGE_BOTTOM_FADE_OVERLAY,
+} from '@/lib/landing-page-gradients';
 import { SITE_NAME } from '@/lib/site-config';
 import { useMotionReduced } from '@/lib/motion';
 
@@ -44,10 +48,6 @@ const CHIPS = [
   },
 ] as const;
 
-/** Mirror of the hero dissolve — white back into brand blue for the lower page. */
-const INTEGRATIONS_BOTTOM_FADE =
-  'linear-gradient(180deg,#FFFFFF 0%,#DCEBFE 28%,#A8CCFE 48%,#7FB4FD 62%,#4B93FC 78%,#2E86FB 90%,#0668E1 100%)';
-
 export default function LandingIntegrations() {
   const reduced = useMotionReduced();
 
@@ -61,7 +61,7 @@ export default function LandingIntegrations() {
       `}</style>
 
       <section className="relative overflow-hidden bg-white px-5 text-[#111111] sm:px-8">
-        <div className="relative z-[1] mx-auto max-w-[1120px] pb-[min(300px,38vw)] pt-24">
+        <div className="relative z-[1] mx-auto max-w-[1120px] pb-[min(320px,40vw)] pt-24">
           <div className="flex flex-col items-center text-center">
             <h2 className="font-display max-w-[17ch] text-[64px] font-extrabold leading-[1.02] tracking-[-0.038em] text-[#111111]">
               Fits the tools you already run on
@@ -114,8 +114,8 @@ export default function LandingIntegrations() {
 
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-[min(340px,42vw)]"
-          style={{ background: INTEGRATIONS_BOTTOM_FADE }}
+          className="pointer-events-none absolute inset-x-0 bottom-0"
+          style={{ height: PAGE_BOTTOM_FADE_HEIGHT, background: PAGE_BOTTOM_FADE_OVERLAY }}
         />
       </section>
     </>
