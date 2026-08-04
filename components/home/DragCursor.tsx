@@ -16,7 +16,7 @@ function DragCursorContent({ dragging }: { dragging?: boolean }) {
   return (
     <div
       className={clsx(
-        'flex size-[92px] flex-col items-center justify-center rounded-full bg-[#111111] text-white shadow-[0_10px_40px_rgba(0,0,0,0.16)] transition-transform duration-150',
+        'flex size-[92px] flex-col items-center justify-center rounded-full bg-[#0668E1] text-white shadow-[0_10px_40px_rgba(6,104,225,0.35)] transition-transform duration-150',
         dragging && 'scale-[0.96]',
       )}
     >
