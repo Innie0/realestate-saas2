@@ -3,7 +3,12 @@
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 import BrowserWindowFrame from '@/components/home/BrowserWindowFrame';
-import { BackgroundGradientGlow } from '@/components/ui/background-gradient-glow';
+import {
+  BackgroundGradientGlow,
+  PREVIEW_CARD_HEIGHT,
+  PREVIEW_FRAME_PADDING,
+  PREVIEW_IMAGE_HEIGHT,
+} from '@/components/ui/background-gradient-glow';
 import { ensureGsapRegistered, gsap, ScrollTrigger, useGSAP } from '@/lib/gsap-config';
 import { SITE_DOMAIN, SITE_NAME } from '@/lib/site-config';
 import { useMotionReduced } from '@/lib/motion';
@@ -75,14 +80,19 @@ function ScreenshotPanel({
         transition: 'opacity 0.35s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
-      <div className="relative h-full w-full overflow-hidden rounded-[20px]">
+      <div
+        className="relative w-full overflow-hidden rounded-[24px]"
+        style={{ padding: PREVIEW_FRAME_PADDING }}
+      >
         <BackgroundGradientGlow variant={glow} />
-        <div className="relative z-[1] h-full p-4">
-          <BrowserWindowFrame className="shadow-[var(--mkt-shadow-soft)]">
-            <div className="border-b border-mkt-border bg-white px-3 py-1.5">
-              <p className="truncate font-mkt-mono text-[11px] text-[#6B6D76]">{url}</p>
-            </div>
-            <div className="relative h-[196px] w-full bg-white">
+        <BrowserWindowFrame className="relative z-[1] shadow-[var(--mkt-shadow-soft)]">
+          <div className="border-b border-mkt-border bg-white px-3 py-1.5">
+            <p className="truncate font-mkt-mono text-[11px] text-[#6B6D76]">{url}</p>
+          </div>
+          <div
+            className="relative w-full bg-white"
+            style={{ height: PREVIEW_IMAGE_HEIGHT }}
+          >
               {!failed ? (
                 <Image
                   src={src}
@@ -101,8 +111,7 @@ function ScreenshotPanel({
                 </div>
               )}
             </div>
-          </BrowserWindowFrame>
-        </div>
+        </BrowserWindowFrame>
       </div>
     </div>
   );
@@ -147,7 +156,7 @@ function StaticStepRow({ step }: { step: (typeof STEPS)[number] }) {
         </h3>
         <p className="mt-4 text-[18px] leading-[1.55] text-[#6B6D76]">{step.body}</p>
       </div>
-      <div className="relative h-[248px]">
+      <div className="relative" style={{ height: PREVIEW_CARD_HEIGHT }}>
         <ScreenshotPanel
           src={step.src}
           alt={step.title}
@@ -269,7 +278,10 @@ export default function LandingWhySwitcher() {
               </div>
 
               <div className="flex items-start justify-end">
-                <div className="relative h-[260px] w-full max-w-[480px]">
+                <div
+                  className="relative w-full max-w-[480px]"
+                  style={{ height: PREVIEW_CARD_HEIGHT }}
+                >
                   {STEPS.map((step, index) => (
                     <ScreenshotPanel
                       key={step.kicker}
@@ -297,7 +309,7 @@ export default function LandingWhySwitcher() {
                     {step.title}
                   </h3>
                   <p className="mt-3 text-[17px] leading-[1.55] text-[#6B6D76]">{step.body}</p>
-                  <div className="relative mt-6 h-[248px]">
+                  <div className="relative mt-6" style={{ height: PREVIEW_CARD_HEIGHT }}>
                     <ScreenshotPanel
                       src={step.src}
                       alt={step.title}
