@@ -486,6 +486,7 @@ html[data-dashboard-theme='light'] .dashboard-root,
     --mkt-accent-foreground: #ffffff;
     --mkt-muted: #6B6D76;
     --mkt-blue: #0668E1;
+    --header-blue: var(--mkt-blue);
     --mkt-mock-surface: #ffffff;
     --mkt-browser-dot: #c4bfb6;
     --mkt-error-border: #f87171;
@@ -585,6 +586,27 @@ html[data-dashboard-theme='light'] .dashboard-root,
     font-family: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
     color: var(--mkt-text-primary);
     background-color: var(--mkt-background);
+  }
+
+  .marketing-root .section-ambient-glow {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .marketing-root .section-ambient-glow::before {
+    content: '';
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--header-blue) 0%, transparent 65%);
+    filter: blur(140px);
+    opacity: 0.25;
+    top: -20%;
+    right: -20%;
   }
 
   .marketing-root .font-display,
