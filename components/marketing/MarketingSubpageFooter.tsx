@@ -1,9 +1,16 @@
 import Link from 'next/link';
 import MarketingFooterColumns from '@/components/marketing/MarketingFooterColumns';
 
-export default function MarketingSubpageFooter() {
+type MarketingSubpageFooterProps = {
+  /** 'default' is the marketing-root cream background; 'white' matches the landing page's white sections. */
+  background?: 'default' | 'white';
+};
+
+export default function MarketingSubpageFooter({ background = 'default' }: MarketingSubpageFooterProps) {
+  const bgClass = background === 'white' ? 'bg-white' : 'bg-mkt-background';
+
   return (
-    <footer className="border-t border-mkt-border bg-mkt-background">
+    <footer className={`border-t border-mkt-border ${bgClass}`}>
       <div className="mx-auto max-w-mkt-content px-6 py-12 lg:px-8">
         <MarketingFooterColumns
           brand={

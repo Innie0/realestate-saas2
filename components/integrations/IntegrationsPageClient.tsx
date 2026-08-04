@@ -11,11 +11,11 @@ import { SITE_NAME } from '@/lib/site-config';
 
 export default function IntegrationsPageClient() {
   return (
-    <div className="marketing-root min-h-screen bg-mkt-background font-sans text-mkt-foreground">
-      <MarketingSubpageHeader />
+    <div className="marketing-root min-h-screen bg-white font-sans text-mkt-foreground">
+      <MarketingSubpageHeader background="white" />
 
       <main>
-        <section className="border-b border-mkt-border bg-mkt-background py-16 lg:py-24">
+        <section className="border-b border-mkt-border bg-white py-16 lg:py-24">
           <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
             <LandingStaggerReveal className="mx-auto max-w-2xl text-center">
               <p
@@ -38,7 +38,7 @@ export default function IntegrationsPageClient() {
           </div>
         </section>
 
-        <section className="bg-mkt-background py-16 lg:py-20">
+        <section className="bg-white py-16 lg:py-20">
           <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
             <LandingStaggerReveal
               className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
@@ -72,7 +72,7 @@ export default function IntegrationsPageClient() {
           </div>
         </section>
 
-        <section className="border-t border-mkt-border bg-mkt-background py-16 lg:py-20">
+        <section className="border-t border-mkt-border bg-white py-16 lg:py-20">
           <div className="mx-auto max-w-mkt-content px-5 text-center sm:px-8">
             <h2 className="text-2xl font-medium tracking-[-0.02em] text-mkt-foreground sm:text-3xl">
               Don&apos;t see what you need?
@@ -91,7 +91,7 @@ export default function IntegrationsPageClient() {
         </section>
       </main>
 
-      <MarketingSubpageFooter />
+      <MarketingSubpageFooter background="white" />
     </div>
   );
 }

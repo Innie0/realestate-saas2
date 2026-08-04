@@ -14,11 +14,11 @@ type IntegrationDetailClientProps = {
 
 export default function IntegrationDetailClient({ integration }: IntegrationDetailClientProps) {
   return (
-    <div className="marketing-root min-h-screen bg-mkt-background font-sans text-mkt-foreground">
-      <MarketingSubpageHeader />
+    <div className="marketing-root min-h-screen bg-white font-sans text-mkt-foreground">
+      <MarketingSubpageHeader background="white" />
 
       <main>
-        <section className="border-b border-mkt-border bg-mkt-background py-16 lg:py-24">
+        <section className="border-b border-mkt-border bg-white py-16 lg:py-24">
           <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
             <Link
               href="/integrations"
@@ -50,7 +50,7 @@ export default function IntegrationDetailClient({ integration }: IntegrationDeta
           </div>
         </section>
 
-        <section className="bg-mkt-background py-16 lg:py-20">
+        <section className="bg-white py-16 lg:py-20">
           <div className="mx-auto max-w-mkt-content px-5 text-center sm:px-8">
             <p className="text-sm leading-[1.6] text-mkt-secondary">
               Have a question about connecting {integration.name} to {SITE_NAME}?{' '}
@@ -63,7 +63,7 @@ export default function IntegrationDetailClient({ integration }: IntegrationDeta
         </section>
       </main>
 
-      <MarketingSubpageFooter />
+      <MarketingSubpageFooter background="white" />
     </div>
   );
 }
