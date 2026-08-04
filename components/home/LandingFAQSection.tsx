@@ -17,15 +17,15 @@ function FAQItem({
   onToggle: () => void;
 }) {
   return (
-    <div data-reveal className="border-b border-mkt-border">
+    <div data-reveal className="border-b border-white/15">
       <button
         type="button"
         onClick={onToggle}
         className="flex w-full items-start justify-between gap-6 py-6 text-left transition-colors hover:opacity-80"
       >
-        <span className="text-base font-medium leading-snug text-mkt-foreground">{question}</span>
+        <span className="text-base font-medium leading-snug text-white">{question}</span>
         <span
-          className="mt-0.5 shrink-0 text-lg leading-none tabular-nums text-mkt-secondary"
+          className="mt-0.5 shrink-0 text-lg leading-none tabular-nums text-white/60"
           aria-hidden
         >
           {isOpen ? '−' : '+'}
@@ -38,7 +38,7 @@ function FAQItem({
         )}
       >
         <div className="overflow-hidden">
-          <p className="pb-6 pr-8 text-base leading-[1.65] text-mkt-secondary">{answer}</p>
+          <p className="pb-6 pr-8 text-base leading-[1.65] text-white/75">{answer}</p>
         </div>
       </div>
     </div>
@@ -49,19 +49,19 @@ export default function LandingFAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="bg-mkt-background py-24 lg:py-32">
+    <section className="bg-[#0668E1] py-24 text-white lg:py-32">
       <div className="mx-auto max-w-mkt-content px-5 sm:px-8">
         <LandingStaggerReveal className="mx-auto mb-14 max-w-2xl text-center">
-          <p data-reveal className="text-xs font-medium uppercase tracking-[0.14em] text-mkt-secondary">
+          <p data-reveal className="text-xs font-medium uppercase tracking-[0.14em] text-white/70">
             FAQ
           </p>
           <h2
             data-reveal
-            className="font-display mt-4 text-3xl font-medium tracking-[-0.03em] text-mkt-foreground sm:text-4xl"
+            className="font-display mt-4 text-3xl font-extrabold tracking-[-0.03em] text-white sm:text-4xl"
           >
             Common questions
           </h2>
-          <p data-reveal className="mt-4 text-base leading-[1.65] text-mkt-secondary">
+          <p data-reveal className="mt-4 text-base leading-[1.65] text-white/75">
             Straight answers about trials, billing, and how Oikaro handles your client data.
           </p>
         </LandingStaggerReveal>

@@ -4,18 +4,19 @@ import { SITE_NAME } from '@/lib/site-config';
 
 export default function LandingFooter() {
   return (
-    <footer className="border-t border-mkt-border bg-white">
+    <footer className="bg-[#0668E1] text-white">
       <div className="mx-auto max-w-mkt-content px-5 py-14 sm:px-8 lg:py-16">
         <MarketingFooterColumns
+          onBlue
           brand={
             <>
               <Link
                 href="/"
-                className="font-display text-3xl font-medium tracking-[-0.03em] text-mkt-foreground transition-opacity hover:opacity-70 sm:text-4xl"
+                className="font-display text-3xl font-medium tracking-[-0.03em] text-white transition-opacity hover:opacity-70 sm:text-4xl"
               >
                 {SITE_NAME}
               </Link>
-              <p className="mt-3 max-w-xs text-sm leading-[1.6] text-mkt-secondary">
+              <p className="mt-3 max-w-xs text-sm leading-[1.6] text-white/75">
                 One workspace for listings, leads, clients, and transactions.
               </p>
             </>
