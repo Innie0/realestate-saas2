@@ -6,7 +6,7 @@ import { SITE_NAME } from '@/lib/site-config';
 import { useMotionReduced } from '@/lib/motion';
 
 const HERO_GRADIENT =
-  'linear-gradient(180deg,#0668E1 0%,#0668E1 28%,#2E86FB 44%,#4B93FC 58%,#7FB4FD 72%,#A8CCFE 84%,#DCEBFE 93%,#FFFFFF 100%)';
+  'linear-gradient(180deg,#0668E1 0%,#0668E1 38%,#2E86FB 54%,#4B93FC 68%,#7FB4FD 82%,#A8CCFE 91%,#DCEBFE 97%,#FFFFFF 100%)';
 
 const ENTRANCE =
   'motion-safe:animate-[landing-fade-up_0.7s_cubic-bezier(0.16,1,0.3,1)_both] motion-reduce:animate-none';
@@ -32,7 +32,7 @@ export default function LandingHeroFade() {
         className="relative text-center text-[#111111]"
         style={{ background: HERO_GRADIENT }}
       >
-        <div className="mx-auto max-w-mkt-content px-5 pb-[230px] pt-[calc(var(--mkt-nav-height)+4.5rem)] sm:px-8 sm:pt-[calc(var(--mkt-nav-height)+5.5rem)]">
+        <div className="mx-auto max-w-mkt-content px-5 pb-[280px] pt-[calc(var(--mkt-nav-height)+4.5rem)] sm:px-8 sm:pt-[calc(var(--mkt-nav-height)+5.5rem)]">
           <h1
             id="landing-hero-headline"
             className={clsx(
