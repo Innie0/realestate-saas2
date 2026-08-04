@@ -1,14 +1,14 @@
 import { cn } from '@/lib/utils';
 
-/** Pitch-style mesh: deep brand blue + saturated warm tan, high contrast blobs. */
+/** Pitch-style mesh: deep brand blue + soft gray-white highlights. */
 const BRAND = {
   navy: '#022654',
   blueDeep: '#0452AD',
   blue: '#0668E1',
   blueBright: '#2E86FB',
-  tan: '#D4A85C',
-  tanWarm: '#E8C078',
-  tanLight: '#F0D9A8',
+  mist: '#E8EAED',
+  mistSoft: '#F0F2F5',
+  mistLight: '#F7F8FA',
 } as const;
 
 type GlowBlob = {
@@ -24,22 +24,22 @@ type GlowVariant = 'listings' | 'leads' | 'transactions';
 
 const VARIANT_BLOBS: Record<GlowVariant, GlowBlob[]> = {
   listings: [
-    { x: '88%', y: '18%', size: '72%', color: BRAND.tanWarm, opacity: 0.95, blur: 52 },
+    { x: '88%', y: '18%', size: '72%', color: BRAND.mistSoft, opacity: 0.88, blur: 52 },
     { x: '12%', y: '78%', size: '68%', color: BRAND.blueDeep, opacity: 0.92, blur: 48 },
     { x: '55%', y: '55%', size: '50%', color: BRAND.blueBright, opacity: 0.55, blur: 44 },
-    { x: '28%', y: '22%', size: '38%', color: BRAND.tan, opacity: 0.7, blur: 36 },
+    { x: '28%', y: '22%', size: '38%', color: BRAND.mist, opacity: 0.65, blur: 36 },
   ],
   leads: [
-    { x: '82%', y: '72%', size: '70%', color: BRAND.tanLight, opacity: 0.9, blur: 50 },
+    { x: '82%', y: '72%', size: '70%', color: BRAND.mistLight, opacity: 0.82, blur: 50 },
     { x: '8%', y: '28%', size: '65%', color: BRAND.blue, opacity: 0.88, blur: 46 },
     { x: '62%', y: '12%', size: '48%', color: BRAND.blueBright, opacity: 0.65, blur: 40 },
-    { x: '40%', y: '88%', size: '42%', color: BRAND.tan, opacity: 0.75, blur: 38 },
+    { x: '40%', y: '88%', size: '42%', color: BRAND.mist, opacity: 0.7, blur: 38 },
   ],
   transactions: [
-    { x: '15%', y: '82%', size: '68%', color: BRAND.tanWarm, opacity: 0.92, blur: 48 },
+    { x: '15%', y: '82%', size: '68%', color: BRAND.mistSoft, opacity: 0.85, blur: 48 },
     { x: '92%', y: '20%', size: '62%', color: BRAND.navy, opacity: 0.95, blur: 44 },
     { x: '70%', y: '58%', size: '52%', color: BRAND.blueBright, opacity: 0.6, blur: 42 },
-    { x: '48%', y: '8%', size: '36%', color: BRAND.tanLight, opacity: 0.65, blur: 34 },
+    { x: '48%', y: '8%', size: '36%', color: BRAND.mistLight, opacity: 0.6, blur: 34 },
   ],
 };
 
