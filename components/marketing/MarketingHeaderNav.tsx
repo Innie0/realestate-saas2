@@ -16,6 +16,8 @@ type MarketingHeaderNavProps = {
   heroFade?: boolean;
   /** 'blue' uses the header brand blue for the trial CTA instead of the default black. */
   ctaColor?: 'default' | 'blue';
+  /** 'mono' matches the landing page hero's monospace wordmark instead of the default bold sans. */
+  wordmarkVariant?: 'default' | 'mono';
 };
 
 export default function MarketingHeaderNav({
@@ -23,6 +25,7 @@ export default function MarketingHeaderNav({
   inverted = false,
   heroFade = false,
   ctaColor = 'default',
+  wordmarkVariant = 'default',
 }: MarketingHeaderNavProps) {
   const navLinkClass = inverted
     ? 'inline-flex items-center px-3 py-2.5 text-[15px] font-medium text-white/75 transition-colors duration-200 hover:text-white'
@@ -34,8 +37,11 @@ export default function MarketingHeaderNav({
         href="/"
         className={clsx(
           'shrink-0 transition-opacity duration-200 hover:opacity-70',
-          heroFade
-            ? 'font-mkt-mono text-[21px] font-normal tracking-[-0.01em] text-white'
+          heroFade || wordmarkVariant === 'mono'
+            ? clsx(
+                'font-mkt-mono text-[21px] font-normal tracking-[-0.01em]',
+                inverted || heroFade ? 'text-white' : 'text-mkt-foreground',
+              )
             : clsx(
                 'text-[17px] font-bold tracking-[-0.02em]',
                 inverted ? 'text-white' : 'text-mkt-foreground',

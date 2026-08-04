@@ -17,7 +17,7 @@ export default function IntegrationDetailClient({ integration }: IntegrationDeta
 
   return (
     <div className="marketing-root min-h-screen bg-white text-mkt-foreground">
-      <MarketingSubpageHeader background="white" ctaColor="blue" />
+      <MarketingSubpageHeader background="white" ctaColor="blue" wordmarkVariant="mono" />
 
       <main>
         <section className="bg-white py-16 lg:py-24">

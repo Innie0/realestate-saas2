@@ -8,11 +8,14 @@ type MarketingSubpageHeaderProps = {
   background?: 'default' | 'white';
   /** 'blue' uses the header brand blue for the trial CTA instead of the default black. */
   ctaColor?: 'default' | 'blue';
+  /** 'mono' matches the landing page hero's monospace wordmark instead of the default bold sans. */
+  wordmarkVariant?: 'default' | 'mono';
 };
 
 export default function MarketingSubpageHeader({
   background = 'default',
   ctaColor = 'default',
+  wordmarkVariant = 'default',
 }: MarketingSubpageHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const bgClass = background === 'white' ? 'bg-white' : 'bg-mkt-background';
@@ -24,7 +27,11 @@ export default function MarketingSubpageHeader({
       }`}
     >
       <div className="mx-auto flex h-16 max-w-mkt-content items-center px-5 sm:h-[4.5rem] sm:px-8">
-        <MarketingHeaderNav onProductsMenuChange={setMenuOpen} ctaColor={ctaColor} />
+        <MarketingHeaderNav
+          onProductsMenuChange={setMenuOpen}
+          ctaColor={ctaColor}
+          wordmarkVariant={wordmarkVariant}
+        />
       </div>
     </header>
   );
