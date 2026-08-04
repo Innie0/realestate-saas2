@@ -92,6 +92,8 @@ void main() {
 
 export type GradientMeshProps = {
   colors?: string[];
+  /** Solid fill behind the mesh so transparent areas stay on-brand. */
+  baseColor?: string;
   distortion?: number;
   swirl?: number;
   speed?: number;
@@ -118,6 +120,7 @@ const hexToRgb = (hex: string): [number, number, number] => {
 
 export function GradientMesh({
   colors = ['#3b2a8d', '#aaa7d7', '#f75092'],
+  baseColor = '#0668E1',
   distortion = 5,
   swirl = 0.5,
   speed = 1.0,
@@ -133,14 +136,15 @@ export function GradientMesh({
   className,
 }: GradientMeshProps) {
   const ctnDom = useRef<HTMLDivElement>(null);
+  const [r, g, b] = hexToRgb(baseColor);
 
   useEffect(() => {
     if (!ctnDom.current) return;
 
     const ctn = ctnDom.current;
-    const renderer = new Renderer({ alpha: true, antialias: true });
+    const renderer = new Renderer({ alpha: false, antialias: true });
     const gl = renderer.gl;
-    gl.clearColor(0, 0, 0, 0);
+    gl.clearColor(r, g, b, 1);
 
     const geometry = new Triangle(gl);
     const rgbColors = colors.slice(0, 3).map(hexToRgb);
@@ -230,13 +234,21 @@ export function GradientMesh({
     waveSpeed,
     grain,
     animated,
+    baseColor,
   ]);
 
   return (
     <div
       ref={ctnDom}
       className={className}
-      style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, overflow: 'hidden' }}
+      style={{
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
+        inset: 0,
+        overflow: 'hidden',
+        backgroundColor: baseColor,
+      }}
       aria-hidden
     />
   );

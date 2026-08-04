@@ -12,7 +12,15 @@ ensureGsapRegistered();
 
 type StepMeshConfig = Pick<
   GradientMeshProps,
-  'colors' | 'distortion' | 'swirl' | 'scale' | 'offsetX' | 'offsetY' | 'rotation' | 'grain'
+  | 'colors'
+  | 'baseColor'
+  | 'distortion'
+  | 'swirl'
+  | 'scale'
+  | 'offsetX'
+  | 'offsetY'
+  | 'rotation'
+  | 'grain'
 >;
 
 const STATIC_MESH: Pick<GradientMeshProps, 'animated' | 'speed' | 'waveSpeed' | 'waveAmp'> = {
@@ -40,14 +48,15 @@ const STEPS = [
     url: `${SITE_DOMAIN}/dashboard/projects`,
     label: '01 Listings',
     mesh: {
-      colors: ['#0668E1', '#A8CCFE', '#FFFFFF'],
-      distortion: 4,
-      swirl: 0.28,
-      scale: 1.25,
-      offsetX: 0.12,
-      offsetY: -0.15,
-      rotation: 0.35,
-      grain: 0.035,
+      baseColor: '#0452AD',
+      colors: ['#0452AD', '#0668E1', '#C8DFF8'],
+      distortion: 5,
+      swirl: 0.42,
+      scale: 1.12,
+      offsetX: 0.08,
+      offsetY: -0.06,
+      rotation: 0.55,
+      grain: 0.012,
     } satisfies StepMeshConfig,
   },
   {
@@ -58,14 +67,15 @@ const STEPS = [
     url: `${SITE_DOMAIN}/dashboard/leads`,
     label: '02 Leads',
     mesh: {
-      colors: ['#0452AD', '#7FB4FD', '#EAF2FE'],
-      distortion: 6,
-      swirl: 0.72,
-      scale: 1.08,
-      offsetX: -0.18,
-      offsetY: 0.08,
-      rotation: 1.15,
-      grain: 0.05,
+      baseColor: '#0668E1',
+      colors: ['#0668E1', '#0452AD', '#2E86FB'],
+      distortion: 5.5,
+      swirl: 0.78,
+      scale: 1.05,
+      offsetX: -0.12,
+      offsetY: 0.04,
+      rotation: 1.35,
+      grain: 0.012,
     } satisfies StepMeshConfig,
   },
   {
@@ -76,14 +86,15 @@ const STEPS = [
     url: `${SITE_DOMAIN}/dashboard/transactions`,
     label: '03 Transactions',
     mesh: {
-      colors: ['#2E86FB', '#DCEBFE', '#FFFFFF'],
-      distortion: 5,
-      swirl: 1.05,
-      scale: 0.92,
-      offsetX: 0.06,
-      offsetY: 0.14,
-      rotation: 2.35,
-      grain: 0.03,
+      baseColor: '#0452AD',
+      colors: ['#0452AD', '#2E86FB', '#0668E1'],
+      distortion: 6,
+      swirl: 1.12,
+      scale: 0.98,
+      offsetX: 0.04,
+      offsetY: 0.1,
+      rotation: 2.1,
+      grain: 0.01,
     } satisfies StepMeshConfig,
   },
 ] as const;
