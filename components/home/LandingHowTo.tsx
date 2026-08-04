@@ -172,21 +172,11 @@ export default function LandingHowTo() {
         </p>
       </div>
 
-      <div className="relative mt-20 lg:mt-28">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white via-[#F5F9FF] to-white"
-        />
-        <DraggableCardRow
-          className="relative z-[1]"
-          style={{ height: CLIP_H }}
-          contentClassName="h-full"
-        >
+      <DraggableCardRow className="mt-20 lg:mt-28" style={{ height: CLIP_H }} contentClassName="h-full">
           {STEPS.map((step) => (
             <HowToPanel key={step.n} step={step} />
           ))}
-        </DraggableCardRow>
-      </div>
+      </DraggableCardRow>
 
       <div className="mx-auto flex max-w-[1120px] flex-wrap items-center gap-5 px-10 pb-[120px] pt-14">
         <Link
