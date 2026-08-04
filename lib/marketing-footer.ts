@@ -27,6 +27,7 @@ export const FOOTER_COMPANY_LINKS = [
 export const FOOTER_RESOURCES_LINKS = [
   { href: '/for-agents', label: 'For agents' },
   { href: '/products', label: 'All products' },
+  { href: '/integrations', label: 'Integrations' },
   { href: '/pricing', label: 'Pricing' },
 ] as const;
 

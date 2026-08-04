@@ -47,6 +47,9 @@ export default function MarketingHeaderNav({
         className="hidden items-center gap-0.5 md:flex lg:gap-1 lg:pl-8 xl:pl-10"
       >
         <ProductsMegaMenu inverted={inverted} onOpenChange={onProductsMenuChange} />
+        <Link href="/integrations" className={navLinkClass}>
+          Integrations
+        </Link>
         <Link href="/pricing" className={navLinkClass}>
           Pricing
         </Link>
