@@ -11,37 +11,65 @@ import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
 
+/** Each step's outer card shell carries its own blue tone — background wash,
+ *  border tint, and step-number color — so the three cards read as distinct
+ *  steps rather than repeats of the same card. The illustrated panel inside
+ *  each card stays the shared brand blue regardless of the shell's accent. */
+const CARD_ACCENT = {
+  blue: {
+    border: 'border-[#0668E1]/[0.07]',
+    bg: 'from-white to-[#FAFCFF]',
+    number: 'text-[#0668E1]/40',
+  },
+  indigo: {
+    border: 'border-[#6366F1]/[0.1]',
+    bg: 'from-white to-[#F1F0FE]',
+    number: 'text-[#6366F1]/45',
+  },
+  cyan: {
+    border: 'border-[#0891B2]/[0.1]',
+    bg: 'from-white to-[#E7F8FB]',
+    number: 'text-[#0891B2]/45',
+  },
+} as const;
+
 const STEPS = [
   {
     n: '01',
     title: 'Research the property',
     body: 'Look up the owner, pull property details, and run a comps-based CMA before you ever pick up the phone.',
     Demo: LandingResearchDemo,
+    accent: 'blue',
   },
   {
     n: '02',
     title: 'Let AI handle the busywork',
     body: "Ask in plain English and Oikaro drafts the follow-up, ready to send in seconds — no blank page, no starting from scratch.",
     Demo: LandingAskDemo,
+    accent: 'indigo',
   },
   {
     n: '03',
     title: 'Get it on the calendar',
     body: "Book the showing and it's synced everywhere — no double-booking, no back-and-forth texts to lock a time.",
     Demo: LandingScheduleDemo,
+    accent: 'cyan',
   },
 ] as const;
 
 function HowToPanel({ step }: { step: (typeof STEPS)[number] }) {
   const Demo = step.Demo;
+  const accent = CARD_ACCENT[step.accent];
 
   return (
     <div
       data-howto-card
-      className="box-border flex w-[880px] max-w-[calc(100vw-3rem)] flex-none flex-col overflow-hidden rounded-[24px] border border-[#0668E1]/[0.07] bg-gradient-to-b from-white to-[#FAFCFF] p-8 shadow-[0_20px_60px_-30px_rgba(2,38,84,0.18)] sm:max-w-none sm:p-10"
+      className={`box-border flex w-[880px] max-w-[calc(100vw-3rem)] flex-none flex-col overflow-hidden rounded-[24px] border bg-gradient-to-b p-8 shadow-[0_20px_60px_-30px_rgba(2,38,84,0.18)] sm:max-w-none sm:p-10 ${accent.border} ${accent.bg}`}
     >
       <div className="flex items-start gap-5">
-        <span className="flex-none font-mkt-mono text-[28px] font-semibold leading-none tracking-[-0.03em] text-[#0668E1]/40 sm:text-[34px]">
+        <span
+          className={`flex-none font-mkt-mono text-[28px] font-semibold leading-none tracking-[-0.03em] sm:text-[34px] ${accent.number}`}
+        >
           ({step.n})
         </span>
         <div className="flex-1">

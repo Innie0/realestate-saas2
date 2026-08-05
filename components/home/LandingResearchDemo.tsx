@@ -33,12 +33,7 @@ export function LandingResearchDemo() {
         <div className="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 rounded-full bg-[#0668E1]/[0.06] blur-3xl" />
 
         <div className="relative z-[1] flex flex-1 flex-col">
-          <DemoToolbar
-            light
-            accent="blue"
-            label="Property research"
-            icons={[Search, MapPin, BarChart3]}
-          />
+          <DemoToolbar light label="Property research" icons={[Search, MapPin, BarChart3]} />
 
           <div className="mt-1 flex-1 rounded-xl border border-dashed border-[#0668E1]/20 p-5">
             <motion.p
