@@ -12,7 +12,7 @@ export default function MarketingPageHeader({
   backLabel = 'Back to home',
 }: MarketingPageHeaderProps) {
   return (
-    <header className="sticky top-0 z-10 border-b border-mkt-border bg-white/92 backdrop-blur-md">
+    <header className="sticky top-0 z-10 border-b border-mkt-border bg-white">
       <div className="mx-auto flex h-16 max-w-3xl items-center justify-between px-5 sm:px-8">
         <Link
           href={backHref}
