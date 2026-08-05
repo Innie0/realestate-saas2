@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import { motion, useInView } from 'framer-motion';
 import { Calendar, Clock, MapPin } from 'lucide-react';
 import { DemoToolbar } from '@/components/home/LandingDemoToolbar';
-import { BackgroundGradientGlow } from '@/components/ui/background-gradient-glow';
 import { useMotionReduced } from '@/lib/motion';
 
 const DAYS = [
@@ -22,7 +21,9 @@ const SYNC_OPTIONS = ['Google', 'Outlook', 'iCal'];
 
 /** Illustrated card for the "Get it on the calendar" How To step — a
  *  click-to-select week strip (the selection glides over) plus a synced
- *  showing card. Built from real UI elements, not a screenshot. */
+ *  showing card. Built from real UI elements, not a screenshot. White surface
+ *  with a soft blue tint, distinct from the saturated gradient cards used in
+ *  the "Why Oikaro" section. */
 export function LandingScheduleDemo() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.4 });
@@ -33,14 +34,14 @@ export function LandingScheduleDemo() {
   return (
     <div ref={ref} className="relative w-full">
       {/* Main illustrated card — built from real UI elements, not a screenshot */}
-      <div className="relative flex min-h-[420px] flex-col overflow-hidden rounded-[16px] p-6 sm:p-8">
-        <BackgroundGradientGlow variant="schedule" className="rounded-[16px]" />
-        <div className="absolute inset-0 rounded-[16px] bg-black/20" />
+      <div className="relative flex min-h-[420px] flex-col overflow-hidden rounded-[16px] border border-[#0668E1]/10 bg-gradient-to-br from-white via-[#F6FAFF] to-[#E8F1FE] p-6 sm:p-8">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#0668E1]/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 rounded-full bg-[#0668E1]/[0.06] blur-3xl" />
 
         <div className="relative z-[1] flex flex-1 flex-col">
-          <DemoToolbar label="Showings & calendar" icons={[Calendar, Clock, MapPin]} />
+          <DemoToolbar light label="Showings & calendar" icons={[Calendar, Clock, MapPin]} />
 
-          <div className="mt-1 flex-1 rounded-xl border border-dashed border-white/30 p-5">
+          <div className="mt-1 flex-1 rounded-xl border border-dashed border-[#0668E1]/20 p-5">
             <motion.div
               initial={reduced ? false : { opacity: 0, y: 8 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -52,19 +53,19 @@ export function LandingScheduleDemo() {
                   key={i}
                   type="button"
                   onClick={() => setActiveDay(i)}
-                  className="relative flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg text-[11px] font-medium text-white/60 transition-colors hover:text-white"
+                  className="relative flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg text-[11px] font-medium text-[#6B7280] transition-colors hover:text-[#111111]"
                 >
                   {activeDay === i && (
                     <motion.span
                       layoutId="schedule-active-day"
-                      className="absolute inset-0 rounded-lg bg-white"
+                      className="absolute inset-0 rounded-lg bg-[#0668E1]"
                       transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
                     />
                   )}
                   <span
                     className={clsx(
                       'relative z-[1] uppercase',
-                      activeDay === i && 'text-[#0668E1]',
+                      activeDay === i ? 'text-white/80' : 'text-[#9AA1AC]',
                     )}
                   >
                     {day.label}
@@ -72,7 +73,7 @@ export function LandingScheduleDemo() {
                   <span
                     className={clsx(
                       'relative z-[1] text-[13px] font-semibold',
-                      activeDay === i ? 'text-[#0668E1]' : 'text-white',
+                      activeDay === i ? 'text-white' : 'text-[#111111]',
                     )}
                   >
                     {day.date}
@@ -85,11 +86,11 @@ export function LandingScheduleDemo() {
               initial={reduced ? false : { opacity: 0, y: 10 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.45, delay: 0.75 }}
-              className="mt-5 rounded-lg bg-white/10 p-4"
+              className="mt-5 rounded-lg border border-[#0668E1]/10 bg-white p-4 shadow-sm"
             >
-              <p className="text-sm font-semibold text-white">Showing — 742 Oak St</p>
-              <p className="mt-1 text-xs text-white/60">2:00 PM · Sarah Chen</p>
-              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
+              <p className="text-sm font-semibold text-[#111111]">Showing — 742 Oak St</p>
+              <p className="mt-1 text-xs text-[#6B6D76]">2:00 PM · Sarah Chen</p>
+              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#0668E1]/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-[#0668E1]">
                 Synced to Google Calendar
               </span>
             </motion.div>
@@ -103,7 +104,7 @@ export function LandingScheduleDemo() {
         initial={reduced ? false : { opacity: 0, y: 16, scale: 0.95 }}
         animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
         transition={{ duration: 0.5, delay: 1.05, ease: 'easeOut' }}
-        className="relative mt-4 w-full rounded-2xl border border-black/10 bg-white p-4 shadow-lg sm:absolute sm:bottom-5 sm:right-5 sm:mt-0 sm:w-44"
+        className="relative mt-4 w-full rounded-2xl border border-[#0668E1]/15 bg-white p-4 shadow-lg sm:absolute sm:bottom-5 sm:right-5 sm:mt-0 sm:w-44"
       >
         <p className="mb-3 text-xs font-medium text-black/80">AI Assistant</p>
         <p className="mb-2 text-[11px] text-black/40">Sync with</p>

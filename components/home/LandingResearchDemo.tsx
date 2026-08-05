@@ -4,7 +4,6 @@ import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { BarChart3, Download, MapPin, Search } from 'lucide-react';
 import { DemoToolbar } from '@/components/home/LandingDemoToolbar';
-import { BackgroundGradientGlow } from '@/components/ui/background-gradient-glow';
 import { useMotionReduced } from '@/lib/motion';
 
 const STATS = [
@@ -17,7 +16,9 @@ const STATS = [
 const COMP_FILTERS = ['Sold', 'Active', 'Both'];
 
 /** Illustrated card for the "Research the property" How To step — built from
- *  real UI elements (address lookup, stat chips, CMA valuation), not a screenshot. */
+ *  real UI elements (address lookup, stat chips, CMA valuation), not a screenshot.
+ *  White surface with a soft blue tint, distinct from the saturated gradient
+ *  cards used in the "Why Oikaro" section. */
 export function LandingResearchDemo() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.4 });
@@ -27,19 +28,19 @@ export function LandingResearchDemo() {
   return (
     <div ref={ref} className="relative w-full">
       {/* Main illustrated card — built from real UI elements, not a screenshot */}
-      <div className="relative flex min-h-[420px] flex-col overflow-hidden rounded-[16px] p-6 sm:p-8">
-        <BackgroundGradientGlow variant="research" className="rounded-[16px]" />
-        <div className="absolute inset-0 rounded-[16px] bg-black/20" />
+      <div className="relative flex min-h-[420px] flex-col overflow-hidden rounded-[16px] border border-[#0668E1]/10 bg-gradient-to-br from-white via-[#F6FAFF] to-[#E8F1FE] p-6 sm:p-8">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#0668E1]/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 rounded-full bg-[#0668E1]/[0.06] blur-3xl" />
 
         <div className="relative z-[1] flex flex-1 flex-col">
-          <DemoToolbar label="Property research" icons={[Search, MapPin, BarChart3]} />
+          <DemoToolbar light label="Property research" icons={[Search, MapPin, BarChart3]} />
 
-          <div className="mt-1 flex-1 rounded-xl border border-dashed border-white/30 p-5">
+          <div className="mt-1 flex-1 rounded-xl border border-dashed border-[#0668E1]/20 p-5">
             <motion.p
               initial={reduced ? false : { opacity: 0, y: -6 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.4, delay: 0.4 }}
-              className="flex items-center gap-1.5 text-sm font-medium text-white/70"
+              className="flex items-center gap-1.5 text-sm font-medium text-[#5B6472]"
             >
               <Search size={13} className="shrink-0" />
               742 Oak Street, Austin, TX
@@ -49,7 +50,7 @@ export function LandingResearchDemo() {
               initial={reduced ? false : { opacity: 0, y: -6 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.4, delay: 0.55 }}
-              className="mt-2 text-lg font-semibold text-white sm:text-xl"
+              className="mt-2 text-lg font-semibold text-[#111111] sm:text-xl"
             >
               Owner: Marjorie Kessler
             </motion.p>
@@ -63,10 +64,10 @@ export function LandingResearchDemo() {
               {STATS.map((stat) => (
                 <span
                   key={stat.label}
-                  className="rounded-full bg-white/10 px-3 py-1.5 text-xs text-white"
+                  className="rounded-full bg-[#0668E1]/[0.07] px-3 py-1.5 text-xs text-[#111111]"
                 >
                   <span className="font-semibold">{stat.value}</span>{' '}
-                  <span className="text-white/60">{stat.label}</span>
+                  <span className="text-[#6B6D76]">{stat.label}</span>
                 </span>
               ))}
             </motion.div>
@@ -75,13 +76,13 @@ export function LandingResearchDemo() {
               initial={reduced ? false : { opacity: 0, y: 10 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.45, delay: 0.9 }}
-              className="mt-5 rounded-lg bg-white/10 p-4"
+              className="mt-5 rounded-lg border border-[#0668E1]/10 bg-white p-4 shadow-sm"
             >
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-white/50">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#6B6D76]">
                 Estimated value
               </p>
-              <p className="mt-1.5 text-2xl font-bold text-white sm:text-3xl">$625K</p>
-              <p className="mt-1 text-xs text-white/60">
+              <p className="mt-1.5 text-2xl font-bold text-[#0668E1] sm:text-3xl">$625K</p>
+              <p className="mt-1 text-xs text-[#6B6D76]">
                 Range $610K – $640K · 6 comparable sales
               </p>
             </motion.div>
@@ -94,7 +95,7 @@ export function LandingResearchDemo() {
             initial={reduced ? false : { opacity: 0 }}
             animate={isInView ? { opacity: 1 } : {}}
             transition={{ duration: 0.4, delay: 1.35 }}
-            className="mt-4 inline-flex items-center gap-1.5 self-start rounded-full border border-dashed border-white/30 px-3 py-1.5 text-xs text-white/70 transition-colors hover:border-white/50 hover:text-white"
+            className="mt-4 inline-flex items-center gap-1.5 self-start rounded-full border border-dashed border-[#0668E1]/25 px-3 py-1.5 text-xs text-[#0668E1]/80 transition-colors hover:border-[#0668E1]/50 hover:text-[#0668E1]"
           >
             <Download size={12} />
             Export PDF
@@ -108,7 +109,7 @@ export function LandingResearchDemo() {
         initial={reduced ? false : { opacity: 0, y: 16, scale: 0.95 }}
         animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
         transition={{ duration: 0.5, delay: 1.05, ease: 'easeOut' }}
-        className="relative mt-4 w-full rounded-2xl border border-black/10 bg-white p-4 shadow-lg sm:absolute sm:bottom-5 sm:right-5 sm:mt-0 sm:w-44"
+        className="relative mt-4 w-full rounded-2xl border border-[#0668E1]/15 bg-white p-4 shadow-lg sm:absolute sm:bottom-5 sm:right-5 sm:mt-0 sm:w-44"
       >
         <p className="mb-3 text-xs font-medium text-black/80">AI Assistant</p>
         <p className="mb-2 text-[11px] text-black/40">Comps</p>

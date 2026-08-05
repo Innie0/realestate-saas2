@@ -38,7 +38,7 @@ function HowToPanel({ step }: { step: (typeof STEPS)[number] }) {
   return (
     <div
       data-howto-card
-      className="box-border flex w-[880px] max-w-[calc(100vw-3rem)] flex-none flex-col overflow-hidden rounded-[24px] border border-black/[0.06] bg-white p-8 shadow-[0_20px_60px_-30px_rgba(2,38,84,0.18)] sm:max-w-none sm:p-10"
+      className="box-border flex w-[880px] max-w-[calc(100vw-3rem)] flex-none flex-col overflow-hidden rounded-[24px] border border-[#0668E1]/[0.07] bg-gradient-to-b from-white to-[#FAFCFF] p-8 shadow-[0_20px_60px_-30px_rgba(2,38,84,0.18)] sm:max-w-none sm:p-10"
     >
       <div className="flex items-start gap-5">
         <span className="flex-none font-mkt-mono text-[28px] font-semibold leading-none tracking-[-0.03em] text-[#0668E1]/40 sm:text-[34px]">
