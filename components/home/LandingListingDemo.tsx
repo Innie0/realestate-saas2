@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { AlignLeft, Bold, Palette, Sparkles } from 'lucide-react';
 import { DemoToolbar } from '@/components/home/LandingDemoToolbar';
+import { BackgroundGradientGlow } from '@/components/ui/background-gradient-glow';
 import { useMotionReduced } from '@/lib/motion';
 
 const TONES = ['Professional', 'Luxury', 'Friendly'];
@@ -28,44 +29,48 @@ export function LandingListingDemo() {
         initial={reduced ? false : { opacity: 0, y: 24 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="rounded-3xl p-6 sm:p-7"
-        style={{ background: 'linear-gradient(135deg, #0668E1 0%, #2E86FB 100%)' }}
+        className="relative overflow-hidden rounded-3xl p-6 sm:p-7"
       >
-        <DemoToolbar label="Listing description" icons={[AlignLeft, Bold, Palette]} />
+        <BackgroundGradientGlow variant="listings" className="rounded-3xl" />
+        <div className="absolute inset-0 rounded-3xl bg-black/20" />
 
-        {/* Dashed outline reads as an active/editable text region */}
-        <div className="rounded-xl border border-dashed border-white/30 p-4">
-          <div className="space-y-2.5">
-            {LISTING_LINES.map((line, i) => (
-              <motion.div
-                key={line.text}
-                initial={reduced ? false : { opacity: 0, x: -8 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.4, delay: 0.5 + i * 0.2 }}
-                className={
-                  line.muted
-                    ? 'text-sm leading-snug text-white/60'
-                    : 'text-base font-medium leading-snug text-white sm:text-lg'
-                }
-              >
-                {line.text}
-              </motion.div>
-            ))}
+        <div className="relative z-[1]">
+          <DemoToolbar label="Listing description" icons={[AlignLeft, Bold, Palette]} />
+
+          {/* Dashed outline reads as an active/editable text region */}
+          <div className="rounded-xl border border-dashed border-white/30 p-4">
+            <div className="space-y-2.5">
+              {LISTING_LINES.map((line, i) => (
+                <motion.div
+                  key={line.text}
+                  initial={reduced ? false : { opacity: 0, x: -8 }}
+                  animate={isInView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ duration: 0.4, delay: 0.5 + i * 0.2 }}
+                  className={
+                    line.muted
+                      ? 'text-sm leading-snug text-white/60'
+                      : 'text-base font-medium leading-snug text-white sm:text-lg'
+                  }
+                >
+                  {line.text}
+                </motion.div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <motion.button
-          type="button"
-          tabIndex={-1}
-          aria-hidden
-          initial={reduced ? false : { opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.4, delay: 1.5 }}
-          className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-dashed border-white/30 px-3 py-1.5 text-xs text-white/70 transition-colors hover:border-white/50 hover:text-white"
-        >
-          <Sparkles size={12} />
-          Generate more
-        </motion.button>
+          <motion.button
+            type="button"
+            tabIndex={-1}
+            aria-hidden
+            initial={reduced ? false : { opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.4, delay: 1.5 }}
+            className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-dashed border-white/30 px-3 py-1.5 text-xs text-white/70 transition-colors hover:border-white/50 hover:text-white"
+          >
+            <Sparkles size={12} />
+            Generate more
+          </motion.button>
+        </div>
       </motion.div>
 
       {/* Floating settings panel — stacks below the card on mobile; overlaps the

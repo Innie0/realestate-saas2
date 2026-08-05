@@ -38,7 +38,7 @@ const STEPS = [
   {
     kicker: 'ADS',
     title: 'Turn listings into ad campaigns',
-    body: 'Push any listing straight to Google and Meta in a couple clicks — Oikaro builds the creative and tracks reach so you skip the ad-manager learning curve.',
+    body: 'Push any listing straight to Google and Meta in a couple clicks — Oikaro writes the ad copy, you pick the photo, and reach is tracked automatically.',
     label: '03 Ads',
     glow: 'ads' as const,
   },

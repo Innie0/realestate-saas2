@@ -20,7 +20,7 @@ type GlowBlob = {
   blur: number;
 };
 
-type GlowVariant = 'listings' | 'leads' | 'transactions';
+type GlowVariant = 'listings' | 'leads' | 'ads' | 'transactions';
 
 const VARIANT_BLOBS: Record<GlowVariant, GlowBlob[]> = {
   listings: [
@@ -35,6 +35,12 @@ const VARIANT_BLOBS: Record<GlowVariant, GlowBlob[]> = {
     { x: '62%', y: '12%', size: '48%', color: BRAND.blueBright, opacity: 0.65, blur: 40 },
     { x: '40%', y: '88%', size: '42%', color: BRAND.mist, opacity: 0.7, blur: 38 },
   ],
+  ads: [
+    { x: '85%', y: '25%', size: '70%', color: BRAND.mistSoft, opacity: 0.85, blur: 50 },
+    { x: '10%', y: '75%', size: '66%', color: BRAND.blue, opacity: 0.9, blur: 46 },
+    { x: '58%', y: '88%', size: '48%', color: BRAND.blueBright, opacity: 0.6, blur: 40 },
+    { x: '30%', y: '12%', size: '40%', color: BRAND.mist, opacity: 0.65, blur: 36 },
+  ],
   transactions: [
     { x: '15%', y: '82%', size: '68%', color: BRAND.mistSoft, opacity: 0.85, blur: 48 },
     { x: '92%', y: '20%', size: '62%', color: BRAND.navy, opacity: 0.95, blur: 44 },
@@ -46,6 +52,7 @@ const VARIANT_BLOBS: Record<GlowVariant, GlowBlob[]> = {
 const VARIANT_BASE: Record<GlowVariant, string> = {
   listings: `linear-gradient(145deg, ${BRAND.navy} 0%, ${BRAND.blueDeep} 45%, ${BRAND.blue} 100%)`,
   leads: `linear-gradient(160deg, ${BRAND.blueDeep} 0%, ${BRAND.blue} 50%, ${BRAND.navy} 100%)`,
+  ads: `linear-gradient(150deg, ${BRAND.navy} 0%, ${BRAND.blue} 55%, ${BRAND.blueBright} 100%)`,
   transactions: `linear-gradient(135deg, ${BRAND.navy} 0%, ${BRAND.blueBright} 42%, ${BRAND.blueDeep} 100%)`,
 };
 

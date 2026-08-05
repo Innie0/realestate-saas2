@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { BarChart3, Megaphone, Plus, Target } from 'lucide-react';
 import { DemoToolbar } from '@/components/home/LandingDemoToolbar';
+import { BackgroundGradientGlow } from '@/components/ui/background-gradient-glow';
 import { useMotionReduced } from '@/lib/motion';
 
 const PLATFORMS = ['Google', 'Meta', 'Both'] as const;
@@ -32,51 +33,55 @@ export function LandingAdsDemo() {
         initial={reduced ? false : { opacity: 0, y: 24 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="rounded-3xl p-6 sm:p-7"
-        style={{ background: 'linear-gradient(135deg, #0668E1 0%, #2E86FB 100%)' }}
+        className="relative overflow-hidden rounded-3xl p-6 sm:p-7"
       >
-        <DemoToolbar label="Active campaigns" icons={[Megaphone, Target, BarChart3]} />
+        <BackgroundGradientGlow variant="ads" className="rounded-3xl" />
+        <div className="absolute inset-0 rounded-3xl bg-black/20" />
 
-        {/* Dashed outline reads as an active/live-updating campaign list */}
-        <div className="rounded-xl border border-dashed border-white/30 p-3">
-          <div className="space-y-2">
-            {CAMPAIGNS.map((campaign, i) => (
-              <motion.div
-                key={campaign.name}
-                initial={reduced ? false : { opacity: 0, x: -8 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.4, delay: 0.5 + i * 0.2 }}
-                className="flex items-center justify-between gap-3 rounded-lg bg-white/10 px-3 py-2.5"
-              >
-                <div className="flex min-w-0 items-center gap-2.5">
-                  <span
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-[11px] font-bold"
-                    style={{ color: PLATFORM_BADGE[campaign.platform].color }}
-                  >
-                    {PLATFORM_BADGE[campaign.platform].letter}
+        <div className="relative z-[1]">
+          <DemoToolbar label="Active campaigns" icons={[Megaphone, Target, BarChart3]} />
+
+          {/* Dashed outline reads as an active/live-updating campaign list */}
+          <div className="rounded-xl border border-dashed border-white/30 p-3">
+            <div className="space-y-2">
+              {CAMPAIGNS.map((campaign, i) => (
+                <motion.div
+                  key={campaign.name}
+                  initial={reduced ? false : { opacity: 0, x: -8 }}
+                  animate={isInView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ duration: 0.4, delay: 0.5 + i * 0.2 }}
+                  className="flex items-center justify-between gap-3 rounded-lg bg-white/10 px-3 py-2.5"
+                >
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    <span
+                      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-[11px] font-bold"
+                      style={{ color: PLATFORM_BADGE[campaign.platform].color }}
+                    >
+                      {PLATFORM_BADGE[campaign.platform].letter}
+                    </span>
+                    <p className="truncate text-sm font-medium text-white">{campaign.name}</p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
+                    {campaign.reach}
                   </span>
-                  <p className="truncate text-sm font-medium text-white">{campaign.name}</p>
-                </div>
-                <span className="shrink-0 rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
-                  {campaign.reach}
-                </span>
-              </motion.div>
-            ))}
+                </motion.div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <motion.button
-          type="button"
-          tabIndex={-1}
-          aria-hidden
-          initial={reduced ? false : { opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.4, delay: 1.5 }}
-          className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-dashed border-white/30 px-3 py-1.5 text-xs text-white/70 transition-colors hover:border-white/50 hover:text-white"
-        >
-          <Plus size={12} />
-          New campaign
-        </motion.button>
+          <motion.button
+            type="button"
+            tabIndex={-1}
+            aria-hidden
+            initial={reduced ? false : { opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.4, delay: 1.5 }}
+            className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-dashed border-white/30 px-3 py-1.5 text-xs text-white/70 transition-colors hover:border-white/50 hover:text-white"
+          >
+            <Plus size={12} />
+            New campaign
+          </motion.button>
+        </div>
       </motion.div>
 
       {/* Floating settings panel — stacks below the card on mobile; overlaps the
