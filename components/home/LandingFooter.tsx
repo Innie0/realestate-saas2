@@ -25,25 +25,30 @@ export default function LandingFooter() {
             />
           </div>
 
-          <div className="flex flex-col items-start justify-between gap-6 rounded-[28px] border-2 border-dashed border-white/35 p-8 sm:p-10">
-            <p className="font-display text-2xl font-medium leading-[1.2] tracking-[-0.02em] text-white">
-              Ready to close faster with Oikaro?
-            </p>
-            <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="flex flex-col items-start justify-center gap-6 rounded-[28px] border-2 border-dashed border-white/35 p-8 sm:p-10">
+            <div>
+              <p className="font-display text-2xl font-medium leading-[1.25] tracking-[-0.02em] text-white">
+                Ready to close faster with Oikaro?
+              </p>
+              <p className="mt-3 text-sm leading-[1.6] text-white/70">
+                Start for free — 7 days on us, no credit card required.
+              </p>
+            </div>
+            <div className="flex w-full flex-col gap-3">
+              <Link
+                href="/auth/signup"
+                className="inline-flex h-11 w-full items-center justify-center whitespace-nowrap rounded-full bg-[#0A0A0A] px-[22px] text-[15px] font-semibold text-white transition-colors hover:bg-[#262626]"
+              >
+                Start free trial
+              </Link>
               <Link
                 href="/auth/login"
-                className="inline-flex h-11 items-center gap-2 rounded-full bg-white px-5 text-[15px] font-semibold text-[#111111] transition-opacity hover:opacity-90"
+                className="inline-flex h-11 w-full items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-5 text-[15px] font-semibold text-[#111111] transition-opacity hover:opacity-90"
               >
                 Sign in
                 <span className="text-[#0668E1]" aria-hidden>
                   →
                 </span>
-              </Link>
-              <Link
-                href="/auth/signup"
-                className="inline-flex h-11 items-center rounded-full bg-[#0A0A0A] px-[22px] text-[15px] font-semibold text-white transition-colors hover:bg-[#262626]"
-              >
-                Start free trial
               </Link>
             </div>
           </div>
