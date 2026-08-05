@@ -8,7 +8,6 @@ import LandingWhySwitcher from '@/components/home/LandingWhySwitcher';
 import LandingHowTo from '@/components/home/LandingHowTo';
 import LandingIntegrations from '@/components/home/LandingIntegrations';
 import LandingFAQSection from '@/components/home/LandingFAQSection';
-import LandingCTABand from '@/components/home/LandingCTABand';
 import LandingFooter from '@/components/home/LandingFooter';
 import { supabase } from '@/lib/supabase';
 
@@ -48,7 +47,6 @@ export default function HomePageClient() {
       <LandingHowTo />
       <LandingIntegrations />
       <LandingFAQSection />
-      <LandingCTABand />
       <LandingFooter />
     </div>
   );
