@@ -622,8 +622,8 @@ function TasksPageContent() {
                     <div
                       key={conv.id}
                       className={clsx(
-                        'group relative px-2.5 py-2.5 rounded-[8px] cursor-pointer transition-colors',
-                        selected ? 'bg-brand-50 border border-brand-200/70' : 'hover:bg-[var(--canvas)] border border-transparent',
+                        'group relative px-2.5 py-2.5 rounded-[8px] cursor-pointer transition-colors border-l-2',
+                        selected ? 'bg-muted border-l-brand-500' : 'hover:bg-[var(--canvas)] border-l-transparent',
                       )}
                       onClick={() => selectConversation(conv.id)}
                     >

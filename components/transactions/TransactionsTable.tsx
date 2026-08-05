@@ -64,7 +64,7 @@ export default function TransactionsTable({ transactions }: TransactionsTablePro
                       href={`/dashboard/transactions/${transaction.id}`}
                       className="flex min-w-0 items-center gap-3 group/link"
                     >
-                      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+                      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground">
                         <Home className="size-[18px]" strokeWidth={1.75} />
                       </span>
                       <div className="min-w-0">

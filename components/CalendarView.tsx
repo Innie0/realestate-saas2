@@ -151,7 +151,7 @@ export default function CalendarView({
       >
         <div
           className={`inline-flex items-center justify-center h-5 w-5 rounded-full text-xs font-semibold mb-1 ${
-            isToday ? 'bg-brand-500 text-[var(--brand-foreground)]' : 'text-muted-foreground'
+            isToday ? 'bg-foreground text-background' : 'text-muted-foreground'
           }`}
         >
           {day}

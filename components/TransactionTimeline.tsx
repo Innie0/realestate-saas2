@@ -80,7 +80,7 @@ export default function TransactionTimeline({ transaction, compact = false, onAd
         };
       case 'today':
         return {
-          icon: 'bg-brand-50 text-brand-700 ring-1 ring-brand-200',
+          icon: 'bg-muted text-foreground ring-1 ring-border',
           line: 'bg-brand-500',
         };
       case 'overdue':

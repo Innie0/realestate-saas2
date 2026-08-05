@@ -263,7 +263,7 @@ export default function NotificationsPanel({ embedded = false, className }: Noti
             <div className="flex items-center gap-2 flex-wrap">
               <p className="text-body font-medium text-gray-900">{item.title}</p>
               {isToday(item.date) && (
-                <span className="text-[0.6875rem] font-semibold uppercase tracking-wide text-brand-600 bg-brand-50 px-1.5 py-0.5 rounded">
+                <span className="text-[0.6875rem] font-semibold uppercase tracking-wide text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
                   Today
                 </span>
               )}

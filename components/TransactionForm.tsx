@@ -295,7 +295,7 @@ export default function TransactionForm({
             onClick={() => setActiveSection(section.id)}
             className={`flex-1 py-2 px-3 rounded-lg text-[12.5px] font-medium transition-colors duration-150 ${
               activeSection === section.id
-                ? 'bg-brand-500 text-[var(--brand-foreground)]'
+                ? 'bg-gray-900 text-white'
                 : 'text-gray-700 hover:text-gray-900'
             }`}
           >

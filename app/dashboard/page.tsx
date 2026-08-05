@@ -202,10 +202,10 @@ function MetricStrip({ metrics }: { metrics: Metric[] }) {
             href={m.href}
             className={clsx(
               'group px-4 py-4 transition-colors hover:bg-muted/40 sm:px-5',
-              m.accent && 'bg-brand-50/60',
+              m.accent && 'bg-muted/50',
             )}
           >
-            <p className={clsx('text-label', m.accent && 'text-brand-600')}>{m.label}</p>
+            <p className={clsx('text-label', m.accent && 'text-foreground')}>{m.label}</p>
             <div className="mt-2 flex items-end justify-between gap-2">
               <p
                 className={clsx(

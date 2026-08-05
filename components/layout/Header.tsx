@@ -241,7 +241,7 @@ export default function Header({ title, subtitle, eyebrow, actions, inline = fal
                                 <Clock className="w-3 h-3" />
                                 <span className="font-mono">{formatDate(item.date)}</span>
                                 {isToday(item.date) && (
-                                  <span className="bg-brand-50 text-brand-600 px-1.5 py-px rounded font-medium">
+                                  <span className="bg-muted text-muted-foreground px-1.5 py-px rounded font-medium">
                                     Today
                                   </span>
                                 )}

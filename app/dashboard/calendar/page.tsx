@@ -205,7 +205,7 @@ function CalendarPageContent() {
                         className={cn(
                           'flex w-full items-center rounded-lg px-2.5 py-2 text-[13px] font-medium transition-colors',
                           eventTypeFilter === value
-                            ? 'bg-brand-50 text-brand-600'
+                            ? 'bg-foreground text-background'
                             : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
                         )}
                       >
