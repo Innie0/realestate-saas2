@@ -1514,23 +1514,31 @@ html[data-dashboard-theme='light'] .dashboard-root,
     background-color: var(--surface) !important;
   }
 
-  /* Marketing landing uses real white fills on cobalt panels (not dashboard --surface). */
+  /* Marketing landing uses real white fills on cobalt panels (not dashboard --surface).
+     Both compound (.marketing-root.bg-white, the root wrapper itself) and descendant
+     (.marketing-root .bg-white, nested elements) forms need covering here — several
+     page roots apply `marketing-root` and `bg-white` to the same element. */
+  .marketing-root.bg-white,
   .marketing-root .bg-white {
     background-color: #ffffff !important;
   }
 
+  .marketing-root.bg-white\/90,
   .marketing-root .bg-white\/90 {
     background-color: color-mix(in srgb, #ffffff 90%, transparent) !important;
   }
 
+  .marketing-root.bg-white\/95,
   .marketing-root .bg-white\/95 {
     background-color: color-mix(in srgb, #ffffff 95%, transparent) !important;
   }
 
+  .marketing-root.hover\:bg-white:hover,
   .marketing-root .hover\:bg-white:hover {
     background-color: #ffffff !important;
   }
 
+  .marketing-root.hover\:bg-white\/90:hover,
   .marketing-root .hover\:bg-white\/90:hover {
     background-color: color-mix(in srgb, #ffffff 90%, transparent) !important;
   }
