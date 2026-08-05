@@ -223,7 +223,7 @@ export default function LeadsInbox({
           className={cn(
             'inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors',
             filter === key
-              ? 'border-foreground bg-foreground text-background'
+              ? 'border-zinc-700 bg-zinc-700 text-white'
               : 'border-border bg-card text-muted-foreground hover:border-foreground/30 hover:text-foreground',
           )}
         >

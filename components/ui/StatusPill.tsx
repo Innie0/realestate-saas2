@@ -9,7 +9,7 @@ export type StatusPillTone =
   | 'info';
 
 const toneStyles: Record<StatusPillTone, string> = {
-  active: 'bg-foreground text-background',
+  active: 'bg-zinc-700 text-white',
   success: 'bg-emerald-500 text-white',
   warning: 'bg-amber-500 text-white',
   neutral: 'bg-muted text-muted-foreground',

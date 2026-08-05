@@ -30,7 +30,7 @@ export default function AdTypeSelector({ value, onChange }: AdTypeSelectorProps)
             <div
               className={clsx(
                 'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg',
-                selected ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600'
+                selected ? 'bg-zinc-700 text-white' : 'bg-gray-100 text-gray-600'
               )}
             >
               <Icon className="h-4 w-4" strokeWidth={1.75} />

@@ -244,7 +244,7 @@ export default function BookingSettingsPage() {
                   onClick={() => toggleDay(value)}
                   className={`w-12 py-2 rounded-lg border text-[12.5px] font-medium transition-all ${
                     selected
-                      ? 'border-gray-900 bg-gray-900 text-white'
+                      ? 'border-zinc-700 bg-zinc-700 text-white'
                       : 'border-gray-200 text-gray-700 hover:border-gray-300 hover:text-gray-900'
                   }`}
                 >

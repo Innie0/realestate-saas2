@@ -39,7 +39,7 @@ export default function StepSidebar({ currentStep, maxStepIndex, onStepClick }: 
               <span
                 className={clsx(
                   'flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold',
-                  isActive && 'bg-gray-900 text-white',
+                  isActive && 'bg-zinc-700 text-white',
                   isComplete && !isActive && 'bg-emerald-100 text-emerald-700',
                   !isActive && !isComplete && 'bg-gray-100 text-gray-700'
                 )}
@@ -73,7 +73,7 @@ export default function StepSidebar({ currentStep, maxStepIndex, onStepClick }: 
               className={clsx(
                 'shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors',
                 isActive
-                  ? 'bg-gray-900 text-white'
+                  ? 'bg-zinc-700 text-white'
                   : isClickable
                     ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     : 'bg-gray-50 text-gray-400'

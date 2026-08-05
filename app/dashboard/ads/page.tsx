@@ -289,7 +289,7 @@ function AdsPageContent() {
           className={clsx(
             'inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-[13px] font-medium transition-colors',
             tab === 'create'
-              ? 'bg-foreground text-background'
+              ? 'bg-zinc-700 text-white'
               : 'text-muted-foreground hover:bg-card hover:text-foreground',
           )}
         >
@@ -302,7 +302,7 @@ function AdsPageContent() {
           className={clsx(
             'inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-[13px] font-medium transition-colors',
             tab === 'performance'
-              ? 'bg-foreground text-background'
+              ? 'bg-zinc-700 text-white'
               : 'text-muted-foreground hover:bg-card hover:text-foreground',
           )}
         >
@@ -389,7 +389,7 @@ function AdsPageContent() {
                         className={cn(
                           'rounded-lg px-3 py-2 text-[13px] font-medium transition-colors',
                           perfDays === range.days
-                            ? 'bg-foreground text-background'
+                            ? 'bg-zinc-700 text-white'
                             : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
                         )}
                       >
@@ -412,7 +412,7 @@ function AdsPageContent() {
                       className={cn(
                         'rounded-lg px-2.5 py-2 text-left text-[13px] font-medium transition-colors',
                         perfAdType === ''
-                          ? 'bg-foreground text-background'
+                          ? 'bg-zinc-700 text-white'
                           : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
                       )}
                     >
@@ -426,7 +426,7 @@ function AdsPageContent() {
                         className={cn(
                           'rounded-lg px-2.5 py-2 text-left text-[13px] font-medium transition-colors',
                           perfAdType === option.id
-                            ? 'bg-foreground text-background'
+                            ? 'bg-zinc-700 text-white'
                             : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
                         )}
                       >

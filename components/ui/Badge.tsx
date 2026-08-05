@@ -25,7 +25,7 @@ const variantStyles: Record<BadgeVariant, string> = {
   graphite: 'bg-brand-50 text-brand-600 border-transparent',
   info: 'bg-teal-50 text-teal-700 border-teal-200',
   ad: 'bg-sky-50 text-sky-700 border-sky-200',
-  active: 'bg-foreground text-background border-transparent',
+  active: 'bg-zinc-700 text-white border-transparent',
 }
 
 interface BadgeProps {

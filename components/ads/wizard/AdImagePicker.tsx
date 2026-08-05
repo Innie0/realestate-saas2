@@ -146,7 +146,7 @@ export default function AdImagePicker({
               >
                 <Image src={img.url} alt="" fill className="object-cover" sizes="80px" />
                 {index === 0 && (
-                  <span className="absolute bottom-0 inset-x-0 bg-gray-900/90 text-[9px] font-semibold text-white text-center py-0.5">
+                  <span className="absolute bottom-0 inset-x-0 bg-zinc-700/90 text-[9px] font-semibold text-white text-center py-0.5">
                     Primary
                   </span>
                 )}
