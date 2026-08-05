@@ -104,8 +104,10 @@ export function DraggableCardRow({
   };
 
   if (prefersReducedMotion) {
+    // The fixed height in `style` clips the horizontal-scroll variant; the
+    // stacked fallback lays out vertically and must size itself naturally.
     return (
-      <div className={clsx('flex flex-col gap-7 px-10', className)} style={style}>
+      <div className={clsx('flex flex-col gap-7 px-10', className)}>
         {children}
       </div>
     );

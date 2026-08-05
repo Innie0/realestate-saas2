@@ -1,181 +1,117 @@
 'use client';
 
-import clsx from 'clsx';
-import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRef } from 'react';
 import { DraggableCardRow } from '@/components/home/DraggableCardRow';
+import { LandingAskDemo } from '@/components/home/LandingAskDemo';
+import { LandingResearchDemo } from '@/components/home/LandingResearchDemo';
+import { LandingScheduleDemo } from '@/components/home/LandingScheduleDemo';
+import { ensureGsapRegistered, gsap, ScrollTrigger, useGSAP } from '@/lib/gsap-config';
+import { useMotionReduced } from '@/lib/motion';
 
-type PanelTheme = 'light' | 'deep' | 'brand';
-
-const PANEL_THEMES: Record<
-  PanelTheme,
-  {
-    background: string;
-    number: string;
-    title: string;
-    body: string;
-    mockShell?: string;
-    mockShadow: string;
-  }
-> = {
-  light: {
-    background: 'linear-gradient(180deg,#F5F9FF 0%,#EAF2FE 52%,#DCEBFE 100%)',
-    number: 'text-[#0668E1]/35',
-    title: 'text-[#0452AD]',
-    body: 'text-[#6B6D76]',
-    mockShadow: 'shadow-[0_-6px_50px_-20px_rgba(6,104,225,0.22)]',
-  },
-  deep: {
-    background: 'linear-gradient(180deg,#022654 0%,#0452AD 58%,#0668E1 100%)',
-    number: 'text-white/35',
-    title: 'text-white',
-    body: 'text-white/65',
-    mockShell:
-      'rounded-t-[16px] border border-dashed border-white/25 bg-[#0668E1]/20 p-1.5 backdrop-blur-[1px]',
-    mockShadow: 'shadow-[0_-6px_50px_-20px_rgba(0,0,0,0.35)]',
-  },
-  brand: {
-    background: 'linear-gradient(145deg,#0668E1 0%,#2E86FB 58%,#0668E1 100%)',
-    number: 'text-white/35',
-    title: 'text-white',
-    body: 'text-white/72',
-    mockShadow: 'shadow-[0_-8px_56px_-18px_rgba(2,38,84,0.45)]',
-  },
-};
+ensureGsapRegistered();
 
 const STEPS = [
   {
     n: '01',
-    title: 'Capture',
-    body: 'Open-house sign-ins, website forms, and portal inquiries all land in one inbox — deduped, scored, and attached to the property they asked about.',
-    theme: 'light' as const,
-    src: '/landing/leads-inbox.png',
-    fallbackSrc: '/landing/leads-inbox.png',
+    title: 'Research the property',
+    body: 'Look up the owner, pull property details, and run a comps-based CMA before you ever pick up the phone.',
+    Demo: LandingResearchDemo,
   },
   {
     n: '02',
-    title: 'Qualify',
-    body: 'Oikaro reads the history and tells you who is actually ready. Draft the follow-up, book the showing, and log the call without leaving the row.',
-    theme: 'deep' as const,
-    src: '/landing/lead-detail.png',
-    fallbackSrc: '/landing/lead-capture.png',
+    title: 'Let AI handle the busywork',
+    body: "Ask in plain English and Oikaro drafts the follow-up, ready to send in seconds — no blank page, no starting from scratch.",
+    Demo: LandingAskDemo,
   },
   {
     n: '03',
-    title: 'Close',
-    body: 'Every deadline, document, and signature tracked to closing day — with reminders that fire before the escrow officer has to ask.',
-    theme: 'brand' as const,
-    src: '/landing/transactions.png',
-    fallbackSrc: '/landing/transactions.png',
+    title: 'Get it on the calendar',
+    body: "Book the showing and it's synced everywhere — no double-booking, no back-and-forth texts to lock a time.",
+    Demo: LandingScheduleDemo,
   },
 ] as const;
 
-const CLIP_H = 760;
-
-function PanelMock({
-  src,
-  fallbackSrc,
-  alt,
-  theme,
-}: {
-  src: string;
-  fallbackSrc: string;
-  alt: string;
-  theme: PanelTheme;
-}) {
-  const [activeSrc, setActiveSrc] = useState(src);
-  const styles = PANEL_THEMES[theme];
-
-  const mock = (
-    <div
-      className={clsx(
-        'relative min-h-[300px] flex-1 overflow-hidden rounded-t-[14px] bg-white',
-        !styles.mockShell && 'mt-[38px]',
-        styles.mockShadow,
-      )}
-    >
-      <Image
-        src={activeSrc}
-        alt={alt}
-        fill
-        draggable={false}
-        className="pointer-events-none object-cover object-top select-none"
-        sizes="880px"
-        onError={() => {
-          if (activeSrc !== fallbackSrc) setActiveSrc(fallbackSrc);
-        }}
-      />
-    </div>
-  );
-
-  if (!styles.mockShell) return mock;
-
-  return <div className={clsx('mt-[38px] flex-1', styles.mockShell)}>{mock}</div>;
-}
-
 function HowToPanel({ step }: { step: (typeof STEPS)[number] }) {
-  const styles = PANEL_THEMES[step.theme];
+  const Demo = step.Demo;
 
   return (
     <div
-      className="box-border flex w-[880px] max-w-[calc(100vw-3rem)] flex-none flex-col overflow-hidden rounded-[24px] px-12 pt-12 sm:max-w-none"
-      style={{ background: styles.background }}
+      data-howto-card
+      className="box-border flex w-[880px] max-w-[calc(100vw-3rem)] flex-none flex-col overflow-hidden rounded-[24px] border border-black/[0.06] bg-white p-8 shadow-[0_20px_60px_-30px_rgba(2,38,84,0.18)] sm:max-w-none sm:p-10"
     >
-      <div className="flex h-[210px] flex-none items-start gap-[22px]">
-        <span
-          className={clsx(
-            'flex-none font-mkt-mono text-[34px] font-semibold leading-none tracking-[-0.03em]',
-            styles.number,
-          )}
-        >
+      <div className="flex items-start gap-5">
+        <span className="flex-none font-mkt-mono text-[28px] font-semibold leading-none tracking-[-0.03em] text-[#0668E1]/40 sm:text-[34px]">
           ({step.n})
         </span>
         <div className="flex-1">
-          <h3
-            className={clsx(
-              'font-display text-[56px] font-extrabold leading-[0.98] tracking-[-0.045em]',
-              styles.title,
-            )}
-          >
+          <h3 className="font-display text-[30px] font-extrabold leading-[1.05] tracking-[-0.04em] text-[#111111] sm:text-[38px]">
             {step.title}
           </h3>
-          <p className={clsx('mt-[18px] max-w-[44ch] text-[17px] leading-[1.6]', styles.body)}>
+          <p className="mt-3 max-w-[46ch] text-[16px] leading-[1.6] text-[#6B6D76] sm:text-[17px]">
             {step.body}
           </p>
         </div>
       </div>
 
-      <PanelMock
-        src={step.src}
-        fallbackSrc={step.fallbackSrc}
-        alt={step.title}
-        theme={step.theme}
-      />
+      <div className="mt-8 flex-1">
+        <Demo />
+      </div>
     </div>
   );
 }
 
 export default function LandingHowTo() {
+  const reduced = useMotionReduced();
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      if (reduced || !sectionRef.current) return;
+
+      const cards = gsap.utils.toArray<HTMLElement>('[data-howto-card]', sectionRef.current);
+      if (!cards.length) return;
+
+      gsap.set(cards, { autoAlpha: 0, y: 28 });
+
+      ScrollTrigger.batch(cards, {
+        start: 'top 85%',
+        once: true,
+        onEnter: (batch) =>
+          gsap.to(batch, {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.7,
+            ease: 'power3.out',
+            stagger: 0.15,
+          }),
+      });
+    },
+    { scope: sectionRef, dependencies: [reduced] },
+  );
+
   return (
-    <section className="relative bg-white pt-16 text-[#111111] sm:pt-20 lg:pt-28">
+    <section
+      ref={sectionRef as React.RefObject<HTMLElement>}
+      className="relative bg-white pt-16 text-[#111111] sm:pt-20 lg:pt-28"
+    >
       <div className="mx-auto max-w-[1120px] px-10">
         <p className="font-mkt-mono text-[13px] font-semibold tracking-[0.22em] text-[#0668E1]">
           HOW TO
         </p>
         <h2 className="font-display mt-[34px] max-w-[24ch] text-[64px] font-extrabold leading-[1.04] tracking-[-0.048em] text-[#111111]">
-          From first inquiry to closed deal, and beyond
+          Ask a question. Get it done. Move on.
         </h2>
         <p className="mt-[30px] max-w-[48ch] text-[19.5px] leading-[1.6] text-[#6B6D76]">
-          Three steps, one workspace. Oikaro carries a lead from the first form fill through the
-          closing table without you rebuilding the file four times.
+          Property research, follow-ups, and scheduling — the stuff that used to take five tabs
+          and twenty minutes now happens in one place, in seconds.
         </p>
       </div>
 
-      <DraggableCardRow className="mt-20 lg:mt-28" style={{ height: CLIP_H }} contentClassName="h-full">
-          {STEPS.map((step) => (
-            <HowToPanel key={step.n} step={step} />
-          ))}
+      <DraggableCardRow className="mt-20 lg:mt-28">
+        {STEPS.map((step) => (
+          <HowToPanel key={step.n} step={step} />
+        ))}
       </DraggableCardRow>
 
       <div className="mx-auto flex max-w-[1120px] flex-wrap items-center gap-5 px-10 pb-[120px] pt-14">

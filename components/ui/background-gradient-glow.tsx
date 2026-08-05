@@ -20,7 +20,7 @@ type GlowBlob = {
   blur: number;
 };
 
-type GlowVariant = 'listings' | 'leads' | 'ads' | 'transactions';
+type GlowVariant = 'listings' | 'leads' | 'ads' | 'transactions' | 'research' | 'ask' | 'schedule';
 
 const VARIANT_BLOBS: Record<GlowVariant, GlowBlob[]> = {
   listings: [
@@ -47,6 +47,24 @@ const VARIANT_BLOBS: Record<GlowVariant, GlowBlob[]> = {
     { x: '70%', y: '58%', size: '52%', color: BRAND.blueBright, opacity: 0.6, blur: 42 },
     { x: '48%', y: '8%', size: '36%', color: BRAND.mistLight, opacity: 0.6, blur: 34 },
   ],
+  research: [
+    { x: '90%', y: '85%', size: '68%', color: BRAND.mistSoft, opacity: 0.85, blur: 50 },
+    { x: '10%', y: '15%', size: '64%', color: BRAND.blueDeep, opacity: 0.9, blur: 46 },
+    { x: '48%', y: '48%', size: '46%', color: BRAND.blueBright, opacity: 0.55, blur: 40 },
+    { x: '78%', y: '10%', size: '36%', color: BRAND.mist, opacity: 0.6, blur: 34 },
+  ],
+  ask: [
+    { x: '12%', y: '88%', size: '70%', color: BRAND.mistLight, opacity: 0.85, blur: 50 },
+    { x: '88%', y: '32%', size: '62%', color: BRAND.blue, opacity: 0.88, blur: 46 },
+    { x: '40%', y: '18%', size: '46%', color: BRAND.blueBright, opacity: 0.55, blur: 40 },
+    { x: '65%', y: '82%', size: '36%', color: BRAND.mist, opacity: 0.6, blur: 34 },
+  ],
+  schedule: [
+    { x: '85%', y: '78%', size: '66%', color: BRAND.mistSoft, opacity: 0.85, blur: 48 },
+    { x: '15%', y: '25%', size: '64%', color: BRAND.navy, opacity: 0.92, blur: 46 },
+    { x: '55%', y: '65%', size: '48%', color: BRAND.blueBright, opacity: 0.58, blur: 40 },
+    { x: '30%', y: '90%', size: '34%', color: BRAND.mistLight, opacity: 0.6, blur: 34 },
+  ],
 };
 
 const VARIANT_BASE: Record<GlowVariant, string> = {
@@ -54,6 +72,9 @@ const VARIANT_BASE: Record<GlowVariant, string> = {
   leads: `linear-gradient(160deg, ${BRAND.blueDeep} 0%, ${BRAND.blue} 50%, ${BRAND.navy} 100%)`,
   ads: `linear-gradient(150deg, ${BRAND.navy} 0%, ${BRAND.blue} 55%, ${BRAND.blueBright} 100%)`,
   transactions: `linear-gradient(135deg, ${BRAND.navy} 0%, ${BRAND.blueBright} 42%, ${BRAND.blueDeep} 100%)`,
+  research: `linear-gradient(140deg, ${BRAND.navy} 0%, ${BRAND.blueDeep} 50%, ${BRAND.blue} 100%)`,
+  ask: `linear-gradient(155deg, ${BRAND.blueDeep} 0%, ${BRAND.blue} 45%, ${BRAND.blueBright} 100%)`,
+  schedule: `linear-gradient(130deg, ${BRAND.navy} 0%, ${BRAND.blueBright} 48%, ${BRAND.blueDeep} 100%)`,
 };
 
 export type BackgroundGradientGlowProps = {
