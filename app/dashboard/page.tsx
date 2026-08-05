@@ -41,7 +41,6 @@ import { formatCompactPrice } from '@/lib/format-price';
 
 interface RecentClient {
   id: string;
-  name: string;
   created_at: string;
 }
 
@@ -504,8 +503,8 @@ export default function DashboardHomePage() {
 
   const { response: usageResponse, isLoading: usageLoading } = useApi<UsageData>('/api/usage');
   const { data: recentProjects = [], isLoading: projectsLoading } = useApi<Project[]>('/api/projects?limit=3');
-  const { data: inboxLeads = [], isLoading: leadsLoading } = useApi<RecentClient[]>('/api/clients?status=all&view=inbox');
-  const { data: allContacts = [], isLoading: contactsLoading } = useApi<RecentClient[]>('/api/clients?status=all');
+  const { data: inboxLeads = [], isLoading: leadsLoading } = useApi<RecentClient[]>('/api/clients/lite?status=all&view=inbox');
+  const { data: allContacts = [], isLoading: contactsLoading } = useApi<RecentClient[]>('/api/clients/lite?status=all');
   const { data: allTransactions = [], isLoading: transactionsLoading } = useApi<RecentTransaction[]>('/api/transactions?status=open');
   const { data: activeReminders = [], isLoading: remindersLoading } = useApi<ReminderRow[]>('/api/reminders?include_completed=false');
   const { data: upcomingItems, isLoading: todayLoading } = useSWR<UpcomingItem[]>(
