@@ -92,7 +92,7 @@ function NavLink({
         'group relative flex items-center rounded-lg text-[13px] font-medium transition-colors duration-100',
         isCollapsed ? 'justify-center px-2 py-2' : 'gap-2.5 px-2.5 py-[7px]',
         active
-          ? 'bg-foreground text-background'
+          ? 'bg-primary text-primary-foreground'
           : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground',
       )}
     >
@@ -116,7 +116,7 @@ function NavLink({
           className={clsx(
             'relative z-10 rounded-full px-[6px] py-[1px] font-mono text-[10px] font-semibold',
             active
-              ? 'bg-background/20 text-background'
+              ? 'bg-primary-foreground/20 text-primary-foreground'
               : 'bg-foreground text-background',
           )}
         >
@@ -249,7 +249,7 @@ export default function Sidebar() {
     <>
       <div className="fixed left-0 right-0 top-0 z-50 flex h-16 items-center justify-between border-b border-border bg-[var(--canvas)] px-4 lg:hidden">
         <Link href="/dashboard" className="flex items-center gap-2 min-h-0">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] bg-foreground text-[11px] font-bold text-background">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] bg-primary text-[11px] font-bold text-primary-foreground">
             {SITE_NAME.charAt(0)}
           </span>
           <span className="text-[13px] font-semibold tracking-tight text-foreground">{SITE_NAME}</span>
@@ -297,7 +297,7 @@ export default function Sidebar() {
             />
           ) : (
             <>
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-foreground text-[11px] font-bold text-background">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-primary text-[11px] font-bold text-primary-foreground">
                 {SITE_NAME.charAt(0)}
               </span>
               <span className="text-[13px] font-semibold tracking-tight text-foreground">{SITE_NAME}</span>
@@ -365,7 +365,7 @@ export default function Sidebar() {
             >
               <div className="border-b border-border px-3.5 py-3">
                 <div className="flex items-center gap-2.5">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-foreground text-[11px] font-semibold text-background">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-primary-foreground">
                     {initials}
                   </span>
                   <div className="min-w-0 flex-1">
@@ -432,7 +432,7 @@ export default function Sidebar() {
               isUserMenuOpen && !isCollapsed && 'bg-muted/60',
             )}
           >
-            <span className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full bg-foreground text-[10px] font-semibold text-background">
+            <span className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
               {initials}
             </span>
             {!isCollapsed && (
