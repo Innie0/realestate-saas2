@@ -115,7 +115,7 @@ export default function ProductsMegaMenu({ onOpenChange, inverted = false }: Pro
                             >
                               {tool.name}
                               {NEW_TOOL_IDS.has(tool.id) ? (
-                                <span className="rounded bg-mkt-accent px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.04em] text-mkt-accent-foreground">
+                                <span className="rounded bg-[#0668E1] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.04em] text-white">
                                   New
                                 </span>
                               ) : null}
@@ -137,7 +137,7 @@ export default function ProductsMegaMenu({ onOpenChange, inverted = false }: Pro
                   <Link
                     href="/auth/signup"
                     onClick={handleClose}
-                    className="group inline-flex shrink-0 items-center gap-1 rounded-full bg-mkt-accent px-3.5 py-2 text-[12px] font-semibold text-mkt-accent-foreground transition-opacity hover:opacity-90"
+                    className="group inline-flex shrink-0 items-center gap-1 rounded-full bg-[#0668E1] px-3.5 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-[#0450b0]"
                   >
                     Try Oikaro
                     <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
