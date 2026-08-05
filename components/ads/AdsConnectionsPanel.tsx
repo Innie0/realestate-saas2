@@ -106,14 +106,7 @@ export default function AdsConnectionsPanel({
         return (
           <Card key={platform.id} className="min-w-0 p-4">
             <div className="flex min-w-0 items-start gap-3">
-              <div
-                className={clsx(
-                  'flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] text-sm font-semibold',
-                  platform.id === 'google'
-                    ? 'bg-sky-50 text-sky-700 border border-sky-200'
-                    : 'bg-brand-50 text-gray-900 border border-brand-200',
-                )}
-              >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-border bg-muted text-sm font-semibold text-foreground">
                 {platform.accent}
               </div>
               <div className="min-w-0 flex-1">
