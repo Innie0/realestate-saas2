@@ -177,13 +177,13 @@ html.dashboard-theme-switching * {
   transition: none !important;
 }
 
-/* Light dashboard — cream canvas aligned with marketing (#F7F5F1) */
+/* Light dashboard — white canvas aligned with the landing page (bg-white) */
 html[data-dashboard-theme='light'],
 .theme-light {
   color-scheme: light;
-  --canvas: #F7F5F1;
+  --canvas: #ffffff;
   --surface: #ffffff;
-  --sidebar: #F7F5F1;
+  --sidebar: #ffffff;
   --ink: #1c1d22;
   --brand: #0668E1;
   --border: #eaeaea;
@@ -224,7 +224,7 @@ html[data-dashboard-theme='light'],
   --ring: #0668E1;
 
   /* shadcn/ui — explicit values so nested var() does not resolve against dark :root */
-  --background: #F7F5F1;
+  --background: #ffffff;
   --foreground: #1c1d22;
   --card: #ffffff;
   --card-foreground: #1c1d22;
@@ -355,11 +355,11 @@ html[data-dashboard-theme='dark'],
 
 /* First paint / overscroll match stored dashboard theme before React mounts */
 html[data-dashboard-theme='light'] {
-  background-color: #F7F5F1;
+  background-color: #ffffff;
 }
 
 html[data-dashboard-theme='light'] body {
-  background-color: #F7F5F1;
+  background-color: #ffffff;
 }
 
 html[data-dashboard-theme='dark'] {
