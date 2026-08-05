@@ -195,6 +195,24 @@ export function DraggableCardRow({
     };
   }, [children, x, edgePad, cardGap]);
 
+  const SNAP_SPRING = { type: 'spring' as const, stiffness: 420, damping: 34, mass: 0.55 };
+
+  const nearestSnapIndex = (from = x.get()) => {
+    const snaps = snapPointsRef.current;
+    if (!snaps.length) return 0;
+
+    let nearest = 0;
+    let minDistance = Math.abs(from - snaps[0]);
+    for (let i = 1; i < snaps.length; i++) {
+      const distance = Math.abs(from - snaps[i]);
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearest = i;
+      }
+    }
+    return nearest;
+  };
+
   /** Animates `x` to whichever snap point is nearest (optionally biased by a
    *  flick's velocity), so a card settles fully "straight" instead of
    *  resting at whatever arbitrary offset the drag happened to stop at. */
@@ -203,20 +221,21 @@ export function DraggableCardRow({
     if (!snaps.length) return;
 
     const projected = x.get() + velocity * 0.15;
-    let nearest = snaps[0];
-    let minDistance = Math.abs(projected - nearest);
-    for (const point of snaps) {
-      const distance = Math.abs(projected - point);
-      if (distance < minDistance) {
-        minDistance = distance;
-        nearest = point;
-      }
-    }
-
-    animate(x, nearest, { type: 'spring', stiffness: 300, damping: 30, mass: 0.7 });
+    animate(x, snaps[nearestSnapIndex(projected)], SNAP_SPRING);
   };
 
-  const wheelSnapTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** Trackpad / horizontal-wheel: jump one card in the swipe direction and
+   *  lock briefly so a single gesture doesn't skip past multiple cards. */
+  const snapByDirection = (direction: 1 | -1) => {
+    const snaps = snapPointsRef.current;
+    if (!snaps.length) return;
+
+    const nextIndex = Math.max(0, Math.min(snaps.length - 1, nearestSnapIndex() + direction));
+    animate(x, snaps[nextIndex], SNAP_SPRING);
+  };
+
+  const wheelLockedRef = useRef(false);
+  const wheelUnlockTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -224,23 +243,27 @@ export function DraggableCardRow({
 
     const onWheel = (event: WheelEvent) => {
       if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
-      if (Math.abs(event.deltaX) < 0.5) return;
+      // Ignore tiny trackpad jitter; require a real horizontal flick.
+      if (Math.abs(event.deltaX) < 8) return;
 
       event.preventDefault();
-      const next = Math.max(
-        dragConstraintRef.current,
-        Math.min(0, x.get() - event.deltaX),
-      );
-      x.set(next);
 
-      if (wheelSnapTimeoutRef.current) clearTimeout(wheelSnapTimeoutRef.current);
-      wheelSnapTimeoutRef.current = setTimeout(() => snapToNearest(0), 140);
+      if (wheelLockedRef.current) return;
+      wheelLockedRef.current = true;
+
+      // Positive deltaX = finger/swipe left on a trackpad = advance to next card.
+      snapByDirection(event.deltaX > 0 ? 1 : -1);
+
+      if (wheelUnlockTimeoutRef.current) clearTimeout(wheelUnlockTimeoutRef.current);
+      wheelUnlockTimeoutRef.current = setTimeout(() => {
+        wheelLockedRef.current = false;
+      }, 450);
     };
 
     container.addEventListener('wheel', onWheel, { passive: false });
     return () => {
       container.removeEventListener('wheel', onWheel);
-      if (wheelSnapTimeoutRef.current) clearTimeout(wheelSnapTimeoutRef.current);
+      if (wheelUnlockTimeoutRef.current) clearTimeout(wheelUnlockTimeoutRef.current);
     };
   }, [prefersReducedMotion, x, children]);
 
