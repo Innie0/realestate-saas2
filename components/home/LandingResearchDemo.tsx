@@ -76,7 +76,7 @@ export function LandingResearchDemo() {
               initial={reduced ? false : { opacity: 0, y: 10 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.45, delay: 0.9 }}
-              className="mt-5 rounded-lg border border-[#0668E1]/10 bg-white p-4 shadow-sm"
+              className="mt-5 max-w-[280px] rounded-lg border border-[#0668E1]/10 bg-white p-4 shadow-sm sm:max-w-[300px]"
             >
               <p className="text-[11px] font-semibold uppercase tracking-wide text-[#6B6D76]">
                 Estimated value
@@ -109,7 +109,7 @@ export function LandingResearchDemo() {
         initial={reduced ? false : { opacity: 0, y: 16, scale: 0.95 }}
         animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
         transition={{ duration: 0.5, delay: 1.05, ease: 'easeOut' }}
-        className="relative mt-4 w-full rounded-2xl border border-[#0668E1]/15 bg-white p-4 shadow-lg sm:absolute sm:bottom-5 sm:right-5 sm:mt-0 sm:w-44"
+        className="relative z-20 mt-4 w-full rounded-2xl border border-[#0668E1]/15 bg-white p-4 shadow-lg sm:absolute sm:bottom-5 sm:right-5 sm:mt-0 sm:w-44"
       >
         <p className="mb-3 text-xs font-medium text-black/80">AI Assistant</p>
         <p className="mb-2 text-[11px] text-black/40">Comps</p>
