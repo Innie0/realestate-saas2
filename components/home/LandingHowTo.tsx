@@ -1,15 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useRef } from 'react';
 import { DraggableCardRow } from '@/components/home/DraggableCardRow';
 import { LandingAskDemo } from '@/components/home/LandingAskDemo';
 import { LandingResearchDemo } from '@/components/home/LandingResearchDemo';
 import { LandingScheduleDemo } from '@/components/home/LandingScheduleDemo';
-import { ensureGsapRegistered, gsap, ScrollTrigger, useGSAP } from '@/lib/gsap-config';
-import { useMotionReduced } from '@/lib/motion';
-
-ensureGsapRegistered();
 
 /** Each step's outer card shell is a solid brand-blue fill, with a distinct
  *  shade per card — header blue, then two progressively darker blues — so
@@ -91,39 +86,8 @@ function HowToPanel({ step }: { step: (typeof STEPS)[number] }) {
 }
 
 export default function LandingHowTo() {
-  const reduced = useMotionReduced();
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useGSAP(
-    () => {
-      if (reduced || !sectionRef.current) return;
-
-      const cards = gsap.utils.toArray<HTMLElement>('[data-howto-card]', sectionRef.current);
-      if (!cards.length) return;
-
-      gsap.set(cards, { autoAlpha: 0, y: 28 });
-
-      ScrollTrigger.batch(cards, {
-        start: 'top 85%',
-        once: true,
-        onEnter: (batch) =>
-          gsap.to(batch, {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.7,
-            ease: 'power3.out',
-            stagger: 0.15,
-          }),
-      });
-    },
-    { scope: sectionRef, dependencies: [reduced] },
-  );
-
   return (
-    <section
-      ref={sectionRef as React.RefObject<HTMLElement>}
-      className="relative bg-white pt-16 text-[#111111] sm:pt-20 lg:pt-28"
-    >
+    <section className="relative bg-white pt-16 text-[#111111] sm:pt-20 lg:pt-28">
       <div className="mx-auto max-w-[1120px] px-10">
         <p className="font-mkt-mono text-[13px] font-semibold tracking-[0.22em] text-[#0668E1]">
           HOW TO
