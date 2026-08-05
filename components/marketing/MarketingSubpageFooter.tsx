@@ -6,7 +6,7 @@ type MarketingSubpageFooterProps = {
   background?: 'default' | 'white';
 };
 
-export default function MarketingSubpageFooter({ background = 'default' }: MarketingSubpageFooterProps) {
+export default function MarketingSubpageFooter({ background = 'white' }: MarketingSubpageFooterProps) {
   const bgClass = background === 'white' ? 'bg-white' : 'bg-mkt-background';
 
   return (

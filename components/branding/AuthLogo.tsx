@@ -5,12 +5,12 @@ interface AuthLogoProps {
   centered?: boolean;
 }
 
-/** Auth wordmark — matches landing nav typography. */
+/** Auth wordmark — matches landing nav monospace typography. */
 export default function AuthLogo({ centered = true }: AuthLogoProps) {
   const mark = (
     <Link
       href="/"
-      className="font-display text-3xl font-medium tracking-[-0.03em] text-mkt-foreground transition-opacity hover:opacity-70 sm:text-4xl"
+      className="font-mkt-mono text-2xl font-normal tracking-[-0.01em] text-mkt-foreground transition-opacity hover:opacity-70 sm:text-3xl"
     >
       Oikaro
     </Link>

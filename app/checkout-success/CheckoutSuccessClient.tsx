@@ -72,7 +72,7 @@ export default function CheckoutSuccessClient() {
       <div className="mt-8">
         <AuthFormCard>
           <div className="px-2 py-4 text-center">
-            <Loader2 className="mx-auto h-10 w-10 animate-spin text-mkt-accent" aria-hidden />
+            <Loader2 className="mx-auto h-10 w-10 animate-spin text-[#0668E1]" aria-hidden />
             <p className="mt-5 text-lg font-semibold text-mkt-foreground">Payment successful</p>
             <p className="mt-2 text-sm text-mkt-secondary">{message}</p>
           </div>

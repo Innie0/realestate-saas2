@@ -13,9 +13,9 @@ type MarketingSubpageHeaderProps = {
 };
 
 export default function MarketingSubpageHeader({
-  background = 'default',
-  ctaColor = 'default',
-  wordmarkVariant = 'default',
+  background = 'white',
+  ctaColor = 'blue',
+  wordmarkVariant = 'mono',
 }: MarketingSubpageHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const bgClass = background === 'white' ? 'bg-white' : 'bg-mkt-background';

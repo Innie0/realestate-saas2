@@ -65,15 +65,15 @@ export default async function BookingPage({ params }: BookingPageProps) {
 
   if (unavailable) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--canvas)] px-4">
+      <div className="marketing-root min-h-screen flex items-center justify-center bg-white px-4 text-mkt-foreground">
         <div className="text-center">
-          <div className="w-16 h-16 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center mx-auto mb-6">
-            <svg className="w-7 h-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="w-16 h-16 rounded-full bg-mkt-surface-muted border border-mkt-border flex items-center justify-center mx-auto mb-6">
+            <svg className="w-7 h-7 text-mkt-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
           </div>
-          <h1 className="text-xl font-semibold text-gray-900 mb-2">Booking not available</h1>
-          <p className="text-gray-700 text-sm">This booking link is invalid or is no longer accepting appointments.</p>
+          <h1 className="font-display text-xl font-medium text-mkt-foreground mb-2">Booking not available</h1>
+          <p className="text-mkt-secondary text-sm">This booking link is invalid or is no longer accepting appointments.</p>
         </div>
       </div>
     );
@@ -88,27 +88,27 @@ export default async function BookingPage({ params }: BookingPageProps) {
     .slice(0, 2);
 
   return (
-    <div className="min-h-screen bg-[var(--canvas)] py-10 px-4 flex flex-col items-center justify-center">
+    <div className="marketing-root min-h-screen bg-white py-10 px-4 flex flex-col items-center justify-center text-mkt-foreground">
       <div className="w-full max-w-lg">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center mx-auto mb-4 text-gray-900 text-xl font-bold">
+          <div className="w-16 h-16 rounded-full bg-mkt-surface-muted border border-mkt-border flex items-center justify-center mx-auto mb-4 text-mkt-foreground text-xl font-medium">
             {initials}
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">
+          <h1 className="font-display text-2xl font-medium text-mkt-foreground mb-1">
             Book a showing with {agentName}
           </h1>
-          <p className="text-gray-700 text-sm max-w-sm mx-auto">
+          <p className="text-mkt-secondary text-sm max-w-sm mx-auto">
             Pick a time that works for you — you&apos;ll get an instant confirmation.
           </p>
         </div>
 
-        <div className="bg-[var(--surface)] rounded-2xl border border-gray-200 shadow-2xl p-6 sm:p-8">
+        <div className="bg-mkt-surface rounded-mkt-card border border-mkt-border shadow-[var(--mkt-shadow-soft)] p-6 sm:p-8">
           <BookingScheduler agentId={agent.id} agentName={agentName} />
         </div>
 
-        <p className="text-center text-xs text-gray-600 mt-6">
+        <p className="text-center text-xs text-mkt-secondary mt-6">
           Powered by{' '}
-          <a href={SITE_URL} className="text-gray-700 hover:text-gray-700 transition-colors">
+          <a href={SITE_URL} className="font-mkt-mono text-mkt-secondary hover:text-[#0668E1] transition-colors">
             Oikaro
           </a>
         </p>

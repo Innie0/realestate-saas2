@@ -111,7 +111,7 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <Loader2 className="w-6 h-6 text-brand-500 animate-spin" />
+        <Loader2 className="w-6 h-6 text-[#0668E1] animate-spin" />
       </div>
     );
   }
@@ -120,8 +120,8 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
     return (
       <div className="text-center py-12">
         <Calendar className="w-10 h-10 text-gray-300 mx-auto mb-4" />
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">No times available</h2>
-        <p className="text-sm text-gray-700 max-w-xs mx-auto">
+        <h2 className="font-display text-lg font-medium text-mkt-foreground mb-1">No times available</h2>
+        <p className="text-sm text-mkt-secondary max-w-xs mx-auto">
           {loadError || `${agentName.split(' ')[0]} doesn't have any open slots right now. Please reach out directly.`}
         </p>
       </div>
@@ -134,13 +134,13 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 border border-emerald-200 mb-6">
           <Check className="h-8 w-8 text-emerald-600" />
         </div>
-        <h2 className="text-xl font-bold text-gray-900 mb-2">You&apos;re all set!</h2>
+        <h2 className="font-display text-xl font-medium text-mkt-foreground mb-2">You&apos;re all set!</h2>
         {selectedSlot && (
-          <p className="text-gray-700 text-sm font-medium mb-1">
+          <p className="text-mkt-foreground text-sm font-medium mb-1">
             {formatDateLabel(selectedSlot.slice(0, 10))} at {formatTimeInZone(selectedSlot, timezone)}
           </p>
         )}
-        <p className="text-gray-700 text-sm max-w-xs mx-auto mt-2">
+        <p className="text-mkt-secondary text-sm max-w-xs mx-auto mt-2">
           {agentName.split(' ')[0]} has been notified and will see you then.
           {form.email ? ' A confirmation was sent to your email.' : ''}
         </p>
@@ -155,12 +155,12 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
         <button
           type="button"
           onClick={() => setSelectedSlot(null)}
-          className="inline-flex items-center gap-1.5 text-sm text-gray-700 hover:text-brand-600 transition-colors mb-5"
+          className="inline-flex items-center gap-1.5 text-sm text-mkt-secondary hover:text-[#0668E1] transition-colors mb-5"
         >
           <ChevronLeft className="w-4 h-4" /> Choose a different time
         </button>
 
-        <div className="mb-6 rounded-lg bg-brand-500/5 border border-brand-500/20 px-4 py-3 flex items-center gap-2 text-sm text-brand-800">
+        <div className="mb-6 rounded-lg bg-[#0668E1]/5 border border-[#0668E1]/20 px-4 py-3 flex items-center gap-2 text-sm text-[#0668E1]">
           <Clock className="w-4 h-4 shrink-0" />
           <span className="font-medium">
             {formatDateLabel(selectedSlot.slice(0, 10))} at {formatTimeInZone(selectedSlot, timezone)}
@@ -169,51 +169,51 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">
-              Full name <span className="text-gray-700">*</span>
+            <label className="block text-sm font-medium text-mkt-secondary mb-2">
+              Full name <span className="text-mkt-foreground">*</span>
             </label>
             <input
               type="text"
               value={form.name}
               onChange={(e) => set('name', e.target.value)}
               placeholder="Jane Smith"
-              className="block w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-sm"
+              className="block w-full rounded-mkt-button border border-mkt-border bg-mkt-surface px-4 py-3 text-mkt-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0668E1]/30 text-sm"
               required
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-2">Email</label>
+              <label className="block text-sm font-medium text-mkt-secondary mb-2">Email</label>
               <input
                 type="email"
                 value={form.email}
                 onChange={(e) => set('email', e.target.value)}
                 placeholder="jane@example.com"
-                className="block w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-sm"
+                className="block w-full rounded-mkt-button border border-mkt-border bg-mkt-surface px-4 py-3 text-mkt-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0668E1]/30 text-sm"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-2">Phone</label>
+              <label className="block text-sm font-medium text-mkt-secondary mb-2">Phone</label>
               <input
                 type="tel"
                 value={form.phone}
                 onChange={(e) => set('phone', e.target.value)}
                 placeholder="(555) 123-4567"
-                className="block w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-sm"
+                className="block w-full rounded-mkt-button border border-mkt-border bg-mkt-surface px-4 py-3 text-mkt-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0668E1]/30 text-sm"
               />
             </div>
           </div>
-          <p className="text-xs text-gray-600 -mt-1">At least one contact method required.</p>
+          <p className="text-xs text-mkt-secondary -mt-1">At least one contact method required.</p>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">
-              Anything the agent should know? <span className="text-gray-600">(optional)</span>
+            <label className="block text-sm font-medium text-mkt-secondary mb-2">
+              Anything the agent should know? <span className="text-mkt-secondary">(optional)</span>
             </label>
             <textarea
               value={form.message}
               onChange={(e) => set('message', e.target.value)}
               rows={3}
               placeholder="e.g. the property address, or questions you have"
-              className="block w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-sm"
+              className="block w-full rounded-mkt-button border border-mkt-border bg-mkt-surface px-4 py-3 text-mkt-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0668E1]/30 text-sm"
             />
           </div>
 
@@ -226,7 +226,7 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
           <button
             type="submit"
             disabled={submitting}
-            className="w-full rounded-lg px-6 py-3.5 text-sm font-semibold transition-colors focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed bg-brand-500 text-[var(--brand-foreground)] hover:bg-brand-600 focus:ring-brand-500/40"
+            className="w-full rounded-mkt-button px-6 py-3.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed bg-[#0668E1] text-white hover:bg-[#0450b0] focus:ring-[#0668E1]/40"
           >
             {submitting ? 'Confirming...' : 'Confirm showing'}
           </button>
@@ -239,8 +239,8 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
   return (
     <div>
       {data?.location && (
-        <div className="mb-5 flex items-center gap-2 text-sm text-gray-700">
-          <MapPin className="w-4 h-4 shrink-0 text-brand-600" />
+        <div className="mb-5 flex items-center gap-2 text-sm text-mkt-secondary">
+          <MapPin className="w-4 h-4 shrink-0 text-[#0668E1]" />
           {data.location}
         </div>
       )}
@@ -253,10 +253,10 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
               key={day.date}
               type="button"
               onClick={() => setSelectedDate(day.date)}
-              className={`flex flex-col items-center shrink-0 rounded-lg border px-3.5 py-2.5 text-sm font-medium transition-all min-w-[76px] ${
+              className={`flex flex-col items-center shrink-0 rounded-mkt-button border px-3.5 py-2.5 text-sm font-medium transition-all min-w-[76px] ${
                 selected
-                  ? 'border-brand-500 bg-brand-500/10 text-brand-800'
-                  : 'border-gray-200 text-gray-700 hover:border-brand-300 hover:text-gray-900'
+                  ? 'border-[#0668E1] bg-[#0668E1]/10 text-[#0668E1]'
+                  : 'border-mkt-border text-mkt-secondary hover:border-[#0668E1]/40 hover:text-mkt-foreground'
               }`}
             >
               <span className="text-xs uppercase tracking-wide">
@@ -275,7 +275,7 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
               key={slot}
               type="button"
               onClick={() => setSelectedSlot(slot)}
-              className="rounded-lg border border-gray-200 px-3 py-2.5 text-sm font-medium text-gray-700 hover:border-brand-500 hover:bg-brand-500/5 hover:text-brand-800 transition-all"
+              className="rounded-mkt-button border border-mkt-border px-3 py-2.5 text-sm font-medium text-mkt-secondary hover:border-[#0668E1] hover:bg-[#0668E1]/5 hover:text-[#0668E1] transition-all"
             >
               {formatTimeInZone(slot, timezone)}
             </button>
@@ -283,7 +283,7 @@ export default function BookingScheduler({ agentId, agentName }: BookingSchedule
         </div>
       )}
 
-      <p className="text-center text-xs text-gray-700 mt-6">
+      <p className="text-center text-xs text-mkt-secondary mt-6">
         Times shown in {timezone.replace('_', ' ').split('/').pop()} time
         {data?.durationMinutes ? ` · ${data.durationMinutes} min` : ''}
       </p>

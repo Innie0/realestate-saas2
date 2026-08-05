@@ -143,9 +143,9 @@ export default function LeadCaptureForm({
   };
 
   const inputClasses =
-    'block w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-gray-300 transition-colors text-sm';
+    'block w-full rounded-mkt-button border border-mkt-border bg-mkt-surface px-4 py-3 text-mkt-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0668E1]/30 focus:border-[#0668E1]/30 transition-colors text-sm';
 
-  const labelClasses = 'block text-sm font-medium text-gray-600 mb-2';
+  const labelClasses = 'block text-sm font-medium text-mkt-secondary mb-2';
 
   const showBudget = formData.leadType === 'buyer' || formData.leadType === 'renter';
   const budgetOptions = formData.leadType === 'renter' ? RENTER_BUDGETS : BUYER_BUDGETS;
@@ -153,11 +153,11 @@ export default function LeadCaptureForm({
   if (submitted) {
     return (
       <div className="text-center py-10">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 border border-gray-300 mb-6">
-          <Check className="h-8 w-8 text-gray-900" />
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-mkt-surface-muted border border-mkt-border mb-6">
+          <Check className="h-8 w-8 text-mkt-foreground" />
         </div>
-        <h2 className="text-xl font-bold text-gray-900 mb-2">You&apos;re all set!</h2>
-        <p className="text-gray-700 text-sm max-w-xs mx-auto">
+        <h2 className="font-display text-xl font-medium text-mkt-foreground mb-2">You&apos;re all set!</h2>
+        <p className="text-mkt-secondary text-sm max-w-xs mx-auto">
           {agentName.split(' ')[0]} will review your details and be in touch soon.
         </p>
       </div>
@@ -170,7 +170,7 @@ export default function LeadCaptureForm({
       {/* Name */}
       <div>
         <label htmlFor="name" className={labelClasses}>
-          Full name <span className="text-gray-700">*</span>
+          Full name <span className="text-mkt-foreground">*</span>
         </label>
         <input
           id="name"
@@ -187,7 +187,7 @@ export default function LeadCaptureForm({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label htmlFor="email" className={labelClasses}>
-            Email{isListingForm && <span className="text-gray-700"> *</span>}
+            Email{isListingForm && <span className="text-mkt-foreground"> *</span>}
           </label>
           <input
             id="email"
@@ -201,7 +201,7 @@ export default function LeadCaptureForm({
         </div>
         <div>
           <label htmlFor="phone" className={labelClasses}>
-            Phone{isListingForm && <span className="text-gray-700"> *</span>}
+            Phone{isListingForm && <span className="text-mkt-foreground"> *</span>}
           </label>
           <input
             id="phone"
@@ -215,7 +215,7 @@ export default function LeadCaptureForm({
         </div>
       </div>
       {!isListingForm && (
-        <p className="text-xs text-gray-600 -mt-3">At least one contact method required.</p>
+        <p className="text-xs text-mkt-secondary -mt-3">At least one contact method required.</p>
       )}
 
       {!isListingForm && (
@@ -234,10 +234,10 @@ export default function LeadCaptureForm({
                   toggle('leadType', value);
                   set('budget', ''); // reset budget when type changes
                 }}
-                className={`flex flex-col items-center justify-center gap-1.5 rounded-lg border px-2 py-3 text-sm font-medium transition-all ${
+                className={`flex flex-col items-center justify-center gap-1.5 rounded-mkt-button border px-2 py-3 text-sm font-medium transition-all ${
                   selected
-                    ? 'border-brand-500 bg-brand-500/10 text-brand-800'
-                    : 'border-gray-200 text-gray-700 hover:border-brand-300 hover:text-gray-900'
+                    ? 'border-[#0668E1] bg-[#0668E1]/10 text-[#0668E1]'
+                    : 'border-mkt-border text-mkt-secondary hover:border-[#0668E1]/40 hover:text-mkt-foreground'
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -259,10 +259,10 @@ export default function LeadCaptureForm({
                 key={value}
                 type="button"
                 onClick={() => toggle('timeline', value)}
-                className={`rounded-lg border px-4 py-2 text-sm font-medium transition-all ${
+                className={`rounded-mkt-button border px-4 py-2 text-sm font-medium transition-all ${
                   selected
-                    ? 'border-brand-500 bg-brand-500/10 text-brand-800'
-                    : 'border-gray-200 text-gray-700 hover:border-brand-300 hover:text-gray-900'
+                    ? 'border-[#0668E1] bg-[#0668E1]/10 text-[#0668E1]'
+                    : 'border-mkt-border text-mkt-secondary hover:border-[#0668E1]/40 hover:text-mkt-foreground'
                 }`}
               >
                 {label}
@@ -286,10 +286,10 @@ export default function LeadCaptureForm({
                   key={value}
                   type="button"
                   onClick={() => toggle('budget', value)}
-                  className={`rounded-lg border px-4 py-2 text-sm font-medium transition-all ${
+                  className={`rounded-mkt-button border px-4 py-2 text-sm font-medium transition-all ${
                     selected
-                      ? 'border-brand-500 bg-brand-500/10 text-brand-800'
-                      : 'border-gray-200 text-gray-700 hover:border-brand-300 hover:text-gray-900'
+                      ? 'border-[#0668E1] bg-[#0668E1]/10 text-[#0668E1]'
+                      : 'border-mkt-border text-mkt-secondary hover:border-[#0668E1]/40 hover:text-mkt-foreground'
                   }`}
                 >
                   {label}
@@ -321,9 +321,9 @@ export default function LeadCaptureForm({
       <div>
         <label htmlFor="message" className={labelClasses}>
           {isListingForm ? (
-            <>Your message <span className="text-gray-600">(optional)</span></>
+            <>Your message <span className="text-mkt-secondary">(optional)</span></>
           ) : (
-            <>Anything else? <span className="text-gray-600">(optional)</span></>
+            <>Anything else? <span className="text-mkt-secondary">(optional)</span></>
           )}
         </label>
         <textarea
@@ -351,12 +351,12 @@ export default function LeadCaptureForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-lg px-6 py-3.5 text-sm font-semibold transition-colors focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed bg-brand-500 text-[var(--brand-foreground)] hover:bg-brand-600 focus:ring-brand-500/40"
+        className="w-full rounded-mkt-button px-6 py-3.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed bg-[#0668E1] text-white hover:bg-[#0450b0] focus:ring-[#0668E1]/40"
       >
         {isSubmitting ? 'Sending...' : isListingForm ? 'Request info' : `Contact ${agentName.split(' ')[0]}`}
       </button>
 
-      <p className="text-center text-xs text-gray-600">
+      <p className="text-center text-xs text-mkt-secondary">
         Your information is only shared with {agentName}.
       </p>
     </form>

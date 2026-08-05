@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowLeft, MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react';
+import MarketingSubpageHeader from '@/components/marketing/MarketingSubpageHeader';
+import MarketingSubpageFooter from '@/components/marketing/MarketingSubpageFooter';
 import AgentDirectorySearch from '@/components/agents/AgentDirectorySearch';
 import { getAreaGroup } from '@/lib/agent-directory';
 import { SITE_NAME_ALT, SITE_URL } from '@/lib/site-config';
@@ -54,17 +56,16 @@ export default async function AgentAreaPage({ params }: PageProps) {
 
   if (!group) {
     return (
-      <div className="min-h-screen bg-[var(--canvas)] flex items-center justify-center p-6">
-        <div className="text-center max-w-md rounded-2xl border border-gray-200 bg-[var(--surface)] p-8 shadow-sm">
-          <p className="text-gray-900 text-lg font-semibold">Area not found</p>
-          <p className="text-gray-700 text-sm mt-2">
+      <div className="marketing-root min-h-screen bg-white flex items-center justify-center p-6 text-mkt-foreground">
+        <div className="text-center max-w-md rounded-mkt-card border border-mkt-border bg-mkt-surface p-8 shadow-sm">
+          <p className="text-mkt-foreground text-lg font-medium">Area not found</p>
+          <p className="text-mkt-secondary text-sm mt-2">
             We don&apos;t have any agents listed for that area yet.
           </p>
           <Link
             href="/agents"
-            className="inline-flex items-center gap-1.5 mt-4 text-sm font-medium text-brand-600 hover:text-brand-700"
+            className="inline-flex items-center gap-1.5 mt-4 text-sm font-medium text-[#0668E1] hover:text-[#0450b0]"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
             Browse all agents
           </Link>
         </div>
@@ -73,33 +74,19 @@ export default async function AgentAreaPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--canvas)]">
-      <header className="sticky top-0 z-10 bg-[var(--canvas)]/90 backdrop-blur-md border-b border-gray-200/70">
-        <div className="mx-auto max-w-5xl px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <Link
-              href="/agents"
-              className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              All Agents
-            </Link>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Oikaro" className="h-8 w-auto" />
-          </div>
-        </div>
-      </header>
+    <div className="marketing-root min-h-screen bg-white text-mkt-foreground">
+      <MarketingSubpageHeader />
 
       <main className="mx-auto max-w-5xl px-6 py-10 lg:px-8 lg:py-14">
         <div className="mb-10 max-w-2xl">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700 mb-4">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-mkt-border bg-mkt-surface px-3 py-1 text-xs font-medium text-mkt-secondary mb-4">
             <MapPin className="w-3.5 h-3.5" />
             {group.area}
           </div>
-          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-gray-900">
+          <h1 className="font-display text-3xl sm:text-4xl font-medium tracking-[-0.02em] text-mkt-foreground">
             Real estate agents in {group.area}
           </h1>
-          <p className="text-gray-700 mt-3 leading-relaxed">
+          <p className="text-mkt-secondary mt-3 leading-relaxed">
             {group.agents.length} agent{group.agents.length === 1 ? '' : 's'} serving {group.area} —
             reach out directly, no lead-selling middleman.
           </p>
@@ -107,6 +94,8 @@ export default async function AgentAreaPage({ params }: PageProps) {
 
         <AgentDirectorySearch groups={[group]} />
       </main>
+
+      <MarketingSubpageFooter />
     </div>
   );
 }

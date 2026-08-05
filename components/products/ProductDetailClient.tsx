@@ -31,11 +31,11 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
   const related = getRelatedProducts(product.id);
 
   return (
-    <div className="marketing-root min-h-screen bg-mkt-background font-sans text-mkt-foreground">
+    <div className="marketing-root min-h-screen bg-white text-mkt-foreground">
       <MarketingSubpageHeader />
 
       <main>
-        <section className="border-b border-mkt-border bg-mkt-background py-12 lg:py-16">
+        <section className="bg-white py-12 lg:py-16">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <Link
               href="/products"
@@ -51,10 +51,10 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
                   {category.label}
                 </p>
               ) : null}
-              <span className="mb-5 inline-flex items-center rounded-full border border-mkt-border bg-mkt-background px-3 py-1 text-xs font-medium uppercase tracking-[0.12em] text-mkt-secondary">
+              <span className="mb-5 inline-flex items-center rounded-full border border-mkt-border bg-white px-3 py-1 text-xs font-medium uppercase tracking-[0.12em] text-mkt-secondary">
                 {product.tag}
               </span>
-              <h1 className="text-3xl font-medium leading-tight tracking-[-0.02em] text-mkt-foreground sm:text-4xl lg:text-5xl">
+              <h1 className="font-display text-3xl font-medium leading-tight tracking-[-0.02em] text-mkt-foreground sm:text-4xl lg:text-5xl">
                 {product.title}
               </h1>
               <p className="mt-5 text-lg leading-[1.6] text-mkt-secondary">{product.description}</p>
@@ -62,17 +62,17 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
           </div>
         </section>
 
-        <section className="border-b border-mkt-border bg-mkt-background py-12 lg:py-16">
+        <section className="bg-white py-12 lg:py-16">
           <div className="mx-auto max-w-5xl px-6 lg:px-8">
             <ProductMediaPanel feature={product} priority />
           </div>
         </section>
 
-        <section className="border-b border-mkt-border bg-mkt-background py-16 lg:py-20">
+        <section className="bg-white py-16 lg:py-20">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="grid gap-16 lg:grid-cols-2 lg:gap-20">
               <div>
-                <h2 className="mb-6 text-2xl font-medium tracking-[-0.02em] text-mkt-foreground">
+                <h2 className="font-display mb-6 text-2xl font-medium tracking-[-0.02em] text-mkt-foreground">
                   What you get
                 </h2>
                 <ul className="space-y-3">
@@ -107,7 +107,7 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
 
             <div className="mt-14 flex flex-wrap gap-4">
               <Link href="/auth/signup">
-                <span className="inline-flex items-center gap-2 rounded-mkt-button bg-mkt-accent px-6 py-3 text-sm font-medium text-mkt-accent-foreground transition-colors hover:bg-mkt-accent-hover">
+                <span className="inline-flex items-center gap-2 rounded-mkt-button bg-[#0668E1] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#0450b0]">
                   Start free trial
                   <ArrowRight className="h-4 w-4" />
                 </span>
@@ -122,9 +122,9 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
         </section>
 
         {related.length > 0 ? (
-          <section className="bg-mkt-background py-16 lg:py-20">
+          <section className="bg-white py-16 lg:py-20">
             <div className="mx-auto max-w-7xl px-6 lg:px-8">
-              <h2 className="mb-8 text-2xl font-medium tracking-[-0.02em] text-mkt-foreground">
+              <h2 className="font-display mb-8 text-2xl font-medium tracking-[-0.02em] text-mkt-foreground">
                 Related products
               </h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -1,4 +1,5 @@
 import MarketingPageHeader from '@/components/marketing/MarketingPageHeader';
+import MarketingSubpageFooter from '@/components/marketing/MarketingSubpageFooter';
 
 interface LegalPageLayoutProps {
   title: string;
@@ -14,7 +15,7 @@ export default function LegalPageLayout({
   children,
 }: LegalPageLayoutProps) {
   return (
-    <div className="marketing-root min-h-screen bg-mkt-background text-mkt-foreground">
+    <div className="marketing-root min-h-screen bg-white text-mkt-foreground">
       <MarketingPageHeader />
 
       <main className="mx-auto max-w-3xl px-5 py-10 sm:px-8 lg:py-14">
@@ -31,12 +32,10 @@ export default function LegalPageLayout({
           </header>
 
           <div className="legal-prose">{children}</div>
-
-          <footer className="mt-12 border-t border-mkt-border pt-8 text-center text-xs text-mkt-secondary">
-            <p>© 2026 Oikaro. All rights reserved.</p>
-          </footer>
         </article>
       </main>
+
+      <MarketingSubpageFooter />
     </div>
   );
 }

@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Check, Loader2, Mail, MessageSquare } from 'lucide-react';
-import AuthLogo from '@/components/branding/AuthLogo';
+import { Check, Loader2, Mail, MessageSquare } from 'lucide-react';
+import MarketingSubpageHeader from '@/components/marketing/MarketingSubpageHeader';
+import MarketingSubpageFooter from '@/components/marketing/MarketingSubpageFooter';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import { SUPPORT_EMAIL } from '@/lib/support-email';
@@ -56,22 +57,12 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="marketing-root flex min-h-screen items-center justify-center bg-mkt-background px-4 py-12 font-sans text-mkt-foreground">
-      <div className="w-full max-w-md">
-        <div className="mb-6">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-sm text-mkt-secondary transition-opacity hover:opacity-70"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to home
-          </Link>
-        </div>
+    <div className="marketing-root min-h-screen bg-white text-mkt-foreground">
+      <MarketingSubpageHeader />
 
-        <AuthLogo className="h-14 w-auto sm:h-16" />
-
+      <div className="mx-auto w-full max-w-md px-4 py-16 lg:py-24">
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-medium tracking-[-0.02em] text-mkt-foreground sm:text-3xl">
+          <h1 className="font-display text-2xl font-medium tracking-[-0.02em] text-mkt-foreground sm:text-3xl">
             Contact us
           </h1>
           <p className="mt-2 text-sm leading-[1.6] text-mkt-secondary sm:text-base">
@@ -160,7 +151,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-mkt-button bg-mkt-accent py-2.5 text-sm font-medium text-mkt-accent-foreground transition-colors hover:bg-mkt-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-mkt-button bg-[#0668E1] py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#0450b0] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {submitting ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -184,6 +175,8 @@ export default function ContactPage() {
           </a>
         </p>
       </div>
+
+      <MarketingSubpageFooter />
     </div>
   );
 }

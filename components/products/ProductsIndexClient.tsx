@@ -31,24 +31,24 @@ export default function ProductsIndexClient() {
   }, [router]);
 
   return (
-    <div className="marketing-root min-h-screen bg-mkt-background font-sans text-mkt-foreground">
+    <div className="marketing-root min-h-screen bg-white text-mkt-foreground">
       <MarketingSubpageHeader />
 
       <main>
-        <section className="border-b border-mkt-border bg-mkt-background py-16 lg:py-24">
+        <section className="bg-white py-16 lg:py-24">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <motion.div {...mktEnterReveal(reduced)} className="mx-auto max-w-3xl text-center">
               <p className="mb-4 text-xs font-medium uppercase tracking-[0.12em] text-mkt-secondary">
                 Products
               </p>
-              <h1 className="text-4xl font-medium tracking-[-0.02em] text-mkt-foreground sm:text-5xl">
+              <h1 className="font-display text-4xl font-medium tracking-[-0.02em] text-mkt-foreground sm:text-5xl">
                 Everything in Oikaro
               </h1>
               <p className="mt-5 text-lg leading-[1.6] text-mkt-secondary">
                 Pick a product to learn how it fits your workflow — listings, leads, CRM, deals, and more.
               </p>
               <Link href="/auth/signup" className="mt-8 inline-block">
-                <span className="inline-flex items-center gap-2 rounded-mkt-button bg-mkt-accent px-6 py-3 text-sm font-medium text-mkt-accent-foreground transition-colors hover:bg-mkt-accent-hover">
+                <span className="inline-flex items-center gap-2 rounded-mkt-button bg-[#0668E1] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#0450b0]">
                   Get started free
                   <ArrowRight className="h-4 w-4" />
                 </span>
@@ -65,7 +65,7 @@ export default function ProductsIndexClient() {
           if (features.length === 0) return null;
 
           return (
-            <section key={category.id} className="border-b border-mkt-border bg-mkt-background py-16 lg:py-20">
+            <section key={category.id} className="bg-white py-16 lg:py-20">
               <div className="mx-auto max-w-7xl px-6 lg:px-8">
                 <div className="mb-10 max-w-2xl">
                   <p className="mb-2 text-xs font-medium uppercase tracking-[0.12em] text-mkt-secondary">
@@ -114,9 +114,9 @@ export default function ProductsIndexClient() {
           );
         })}
 
-        <section className="bg-mkt-background py-20 lg:py-24">
+        <section className="bg-white py-20 lg:py-24">
           <div className="mx-auto max-w-7xl px-6 text-center lg:px-8">
-            <h2 className="text-3xl font-medium tracking-[-0.02em] text-mkt-foreground sm:text-4xl">
+            <h2 className="font-display text-3xl font-medium tracking-[-0.02em] text-mkt-foreground sm:text-4xl">
               Ready to replace your patchwork stack?
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-lg leading-[1.6] text-mkt-secondary">
@@ -124,7 +124,7 @@ export default function ProductsIndexClient() {
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               <Link href="/auth/signup">
-                <span className="inline-flex items-center gap-2 rounded-mkt-button bg-mkt-accent px-6 py-3 text-sm font-medium text-mkt-accent-foreground transition-colors hover:bg-mkt-accent-hover">
+                <span className="inline-flex items-center gap-2 rounded-mkt-button bg-[#0668E1] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#0450b0]">
                   Get started free
                 </span>
               </Link>

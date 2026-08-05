@@ -10,7 +10,7 @@ import { useMotionReduced } from '@/lib/motion';
 type MarketingButtonProps = {
   href: string;
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'dark' | 'light' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'dark' | 'light' | 'ghost' | 'blue';
   size?: 'md' | 'lg';
   className?: string;
   showArrow?: boolean;
@@ -52,6 +52,7 @@ export default function MarketingButton({
     dark: 'bg-[#111111] text-white hover:bg-[#262626]',
     light: 'bg-white text-[#111111] hover:bg-white/90 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.18)]',
     ghost: 'text-mkt-foreground hover:bg-mkt-surface-muted',
+    blue: 'bg-[#0668E1] text-white hover:bg-[#0450b0] shadow-[0_8px_24px_-12px_rgba(6,104,225,0.35)]',
   };
 
   return (

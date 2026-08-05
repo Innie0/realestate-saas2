@@ -51,7 +51,7 @@ export default function AgentDirectorySearch({ groups, linkToAreaPages = false }
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search by name, area, or specialty"
-          className="w-full rounded-xl border border-gray-200 bg-[var(--surface)] pl-10 pr-9 py-2.5 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-300"
+          className="w-full rounded-mkt-button border border-mkt-border bg-mkt-surface pl-10 pr-9 py-2.5 text-sm text-mkt-foreground placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0668E1]/20 focus:border-[#0668E1]/30"
         />
         {query && (
           <button
@@ -70,8 +70,8 @@ export default function AgentDirectorySearch({ groups, linkToAreaPages = false }
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gray-100 mb-4">
             <Search className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
           </div>
-          <h3 className="text-base font-semibold text-gray-900 mb-1">No agents match &ldquo;{query}&rdquo;</h3>
-          <p className="text-sm text-gray-700 max-w-sm mx-auto">Try a different name, area, or specialty.</p>
+          <h3 className="text-base font-medium text-mkt-foreground mb-1">No agents match &ldquo;{query}&rdquo;</h3>
+          <p className="text-sm text-mkt-secondary max-w-sm mx-auto">Try a different name, area, or specialty.</p>
         </div>
       ) : (
         <>
@@ -81,7 +81,7 @@ export default function AgentDirectorySearch({ groups, linkToAreaPages = false }
                 <a
                   key={area}
                   href={`#${slugifyArea(area)}`}
-                  className="rounded-full border border-gray-200 bg-[var(--surface)] px-3 py-1.5 text-xs font-medium text-gray-600 hover:border-brand-300 hover:text-brand-700 transition-colors"
+                  className="rounded-full border border-mkt-border bg-mkt-surface px-3 py-1.5 text-xs font-medium text-mkt-secondary hover:border-[#0668E1]/40 hover:text-[#0668E1] transition-colors"
                 >
                   {area}
                 </a>
@@ -93,14 +93,14 @@ export default function AgentDirectorySearch({ groups, linkToAreaPages = false }
             {filteredGroups.map((group) => (
               <section key={group.area} id={slugifyArea(group.area)}>
                 <div className="flex items-center justify-between gap-3 mb-4">
-                  <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-brand-500" />
+                  <h2 className="font-display text-lg font-medium text-mkt-foreground flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-[#0668E1]" />
                     {group.area}
                   </h2>
                   {linkToAreaPages && (
                     <Link
                       href={`/agents/${slugifyArea(group.area)}`}
-                      className="text-xs font-medium text-brand-600 hover:text-brand-700 transition-colors whitespace-nowrap"
+                      className="text-xs font-medium text-[#0668E1] hover:text-[#0450b0] transition-colors whitespace-nowrap"
                     >
                       View all in {group.area} →
                     </Link>

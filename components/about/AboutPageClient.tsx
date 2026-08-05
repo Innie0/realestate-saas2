@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import LandingStaggerReveal from '@/components/home/LandingStaggerReveal';
 import MarketingButton from '@/components/marketing/MarketingButton';
-import MarketingPageHeader from '@/components/marketing/MarketingPageHeader';
+import MarketingSubpageHeader from '@/components/marketing/MarketingSubpageHeader';
+import MarketingSubpageFooter from '@/components/marketing/MarketingSubpageFooter';
 import { SUPPORT_EMAIL } from '@/lib/support-email';
 
 const BELIEFS = [
@@ -27,8 +28,8 @@ const BELIEFS = [
 
 export default function AboutPageClient() {
   return (
-    <div className="marketing-root min-h-screen bg-mkt-background text-mkt-foreground">
-      <MarketingPageHeader />
+    <div className="marketing-root min-h-screen bg-white text-mkt-foreground">
+      <MarketingSubpageHeader />
 
       <main>
         <section className="border-b border-mkt-border py-20 sm:py-28">
@@ -143,7 +144,7 @@ export default function AboutPageClient() {
                 Start your 7-day free trial and see if Oikaro fits your workflow.
               </p>
               <div data-reveal className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <MarketingButton href="/auth/signup" size="lg">
+                <MarketingButton href="/auth/signup" variant="blue" size="lg">
                   Start your 7-day free trial
                 </MarketingButton>
                 <MarketingButton href="/pricing" variant="secondary" size="lg">
@@ -154,6 +155,8 @@ export default function AboutPageClient() {
           </div>
         </section>
       </main>
+
+      <MarketingSubpageFooter />
     </div>
   );
 }

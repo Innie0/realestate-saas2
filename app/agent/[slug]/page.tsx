@@ -116,10 +116,10 @@ export default async function AgentProfilePage({ params }: PageProps) {
 
   if (!agent) {
     return (
-      <div className="min-h-screen bg-[var(--canvas)] flex items-center justify-center p-6">
-        <div className="text-center max-w-md rounded-2xl border border-gray-200 bg-[var(--surface)] p-8 shadow-sm">
-          <p className="text-gray-900 text-lg font-semibold">Profile not available</p>
-          <p className="text-gray-700 text-sm mt-2">
+      <div className="marketing-root min-h-screen bg-white flex items-center justify-center p-6 text-mkt-foreground">
+        <div className="text-center max-w-md rounded-mkt-card border border-mkt-border bg-mkt-surface p-8 shadow-[var(--mkt-shadow-soft)]">
+          <p className="text-mkt-foreground text-lg font-medium">Profile not available</p>
+          <p className="text-mkt-secondary text-sm mt-2">
             This agent hasn&apos;t set up their public profile yet.
           </p>
         </div>

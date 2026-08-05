@@ -91,7 +91,7 @@ export default function PricingPage() {
   }, [router]);
 
   return (
-    <div className="marketing-root min-h-screen bg-mkt-background font-sans text-mkt-foreground">
+    <div className="marketing-root min-h-screen bg-white text-mkt-foreground">
       <MarketingSubpageHeader />
 
       {isLoading && (
@@ -109,7 +109,7 @@ export default function PricingPage() {
                   <Sparkles className="h-3.5 w-3.5" />
                   7-day free trial on every plan
                 </span>
-                <h1 className="text-4xl font-medium tracking-[-0.02em] text-mkt-foreground sm:text-5xl lg:text-6xl">
+                <h1 className="font-display text-4xl font-medium tracking-[-0.02em] text-mkt-foreground sm:text-5xl lg:text-6xl">
                   Choose your plan
                 </h1>
                 <p className="mx-auto mt-4 max-w-xl text-lg leading-[1.6] text-mkt-secondary">
@@ -157,7 +157,7 @@ export default function PricingPage() {
             </div>
           </section>
 
-          <section className="bg-mkt-background py-16 lg:py-20">
+          <section className="bg-white py-16 lg:py-20">
             <div className="mx-auto max-w-mkt-content px-6 lg:px-8">
               <div className="mx-auto grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2 md:items-start">
                 {PLANS.map((plan, i) => (
@@ -170,7 +170,7 @@ export default function PricingPage() {
                   >
                     {plan.popular && (
                       <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                        <span className="inline-flex items-center gap-1.5 rounded-mkt-button bg-mkt-accent px-4 py-1 text-xs font-medium text-mkt-accent-foreground">
+                        <span className="inline-flex items-center gap-1.5 rounded-mkt-button bg-[#0668E1] px-4 py-1 text-xs font-medium text-white">
                           <Sparkles className="h-3 w-3" />
                           Most Popular
                         </span>
@@ -232,7 +232,7 @@ export default function PricingPage() {
                   <button
                     type="button"
                     onClick={() => router.push('/auth/signup')}
-                    className="rounded-mkt-button bg-mkt-accent px-6 py-2.5 text-sm font-medium text-mkt-accent-foreground transition-colors hover:bg-mkt-accent-hover"
+                    className="rounded-mkt-button bg-[#0668E1] px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#0450b0]"
                   >
                     Create your account
                   </button>

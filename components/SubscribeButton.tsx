@@ -78,7 +78,7 @@ export default function SubscribeButton({
           disabled={loading}
           className={`inline-flex w-full items-center justify-center gap-2 rounded-mkt-button py-3 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
             isPrimary
-              ? 'bg-mkt-accent text-mkt-accent-foreground hover:bg-mkt-accent-hover'
+              ? 'bg-[#0668E1] text-white hover:bg-[#0450b0]'
               : 'border border-mkt-border bg-mkt-background text-mkt-foreground'
           }`}
         >

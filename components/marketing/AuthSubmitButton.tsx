@@ -20,7 +20,7 @@ export default function AuthSubmitButton({
       type="submit"
       disabled={disabled || isLoading}
       className={clsx(
-        'flex w-full items-center justify-center gap-2 rounded-mkt-button bg-mkt-accent py-3 text-sm font-medium text-mkt-accent-foreground transition-colors hover:bg-mkt-accent-hover disabled:cursor-not-allowed disabled:opacity-40',
+        'flex w-full items-center justify-center gap-2 rounded-mkt-button bg-[#0668E1] py-3 text-sm font-medium text-white transition-colors hover:bg-[#0450b0] disabled:cursor-not-allowed disabled:opacity-40',
         className,
       )}
       {...props}
