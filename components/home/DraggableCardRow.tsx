@@ -33,6 +33,13 @@ type DraggableCardRowProps = {
  *  fan out from there as the row moves. */
 const MAX_TILT_DEG = 7;
 
+/** Flex layout reserves space for each card's un-rotated box, but a tilted
+ *  card's visual bounding box is wider than that (by roughly
+ *  height * sin(tilt)) — without extra gap to absorb that difference, a
+ *  fully-tilted neighbor's corner visually pokes into the next card. */
+const BASE_GAP = 28;
+const GAP_BUFFER = 16;
+
 /** Wraps a single card so it can rotate based on its own distance from the
  *  row's center, independent of the shared drag position. `offsetLeft` is
  *  captured relative to the (positioned) outer container, so it already
@@ -109,6 +116,7 @@ export function DraggableCardRow({
   const snapPointsRef = useRef<number[]>([]);
   const [dragConstraint, setDragConstraint] = useState(0);
   const [edgePad, setEdgePad] = useState(40);
+  const [cardGap, setCardGap] = useState(BASE_GAP);
   const [isDragging, setIsDragging] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
@@ -124,23 +132,31 @@ export function DraggableCardRow({
   // Leading/trailing spacers sized to half the leftover space around a card
   // — without this, the first and last cards physically can't be dragged far
   // enough to reach the row's center, so they'd never settle "straight."
+  // Also sizes the gap between cards so a fully-tilted neighbor never
+  // visually overlaps the card next to it.
   useEffect(() => {
-    const computeEdgePad = () => {
+    const computeLayout = () => {
       const container = containerRef.current;
       const content = contentRef.current;
       const firstCard = content?.children[0] as HTMLElement | undefined;
       if (!container || !firstCard) return;
+
       setEdgePad(Math.max(16, (container.offsetWidth - firstCard.offsetWidth) / 2));
+
+      const tiltOverflow = firstCard.offsetHeight * Math.sin((MAX_TILT_DEG * Math.PI) / 180);
+      setCardGap(BASE_GAP + tiltOverflow + GAP_BUFFER);
     };
 
-    computeEdgePad();
-    window.addEventListener('resize', computeEdgePad);
+    computeLayout();
+    window.addEventListener('resize', computeLayout);
 
-    const observer = new ResizeObserver(computeEdgePad);
+    const observer = new ResizeObserver(computeLayout);
     if (containerRef.current) observer.observe(containerRef.current);
+    const firstCard = contentRef.current?.children[0];
+    if (firstCard) observer.observe(firstCard);
 
     return () => {
-      window.removeEventListener('resize', computeEdgePad);
+      window.removeEventListener('resize', computeLayout);
       observer.disconnect();
     };
   }, [children]);
@@ -177,7 +193,7 @@ export function DraggableCardRow({
       window.removeEventListener('resize', updateConstraint);
       observer.disconnect();
     };
-  }, [children, x, edgePad]);
+  }, [children, x, edgePad, cardGap]);
 
   /** Animates `x` to whichever snap point is nearest (optionally biased by a
    *  flick's velocity), so a card settles fully "straight" instead of
@@ -290,9 +306,10 @@ export function DraggableCardRow({
       >
         <motion.div
           ref={contentRef}
-          className={clsx('flex w-max gap-7', contentClassName)}
+          className={clsx('flex w-max', contentClassName)}
           style={{
             x,
+            gap: cardGap,
             paddingLeft: edgePad,
             paddingRight: edgePad,
             userSelect: isDragging ? 'none' : 'auto',
