@@ -204,13 +204,15 @@ html[data-dashboard-theme='light'],
   --gray-900: #1c1d22;
   --gray-950: #111111;
 
-  /* Blue brand scale (matches marketing CTA blue #0668E1 at 500) — used for
-     primary buttons, selection tints, active states, and accent text. */
-  --brand-50: #eff6ff;
-  --brand-100: #dbeafe;
-  --brand-200: #bfdbfe;
-  --brand-300: #93c5fd;
-  --brand-400: #4f9cf0;
+  /* Brand scale — neutral tints (50–400) keep selected/hover chips calm;
+     blue (500–900) is reserved for solid fills, borders, and accent text,
+     matching the marketing CTA blue #0668E1 at 500. Keeps blue to the
+     "right spots" instead of tinting every selected box. */
+  --brand-50: #f4f4f5;
+  --brand-100: #ececee;
+  --brand-200: #d4d4d8;
+  --brand-300: #a1a1aa;
+  --brand-400: #71717a;
   --brand-500: #0668E1;
   --brand-600: #0450b0;
   --brand-700: #043875;
@@ -219,7 +221,7 @@ html[data-dashboard-theme='light'],
 
   --primary: #0668E1;
   --primary-foreground: #ffffff;
-  --accent: #eaf2fe;
+  --accent: #f4f4f5;
   --accent-foreground: #1c1d22;
   --ring: #0668E1;
 
@@ -330,8 +332,8 @@ html[data-dashboard-theme='dark'],
   --secondary-foreground: #f4f4f5;
   --muted: #1c1c1c;
   --muted-foreground: #a3a3a3;
-  --accent: #142544;
-  --accent-foreground: #dbe8ff;
+  --accent: #2e2e2e;
+  --accent-foreground: #f4f4f5;
   --primary: #3b82f6;
   --primary-foreground: #ffffff;
   --destructive: #f43f5e;
@@ -339,13 +341,13 @@ html[data-dashboard-theme='dark'],
   --input: #2e2e2e;
   --ring: #3b82f6;
 
-  /* Blue brand scale for dark mode — same hue family as light mode's
-     #0668E1, lifted for legibility on a near-black canvas. */
-  --brand-50: #0f1b30;
-  --brand-100: #142544;
-  --brand-200: #1c3566;
-  --brand-300: #2a4f99;
-  --brand-400: #3f6fd6;
+  /* Brand scale for dark mode — neutral tints (50–400) keep selected/hover
+     chips calm; blue (500–900) is reserved for solid fills and borders. */
+  --brand-50: #1c1c1c;
+  --brand-100: #2e2e2e;
+  --brand-200: #3f3f3f;
+  --brand-300: #666666;
+  --brand-400: #7a95c4;
   --brand-500: #3b82f6;
   --brand-600: #5b9dff;
   --brand-700: #8ab8ff;
