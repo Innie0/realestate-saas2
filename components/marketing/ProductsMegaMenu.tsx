@@ -20,6 +20,7 @@ export default function ProductsMegaMenu({ onOpenChange, inverted = false }: Pro
   const reduced = useMotionReduced();
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -44,8 +45,15 @@ export default function ProductsMegaMenu({ onOpenChange, inverted = false }: Pro
     closeTimer.current = setTimeout(() => setMenuOpen(false), CLOSE_DELAY_MS);
   };
 
+  const updateCoords = () => {
+    if (!triggerRef.current) return;
+    const rect = triggerRef.current.getBoundingClientRect();
+    setCoords({ top: rect.bottom + 10, left: rect.left });
+  };
+
   const handleEnter = () => {
     clearCloseTimer();
+    updateCoords();
     setMenuOpen(true);
   };
 
@@ -62,9 +70,14 @@ export default function ProductsMegaMenu({ onOpenChange, inverted = false }: Pro
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') handleClose();
     };
+    const onViewportChange = () => updateCoords();
 
     window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
+    window.addEventListener('resize', onViewportChange);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('resize', onViewportChange);
+    };
   }, [open]);
 
   useEffect(() => () => clearCloseTimer(), []);
@@ -73,80 +86,73 @@ export default function ProductsMegaMenu({ onOpenChange, inverted = false }: Pro
     mounted
       ? createPortal(
           <AnimatePresence>
-            {open ? (
+            {open && coords ? (
               <motion.div
                 ref={panelRef}
                 key="products-menu-panel"
-                initial={reduced ? false : { opacity: 0, y: -6 }}
-                animate={reduced ? undefined : { opacity: 1, y: 0 }}
-                exit={reduced ? undefined : { opacity: 0, y: -4 }}
-                transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
-                className="marketing-root fixed inset-x-0 top-[var(--mkt-nav-height)] z-[59] -mt-px bg-mkt-background pt-3 text-mkt-foreground"
+                initial={reduced ? false : { opacity: 0, y: -6, scale: 0.98 }}
+                animate={reduced ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                exit={reduced ? undefined : { opacity: 0, y: -4, scale: 0.98 }}
+                transition={{ duration: 0.16, ease: [0.25, 0.1, 0.25, 1] }}
+                style={{ position: 'fixed', top: coords.top, left: coords.left }}
+                className="marketing-root z-[59] w-[520px] max-w-[calc(100vw-2.5rem)] origin-top-left rounded-2xl border border-mkt-border bg-white p-4 text-mkt-foreground shadow-[0_24px_48px_-16px_rgba(17,17,17,0.22)]"
                 onMouseEnter={handleEnter}
                 onMouseLeave={scheduleClose}
               >
-                <div className="border-b border-[rgba(28,29,34,0.10)] border-t border-[rgba(28,29,34,0.12)] bg-mkt-background shadow-[var(--mkt-shadow-soft)]">
-                  <div className="mx-auto max-w-mkt-content px-5 py-8 sm:px-8 sm:py-9 lg:py-10">
-                    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_260px] lg:gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_280px] xl:gap-8">
-                      {PRODUCT_MENU_COLUMNS.map((column) => (
-                        <div key={column.id} className="min-w-0">
-                          <p className="mb-4 text-[13px] font-medium text-mkt-secondary">{column.label}</p>
-                          <ul className="space-y-3">
-                            {column.tools.map((tool) => (
-                              <li key={tool.id}>
-                                <Link
-                                  href={tool.href}
-                                  onClick={handleClose}
-                                  className="group inline-flex items-center gap-2 text-[15px] font-semibold leading-snug tracking-[-0.01em] text-mkt-foreground transition-opacity hover:opacity-65"
-                                >
-                                  {tool.name}
-                                  {NEW_TOOL_IDS.has(tool.id) ? (
-                                    <span className="rounded bg-mkt-accent px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.04em] text-mkt-accent-foreground">
-                                      New
-                                    </span>
-                                  ) : null}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
-
-                      <div className="min-w-0 lg:col-span-1">
-                        <Link
-                          href="/auth/signup"
-                          onClick={handleClose}
-                          className="group flex h-full min-h-[220px] flex-col justify-between overflow-hidden rounded-[1.25rem] bg-gradient-to-br from-[#4a62d9] via-[#6b8af0] to-[#9eb8ff] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] transition-opacity hover:opacity-95 sm:min-h-[240px] sm:p-6"
-                        >
-                          <div
-                            className="pointer-events-none h-24 rounded-xl bg-white/10 backdrop-blur-sm"
-                            aria-hidden
-                          />
-                          <div>
-                            <p className="text-sm font-medium text-white/75">Get started</p>
-                            <p className="mt-1 text-lg font-bold leading-snug tracking-[-0.02em] text-white sm:text-xl">
-                              Start your 7-day free trial
-                            </p>
-                            <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-white/90">
-                              Try Oikaro
-                              <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-                            </span>
-                          </div>
-                        </Link>
-                      </div>
+                <div className="grid grid-cols-2 gap-x-6 gap-y-5">
+                  {PRODUCT_MENU_COLUMNS.map((column) => (
+                    <div key={column.id} className="min-w-0">
+                      <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.04em] text-mkt-muted">
+                        {column.label}
+                      </p>
+                      <ul className="space-y-2">
+                        {column.tools.map((tool) => (
+                          <li key={tool.id}>
+                            <Link
+                              href={tool.href}
+                              onClick={handleClose}
+                              className="group inline-flex items-center gap-2 rounded-md text-[14px] font-medium leading-snug text-mkt-foreground transition-colors hover:text-mkt-accent"
+                            >
+                              {tool.name}
+                              {NEW_TOOL_IDS.has(tool.id) ? (
+                                <span className="rounded bg-mkt-accent px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.04em] text-mkt-accent-foreground">
+                                  New
+                                </span>
+                              ) : null}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
+                  ))}
+                </div>
 
-                    <div className="mt-8 border-t border-mkt-border pt-5">
-                      <Link
-                        href="/products"
-                        onClick={handleClose}
-                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-mkt-accent transition-opacity hover:opacity-70"
-                      >
-                        View all products
-                        <ArrowRight className="size-4" strokeWidth={2.2} />
-                      </Link>
-                    </div>
+                <div className="mt-4 flex items-center justify-between gap-3 rounded-xl bg-mkt-surface-muted px-4 py-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-[13px] font-semibold text-mkt-foreground">
+                      Start your 7-day free trial
+                    </p>
+                    <p className="truncate text-[12px] text-mkt-secondary">Cancel anytime</p>
                   </div>
+                  <Link
+                    href="/auth/signup"
+                    onClick={handleClose}
+                    className="group inline-flex shrink-0 items-center gap-1 rounded-full bg-mkt-accent px-3.5 py-2 text-[12px] font-semibold text-mkt-accent-foreground transition-opacity hover:opacity-90"
+                  >
+                    Try Oikaro
+                    <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+                  </Link>
+                </div>
+
+                <div className="mt-3 flex items-center justify-between border-t border-mkt-border pt-3">
+                  <Link
+                    href="/products"
+                    onClick={handleClose}
+                    className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-mkt-accent transition-opacity hover:opacity-70"
+                  >
+                    View all products
+                    <ArrowRight className="size-3.5" strokeWidth={2.2} />
+                  </Link>
                 </div>
               </motion.div>
             ) : null}
