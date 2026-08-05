@@ -11,16 +11,21 @@ import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
 
-/** Each step's outer card shell is a solid brand-blue fill — the header blue
- *  for the first card, a darker navy for the second and third — so the three
- *  cards read as distinct steps rather than repeats of the same card. The
- *  illustrated panel inside each card keeps its own light surface regardless
- *  of the shell's color. */
+/** Each step's outer card shell is a solid brand-blue fill, with a distinct
+ *  shade per card — header blue, then two progressively darker blues — so
+ *  the three cards read as distinct steps rather than repeats of the same
+ *  card. The illustrated panel inside each card keeps its own light surface
+ *  regardless of the shell's color. */
 const CARD_ACCENT = {
   blue: {
     bg: 'bg-[#0668E1]',
     number: 'text-white/40',
     body: 'text-white/75',
+  },
+  steel: {
+    bg: 'bg-[#0B3D7A]',
+    number: 'text-white/35',
+    body: 'text-white/70',
   },
   navy: {
     bg: 'bg-[#062B5C]',
@@ -42,7 +47,7 @@ const STEPS = [
     title: 'Let AI handle the busywork',
     body: "Ask in plain English and Oikaro drafts the follow-up, ready to send in seconds — no blank page, no starting from scratch.",
     Demo: LandingAskDemo,
-    accent: 'navy',
+    accent: 'steel',
   },
   {
     n: '03',
