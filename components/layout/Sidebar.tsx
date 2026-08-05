@@ -144,13 +144,17 @@ export default function Sidebar() {
     bottom: number;
   } | null>(null);
 
-  // Cheap count-only fetch (see app/api/clients/inbox-count) instead of the
-  // full leads-with-joins payload the Leads inbox page needs. Seeded from
+  // Cheap id+created_at-only fetch (see app/api/clients/lite) instead of the
+  // full leads-with-joins payload the Leads inbox page needs. Same URL as
+  // the dashboard home page's inbox-lead fetch so SWR de-dupes them into a
+  // single network request there instead of two separate ones. Seeded from
   // localStorage so the badge shows the last-known count immediately on
   // refresh instead of popping in once the network request resolves.
   const [cachedInboxCount, setCachedInboxCount] = useState<number | null>(null);
-  const { data: inboxCountData } = useApi<{ count: number }>('/api/clients/inbox-count');
-  const inboxLeadCount = inboxCountData?.count ?? cachedInboxCount ?? 0;
+  const { data: inboxLeadsData } = useApi<{ id: string; created_at: string }[]>(
+    '/api/clients/lite?status=all&view=inbox',
+  );
+  const inboxLeadCount = inboxLeadsData?.length ?? cachedInboxCount ?? 0;
 
   useEffect(() => {
     const saved = localStorage.getItem('sidebar-collapsed');
@@ -161,10 +165,10 @@ export default function Sidebar() {
   }, []);
 
   useEffect(() => {
-    if (inboxCountData?.count !== undefined) {
-      localStorage.setItem(INBOX_COUNT_CACHE_KEY, String(inboxCountData.count));
+    if (inboxLeadsData !== undefined) {
+      localStorage.setItem(INBOX_COUNT_CACHE_KEY, String(inboxLeadsData.length));
     }
-  }, [inboxCountData]);
+  }, [inboxLeadsData]);
 
   useEffect(() => {
     (async () => {
