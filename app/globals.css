@@ -8,7 +8,7 @@
 @tailwind utilities;
 
 /* Default theme — Framer dark (matches marketing / landing page).
-   Dashboard light mode overrides below — strict inverse (black CTAs on cream). */
+   Dashboard light mode overrides below — cream canvas with blue CTAs (matches marketing). */
 :root {
   color-scheme: dark;
 
@@ -177,15 +177,15 @@ html.dashboard-theme-switching * {
   transition: none !important;
 }
 
-/* Light dashboard — cool neutral canvas aligned with marketing (#FAFAFA) */
+/* Light dashboard — cream canvas aligned with marketing (#F7F5F1) */
 html[data-dashboard-theme='light'],
 .theme-light {
   color-scheme: light;
-  --canvas: #fafafa;
+  --canvas: #F7F5F1;
   --surface: #ffffff;
-  --sidebar: #fafafa;
+  --sidebar: #F7F5F1;
   --ink: #1c1d22;
-  --brand: #111111;
+  --brand: #0668E1;
   --border: #eaeaea;
   --brand-foreground: #ffffff;
   --champagne: #444039;
@@ -204,26 +204,27 @@ html[data-dashboard-theme='light'],
   --gray-900: #1c1d22;
   --gray-950: #111111;
 
-  /* Neutral brand scale — selection tints and accent text (primary buttons use --primary) */
-  --brand-50: #f4f4f5;
-  --brand-100: #ececee;
-  --brand-200: #d4d4d8;
-  --brand-300: #a1a1aa;
-  --brand-400: #71717a;
-  --brand-500: #111111;
-  --brand-600: #1c1d22;
-  --brand-700: #27272a;
-  --brand-800: #52525b;
-  --brand-900: #6b6d76;
+  /* Blue brand scale (matches marketing CTA blue #0668E1 at 500) — used for
+     primary buttons, selection tints, active states, and accent text. */
+  --brand-50: #eff6ff;
+  --brand-100: #dbeafe;
+  --brand-200: #bfdbfe;
+  --brand-300: #93c5fd;
+  --brand-400: #4f9cf0;
+  --brand-500: #0668E1;
+  --brand-600: #0450b0;
+  --brand-700: #043875;
+  --brand-800: #052b5c;
+  --brand-900: #041d3d;
 
-  --primary: #111111;
+  --primary: #0668E1;
   --primary-foreground: #ffffff;
-  --accent: #f4f4f5;
+  --accent: #eaf2fe;
   --accent-foreground: #1c1d22;
-  --ring: #111111;
+  --ring: #0668E1;
 
   /* shadcn/ui — explicit values so nested var() does not resolve against dark :root */
-  --background: #fafafa;
+  --background: #F7F5F1;
   --foreground: #1c1d22;
   --card: #ffffff;
   --card-foreground: #1c1d22;
@@ -329,23 +330,36 @@ html[data-dashboard-theme='dark'],
   --secondary-foreground: #f4f4f5;
   --muted: #1c1c1c;
   --muted-foreground: #a3a3a3;
-  --accent: #2e2e2e;
-  --accent-foreground: #f4f4f5;
-  --primary: #ffffff;
-  --primary-foreground: #0a0a0a;
+  --accent: #142544;
+  --accent-foreground: #dbe8ff;
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
   --destructive: #f43f5e;
   --destructive-foreground: #ffffff;
   --input: #2e2e2e;
-  --ring: #e5e5e5;
+  --ring: #3b82f6;
+
+  /* Blue brand scale for dark mode — same hue family as light mode's
+     #0668E1, lifted for legibility on a near-black canvas. */
+  --brand-50: #0f1b30;
+  --brand-100: #142544;
+  --brand-200: #1c3566;
+  --brand-300: #2a4f99;
+  --brand-400: #3f6fd6;
+  --brand-500: #3b82f6;
+  --brand-600: #5b9dff;
+  --brand-700: #8ab8ff;
+  --brand-800: #bdd6ff;
+  --brand-900: #dbe8ff;
 }
 
 /* First paint / overscroll match stored dashboard theme before React mounts */
 html[data-dashboard-theme='light'] {
-  background-color: #fafafa;
+  background-color: #F7F5F1;
 }
 
 html[data-dashboard-theme='light'] body {
-  background-color: #fafafa;
+  background-color: #F7F5F1;
 }
 
 html[data-dashboard-theme='dark'] {
