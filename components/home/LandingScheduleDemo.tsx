@@ -16,16 +16,8 @@ const DAYS = [
   { label: 'S', date: 16 },
 ];
 
-const SYNC_OPTIONS = ['Google', 'Outlook', 'iCal'];
-
-/** Illustrated card for the "Get it on the calendar" How To step — a
- *  click-to-select week strip (the selection glides over) plus a synced
- *  showing card. Built from real UI elements, not a screenshot. White surface
- *  with a soft blue tint, distinct from the saturated gradient cards used in
- *  the "Why Oikaro" section. */
 export function LandingScheduleDemo() {
   const [activeDay, setActiveDay] = useState(3);
-  const [activeSync, setActiveSync] = useState(0);
 
   return (
     <div className="relative w-full">
@@ -88,23 +80,10 @@ export function LandingScheduleDemo() {
           the card's bottom-right corner from sm: up, where it clears the content. */}
       <div className="relative z-20 mt-4 w-full rounded-2xl border border-[#0668E1]/15 bg-white p-4 shadow-lg sm:absolute sm:bottom-5 sm:right-5 sm:mt-0 sm:w-44">
         <p className="mb-3 text-xs font-medium text-black/80">AI Assistant</p>
-        <p className="mb-2 text-[11px] text-black/40">Sync with</p>
-        <div className="flex flex-wrap gap-1.5">
-          {SYNC_OPTIONS.map((option, i) => (
-            <button
-              key={option}
-              type="button"
-              onClick={() => setActiveSync(i)}
-              className="rounded-full px-3 py-1.5 text-xs transition-colors"
-              style={{
-                backgroundColor: activeSync === i ? '#0668E1' : '#F3F4F6',
-                color: activeSync === i ? '#FFFFFF' : '#6B6D76',
-              }}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
+        <p className="mb-2 text-[11px] text-black/40">Calendar sync</p>
+        <span className="inline-flex rounded-full bg-[#0668E1] px-3 py-1.5 text-xs text-white">
+          Google Calendar
+        </span>
       </div>
     </div>
   );
