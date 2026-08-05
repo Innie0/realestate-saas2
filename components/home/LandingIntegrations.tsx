@@ -65,7 +65,7 @@ export default function LandingIntegrations() {
         className="relative overflow-hidden px-5 text-[#111111] sm:px-8"
         style={{ background: INTEGRATIONS_SECTION_GRADIENT }}
       >
-        <div className="relative z-[1] mx-auto max-w-[1120px] pb-[min(280px,34vw)] pt-24">
+        <div className="relative z-[1] mx-auto max-w-[1120px] pb-[min(120px,14vw)] pt-24">
           <div className="flex flex-col items-center text-center">
             <h2 className="font-display max-w-[17ch] text-[64px] font-extrabold leading-[1.02] tracking-[-0.038em] text-[#111111]">
               Fits the tools you already run on
