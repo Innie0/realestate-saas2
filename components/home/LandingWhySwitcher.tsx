@@ -1,18 +1,12 @@
 'use client';
 
-import Image from 'next/image';
 import { useRef, useState } from 'react';
-import BrowserWindowFrame from '@/components/home/BrowserWindowFrame';
+import { LandingLeadsDemo } from '@/components/home/LandingLeadsDemo';
 import { LandingListingDemo } from '@/components/home/LandingListingDemo';
-import {
-  BackgroundGradientGlow,
-  PREVIEW_CARD_HEIGHT,
-  PREVIEW_FRAME_PADDING,
-  PREVIEW_IMAGE_HEIGHT,
-  PREVIEW_MAX_WIDTH,
-} from '@/components/ui/background-gradient-glow';
+import { LandingTransactionsDemo } from '@/components/home/LandingTransactionsDemo';
+import { PREVIEW_CARD_HEIGHT, PREVIEW_MAX_WIDTH } from '@/components/ui/background-gradient-glow';
 import { ensureGsapRegistered, gsap, ScrollTrigger, useGSAP } from '@/lib/gsap-config';
-import { SITE_DOMAIN, SITE_NAME } from '@/lib/site-config';
+import { SITE_NAME } from '@/lib/site-config';
 import { useMotionReduced } from '@/lib/motion';
 
 ensureGsapRegistered();
@@ -31,8 +25,6 @@ const STEPS = [
     kicker: 'LISTINGS',
     title: 'Draft listings that sell',
     body: 'Upload the photos, pick a tone, and get MLS-ready copy plus social captions in seconds. Edit inline until it sounds like you.',
-    src: '/landing/projects.png',
-    url: `${SITE_DOMAIN}/dashboard/projects`,
     label: '01 Listings',
     glow: 'listings' as const,
   },
@@ -40,8 +32,6 @@ const STEPS = [
     kicker: 'LEADS',
     title: 'Know who to call first',
     body: 'Every form fill and open-house sign-in lands in one inbox, scored hot to cold, with the property and timeline attached.',
-    src: '/landing/leads-inbox.png',
-    url: `${SITE_DOMAIN}/dashboard/leads`,
     label: '02 Leads',
     glow: 'leads' as const,
   },
@@ -49,27 +39,26 @@ const STEPS = [
     kicker: 'TRANSACTIONS',
     title: 'Nothing slips before closing',
     body: 'Checklists, documents, and deadline reminders on every deal — so the week before closing stops being a scramble.',
-    src: '/landing/transactions.png',
-    url: `${SITE_DOMAIN}/dashboard/transactions`,
     label: '03 Transactions',
     glow: 'transactions' as const,
   },
 ] as const;
 
-function ScreenshotPanel({
-  src,
-  alt,
-  url,
+const DEMOS: Record<(typeof STEPS)[number]['glow'], () => React.JSX.Element> = {
+  listings: LandingListingDemo,
+  leads: LandingLeadsDemo,
+  transactions: LandingTransactionsDemo,
+};
+
+/** Illustrated feature card — built from real UI elements, not a screenshot. */
+function FeaturePanel({
   active,
   glow,
 }: {
-  src: string;
-  alt: string;
-  url: string;
   active: boolean;
   glow: (typeof STEPS)[number]['glow'];
 }) {
-  const [failed, setFailed] = useState(false);
+  const Demo = DEMOS[glow];
 
   return (
     <div
@@ -82,63 +71,37 @@ function ScreenshotPanel({
         transition: 'opacity 0.35s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
-      {glow === 'listings' ? (
-        <div className="flex h-full w-full items-center justify-center">
-          <LandingListingDemo />
-        </div>
-      ) : (
-        <div
-          className="relative w-full overflow-hidden rounded-[28px]"
-          style={{ padding: PREVIEW_FRAME_PADDING }}
-        >
-          <BackgroundGradientGlow variant={glow} />
-          <BrowserWindowFrame className="relative z-[1] shadow-[var(--mkt-shadow-soft)]">
-            <div className="border-b border-mkt-border bg-white px-3 py-1.5">
-              <p className="truncate font-mkt-mono text-[11px] text-[#6B6D76]">{url}</p>
-            </div>
-            <div
-              className="relative w-full bg-white"
-              style={{ height: PREVIEW_IMAGE_HEIGHT }}
-            >
-                {!failed ? (
-                  <Image
-                    src={src}
-                    alt={alt}
-                    fill
-                    className="object-cover object-top"
-                    sizes="(min-width: 1024px) 580px, 100vw"
-                    onError={() => setFailed(true)}
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-6 text-center">
-                    <p className="mb-2 font-mkt-mono text-[11px] font-medium uppercase tracking-[0.12em] text-[#6B6D76]">
-                      Screenshot
-                    </p>
-                    <p className="max-w-[220px] text-sm font-medium text-[#111111]">{alt}</p>
-                  </div>
-                )}
-              </div>
-          </BrowserWindowFrame>
-        </div>
-      )}
+      <div className="flex h-full w-full items-center justify-center">
+        <Demo />
+      </div>
     </div>
   );
 }
 
+/** Scroll-progress step nav — tracks how far you've scrolled through each of
+ *  the 3 pinned steps; the active step is bold/dark, others are muted. */
 function ProgressRow({
   label,
   progress,
+  active,
   isFirst = false,
 }: {
   label: string;
   progress: number;
+  active: boolean;
   isFirst?: boolean;
 }) {
   return (
     <div
-      className={`flex items-center gap-6 border-t border-[#EAEAEA] py-3.5 ${isFirst ? 'border-t-0' : ''}`}
+      className={`flex items-center gap-6 border-t border-[#EAEAEA] py-3 ${isFirst ? 'border-t-0' : ''}`}
     >
-      <span className="shrink-0 text-[15px] font-medium text-[#111111]">{label}</span>
+      <span
+        className={`shrink-0 whitespace-nowrap text-[14px] font-medium transition-colors duration-200 ${
+          active ? 'text-[#111111]' : 'text-[#9A9CA6]'
+        }`}
+      >
+        {label}
+      </span>
       <div className="h-[2px] min-w-[80px] flex-1 overflow-hidden rounded-full bg-[#EAEAEA] sm:min-w-[130px]">
         <div
           className="h-full origin-left rounded-full bg-[#0668E1] motion-reduce:transition-none"
@@ -165,13 +128,7 @@ function StaticStepRow({ step }: { step: (typeof STEPS)[number] }) {
         <p className="mt-4 text-[18px] leading-[1.55] text-[#6B6D76]">{step.body}</p>
       </div>
       <div className="relative" style={{ height: PREVIEW_CARD_HEIGHT }}>
-        <ScreenshotPanel
-          src={step.src}
-          alt={step.title}
-          url={step.url}
-          glow={step.glow}
-          active
-        />
+        <FeaturePanel glow={step.glow} active />
       </div>
     </div>
   );
@@ -220,7 +177,7 @@ export default function LandingWhySwitcher() {
 
   return (
     <section className="relative isolate bg-white pb-16 text-[#111111] sm:pb-20 lg:pb-28">
-      <div className="mx-auto max-w-mkt-content px-5 pb-12 pt-20 sm:px-8 sm:pb-16 lg:pb-20 lg:pt-24">
+      <div className="mx-auto max-w-mkt-content px-5 pb-8 pt-20 sm:px-8 sm:pb-10 lg:pb-10 lg:pt-24">
         <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
           WHY {SITE_NAME.toUpperCase()}
         </p>
@@ -244,7 +201,7 @@ export default function LandingWhySwitcher() {
         </div>
       ) : (
         <>
-          <div ref={triggerRef} className="relative z-0 mx-auto hidden max-w-mkt-content px-5 pb-12 pt-4 sm:px-8 lg:block lg:pb-20 lg:pt-8">
+          <div ref={triggerRef} className="relative z-0 mx-auto hidden max-w-mkt-content px-5 pb-12 sm:px-8 lg:block lg:pb-20 lg:pt-0">
             <div ref={pinRef} className="w-full bg-white">
               <div className="grid grid-cols-2 items-start gap-14">
                 <div className="flex min-w-0 flex-col justify-center">
@@ -256,7 +213,7 @@ export default function LandingWhySwitcher() {
                     {STEPS.map((step) => (
                       <div
                         key={step.kicker}
-                        className="flex flex-col justify-center"
+                        className="flex flex-col justify-start pt-1"
                         style={{ height: STEP_SLOT }}
                       >
                         <p className="font-mkt-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#0668E1]">
@@ -279,6 +236,7 @@ export default function LandingWhySwitcher() {
                       key={step.kicker}
                       label={step.label}
                       progress={segProgress(index)}
+                      active={active === index}
                       isFirst={index === 0}
                     />
                   ))}
@@ -291,14 +249,7 @@ export default function LandingWhySwitcher() {
                   style={{ maxWidth: PREVIEW_MAX_WIDTH, height: PREVIEW_CARD_HEIGHT }}
                 >
                   {STEPS.map((step, index) => (
-                    <ScreenshotPanel
-                      key={step.kicker}
-                      src={step.src}
-                      alt={step.title}
-                      url={step.url}
-                      glow={step.glow}
-                      active={active === index}
-                    />
+                    <FeaturePanel key={step.kicker} glow={step.glow} active={active === index} />
                   ))}
                 </div>
               </div>
@@ -318,13 +269,7 @@ export default function LandingWhySwitcher() {
                   </h3>
                   <p className="mt-3 text-[17px] leading-[1.55] text-[#6B6D76]">{step.body}</p>
                   <div className="relative mt-6" style={{ height: PREVIEW_CARD_HEIGHT }}>
-                    <ScreenshotPanel
-                      src={step.src}
-                      alt={step.title}
-                      url={step.url}
-                      glow={step.glow}
-                      active
-                    />
+                    <FeaturePanel glow={step.glow} active />
                   </div>
                 </div>
               ))}
