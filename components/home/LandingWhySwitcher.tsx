@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { LandingAdsDemo } from '@/components/home/LandingAdsDemo';
 import { LandingLeadsDemo } from '@/components/home/LandingLeadsDemo';
 import { LandingListingDemo } from '@/components/home/LandingListingDemo';
 import { LandingTransactionsDemo } from '@/components/home/LandingTransactionsDemo';
@@ -12,7 +13,6 @@ import { useMotionReduced } from '@/lib/motion';
 ensureGsapRegistered();
 
 const STICKY_TOP = 120;
-const SEGMENT = 1 / 3;
 const STEP_SLOT = 228;
 
 function getScrollTravel() {
@@ -36,17 +36,27 @@ const STEPS = [
     glow: 'leads' as const,
   },
   {
+    kicker: 'ADS',
+    title: 'Turn listings into ad campaigns',
+    body: 'Push any listing straight to Google and Meta in a couple clicks — Oikaro builds the creative and tracks reach so you skip the ad-manager learning curve.',
+    label: '03 Ads',
+    glow: 'ads' as const,
+  },
+  {
     kicker: 'TRANSACTIONS',
     title: 'Nothing slips before closing',
     body: 'Checklists, documents, and deadline reminders on every deal — so the week before closing stops being a scramble.',
-    label: '03 Transactions',
+    label: '04 Transactions',
     glow: 'transactions' as const,
   },
 ] as const;
 
+const SEGMENT = 1 / STEPS.length;
+
 const DEMOS: Record<(typeof STEPS)[number]['glow'], () => React.JSX.Element> = {
   listings: LandingListingDemo,
   leads: LandingLeadsDemo,
+  ads: LandingAdsDemo,
   transactions: LandingTransactionsDemo,
 };
 
@@ -170,7 +180,7 @@ export default function LandingWhySwitcher() {
     { scope: triggerRef, dependencies: [reduced], revertOnUpdate: true },
   );
 
-  const active = prog >= 2 * SEGMENT ? 2 : prog >= SEGMENT ? 1 : 0;
+  const active = Math.min(STEPS.length - 1, Math.floor(prog / SEGMENT));
   const segProgress = (index: number) =>
     Math.min(1, Math.max(0, (prog - index * SEGMENT) / SEGMENT));
   const textScrollOffset = prog * (STEPS.length - 1) * STEP_SLOT;
