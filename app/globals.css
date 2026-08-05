@@ -1517,6 +1517,20 @@ html[data-dashboard-theme='light'] .dashboard-root,
     margin-top: 2rem;
   }
 
+  /* How To carousel: cards and illustrated demo content should always be
+     fully visible — no scroll-triggered fade on the shell or inner UI.
+     Tilt animation lives on the parent drag wrapper, not on this element. */
+  .marketing-root [data-howto-card] {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  .marketing-root [data-howto-card] * {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .landing-reveal-pending {
       opacity: 0;
