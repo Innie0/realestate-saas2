@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 import BrowserWindowFrame from '@/components/home/BrowserWindowFrame';
+import { LandingListingDemo } from '@/components/home/LandingListingDemo';
 import {
   BackgroundGradientGlow,
   PREVIEW_CARD_HEIGHT,
@@ -81,39 +82,45 @@ function ScreenshotPanel({
         transition: 'opacity 0.35s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
-      <div
-        className="relative w-full overflow-hidden rounded-[28px]"
-        style={{ padding: PREVIEW_FRAME_PADDING }}
-      >
-        <BackgroundGradientGlow variant={glow} />
-        <BrowserWindowFrame className="relative z-[1] shadow-[var(--mkt-shadow-soft)]">
-          <div className="border-b border-mkt-border bg-white px-3 py-1.5">
-            <p className="truncate font-mkt-mono text-[11px] text-[#6B6D76]">{url}</p>
-          </div>
-          <div
-            className="relative w-full bg-white"
-            style={{ height: PREVIEW_IMAGE_HEIGHT }}
-          >
-              {!failed ? (
-                <Image
-                  src={src}
-                  alt={alt}
-                  fill
-                  className="object-cover object-top"
-                  sizes="(min-width: 1024px) 580px, 100vw"
-                  onError={() => setFailed(true)}
-                />
-              ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-6 text-center">
-                  <p className="mb-2 font-mkt-mono text-[11px] font-medium uppercase tracking-[0.12em] text-[#6B6D76]">
-                    Screenshot
-                  </p>
-                  <p className="max-w-[220px] text-sm font-medium text-[#111111]">{alt}</p>
-                </div>
-              )}
+      {glow === 'listings' ? (
+        <div className="flex h-full w-full items-center justify-center">
+          <LandingListingDemo />
+        </div>
+      ) : (
+        <div
+          className="relative w-full overflow-hidden rounded-[28px]"
+          style={{ padding: PREVIEW_FRAME_PADDING }}
+        >
+          <BackgroundGradientGlow variant={glow} />
+          <BrowserWindowFrame className="relative z-[1] shadow-[var(--mkt-shadow-soft)]">
+            <div className="border-b border-mkt-border bg-white px-3 py-1.5">
+              <p className="truncate font-mkt-mono text-[11px] text-[#6B6D76]">{url}</p>
             </div>
-        </BrowserWindowFrame>
-      </div>
+            <div
+              className="relative w-full bg-white"
+              style={{ height: PREVIEW_IMAGE_HEIGHT }}
+            >
+                {!failed ? (
+                  <Image
+                    src={src}
+                    alt={alt}
+                    fill
+                    className="object-cover object-top"
+                    sizes="(min-width: 1024px) 580px, 100vw"
+                    onError={() => setFailed(true)}
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-6 text-center">
+                    <p className="mb-2 font-mkt-mono text-[11px] font-medium uppercase tracking-[0.12em] text-[#6B6D76]">
+                      Screenshot
+                    </p>
+                    <p className="max-w-[220px] text-sm font-medium text-[#111111]">{alt}</p>
+                  </div>
+                )}
+              </div>
+          </BrowserWindowFrame>
+        </div>
+      )}
     </div>
   );
 }
