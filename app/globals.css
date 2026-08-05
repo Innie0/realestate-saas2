@@ -438,6 +438,19 @@ html[data-dashboard-theme='light'] .dashboard-root,
     caret-color: var(--gray-900);
   }
 
+  /* Marketing pages (login/signup, legal, etc.) are always light — the
+     dashboard's --surface/--gray-900 tokens default dark, which made
+     autofilled inputs render as a black box with white text here. */
+  .marketing-root input:-webkit-autofill,
+  .marketing-root input:-webkit-autofill:hover,
+  .marketing-root input:-webkit-autofill:focus,
+  .marketing-root textarea:-webkit-autofill,
+  .marketing-root select:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #1c1d22 !important;
+    caret-color: #1c1d22;
+  }
+
   /* Unified icon weight inside the app workspace. */
   .dashboard-root .lucide[stroke-width='2'],
   .marketing-root .lucide[stroke-width='2'] {
