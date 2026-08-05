@@ -31,7 +31,7 @@ export default function LandingFooter() {
                 Ready to close faster with Oikaro?
               </p>
               <p className="mt-3 text-sm leading-[1.6] text-white/70">
-                Start for free — 7 days on us, no credit card required.
+                Start for free — 7 days on us, cancel anytime.
               </p>
             </div>
             <div className="flex w-full flex-col gap-3">
