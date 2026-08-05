@@ -2,6 +2,7 @@
 
 import clsx from 'clsx';
 import Image from 'next/image';
+import Link from 'next/link';
 import { SITE_NAME } from '@/lib/site-config';
 import { useMotionReduced } from '@/lib/motion';
 
@@ -100,7 +101,8 @@ export default function LandingIntegrations() {
               </div>
 
               <div className="relative z-[1] flex justify-center pt-16">
-                <div
+                <Link
+                  href="/integrations"
                   className={clsx(
                     'inline-flex h-24 items-center justify-center rounded-full bg-[#0668E1] px-16',
                     'shadow-[0_26px_60px_-28px_rgba(6,104,225,0.85)] transition-colors hover:bg-[#0450b0]',
@@ -109,7 +111,7 @@ export default function LandingIntegrations() {
                   <span className="font-mkt-mono text-[44px] font-normal leading-none tracking-[-0.02em] text-white">
                     {SITE_NAME}
                   </span>
-                </div>
+                </Link>
               </div>
             </div>
           </div>
