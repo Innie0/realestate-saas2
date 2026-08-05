@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { BarChart3, Download, MapPin, Search } from 'lucide-react';
+import { BarChart3, Download, Mail, MapPin, Phone, Search } from 'lucide-react';
 import { DemoToolbar } from '@/components/home/LandingDemoToolbar';
 import { useMotionReduced } from '@/lib/motion';
 
@@ -33,7 +33,12 @@ export function LandingResearchDemo() {
         <div className="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 rounded-full bg-[#0668E1]/[0.06] blur-3xl" />
 
         <div className="relative z-[1] flex flex-1 flex-col">
-          <DemoToolbar light label="Property research" icons={[Search, MapPin, BarChart3]} />
+          <DemoToolbar
+            light
+            accent="blue"
+            label="Property research"
+            icons={[Search, MapPin, BarChart3]}
+          />
 
           <div className="mt-1 flex-1 rounded-xl border border-dashed border-[#0668E1]/20 p-5">
             <motion.p
@@ -54,6 +59,24 @@ export function LandingResearchDemo() {
             >
               Owner: Marjorie Kessler
             </motion.p>
+
+            {/* Obviously-fake placeholder contact info — illustrates that owner
+                lookup includes phone + email, without showing a real person's data */}
+            <motion.div
+              initial={reduced ? false : { opacity: 0, y: -4 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.4, delay: 0.62 }}
+              className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[#5B6472]"
+            >
+              <span className="inline-flex items-center gap-1">
+                <Phone size={11} className="shrink-0" />
+                (555) 019-4271
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <Mail size={11} className="shrink-0" />
+                marjorie.kessler@fakemail.demo
+              </span>
+            </motion.div>
 
             <motion.div
               initial={reduced ? false : { opacity: 0, y: 8 }}

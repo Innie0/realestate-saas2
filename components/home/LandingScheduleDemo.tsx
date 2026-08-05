@@ -18,12 +18,12 @@ const DAYS = [
 ];
 
 const SYNC_OPTIONS = ['Google', 'Outlook', 'iCal'];
+const ACCENT = '#0891B2'; // cyan — distinct from Research (blue) and Ask (indigo)
 
 /** Illustrated card for the "Get it on the calendar" How To step — a
  *  click-to-select week strip (the selection glides over) plus a synced
- *  showing card. Built from real UI elements, not a screenshot. White surface
- *  with a soft blue tint, distinct from the saturated gradient cards used in
- *  the "Why Oikaro" section. */
+ *  showing card. Built from real UI elements, not a screenshot. Cyan tint
+ *  gives this card its own identity within the section. */
 export function LandingScheduleDemo() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.4 });
@@ -34,14 +34,19 @@ export function LandingScheduleDemo() {
   return (
     <div ref={ref} className="relative w-full">
       {/* Main illustrated card — built from real UI elements, not a screenshot */}
-      <div className="relative flex min-h-[420px] flex-col overflow-hidden rounded-[16px] border border-[#0668E1]/10 bg-gradient-to-br from-white via-[#F6FAFF] to-[#E8F1FE] p-6 sm:p-8">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#0668E1]/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 rounded-full bg-[#0668E1]/[0.06] blur-3xl" />
+      <div className="relative flex min-h-[420px] flex-col overflow-hidden rounded-[16px] border border-[#0891B2]/12 bg-gradient-to-br from-white via-[#F0FAFC] to-[#D7EEF3] p-6 sm:p-8">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#0891B2]/12 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 rounded-full bg-[#0891B2]/[0.07] blur-3xl" />
 
         <div className="relative z-[1] flex flex-1 flex-col">
-          <DemoToolbar light label="Showings & calendar" icons={[Calendar, Clock, MapPin]} />
+          <DemoToolbar
+            light
+            accent="cyan"
+            label="Showings & calendar"
+            icons={[Calendar, Clock, MapPin]}
+          />
 
-          <div className="mt-1 flex-1 rounded-xl border border-dashed border-[#0668E1]/20 p-5">
+          <div className="mt-1 flex-1 rounded-xl border border-dashed border-[#0891B2]/25 p-5">
             <motion.div
               initial={reduced ? false : { opacity: 0, y: 8 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -58,7 +63,7 @@ export function LandingScheduleDemo() {
                   {activeDay === i && (
                     <motion.span
                       layoutId="schedule-active-day"
-                      className="absolute inset-0 rounded-lg bg-[#0668E1]"
+                      className="absolute inset-0 rounded-lg bg-[#0891B2]"
                       transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
                     />
                   )}
@@ -86,11 +91,11 @@ export function LandingScheduleDemo() {
               initial={reduced ? false : { opacity: 0, y: 10 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.45, delay: 0.75 }}
-              className="mt-5 max-w-[280px] rounded-lg border border-[#0668E1]/10 bg-white p-4 shadow-sm sm:max-w-[300px]"
+              className="mt-5 max-w-[280px] rounded-lg border border-[#0891B2]/12 bg-white p-4 shadow-sm sm:max-w-[300px]"
             >
               <p className="text-sm font-semibold text-[#111111]">Showing — 742 Oak St</p>
               <p className="mt-1 text-xs text-[#6B6D76]">2:00 PM · Sarah Chen</p>
-              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#0668E1]/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-[#0668E1]">
+              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#0891B2]/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-[#0891B2]">
                 Synced to Google Calendar
               </span>
             </motion.div>
@@ -104,7 +109,7 @@ export function LandingScheduleDemo() {
         initial={reduced ? false : { opacity: 0, y: 16, scale: 0.95 }}
         animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
         transition={{ duration: 0.5, delay: 1.05, ease: 'easeOut' }}
-        className="relative z-20 mt-4 w-full rounded-2xl border border-[#0668E1]/15 bg-white p-4 shadow-lg sm:absolute sm:bottom-5 sm:right-5 sm:mt-0 sm:w-44"
+        className="relative z-20 mt-4 w-full rounded-2xl border border-[#0891B2]/20 bg-white p-4 shadow-lg sm:absolute sm:bottom-5 sm:right-5 sm:mt-0 sm:w-44"
       >
         <p className="mb-3 text-xs font-medium text-black/80">AI Assistant</p>
         <p className="mb-2 text-[11px] text-black/40">Sync with</p>
@@ -116,7 +121,7 @@ export function LandingScheduleDemo() {
               onClick={() => setActiveSync(i)}
               className="rounded-full px-3 py-1.5 text-xs transition-colors"
               style={{
-                backgroundColor: activeSync === i ? '#0668E1' : '#F3F4F6',
+                backgroundColor: activeSync === i ? ACCENT : '#F3F4F6',
                 color: activeSync === i ? '#FFFFFF' : '#6B6D76',
               }}
             >
