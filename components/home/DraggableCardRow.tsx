@@ -1,7 +1,15 @@
 'use client';
 
-import { motion, useMotionValue } from 'framer-motion';
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { motion, useMotionValue, useSpring, useTransform, type MotionValue } from 'framer-motion';
+import {
+  Children,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 import clsx from 'clsx';
 import DragCursor from '@/components/home/DragCursor';
 import { useMotionReduced } from '@/lib/motion';
@@ -12,6 +20,76 @@ type DraggableCardRowProps = {
   contentClassName?: string;
   style?: CSSProperties;
 };
+
+/** Max rotation (deg) applied to a card once it's a full card-width away from
+ *  dead center — the active/centered card sits at 0deg, neighbors fan out
+ *  from there as the row is dragged. */
+const MAX_TILT_DEG = 7;
+
+/** Wraps a single card so it can rotate based on its own distance from the
+ *  row's center, independent of the shared drag position. `offsetLeft` is
+ *  captured relative to the (positioned) outer container, so it already
+ *  reflects each card's natural rest position — combining it with the live
+ *  drag value `x` gives the card's actual on-screen distance from center at
+ *  any moment during the drag. */
+function TiltCard({
+  x,
+  containerRef,
+  children,
+}: {
+  x: MotionValue<number>;
+  containerRef: RefObject<HTMLDivElement | null>;
+  children: ReactNode;
+}) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const metricsRef = useRef({ offset: 0, half: 1 });
+
+  useEffect(() => {
+    const measure = () => {
+      const el = wrapperRef.current;
+      const container = containerRef.current;
+      if (!el || !container) return;
+      const width = el.offsetWidth;
+      metricsRef.current = {
+        offset: el.offsetLeft + width / 2 - container.offsetWidth / 2,
+        half: Math.max(width / 2, 1),
+      };
+      // `useTransform` only re-runs when `x` changes, so nudge it (no-op
+      // value-wise) to re-derive tilt from the freshly measured metrics —
+      // otherwise a resize wouldn't visibly update the tilt until the next drag.
+      x.set(x.get());
+    };
+
+    measure();
+    window.addEventListener('resize', measure);
+
+    const observer = new ResizeObserver(measure);
+    if (wrapperRef.current) observer.observe(wrapperRef.current);
+    if (containerRef.current) observer.observe(containerRef.current);
+
+    return () => {
+      window.removeEventListener('resize', measure);
+      observer.disconnect();
+    };
+  }, [containerRef, x]);
+
+  const rawTilt = useTransform(x, (latest) => {
+    const { offset, half } = metricsRef.current;
+    const distance = offset + latest;
+    const t = Math.max(-1, Math.min(1, distance / half));
+    return t * MAX_TILT_DEG;
+  });
+  // Springing the tilt (rather than following `x` 1:1) is what gives the
+  // "straightens into place with some character" settle — a slight
+  // overshoot as a card swings back to upright instead of a flat linear snap.
+  const tilt = useSpring(rawTilt, { stiffness: 260, damping: 22, mass: 0.4 });
+
+  return (
+    <motion.div ref={wrapperRef} className="flex-none" style={{ rotate: tilt }}>
+      {children}
+    </motion.div>
+  );
+}
 
 export function DraggableCardRow({
   children,
@@ -151,7 +229,11 @@ export function DraggableCardRow({
             userSelect: isDragging ? 'none' : 'auto',
           }}
         >
-          {children}
+          {Children.toArray(children).map((child) => (
+            <TiltCard key={(child as { key?: string | null }).key} x={x} containerRef={containerRef}>
+              {child}
+            </TiltCard>
+          ))}
         </motion.div>
       </div>
 
