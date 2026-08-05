@@ -21,11 +21,7 @@ import Button from '@/components/ui/Button';
 import { useApi } from '@/lib/swr';
 import { SITE_NAME } from '@/lib/site-config';
 
-interface RecentClient {
-  id: string;
-  name: string;
-  created_at: string;
-}
+const INBOX_COUNT_CACHE_KEY = 'sidebar-inbox-count';
 
 type NavItem = {
   name: string;
@@ -148,13 +144,27 @@ export default function Sidebar() {
     bottom: number;
   } | null>(null);
 
-  const { data: inboxLeadsData } = useApi<RecentClient[]>('/api/clients?status=all&view=inbox');
-  const inboxLeadCount = Array.isArray(inboxLeadsData) ? inboxLeadsData.length : 0;
+  // Cheap count-only fetch (see app/api/clients/inbox-count) instead of the
+  // full leads-with-joins payload the Leads inbox page needs. Seeded from
+  // localStorage so the badge shows the last-known count immediately on
+  // refresh instead of popping in once the network request resolves.
+  const [cachedInboxCount, setCachedInboxCount] = useState<number | null>(null);
+  const { data: inboxCountData } = useApi<{ count: number }>('/api/clients/inbox-count');
+  const inboxLeadCount = inboxCountData?.count ?? cachedInboxCount ?? 0;
 
   useEffect(() => {
     const saved = localStorage.getItem('sidebar-collapsed');
     if (saved !== null) setIsCollapsed(saved === 'true');
+
+    const savedCount = localStorage.getItem(INBOX_COUNT_CACHE_KEY);
+    if (savedCount !== null) setCachedInboxCount(Number(savedCount));
   }, []);
+
+  useEffect(() => {
+    if (inboxCountData?.count !== undefined) {
+      localStorage.setItem(INBOX_COUNT_CACHE_KEY, String(inboxCountData.count));
+    }
+  }, [inboxCountData]);
 
   useEffect(() => {
     (async () => {
