@@ -33,7 +33,7 @@ const STEPS = [
   {
     n: '01',
     title: 'Research the property',
-    body: 'Look up the owner, pull property details, and run a comps-based CMA before you ever pick up the phone.',
+    body: 'Enter a property address and Oikaro pulls the owner, contact details, property specs, and a comps-based value estimate — everything you need before you pick up the phone.',
     Demo: LandingResearchDemo,
     accent: 'blue',
   },
