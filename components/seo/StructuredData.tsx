@@ -18,7 +18,7 @@ export function GlobalStructuredData() {
     name: SITE_NAME,
     alternateName: SITE_NAME_ALT,
     url: SITE_URL,
-    logo: `${SITE_URL}/logo-wordmark.png`,
+    logo: `${SITE_URL}/apple-icon.png`,
     email: SUPPORT_EMAIL,
     description: SITE_DESCRIPTION,
     founder: {

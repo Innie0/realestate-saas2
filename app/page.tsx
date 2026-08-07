@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   keywords: [
     'Oikaro',
     'Oikaro',
-    'oikaro.ai',
+    'oikaro.com',
     'real estate agent tools',
     'AI listing description generator',
     'real estate CRM',
