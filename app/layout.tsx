@@ -114,8 +114,11 @@ export const metadata: Metadata = {
     images: ['/logo-wordmark.png'],
   },
   icons: {
-    icon: '/favicon.png',
-    apple: '/favicon.png',
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: '/apple-icon.png',
   },
   robots: {
     index: true,
