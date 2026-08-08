@@ -266,7 +266,7 @@ export default function TermsPage() {
                 <li>At our sole discretion on a case-by-case basis</li>
               </ul>
               <p className="text-mkt-secondary leading-relaxed mb-4">
-                To request a refund, contact support@oikaro.ai with details of your concern.
+                To request a refund, contact support@oikaro.com with details of your concern.
               </p>
 
               <h3 className="font-display text-xl font-medium tracking-[-0.01em] text-mkt-foreground mb-3 mt-6">Price Changes</h3>
@@ -469,7 +469,7 @@ export default function TermsPage() {
               </p>
               <div className="legal-callout">
                 <p><strong>Email:</strong> legal@oikaro.com</p>
-                <p><strong>Support:</strong> support@oikaro.ai</p>
+                <p><strong>Support:</strong> support@oikaro.com</p>
               </div>
             </section>
 

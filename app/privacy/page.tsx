@@ -437,7 +437,7 @@ export default function PrivacyPage() {
                 <li><strong>Update data:</strong> Use your account Settings page</li>
                 <li><strong>Delete account:</strong> Contact us at privacy@oikaro.com</li>
                 <li><strong>Data export:</strong> Contact us at privacy@oikaro.com</li>
-                <li><strong>Questions:</strong> Email us at support@oikaro.ai or use our <Link href="/contact">contact form</Link></li>
+                <li><strong>Questions:</strong> Email us at support@oikaro.com or use our <Link href="/contact">contact form</Link></li>
               </ul>
             </section>
 
@@ -518,7 +518,7 @@ export default function PrivacyPage() {
               </p>
               <div className="legal-callout">
                 <p><strong>Email:</strong> privacy@oikaro.com</p>
-                <p><strong>Support:</strong> support@oikaro.ai</p>
+                <p><strong>Support:</strong> support@oikaro.com</p>
                 <p><strong>Response time:</strong> We aim to respond within 30 days</p>
               </div>
             </section>
