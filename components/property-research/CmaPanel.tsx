@@ -36,7 +36,7 @@ import type { LookupResponse } from '@/components/property-research/OwnerContact
 const CmaCompsMap = dynamic(() => import('@/components/property-research/CmaCompsMap'), {
   ssr: false,
   loading: () => (
-    <div className="min-h-[320px] w-full animate-pulse rounded-[10px] border border-gray-200 bg-gray-100 lg:min-h-[calc(100vh-280px)]" />
+    <div className="h-[320px] w-full animate-pulse rounded-[10px] border border-gray-200 bg-gray-100" />
   ),
 });
 
@@ -527,344 +527,309 @@ export function CmaPanel({
   const mapAddress = result?.address ?? formattedAddress;
   const hasResults = Boolean(result && !loading && liveValuation);
 
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(300px,380px)_minmax(0,1fr)] lg:items-stretch lg:gap-5">
-        {/* Left: subject, params, results, actions */}
-        <div className="flex min-h-0 flex-col overflow-hidden rounded-[10px] border border-gray-150 bg-gray-50/50">
-          {hasResults && liveValuation && (
-            <div className="shrink-0 border-b border-gray-150 bg-[var(--surface)] px-4 py-3">
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <p className="text-[11px] font-medium uppercase tracking-wide text-gray-600">
-                    Suggested list price
-                  </p>
-                  {liveValuation.suggestedPrice ? (
-                    <>
-                      <p className="mt-0.5 text-[26px] font-bold leading-tight text-gray-900">
-                        {fmt(liveValuation.suggestedPrice, '$')}
-                      </p>
-                      <p className="mt-0.5 text-[12px] text-gray-600">
-                        {fmt(liveValuation.priceLow, '$')} – {fmt(liveValuation.priceHigh, '$')} ·{' '}
-                        {liveValuation.compCount} comp{liveValuation.compCount !== 1 ? 's' : ''}
-                      </p>
-                    </>
-                  ) : (
-                    <p className="mt-1 text-[13px] text-gray-600">
-                      Not enough comps — widen radius or sold-within range.
-                    </p>
-                  )}
-                </div>
-                <button
-                  type="button"
-                  onClick={handleExportPdf}
-                  disabled={exportingPdf}
-                  className="inline-flex shrink-0 items-center gap-1 rounded-[8px] border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-[12px] font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:opacity-50"
-                >
-                  {exportingPdf ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
-                  PDF
-                </button>
-              </div>
-            </div>
-          )}
+  const renderResults = () => {
+    if (!hasResults || !liveValuation || !result) return null;
 
-          <div className="flex-1 space-y-4 overflow-y-auto p-4 lg:max-h-[calc(100vh-220px)]">
-            {!hasResults && (
+    return (
+      <div className="space-y-4 border-t border-gray-150 pt-4">
+        {result.isDemo && (
+          <div className="rounded-[10px] border border-gray-200 bg-gray-50 px-4 py-3 text-[13px] text-gray-600">
+            Sample marketing CMA — comps and valuation are fictional for demo purposes.
+          </div>
+        )}
+        {fromCache && !result.isDemo && (
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] text-emerald-800">
+            <span>Loaded from saved search — no API usage.</span>
+            <button
+              type="button"
+              onClick={() => runAnalysis(true)}
+              className="text-[12.5px] font-medium text-emerald-700 underline hover:text-emerald-900"
+            >
+              Refresh live data
+            </button>
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[12px] text-gray-600">Suggested list price</p>
+            {liveValuation.suggestedPrice ? (
               <>
-                <CmaSubjectSummary
-                  address={mapAddress}
-                  subject={subject}
-                  subjectEnrichment={subjectEnrichment}
-                  manualFields={manualFields}
-                  prefilling={prefilling}
-                  canPrefill={Boolean(street.trim() && state)}
-                  onPrefill={handlePrefill}
-                  onUpdateSubject={updateSubject}
-                />
-
-                <CmaSearchParams
-                  radius={radius}
-                  yearsBack={yearsBack}
-                  propertyType={propertyType}
-                  onRadiusChange={setRadius}
-                  onYearsBackChange={setYearsBack}
-                  onPropertyTypeChange={setPropertyType}
-                />
-              </>
-            )}
-
-            {error && (
-              <div className="flex items-start gap-2 rounded-[10px] border border-rose-200 bg-rose-50 px-3 py-2.5 text-[13px] text-rose-700">
-                <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
-                {error}
-              </div>
-            )}
-
-            {loading && (
-              <DataLoadingState
-                title="Running comp-based analysis"
-                description="Scoring nearby sales and adjusting for beds, baths, and condition."
-              />
-            )}
-
-            {hasResults && liveValuation && result && (
-              <div className="space-y-4">
-                {paramsExpanded && (
-                  <>
-                    <CmaSearchParams
-                      radius={radius}
-                      yearsBack={yearsBack}
-                      propertyType={propertyType}
-                      onRadiusChange={setRadius}
-                      onYearsBackChange={setYearsBack}
-                      onPropertyTypeChange={setPropertyType}
-                    />
-                    <CmaSubjectSummary
-                      address={mapAddress}
-                      subject={subject}
-                      subjectEnrichment={subjectEnrichment}
-                      manualFields={manualFields}
-                      prefilling={prefilling}
-                      canPrefill={Boolean(street.trim() && state)}
-                      onPrefill={handlePrefill}
-                      onUpdateSubject={updateSubject}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setParamsExpanded(false)}
-                      className="w-full rounded-[10px] border border-gray-200 py-2 text-[12px] font-medium text-gray-700 transition-colors hover:bg-gray-50"
-                    >
-                      Done editing search
-                    </button>
-                  </>
-                )}
-
-                {result.isDemo && (
-                  <div className="rounded-[10px] border border-gray-200 bg-gray-50 px-3 py-2.5 text-[12.5px] text-gray-600">
-                    Sample marketing CMA — fictional comps for demo.
-                  </div>
-                )}
-                {fromCache && !result.isDemo && (
-                  <div className="flex flex-wrap items-center justify-between gap-2 rounded-[10px] border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-[12.5px] text-emerald-800">
-                    <span>Loaded from cache — no API usage.</span>
-                    <button
-                      type="button"
-                      onClick={() => runAnalysis(true)}
-                      className="font-medium text-emerald-700 underline hover:text-emerald-900"
-                    >
-                      Refresh live
-                    </button>
-                  </div>
-                )}
-
-                {result.activeListing && (
-                  <div className="flex items-start gap-2 rounded-[10px] border border-amber-200 bg-amber-50 px-3 py-2.5 text-[12.5px] text-amber-800">
-                    <Info className="mt-0.5 h-4 w-4 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium">Currently listed</p>
-                      <p className="mt-0.5 text-amber-700">
-                        {fmt(result.activeListing.price, '$')}
-                        {result.activeListing.mlsNumber && ` · MLS #${result.activeListing.mlsNumber}`}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-3">
-                    <p className="text-[11px] text-gray-600">AVM</p>
-                    <p className="mt-0.5 text-[15px] font-bold text-gray-800">
-                      {result.avm?.estimatedValue ? fmt(result.avm.estimatedValue, '$') : '—'}
-                    </p>
-                  </div>
-                  <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-3">
-                    <p className="text-[11px] text-gray-600">Rent est.</p>
-                    <p className="mt-0.5 text-[15px] font-bold text-gray-900">
-                      {result.rentEstimate?.monthlyRent ? `${fmt(result.rentEstimate.monthlyRent, '$')}/mo` : '—'}
-                    </p>
-                  </div>
-                </div>
-
-                {result.summary && (
-                  <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-3">
-                    <div className="mb-1.5 flex items-center gap-1.5">
-                      <Sparkles className="h-3.5 w-3.5 text-gray-700" />
-                      <p className="text-[11px] font-medium text-gray-600">Market summary</p>
-                    </div>
-                    <p className="text-[12.5px] leading-relaxed text-gray-600">{result.summary}</p>
-                  </div>
-                )}
-
-                <div>
-                  <p className="mb-2 text-[12px] font-medium text-gray-600">
-                    Comparable sales
-                    {result.compsFiltered > 0 && (
-                      <span className="font-normal text-gray-500">
-                        {' '}
-                        · {result.compsFiltered} removed
-                      </span>
-                    )}
-                  </p>
-                  {activeComps.length === 0 ? (
-                    <p className="text-[13px] text-gray-600">No comps available.</p>
-                  ) : (
-                    <div className="max-h-64 space-y-2 overflow-y-auto pr-0.5">
-                      {visibleComps.map((comp) => {
-                        const realIdx = result.comps.indexOf(comp);
-                        const conditionedAdj = comp.adjustedPrice
-                          ? Math.round(comp.adjustedPrice * liveValuation.conditionFactor)
-                          : null;
-                        return (
-                          <div key={realIdx} className="rounded-[10px] border border-gray-150 bg-[var(--surface)] p-3">
-                            <div className="mb-1.5 flex items-start justify-between gap-2">
-                              <p className="text-[12.5px] font-medium text-gray-900">{comp.address}</p>
-                              <div className="flex shrink-0 items-center gap-1.5">
-                                <div className="text-right">
-                                  <p className="text-[12.5px] font-bold text-gray-900">{fmt(comp.price, '$')}</p>
-                                  {conditionedAdj && (
-                                    <p className="text-[10px] text-gray-600">Adj. {fmt(conditionedAdj, '$')}</p>
-                                  )}
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() => setExcludedIds((prev) => new Set([...prev, realIdx]))}
-                                  className="p-0.5 text-gray-400 hover:text-rose-500"
-                                >
-                                  <X className="h-3.5 w-3.5" />
-                                </button>
-                              </div>
-                            </div>
-                            <div className="flex flex-wrap gap-2 text-[11px] text-gray-600">
-                              {comp.bedrooms !== null && <span>{comp.bedrooms} bd</span>}
-                              {comp.bathrooms !== null && <span>{comp.bathrooms} ba</span>}
-                              {comp.squareFootage !== null && (
-                                <span>{comp.squareFootage.toLocaleString()} sqft</span>
-                              )}
-                              {comp.soldDate && <span>Sold {fmtDate(comp.soldDate)}</span>}
-                            </div>
-                          </div>
-                        );
-                      })}
-                      {activeComps.length > 5 && (
-                        <button
-                          type="button"
-                          onClick={() => setShowAllComps((v) => !v)}
-                          className="w-full rounded-[10px] border border-gray-200 py-2 text-[12px] text-gray-700 transition-colors hover:bg-gray-50"
-                        >
-                          {showAllComps ? 'Show fewer' : `Show all ${activeComps.length} comps`}
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {!paramsExpanded && (
-                  <>
-                    <CmaSubjectSummary
-                      address={mapAddress}
-                      subject={subject}
-                      subjectEnrichment={subjectEnrichment}
-                      manualFields={manualFields}
-                      prefilling={prefilling}
-                      canPrefill={Boolean(street.trim() && state)}
-                      onPrefill={handlePrefill}
-                      onUpdateSubject={updateSubject}
-                    />
-                    <CmaSearchParams
-                      radius={radius}
-                      yearsBack={yearsBack}
-                      propertyType={propertyType}
-                      onRadiusChange={setRadius}
-                      onYearsBackChange={setYearsBack}
-                      onPropertyTypeChange={setPropertyType}
-                      collapsed
-                      onExpand={() => setParamsExpanded(true)}
-                    />
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-
-          <div className="flex shrink-0 items-center gap-2 border-t border-gray-150 bg-[var(--surface)] p-3">
-            <button
-              type="button"
-              onClick={handleResetParams}
-              className="rounded-[10px] px-3 py-2 text-[12.5px] font-medium text-gray-600 transition-colors hover:text-gray-900"
-            >
-              Reset defaults
-            </button>
-            <button
-              type="button"
-              onClick={() => runAnalysis()}
-              disabled={loading || !street.trim() || !state}
-              className="ml-auto flex flex-1 items-center justify-center gap-2 rounded-[10px] bg-brand-500 py-2.5 text-[13px] font-semibold text-[var(--brand-foreground)] transition-colors hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:px-6"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" /> Running…
-                </>
-              ) : result ? (
-                <>
-                  <TrendingUp className="h-4 w-4" /> Re-run comps
-                </>
-              ) : (
-                <>
-                  <TrendingUp className="h-4 w-4" /> Find comps
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Right: live map */}
-        <div className="flex min-h-[320px] flex-col overflow-hidden rounded-[10px] border border-gray-150 bg-[var(--surface)] p-3 lg:min-h-[calc(100vh-220px)]">
-          <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] text-gray-600">
-            <span className="inline-flex items-center gap-1">
-              <span className="inline-block size-2.5 rounded-full bg-[#0668E1] border border-white" />
-              Subject
-            </span>
-            {mapHasCompPins && (
-              <span className="inline-flex items-center gap-1">
-                <span className="inline-block size-2 rounded-full bg-[#1C1D22] border border-white" />
-                Comp
-              </span>
-            )}
-            <span className="inline-flex items-center gap-1">
-              <span className="inline-block h-2 w-2 rounded-full border border-[#0668E1]/55 bg-[#0668E1]/10" />
-              {radius} mi
-            </span>
-            <span className="text-[10px] text-gray-400 lg:ml-auto">© Mapbox © OpenStreetMap</span>
-          </div>
-          <div className="relative min-h-0 flex-1">
-            {loading && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center rounded-[10px] bg-[var(--surface)]/80 backdrop-blur-[1px]">
-                <Loader2 className="h-8 w-8 animate-spin text-brand-500" />
-              </div>
-            )}
-            {hasResults && liveValuation?.suggestedPrice && (
-              <div className="pointer-events-none absolute bottom-3 left-3 z-10 max-w-[220px] rounded-[10px] border border-gray-200 bg-white/95 px-3 py-2.5 shadow-md backdrop-blur-sm">
-                <p className="text-[10px] font-medium uppercase tracking-wide text-gray-600">Suggested list</p>
-                <p className="text-[18px] font-bold leading-tight text-gray-900">
+                <p className="mt-1 text-[28px] font-bold text-gray-900">
                   {fmt(liveValuation.suggestedPrice, '$')}
                 </p>
-                <p className="text-[11px] text-gray-600">
-                  {fmt(liveValuation.priceLow, '$')} – {fmt(liveValuation.priceHigh, '$')}
+                <p className="text-[13px] text-gray-600">
+                  Range: {fmt(liveValuation.priceLow, '$')} – {fmt(liveValuation.priceHigh, '$')} ·{' '}
+                  {liveValuation.compCount} comp{liveValuation.compCount !== 1 ? 's' : ''}
                 </p>
-              </div>
+              </>
+            ) : (
+              <p className="mt-1 text-[13px] text-gray-600">
+                Not enough comps. Widen radius or sold-within range.
+              </p>
             )}
-            <CmaCompsMap
-              mode={mapHasCompPins ? 'results' : 'preview'}
-              subjectLocation={mapSubjectLocation}
-              comps={mapHasCompPins ? activeComps : []}
-              radiusMiles={radius}
-              subjectAddress={mapAddress}
-              hideLegend
-              mapHeightClassName="h-full min-h-[280px] lg:min-h-0"
-            />
+          </div>
+          <button
+            type="button"
+            onClick={handleExportPdf}
+            disabled={exportingPdf}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-[10px] border border-gray-200 bg-[var(--surface)] px-3 py-2 text-[13px] font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
+          >
+            {exportingPdf ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+            Export seller PDF
+          </button>
+        </div>
+
+        {result.activeListing && (
+          <div className="flex items-start gap-2 rounded-[10px] border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] text-amber-800">
+            <Info className="mt-0.5 h-4 w-4 flex-shrink-0" />
+            <div>
+              <p className="font-medium">Currently listed for sale</p>
+              <p className="mt-0.5 text-[12px] text-amber-700">
+                List price: {fmt(result.activeListing.price, '$')}
+                {result.activeListing.mlsNumber && ` · MLS #${result.activeListing.mlsNumber}`}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {result.compsFiltered > 0 && (
+          <p className="text-[12.5px] text-gray-600">
+            {result.compsFiltered} invalid listing{result.compsFiltered !== 1 ? 's' : ''} removed from comps.
+          </p>
+        )}
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-4">
+            <p className="text-[12.5px] text-gray-600 mb-2">AVM Reference</p>
+            {result.avm?.estimatedValue ? (
+              <p className="text-[22px] font-bold text-gray-700">{fmt(result.avm.estimatedValue, '$')}</p>
+            ) : (
+              <p className="text-[13px] text-gray-600">Not available</p>
+            )}
+          </div>
+          <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-4">
+            <p className="text-[12.5px] text-gray-600 mb-2">Rent Estimate</p>
+            {result.rentEstimate?.monthlyRent ? (
+              <p className="text-[22px] font-bold text-gray-900">
+                {fmt(result.rentEstimate.monthlyRent, '$')}
+                <span className="text-[14px] font-normal text-gray-600">/mo</span>
+              </p>
+            ) : (
+              <p className="text-[13px] text-gray-600">Not available</p>
+            )}
           </div>
         </div>
+
+        {result.summary && (
+          <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-4">
+            <div className="mb-2 flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-gray-700" />
+              <p className="text-[12.5px] font-medium text-gray-600">Market Summary</p>
+            </div>
+            <p className="text-[13px] leading-relaxed text-gray-600">{result.summary}</p>
+          </div>
+        )}
+
+        <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-4">
+          <p className="mb-3 text-[12.5px] font-medium text-gray-600">Comparable Sales</p>
+          {activeComps.length === 0 ? (
+            <p className="text-[13px] text-gray-600">No comps available.</p>
+          ) : (
+            <div className="space-y-3">
+              {visibleComps.map((comp) => {
+                const realIdx = result.comps.indexOf(comp);
+                const conditionedAdj = comp.adjustedPrice
+                  ? Math.round(comp.adjustedPrice * liveValuation.conditionFactor)
+                  : null;
+                return (
+                  <div key={realIdx} className="rounded-[10px] border border-gray-150 p-3.5">
+                    <div className="mb-2 flex items-start justify-between gap-2">
+                      <p className="text-[13px] font-medium text-gray-900">{comp.address}</p>
+                      <div className="flex items-center gap-2">
+                        <div className="text-right">
+                          <p className="text-[13px] font-bold text-gray-900">{fmt(comp.price, '$')}</p>
+                          {conditionedAdj && (
+                            <p className="text-[10.5px] text-gray-600">Adj. {fmt(conditionedAdj, '$')}</p>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setExcludedIds((prev) => new Set([...prev, realIdx]))}
+                          className="p-1 text-gray-400 hover:text-rose-500"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-3 text-[12px] text-gray-600">
+                      {comp.bedrooms !== null && <span>{comp.bedrooms} bd</span>}
+                      {comp.bathrooms !== null && <span>{comp.bathrooms} ba</span>}
+                      {comp.squareFootage !== null && (
+                        <span>{comp.squareFootage.toLocaleString()} sqft</span>
+                      )}
+                      {comp.soldDate && <span>Sold {fmtDate(comp.soldDate)}</span>}
+                    </div>
+                  </div>
+                );
+              })}
+              {activeComps.length > 5 && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllComps((v) => !v)}
+                  className="w-full rounded-[10px] border border-gray-200 py-2 text-[12.5px] text-gray-700 transition-colors hover:bg-gray-50"
+                >
+                  {showAllComps ? 'Show fewer' : `Show all ${activeComps.length} comps`}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
+    );
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-4 rounded-[10px] border border-gray-150 bg-gray-50/50 p-5">
+        {hasResults && (
+          <p className="text-[13px] font-medium text-gray-700">Analysis settings</p>
+        )}
+
+        {hasResults && paramsExpanded ? (
+          <>
+            <CmaSearchParams
+              radius={radius}
+              yearsBack={yearsBack}
+              propertyType={propertyType}
+              onRadiusChange={setRadius}
+              onYearsBackChange={setYearsBack}
+              onPropertyTypeChange={setPropertyType}
+            />
+            <CmaSubjectSummary
+              address={mapAddress}
+              subject={subject}
+              subjectEnrichment={subjectEnrichment}
+              manualFields={manualFields}
+              prefilling={prefilling}
+              canPrefill={Boolean(street.trim() && state)}
+              onPrefill={handlePrefill}
+              onUpdateSubject={updateSubject}
+            />
+            <button
+              type="button"
+              onClick={() => setParamsExpanded(false)}
+              className="w-full rounded-[10px] border border-gray-200 py-2 text-[12.5px] font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            >
+              Done editing search
+            </button>
+          </>
+        ) : hasResults ? (
+          <>
+            <CmaSubjectSummary
+              address={mapAddress}
+              subject={subject}
+              subjectEnrichment={subjectEnrichment}
+              manualFields={manualFields}
+              prefilling={prefilling}
+              canPrefill={Boolean(street.trim() && state)}
+              onPrefill={handlePrefill}
+              onUpdateSubject={updateSubject}
+            />
+            <CmaSearchParams
+              radius={radius}
+              yearsBack={yearsBack}
+              propertyType={propertyType}
+              onRadiusChange={setRadius}
+              onYearsBackChange={setYearsBack}
+              onPropertyTypeChange={setPropertyType}
+              collapsed
+              onExpand={() => setParamsExpanded(true)}
+            />
+          </>
+        ) : (
+          <>
+            <CmaSubjectSummary
+              address={mapAddress}
+              subject={subject}
+              subjectEnrichment={subjectEnrichment}
+              manualFields={manualFields}
+              prefilling={prefilling}
+              canPrefill={Boolean(street.trim() && state)}
+              onPrefill={handlePrefill}
+              onUpdateSubject={updateSubject}
+            />
+            <CmaSearchParams
+              radius={radius}
+              yearsBack={yearsBack}
+              propertyType={propertyType}
+              onRadiusChange={setRadius}
+              onYearsBackChange={setYearsBack}
+              onPropertyTypeChange={setPropertyType}
+            />
+          </>
+        )}
+
+        <div className="space-y-3 rounded-[10px] border border-gray-150 bg-[var(--surface)] p-4">
+          <p className="text-[14px] font-semibold text-gray-900">Search area</p>
+          <p className="text-[12px] text-gray-600">
+            Blue circle shows the comp search radius. Adjust parameters above, then run the analysis.
+          </p>
+          <CmaCompsMap
+            mode={mapHasCompPins ? 'results' : 'preview'}
+            subjectLocation={mapSubjectLocation}
+            comps={mapHasCompPins ? activeComps : []}
+            radiusMiles={radius}
+            subjectAddress={mapAddress}
+          />
+        </div>
+
+        {renderResults()}
+
+        {error && (
+          <div className="flex items-start gap-2 rounded-[10px] border border-rose-200 bg-rose-50 px-3 py-2.5 text-[13px] text-rose-700">
+            <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
+            {error}
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={handleResetParams}
+            className="rounded-[10px] px-3 py-2 text-[12.5px] font-medium text-gray-600 transition-colors hover:text-gray-900"
+          >
+            Reset defaults
+          </button>
+          <button
+            type="button"
+            onClick={() => runAnalysis()}
+            disabled={loading || !street.trim() || !state}
+            className="ml-auto flex min-w-[200px] flex-1 items-center justify-center gap-2 rounded-lg bg-brand-500 py-2.5 text-[13px] font-semibold text-[var(--brand-foreground)] transition-colors hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:px-8"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" /> Running CMA…
+              </>
+            ) : result ? (
+              <>
+                <TrendingUp className="h-4 w-4" /> Re-run Comp-Based Analysis
+              </>
+            ) : (
+              <>
+                <TrendingUp className="h-4 w-4" /> Run Comp-Based Analysis
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {loading && (
+        <DataLoadingState
+          title="Running comp-based analysis"
+          description="Scoring nearby sales and adjusting for beds, baths, and condition. This usually takes 10–20 seconds."
+        />
+      )}
     </div>
   );
 }
