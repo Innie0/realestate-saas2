@@ -18,6 +18,10 @@ export interface CmaCompsMapProps {
   subjectAddress?: string;
   /** Preview shows subject pin + radius only; results adds comp pins */
   mode?: 'preview' | 'results';
+  /** Tailwind height classes for the map canvas */
+  mapHeightClassName?: string;
+  /** When true, legend is omitted (e.g. parent shows legend elsewhere) */
+  hideLegend?: boolean;
 }
 
 function fmtPrice(n: number | null | undefined) {
@@ -94,6 +98,8 @@ export default function CmaCompsMap({
   radiusMiles,
   subjectAddress,
   mode = 'results',
+  mapHeightClassName = 'h-[320px]',
+  hideLegend = false,
 }: CmaCompsMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -236,7 +242,9 @@ export default function CmaCompsMap({
 
   if (!token) {
     return (
-      <div className="rounded-[10px] border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center text-[13px] text-gray-600">
+      <div
+        className={`rounded-[10px] border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center text-[13px] text-gray-600 ${mapHeightClassName}`}
+      >
         Map unavailable — add <code className="text-[12px]">NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN</code> to enable the comps map.
       </div>
     );
@@ -244,7 +252,9 @@ export default function CmaCompsMap({
 
   if (!subjectPoint) {
     return (
-      <div className="rounded-[10px] border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center text-[13px] text-gray-600">
+      <div
+        className={`flex items-center justify-center rounded-[10px] border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center text-[13px] text-gray-600 ${mapHeightClassName}`}
+      >
         Map unavailable — subject coordinates were not returned for this address.
       </div>
     );
@@ -252,34 +262,38 @@ export default function CmaCompsMap({
 
   if (!isPreview && compPoints.length === 0) {
     return (
-      <div className="rounded-[10px] border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center text-[13px] text-gray-600">
+      <div
+        className={`flex items-center justify-center rounded-[10px] border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center text-[13px] text-gray-600 ${mapHeightClassName}`}
+      >
         Map unavailable — none of the comps include location coordinates.
       </div>
     );
   }
 
   return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap items-center gap-3 text-[12px] text-gray-600">
-        <span className="inline-flex items-center gap-1.5">
-          <span className="inline-block size-3 rounded-full bg-[#0668E1] border border-white shadow-sm" />
-          Subject
-        </span>
-        {!isPreview && (
+    <div className={hideLegend ? `flex h-full min-h-0 flex-col ${mapHeightClassName}` : 'space-y-2'}>
+      {!hideLegend && (
+        <div className="flex flex-wrap items-center gap-3 text-[12px] text-gray-600">
           <span className="inline-flex items-center gap-1.5">
-            <span className="inline-block size-2.5 rounded-full bg-[#1C1D22] border border-white shadow-sm" />
-            Comp sale
+            <span className="inline-block size-3 rounded-full bg-[#0668E1] border border-white shadow-sm" />
+            Subject
           </span>
-        )}
-        <span className="inline-flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-2.5 rounded-full border-2 border-[#0668E1]/55 bg-[#0668E1]/10" />
-          {radiusMiles} mi search radius
-        </span>
-        <span className="text-[10px] text-gray-400 sm:ml-auto">© Mapbox © OpenStreetMap</span>
-      </div>
+          {!isPreview && (
+            <span className="inline-flex items-center gap-1.5">
+              <span className="inline-block size-2.5 rounded-full bg-[#1C1D22] border border-white shadow-sm" />
+              Comp sale
+            </span>
+          )}
+          <span className="inline-flex items-center gap-1.5">
+            <span className="inline-block h-2.5 w-2.5 rounded-full border-2 border-[#0668E1]/55 bg-[#0668E1]/10" />
+            {radiusMiles} mi search radius
+          </span>
+          <span className="text-[10px] text-gray-400 sm:ml-auto">© Mapbox © OpenStreetMap</span>
+        </div>
+      )}
       <div
         ref={containerRef}
-        className="cma-map-host h-[320px] w-full overflow-hidden rounded-[10px] border border-gray-200 [&_.mapboxgl-ctrl-attrib]:!hidden [&_.mapboxgl-ctrl-logo]:!hidden"
+        className={`cma-map-host w-full flex-1 overflow-hidden rounded-[10px] border border-gray-200 [&_.mapboxgl-ctrl-attrib]:!hidden [&_.mapboxgl-ctrl-logo]:!hidden ${hideLegend ? 'min-h-[280px] h-full' : mapHeightClassName}`}
         aria-label="Comparable sales map"
       />
     </div>

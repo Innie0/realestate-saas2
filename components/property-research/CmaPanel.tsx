@@ -3,21 +3,22 @@
 import { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import {
-  CONDITION_OPTIONS,
   defaultSubject,
   recalculateValuation,
-  type ConditionLevel,
   type ScoredComp,
   type SubjectProperty,
 } from '@/lib/cma';
 import { useToast } from '@/components/providers/ToastProvider';
-import Select from '@/components/ui/Select';
 import DataLoadingState from '@/components/dashboard/DataLoadingState';
-import EmptyState from '@/components/ui/EmptyState';
+import CmaSubjectSummary from '@/components/property-research/CmaSubjectSummary';
+import CmaSearchParams, {
+  CMA_DEFAULT_RADIUS,
+  CMA_DEFAULT_YEARS_BACK,
+} from '@/components/property-research/CmaSearchParams';
 import {
-  BarChart2, Loader2, AlertCircle, DollarSign,
-  TrendingUp, MapPin, Sparkles,
-  X, RefreshCw, Info, Download,
+  Loader2, AlertCircle,
+  TrendingUp, Sparkles,
+  X, Download, Info,
 } from 'lucide-react';
 import { buildCmaPdfPayload, downloadCmaPdf } from '@/lib/export-cma-pdf';
 import { normalizeAddressKey } from '@/lib/property-research-cache';
@@ -35,7 +36,7 @@ import type { LookupResponse } from '@/components/property-research/OwnerContact
 const CmaCompsMap = dynamic(() => import('@/components/property-research/CmaCompsMap'), {
   ssr: false,
   loading: () => (
-    <div className="h-[320px] w-full animate-pulse rounded-[10px] border border-gray-200 bg-gray-100" />
+    <div className="min-h-[320px] w-full animate-pulse rounded-[10px] border border-gray-200 bg-gray-100 lg:min-h-[calc(100vh-280px)]" />
   ),
 });
 
@@ -88,49 +89,9 @@ export interface CmaAnalysisResult {
   queriedAt: string;
 }
 
-const PROPERTY_TYPES = [
-  { value: '', label: 'Auto-detect' },
-  { value: 'Single Family', label: 'Single Family' },
-  { value: 'Condo', label: 'Condo' },
-  { value: 'Townhouse', label: 'Townhouse' },
-  { value: 'Multi-Family', label: 'Multi-Family' },
-  { value: 'Apartment', label: 'Apartment' },
-  { value: 'Manufactured', label: 'Manufactured' },
-  { value: 'Land', label: 'Land' },
-];
-
-const inputClass =
-  'w-full bg-gray-50 border border-gray-200 rounded-[10px] px-3 py-2.5 text-gray-900 text-[13px] placeholder-gray-450 focus:outline-none focus:border-gray-400';
-
 function fmt(n: number | null | undefined, prefix = '', suffix = '') {
   if (n === null || n === undefined) return '—';
   return `${prefix}${n.toLocaleString()}${suffix}`;
-}
-
-function enrichmentLabel(source: SubjectEnrichmentMeta[keyof SubjectEnrichmentMeta] | undefined) {
-  switch (source) {
-    case 'county':
-      return 'County records';
-    case 'mls':
-      return 'MLS listing';
-    case 'heuristic':
-      return 'Estimated from price & size';
-    case 'ai':
-      return 'AI from listing remarks';
-    default:
-      return null;
-  }
-}
-
-function AutoDetectHint({ source }: { source: SubjectEnrichmentMeta[keyof SubjectEnrichmentMeta] | undefined }) {
-  const label = enrichmentLabel(source);
-  if (!label) return null;
-  return (
-    <span className="inline-flex items-center gap-1 text-[10.5px] text-gray-600 mt-0.5">
-      <Sparkles className="w-3 h-3" />
-      Auto: {label}
-    </span>
-  );
 }
 
 function fmtDate(s: string | null) {
@@ -534,316 +495,280 @@ export function CmaPanel({
     }
   };
 
+  const handleResetParams = () => {
+    setRadius(CMA_DEFAULT_RADIUS);
+    setYearsBack(CMA_DEFAULT_YEARS_BACK);
+    setPropertyType('');
+  };
+
+  const mapHasCompPins =
+    Boolean(result) &&
+    activeComps.some((c) => c.latitude !== null && c.longitude !== null);
+
+  const mapAddress = result?.address ?? formattedAddress;
+
   return (
     <div className="space-y-4">
-      <div className="border border-gray-150 rounded-[10px] p-5 space-y-4 bg-gray-50/50">
-        {result && (
-          <p className="text-[13px] font-medium text-gray-700">Analysis settings</p>
-        )}
-        <div data-tour="ma-subject" className="border border-gray-150 rounded-[10px] p-4 bg-gray-50 space-y-3">
-          <div className="flex items-center justify-between gap-2 flex-wrap">
-            <p className="text-[14px] font-semibold text-gray-900">Subject Property Details</p>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(300px,380px)_minmax(0,1fr)] lg:items-stretch lg:gap-5">
+        {/* Left: subject, params, results, actions */}
+        <div className="flex min-h-0 flex-col overflow-hidden rounded-[10px] border border-gray-150 bg-gray-50/50">
+          <div className="flex-1 space-y-4 overflow-y-auto p-4 lg:max-h-[calc(100vh-220px)]">
+            <CmaSubjectSummary
+              address={mapAddress}
+              subject={subject}
+              subjectEnrichment={subjectEnrichment}
+              manualFields={manualFields}
+              prefilling={prefilling}
+              canPrefill={Boolean(street.trim() && state)}
+              onPrefill={handlePrefill}
+              onUpdateSubject={updateSubject}
+            />
+
+            <CmaSearchParams
+              radius={radius}
+              yearsBack={yearsBack}
+              propertyType={propertyType}
+              onRadiusChange={setRadius}
+              onYearsBackChange={setYearsBack}
+              onPropertyTypeChange={setPropertyType}
+            />
+
+            {error && (
+              <div className="flex items-start gap-2 rounded-[10px] border border-rose-200 bg-rose-50 px-3 py-2.5 text-[13px] text-rose-700">
+                <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                {error}
+              </div>
+            )}
+
+            {loading && (
+              <DataLoadingState
+                title="Running comp-based analysis"
+                description="Scoring nearby sales and adjusting for beds, baths, and condition."
+              />
+            )}
+
+            {result && !loading && liveValuation && (
+              <div className="space-y-4 border-t border-gray-150 pt-4">
+                {result.isDemo && (
+                  <div className="rounded-[10px] border border-gray-200 bg-gray-50 px-3 py-2.5 text-[12.5px] text-gray-600">
+                    Sample marketing CMA — fictional comps for demo.
+                  </div>
+                )}
+                {fromCache && !result.isDemo && (
+                  <div className="flex flex-wrap items-center justify-between gap-2 rounded-[10px] border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-[12.5px] text-emerald-800">
+                    <span>Loaded from cache — no API usage.</span>
+                    <button
+                      type="button"
+                      onClick={() => runAnalysis(true)}
+                      className="font-medium text-emerald-700 underline hover:text-emerald-900"
+                    >
+                      Refresh live
+                    </button>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-[13px] font-semibold text-gray-900">Results</p>
+                  <button
+                    type="button"
+                    onClick={handleExportPdf}
+                    disabled={exportingPdf}
+                    className="inline-flex items-center gap-1 rounded-[8px] border border-gray-200 bg-[var(--surface)] px-2.5 py-1.5 text-[12px] font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    {exportingPdf ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
+                    Export PDF
+                  </button>
+                </div>
+
+                {result.activeListing && (
+                  <div className="flex items-start gap-2 rounded-[10px] border border-amber-200 bg-amber-50 px-3 py-2.5 text-[12.5px] text-amber-800">
+                    <Info className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium">Currently listed</p>
+                      <p className="mt-0.5 text-amber-700">
+                        {fmt(result.activeListing.price, '$')}
+                        {result.activeListing.mlsNumber && ` · MLS #${result.activeListing.mlsNumber}`}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-4">
+                  <p className="text-[12px] text-gray-600">Suggested list price</p>
+                  {liveValuation.suggestedPrice ? (
+                    <>
+                      <p className="mt-1 text-[24px] font-bold text-gray-900">
+                        {fmt(liveValuation.suggestedPrice, '$')}
+                      </p>
+                      <p className="text-[12px] text-gray-600">
+                        {fmt(liveValuation.priceLow, '$')} – {fmt(liveValuation.priceHigh, '$')} ·{' '}
+                        {liveValuation.compCount} comp{liveValuation.compCount !== 1 ? 's' : ''}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="mt-1 text-[13px] text-gray-600">Not enough comps. Widen radius or sold-within range.</p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-3">
+                    <p className="text-[11px] text-gray-600">AVM</p>
+                    <p className="mt-0.5 text-[15px] font-bold text-gray-800">
+                      {result.avm?.estimatedValue ? fmt(result.avm.estimatedValue, '$') : '—'}
+                    </p>
+                  </div>
+                  <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-3">
+                    <p className="text-[11px] text-gray-600">Rent est.</p>
+                    <p className="mt-0.5 text-[15px] font-bold text-gray-900">
+                      {result.rentEstimate?.monthlyRent ? `${fmt(result.rentEstimate.monthlyRent, '$')}/mo` : '—'}
+                    </p>
+                  </div>
+                </div>
+
+                {result.summary && (
+                  <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-3">
+                    <div className="mb-1.5 flex items-center gap-1.5">
+                      <Sparkles className="h-3.5 w-3.5 text-gray-700" />
+                      <p className="text-[11px] font-medium text-gray-600">Market summary</p>
+                    </div>
+                    <p className="text-[12.5px] leading-relaxed text-gray-600">{result.summary}</p>
+                  </div>
+                )}
+
+                <div>
+                  <p className="mb-2 text-[12px] font-medium text-gray-600">
+                    Comparable sales
+                    {result.compsFiltered > 0 && (
+                      <span className="font-normal text-gray-500">
+                        {' '}
+                        · {result.compsFiltered} removed
+                      </span>
+                    )}
+                  </p>
+                  {activeComps.length === 0 ? (
+                    <p className="text-[13px] text-gray-600">No comps available.</p>
+                  ) : (
+                    <div className="max-h-64 space-y-2 overflow-y-auto pr-0.5">
+                      {visibleComps.map((comp) => {
+                        const realIdx = result.comps.indexOf(comp);
+                        const conditionedAdj = comp.adjustedPrice
+                          ? Math.round(comp.adjustedPrice * liveValuation.conditionFactor)
+                          : null;
+                        return (
+                          <div key={realIdx} className="rounded-[10px] border border-gray-150 bg-[var(--surface)] p-3">
+                            <div className="mb-1.5 flex items-start justify-between gap-2">
+                              <p className="text-[12.5px] font-medium text-gray-900">{comp.address}</p>
+                              <div className="flex shrink-0 items-center gap-1.5">
+                                <div className="text-right">
+                                  <p className="text-[12.5px] font-bold text-gray-900">{fmt(comp.price, '$')}</p>
+                                  {conditionedAdj && (
+                                    <p className="text-[10px] text-gray-600">Adj. {fmt(conditionedAdj, '$')}</p>
+                                  )}
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => setExcludedIds((prev) => new Set([...prev, realIdx]))}
+                                  className="p-0.5 text-gray-400 hover:text-rose-500"
+                                >
+                                  <X className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                            <div className="flex flex-wrap gap-2 text-[11px] text-gray-600">
+                              {comp.bedrooms !== null && <span>{comp.bedrooms} bd</span>}
+                              {comp.bathrooms !== null && <span>{comp.bathrooms} ba</span>}
+                              {comp.squareFootage !== null && (
+                                <span>{comp.squareFootage.toLocaleString()} sqft</span>
+                              )}
+                              {comp.soldDate && <span>Sold {fmtDate(comp.soldDate)}</span>}
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {activeComps.length > 5 && (
+                        <button
+                          type="button"
+                          onClick={() => setShowAllComps((v) => !v)}
+                          className="w-full rounded-[10px] border border-gray-200 py-2 text-[12px] text-gray-700 transition-colors hover:bg-gray-50"
+                        >
+                          {showAllComps ? 'Show fewer' : `Show all ${activeComps.length} comps`}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex shrink-0 items-center gap-2 border-t border-gray-150 bg-[var(--surface)] p-3">
             <button
               type="button"
-              onClick={handlePrefill}
-              disabled={prefilling || !street.trim() || !state}
-              className="flex items-center gap-1.5 text-[12.5px] font-medium text-gray-600 hover:text-gray-900 disabled:opacity-50 transition-colors"
+              onClick={handleResetParams}
+              className="rounded-[10px] px-3 py-2 text-[12.5px] font-medium text-gray-600 transition-colors hover:text-gray-900"
             >
-              {prefilling ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-              Load from county records
+              Reset defaults
+            </button>
+            <button
+              type="button"
+              onClick={() => runAnalysis()}
+              disabled={loading || !street.trim() || !state}
+              className="ml-auto flex flex-1 items-center justify-center gap-2 rounded-[10px] bg-brand-500 py-2.5 text-[13px] font-semibold text-[var(--brand-foreground)] transition-colors hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:px-6"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" /> Running…
+                </>
+              ) : result ? (
+                <>
+                  <TrendingUp className="h-4 w-4" /> Re-run comps
+                </>
+              ) : (
+                <>
+                  <TrendingUp className="h-4 w-4" /> Find comps
+                </>
+              )}
             </button>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div>
-              <label className="block text-[12.5px] text-gray-600 mb-1">Beds</label>
-              <input type="number" min={0} max={20} value={subject.bedrooms ?? ''} onChange={(e) => updateSubject('bedrooms', e.target.value ? Number(e.target.value) : null)} className={inputClass} />
-            </div>
-            <div>
-              <label className="block text-[12.5px] text-gray-600 mb-1">Baths</label>
-              <input type="number" min={0} max={20} step={0.5} value={subject.bathrooms ?? ''} onChange={(e) => updateSubject('bathrooms', e.target.value ? Number(e.target.value) : null)} className={inputClass} />
-            </div>
-            <div>
-              <label className="block text-[12.5px] text-gray-600 mb-1">Sq Ft</label>
-              <input type="number" min={0} value={subject.squareFootage ?? ''} onChange={(e) => updateSubject('squareFootage', e.target.value ? Number(e.target.value) : null)} className={inputClass} />
-            </div>
-            <div>
-              <label className="block text-[12.5px] text-gray-600 mb-1">Year Built</label>
-              <input type="number" min={1800} max={2030} value={subject.yearBuilt ?? ''} onChange={(e) => updateSubject('yearBuilt', e.target.value ? Number(e.target.value) : null)} className={inputClass} />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <label className="block text-[12.5px] text-gray-600 mb-1">Condition</label>
-              <Select
-                value={subject.condition}
-                onChange={(value) => updateSubject('condition', value as ConditionLevel)}
-                triggerClassName={inputClass}
-                options={CONDITION_OPTIONS.map((c) => ({ value: c.value, label: c.label }))}
-              />
-              {!manualFields.has('condition') && (
-                <AutoDetectHint source={subjectEnrichment?.condition} />
-              )}
-            </div>
-            <div>
-              <label className="block text-[12.5px] text-gray-600 mb-1">Garage Spaces</label>
-              <input type="number" min={0} max={10} value={subject.garageSpaces} onChange={(e) => updateSubject('garageSpaces', Number(e.target.value) || 0)} className={inputClass} />
-              {!manualFields.has('garageSpaces') && (
-                <AutoDetectHint source={subjectEnrichment?.garageSpaces} />
-              )}
-            </div>
-            <div className="flex flex-col justify-end pb-1">
-              <label className="flex items-center gap-2 text-[13px] text-gray-700 cursor-pointer">
-                <input type="checkbox" checked={subject.hasPool} onChange={(e) => updateSubject('hasPool', e.target.checked)} className="rounded border-gray-300 text-brand-500 focus:ring-brand-500" />
-                Has pool
-              </label>
-              {!manualFields.has('hasPool') && (
-                <AutoDetectHint source={subjectEnrichment?.hasPool} />
-              )}
-            </div>
-          </div>
-          <p className="text-[12px] text-gray-600 flex items-start gap-1.5">
-            <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
-            Pool and garage come from county/MLS when available. Luxury condition is estimated from price, size, and listing text — verify before sharing with a client.
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label className="block text-[12.5px] text-gray-600 mb-1">Property Type</label>
-            <Select
-              value={propertyType}
-              onChange={setPropertyType}
-              triggerClassName={inputClass}
-              options={PROPERTY_TYPES.map((pt) => ({ value: pt.value, label: pt.label }))}
+        {/* Right: live map */}
+        <div className="flex min-h-[320px] flex-col overflow-hidden rounded-[10px] border border-gray-150 bg-[var(--surface)] p-3 lg:min-h-[calc(100vh-220px)]">
+          <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] text-gray-600">
+            <span className="inline-flex items-center gap-1">
+              <span className="inline-block size-2.5 rounded-full bg-[#0668E1] border border-white" />
+              Subject
+            </span>
+            {mapHasCompPins && (
+              <span className="inline-flex items-center gap-1">
+                <span className="inline-block size-2 rounded-full bg-[#1C1D22] border border-white" />
+                Comp
+              </span>
+            )}
+            <span className="inline-flex items-center gap-1">
+              <span className="inline-block h-2 w-2 rounded-full border border-[#0668E1]/55 bg-[#0668E1]/10" />
+              {radius} mi
+            </span>
+            <span className="text-[10px] text-gray-400 lg:ml-auto">© Mapbox © OpenStreetMap</span>
+          </div>
+          <div className="relative min-h-0 flex-1">
+            {loading && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center rounded-[10px] bg-[var(--surface)]/80 backdrop-blur-[1px]">
+                <Loader2 className="h-8 w-8 animate-spin text-brand-500" />
+              </div>
+            )}
+            <CmaCompsMap
+              mode={mapHasCompPins ? 'results' : 'preview'}
+              subjectLocation={mapSubjectLocation}
+              comps={mapHasCompPins ? activeComps : []}
+              radiusMiles={radius}
+              subjectAddress={mapAddress}
+              hideLegend
+              mapHeightClassName="h-full min-h-[280px] lg:min-h-0"
             />
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-[12.5px] text-gray-600 mb-2">Radius — {radius} mi</label>
-              <input type="range" min={0.25} max={2} step={0.25} value={radius} onChange={(e) => setRadius(Number(e.target.value))} className="w-full accent-brand-500" />
-            </div>
-            <div>
-              <label className="block text-[12.5px] text-gray-600 mb-2">History — {yearsBack} yr{yearsBack !== 1 ? 's' : ''}</label>
-              <input type="range" min={1} max={5} step={1} value={yearsBack} onChange={(e) => setYearsBack(Number(e.target.value))} className="w-full accent-brand-500" />
-            </div>
-          </div>
         </div>
-
-        <div className="border border-gray-150 rounded-[10px] p-4 bg-[var(--surface)] space-y-3">
-          <p className="text-[14px] font-semibold text-gray-900">Search area</p>
-          <p className="text-[12px] text-gray-600">
-            Blue circle shows the comp search radius around the subject property. Adjust the radius slider to widen or narrow the search.
-          </p>
-          <CmaCompsMap
-            mode="preview"
-            subjectLocation={mapSubjectLocation}
-            radiusMiles={radius}
-            subjectAddress={result?.address ?? formattedAddress}
-          />
-        </div>
-
-        {error && (
-          <div className="flex items-start gap-2 text-rose-700 text-[13px] bg-rose-50 border border-rose-200 rounded-[10px] px-3 py-2.5">
-            <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-            {error}
-          </div>
-        )}
-
-        <button
-          type="button"
-          onClick={() => runAnalysis()}
-          disabled={loading || !street.trim() || !state}
-          className="w-full flex items-center justify-center gap-2 h-9 bg-brand-500 text-[var(--brand-foreground)] text-[13px] font-semibold rounded-lg hover:bg-brand-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? (
-            <><Loader2 className="w-4 h-4 animate-spin" /> Running CMA…</>
-          ) : result ? (
-            <><TrendingUp className="w-4 h-4" /> Re-run Comp-Based Analysis</>
-          ) : (
-            <><TrendingUp className="w-4 h-4" /> Run Comp-Based Analysis</>
-          )}
-        </button>
       </div>
-
-      {loading && (
-        <DataLoadingState
-          title="Running comp-based analysis"
-          description="Scoring nearby sales and adjusting for beds, baths, and condition. This usually takes 10–20 seconds."
-        />
-      )}
-
-      {result && !loading && liveValuation && (
-        <div className="space-y-4">
-          {result.isDemo && (
-            <div className="rounded-[10px] border border-gray-200 bg-gray-50 px-4 py-3 text-[13px] text-gray-600">
-              Sample marketing CMA — comps and valuation are fictional for demo purposes.
-            </div>
-          )}
-          {fromCache && !result.isDemo && (
-            <div className="flex items-center justify-between gap-3 flex-wrap text-[13px] bg-emerald-50 border border-emerald-200 rounded-[10px] px-4 py-3">
-              <span className="text-emerald-800">Loaded from saved search — no API usage.</span>
-              <button
-                type="button"
-                onClick={() => runAnalysis(true)}
-                className="text-[12.5px] font-medium text-emerald-700 hover:text-emerald-900 underline"
-              >
-                Refresh live data
-              </button>
-            </div>
-          )}
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div className="flex items-center gap-2 text-[13px] text-gray-700 flex-wrap min-w-0">
-              <MapPin className="w-4 h-4 flex-shrink-0 text-gray-600" />
-              <span className="font-medium text-gray-900">{result.address}</span>
-              {result.propertyType && (
-                <span className="text-[12px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 border border-gray-200">{result.propertyType}</span>
-              )}
-            </div>
-            <button
-              type="button"
-              onClick={handleExportPdf}
-              disabled={exportingPdf}
-              className="flex items-center gap-1.5 text-[13px] font-medium text-gray-700 border border-gray-200 bg-[var(--surface)] hover:bg-gray-50 hover:border-gray-300 rounded-[10px] px-3 py-2 transition-colors disabled:opacity-50"
-            >
-              {exportingPdf ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Download className="w-4 h-4" />
-              )}
-              Export seller PDF
-            </button>
-          </div>
-
-          {result.activeListing && (
-            <div className="flex items-start gap-2 text-[13px] text-amber-800 bg-amber-50 border border-amber-200 rounded-[10px] px-4 py-3">
-              <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="font-medium">Currently listed for sale</p>
-                <p className="text-[12px] mt-0.5 text-amber-700">
-                  List price: {fmt(result.activeListing.price, '$')}
-                  {result.activeListing.mlsNumber && ` · MLS #${result.activeListing.mlsNumber}`}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {result.compsFiltered > 0 && (
-            <p className="text-[12.5px] text-gray-600">
-              {result.compsFiltered} invalid listing{result.compsFiltered !== 1 ? 's' : ''} removed from comps.
-            </p>
-          )}
-
-          <div className="bg-[var(--surface)] border border-gray-200 rounded-[10px] p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 rounded-[10px] bg-gray-100 flex items-center justify-center">
-                <TrendingUp className="w-4 h-4 text-gray-900" />
-              </div>
-              <div>
-                <p className="text-[14px] font-semibold text-gray-900">Suggested List Price</p>
-                <p className="text-[12px] text-gray-600">Based on {liveValuation.compCount} adjusted comp{liveValuation.compCount !== 1 ? 's' : ''}</p>
-              </div>
-            </div>
-            {liveValuation.suggestedPrice ? (
-              <>
-                <p className="text-[28px] font-bold text-gray-900 mb-1">{fmt(liveValuation.suggestedPrice, '$')}</p>
-                <p className="text-[13px] text-gray-600">Range: {fmt(liveValuation.priceLow, '$')} – {fmt(liveValuation.priceHigh, '$')}</p>
-              </>
-            ) : (
-              <p className="text-gray-600 text-[13px]">Not enough comps. Widen radius or history.</p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-[var(--surface)] border border-gray-200 rounded-[10px] p-5">
-              <p className="text-[12.5px] text-gray-600 mb-2">AVM Reference</p>
-              {result.avm?.estimatedValue ? (
-                <p className="text-[22px] font-bold text-gray-700">{fmt(result.avm.estimatedValue, '$')}</p>
-              ) : (
-                <p className="text-gray-600 text-[13px]">Not available</p>
-              )}
-            </div>
-            <div className="bg-[var(--surface)] border border-gray-200 rounded-[10px] p-5">
-              <p className="text-[12.5px] text-gray-600 mb-2">Rent Estimate</p>
-              {result.rentEstimate?.monthlyRent ? (
-                <p className="text-[22px] font-bold text-gray-900">{fmt(result.rentEstimate.monthlyRent, '$')}<span className="text-[14px] font-normal text-gray-600">/mo</span></p>
-              ) : (
-                <p className="text-gray-600 text-[13px]">Not available</p>
-              )}
-            </div>
-          </div>
-
-          {result.summary && (
-            <div className="bg-[var(--surface)] border border-gray-200 rounded-[10px] p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <Sparkles className="w-4 h-4 text-gray-700" />
-                <p className="text-[12.5px] text-gray-600 font-medium">Market Summary</p>
-              </div>
-              <p className="text-gray-600 text-[13px] leading-relaxed">{result.summary}</p>
-            </div>
-          )}
-
-          <div className="bg-[var(--surface)] border border-gray-200 rounded-[10px] p-5">
-            <p className="text-[12.5px] text-gray-600 font-medium mb-4">Comparable Sales</p>
-            {activeComps.length === 0 ? (
-              <p className="text-gray-600 text-[13px]">No comps available.</p>
-            ) : (
-              <div className="space-y-3">
-                {visibleComps.map((comp) => {
-                  const realIdx = result.comps.indexOf(comp);
-                  const conditionedAdj = comp.adjustedPrice
-                    ? Math.round(comp.adjustedPrice * liveValuation.conditionFactor)
-                    : null;
-                  return (
-                    <div key={realIdx} className="border border-gray-150 rounded-[10px] p-3.5">
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <p className="text-[13px] font-medium text-gray-900">{comp.address}</p>
-                        <div className="flex items-center gap-2">
-                          <div className="text-right">
-                            <p className="text-[13px] font-bold text-gray-900">{fmt(comp.price, '$')}</p>
-                            {conditionedAdj && <p className="text-[10.5px] text-gray-600">Adj. {fmt(conditionedAdj, '$')}</p>}
-                          </div>
-                          <button type="button" onClick={() => setExcludedIds((prev) => new Set([...prev, realIdx]))} className="p-1 text-gray-400 hover:text-rose-500">
-                            <X className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap gap-3 text-[12px] text-gray-600">
-                        {comp.bedrooms !== null && <span>{comp.bedrooms} bd</span>}
-                        {comp.bathrooms !== null && <span>{comp.bathrooms} ba</span>}
-                        {comp.squareFootage !== null && <span>{comp.squareFootage.toLocaleString()} sqft</span>}
-                        {comp.soldDate && <span>Sold {fmtDate(comp.soldDate)}</span>}
-                      </div>
-                    </div>
-                  );
-                })}
-                {activeComps.length > 5 && (
-                  <button type="button" onClick={() => setShowAllComps((v) => !v)} className="w-full text-[12.5px] text-gray-700 hover:text-gray-900 py-2 border border-gray-200 rounded-[10px] hover:bg-gray-50 transition-colors">
-                    {showAllComps ? 'Show fewer' : `Show all ${activeComps.length} comps`}
-                  </button>
-                )}
-              </div>
-            )}
-
-            <div className="pt-4 border-t border-gray-150">
-              <p className="text-[12.5px] text-gray-600 font-medium mb-3">Comp locations</p>
-              <CmaCompsMap
-                subjectLocation={result.subjectLocation ?? null}
-                comps={activeComps}
-                radiusMiles={result.radius}
-                subjectAddress={result.address}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {!result && !loading && (
-        <EmptyState
-          icon={BarChart2}
-          title="Ready for CMA"
-          description="Confirm subject beds, baths, and condition above, then run the comp-based analysis for a suggested list price."
-        />
-      )}
     </div>
   );
 }
