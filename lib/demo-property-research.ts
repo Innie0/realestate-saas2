@@ -25,6 +25,8 @@ const DEMO_SUBJECT: SubjectProperty = {
   garageSpaces: 2,
 };
 
+const DEMO_SUBJECT_COORDS = { latitude: 30.2672, longitude: -97.7431 };
+
 const DEMO_COMPS: CompRecord[] = [
   {
     address: '118 W Main St, Austin, TX 78701',
@@ -37,6 +39,8 @@ const DEMO_COMPS: CompRecord[] = [
     daysOnMarket: 28,
     soldDate: new Date(Date.now() - 120 * 86_400_000).toISOString().slice(0, 10),
     distance: 0.2,
+    latitude: 30.2684,
+    longitude: -97.7448,
   },
   {
     address: '131 Oak Ln, Austin, TX 78701',
@@ -49,6 +53,8 @@ const DEMO_COMPS: CompRecord[] = [
     daysOnMarket: 19,
     soldDate: new Date(Date.now() - 95 * 86_400_000).toISOString().slice(0, 10),
     distance: 0.4,
+    latitude: 30.2651,
+    longitude: -97.7408,
   },
   {
     address: '99 Elm Ct, Austin, TX 78701',
@@ -61,6 +67,8 @@ const DEMO_COMPS: CompRecord[] = [
     daysOnMarket: 41,
     soldDate: new Date(Date.now() - 200 * 86_400_000).toISOString().slice(0, 10),
     distance: 0.5,
+    latitude: 30.2692,
+    longitude: -97.7462,
   },
 ];
 
@@ -244,6 +252,7 @@ export function getDemoMarketAnalysisResponse(
     radius,
     yearsBack,
     subject: { ...DEMO_SUBJECT },
+    subjectLocation: { ...DEMO_SUBJECT_COORDS },
     subjectEnrichment: {
       hasPool: 'default' as const,
       garageSpaces: 'default' as const,

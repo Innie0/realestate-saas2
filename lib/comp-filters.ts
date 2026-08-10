@@ -205,6 +205,8 @@ export function mapRawComp(raw: Record<string, unknown>) {
   const soldDate = extractSoldDate(raw);
   const price = raw.price as number;
   const squareFootage = raw.squareFootage as number | undefined;
+  const latitude = typeof raw.latitude === 'number' ? raw.latitude : null;
+  const longitude = typeof raw.longitude === 'number' ? raw.longitude : null;
 
   return {
     address: compAddressFromRaw(raw),
@@ -218,6 +220,8 @@ export function mapRawComp(raw: Record<string, unknown>) {
     daysOnMarket: (raw.daysOnMarket as number) ?? null,
     soldDate,
     distance: (raw.distance as number) ?? null,
+    latitude,
+    longitude,
     mlsNumber: (raw.mlsNumber as string) ?? null,
     listingStatus: String(raw.status ?? 'Sold'),
   };

@@ -21,6 +21,7 @@ import {
   filterSoldComps,
   mapRawComp,
 } from '@/lib/comp-filters';
+import { extractCoordinates } from '@/lib/cma-map-utils';
 import {
   getResearchCache,
   setResearchCache,
@@ -453,6 +454,7 @@ export async function POST(request: NextRequest) {
       radius: resolvedRadius,
       yearsBack: resolvedDaysOld / 365,
       subject,
+      subjectLocation: extractCoordinates(rentcastProperty),
       subjectEnrichment,
       valuation,
       activeListing: activeListing

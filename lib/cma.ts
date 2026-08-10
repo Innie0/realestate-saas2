@@ -40,6 +40,8 @@ export interface CompRecord {
   daysOnMarket: number | null;
   soldDate: string | null;
   distance: number | null;
+  latitude: number | null;
+  longitude: number | null;
 }
 
 export interface CompAdjustment {

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState, useRef, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import {
   CONDITION_OPTIONS,
   defaultSubject,
@@ -27,6 +28,14 @@ import {
   getLocalResearchCache,
   setLocalResearchCache,
 } from '@/lib/research-local-cache';
+import type { MapCoordinate } from '@/lib/cma-map-utils';
+
+const CmaCompsMap = dynamic(() => import('@/components/property-research/CmaCompsMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[320px] w-full animate-pulse rounded-[10px] border border-gray-200 bg-gray-100" />
+  ),
+});
 
 export interface CmaValuationResult {
   suggestedPrice: number | null;
@@ -50,6 +59,7 @@ export interface CmaAnalysisResult {
   radius: number;
   yearsBack: number;
   subject: SubjectProperty;
+  subjectLocation?: MapCoordinate | null;
   subjectEnrichment?: SubjectEnrichmentMeta | null;
   valuation: CmaValuationResult;
   activeListing: {
@@ -670,6 +680,16 @@ export function CmaPanel({
                 )}
               </div>
             )}
+
+            <div className="pt-4 border-t border-gray-150">
+              <p className="text-[12.5px] text-gray-600 font-medium mb-3">Comp locations</p>
+              <CmaCompsMap
+                subjectLocation={result.subjectLocation ?? null}
+                comps={activeComps}
+                radiusMiles={result.radius}
+                subjectAddress={result.address}
+              />
+            </div>
           </div>
         </div>
       )}
