@@ -160,6 +160,8 @@ export function CmaPanel({
   const [showAllComps, setShowAllComps] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
   const [fromCache, setFromCache] = useState(false);
+  const [paramsExpanded, setParamsExpanded] = useState(true);
+  const prevLoadingRef = useRef(false);
   const isRunningRef = useRef(false);
   const lastTriggerRef = useRef(0);
   const prevAddressKeyRef = useRef('');
@@ -447,6 +449,23 @@ export function CmaPanel({
   }, [addressKey, lookupData]);
 
   useEffect(() => {
+    if (!result) setParamsExpanded(true);
+  }, [result]);
+
+  useEffect(() => {
+    if (prevLoadingRef.current && !loading && result) {
+      setParamsExpanded(false);
+    }
+    prevLoadingRef.current = loading;
+  }, [loading, result]);
+
+  useEffect(() => {
+    if (result && !loading) {
+      setParamsExpanded(false);
+    }
+  }, [addressKey]);
+
+  useEffect(() => {
     if (runTrigger <= 0 || runTrigger === lastTriggerRef.current) return;
     lastTriggerRef.current = runTrigger;
 
@@ -506,32 +525,73 @@ export function CmaPanel({
     activeComps.some((c) => c.latitude !== null && c.longitude !== null);
 
   const mapAddress = result?.address ?? formattedAddress;
+  const hasResults = Boolean(result && !loading && liveValuation);
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(300px,380px)_minmax(0,1fr)] lg:items-stretch lg:gap-5">
         {/* Left: subject, params, results, actions */}
         <div className="flex min-h-0 flex-col overflow-hidden rounded-[10px] border border-gray-150 bg-gray-50/50">
-          <div className="flex-1 space-y-4 overflow-y-auto p-4 lg:max-h-[calc(100vh-220px)]">
-            <CmaSubjectSummary
-              address={mapAddress}
-              subject={subject}
-              subjectEnrichment={subjectEnrichment}
-              manualFields={manualFields}
-              prefilling={prefilling}
-              canPrefill={Boolean(street.trim() && state)}
-              onPrefill={handlePrefill}
-              onUpdateSubject={updateSubject}
-            />
+          {hasResults && liveValuation && (
+            <div className="shrink-0 border-b border-gray-150 bg-[var(--surface)] px-4 py-3">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-[11px] font-medium uppercase tracking-wide text-gray-600">
+                    Suggested list price
+                  </p>
+                  {liveValuation.suggestedPrice ? (
+                    <>
+                      <p className="mt-0.5 text-[26px] font-bold leading-tight text-gray-900">
+                        {fmt(liveValuation.suggestedPrice, '$')}
+                      </p>
+                      <p className="mt-0.5 text-[12px] text-gray-600">
+                        {fmt(liveValuation.priceLow, '$')} – {fmt(liveValuation.priceHigh, '$')} ·{' '}
+                        {liveValuation.compCount} comp{liveValuation.compCount !== 1 ? 's' : ''}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="mt-1 text-[13px] text-gray-600">
+                      Not enough comps — widen radius or sold-within range.
+                    </p>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={handleExportPdf}
+                  disabled={exportingPdf}
+                  className="inline-flex shrink-0 items-center gap-1 rounded-[8px] border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-[12px] font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:opacity-50"
+                >
+                  {exportingPdf ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
+                  PDF
+                </button>
+              </div>
+            </div>
+          )}
 
-            <CmaSearchParams
-              radius={radius}
-              yearsBack={yearsBack}
-              propertyType={propertyType}
-              onRadiusChange={setRadius}
-              onYearsBackChange={setYearsBack}
-              onPropertyTypeChange={setPropertyType}
-            />
+          <div className="flex-1 space-y-4 overflow-y-auto p-4 lg:max-h-[calc(100vh-220px)]">
+            {!hasResults && (
+              <>
+                <CmaSubjectSummary
+                  address={mapAddress}
+                  subject={subject}
+                  subjectEnrichment={subjectEnrichment}
+                  manualFields={manualFields}
+                  prefilling={prefilling}
+                  canPrefill={Boolean(street.trim() && state)}
+                  onPrefill={handlePrefill}
+                  onUpdateSubject={updateSubject}
+                />
+
+                <CmaSearchParams
+                  radius={radius}
+                  yearsBack={yearsBack}
+                  propertyType={propertyType}
+                  onRadiusChange={setRadius}
+                  onYearsBackChange={setYearsBack}
+                  onPropertyTypeChange={setPropertyType}
+                />
+              </>
+            )}
 
             {error && (
               <div className="flex items-start gap-2 rounded-[10px] border border-rose-200 bg-rose-50 px-3 py-2.5 text-[13px] text-rose-700">
@@ -547,8 +607,38 @@ export function CmaPanel({
               />
             )}
 
-            {result && !loading && liveValuation && (
-              <div className="space-y-4 border-t border-gray-150 pt-4">
+            {hasResults && liveValuation && result && (
+              <div className="space-y-4">
+                {paramsExpanded && (
+                  <>
+                    <CmaSearchParams
+                      radius={radius}
+                      yearsBack={yearsBack}
+                      propertyType={propertyType}
+                      onRadiusChange={setRadius}
+                      onYearsBackChange={setYearsBack}
+                      onPropertyTypeChange={setPropertyType}
+                    />
+                    <CmaSubjectSummary
+                      address={mapAddress}
+                      subject={subject}
+                      subjectEnrichment={subjectEnrichment}
+                      manualFields={manualFields}
+                      prefilling={prefilling}
+                      canPrefill={Boolean(street.trim() && state)}
+                      onPrefill={handlePrefill}
+                      onUpdateSubject={updateSubject}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setParamsExpanded(false)}
+                      className="w-full rounded-[10px] border border-gray-200 py-2 text-[12px] font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                    >
+                      Done editing search
+                    </button>
+                  </>
+                )}
+
                 {result.isDemo && (
                   <div className="rounded-[10px] border border-gray-200 bg-gray-50 px-3 py-2.5 text-[12.5px] text-gray-600">
                     Sample marketing CMA — fictional comps for demo.
@@ -567,19 +657,6 @@ export function CmaPanel({
                   </div>
                 )}
 
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-[13px] font-semibold text-gray-900">Results</p>
-                  <button
-                    type="button"
-                    onClick={handleExportPdf}
-                    disabled={exportingPdf}
-                    className="inline-flex items-center gap-1 rounded-[8px] border border-gray-200 bg-[var(--surface)] px-2.5 py-1.5 text-[12px] font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
-                  >
-                    {exportingPdf ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
-                    Export PDF
-                  </button>
-                </div>
-
                 {result.activeListing && (
                   <div className="flex items-start gap-2 rounded-[10px] border border-amber-200 bg-amber-50 px-3 py-2.5 text-[12.5px] text-amber-800">
                     <Info className="mt-0.5 h-4 w-4 flex-shrink-0" />
@@ -592,23 +669,6 @@ export function CmaPanel({
                     </div>
                   </div>
                 )}
-
-                <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-4">
-                  <p className="text-[12px] text-gray-600">Suggested list price</p>
-                  {liveValuation.suggestedPrice ? (
-                    <>
-                      <p className="mt-1 text-[24px] font-bold text-gray-900">
-                        {fmt(liveValuation.suggestedPrice, '$')}
-                      </p>
-                      <p className="text-[12px] text-gray-600">
-                        {fmt(liveValuation.priceLow, '$')} – {fmt(liveValuation.priceHigh, '$')} ·{' '}
-                        {liveValuation.compCount} comp{liveValuation.compCount !== 1 ? 's' : ''}
-                      </p>
-                    </>
-                  ) : (
-                    <p className="mt-1 text-[13px] text-gray-600">Not enough comps. Widen radius or sold-within range.</p>
-                  )}
-                </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-3">
@@ -697,6 +757,31 @@ export function CmaPanel({
                     </div>
                   )}
                 </div>
+
+                {!paramsExpanded && (
+                  <>
+                    <CmaSubjectSummary
+                      address={mapAddress}
+                      subject={subject}
+                      subjectEnrichment={subjectEnrichment}
+                      manualFields={manualFields}
+                      prefilling={prefilling}
+                      canPrefill={Boolean(street.trim() && state)}
+                      onPrefill={handlePrefill}
+                      onUpdateSubject={updateSubject}
+                    />
+                    <CmaSearchParams
+                      radius={radius}
+                      yearsBack={yearsBack}
+                      propertyType={propertyType}
+                      onRadiusChange={setRadius}
+                      onYearsBackChange={setYearsBack}
+                      onPropertyTypeChange={setPropertyType}
+                      collapsed
+                      onExpand={() => setParamsExpanded(true)}
+                    />
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -755,6 +840,17 @@ export function CmaPanel({
             {loading && (
               <div className="absolute inset-0 z-10 flex items-center justify-center rounded-[10px] bg-[var(--surface)]/80 backdrop-blur-[1px]">
                 <Loader2 className="h-8 w-8 animate-spin text-brand-500" />
+              </div>
+            )}
+            {hasResults && liveValuation?.suggestedPrice && (
+              <div className="pointer-events-none absolute bottom-3 left-3 z-10 max-w-[220px] rounded-[10px] border border-gray-200 bg-white/95 px-3 py-2.5 shadow-md backdrop-blur-sm">
+                <p className="text-[10px] font-medium uppercase tracking-wide text-gray-600">Suggested list</p>
+                <p className="text-[18px] font-bold leading-tight text-gray-900">
+                  {fmt(liveValuation.suggestedPrice, '$')}
+                </p>
+                <p className="text-[11px] text-gray-600">
+                  {fmt(liveValuation.priceLow, '$')} – {fmt(liveValuation.priceHigh, '$')}
+                </p>
               </div>
             )}
             <CmaCompsMap

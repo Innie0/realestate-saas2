@@ -45,6 +45,18 @@ function ParamPill({
   );
 }
 
+function propertyTypeLabel(propertyType: string) {
+  return PROPERTY_TYPE_CHIPS.find((c) => c.value === propertyType)?.label ?? 'Auto';
+}
+
+export function formatSearchParamsSummary(
+  radius: number,
+  yearsBack: number,
+  propertyType: string,
+): string {
+  return `${radius} mi · ${Math.round(yearsBack * 12)} mo · ${propertyTypeLabel(propertyType)}`;
+}
+
 export interface CmaSearchParamsProps {
   radius: number;
   yearsBack: number;
@@ -52,6 +64,9 @@ export interface CmaSearchParamsProps {
   onRadiusChange: (radius: number) => void;
   onYearsBackChange: (years: number) => void;
   onPropertyTypeChange: (type: string) => void;
+  /** When true, show one-line summary with Edit to expand */
+  collapsed?: boolean;
+  onExpand?: () => void;
 }
 
 export default function CmaSearchParams({
@@ -61,7 +76,31 @@ export default function CmaSearchParams({
   onRadiusChange,
   onYearsBackChange,
   onPropertyTypeChange,
+  collapsed = false,
+  onExpand,
 }: CmaSearchParamsProps) {
+  if (collapsed) {
+    return (
+      <div className="flex items-start justify-between gap-2 rounded-[10px] border border-gray-150 bg-[var(--surface)] px-3 py-2.5">
+        <div className="min-w-0">
+          <p className="text-[11px] font-mono uppercase tracking-[0.06em] text-gray-600">Search parameters</p>
+          <p className="mt-0.5 text-[12.5px] text-gray-800">
+            {formatSearchParamsSummary(radius, yearsBack, propertyType)}
+          </p>
+        </div>
+        {onExpand && (
+          <button
+            type="button"
+            onClick={onExpand}
+            className="shrink-0 text-[12px] font-medium text-brand-600 hover:text-brand-700"
+          >
+            Edit
+          </button>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <p className="text-[13px] font-semibold text-gray-900">Search parameters</p>
