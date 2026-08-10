@@ -269,7 +269,7 @@ export default function LeadsInbox({
               <CardTitle className="text-sm">Leads</CardTitle>
               <CardDescription>{filteredLeads.length} in view</CardDescription>
             </CardHeader>
-            <CardContent className="flex flex-col gap-0 p-0">
+            <CardContent className="flex flex-col gap-1 p-2">
               {filteredLeads.map((lead) => {
                 const temp = getLeadTemperature(lead.created_at, lead.message);
                 const selected = lead.id === selectedLeadId;
@@ -279,7 +279,7 @@ export default function LeadsInbox({
                     type="button"
                     onClick={() => onSelectLead(lead.id)}
                     className={cn(
-                      'flex w-full items-start gap-3 border-b border-border px-4 py-3 text-left transition-colors last:border-b-0 hover:bg-muted/50',
+                      'flex w-full items-start gap-3 rounded-[10px] px-3 py-3 text-left transition-colors hover:bg-muted/50',
                       selected && 'bg-muted',
                     )}
                   >
