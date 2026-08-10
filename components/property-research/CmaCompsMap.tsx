@@ -131,7 +131,8 @@ export default function CmaCompsMap({
       style: 'mapbox://styles/mapbox/light-v11',
       center: toLngLat(subjectPoint),
       zoom: 13,
-      attributionControl: true,
+      attributionControl: false,
+      logoPosition: 'bottom-right',
     });
 
     mapRef.current = map;
@@ -274,10 +275,11 @@ export default function CmaCompsMap({
           <span className="inline-block h-2.5 w-2.5 rounded-full border-2 border-[#0668E1]/55 bg-[#0668E1]/10" />
           {radiusMiles} mi search radius
         </span>
+        <span className="text-[10px] text-gray-400 sm:ml-auto">© Mapbox © OpenStreetMap</span>
       </div>
       <div
         ref={containerRef}
-        className="h-[320px] w-full overflow-hidden rounded-[10px] border border-gray-200"
+        className="cma-map-host h-[320px] w-full overflow-hidden rounded-[10px] border border-gray-200 [&_.mapboxgl-ctrl-attrib]:!hidden [&_.mapboxgl-ctrl-logo]:!hidden"
         aria-label="Comparable sales map"
       />
     </div>
