@@ -28,7 +28,9 @@ import {
   getLocalResearchCache,
   setLocalResearchCache,
 } from '@/lib/research-local-cache';
+import { subjectFromLookupPerson } from '@/lib/cma-prefill-from-lookup';
 import type { MapCoordinate } from '@/lib/cma-map-utils';
+import type { LookupResponse } from '@/components/property-research/OwnerContactPanel';
 
 const CmaCompsMap = dynamic(() => import('@/components/property-research/CmaCompsMap'), {
   ssr: false,
@@ -145,6 +147,8 @@ export interface CmaPanelProps {
   city: string;
   state: string;
   zip: string;
+  /** Parent-held owner lookup (used to prefill subject fields) */
+  lookupData?: LookupResponse | null;
   /** Increment to trigger a CMA run from the parent */
   runTrigger?: number;
   /** Parent-held CMA result (e.g. from recent history cache) */
@@ -174,6 +178,7 @@ export function CmaPanel({
   city,
   state,
   zip,
+  lookupData = null,
   runTrigger = 0,
   initialResult = null,
   onComplete,
@@ -183,6 +188,7 @@ export function CmaPanel({
   const [radius, setRadius] = useState(0.5);
   const [yearsBack, setYearsBack] = useState(1);
   const [subject, setSubject] = useState<SubjectProperty>(defaultSubject());
+  const [subjectLocation, setSubjectLocation] = useState<MapCoordinate | null>(null);
   const [subjectEnrichment, setSubjectEnrichment] = useState<SubjectEnrichmentMeta | null>(null);
   const [manualFields, setManualFields] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
@@ -195,8 +201,38 @@ export function CmaPanel({
   const [fromCache, setFromCache] = useState(false);
   const isRunningRef = useRef(false);
   const lastTriggerRef = useRef(0);
+  const prevAddressKeyRef = useRef('');
+  const lastPrefilledKeyRef = useRef<string | null>(null);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
+
+  const addressKey = useMemo(
+    () =>
+      normalizeAddressKey({
+        street: street.trim(),
+        city: city.trim(),
+        state,
+        zip: zip.trim(),
+      }),
+    [street, city, state, zip],
+  );
+
+  const formattedAddress = useMemo(() => {
+    const parts = [street.trim(), city.trim(), `${state} ${zip.trim()}`.trim()].filter(Boolean);
+    return parts.join(', ');
+  }, [street, city, state, zip]);
+
+  const lookupCoords = useMemo(() => {
+    const person = lookupData?.found && lookupData.results?.[0] ? lookupData.results[0] : null;
+    const lat = person?.propertyAddress?.latitude;
+    const lng = person?.propertyAddress?.longitude;
+    if (typeof lat === 'number' && typeof lng === 'number' && Number.isFinite(lat) && Number.isFinite(lng)) {
+      return { latitude: lat, longitude: lng };
+    }
+    return null;
+  }, [lookupData]);
+
+  const mapSubjectLocation = subjectLocation ?? result?.subjectLocation ?? lookupCoords;
 
   const buildPayload = (prefillOnly = false, forceRefresh = false) => ({
     street: street.trim(),
@@ -219,6 +255,26 @@ export function CmaPanel({
     garageSpaces: subject.garageSpaces,
   });
 
+  const applyPrefillData = useCallback(
+    (data: {
+      subject: SubjectProperty;
+      subjectEnrichment?: SubjectEnrichmentMeta | null;
+      propertyType?: string | null;
+      subjectLocation?: MapCoordinate | null;
+    }) => {
+      setSubject(data.subject);
+      setSubjectEnrichment(data.subjectEnrichment ?? null);
+      setManualFields(new Set());
+      if (data.propertyType) {
+        setPropertyType((prev) => prev || data.propertyType!);
+      }
+      if (data.subjectLocation) {
+        setSubjectLocation(data.subjectLocation);
+      }
+    },
+    [],
+  );
+
   const handlePrefill = async () => {
     if (!street.trim() || !state) return;
     setPrefilling(true);
@@ -233,12 +289,8 @@ export function CmaPanel({
       if (!data.success) {
         setError(data.error || 'Could not load property details.');
       } else {
-        setSubject(data.data.subject);
-        setSubjectEnrichment(data.data.subjectEnrichment ?? null);
-        setManualFields(new Set());
-        if (data.data.propertyType && !propertyType) {
-          setPropertyType(data.data.propertyType);
-        }
+        applyPrefillData(data.data);
+        lastPrefilledKeyRef.current = addressKey;
       }
     } catch {
       setError('Could not load property details.');
@@ -276,8 +328,12 @@ export function CmaPanel({
       const cached = getLocalResearchCache<CmaAnalysisResult>(localKey);
       if (cached) {
         setResult(cached);
-        setSubject(cached.subject);
-        setSubjectEnrichment(cached.subjectEnrichment ?? null);
+        applyPrefillData({
+          subject: cached.subject,
+          subjectEnrichment: cached.subjectEnrichment,
+          propertyType: cached.propertyType,
+          subjectLocation: cached.subjectLocation,
+        });
         setFromCache(true);
         setError('');
         onCompleteRef.current?.(cached);
@@ -286,10 +342,13 @@ export function CmaPanel({
       const latest = findLatestCmaCache<CmaAnalysisResult>(addressKey);
       if (latest) {
         setResult(latest);
-        setSubject(latest.subject);
-        setSubjectEnrichment(latest.subjectEnrichment ?? null);
+        applyPrefillData({
+          subject: latest.subject,
+          subjectEnrichment: latest.subjectEnrichment,
+          propertyType: latest.propertyType,
+          subjectLocation: latest.subjectLocation,
+        });
         setFromCache(true);
-        if (latest.propertyType) setPropertyType(latest.propertyType);
         setRadius(latest.radius ?? 0.5);
         setYearsBack(latest.yearsBack ?? 1);
         setError('');
@@ -319,8 +378,12 @@ export function CmaPanel({
         onCompleteRef.current?.(null);
       } else {
         setResult(data.data);
-        setSubject(data.data.subject);
-        setSubjectEnrichment(data.data.subjectEnrichment ?? null);
+        applyPrefillData({
+          subject: data.data.subject,
+          subjectEnrichment: data.data.subjectEnrichment,
+          propertyType: data.data.propertyType,
+          subjectLocation: data.data.subjectLocation,
+        });
         setFromCache(!!data.fromCache);
         setLocalResearchCache(localKey, data.data);
         onCompleteRef.current?.(data.data);
@@ -333,7 +396,7 @@ export function CmaPanel({
       isRunningRef.current = false;
       setLoading(false);
     }
-  }, [street, city, state, zip, propertyType, radius, yearsBack, subject, manualFields]);
+  }, [street, city, state, zip, propertyType, radius, yearsBack, subject, manualFields, applyPrefillData]);
 
   useEffect(() => {
     if (
@@ -343,34 +406,98 @@ export function CmaPanel({
       !loading
     ) {
       setResult(initialResult);
-      setSubject(initialResult.subject);
-      setSubjectEnrichment(initialResult.subjectEnrichment ?? null);
+      applyPrefillData({
+        subject: initialResult.subject,
+        subjectEnrichment: initialResult.subjectEnrichment,
+        propertyType: initialResult.propertyType,
+        subjectLocation: initialResult.subjectLocation,
+      });
       setFromCache(true);
-      if (initialResult.propertyType) setPropertyType(initialResult.propertyType);
       setRadius(initialResult.radius ?? 0.5);
       setYearsBack(initialResult.yearsBack ?? 1);
       setError('');
       setExcludedIds(new Set());
       setShowAllComps(false);
+      lastPrefilledKeyRef.current = addressKey;
       return;
     }
-    if (!isRunningRef.current && !loading) {
-      setSubject(defaultSubject());
-      setSubjectEnrichment(null);
-      setManualFields(new Set());
-      setResult(null);
-      setFromCache(false);
-      setError('');
-      setExcludedIds(new Set());
-      setShowAllComps(false);
+
+    if (prevAddressKeyRef.current !== addressKey) {
+      prevAddressKeyRef.current = addressKey;
+      lastPrefilledKeyRef.current = null;
+      if (!isRunningRef.current && !loading) {
+        setSubject(defaultSubject());
+        setSubjectLocation(null);
+        setSubjectEnrichment(null);
+        setManualFields(new Set());
+        setResult(null);
+        setFromCache(false);
+        setError('');
+        setExcludedIds(new Set());
+        setShowAllComps(false);
+      }
     }
-  }, [street, city, state, zip, initialResult, loading]);
+  }, [street, city, state, zip, initialResult, loading, addressKey, applyPrefillData]);
+
+  useEffect(() => {
+    if (!street.trim() || !state) return;
+    if (lastPrefilledKeyRef.current === addressKey) return;
+    if (initialResult && cmaMatchesFields(initialResult, street, city, state, zip)) return;
+
+    let cancelled = false;
+
+    const person = lookupData?.found && lookupData.results?.[0] ? lookupData.results[0] : null;
+    if (person) {
+      const fromLookup = subjectFromLookupPerson(person);
+      if (!cancelled) {
+        setSubject(fromLookup.subject);
+        if (fromLookup.propertyType) setPropertyType(fromLookup.propertyType);
+        if (fromLookup.subjectLocation) setSubjectLocation(fromLookup.subjectLocation);
+      }
+    }
+
+    (async () => {
+      setPrefilling(true);
+      setError('');
+      try {
+        const res = await fetch('/api/market-analysis', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(buildPayload(true)),
+        });
+        const data = await res.json();
+        if (!cancelled && data.success) {
+          applyPrefillData(data.data);
+          lastPrefilledKeyRef.current = addressKey;
+        }
+      } catch {
+        if (!cancelled && !person) {
+          setError('Could not load property details.');
+        }
+      } finally {
+        if (!cancelled) setPrefilling(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- prefill when address or lookup changes
+  }, [addressKey, lookupData]);
 
   useEffect(() => {
     if (runTrigger <= 0 || runTrigger === lastTriggerRef.current) return;
     lastTriggerRef.current = runTrigger;
-    runAnalysis();
-  }, [runTrigger, runAnalysis]);
+
+    const runWithPrefill = async () => {
+      if (lastPrefilledKeyRef.current !== addressKey && street.trim() && state) {
+        await handlePrefill();
+      }
+      runAnalysis();
+    };
+
+    void runWithPrefill();
+  }, [runTrigger, runAnalysis, addressKey, street, state]);
 
   const activeComps = result?.comps.filter((_, i) => !excludedIds.has(i)) ?? [];
 
@@ -409,8 +536,10 @@ export function CmaPanel({
 
   return (
     <div className="space-y-4">
-      {!result && (
       <div className="border border-gray-150 rounded-[10px] p-5 space-y-4 bg-gray-50/50">
+        {result && (
+          <p className="text-[13px] font-medium text-gray-700">Analysis settings</p>
+        )}
         <div data-tour="ma-subject" className="border border-gray-150 rounded-[10px] p-4 bg-gray-50 space-y-3">
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <p className="text-[14px] font-semibold text-gray-900">Subject Property Details</p>
@@ -500,6 +629,19 @@ export function CmaPanel({
           </div>
         </div>
 
+        <div className="border border-gray-150 rounded-[10px] p-4 bg-[var(--surface)] space-y-3">
+          <p className="text-[14px] font-semibold text-gray-900">Search area</p>
+          <p className="text-[12px] text-gray-600">
+            Blue circle shows the comp search radius around the subject property. Adjust the radius slider to widen or narrow the search.
+          </p>
+          <CmaCompsMap
+            mode="preview"
+            subjectLocation={mapSubjectLocation}
+            radiusMiles={radius}
+            subjectAddress={result?.address ?? formattedAddress}
+          />
+        </div>
+
         {error && (
           <div className="flex items-start gap-2 text-rose-700 text-[13px] bg-rose-50 border border-rose-200 rounded-[10px] px-3 py-2.5">
             <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
@@ -515,12 +657,13 @@ export function CmaPanel({
         >
           {loading ? (
             <><Loader2 className="w-4 h-4 animate-spin" /> Running CMA…</>
+          ) : result ? (
+            <><TrendingUp className="w-4 h-4" /> Re-run Comp-Based Analysis</>
           ) : (
             <><TrendingUp className="w-4 h-4" /> Run Comp-Based Analysis</>
           )}
         </button>
       </div>
-      )}
 
       {loading && (
         <DataLoadingState

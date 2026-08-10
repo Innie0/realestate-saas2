@@ -324,6 +324,7 @@ export async function POST(request: NextRequest) {
         subjectEnrichment,
         propertyType: propertyType || rentcastProperty?.propertyType || null,
         formattedAddress: rentcastProperty?.formattedAddress || address,
+        subjectLocation: extractCoordinates(rentcastProperty),
       };
 
       await setResearchCache(supabase, user.id, 'market_prefill', prefillCacheKey, prefillData);

@@ -219,6 +219,7 @@ export function getDemoMarketPrefillResponse(parts: {
     },
     propertyType: 'Single Family',
     formattedAddress: address,
+    subjectLocation: { ...DEMO_SUBJECT_COORDS },
     isDemo: true,
   };
 }

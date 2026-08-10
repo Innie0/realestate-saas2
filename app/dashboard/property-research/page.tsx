@@ -465,6 +465,7 @@ function PropertyResearchContent() {
                             city={city}
                             state={state}
                             zip={zip}
+                            lookupData={lookupData}
                             runTrigger={cmaTrigger}
                             initialResult={cmaResult}
                             onComplete={handleCmaComplete}

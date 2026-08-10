@@ -13,9 +13,11 @@ import {
 
 export interface CmaCompsMapProps {
   subjectLocation: MapCoordinate | null;
-  comps: ScoredComp[];
+  comps?: ScoredComp[];
   radiusMiles: number;
   subjectAddress?: string;
+  /** Preview shows subject pin + radius only; results adds comp pins */
+  mode?: 'preview' | 'results';
 }
 
 function fmtPrice(n: number | null | undefined) {
@@ -88,9 +90,10 @@ function createPinElement(options: { label: string; background: string; size: nu
 
 export default function CmaCompsMap({
   subjectLocation,
-  comps,
+  comps = [],
   radiusMiles,
   subjectAddress,
+  mode = 'results',
 }: CmaCompsMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -113,7 +116,10 @@ export default function CmaCompsMap({
 
   const subjectPoint = subjectLocation;
 
-  const canRenderMap = Boolean(token && subjectPoint && compPoints.length > 0);
+  const isPreview = mode === 'preview';
+  const canRenderMap = Boolean(
+    token && subjectPoint && (isPreview || compPoints.length > 0),
+  );
 
   useEffect(() => {
     if (!canRenderMap || !containerRef.current || !subjectPoint) return;
@@ -187,34 +193,35 @@ export default function CmaCompsMap({
 
       markersRef.current.push(subjectMarker);
 
-      for (const { comp, coordinate } of compPoints) {
-        const marker = new mapboxgl.Marker({
-          element: createPinElement({
-            label: comp.address,
-            background: '#1c1d22',
-            size: 18,
-            border: '2px solid #ffffff',
-          }),
-          anchor: 'center',
-        })
-          .setLngLat(toLngLat(coordinate))
-          .setPopup(
-            new mapboxgl.Popup({ offset: 14, closeButton: true, maxWidth: '260px' }).setHTML(
-              buildCompPopupHtml(comp),
-            ),
-          )
-          .addTo(map);
+      if (!isPreview) {
+        for (const { comp, coordinate } of compPoints) {
+          const marker = new mapboxgl.Marker({
+            element: createPinElement({
+              label: comp.address,
+              background: '#1c1d22',
+              size: 18,
+              border: '2px solid #ffffff',
+            }),
+            anchor: 'center',
+          })
+            .setLngLat(toLngLat(coordinate))
+            .setPopup(
+              new mapboxgl.Popup({ offset: 14, closeButton: true, maxWidth: '260px' }).setHTML(
+                buildCompPopupHtml(comp),
+              ),
+            )
+            .addTo(map);
 
-        markersRef.current.push(marker);
+          markersRef.current.push(marker);
+        }
       }
 
-      const fitPoints: MapCoordinate[] = [
-        subjectPoint,
-        ...compPoints.map(({ coordinate }) => coordinate),
-      ];
+      const fitPoints: MapCoordinate[] = isPreview
+        ? [subjectPoint]
+        : [subjectPoint, ...compPoints.map(({ coordinate }) => coordinate)];
       const bounds = boundsForPoints(fitPoints);
       if (bounds) {
-        map.fitBounds(bounds, { padding: 48, maxZoom: 15, duration: 0 });
+        map.fitBounds(bounds, { padding: isPreview ? 64 : 48, maxZoom: isPreview ? 14 : 15, duration: 0 });
       }
     });
 
@@ -224,7 +231,7 @@ export default function CmaCompsMap({
       map.remove();
       mapRef.current = null;
     };
-  }, [canRenderMap, compPoints, radiusMiles, subjectAddress, subjectPoint, token]);
+  }, [canRenderMap, compPoints, isPreview, radiusMiles, subjectAddress, subjectPoint, token]);
 
   if (!token) {
     return (
@@ -242,7 +249,7 @@ export default function CmaCompsMap({
     );
   }
 
-  if (compPoints.length === 0) {
+  if (!isPreview && compPoints.length === 0) {
     return (
       <div className="rounded-[10px] border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center text-[13px] text-gray-600">
         Map unavailable — none of the comps include location coordinates.
@@ -257,10 +264,12 @@ export default function CmaCompsMap({
           <span className="inline-block size-3 rounded-full bg-[#0668E1] border border-white shadow-sm" />
           Subject
         </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span className="inline-block size-2.5 rounded-full bg-[#1C1D22] border border-white shadow-sm" />
-          Comp sale
-        </span>
+        {!isPreview && (
+          <span className="inline-flex items-center gap-1.5">
+            <span className="inline-block size-2.5 rounded-full bg-[#1C1D22] border border-white shadow-sm" />
+            Comp sale
+          </span>
+        )}
         <span className="inline-flex items-center gap-1.5">
           <span className="inline-block h-2.5 w-2.5 rounded-full border-2 border-[#0668E1]/55 bg-[#0668E1]/10" />
           {radiusMiles} mi search radius
