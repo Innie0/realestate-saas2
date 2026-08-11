@@ -3,7 +3,9 @@
  * Never calls Rentcast/BatchData — no real owner PII is returned.
  */
 
-import { calculateCma, type CompRecord, type SubjectProperty } from '@/lib/cma';
+import { calculateCma, valueFromSelectedComps, type CompRecord, type SubjectProperty } from '@/lib/cma';
+import { addressesToSelectedComps } from '@/lib/cma-ai-comp-selection';
+import { normalizeAddress } from '@/lib/comp-filters';
 
 const DEMO_OWNER = {
   firstName: 'James',
@@ -239,7 +241,12 @@ export function getDemoMarketAnalysisResponse(
   const radius = options.radius ?? 0.5;
   const yearsBack = options.yearsBack ?? 1;
 
-  const { scoredComps, valuation } = calculateCma(DEMO_SUBJECT, DEMO_COMPS);
+  const { scoredComps: preliminary } = calculateCma(DEMO_SUBJECT, DEMO_COMPS);
+  const selectedAddresses = new Set(
+    preliminary.slice(0, 3).map((c) => normalizeAddress(c.address)).filter(Boolean),
+  );
+  const marked = addressesToSelectedComps(preliminary, selectedAddresses);
+  const { scoredComps, valuation } = valueFromSelectedComps(DEMO_SUBJECT, marked);
 
   const summary =
     'Based on three recent sales within a half mile, comparable properties suggest a market range of ' +
@@ -274,6 +281,9 @@ export function getDemoMarketAnalysisResponse(
       rentHigh: 4_500,
     },
     comps: scoredComps,
+    compSelectionNote:
+      'Demo uses three structurally similar sales with matching bed/bath count and comparable square footage.',
+    compSelectionAiUsed: false,
     summary,
     queriedAt: new Date().toISOString(),
     isDemo: true,

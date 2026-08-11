@@ -5,9 +5,11 @@ import dynamic from 'next/dynamic';
 import {
   defaultSubject,
   recalculateValuation,
+  valueFromSelectedComps,
   type ScoredComp,
   type SubjectProperty,
 } from '@/lib/cma';
+import { formatListingStatus } from '@/lib/comp-filters';
 import { useToast } from '@/components/providers/ToastProvider';
 import DataLoadingState from '@/components/dashboard/DataLoadingState';
 import CmaSubjectSummary from '@/components/property-research/CmaSubjectSummary';
@@ -84,6 +86,8 @@ export interface CmaAnalysisResult {
     rentHigh: number | null;
   } | null;
   comps: ScoredComp[];
+  compSelectionNote?: string | null;
+  compSelectionAiUsed?: boolean;
   summary: string | null;
   isDemo?: boolean;
   queriedAt: string;
@@ -481,12 +485,23 @@ export function CmaPanel({
 
   const activeComps = result?.comps.filter((_, i) => !excludedIds.has(i)) ?? [];
 
+  const sortedActiveComps = useMemo(() => {
+    const selected = activeComps.filter((c) => c.selectedForValuation);
+    const others = activeComps.filter((c) => !c.selectedForValuation);
+    return selected.length > 0 ? [...selected, ...others] : activeComps;
+  }, [activeComps]);
+
   const liveValuation = useMemo(() => {
     if (!result) return null;
+    const hasSelectionFlags = activeComps.some((c) => c.selectedForValuation !== undefined);
+    if (hasSelectionFlags) {
+      const { valuation } = valueFromSelectedComps(result.subject, activeComps);
+      return valuation;
+    }
     return recalculateValuation(result.subject, activeComps, result.valuation.medianPricePerSqft);
   }, [result, activeComps]);
 
-  const visibleComps = showAllComps ? activeComps : activeComps.slice(0, 5);
+  const visibleComps = showAllComps ? sortedActiveComps : sortedActiveComps.slice(0, 5);
 
   const updateSubject = <K extends keyof SubjectProperty>(key: K, value: SubjectProperty[K]) => {
     if (key === 'condition' || key === 'hasPool' || key === 'garageSpaces') {
@@ -547,6 +562,16 @@ export function CmaPanel({
             >
               Refresh live data
             </button>
+          </div>
+        )}
+
+        {result.compSelectionNote && (
+          <div className="rounded-[10px] border border-blue-100 bg-blue-50/80 px-4 py-3 text-[13px] text-gray-700">
+            <div className="mb-1 flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-blue-700" />
+              <p className="text-[12.5px] font-medium text-blue-900">Best-match comps selected</p>
+            </div>
+            <p className="leading-relaxed">{result.compSelectionNote}</p>
           </div>
         )}
 
@@ -632,7 +657,14 @@ export function CmaPanel({
         )}
 
         <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-4">
-          <p className="mb-3 text-[12.5px] font-medium text-gray-600">Comparable Sales</p>
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <p className="text-[12.5px] font-medium text-gray-600">Comparable Sales</p>
+            {activeComps.some((c) => c.selectedForValuation) && (
+              <p className="text-[11.5px] text-gray-500">
+                Highlighted comps drive the suggested price
+              </p>
+            )}
+          </div>
           {activeComps.length === 0 ? (
             <p className="text-[13px] text-gray-600">No comps available.</p>
           ) : (
@@ -643,9 +675,23 @@ export function CmaPanel({
                   ? Math.round(comp.adjustedPrice * liveValuation.conditionFactor)
                   : null;
                 return (
-                  <div key={realIdx} className="rounded-[10px] border border-gray-150 p-3.5">
+                  <div
+                    key={realIdx}
+                    className={`rounded-[10px] border p-3.5 ${
+                      comp.selectedForValuation
+                        ? 'border-blue-200 bg-blue-50/40'
+                        : 'border-gray-150 bg-[var(--surface)]'
+                    }`}
+                  >
                     <div className="mb-2 flex items-start justify-between gap-2">
-                      <p className="text-[13px] font-medium text-gray-900">{comp.address}</p>
+                      <div className="min-w-0">
+                        <p className="text-[13px] font-medium text-gray-900">{comp.address}</p>
+                        {comp.selectedForValuation && (
+                          <span className="mt-1 inline-flex rounded-full bg-blue-100 px-2 py-0.5 text-[10.5px] font-medium text-blue-800">
+                            Used in valuation
+                          </span>
+                        )}
+                      </div>
                       <div className="flex items-center gap-2">
                         <div className="text-right">
                           <p className="text-[13px] font-bold text-gray-900">{fmt(comp.price, '$')}</p>
@@ -668,7 +714,11 @@ export function CmaPanel({
                       {comp.squareFootage !== null && (
                         <span>{comp.squareFootage.toLocaleString()} sqft</span>
                       )}
-                      {comp.soldDate && <span>Sold {fmtDate(comp.soldDate)}</span>}
+                      {comp.soldDate && (
+                        <span>
+                          {formatListingStatus(comp.listingStatus)} {fmtDate(comp.soldDate)}
+                        </span>
+                      )}
                     </div>
                   </div>
                 );

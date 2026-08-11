@@ -3,6 +3,8 @@
  * Comp-based valuation with size, bed/bath, and condition adjustments.
  */
 
+import { normalizeAddress } from '@/lib/comp-filters';
+
 export type ConditionLevel =
   | 'below_average'
   | 'average'
@@ -42,6 +44,8 @@ export interface CompRecord {
   distance: number | null;
   latitude: number | null;
   longitude: number | null;
+  listingStatus?: string | null;
+  mlsNumber?: string | null;
 }
 
 export interface CompAdjustment {
@@ -54,6 +58,8 @@ export interface ScoredComp extends CompRecord {
   adjustments: CompAdjustment[];
   totalAdjustment: number;
   adjustedPrice: number | null;
+  /** True when this comp is used in the suggested list price */
+  selectedForValuation?: boolean;
 }
 
 export interface CmaValuation {
@@ -243,6 +249,65 @@ export function adjustComp(
 
 export function getConditionFactor(condition: ConditionLevel): number {
   return CONDITION_OPTIONS.find((c) => c.value === condition)?.factor ?? 1;
+}
+
+/** Recompute valuation using only AI- or agent-selected comps. */
+export function valueFromSelectedComps(
+  subject: SubjectProperty,
+  scoredComps: ScoredComp[],
+): { scoredComps: ScoredComp[]; valuation: CmaValuation } {
+  const selected = scoredComps.filter((c) => c.selectedForValuation && c.price && c.price > 0);
+
+  const ppsfValues = selected
+    .map(compPricePerSqft)
+    .filter((v): v is number => v !== null && v > 0);
+  const medianPpsf = median(ppsfValues);
+
+  const reScoredSelected = selected.map((comp) => {
+    const { adjustments, totalAdjustment, adjustedPrice } = adjustComp(subject, comp, medianPpsf);
+    return { ...comp, adjustments, totalAdjustment, adjustedPrice };
+  });
+
+  const selectedByAddress = new Map(
+    reScoredSelected.map((c) => [normalizeAddress(c.address), c] as const),
+  );
+
+  const merged = scoredComps.map((comp) => {
+    const updated = selectedByAddress.get(normalizeAddress(comp.address));
+    return updated ?? comp;
+  });
+
+  const conditionFactor = getConditionFactor(subject.condition);
+  const conditioned = reScoredSelected
+    .map((c) => c.adjustedPrice)
+    .filter((p): p is number => p !== null && p > 0)
+    .map((p) => Math.round(p * conditionFactor));
+
+  const medianAdjusted = median(conditioned);
+  let priceLow: number | null = null;
+  let priceHigh: number | null = null;
+
+  if (conditioned.length >= 2) {
+    const sorted = [...conditioned].sort((a, b) => a - b);
+    priceLow = sorted[0];
+    priceHigh = sorted[sorted.length - 1];
+  } else if (conditioned.length === 1) {
+    priceLow = Math.round(conditioned[0] * 0.97);
+    priceHigh = Math.round(conditioned[0] * 1.03);
+  }
+
+  return {
+    scoredComps: merged,
+    valuation: {
+      suggestedPrice: medianAdjusted,
+      priceLow,
+      priceHigh,
+      medianAdjustedPrice: medianAdjusted,
+      compCount: reScoredSelected.length,
+      medianPricePerSqft: medianPpsf,
+      conditionFactor,
+    },
+  };
 }
 
 /** Score, rank, and value comps against the subject property. */

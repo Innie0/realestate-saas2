@@ -13,9 +13,14 @@ import {
 import {
   calculateCma,
   defaultSubject,
+  valueFromSelectedComps,
   type ConditionLevel,
   type SubjectProperty,
 } from '@/lib/cma';
+import {
+  addressesToSelectedComps,
+  selectBestCompsWithAI,
+} from '@/lib/cma-ai-comp-selection';
 import {
   compAddressFromRaw,
   filterSoldComps,
@@ -446,8 +451,23 @@ export async function POST(request: NextRequest) {
     );
     const { subject, subjectEnrichment } = mergeSubject(autoSubject, body, enrichment);
 
-    const { scoredComps, valuation } = calculateCma(subject, comps);
-    const summary = await buildAISummary(address, subject, valuation, avm, rentEstimate, scoredComps);
+    const { scoredComps: preliminaryScored } = calculateCma(subject, comps);
+
+    const { selectedAddresses, rationale: compSelectionNote, aiUsed: compSelectionAiUsed } =
+      await selectBestCompsWithAI(subject, resolvedPropertyTypeFinal ?? null, preliminaryScored);
+
+    const markedComps = addressesToSelectedComps(preliminaryScored, selectedAddresses);
+    const { scoredComps, valuation } = valueFromSelectedComps(subject, markedComps);
+
+    const valuationComps = scoredComps.filter((c) => c.selectedForValuation);
+    const summary = await buildAISummary(
+      address,
+      subject,
+      valuation,
+      avm,
+      rentEstimate,
+      valuationComps.length > 0 ? valuationComps : scoredComps,
+    );
 
     const responseData = {
       address,
@@ -483,6 +503,8 @@ export async function POST(request: NextRequest) {
           }
         : null,
       comps: scoredComps,
+      compSelectionNote,
+      compSelectionAiUsed,
       summary,
       queriedAt: new Date().toISOString(),
     };

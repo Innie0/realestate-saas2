@@ -66,6 +66,28 @@ export function isSameAddress(a: string, b: string): boolean {
   return normalizeAddress(a) === normalizeAddress(b);
 }
 
+/** Human-readable MLS/listing status for comp display. */
+export function formatListingStatus(status: string | null | undefined): string {
+  if (!status?.trim()) return 'Closed';
+  const s = status.toLowerCase();
+  if (s === 'sold' || s === 'closed' || s === 'inactive') return 'Sold';
+  if (s === 'pending') return 'Pending';
+  if (s.includes('contingent')) return 'Contingent';
+  if (s.includes('under contract')) return 'Under contract';
+  if (s === 'active') return 'Active';
+  return status;
+}
+
+function isNonClosedStatus(status: string): boolean {
+  return (
+    status === 'active' ||
+    status === 'pending' ||
+    status.includes('coming') ||
+    status.includes('contingent') ||
+    status.includes('under contract')
+  );
+}
+
 function parseDate(value: unknown): Date | null {
   if (!value || typeof value !== 'string') return null;
   const d = new Date(value);
@@ -85,9 +107,9 @@ export function compAddressFromRaw(raw: Record<string, unknown>): string {
  * Never use listedDate for active/pending listings — that is the list date, not a sale.
  */
 export function extractSoldDate(raw: Record<string, unknown>): string | null {
-  const status = String(raw.status ?? 'Sold').toLowerCase();
+  const status = String(raw.status ?? '').toLowerCase();
 
-  if (status === 'active' || status === 'pending' || status.includes('coming')) {
+  if (isNonClosedStatus(status)) {
     return null;
   }
 
@@ -131,7 +153,7 @@ export function getCompExclusionReason(
   options: CompFilterOptions
 ): string | null {
   const compAddr = compAddressFromRaw(raw);
-  const status = String(raw.status ?? 'Sold').toLowerCase();
+  const status = String(raw.status ?? '').toLowerCase();
 
   if (isSameAddress(compAddr, options.subjectAddress)) {
     return 'Same property as subject';
@@ -148,8 +170,8 @@ export function getCompExclusionReason(
     return 'MLS listing is currently active';
   }
 
-  if (status === 'active' || status === 'pending' || status.includes('coming')) {
-    return 'Listing is active, not sold';
+  if (isNonClosedStatus(status)) {
+    return 'Listing is not a closed sale';
   }
 
   const soldDate = extractSoldDate(raw);
@@ -223,6 +245,6 @@ export function mapRawComp(raw: Record<string, unknown>) {
     latitude,
     longitude,
     mlsNumber: (raw.mlsNumber as string) ?? null,
-    listingStatus: String(raw.status ?? 'Sold'),
+    listingStatus: raw.status ? String(raw.status) : null,
   };
 }

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import type { ScoredComp } from '@/lib/cma';
+import { formatListingStatus } from '@/lib/comp-filters';
 import {
   boundsForPoints,
   radiusCirclePolygon,
@@ -63,7 +64,7 @@ function buildCompPopupHtml(comp: ScoredComp) {
     <div style="font-family: system-ui, sans-serif; font-size: 12px; line-height: 1.45; color: #1c1d22; min-width: 180px;">
       <p style="margin: 0 0 6px; font-weight: 600;">${escapeHtml(comp.address)}</p>
       <p style="margin: 0 0 4px; font-size: 14px; font-weight: 700; color: #0668E1;">${fmtPrice(comp.price)}</p>
-      <p style="margin: 0; color: #6b6d76;">Sold ${fmtDate(comp.soldDate)}</p>
+      <p style="margin: 0; color: #6b6d76;">${formatListingStatus(comp.listingStatus)} ${fmtDate(comp.soldDate)}</p>
       ${details ? `<p style="margin: 4px 0 0; color: #6b6d76;">${escapeHtml(details)}</p>` : ''}
     </div>
   `;
@@ -202,12 +203,13 @@ export default function CmaCompsMap({
 
       if (!isPreview) {
         for (const { comp, coordinate } of compPoints) {
+          const selected = comp.selectedForValuation === true;
           const marker = new mapboxgl.Marker({
             element: createPinElement({
               label: comp.address,
-              background: '#1c1d22',
-              size: 18,
-              border: '2px solid #ffffff',
+              background: selected ? '#0668E1' : '#9ca3af',
+              size: selected ? 20 : 16,
+              border: selected ? '2px solid #ffffff' : '1.5px solid #ffffff',
             }),
             anchor: 'center',
           })
@@ -279,10 +281,16 @@ export default function CmaCompsMap({
             Subject
           </span>
           {!isPreview && (
-            <span className="inline-flex items-center gap-1.5">
-              <span className="inline-block size-2.5 rounded-full bg-[#1C1D22] border border-white shadow-sm" />
-              Comp sale
-            </span>
+            <>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="inline-block size-2.5 rounded-full bg-[#0668E1] border border-white shadow-sm" />
+                Used in valuation
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="inline-block size-2 rounded-full bg-[#9ca3af] border border-white shadow-sm" />
+                Other nearby sale
+              </span>
+            </>
           )}
           <span className="inline-flex items-center gap-1.5">
             <span className="inline-block h-2.5 w-2.5 rounded-full border-2 border-[#0668E1]/55 bg-[#0668E1]/10" />
