@@ -52,6 +52,11 @@ function fallbackSelection(scoredComps: ScoredComp[]): Set<string> {
   return new Set(pool.map((c) => normalizeAddress(c.address)).filter(Boolean));
 }
 
+/** Similarity-ranked comp picks when AI is unavailable or for upgrading stale cache. */
+export function fallbackCompSelectionAddresses(scoredComps: ScoredComp[]): Set<string> {
+  return fallbackSelection(scoredComps);
+}
+
 function parseAiSelection(
   raw: string,
   candidates: CandidatePayload[],

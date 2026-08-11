@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { buildCmaPdfPayload, downloadCmaPdf } from '@/lib/export-cma-pdf';
 import { normalizeAddressKey } from '@/lib/property-research-cache';
+import { normalizeCmaResult, CMA_RESULT_VERSION } from '@/lib/cma-result-format';
 import { isDemoMarketingAddress } from '@/lib/demo-property-research';
 import {
   cmaLocalCacheKey,
@@ -59,6 +60,7 @@ export interface SubjectEnrichmentMeta {
 }
 
 export interface CmaAnalysisResult {
+  resultVersion?: number;
   address: string;
   propertyType: string | null;
   radius: number;
@@ -242,6 +244,26 @@ export function CmaPanel({
     [],
   );
 
+  const applyCachedResult = useCallback(
+    (cached: CmaAnalysisResult, localKey: string) => {
+      const normalized = normalizeCmaResult(cached);
+      setResult(normalized);
+      applyPrefillData({
+        subject: normalized.subject,
+        subjectEnrichment: normalized.subjectEnrichment,
+        propertyType: normalized.propertyType,
+        subjectLocation: normalized.subjectLocation,
+      });
+      setFromCache(true);
+      if (normalized.resultVersion !== cached.resultVersion) {
+        setLocalResearchCache(localKey, normalized);
+      }
+      setError('');
+      onCompleteRef.current?.(normalized);
+    },
+    [applyPrefillData],
+  );
+
   const handlePrefill = async () => {
     if (!street.trim() || !state) return;
     setPrefilling(true);
@@ -294,32 +316,25 @@ export function CmaPanel({
     if (!forceRefresh && !isDemo) {
       const cached = getLocalResearchCache<CmaAnalysisResult>(localKey);
       if (cached) {
-        setResult(cached);
-        applyPrefillData({
-          subject: cached.subject,
-          subjectEnrichment: cached.subjectEnrichment,
-          propertyType: cached.propertyType,
-          subjectLocation: cached.subjectLocation,
-        });
-        setFromCache(true);
-        setError('');
-        onCompleteRef.current?.(cached);
+        applyCachedResult(cached, localKey);
         return;
       }
       const latest = findLatestCmaCache<CmaAnalysisResult>(addressKey);
       if (latest) {
-        setResult(latest);
+        const normalized = normalizeCmaResult(latest);
+        setResult(normalized);
         applyPrefillData({
-          subject: latest.subject,
-          subjectEnrichment: latest.subjectEnrichment,
-          propertyType: latest.propertyType,
-          subjectLocation: latest.subjectLocation,
+          subject: normalized.subject,
+          subjectEnrichment: normalized.subjectEnrichment,
+          propertyType: normalized.propertyType,
+          subjectLocation: normalized.subjectLocation,
         });
         setFromCache(true);
-        setRadius(latest.radius ?? 0.5);
-        setYearsBack(latest.yearsBack ?? 1);
+        setRadius(normalized.radius ?? 0.5);
+        setYearsBack(normalized.yearsBack ?? 1);
+        setLocalResearchCache(localKey, normalized);
         setError('');
-        onCompleteRef.current?.(latest);
+        onCompleteRef.current?.(normalized);
         return;
       }
     }
@@ -344,16 +359,17 @@ export function CmaPanel({
         setError(data.error || 'Analysis failed. Please try again.');
         onCompleteRef.current?.(null);
       } else {
-        setResult(data.data);
+        const normalized = normalizeCmaResult(data.data);
+        setResult(normalized);
         applyPrefillData({
-          subject: data.data.subject,
-          subjectEnrichment: data.data.subjectEnrichment,
-          propertyType: data.data.propertyType,
-          subjectLocation: data.data.subjectLocation,
+          subject: normalized.subject,
+          subjectEnrichment: normalized.subjectEnrichment,
+          propertyType: normalized.propertyType,
+          subjectLocation: normalized.subjectLocation,
         });
         setFromCache(!!data.fromCache);
-        setLocalResearchCache(localKey, data.data);
-        onCompleteRef.current?.(data.data);
+        setLocalResearchCache(localKey, normalized);
+        onCompleteRef.current?.(normalized);
         toast.success('CMA analysis complete');
       }
     } catch {
@@ -363,7 +379,7 @@ export function CmaPanel({
       isRunningRef.current = false;
       setLoading(false);
     }
-  }, [street, city, state, zip, propertyType, radius, yearsBack, subject, manualFields, applyPrefillData]);
+  }, [street, city, state, zip, propertyType, radius, yearsBack, subject, manualFields, applyPrefillData, applyCachedResult]);
 
   useEffect(() => {
     if (
@@ -372,7 +388,7 @@ export function CmaPanel({
       !isRunningRef.current &&
       !loading
     ) {
-      setResult(initialResult);
+      setResult(normalizeCmaResult(initialResult));
       applyPrefillData({
         subject: initialResult.subject,
         subjectEnrichment: initialResult.subjectEnrichment,
@@ -493,8 +509,10 @@ export function CmaPanel({
 
   const liveValuation = useMemo(() => {
     if (!result) return null;
-    const hasSelectionFlags = activeComps.some((c) => c.selectedForValuation !== undefined);
-    if (hasSelectionFlags) {
+    const usesSelectedCompValuation =
+      result.resultVersion === CMA_RESULT_VERSION ||
+      activeComps.some((c) => c.selectedForValuation === true);
+    if (usesSelectedCompValuation) {
       const { valuation } = valueFromSelectedComps(result.subject, activeComps);
       return valuation;
     }
@@ -853,7 +871,7 @@ export function CmaPanel({
           </button>
           <button
             type="button"
-            onClick={() => runAnalysis()}
+            onClick={() => runAnalysis(!!result)}
             disabled={loading || !street.trim() || !state}
             className="ml-auto flex min-w-[200px] flex-1 items-center justify-center gap-2 rounded-lg bg-brand-500 py-2.5 text-[13px] font-semibold text-[var(--brand-foreground)] transition-colors hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:px-8"
           >

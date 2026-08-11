@@ -21,6 +21,7 @@ import {
   addressesToSelectedComps,
   selectBestCompsWithAI,
 } from '@/lib/cma-ai-comp-selection';
+import { CMA_RESULT_VERSION, isStaleCmaResult } from '@/lib/cma-result-format';
 import {
   compAddressFromRaw,
   filterSoldComps,
@@ -376,7 +377,7 @@ export async function POST(request: NextRequest) {
 
     if (!refresh) {
       const cachedCma = await getResearchCache(supabase, user.id, 'market_analysis', cmaCacheKey);
-      if (cachedCma) {
+      if (cachedCma && !isStaleCmaResult(cachedCma)) {
         return NextResponse.json({ success: true, data: cachedCma, fromCache: true });
       }
     }
@@ -470,6 +471,7 @@ export async function POST(request: NextRequest) {
     );
 
     const responseData = {
+      resultVersion: CMA_RESULT_VERSION,
       address,
       propertyType: resolvedPropertyTypeFinal ?? null,
       radius: resolvedRadius,

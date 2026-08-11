@@ -3,6 +3,7 @@
  * Never calls Rentcast/BatchData — no real owner PII is returned.
  */
 
+import { normalizeCmaResult, CMA_RESULT_VERSION } from '@/lib/cma-result-format';
 import { calculateCma, valueFromSelectedComps, type CompRecord, type SubjectProperty } from '@/lib/cma';
 import { addressesToSelectedComps } from '@/lib/cma-ai-comp-selection';
 import { normalizeAddress } from '@/lib/comp-filters';
@@ -255,6 +256,7 @@ export function getDemoMarketAnalysisResponse(
     '(Sample marketing data — not a live county or MLS pull.)';
 
   return {
+    resultVersion: CMA_RESULT_VERSION,
     address,
     propertyType: options.propertyType || 'Single Family',
     radius,

@@ -25,6 +25,7 @@ import {
   getLocalResearchCache,
   lookupLocalCacheKey,
 } from '@/lib/research-local-cache';
+import { normalizeCmaResult } from '@/lib/cma-result-format';
 import { History, Trash2, Pencil, User, BarChart2, LayoutGrid } from 'lucide-react';
 
 type TabId = 'overview' | 'owner' | 'cma';
@@ -264,7 +265,7 @@ function PropertyResearchContent() {
     const cachedLookup = getLocalResearchCache<LookupResponse>(lookupLocalCacheKey(addressKey));
     const cachedCma = findLatestCmaCache<CmaAnalysisResult>(addressKey);
     setLookupData(cachedLookup);
-    setCmaResult(cachedCma);
+    setCmaResult(cachedCma ? normalizeCmaResult(cachedCma) : null);
     if (cachedLookup) setLookupTrigger((n) => n + 1);
     if (cachedCma) setCmaTrigger((n) => n + 1);
   };
