@@ -1,3 +1,6 @@
+import { propertyStaticImageUrl } from '@/lib/property-static-image';
+import type { SubjectProperty } from '@/lib/cma';
+
 /**
  * Sanitize comparable sales from MLS/listing feeds.
  * Filters out the subject property, active listings mislabeled as sold,
@@ -59,6 +62,126 @@ export function normalizeAddress(addr: string): string {
   });
 
   return normalized.join(' ');
+}
+
+export interface ExcludedCompSummary {
+  address: string;
+  reason: string;
+  price: number | null;
+  squareFootage: number | null;
+  bedrooms: number | null;
+  bathrooms: number | null;
+  category: 'invalid' | 'similarity';
+}
+
+export interface SubjectSimilarityOptions {
+  maxSqftPctDiff?: number;
+  maxBedDiff?: number;
+  maxBathDiff?: number;
+  requirePropertyTypeMatch?: boolean;
+  subjectPropertyType?: string | null;
+}
+
+const DEFAULT_SIMILARITY: Required<Omit<SubjectSimilarityOptions, 'subjectPropertyType'>> & {
+  subjectPropertyType: string | null;
+} = {
+  maxSqftPctDiff: 0.22,
+  maxBedDiff: 1,
+  maxBathDiff: 1,
+  requirePropertyTypeMatch: false,
+  subjectPropertyType: null,
+};
+
+function normalizePropertyType(value: string | null | undefined): string | null {
+  if (!value?.trim()) return null;
+  return value.trim().toLowerCase();
+}
+
+export function getSubjectSimilarityExclusionReason(
+  raw: Record<string, unknown>,
+  subject: SubjectProperty,
+  options: SubjectSimilarityOptions = {},
+): string | null {
+  const opts = { ...DEFAULT_SIMILARITY, ...options };
+  const subjectType = normalizePropertyType(opts.subjectPropertyType);
+  const compType = normalizePropertyType(raw.propertyType as string | undefined);
+
+  if (
+    opts.requirePropertyTypeMatch &&
+    subjectType &&
+    compType &&
+    subjectType !== compType &&
+    !subjectType.includes(compType) &&
+    !compType.includes(subjectType)
+  ) {
+    return 'Different property type';
+  }
+
+  const compSqft = raw.squareFootage as number | undefined;
+  if (subject.squareFootage && compSqft && compSqft > 0) {
+    const pct = Math.abs(subject.squareFootage - compSqft) / subject.squareFootage;
+    if (pct > opts.maxSqftPctDiff) {
+      return `Living area differs by ${Math.round(pct * 100)}% (>${Math.round(opts.maxSqftPctDiff * 100)}% limit)`;
+    }
+  }
+
+  const compBeds = raw.bedrooms as number | undefined;
+  if (subject.bedrooms != null && compBeds != null) {
+    if (Math.abs(subject.bedrooms - compBeds) > opts.maxBedDiff) {
+      return `Bedroom count off by ${Math.abs(subject.bedrooms - compBeds)}`;
+    }
+  }
+
+  const compBaths = raw.bathrooms as number | undefined;
+  if (subject.bathrooms != null && compBaths != null) {
+    if (Math.abs(subject.bathrooms - compBaths) > opts.maxBathDiff) {
+      return `Bathroom count off by ${Math.abs(subject.bathrooms - compBaths).toFixed(1)}`;
+    }
+  }
+
+  return null;
+}
+
+export function filterCompsBySubjectSimilarity(
+  rawComps: Record<string, unknown>[],
+  subject: SubjectProperty,
+  options: SubjectSimilarityOptions = {},
+): { qualified: Record<string, unknown>[]; excluded: ExcludedCompSummary[] } {
+  const qualified: Record<string, unknown>[] = [];
+  const excluded: ExcludedCompSummary[] = [];
+
+  for (const raw of rawComps) {
+    const reason = getSubjectSimilarityExclusionReason(raw, subject, options);
+    if (reason) {
+      excluded.push(summarizeExcludedRaw(raw, reason, 'similarity'));
+    } else {
+      qualified.push(raw);
+    }
+  }
+
+  return { qualified, excluded };
+}
+
+function summarizeExcludedRaw(
+  raw: Record<string, unknown>,
+  reason: string,
+  category: ExcludedCompSummary['category'],
+): ExcludedCompSummary {
+  return {
+    address: compAddressFromRaw(raw),
+    reason,
+    price: typeof raw.price === 'number' ? raw.price : null,
+    squareFootage: typeof raw.squareFootage === 'number' ? raw.squareFootage : null,
+    bedrooms: typeof raw.bedrooms === 'number' ? raw.bedrooms : null,
+    bathrooms: typeof raw.bathrooms === 'number' ? raw.bathrooms : null,
+    category,
+  };
+}
+
+export function summarizeInvalidExcluded(
+  excluded: { raw: Record<string, unknown>; reason: string }[],
+): ExcludedCompSummary[] {
+  return excluded.map(({ raw, reason }) => summarizeExcludedRaw(raw, reason, 'invalid'));
 }
 
 export function isSameAddress(a: string, b: string): boolean {
@@ -246,5 +369,6 @@ export function mapRawComp(raw: Record<string, unknown>) {
     longitude,
     mlsNumber: (raw.mlsNumber as string) ?? null,
     listingStatus: raw.status ? String(raw.status) : null,
+    imageUrl: propertyStaticImageUrl(latitude, longitude, { width: 280, height: 180 }),
   };
 }

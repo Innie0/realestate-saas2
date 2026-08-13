@@ -46,6 +46,8 @@ export interface CompRecord {
   longitude: number | null;
   listingStatus?: string | null;
   mlsNumber?: string | null;
+  /** Map thumbnail when coordinates exist (Rentcast has no listing photos). */
+  imageUrl?: string | null;
 }
 
 export interface CompAdjustment {
@@ -60,6 +62,14 @@ export interface ScoredComp extends CompRecord {
   adjustedPrice: number | null;
   /** True when this comp is used in the suggested list price */
   selectedForValuation?: boolean;
+  imageUrl?: string | null;
+}
+
+/** Maximum similarity score from scoreCompSimilarity (for match % display). */
+export const SIMILARITY_SCORE_MAX = 110;
+
+export function similarityScoreToMatchPercent(score: number): number {
+  return Math.min(100, Math.max(0, Math.round((score / SIMILARITY_SCORE_MAX) * 100)));
 }
 
 export interface CmaValuation {

@@ -9,10 +9,13 @@ import {
   type ScoredComp,
   type SubjectProperty,
 } from '@/lib/cma';
-import { formatListingStatus } from '@/lib/comp-filters';
 import { useToast } from '@/components/providers/ToastProvider';
 import DataLoadingState from '@/components/dashboard/DataLoadingState';
 import CmaSubjectSummary from '@/components/property-research/CmaSubjectSummary';
+import CmaPropertyDashboard from '@/components/property-research/CmaPropertyDashboard';
+import CmaCompCard from '@/components/property-research/CmaCompCard';
+import type { CmaSubjectProfile } from '@/lib/subject-profile';
+import type { ExcludedCompSummary } from '@/lib/comp-filters';
 import CmaSearchParams, {
   CMA_DEFAULT_RADIUS,
   CMA_DEFAULT_YEARS_BACK,
@@ -20,7 +23,7 @@ import CmaSearchParams, {
 import {
   Loader2, AlertCircle,
   TrendingUp, Sparkles,
-  X, Download, Info,
+  Download, Info,
 } from 'lucide-react';
 import { buildCmaPdfPayload, downloadCmaPdf } from '@/lib/export-cma-pdf';
 import { normalizeAddressKey } from '@/lib/property-research-cache';
@@ -76,6 +79,16 @@ export interface CmaAnalysisResult {
     mlsNumber: string | null;
   } | null;
   compsFiltered: number;
+  excludedComps?: ExcludedCompSummary[];
+  compStats?: {
+    fetched: number;
+    validSold: number;
+    afterSimilarity: number;
+    widenedSearch: boolean;
+    radiusUsed: number;
+    daysOldUsed: number;
+  };
+  subjectProfile?: CmaSubjectProfile | null;
   avm: {
     estimatedValue: number | null;
     valueLow: number | null;
@@ -163,6 +176,8 @@ export function CmaPanel({
   const [error, setError] = useState('');
   const [result, setResult] = useState<CmaAnalysisResult | null>(null);
   const [excludedIds, setExcludedIds] = useState<Set<number>>(new Set());
+  const [valuationOverrides, setValuationOverrides] = useState<Map<number, boolean>>(new Map());
+  const [showExcludedComps, setShowExcludedComps] = useState(false);
   const [showAllComps, setShowAllComps] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
   const [fromCache, setFromCache] = useState(false);
@@ -346,6 +361,8 @@ export function CmaPanel({
     setFromCache(false);
     setShowAllComps(false);
     setExcludedIds(new Set());
+    setValuationOverrides(new Map());
+    setShowExcludedComps(false);
 
     try {
       const res = await fetch('/api/market-analysis', {
@@ -400,6 +417,8 @@ export function CmaPanel({
       setYearsBack(initialResult.yearsBack ?? 1);
       setError('');
       setExcludedIds(new Set());
+    setValuationOverrides(new Map());
+    setShowExcludedComps(false);
       setShowAllComps(false);
       lastPrefilledKeyRef.current = addressKey;
       return;
@@ -417,6 +436,8 @@ export function CmaPanel({
         setFromCache(false);
         setError('');
         setExcludedIds(new Set());
+    setValuationOverrides(new Map());
+    setShowExcludedComps(false);
         setShowAllComps(false);
       }
     }
@@ -499,13 +520,46 @@ export function CmaPanel({
     void runWithPrefill();
   }, [runTrigger, runAnalysis, addressKey, street, state]);
 
-  const activeComps = result?.comps.filter((_, i) => !excludedIds.has(i)) ?? [];
+  const activeCompEntries = useMemo((): { realIdx: number; comp: ScoredComp }[] => {
+    if (!result) return [];
+    const entries: { realIdx: number; comp: ScoredComp }[] = [];
+    for (let realIdx = 0; realIdx < result.comps.length; realIdx += 1) {
+      if (excludedIds.has(realIdx)) continue;
+      const comp = result.comps[realIdx];
+      const override = valuationOverrides.get(realIdx);
+      entries.push({
+        realIdx,
+        comp: {
+          ...comp,
+          selectedForValuation:
+            override !== undefined ? override : Boolean(comp.selectedForValuation),
+        },
+      });
+    }
+    return entries;
+  }, [result, excludedIds, valuationOverrides]);
 
-  const sortedActiveComps = useMemo(() => {
-    const selected = activeComps.filter((c) => c.selectedForValuation);
-    const others = activeComps.filter((c) => !c.selectedForValuation);
-    return selected.length > 0 ? [...selected, ...others] : activeComps;
-  }, [activeComps]);
+  const activeComps = useMemo(
+    () => activeCompEntries.map((e) => e.comp),
+    [activeCompEntries],
+  );
+
+  const toggleCompValuation = useCallback((realIdx: number) => {
+    setValuationOverrides((prev) => {
+      const next = new Map(prev);
+      const comp = result?.comps[realIdx];
+      if (!comp) return prev;
+      const current = next.has(realIdx) ? next.get(realIdx)! : (comp.selectedForValuation ?? false);
+      next.set(realIdx, !current);
+      return next;
+    });
+  }, [result?.comps]);
+
+  const sortedActiveCompEntries = useMemo(() => {
+    const selected = activeCompEntries.filter((e) => e.comp.selectedForValuation);
+    const others = activeCompEntries.filter((e) => !e.comp.selectedForValuation);
+    return selected.length > 0 ? [...selected, ...others] : activeCompEntries;
+  }, [activeCompEntries]);
 
   const liveValuation = useMemo(() => {
     if (!result) return null;
@@ -519,7 +573,9 @@ export function CmaPanel({
     return recalculateValuation(result.subject, activeComps, result.valuation.medianPricePerSqft);
   }, [result, activeComps]);
 
-  const visibleComps = showAllComps ? sortedActiveComps : sortedActiveComps.slice(0, 5);
+  const visibleCompEntries = showAllComps
+    ? sortedActiveCompEntries
+    : sortedActiveCompEntries.slice(0, 5);
 
   const updateSubject = <K extends keyof SubjectProperty>(key: K, value: SubjectProperty[K]) => {
     if (key === 'condition' || key === 'hasPool' || key === 'garageSpaces') {
@@ -593,6 +649,29 @@ export function CmaPanel({
           </div>
         )}
 
+        <CmaPropertyDashboard
+          address={result.address}
+          subject={subject}
+          subjectProfile={result.subjectProfile}
+          suggestedPrice={liveValuation.suggestedPrice}
+          priceLow={liveValuation.priceLow}
+          priceHigh={liveValuation.priceHigh}
+          avmValue={result.avm?.estimatedValue ?? null}
+          rentMonthly={result.rentEstimate?.monthlyRent ?? null}
+          activeListPrice={result.activeListing?.price ?? null}
+          compCount={liveValuation.compCount}
+        />
+
+        {result.compStats && (
+          <p className="text-[12px] text-gray-600">
+            Found {result.compStats.fetched} nearby sale{result.compStats.fetched !== 1 ? 's' : ''} ·{' '}
+            {result.compStats.validSold} valid closed · {result.compStats.afterSimilarity} similar to subject
+            {result.compStats.widenedSearch
+              ? ` (search widened to ${result.compStats.radiusUsed} mi)`
+              : ''}
+          </p>
+        )}
+
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="text-[12px] text-gray-600">Suggested list price</p>
@@ -636,9 +715,35 @@ export function CmaPanel({
           </div>
         )}
 
-        {result.compsFiltered > 0 && (
+        {(result.excludedComps?.length ?? 0) > 0 && (
+          <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)]">
+            <button
+              type="button"
+              onClick={() => setShowExcludedComps((v) => !v)}
+              className="flex w-full items-center justify-between px-4 py-3 text-left text-[13px] font-medium text-gray-700 hover:bg-gray-50"
+            >
+              <span>
+                {result.excludedComps!.length} excluded sale
+                {result.excludedComps!.length !== 1 ? 's' : ''} (not used)
+              </span>
+              <span className="text-[12px] text-gray-500">{showExcludedComps ? 'Hide' : 'Show'}</span>
+            </button>
+            {showExcludedComps && (
+              <div className="max-h-48 space-y-2 overflow-y-auto border-t border-gray-150 px-4 py-3">
+                {result.excludedComps!.map((row) => (
+                  <div key={row.address} className="text-[12px]">
+                    <p className="font-medium text-gray-800">{row.address}</p>
+                    <p className="text-gray-600">{row.reason}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {result.compsFiltered > 0 && !result.excludedComps?.length && (
           <p className="text-[12.5px] text-gray-600">
-            {result.compsFiltered} invalid listing{result.compsFiltered !== 1 ? 's' : ''} removed from comps.
+            {result.compsFiltered} listing{result.compsFiltered !== 1 ? 's' : ''} removed from comps.
           </p>
         )}
 
@@ -687,58 +792,19 @@ export function CmaPanel({
             <p className="text-[13px] text-gray-600">No comps available.</p>
           ) : (
             <div className="space-y-3">
-              {visibleComps.map((comp) => {
-                const realIdx = result.comps.indexOf(comp);
+              {visibleCompEntries.map(({ comp, realIdx }) => {
                 const conditionedAdj = comp.adjustedPrice
                   ? Math.round(comp.adjustedPrice * liveValuation.conditionFactor)
                   : null;
                 return (
-                  <div
+                  <CmaCompCard
                     key={realIdx}
-                    className={`rounded-[10px] border p-3.5 ${
-                      comp.selectedForValuation
-                        ? 'border-blue-200 bg-blue-50/40'
-                        : 'border-gray-150 bg-[var(--surface)]'
-                    }`}
-                  >
-                    <div className="mb-2 flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <p className="text-[13px] font-medium text-gray-900">{comp.address}</p>
-                        {comp.selectedForValuation && (
-                          <span className="mt-1 inline-flex rounded-full bg-blue-100 px-2 py-0.5 text-[10.5px] font-medium text-blue-800">
-                            Used in valuation
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="text-right">
-                          <p className="text-[13px] font-bold text-gray-900">{fmt(comp.price, '$')}</p>
-                          {conditionedAdj && (
-                            <p className="text-[10.5px] text-gray-600">Adj. {fmt(conditionedAdj, '$')}</p>
-                          )}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setExcludedIds((prev) => new Set([...prev, realIdx]))}
-                          className="p-1 text-gray-400 hover:text-rose-500"
-                        >
-                          <X className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap gap-3 text-[12px] text-gray-600">
-                      {comp.bedrooms !== null && <span>{comp.bedrooms} bd</span>}
-                      {comp.bathrooms !== null && <span>{comp.bathrooms} ba</span>}
-                      {comp.squareFootage !== null && (
-                        <span>{comp.squareFootage.toLocaleString()} sqft</span>
-                      )}
-                      {comp.soldDate && (
-                        <span>
-                          {formatListingStatus(comp.listingStatus)} {fmtDate(comp.soldDate)}
-                        </span>
-                      )}
-                    </div>
-                  </div>
+                    comp={comp}
+                    conditionedAdj={conditionedAdj}
+                    selectedForValuation={comp.selectedForValuation === true}
+                    onToggleValuation={() => toggleCompValuation(realIdx)}
+                    onExclude={() => setExcludedIds((prev) => new Set([...prev, realIdx]))}
+                  />
                 );
               })}
               {activeComps.length > 5 && (

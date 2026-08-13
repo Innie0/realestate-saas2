@@ -7,6 +7,7 @@ import { normalizeCmaResult, CMA_RESULT_VERSION } from '@/lib/cma-result-format'
 import { calculateCma, valueFromSelectedComps, type CompRecord, type SubjectProperty } from '@/lib/cma';
 import { addressesToSelectedComps } from '@/lib/cma-ai-comp-selection';
 import { normalizeAddress } from '@/lib/comp-filters';
+import { propertyStaticImageUrl } from '@/lib/property-static-image';
 
 const DEMO_OWNER = {
   firstName: 'James',
@@ -44,6 +45,7 @@ const DEMO_COMPS: CompRecord[] = [
     distance: 0.2,
     latitude: 30.2684,
     longitude: -97.7448,
+    imageUrl: propertyStaticImageUrl(30.2684, -97.7448),
   },
   {
     address: '131 Oak Ln, Austin, TX 78701',
@@ -58,6 +60,7 @@ const DEMO_COMPS: CompRecord[] = [
     distance: 0.4,
     latitude: 30.2651,
     longitude: -97.7408,
+    imageUrl: propertyStaticImageUrl(30.2651, -97.7408),
   },
   {
     address: '99 Elm Ct, Austin, TX 78701',
@@ -72,6 +75,7 @@ const DEMO_COMPS: CompRecord[] = [
     distance: 0.5,
     latitude: 30.2692,
     longitude: -97.7462,
+    imageUrl: propertyStaticImageUrl(30.2692, -97.7462),
   },
 ];
 
@@ -263,6 +267,25 @@ export function getDemoMarketAnalysisResponse(
     yearsBack,
     subject: { ...DEMO_SUBJECT },
     subjectLocation: { ...DEMO_SUBJECT_COORDS },
+    subjectProfile: {
+      imageUrl: propertyStaticImageUrl(DEMO_SUBJECT_COORDS.latitude, DEMO_SUBJECT_COORDS.longitude, {
+        width: 400,
+        height: 260,
+        zoom: 17,
+      }),
+      propertyType: options.propertyType || 'Single Family',
+      lotSize: DEMO_SUBJECT.lotSize,
+      yearBuilt: DEMO_SUBJECT.yearBuilt,
+      county: 'Travis',
+      subdivision: 'Demo Heights',
+      zoning: 'SF-3',
+      assessedValue: 485_000,
+      lastSalePrice: 420_000,
+      lastSaleDate: new Date(Date.now() - 900 * 86_400_000).toISOString(),
+      ownerName: DEMO_OWNER.fullName,
+      ownerOccupied: true,
+      hoaFee: null,
+    },
     subjectEnrichment: {
       hasPool: 'default' as const,
       garageSpaces: 'default' as const,
@@ -271,6 +294,15 @@ export function getDemoMarketAnalysisResponse(
     valuation,
     activeListing: null,
     compsFiltered: 0,
+    excludedComps: [],
+    compStats: {
+      fetched: 3,
+      validSold: 3,
+      afterSimilarity: 3,
+      widenedSearch: false,
+      radiusUsed: radius,
+      daysOldUsed: Math.round(yearsBack * 365),
+    },
     avm: {
       estimatedValue: 1_500_000,
       valueLow: 1_420_000,

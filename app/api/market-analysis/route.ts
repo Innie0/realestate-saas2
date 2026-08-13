@@ -24,9 +24,13 @@ import {
 import { CMA_RESULT_VERSION, isStaleCmaResult } from '@/lib/cma-result-format';
 import {
   compAddressFromRaw,
+  filterCompsBySubjectSimilarity,
   filterSoldComps,
   mapRawComp,
+  summarizeInvalidExcluded,
 } from '@/lib/comp-filters';
+import { fetchCompsWithFallback } from '@/lib/comp-fetch';
+import { buildSubjectProfile } from '@/lib/subject-profile';
 import { extractCoordinates } from '@/lib/cma-map-utils';
 import {
   getResearchCache,
@@ -95,33 +99,6 @@ async function fetchRentEstimate(address: string, key: string) {
     return await res.json();
   } catch {
     return null;
-  }
-}
-
-async function fetchComps(
-  address: string,
-  key: string,
-  propertyType?: string,
-  radius: number = 0.5,
-  daysOld: number = 365,
-) {
-  try {
-    const params = new URLSearchParams({
-      address,
-      status: 'Sold',
-      limit: '25',
-      radius: String(radius),
-      daysOld: String(daysOld),
-    });
-    if (propertyType) params.set('propertyType', propertyType);
-    const res = await fetch(`${RENTCAST_BASE}/listings/sale?${params}`, {
-      headers: { 'X-Api-Key': key, Accept: 'application/json' },
-    });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return Array.isArray(data) ? data : (data?.listings ?? []);
-  } catch {
-    return [];
   }
 }
 
@@ -405,10 +382,23 @@ export async function POST(request: NextRequest) {
     const resolvedPropertyTypeFinal =
       propertyType || rentcastProperty?.propertyType || avm?.propertyType || undefined;
 
-    const [compsRaw, activeListing] = await Promise.all([
-      fetchComps(address, key, resolvedPropertyTypeFinal, resolvedRadius, resolvedDaysOld),
-      fetchActiveListing(street, city, state, zip),
-    ]);
+    const activeListing = await fetchActiveListing(street, city, state, zip);
+
+    const { base: autoSubject, enrichment } = await buildAutoSubject(
+      rentcastProperty,
+      activeListing,
+      avm?.price ?? null,
+      true
+    );
+    const { subject, subjectEnrichment } = mergeSubject(autoSubject, body, enrichment);
+
+    const fetchResult = await fetchCompsWithFallback({
+      address,
+      apiKey: key,
+      propertyType: resolvedPropertyTypeFinal,
+      radius: resolvedRadius,
+      daysOld: resolvedDaysOld,
+    });
 
     const subjectFormattedAddress =
       (rentcastProperty?.formattedAddress as string) || address;
@@ -424,7 +414,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { included: validRawComps, excluded: excludedComps } = filterSoldComps(
-      compsRaw,
+      fetchResult.raw,
       {
         subjectAddress: subjectFormattedAddress,
         activeListingAddresses,
@@ -432,7 +422,19 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    const comps = validRawComps.map(mapRawComp);
+    const { qualified: similarityQualified, excluded: similarityExcluded } =
+      filterCompsBySubjectSimilarity(validRawComps, subject, {
+        subjectPropertyType: resolvedPropertyTypeFinal ?? null,
+      });
+
+    const compsRawForScoring =
+      similarityQualified.length >= 3 ? similarityQualified : validRawComps;
+    const excludedCompSummaries = [
+      ...summarizeInvalidExcluded(excludedComps),
+      ...(similarityQualified.length >= 3 ? similarityExcluded : []),
+    ];
+
+    const comps = compsRawForScoring.map(mapRawComp);
 
     if (excludedComps.length > 0) {
       console.log(
@@ -444,13 +446,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { base: autoSubject, enrichment } = await buildAutoSubject(
-      rentcastProperty,
-      activeListing,
-      avm?.price ?? null,
-      true
-    );
-    const { subject, subjectEnrichment } = mergeSubject(autoSubject, body, enrichment);
+    const subjectLocation = extractCoordinates(rentcastProperty);
+    const subjectProfile = buildSubjectProfile(rentcastProperty, subjectLocation);
 
     const { scoredComps: preliminaryScored } = calculateCma(subject, comps);
 
@@ -477,7 +474,8 @@ export async function POST(request: NextRequest) {
       radius: resolvedRadius,
       yearsBack: resolvedDaysOld / 365,
       subject,
-      subjectLocation: extractCoordinates(rentcastProperty),
+      subjectLocation,
+      subjectProfile,
       subjectEnrichment,
       valuation,
       activeListing: activeListing
@@ -488,7 +486,16 @@ export async function POST(request: NextRequest) {
             mlsNumber: activeListing.mlsNumber ?? null,
           }
         : null,
-      compsFiltered: excludedComps.length,
+      compsFiltered: excludedCompSummaries.length,
+      excludedComps: excludedCompSummaries,
+      compStats: {
+        fetched: fetchResult.raw.length,
+        validSold: validRawComps.length,
+        afterSimilarity: compsRawForScoring.length,
+        widenedSearch: fetchResult.widenedSearch,
+        radiusUsed: fetchResult.radiusUsed,
+        daysOldUsed: fetchResult.daysOldUsed,
+      },
       avm: avm
         ? {
             estimatedValue: avm.price ?? null,
