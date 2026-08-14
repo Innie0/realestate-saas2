@@ -17,7 +17,11 @@ import CmaCompCard from '@/components/property-research/CmaCompCard';
 import type { CmaSubjectProfile } from '@/lib/subject-profile';
 import type { ExcludedCompSummary } from '@/lib/comp-filters';
 import { normalizeAddress } from '@/lib/comp-filters';
-import type { CmaConfidence } from '@/lib/cma-confidence';
+import {
+  assessCmaConfidence,
+  shouldShowAddCompForm,
+  type CmaConfidence,
+} from '@/lib/cma-confidence';
 import CmaConfidenceBanner from '@/components/property-research/CmaConfidenceBanner';
 import CmaAddCompForm from '@/components/property-research/CmaAddCompForm';
 import CmaSearchParams, {
@@ -32,7 +36,6 @@ import {
 import { buildCmaPdfPayload, downloadCmaPdf } from '@/lib/export-cma-pdf';
 import { normalizeAddressKey } from '@/lib/property-research-cache';
 import { normalizeCmaResult, CMA_RESULT_VERSION } from '@/lib/cma-result-format';
-import { assessCmaConfidence } from '@/lib/cma-confidence';
 import { isDemoMarketingAddress } from '@/lib/demo-property-research';
 import {
   cmaLocalCacheKey,
@@ -852,16 +855,19 @@ export function CmaPanel({
             )}
           </div>
 
-          <div className="mb-4">
-            <CmaAddCompForm
-              subjectAddress={result.address}
-              subject={subject}
-              activeListingAddresses={
-                result.activeListing?.address ? [result.activeListing.address] : []
-              }
-              onCompAdded={handleCompAdded}
-            />
-          </div>
+          {shouldShowAddCompForm(liveConfidence) && (
+            <div className="mb-4">
+              <CmaAddCompForm
+                subjectAddress={result.address}
+                subject={subject}
+                activeListingAddresses={
+                  result.activeListing?.address ? [result.activeListing.address] : []
+                }
+                onCompAdded={handleCompAdded}
+                fallbackMode
+              />
+            </div>
+          )}
           {activeComps.length === 0 ? (
             <p className="text-[13px] text-gray-600">No comps available.</p>
           ) : (

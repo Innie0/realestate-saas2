@@ -9,6 +9,7 @@ import {
   mapRawComp,
 } from '@/lib/comp-filters';
 import { fetchSoldListingsByAddress } from '@/lib/comp-lookup';
+import { enrichCmaImages } from '@/lib/enrich-cma-images';
 
 function getRentcastKey() {
   return process.env.RENTCAST_API_KEY || null;
@@ -98,11 +99,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Could not score that comp.' }, { status: 500 });
     }
 
+    const { comps: enrichedComps } = await enrichCmaImages({
+      comps: [scored],
+      subjectProfile: null,
+      subjectMlsNumber: null,
+    });
+    const enriched = enrichedComps[0] ?? scored;
+
     return NextResponse.json({
       success: true,
       data: {
         comp: {
-          ...scored,
+          ...enriched,
           selectedForValuation: true,
           manuallyAdded: true,
         },

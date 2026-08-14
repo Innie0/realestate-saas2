@@ -1,9 +1,9 @@
 'use client';
 
-import Image from 'next/image';
 import { Home, X } from 'lucide-react';
 import { formatListingStatus } from '@/lib/comp-filters';
 import { similarityScoreToMatchPercent, type ScoredComp } from '@/lib/cma';
+import CmaListingImage from '@/components/property-research/CmaListingImage';
 
 function fmt(n: number | null | undefined, prefix = '') {
   if (n === null || n === undefined) return '—';
@@ -51,13 +51,11 @@ export default function CmaCompCard({
       <div className="flex gap-0 sm:gap-3">
         <div className="relative h-[88px] w-[100px] shrink-0 bg-gray-100 sm:h-[96px] sm:w-[120px]">
           {comp.imageUrl ? (
-            <Image
+            <CmaListingImage
               src={comp.imageUrl}
               alt=""
-              fill
-              className="object-cover"
+              imageSource={comp.imageSource}
               sizes="120px"
-              unoptimized
             />
           ) : (
             <div className="flex h-full items-center justify-center text-gray-400">

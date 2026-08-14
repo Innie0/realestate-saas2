@@ -46,8 +46,9 @@ export interface CompRecord {
   longitude: number | null;
   listingStatus?: string | null;
   mlsNumber?: string | null;
-  /** Map thumbnail when coordinates exist (Rentcast has no listing photos). */
+  /** Best available preview — MLS listing photo when configured, else Mapbox map thumbnail. */
   imageUrl?: string | null;
+  imageSource?: 'listing' | 'map' | null;
 }
 
 export interface CompAdjustment {
@@ -62,7 +63,6 @@ export interface ScoredComp extends CompRecord {
   adjustedPrice: number | null;
   /** True when this comp is used in the suggested list price */
   selectedForValuation?: boolean;
-  imageUrl?: string | null;
   /** Set when agent adds a comp by address lookup */
   manuallyAdded?: boolean;
 }

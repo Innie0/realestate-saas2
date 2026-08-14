@@ -122,6 +122,11 @@ export function assessCmaConfidence(params: {
   };
 }
 
+/** Manual add-comp is a fallback when automated comp selection is weak. */
+export function shouldShowAddCompForm(confidence: CmaConfidence | null | undefined): boolean {
+  return confidence?.level === 'low';
+}
+
 export function confidenceStyles(level: CmaConfidenceLevel): {
   border: string;
   bg: string;

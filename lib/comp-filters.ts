@@ -352,6 +352,7 @@ export function mapRawComp(raw: Record<string, unknown>) {
   const squareFootage = raw.squareFootage as number | undefined;
   const latitude = typeof raw.latitude === 'number' ? raw.latitude : null;
   const longitude = typeof raw.longitude === 'number' ? raw.longitude : null;
+  const mapImageUrl = propertyStaticImageUrl(latitude, longitude, { width: 280, height: 180 });
 
   return {
     address: compAddressFromRaw(raw),
@@ -369,6 +370,7 @@ export function mapRawComp(raw: Record<string, unknown>) {
     longitude,
     mlsNumber: (raw.mlsNumber as string) ?? null,
     listingStatus: raw.status ? String(raw.status) : null,
-    imageUrl: propertyStaticImageUrl(latitude, longitude, { width: 280, height: 180 }),
+    imageUrl: mapImageUrl,
+    imageSource: (mapImageUrl ? 'map' : null) as 'map' | 'listing' | null,
   };
 }

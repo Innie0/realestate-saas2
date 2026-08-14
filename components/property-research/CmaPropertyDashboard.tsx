@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import {
   Bed,
   Bath,
@@ -12,6 +11,7 @@ import {
   Calendar,
   User,
 } from 'lucide-react';
+import CmaListingImage from '@/components/property-research/CmaListingImage';
 import type { CmaSubjectProfile } from '@/lib/subject-profile';
 import type { SubjectProperty } from '@/lib/cma';
 
@@ -65,13 +65,11 @@ export default function CmaPropertyDashboard({
       <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
         <div className="relative min-h-[180px] bg-gray-100 md:min-h-[220px]">
           {imageUrl ? (
-            <Image
+            <CmaListingImage
               src={imageUrl}
-              alt={`Map preview of ${address}`}
-              fill
-              className="object-cover"
+              alt={`${subjectProfile?.imageSource === 'listing' ? 'Listing photo' : 'Map preview'} of ${address}`}
+              imageSource={subjectProfile?.imageSource}
               sizes="(max-width: 768px) 100vw, 45vw"
-              unoptimized
             />
           ) : (
             <div className="flex h-full min-h-[180px] items-center justify-center text-gray-400 md:min-h-[220px]">

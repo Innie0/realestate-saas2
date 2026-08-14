@@ -9,6 +9,8 @@ export interface CmaAddCompFormProps {
   subject: SubjectProperty;
   activeListingAddresses?: string[];
   disabled?: boolean;
+  /** Shown only when comp confidence is low — copy reflects fallback use. */
+  fallbackMode?: boolean;
   onCompAdded: (comp: ScoredComp) => void;
 }
 
@@ -17,6 +19,7 @@ export default function CmaAddCompForm({
   subject,
   activeListingAddresses = [],
   disabled,
+  fallbackMode,
   onCompAdded,
 }: CmaAddCompFormProps) {
   const [address, setAddress] = useState('');
@@ -60,7 +63,9 @@ export default function CmaAddCompForm({
     >
       <p className="mb-2 text-[12.5px] font-medium text-gray-800">Add comp by address</p>
       <p className="mb-2.5 text-[11.5px] text-gray-600">
-        Know a closed sale that should count? Paste the full address to pull it from listing records.
+        {fallbackMode
+          ? 'Few strong comps were found nearby. If you know a closed sale that should count, paste the full address to pull it from listing records.'
+          : 'Know a closed sale that should count? Paste the full address to pull it from listing records.'}
       </p>
       <div className="flex flex-col gap-2 sm:flex-row">
         <input
