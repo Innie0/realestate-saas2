@@ -96,6 +96,11 @@ export default function CmaCompCard({
                     Selected
                   </span>
                 )}
+                {comp.manuallyAdded && (
+                  <span className="rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-700">
+                    Added by you
+                  </span>
+                )}
               </div>
             </div>
             <div className="flex shrink-0 items-start gap-1">

@@ -16,6 +16,10 @@ import CmaPropertyDashboard from '@/components/property-research/CmaPropertyDash
 import CmaCompCard from '@/components/property-research/CmaCompCard';
 import type { CmaSubjectProfile } from '@/lib/subject-profile';
 import type { ExcludedCompSummary } from '@/lib/comp-filters';
+import { normalizeAddress } from '@/lib/comp-filters';
+import type { CmaConfidence } from '@/lib/cma-confidence';
+import CmaConfidenceBanner from '@/components/property-research/CmaConfidenceBanner';
+import CmaAddCompForm from '@/components/property-research/CmaAddCompForm';
 import CmaSearchParams, {
   CMA_DEFAULT_RADIUS,
   CMA_DEFAULT_YEARS_BACK,
@@ -28,6 +32,7 @@ import {
 import { buildCmaPdfPayload, downloadCmaPdf } from '@/lib/export-cma-pdf';
 import { normalizeAddressKey } from '@/lib/property-research-cache';
 import { normalizeCmaResult, CMA_RESULT_VERSION } from '@/lib/cma-result-format';
+import { assessCmaConfidence } from '@/lib/cma-confidence';
 import { isDemoMarketingAddress } from '@/lib/demo-property-research';
 import {
   cmaLocalCacheKey,
@@ -103,6 +108,7 @@ export interface CmaAnalysisResult {
   comps: ScoredComp[];
   compSelectionNote?: string | null;
   compSelectionAiUsed?: boolean;
+  cmaConfidence?: CmaConfidence | null;
   summary: string | null;
   isDemo?: boolean;
   queriedAt: string;
@@ -177,6 +183,7 @@ export function CmaPanel({
   const [result, setResult] = useState<CmaAnalysisResult | null>(null);
   const [excludedIds, setExcludedIds] = useState<Set<number>>(new Set());
   const [valuationOverrides, setValuationOverrides] = useState<Map<number, boolean>>(new Map());
+  const [manualComps, setManualComps] = useState<ScoredComp[]>([]);
   const [showExcludedComps, setShowExcludedComps] = useState(false);
   const [showAllComps, setShowAllComps] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
@@ -362,6 +369,7 @@ export function CmaPanel({
     setShowAllComps(false);
     setExcludedIds(new Set());
     setValuationOverrides(new Map());
+    setManualComps([]);
     setShowExcludedComps(false);
 
     try {
@@ -418,6 +426,7 @@ export function CmaPanel({
       setError('');
       setExcludedIds(new Set());
     setValuationOverrides(new Map());
+    setManualComps([]);
     setShowExcludedComps(false);
       setShowAllComps(false);
       lastPrefilledKeyRef.current = addressKey;
@@ -437,6 +446,7 @@ export function CmaPanel({
         setError('');
         setExcludedIds(new Set());
     setValuationOverrides(new Map());
+    setManualComps([]);
     setShowExcludedComps(false);
         setShowAllComps(false);
       }
@@ -520,12 +530,24 @@ export function CmaPanel({
     void runWithPrefill();
   }, [runTrigger, runAnalysis, addressKey, street, state]);
 
+  const mergedComps = useMemo(() => {
+    if (!result) return [];
+    const seen = new Set(result.comps.map((c) => normalizeAddress(c.address)).filter(Boolean));
+    const extras = manualComps.filter((c) => {
+      const key = normalizeAddress(c.address);
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    return [...result.comps, ...extras];
+  }, [result, manualComps]);
+
   const activeCompEntries = useMemo((): { realIdx: number; comp: ScoredComp }[] => {
     if (!result) return [];
     const entries: { realIdx: number; comp: ScoredComp }[] = [];
-    for (let realIdx = 0; realIdx < result.comps.length; realIdx += 1) {
+    for (let realIdx = 0; realIdx < mergedComps.length; realIdx += 1) {
       if (excludedIds.has(realIdx)) continue;
-      const comp = result.comps[realIdx];
+      const comp = mergedComps[realIdx];
       const override = valuationOverrides.get(realIdx);
       entries.push({
         realIdx,
@@ -537,7 +559,7 @@ export function CmaPanel({
       });
     }
     return entries;
-  }, [result, excludedIds, valuationOverrides]);
+  }, [result, mergedComps, excludedIds, valuationOverrides]);
 
   const activeComps = useMemo(
     () => activeCompEntries.map((e) => e.comp),
@@ -547,13 +569,22 @@ export function CmaPanel({
   const toggleCompValuation = useCallback((realIdx: number) => {
     setValuationOverrides((prev) => {
       const next = new Map(prev);
-      const comp = result?.comps[realIdx];
+      const comp = mergedComps[realIdx];
       if (!comp) return prev;
-      const current = next.has(realIdx) ? next.get(realIdx)! : (comp.selectedForValuation ?? false);
+      const current = next.has(realIdx) ? next.get(realIdx)! : Boolean(comp.selectedForValuation);
       next.set(realIdx, !current);
       return next;
     });
-  }, [result?.comps]);
+  }, [mergedComps]);
+
+  const handleCompAdded = useCallback((comp: ScoredComp) => {
+    setManualComps((prev) => {
+      const key = normalizeAddress(comp.address);
+      if (key && prev.some((c) => normalizeAddress(c.address) === key)) return prev;
+      return [...prev, { ...comp, selectedForValuation: true, manuallyAdded: true }];
+    });
+    toast.success('Comp added to analysis');
+  }, [toast]);
 
   const sortedActiveCompEntries = useMemo(() => {
     const selected = activeCompEntries.filter((e) => e.comp.selectedForValuation);
@@ -616,6 +647,24 @@ export function CmaPanel({
   const mapAddress = result?.address ?? formattedAddress;
   const hasResults = Boolean(result && !loading && liveValuation);
 
+  const valuationCompsForConfidence = useMemo(
+    () => activeComps.filter((c) => c.selectedForValuation),
+    [activeComps],
+  );
+
+  const liveConfidence = useMemo(
+    () =>
+      assessCmaConfidence({
+        valuationComps: valuationCompsForConfidence,
+        suggestedPrice: liveValuation?.suggestedPrice ?? null,
+        avmPrice: result?.avm?.estimatedValue ?? null,
+        afterSimilarity: result?.compStats?.afterSimilarity ?? valuationCompsForConfidence.length,
+        validSold: result?.compStats?.validSold ?? mergedComps.length,
+        conditionFactor: liveValuation?.conditionFactor ?? 1,
+      }),
+    [valuationCompsForConfidence, liveValuation, result, mergedComps.length],
+  );
+
   const renderResults = () => {
     if (!hasResults || !liveValuation || !result) return null;
 
@@ -649,6 +698,16 @@ export function CmaPanel({
           </div>
         )}
 
+        <CmaConfidenceBanner
+          valuationComps={valuationCompsForConfidence}
+          suggestedPrice={liveValuation.suggestedPrice}
+          avmPrice={result.avm?.estimatedValue ?? null}
+          afterSimilarity={result.compStats?.afterSimilarity ?? valuationCompsForConfidence.length}
+          validSold={result.compStats?.validSold ?? mergedComps.length}
+          conditionFactor={liveValuation.conditionFactor}
+          initial={result.cmaConfidence}
+        />
+
         <CmaPropertyDashboard
           address={result.address}
           subject={subject}
@@ -679,6 +738,9 @@ export function CmaPanel({
               <>
                 <p className="mt-1 text-[28px] font-bold text-gray-900">
                   {fmt(liveValuation.suggestedPrice, '$')}
+                  {liveConfidence.thinMarket && (
+                    <span className="ml-2 text-[14px] font-normal text-amber-700">estimate</span>
+                  )}
                 </p>
                 <p className="text-[13px] text-gray-600">
                   Range: {fmt(liveValuation.priceLow, '$')} – {fmt(liveValuation.priceHigh, '$')} ·{' '}
@@ -782,11 +844,23 @@ export function CmaPanel({
         <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-4">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <p className="text-[12.5px] font-medium text-gray-600">Comparable Sales</p>
-            {activeComps.some((c) => c.selectedForValuation) && (
+            {valuationCompsForConfidence.length > 0 && (
               <p className="text-[11.5px] text-gray-500">
-                Highlighted comps drive the suggested price
+                {valuationCompsForConfidence.length} comp
+                {valuationCompsForConfidence.length !== 1 ? 's' : ''} drive the suggested price
               </p>
             )}
+          </div>
+
+          <div className="mb-4">
+            <CmaAddCompForm
+              subjectAddress={result.address}
+              subject={subject}
+              activeListingAddresses={
+                result.activeListing?.address ? [result.activeListing.address] : []
+              }
+              onCompAdded={handleCompAdded}
+            />
           </div>
           {activeComps.length === 0 ? (
             <p className="text-[13px] text-gray-600">No comps available.</p>

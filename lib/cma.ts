@@ -63,6 +63,8 @@ export interface ScoredComp extends CompRecord {
   /** True when this comp is used in the suggested list price */
   selectedForValuation?: boolean;
   imageUrl?: string | null;
+  /** Set when agent adds a comp by address lookup */
+  manuallyAdded?: boolean;
 }
 
 /** Maximum similarity score from scoreCompSimilarity (for match % display). */

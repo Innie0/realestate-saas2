@@ -8,6 +8,7 @@ import { calculateCma, valueFromSelectedComps, type CompRecord, type SubjectProp
 import { addressesToSelectedComps } from '@/lib/cma-ai-comp-selection';
 import { normalizeAddress } from '@/lib/comp-filters';
 import { propertyStaticImageUrl } from '@/lib/property-static-image';
+import { assessCmaConfidence } from '@/lib/cma-confidence';
 
 const DEMO_OWNER = {
   firstName: 'James',
@@ -318,6 +319,14 @@ export function getDemoMarketAnalysisResponse(
     compSelectionNote:
       'Demo uses three structurally similar sales with matching bed/bath count and comparable square footage.',
     compSelectionAiUsed: false,
+    cmaConfidence: assessCmaConfidence({
+      valuationComps: scoredComps.filter((c) => c.selectedForValuation),
+      suggestedPrice: valuation.suggestedPrice,
+      avmPrice: 1_500_000,
+      afterSimilarity: 3,
+      validSold: 3,
+      conditionFactor: valuation.conditionFactor,
+    }),
     summary,
     queriedAt: new Date().toISOString(),
     isDemo: true,

@@ -32,6 +32,7 @@ import {
 import { fetchCompsWithFallback } from '@/lib/comp-fetch';
 import { buildSubjectProfile } from '@/lib/subject-profile';
 import { extractCoordinates } from '@/lib/cma-map-utils';
+import { assessCmaConfidence } from '@/lib/cma-confidence';
 import {
   getResearchCache,
   setResearchCache,
@@ -458,6 +459,15 @@ export async function POST(request: NextRequest) {
     const { scoredComps, valuation } = valueFromSelectedComps(subject, markedComps);
 
     const valuationComps = scoredComps.filter((c) => c.selectedForValuation);
+    const cmaConfidence = assessCmaConfidence({
+      valuationComps,
+      suggestedPrice: valuation.suggestedPrice,
+      avmPrice: avm?.price ?? null,
+      afterSimilarity: compsRawForScoring.length,
+      validSold: validRawComps.length,
+      conditionFactor: valuation.conditionFactor,
+    });
+
     const summary = await buildAISummary(
       address,
       subject,
@@ -514,6 +524,7 @@ export async function POST(request: NextRequest) {
       comps: scoredComps,
       compSelectionNote,
       compSelectionAiUsed,
+      cmaConfidence,
       summary,
       queriedAt: new Date().toISOString(),
     };
