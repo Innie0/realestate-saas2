@@ -10,7 +10,9 @@ import DataLoadingState from '@/components/dashboard/DataLoadingState';
 import { PropertyResearchPageLoading } from '@/components/dashboard/page-loading';
 import PanelHeader from '@/components/ui/PanelHeader';
 import AnimatedTabPanels from '@/components/motion/AnimatedTabPanels';
-import PropertyResearchSearchCard from '@/components/property-research/PropertyResearchSearchCard';
+import PropertyResearchCommandBar, {
+  type ResearchSearchMode,
+} from '@/components/property-research/PropertyResearchCommandBar';
 import PropertyResearchTips from '@/components/property-research/PropertyResearchTips';
 import { SITE_NAME } from '@/lib/site-config';
 import { useApi } from '@/lib/swr';
@@ -89,6 +91,7 @@ function PropertyResearchContent() {
   const [cmaUsage, setCmaUsage] = useState<{ current: number; limit: number } | null>(null);
   const [lookupLoading, setLookupLoading] = useState(false);
   const [researchSearched, setResearchSearched] = useState(false);
+  const [searchMode, setSearchMode] = useState<ResearchSearchMode>('research');
 
   const { response: usageResponse, mutate: mutateUsage } = useApi('/api/usage');
 
@@ -270,6 +273,24 @@ function PropertyResearchContent() {
     if (cachedCma) setCmaTrigger((n) => n + 1);
   };
 
+  const handleCommandBarSubmit = (
+    fields: { street: string; city: string; state: string; zip: string },
+    mode: ResearchSearchMode,
+  ) => {
+    setStreet(fields.street);
+    setCity(fields.city);
+    setState(fields.state);
+    setZip(fields.zip);
+    setResearchSearched(true);
+    if (mode === 'cma') {
+      setActiveTab('cma');
+      setCmaTrigger((n) => n + 1);
+    } else {
+      setActiveTab('overview');
+      setLookupTrigger((n) => n + 1);
+    }
+  };
+
   const handleSearchAnother = () => {
     setResearchSearched(false);
   };
@@ -298,6 +319,57 @@ function PropertyResearchContent() {
       subtitle={usageMeta ?? 'Look up owners, property details, and run comp-based CMA'}
     >
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
+        {!researchSearched ? (
+          <>
+            <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start">
+              <Card className="p-4">
+                <p className="mb-3 font-mono text-[10.5px] uppercase tracking-[0.06em] text-muted-foreground">
+                  Usage this month
+                </p>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[13px] text-muted-foreground">Lookups</span>
+                    <span className="text-[13px] font-medium text-foreground">{formatUsage(lookupUsage)}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[13px] text-muted-foreground">CMA runs</span>
+                    <span className="text-[13px] font-medium text-foreground">{formatUsage(cmaUsage)}</span>
+                  </div>
+                </div>
+              </Card>
+            </aside>
+
+            <div className="min-w-0 space-y-6">
+              <div className="lg:hidden">
+                <Card className="p-4">
+                  <p className="mb-2 font-mono text-[10.5px] uppercase tracking-[0.06em] text-muted-foreground">
+                    Usage this month
+                  </p>
+                  <div className="flex gap-6 text-[13px]">
+                    <span>
+                      Lookups <strong className="text-foreground">{formatUsage(lookupUsage)}</strong>
+                    </span>
+                    <span>
+                      CMA <strong className="text-foreground">{formatUsage(cmaUsage)}</strong>
+                    </span>
+                  </div>
+                </Card>
+              </div>
+              <PropertyResearchCommandBar
+                mode={searchMode}
+                onModeChange={setSearchMode}
+                onSubmit={handleCommandBarSubmit}
+                history={history}
+                onHistorySelect={loadHistory}
+                states={US_STATES}
+                loading={lookupLoading}
+                onTryDemo={fillDemoAddress}
+              />
+              <PropertyResearchTips />
+            </div>
+          </>
+        ) : (
+          <>
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <Card className="p-4">
             <p className="mb-3 font-mono text-[10.5px] uppercase tracking-[0.06em] text-muted-foreground">
@@ -362,27 +434,7 @@ function PropertyResearchContent() {
         </aside>
 
         <div className="min-w-0 space-y-4">
-          {!researchSearched ? (
-            <>
-              <PropertyResearchSearchCard
-                street={street}
-                city={city}
-                state={state}
-                zip={zip}
-                states={US_STATES}
-                loading={lookupLoading}
-                onStreetChange={setStreet}
-                onCityChange={setCity}
-                onStateChange={setState}
-                onZipChange={setZip}
-                onSubmit={handleResearchAddress}
-                onTryDemo={fillDemoAddress}
-              />
-              <PropertyResearchTips />
-            </>
-          ) : (
-            <>
-              {addressLabel ? (
+          {addressLabel ? (
                 <div className="flex flex-col gap-3 rounded-[10px] border border-border bg-card px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0">
                     <p className="mb-0.5 font-mono text-[10.5px] uppercase tracking-[0.06em] text-muted-foreground">
@@ -477,9 +529,9 @@ function PropertyResearchContent() {
                   ]}
                 />
               </Card>
-            </>
-          )}
         </div>
+          </>
+        )}
       </div>
     </DashboardPage>
   );
