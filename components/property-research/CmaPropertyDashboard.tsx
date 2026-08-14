@@ -43,6 +43,8 @@ export interface CmaPropertyDashboardProps {
   rentMonthly: number | null;
   activeListPrice: number | null;
   compCount: number;
+  /** Hide suggested price when shown in a sticky results header */
+  showSuggestedPrice?: boolean;
 }
 
 export default function CmaPropertyDashboard({
@@ -56,11 +58,12 @@ export default function CmaPropertyDashboard({
   rentMonthly,
   activeListPrice,
   compCount,
+  showSuggestedPrice = true,
 }: CmaPropertyDashboardProps) {
   return (
     <div className="overflow-hidden rounded-[12px] border border-gray-200 bg-[var(--surface)] p-4 md:p-5">
       <div className="flex flex-col gap-4">
-        {suggestedPrice ? (
+        {showSuggestedPrice && suggestedPrice ? (
           <div className="rounded-[10px] border border-gray-150 bg-gray-50/80 px-3 py-2.5">
             <p className="text-[10px] font-mono uppercase tracking-[0.06em] text-gray-500">
               Suggested list

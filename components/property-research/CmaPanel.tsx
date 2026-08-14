@@ -30,7 +30,7 @@ import CmaSearchParams, {
 } from '@/components/property-research/CmaSearchParams';
 import {
   Loader2, AlertCircle,
-  TrendingUp, Sparkles,
+  TrendingUp,
   Download, Info,
 } from 'lucide-react';
 import { buildCmaPdfPayload, downloadCmaPdf } from '@/lib/export-cma-pdf';
@@ -668,37 +668,205 @@ export function CmaPanel({
     [valuationCompsForConfidence, liveValuation, result, mergedComps.length],
   );
 
-  const renderResults = () => {
+  const renderControlsPanel = () => (
+    <>
+      {hasResults && !paramsExpanded ? (
+        <>
+          <CmaSubjectSummary
+            address={mapAddress}
+            subject={subject}
+            subjectEnrichment={subjectEnrichment}
+            manualFields={manualFields}
+            prefilling={prefilling}
+            canPrefill={Boolean(street.trim() && state)}
+            onPrefill={handlePrefill}
+            onUpdateSubject={updateSubject}
+          />
+          <CmaSearchParams
+            radius={radius}
+            yearsBack={yearsBack}
+            propertyType={propertyType}
+            onRadiusChange={setRadius}
+            onYearsBackChange={setYearsBack}
+            onPropertyTypeChange={setPropertyType}
+            collapsed
+            onExpand={() => setParamsExpanded(true)}
+          />
+        </>
+      ) : hasResults && paramsExpanded ? (
+        <>
+          <CmaSearchParams
+            radius={radius}
+            yearsBack={yearsBack}
+            propertyType={propertyType}
+            onRadiusChange={setRadius}
+            onYearsBackChange={setYearsBack}
+            onPropertyTypeChange={setPropertyType}
+          />
+          <CmaSubjectSummary
+            address={mapAddress}
+            subject={subject}
+            subjectEnrichment={subjectEnrichment}
+            manualFields={manualFields}
+            prefilling={prefilling}
+            canPrefill={Boolean(street.trim() && state)}
+            onPrefill={handlePrefill}
+            onUpdateSubject={updateSubject}
+          />
+          <button
+            type="button"
+            onClick={() => setParamsExpanded(false)}
+            className="w-full rounded-[10px] border border-gray-200 py-2 text-[12.5px] font-medium text-gray-700 transition-colors hover:bg-gray-50"
+          >
+            Done editing search
+          </button>
+        </>
+      ) : (
+        <>
+          <CmaSubjectSummary
+            address={mapAddress}
+            subject={subject}
+            subjectEnrichment={subjectEnrichment}
+            manualFields={manualFields}
+            prefilling={prefilling}
+            canPrefill={Boolean(street.trim() && state)}
+            onPrefill={handlePrefill}
+            onUpdateSubject={updateSubject}
+          />
+          <CmaSearchParams
+            radius={radius}
+            yearsBack={yearsBack}
+            propertyType={propertyType}
+            onRadiusChange={setRadius}
+            onYearsBackChange={setYearsBack}
+            onPropertyTypeChange={setPropertyType}
+          />
+        </>
+      )}
+    </>
+  );
+
+  const renderActionBar = () => (
+    <div className="flex flex-wrap items-center gap-2 border-t border-gray-150 pt-3">
+      <button
+        type="button"
+        onClick={handleResetParams}
+        className="rounded-[10px] px-3 py-2 text-[12.5px] font-medium text-gray-600 transition-colors hover:text-gray-900"
+      >
+        Reset defaults
+      </button>
+      <button
+        type="button"
+        onClick={() => runAnalysis(!!result)}
+        disabled={loading || !street.trim() || !state}
+        className="ml-auto flex min-w-[180px] flex-1 items-center justify-center gap-2 rounded-lg bg-brand-500 py-2.5 text-[13px] font-semibold text-[var(--brand-foreground)] transition-colors hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:px-6"
+      >
+        {loading ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" /> Running CMA…
+          </>
+        ) : result ? (
+          <>
+            <TrendingUp className="h-4 w-4" /> Re-run analysis
+          </>
+        ) : (
+          <>
+            <TrendingUp className="h-4 w-4" /> Find comps
+          </>
+        )}
+      </button>
+    </div>
+  );
+
+  const renderCompList = () => {
     if (!hasResults || !liveValuation || !result) return null;
 
     return (
-      <div className="space-y-4 border-t border-gray-150 pt-4">
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+          <p className="text-[13px] font-semibold text-gray-900">Comparable sales</p>
+          {valuationCompsForConfidence.length > 0 && (
+            <p className="text-[11.5px] text-gray-500">
+              {valuationCompsForConfidence.length} used in valuation
+            </p>
+          )}
+        </div>
+
+        {shouldShowAddCompForm(liveConfidence) && (
+          <div className="mb-3">
+            <CmaAddCompForm
+              subjectAddress={result.address}
+              subject={subject}
+              activeListingAddresses={
+                result.activeListing?.address ? [result.activeListing.address] : []
+              }
+              onCompAdded={handleCompAdded}
+              fallbackMode
+            />
+          </div>
+        )}
+
+        {activeComps.length === 0 ? (
+          <p className="text-[13px] text-gray-600">No comps available.</p>
+        ) : (
+          <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-0.5">
+            {visibleCompEntries.map(({ comp, realIdx }) => {
+              const conditionedAdj = comp.adjustedPrice
+                ? Math.round(comp.adjustedPrice * liveValuation.conditionFactor)
+                : null;
+              return (
+                <CmaCompCard
+                  key={realIdx}
+                  comp={comp}
+                  conditionedAdj={conditionedAdj}
+                  selectedForValuation={comp.selectedForValuation === true}
+                  onToggleValuation={() => toggleCompValuation(realIdx)}
+                  onExclude={() => setExcludedIds((prev) => new Set([...prev, realIdx]))}
+                />
+              );
+            })}
+            {activeComps.length > 5 && (
+              <button
+                type="button"
+                onClick={() => setShowAllComps((v) => !v)}
+                className="w-full rounded-[10px] border border-gray-200 py-2 text-[12.5px] text-gray-700 transition-colors hover:bg-gray-50"
+              >
+                {showAllComps ? 'Show fewer' : `Show all ${activeComps.length} comps`}
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderResultsMeta = () => {
+    if (!hasResults || !liveValuation || !result) return null;
+
+    return (
+      <div className="space-y-3 border-t border-gray-150 pt-3">
         {result.isDemo && (
-          <div className="rounded-[10px] border border-gray-200 bg-gray-50 px-4 py-3 text-[13px] text-gray-600">
-            Sample marketing CMA — comps and valuation are fictional for demo purposes.
+          <div className="rounded-[10px] border border-gray-200 bg-gray-50 px-3 py-2.5 text-[12.5px] text-gray-600">
+            Sample marketing CMA — fictional demo data.
           </div>
         )}
         {fromCache && !result.isDemo && (
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] text-emerald-800">
-            <span>Loaded from saved search — no API usage.</span>
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-[10px] border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-[12.5px] text-emerald-800">
+            <span>Cached results</span>
             <button
               type="button"
               onClick={() => runAnalysis(true)}
-              className="text-[12.5px] font-medium text-emerald-700 underline hover:text-emerald-900"
+              className="font-medium text-emerald-700 underline hover:text-emerald-900"
             >
-              Refresh live data
+              Refresh live
             </button>
           </div>
         )}
 
         {result.compSelectionNote && (
-          <div className="rounded-[10px] border border-blue-100 bg-blue-50/80 px-4 py-3 text-[13px] text-gray-700">
-            <div className="mb-1 flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-blue-700" />
-              <p className="text-[12.5px] font-medium text-blue-900">Best-match comps selected</p>
-            </div>
-            <p className="leading-relaxed">{result.compSelectionNote}</p>
-          </div>
+          <p className="rounded-[10px] border border-blue-100 bg-blue-50/80 px-3 py-2 text-[12.5px] leading-relaxed text-gray-700">
+            {result.compSelectionNote}
+          </p>
         )}
 
         <CmaConfidenceBanner
@@ -722,58 +890,24 @@ export function CmaPanel({
           rentMonthly={result.rentEstimate?.monthlyRent ?? null}
           activeListPrice={result.activeListing?.price ?? null}
           compCount={liveValuation.compCount}
+          showSuggestedPrice={false}
         />
 
         {result.compStats && (
-          <p className="text-[12px] text-gray-600">
-            Found {result.compStats.fetched} nearby sale{result.compStats.fetched !== 1 ? 's' : ''} ·{' '}
-            {result.compStats.validSold} valid closed · {result.compStats.afterSimilarity} similar to subject
-            {result.compStats.widenedSearch
-              ? ` (search widened to ${result.compStats.radiusUsed} mi)`
-              : ''}
+          <p className="text-[11.5px] text-gray-600">
+            {result.compStats.fetched} fetched · {result.compStats.validSold} closed ·{' '}
+            {result.compStats.afterSimilarity} similar
+            {result.compStats.widenedSearch ? ` · widened to ${result.compStats.radiusUsed} mi` : ''}
           </p>
         )}
 
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-[12px] text-gray-600">Suggested list price</p>
-            {liveValuation.suggestedPrice ? (
-              <>
-                <p className="mt-1 text-[28px] font-bold text-gray-900">
-                  {fmt(liveValuation.suggestedPrice, '$')}
-                  {liveConfidence.thinMarket && (
-                    <span className="ml-2 text-[14px] font-normal text-amber-700">estimate</span>
-                  )}
-                </p>
-                <p className="text-[13px] text-gray-600">
-                  Range: {fmt(liveValuation.priceLow, '$')} – {fmt(liveValuation.priceHigh, '$')} ·{' '}
-                  {liveValuation.compCount} comp{liveValuation.compCount !== 1 ? 's' : ''}
-                </p>
-              </>
-            ) : (
-              <p className="mt-1 text-[13px] text-gray-600">
-                Not enough comps. Widen radius or sold-within range.
-              </p>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={handleExportPdf}
-            disabled={exportingPdf}
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-[10px] border border-gray-200 bg-[var(--surface)] px-3 py-2 text-[13px] font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
-          >
-            {exportingPdf ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-            Export seller PDF
-          </button>
-        </div>
-
         {result.activeListing && (
-          <div className="flex items-start gap-2 rounded-[10px] border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] text-amber-800">
-            <Info className="mt-0.5 h-4 w-4 flex-shrink-0" />
+          <div className="flex items-start gap-2 rounded-[10px] border border-amber-200 bg-amber-50 px-3 py-2.5 text-[12.5px] text-amber-800">
+            <Info className="mt-0.5 h-4 w-4 shrink-0" />
             <div>
-              <p className="font-medium">Currently listed for sale</p>
-              <p className="mt-0.5 text-[12px] text-amber-700">
-                List price: {fmt(result.activeListing.price, '$')}
+              <p className="font-medium">Currently listed</p>
+              <p className="mt-0.5 text-[11.5px] text-amber-700">
+                {fmt(result.activeListing.price, '$')}
                 {result.activeListing.mlsNumber && ` · MLS #${result.activeListing.mlsNumber}`}
               </p>
             </div>
@@ -785,18 +919,15 @@ export function CmaPanel({
             <button
               type="button"
               onClick={() => setShowExcludedComps((v) => !v)}
-              className="flex w-full items-center justify-between px-4 py-3 text-left text-[13px] font-medium text-gray-700 hover:bg-gray-50"
+              className="flex w-full items-center justify-between px-3 py-2.5 text-left text-[12.5px] font-medium text-gray-700 hover:bg-gray-50"
             >
-              <span>
-                {result.excludedComps!.length} excluded sale
-                {result.excludedComps!.length !== 1 ? 's' : ''} (not used)
-              </span>
-              <span className="text-[12px] text-gray-500">{showExcludedComps ? 'Hide' : 'Show'}</span>
+              <span>{result.excludedComps!.length} excluded sale{result.excludedComps!.length !== 1 ? 's' : ''}</span>
+              <span className="text-[11px] text-gray-500">{showExcludedComps ? 'Hide' : 'Show'}</span>
             </button>
             {showExcludedComps && (
-              <div className="max-h-48 space-y-2 overflow-y-auto border-t border-gray-150 px-4 py-3">
+              <div className="max-h-36 space-y-2 overflow-y-auto border-t border-gray-150 px-3 py-2">
                 {result.excludedComps!.map((row) => (
-                  <div key={row.address} className="text-[12px]">
+                  <div key={row.address} className="text-[11.5px]">
                     <p className="font-medium text-gray-800">{row.address}</p>
                     <p className="text-gray-600">{row.reason}</p>
                   </div>
@@ -806,235 +937,155 @@ export function CmaPanel({
           </div>
         )}
 
-        {result.compsFiltered > 0 && !result.excludedComps?.length && (
-          <p className="text-[12.5px] text-gray-600">
-            {result.compsFiltered} listing{result.compsFiltered !== 1 ? 's' : ''} removed from comps.
-          </p>
-        )}
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-4">
-            <p className="text-[12.5px] text-gray-600 mb-2">AVM Reference</p>
-            {result.avm?.estimatedValue ? (
-              <p className="text-[22px] font-bold text-gray-700">{fmt(result.avm.estimatedValue, '$')}</p>
-            ) : (
-              <p className="text-[13px] text-gray-600">Not available</p>
-            )}
+        <div className="grid grid-cols-2 gap-2">
+          <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] px-3 py-2">
+            <p className="text-[10px] font-medium uppercase tracking-wide text-gray-500">AVM</p>
+            <p className="mt-0.5 text-[14px] font-semibold text-gray-900">
+              {result.avm?.estimatedValue ? fmt(result.avm.estimatedValue, '$') : '—'}
+            </p>
           </div>
-          <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-4">
-            <p className="text-[12.5px] text-gray-600 mb-2">Rent Estimate</p>
-            {result.rentEstimate?.monthlyRent ? (
-              <p className="text-[22px] font-bold text-gray-900">
-                {fmt(result.rentEstimate.monthlyRent, '$')}
-                <span className="text-[14px] font-normal text-gray-600">/mo</span>
-              </p>
-            ) : (
-              <p className="text-[13px] text-gray-600">Not available</p>
-            )}
+          <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] px-3 py-2">
+            <p className="text-[10px] font-medium uppercase tracking-wide text-gray-500">Rent est.</p>
+            <p className="mt-0.5 text-[14px] font-semibold text-gray-900">
+              {result.rentEstimate?.monthlyRent
+                ? `${fmt(result.rentEstimate.monthlyRent, '$')}/mo`
+                : '—'}
+            </p>
           </div>
         </div>
 
         {result.summary && (
-          <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-4">
-            <div className="mb-2 flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-gray-700" />
-              <p className="text-[12.5px] font-medium text-gray-600">Market Summary</p>
-            </div>
-            <p className="text-[13px] leading-relaxed text-gray-600">{result.summary}</p>
+          <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] px-3 py-2.5">
+            <p className="mb-1 text-[11px] font-medium uppercase tracking-wide text-gray-500">
+              Market summary
+            </p>
+            <p className="text-[12.5px] leading-relaxed text-gray-600">{result.summary}</p>
           </div>
         )}
+      </div>
+    );
+  };
 
-        <div className="rounded-[10px] border border-gray-200 bg-[var(--surface)] p-4">
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <p className="text-[12.5px] font-medium text-gray-600">Comparable Sales</p>
-            {valuationCompsForConfidence.length > 0 && (
-              <p className="text-[11.5px] text-gray-500">
-                {valuationCompsForConfidence.length} comp
-                {valuationCompsForConfidence.length !== 1 ? 's' : ''} drive the suggested price
-              </p>
+  const renderResultsStickyHeader = () => {
+    if (!hasResults || !liveValuation || !result) return null;
+
+    return (
+      <div className="sticky top-0 z-20 rounded-[10px] border border-gray-200 bg-[var(--surface)]/95 px-4 py-3 shadow-sm backdrop-blur-sm">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[10px] font-mono uppercase tracking-[0.06em] text-gray-500">
+              Suggested list price
+            </p>
+            {liveValuation.suggestedPrice ? (
+              <>
+                <p className="text-[24px] font-bold leading-tight text-gray-900 sm:text-[28px]">
+                  {fmt(liveValuation.suggestedPrice, '$')}
+                  {liveConfidence.thinMarket && (
+                    <span className="ml-2 text-[13px] font-normal text-amber-700">estimate</span>
+                  )}
+                </p>
+                <p className="text-[12.5px] text-gray-600">
+                  {fmt(liveValuation.priceLow, '$')} – {fmt(liveValuation.priceHigh, '$')} ·{' '}
+                  {liveValuation.compCount} comp{liveValuation.compCount !== 1 ? 's' : ''}
+                </p>
+              </>
+            ) : (
+              <p className="text-[13px] text-gray-600">Not enough comps — widen search settings.</p>
             )}
           </div>
-
-          {shouldShowAddCompForm(liveConfidence) && (
-            <div className="mb-4">
-              <CmaAddCompForm
-                subjectAddress={result.address}
-                subject={subject}
-                activeListingAddresses={
-                  result.activeListing?.address ? [result.activeListing.address] : []
-                }
-                onCompAdded={handleCompAdded}
-                fallbackMode
-              />
-            </div>
-          )}
-          {activeComps.length === 0 ? (
-            <p className="text-[13px] text-gray-600">No comps available.</p>
-          ) : (
-            <div className="space-y-3">
-              {visibleCompEntries.map(({ comp, realIdx }) => {
-                const conditionedAdj = comp.adjustedPrice
-                  ? Math.round(comp.adjustedPrice * liveValuation.conditionFactor)
-                  : null;
-                return (
-                  <CmaCompCard
-                    key={realIdx}
-                    comp={comp}
-                    conditionedAdj={conditionedAdj}
-                    selectedForValuation={comp.selectedForValuation === true}
-                    onToggleValuation={() => toggleCompValuation(realIdx)}
-                    onExclude={() => setExcludedIds((prev) => new Set([...prev, realIdx]))}
-                  />
-                );
-              })}
-              {activeComps.length > 5 && (
-                <button
-                  type="button"
-                  onClick={() => setShowAllComps((v) => !v)}
-                  className="w-full rounded-[10px] border border-gray-200 py-2 text-[12.5px] text-gray-700 transition-colors hover:bg-gray-50"
-                >
-                  {showAllComps ? 'Show fewer' : `Show all ${activeComps.length} comps`}
-                </button>
+          <div className="flex shrink-0 flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setParamsExpanded(true)}
+              className="rounded-[10px] border border-gray-200 px-3 py-2 text-[12.5px] font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Edit search
+            </button>
+            <button
+              type="button"
+              onClick={handleExportPdf}
+              disabled={exportingPdf || !liveValuation.suggestedPrice}
+              className="inline-flex items-center gap-1.5 rounded-[10px] border border-gray-200 bg-[var(--surface)] px-3 py-2 text-[12.5px] font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            >
+              {exportingPdf ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
               )}
-            </div>
-          )}
+              Export PDF
+            </button>
+          </div>
         </div>
       </div>
     );
   };
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-4 rounded-[10px] border border-gray-150 bg-gray-50/50 p-5">
-        {hasResults && (
-          <p className="text-[13px] font-medium text-gray-700">Analysis settings</p>
-        )}
+    <div className="space-y-3">
+      {renderResultsStickyHeader()}
 
-        {hasResults && paramsExpanded ? (
-          <>
-            <CmaSearchParams
-              radius={radius}
-              yearsBack={yearsBack}
-              propertyType={propertyType}
-              onRadiusChange={setRadius}
-              onYearsBackChange={setYearsBack}
-              onPropertyTypeChange={setPropertyType}
-            />
-            <CmaSubjectSummary
-              address={mapAddress}
-              subject={subject}
-              subjectEnrichment={subjectEnrichment}
-              manualFields={manualFields}
-              prefilling={prefilling}
-              canPrefill={Boolean(street.trim() && state)}
-              onPrefill={handlePrefill}
-              onUpdateSubject={updateSubject}
-            />
-            <button
-              type="button"
-              onClick={() => setParamsExpanded(false)}
-              className="w-full rounded-[10px] border border-gray-200 py-2 text-[12.5px] font-medium text-gray-700 transition-colors hover:bg-gray-50"
-            >
-              Done editing search
-            </button>
-          </>
-        ) : hasResults ? (
-          <>
-            <CmaSubjectSummary
-              address={mapAddress}
-              subject={subject}
-              subjectEnrichment={subjectEnrichment}
-              manualFields={manualFields}
-              prefilling={prefilling}
-              canPrefill={Boolean(street.trim() && state)}
-              onPrefill={handlePrefill}
-              onUpdateSubject={updateSubject}
-            />
-            <CmaSearchParams
-              radius={radius}
-              yearsBack={yearsBack}
-              propertyType={propertyType}
-              onRadiusChange={setRadius}
-              onYearsBackChange={setYearsBack}
-              onPropertyTypeChange={setPropertyType}
-              collapsed
-              onExpand={() => setParamsExpanded(true)}
-            />
-          </>
-        ) : (
-          <>
-            <CmaSubjectSummary
-              address={mapAddress}
-              subject={subject}
-              subjectEnrichment={subjectEnrichment}
-              manualFields={manualFields}
-              prefilling={prefilling}
-              canPrefill={Boolean(street.trim() && state)}
-              onPrefill={handlePrefill}
-              onUpdateSubject={updateSubject}
-            />
-            <CmaSearchParams
-              radius={radius}
-              yearsBack={yearsBack}
-              propertyType={propertyType}
-              onRadiusChange={setRadius}
-              onYearsBackChange={setYearsBack}
-              onPropertyTypeChange={setPropertyType}
-            />
-          </>
-        )}
-
-        <div className="space-y-3 rounded-[10px] border border-gray-150 bg-[var(--surface)] p-4">
-          <p className="text-[14px] font-semibold text-gray-900">Search area</p>
-          <p className="text-[12px] text-gray-600">
-            Blue circle shows the comp search radius. Adjust parameters above, then run the analysis.
-          </p>
-          <CmaCompsMap
-            mode={mapHasCompPins ? 'results' : 'preview'}
-            subjectLocation={mapSubjectLocation}
-            comps={mapHasCompPins ? activeComps : []}
-            radiusMiles={radius}
-            subjectAddress={mapAddress}
-          />
+      <div className="grid gap-4 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:items-start">
+        {/* Left: search controls + metadata */}
+        <div className="space-y-3 rounded-[10px] border border-gray-150 bg-gray-50/50 p-4 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
+          {hasResults && (
+            <p className="text-[12px] font-medium uppercase tracking-wide text-gray-500">
+              Search settings
+            </p>
+          )}
+          {renderControlsPanel()}
+          {error && (
+            <div className="flex items-start gap-2 rounded-[10px] border border-rose-200 bg-rose-50 px-3 py-2.5 text-[13px] text-rose-700">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+              {error}
+            </div>
+          )}
+          {renderActionBar()}
+          {renderResultsMeta()}
         </div>
 
-        {renderResults()}
-
-        {error && (
-          <div className="flex items-start gap-2 rounded-[10px] border border-rose-200 bg-rose-50 px-3 py-2.5 text-[13px] text-rose-700">
-            <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
-            {error}
+        {/* Right: map + comp list (sticky on desktop) */}
+        <div className="flex min-h-[360px] flex-col gap-3 lg:sticky lg:top-4 lg:max-h-[calc(100vh-6rem)]">
+          <div className="flex min-h-[280px] flex-1 flex-col overflow-hidden rounded-[10px] border border-gray-200 bg-[var(--surface)] p-3 lg:min-h-[320px]">
+            <div className="mb-2 flex flex-wrap items-center gap-3 text-[11px] text-gray-600">
+              <span className="inline-flex items-center gap-1.5">
+                <span className="inline-block size-2.5 rounded-full bg-[#0668E1]" />
+                Subject
+              </span>
+              {mapHasCompPins && (
+                <>
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="inline-block size-2 rounded-full bg-[#0668E1]" />
+                    In valuation
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="inline-block size-2 rounded-full bg-gray-400" />
+                    Other sale
+                  </span>
+                </>
+              )}
+              <span className="text-gray-500">{radius} mi radius</span>
+            </div>
+            <CmaCompsMap
+              mode={mapHasCompPins ? 'results' : 'preview'}
+              subjectLocation={mapSubjectLocation}
+              comps={mapHasCompPins ? activeComps : []}
+              radiusMiles={radius}
+              subjectAddress={mapAddress}
+              hideLegend
+              mapHeightClassName="min-h-[240px] flex-1"
+            />
           </div>
-        )}
 
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={handleResetParams}
-            className="rounded-[10px] px-3 py-2 text-[12.5px] font-medium text-gray-600 transition-colors hover:text-gray-900"
-          >
-            Reset defaults
-          </button>
-          <button
-            type="button"
-            onClick={() => runAnalysis(!!result)}
-            disabled={loading || !street.trim() || !state}
-            className="ml-auto flex min-w-[200px] flex-1 items-center justify-center gap-2 rounded-lg bg-brand-500 py-2.5 text-[13px] font-semibold text-[var(--brand-foreground)] transition-colors hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:px-8"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" /> Running CMA…
-              </>
-            ) : result ? (
-              <>
-                <TrendingUp className="h-4 w-4" /> Re-run Comp-Based Analysis
-              </>
-            ) : (
-              <>
-                <TrendingUp className="h-4 w-4" /> Run Comp-Based Analysis
-              </>
-            )}
-          </button>
+          {hasResults ? (
+            <div className="flex min-h-[240px] flex-1 flex-col overflow-hidden rounded-[10px] border border-gray-200 bg-[var(--surface)] p-3 lg:min-h-0">
+              {renderCompList()}
+            </div>
+          ) : (
+            <p className="hidden rounded-[10px] border border-dashed border-gray-200 bg-gray-50/80 px-4 py-6 text-center text-[12.5px] text-gray-600 lg:block">
+              Adjust radius and sold-within on the left, then click Find comps. Results appear here with
+              the map.
+            </p>
+          )}
         </div>
       </div>
 
