@@ -25,6 +25,8 @@ import { CMA_RESULT_VERSION, isStaleCmaResult } from '@/lib/cma-result-format';
 import {
   compAddressFromRaw,
   filterSoldComps,
+  filterActiveComps,
+  mergeSoldAndActiveCompPools,
   mapRawComp,
   summarizeInvalidExcluded,
 } from '@/lib/comp-filters';
@@ -34,7 +36,7 @@ import {
   parseSearchCriteriaFromBody,
   type CmaSearchCriteria,
 } from '@/lib/cma-search-criteria';
-import { fetchCompsWithFallback } from '@/lib/comp-fetch';
+import { fetchCompsWithFallback, fetchActiveCompsNear } from '@/lib/comp-fetch';
 import { buildSubjectProfile } from '@/lib/subject-profile';
 import { extractCoordinates } from '@/lib/cma-map-utils';
 import { assessCmaConfidence } from '@/lib/cma-confidence';
@@ -177,13 +179,13 @@ async function buildAutoSubject(
 async function filterCompsForAnalysis(
   address: string,
   key: string,
-  subject: SubjectProperty,
   searchCriteria: CmaSearchCriteria,
   resolvedPropertyTypeFinal: string | undefined,
   resolvedRadius: number,
   resolvedDaysOld: number,
   rentcastProperty: Record<string, unknown> | null,
   activeListing: Record<string, unknown> | null,
+  includeActiveListings: boolean,
 ) {
   const fetchResult = await fetchCompsWithFallback({
     address,
@@ -215,19 +217,40 @@ async function filterCompsForAnalysis(
     },
   );
 
+  let compPool = validRawComps;
+  let activeCompCount = 0;
+  const activeExcluded: { raw: Record<string, unknown>; reason: string }[] = [];
+
+  if (includeActiveListings) {
+    const activeRaw = await fetchActiveCompsNear({
+      address,
+      apiKey: key,
+      propertyType: resolvedPropertyTypeFinal,
+      radius: resolvedRadius,
+    });
+    const { included: validActive, excluded: excludedActive } = filterActiveComps(activeRaw, {
+      subjectAddress: subjectFormattedAddress,
+    });
+    activeExcluded.push(...excludedActive);
+    activeCompCount = validActive.length;
+    compPool = mergeSoldAndActiveCompPools(validRawComps, validActive);
+  }
+
   const { qualified: criteriaQualified, excluded: criteriaExcluded } =
-    filterCompsBySearchCriteria(validRawComps, searchCriteria);
+    filterCompsBySearchCriteria(compPool, searchCriteria);
 
   const criteriaRelaxed = false;
   const compsRawForScoring = criteriaQualified;
   const excludedCompSummaries = [
     ...summarizeInvalidExcluded(excludedComps),
+    ...summarizeInvalidExcluded(activeExcluded),
     ...criteriaExcluded,
   ];
 
   return {
     fetchResult,
     validRawComps,
+    activeCompCount,
     criteriaQualified,
     compsRawForScoring,
     excludedCompSummaries,
@@ -327,6 +350,7 @@ export async function POST(request: NextRequest) {
       prefillOnly,
       forceRefresh,
       matchPreview,
+      includeActiveListings,
     } = body;
 
     if (!street || !state) {
@@ -411,6 +435,8 @@ export async function POST(request: NextRequest) {
 
     const address = buildAddress(street, city, state, zip);
 
+    const resolvedIncludeActive = includeActiveListings !== false;
+
     // Match preview — count comps matching agent filters without using quota
     if (matchPreview === true) {
       const rentcastProperty = await fetchRentcastProperty(street, city, state, zip);
@@ -430,13 +456,13 @@ export async function POST(request: NextRequest) {
       const filtered = await filterCompsForAnalysis(
         address,
         key!,
-        subject,
         searchCriteria,
         resolvedPropertyTypeFinal,
         resolvedRadius,
         resolvedDaysOld,
         rentcastProperty,
         activeListing,
+        resolvedIncludeActive,
       );
 
       return NextResponse.json({
@@ -444,6 +470,7 @@ export async function POST(request: NextRequest) {
         data: {
           matchCount: filtered.criteriaQualified.length,
           validSold: filtered.validRawComps.length,
+          activeComps: filtered.activeCompCount,
           searchCriteria,
           criteriaRelaxed: filtered.criteriaRelaxed,
           minRequired: MIN_COMPS_FOR_STRICT_SEARCH,
@@ -490,6 +517,7 @@ export async function POST(request: NextRequest) {
       radius: resolvedRadius,
       yearsBack: resolvedDaysOld / 365,
       searchCriteria,
+      includeActiveListings: resolvedIncludeActive,
     });
 
     if (!refresh) {
@@ -535,18 +563,19 @@ export async function POST(request: NextRequest) {
     const filtered = await filterCompsForAnalysis(
       address,
       key,
-      subject,
       searchCriteria,
       resolvedPropertyTypeFinal,
       resolvedRadius,
       resolvedDaysOld,
       rentcastProperty,
       activeListing,
+      resolvedIncludeActive,
     );
 
     const {
       fetchResult,
       validRawComps,
+      activeCompCount,
       criteriaQualified,
       compsRawForScoring,
       excludedCompSummaries,
@@ -572,7 +601,9 @@ export async function POST(request: NextRequest) {
     const { scoredComps: preliminaryScored } = calculateCma(subject, comps);
 
     const { selectedAddresses, rationale: compSelectionNote, aiUsed: compSelectionAiUsed } =
-      await selectBestCompsWithAI(subject, resolvedPropertyTypeFinal ?? null, preliminaryScored);
+      await selectBestCompsWithAI(subject, resolvedPropertyTypeFinal ?? null, preliminaryScored, {
+        includeActive: resolvedIncludeActive,
+      });
 
     const markedComps = addressesToSelectedComps(preliminaryScored, selectedAddresses);
     const { scoredComps, valuation } = valueFromSelectedComps(subject, markedComps);
@@ -611,6 +642,7 @@ export async function POST(request: NextRequest) {
       searchCriteria,
       criteriaRelaxed,
       criteriaMatchCount,
+      includeActiveListings: resolvedIncludeActive,
       subject,
       subjectLocation,
       subjectProfile,
@@ -629,6 +661,7 @@ export async function POST(request: NextRequest) {
       compStats: {
         fetched: fetchResult.raw.length,
         validSold: validRawComps.length,
+        activeComps: activeCompCount,
         afterSimilarity: compsRawForScoring.length,
         afterCriteria: criteriaQualified.length,
         widenedSearch: fetchResult.widenedSearch,

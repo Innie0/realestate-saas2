@@ -33,6 +33,7 @@ export function marketAnalysisCacheKey(
     radius?: number;
     yearsBack?: number;
     searchCriteria?: CmaSearchCriteria;
+    includeActiveListings?: boolean;
   }
 ): string {
   const pt = params.propertyType || 'auto';
@@ -41,7 +42,8 @@ export function marketAnalysisCacheKey(
   const criteria = params.searchCriteria
     ? searchCriteriaCacheSuffix(params.searchCriteria)
     : 'default';
-  return `${addressKey}::cma::${pt}::${radius}::${years}::${criteria}`;
+  const active = params.includeActiveListings === false ? 'sold' : 'sold+active';
+  return `${addressKey}::cma::${pt}::${radius}::${years}::${criteria}::${active}`;
 }
 
 export function marketPrefillCacheKey(addressKey: string): string {

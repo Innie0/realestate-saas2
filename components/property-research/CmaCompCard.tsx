@@ -1,7 +1,7 @@
 'use client';
 
 import { X } from 'lucide-react';
-import { formatListingStatus } from '@/lib/comp-filters';
+import { formatListingStatus, isActiveListingComp } from '@/lib/comp-filters';
 import { similarityScoreToMatchPercent, type ScoredComp } from '@/lib/cma';
 
 function fmt(n: number | null | undefined, prefix = '') {
@@ -38,6 +38,7 @@ export default function CmaCompCard({
   onExclude,
 }: CmaCompCardProps) {
   const matchPct = similarityScoreToMatchPercent(comp.similarityScore);
+  const isActive = isActiveListingComp(comp);
 
   return (
     <div
@@ -62,6 +63,11 @@ export default function CmaCompCard({
             >
               {matchPct}% match
             </span>
+            {isActive && (
+              <span className="rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-white">
+                Active
+              </span>
+            )}
           </div>
           <div className="mt-1.5 flex flex-wrap items-center gap-2">
             <label className="inline-flex cursor-pointer items-center gap-1.5 text-[11px] text-gray-700">
@@ -96,13 +102,26 @@ export default function CmaCompCard({
                 {formatListingStatus(comp.listingStatus)} {fmtDate(comp.soldDate)}
               </span>
             )}
+            {!comp.soldDate && comp.listedDate && (
+              <span>Listed {fmtDate(comp.listedDate)}</span>
+            )}
+            {comp.pricePerSqft != null && (
+              <span>${comp.pricePerSqft}/sqft</span>
+            )}
           </div>
         </div>
         <div className="flex shrink-0 items-start gap-1">
           <div className="text-right">
-            <p className="text-[13px] font-bold text-gray-900">{fmt(comp.price, '$')}</p>
+            <p className="text-[13px] font-bold text-gray-900">
+              {fmt(comp.price, '$')}
+              {isActive && (
+                <span className="ml-1 text-[10px] font-normal text-amber-700">list</span>
+              )}
+            </p>
             {conditionedAdj && (
-              <p className="text-[10.5px] text-gray-600">Adj. {fmt(conditionedAdj, '$')}</p>
+              <p className="text-[10.5px] text-gray-600">
+                At subject sqft {fmt(conditionedAdj, '$')}
+              </p>
             )}
           </div>
           <button

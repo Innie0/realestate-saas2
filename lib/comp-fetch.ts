@@ -69,3 +69,23 @@ export async function fetchCompsWithFallback(params: FetchCompsParams): Promise<
 
   return { raw, radiusUsed, daysOldUsed, widenedSearch };
 }
+
+/** Fetch nearby active listings as market comps (Breezy-style). */
+export async function fetchActiveCompsNear(
+  params: Omit<FetchCompsParams, 'daysOld'>,
+): Promise<Record<string, unknown>[]> {
+  const search = new URLSearchParams({
+    address: params.address,
+    status: 'Active',
+    limit: '25',
+    radius: String(params.radius),
+  });
+  if (params.propertyType) search.set('propertyType', params.propertyType);
+
+  const res = await fetch(`${RENTCAST_BASE}/listings/sale?${search}`, {
+    headers: { 'X-Api-Key': params.apiKey, Accept: 'application/json' },
+  });
+  if (!res.ok) return [];
+  const data = await res.json();
+  return Array.isArray(data) ? data : (data?.listings ?? []);
+}

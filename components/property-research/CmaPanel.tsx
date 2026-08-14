@@ -97,6 +97,7 @@ export interface CmaAnalysisResult {
   compStats?: {
     fetched: number;
     validSold: number;
+    activeComps?: number;
     afterSimilarity: number;
     afterCriteria?: number;
     widenedSearch: boolean;
@@ -104,6 +105,7 @@ export interface CmaAnalysisResult {
     daysOldUsed: number;
   };
   searchCriteria?: CmaSearchCriteria;
+  includeActiveListings?: boolean;
   criteriaRelaxed?: boolean;
   criteriaMatchCount?: number;
   subjectProfile?: CmaSubjectProfile | null;
@@ -177,6 +179,7 @@ export function CmaPanel({
   const [propertyType, setPropertyType] = useState('');
   const [radius, setRadius] = useState(0.5);
   const [yearsBack, setYearsBack] = useState(1);
+  const [includeActiveListings, setIncludeActiveListings] = useState(true);
   const [subject, setSubject] = useState<SubjectProperty>(defaultSubject());
   const [subjectLocation, setSubjectLocation] = useState<MapCoordinate | null>(null);
   const [subjectEnrichment, setSubjectEnrichment] = useState<SubjectEnrichmentMeta | null>(null);
@@ -246,6 +249,7 @@ export function CmaPanel({
     forceRefresh,
     matchPreview,
     searchCriteria,
+    includeActiveListings,
     manualFields: Array.from(manualFields),
     bedrooms: subject.bedrooms,
     bathrooms: subject.bathrooms,
@@ -340,6 +344,7 @@ export function CmaPanel({
       radius,
       yearsBack,
       searchCriteria,
+      includeActiveListings,
     });
     const isDemo = isDemoMarketingAddress({
       street: street.trim(),
@@ -367,6 +372,9 @@ export function CmaPanel({
         setFromCache(true);
         if (normalized.searchCriteria) {
           setSearchCriteria(normalized.searchCriteria);
+        }
+        if (normalized.includeActiveListings !== undefined) {
+          setIncludeActiveListings(normalized.includeActiveListings);
         }
         setRadius(normalized.radius ?? 0.5);
         setYearsBack(normalized.yearsBack ?? 1);
@@ -412,6 +420,9 @@ export function CmaPanel({
         if (normalized.searchCriteria) {
           setSearchCriteria(normalized.searchCriteria);
         }
+        if (normalized.includeActiveListings !== undefined) {
+          setIncludeActiveListings(normalized.includeActiveListings);
+        }
         setLocalResearchCache(localKey, normalized);
         onCompleteRef.current?.(normalized);
         toast.success('CMA analysis complete');
@@ -423,7 +434,7 @@ export function CmaPanel({
       isRunningRef.current = false;
       setLoading(false);
     }
-  }, [street, city, state, zip, propertyType, radius, yearsBack, subject, manualFields, searchCriteria, applyPrefillData, applyCachedResult]);
+  }, [street, city, state, zip, propertyType, radius, yearsBack, subject, manualFields, searchCriteria, includeActiveListings, applyPrefillData, applyCachedResult]);
 
   useEffect(() => {
     if (
@@ -553,7 +564,7 @@ export function CmaPanel({
       clearTimeout(timer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- debounced preview on search inputs
-  }, [addressKey, radius, yearsBack, propertyType, searchCriteria, subject]);
+  }, [addressKey, radius, yearsBack, propertyType, searchCriteria, includeActiveListings, subject]);
 
   useEffect(() => {
     if (!result) setParamsExpanded(true);
@@ -694,6 +705,7 @@ export function CmaPanel({
     setRadius(CMA_DEFAULT_RADIUS);
     setYearsBack(CMA_DEFAULT_YEARS_BACK);
     setPropertyType('');
+    setIncludeActiveListings(true);
     setSearchCriteria(defaultSearchCriteriaFromSubject(subject));
   };
 
@@ -743,9 +755,11 @@ export function CmaPanel({
             radius={radius}
             yearsBack={yearsBack}
             propertyType={propertyType}
+            includeActiveListings={includeActiveListings}
             onRadiusChange={setRadius}
             onYearsBackChange={setYearsBack}
             onPropertyTypeChange={setPropertyType}
+            onIncludeActiveListingsChange={setIncludeActiveListings}
             collapsed
             onExpand={() => setParamsExpanded(true)}
           />
@@ -763,9 +777,11 @@ export function CmaPanel({
             radius={radius}
             yearsBack={yearsBack}
             propertyType={propertyType}
+            includeActiveListings={includeActiveListings}
             onRadiusChange={setRadius}
             onYearsBackChange={setYearsBack}
             onPropertyTypeChange={setPropertyType}
+            onIncludeActiveListingsChange={setIncludeActiveListings}
           />
           <CmaAdvancedSearchParams
             subject={subject}
@@ -808,9 +824,11 @@ export function CmaPanel({
             radius={radius}
             yearsBack={yearsBack}
             propertyType={propertyType}
+            includeActiveListings={includeActiveListings}
             onRadiusChange={setRadius}
             onYearsBackChange={setYearsBack}
             onPropertyTypeChange={setPropertyType}
+            onIncludeActiveListingsChange={setIncludeActiveListings}
           />
           <CmaAdvancedSearchParams
             subject={subject}
@@ -906,9 +924,17 @@ export function CmaPanel({
         ) : (
           <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-0.5">
             {visibleCompEntries.map(({ comp, realIdx }) => {
-              const conditionedAdj = comp.adjustedPrice
-                ? Math.round(comp.adjustedPrice * liveValuation.conditionFactor)
-                : null;
+              const impliedAtSubject =
+                comp.pricePerSqft && subject.squareFootage
+                  ? Math.round(
+                      comp.pricePerSqft * subject.squareFootage * liveValuation.conditionFactor,
+                    )
+                  : null;
+              const conditionedAdj =
+                impliedAtSubject ??
+                (comp.adjustedPrice
+                  ? Math.round(comp.adjustedPrice * liveValuation.conditionFactor)
+                  : null);
               return (
                 <CmaCompCard
                   key={realIdx}
@@ -990,8 +1016,11 @@ export function CmaPanel({
 
         {result.compStats && (
           <p className="text-[11.5px] text-gray-600">
-            {result.compStats.fetched} fetched · {result.compStats.validSold} closed ·{' '}
-            {result.compStats.afterCriteria ?? result.compStats.afterSimilarity} match filters
+            {result.compStats.fetched} fetched · {result.compStats.validSold} closed
+            {(result.compStats.activeComps ?? 0) > 0
+              ? ` · ${result.compStats.activeComps} active`
+              : ''}{' '}
+            · {result.compStats.afterCriteria ?? result.compStats.afterSimilarity} match filters
             {result.compStats.widenedSearch ? ` · widened to ${result.compStats.radiusUsed} mi` : ''}
           </p>
         )}

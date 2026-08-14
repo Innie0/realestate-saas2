@@ -351,6 +351,9 @@ export function mapRawComp(raw: Record<string, unknown>) {
   const squareFootage = raw.squareFootage as number | undefined;
   const latitude = typeof raw.latitude === 'number' ? raw.latitude : null;
   const longitude = typeof raw.longitude === 'number' ? raw.longitude : null;
+  const listedDateRaw = raw.listedDate;
+  const listedDate =
+    typeof listedDateRaw === 'string' && listedDateRaw.trim() ? listedDateRaw : null;
 
   return {
     address: compAddressFromRaw(raw),
@@ -359,14 +362,100 @@ export function mapRawComp(raw: Record<string, unknown>) {
     bedrooms: (raw.bedrooms as number) ?? null,
     bathrooms: (raw.bathrooms as number) ?? null,
     squareFootage: squareFootage ?? null,
+    lotSize: typeof raw.lotSize === 'number' ? raw.lotSize : null,
+    yearBuilt: typeof raw.yearBuilt === 'number' ? raw.yearBuilt : null,
     pricePerSqft:
       price && squareFootage ? Math.round(price / squareFootage) : null,
     daysOnMarket: (raw.daysOnMarket as number) ?? null,
     soldDate,
+    listedDate: soldDate ? null : listedDate,
     distance: (raw.distance as number) ?? null,
     latitude,
     longitude,
     mlsNumber: (raw.mlsNumber as string) ?? null,
     listingStatus: raw.status ? String(raw.status) : null,
   };
+}
+
+function isActiveStatus(status: string): boolean {
+  return status === 'active' || status.includes('coming soon');
+}
+
+/** Whether a comp record represents an active listing (not closed). */
+export function isActiveListingComp(comp: { listingStatus?: string | null; soldDate?: string | null }): boolean {
+  const status = String(comp.listingStatus ?? '').toLowerCase();
+  if (isActiveStatus(status)) return true;
+  return !comp.soldDate && status !== 'sold' && status !== 'closed' && status !== 'inactive';
+}
+
+export function getActiveCompExclusionReason(
+  raw: Record<string, unknown>,
+  options: Pick<CompFilterOptions, 'subjectAddress'>,
+): string | null {
+  const compAddr = compAddressFromRaw(raw);
+  const status = String(raw.status ?? '').toLowerCase();
+
+  if (isSameAddress(compAddr, options.subjectAddress)) {
+    return 'Same property as subject';
+  }
+
+  if (!isActiveStatus(status)) {
+    return 'Not an active listing';
+  }
+
+  if (!raw.price || Number(raw.price) <= 0) {
+    return 'Missing list price';
+  }
+
+  const distance = typeof raw.distance === 'number' ? raw.distance : null;
+  if (distance !== null && distance < 0.02) {
+    const subjectKey = normalizeAddress(options.subjectAddress);
+    const compKey = normalizeAddress(compAddr);
+    if (subjectKey && compKey && subjectKey === compKey) {
+      return 'Same property as subject';
+    }
+  }
+
+  return null;
+}
+
+/** Filter raw Rentcast active listings for use as market comps. */
+export function filterActiveComps(
+  rawComps: Record<string, unknown>[],
+  options: Pick<CompFilterOptions, 'subjectAddress'>,
+): CompFilterResult {
+  const included: Record<string, unknown>[] = [];
+  const excluded: { raw: Record<string, unknown>; reason: string }[] = [];
+
+  for (const raw of rawComps) {
+    const reason = getActiveCompExclusionReason(raw, options);
+    if (reason) {
+      excluded.push({ raw, reason });
+    } else {
+      included.push(raw);
+    }
+  }
+
+  return { included, excluded };
+}
+
+/** Merge sold + active comp pools; sold record wins on duplicate address. */
+export function mergeSoldAndActiveCompPools(
+  sold: Record<string, unknown>[],
+  active: Record<string, unknown>[],
+): Record<string, unknown>[] {
+  const byKey = new Map<string, Record<string, unknown>>();
+
+  for (const raw of sold) {
+    const key = normalizeAddress(compAddressFromRaw(raw));
+    if (key) byKey.set(key, raw);
+  }
+
+  for (const raw of active) {
+    const key = normalizeAddress(compAddressFromRaw(raw));
+    if (!key || byKey.has(key)) continue;
+    byKey.set(key, raw);
+  }
+
+  return [...byKey.values()];
 }

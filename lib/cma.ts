@@ -41,6 +41,8 @@ export interface CompRecord {
   pricePerSqft: number | null;
   daysOnMarket: number | null;
   soldDate: string | null;
+  /** List date for active/pending comps */
+  listedDate?: string | null;
   distance: number | null;
   latitude: number | null;
   longitude: number | null;
@@ -179,6 +181,10 @@ export function scoreCompSimilarity(subject: SubjectProperty, comp: CompRecord):
     if (daysSince <= 180) score += 15;
     else if (daysSince <= 365) score += 10;
     else if (daysSince <= 730) score += 5;
+  } else if (comp.listedDate) {
+    const daysSince = (Date.now() - new Date(comp.listedDate).getTime()) / 86_400_000;
+    if (daysSince <= 90) score += 12;
+    else if (daysSince <= 180) score += 8;
   }
 
   return score;
@@ -287,31 +293,63 @@ export function valueFromSelectedComps(
   });
 
   const conditionFactor = getConditionFactor(subject.condition);
-  const conditioned = reScoredSelected
-    .map((c) => c.adjustedPrice)
-    .filter((p): p is number => p !== null && p > 0)
-    .map((p) => Math.round(p * conditionFactor));
 
-  const medianAdjusted = median(conditioned);
+  // Breezy-style primary: mean $/sqft of selected comps × subject living area
+  let suggestedPrice: number | null = null;
   let priceLow: number | null = null;
   let priceHigh: number | null = null;
 
-  if (conditioned.length >= 2) {
-    const sorted = [...conditioned].sort((a, b) => a - b);
-    priceLow = sorted[0];
-    priceHigh = sorted[sorted.length - 1];
-  } else if (conditioned.length === 1) {
-    priceLow = Math.round(conditioned[0] * 0.97);
-    priceHigh = Math.round(conditioned[0] * 1.03);
+  if (
+    subject.squareFootage &&
+    subject.squareFootage > 0 &&
+    ppsfValues.length > 0
+  ) {
+    const meanPpsf = Math.round(
+      ppsfValues.reduce((sum, v) => sum + v, 0) / ppsfValues.length,
+    );
+    const breezyBase = Math.round(meanPpsf * subject.squareFootage);
+    suggestedPrice = Math.round(breezyBase * conditionFactor);
+
+    const impliedPrices = ppsfValues.map((ppsf) =>
+      Math.round(ppsf * subject.squareFootage! * conditionFactor),
+    );
+    if (impliedPrices.length >= 2) {
+      const sorted = [...impliedPrices].sort((a, b) => a - b);
+      priceLow = sorted[0];
+      priceHigh = sorted[sorted.length - 1];
+    } else if (impliedPrices.length === 1) {
+      priceLow = Math.round(impliedPrices[0] * 0.97);
+      priceHigh = Math.round(impliedPrices[0] * 1.03);
+    }
+  }
+
+  // Fallback: median of feature-adjusted sale prices
+  if (suggestedPrice == null) {
+    const conditioned = reScoredSelected
+      .map((c) => c.adjustedPrice)
+      .filter((p): p is number => p !== null && p > 0)
+      .map((p) => Math.round(p * conditionFactor));
+
+    const medianAdjusted = median(conditioned);
+    suggestedPrice = medianAdjusted;
+
+    if (conditioned.length >= 2) {
+      const sorted = [...conditioned].sort((a, b) => a - b);
+      priceLow = sorted[0];
+      priceHigh = sorted[sorted.length - 1];
+    } else if (conditioned.length === 1) {
+      priceLow = Math.round(conditioned[0] * 0.97);
+      priceHigh = Math.round(conditioned[0] * 1.03);
+    }
   }
 
   return {
     scoredComps: merged,
     valuation: {
-      suggestedPrice: medianAdjusted,
+      suggestedPrice,
       priceLow,
       priceHigh,
-      medianAdjustedPrice: medianAdjusted,
+      medianAdjustedPrice: suggestedPrice,
       compCount: reScoredSelected.length,
       medianPricePerSqft: medianPpsf,
       conditionFactor,

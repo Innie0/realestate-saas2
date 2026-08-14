@@ -71,6 +71,7 @@ export function cmaLocalCacheKey(
     radius?: number;
     yearsBack?: number;
     searchCriteria?: CmaSearchCriteria;
+    includeActiveListings?: boolean;
   }
 ): string {
   const pt = params.propertyType || 'auto';
@@ -79,7 +80,8 @@ export function cmaLocalCacheKey(
   const criteria = params.searchCriteria
     ? searchCriteriaCacheSuffix(params.searchCriteria)
     : 'default';
-  return `${addressKey}::cma::${pt}::${radius}::${years}::${criteria}`;
+  const active = params.includeActiveListings === false ? 'sold' : 'sold+active';
+  return `${addressKey}::cma::${pt}::${radius}::${years}::${criteria}::${active}`;
 }
 
 /** Return the most recently saved CMA cache entry for an address (any radius/type). */

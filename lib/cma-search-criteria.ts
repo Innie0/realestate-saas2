@@ -136,25 +136,25 @@ export function getSearchCriteriaExclusionReason(
 ): string | null {
   const sqft = raw.squareFootage as number | undefined;
   if (criteria.sqftEnabled) {
-    if (!sqft || sqft <= 0) return 'Missing living area for sqft filter';
-    if (!inRange(sqft, criteria.sqftMin, criteria.sqftMax)) {
-      const min = criteria.sqftMin?.toLocaleString() ?? '—';
-      const max = criteria.sqftMax?.toLocaleString() ?? '—';
-      return `Living area ${sqft.toLocaleString()} sqft outside ${min}–${max}`;
+    if (sqft && sqft > 0) {
+      if (!inRange(sqft, criteria.sqftMin, criteria.sqftMax)) {
+        const min = criteria.sqftMin?.toLocaleString() ?? '—';
+        const max = criteria.sqftMax?.toLocaleString() ?? '—';
+        return `Living area ${sqft.toLocaleString()} sqft outside ${min}–${max}`;
+      }
     }
+    // Missing sqft — keep comp (Rentcast often omits size on active listings)
   }
 
   const beds = raw.bedrooms as number | undefined;
-  if (criteria.bedsEnabled) {
-    if (beds == null) return 'Missing bedroom count';
+  if (criteria.bedsEnabled && beds != null) {
     if (!inRange(beds, criteria.bedsMin, criteria.bedsMax)) {
       return `Bedrooms (${beds}) outside ${criteria.bedsMin ?? '—'}–${criteria.bedsMax ?? '—'}`;
     }
   }
 
   const baths = raw.bathrooms as number | undefined;
-  if (criteria.bathsEnabled) {
-    if (baths == null) return 'Missing bathroom count';
+  if (criteria.bathsEnabled && baths != null) {
     if (!inRange(baths, criteria.bathsMin, criteria.bathsMax)) {
       return `Bathrooms (${baths}) outside ${criteria.bathsMin ?? '—'}–${criteria.bathsMax ?? '—'}`;
     }

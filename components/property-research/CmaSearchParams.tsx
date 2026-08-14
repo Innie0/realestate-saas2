@@ -61,9 +61,11 @@ export interface CmaSearchParamsProps {
   radius: number;
   yearsBack: number;
   propertyType: string;
+  includeActiveListings: boolean;
   onRadiusChange: (radius: number) => void;
   onYearsBackChange: (years: number) => void;
   onPropertyTypeChange: (type: string) => void;
+  onIncludeActiveListingsChange: (value: boolean) => void;
   /** When true, show one-line summary with Edit to expand */
   collapsed?: boolean;
   onExpand?: () => void;
@@ -73,9 +75,11 @@ export default function CmaSearchParams({
   radius,
   yearsBack,
   propertyType,
+  includeActiveListings,
   onRadiusChange,
   onYearsBackChange,
   onPropertyTypeChange,
+  onIncludeActiveListingsChange,
   collapsed = false,
   onExpand,
 }: CmaSearchParamsProps) {
@@ -153,6 +157,30 @@ export default function CmaSearchParams({
           ))}
         </div>
       </div>
+
+      <label className="flex cursor-pointer items-center justify-between gap-3 rounded-[10px] border border-gray-200 bg-[var(--surface)] px-3 py-2.5">
+        <div>
+          <p className="text-[12.5px] font-medium text-gray-900">Include active listings</p>
+          <p className="text-[11px] text-gray-500">Use nearby list prices as market comps (Breezy-style)</p>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={includeActiveListings}
+          onClick={() => onIncludeActiveListingsChange(!includeActiveListings)}
+          className={cn(
+            'relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors',
+            includeActiveListings ? 'bg-gray-900' : 'bg-gray-300',
+          )}
+        >
+          <span
+            className={cn(
+              'inline-block size-3.5 rounded-full bg-white shadow transition-transform',
+              includeActiveListings ? 'translate-x-[18px]' : 'translate-x-[3px]',
+            )}
+          />
+        </button>
+      </label>
     </div>
   );
 }

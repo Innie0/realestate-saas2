@@ -1,14 +1,13 @@
 /**
- * AI-assisted selection of the best comparable sales for CMA valuation.
- * Picks a small set of structurally similar closed sales — not just nearby sold listings.
+ * Comparable selection for CMA valuation — similarity-ranked with sold + active mix.
  */
 
 import type { ScoredComp, SubjectProperty } from '@/lib/cma';
-import { normalizeAddress } from '@/lib/comp-filters';
+import { isActiveListingComp, normalizeAddress } from '@/lib/comp-filters';
 
-const MAX_CANDIDATES = 18;
 const TARGET_SELECTED = 5;
 const MIN_SELECTED = 2;
+const STRONG_SCORE = 35;
 
 export interface AiCompSelectionResult {
   selectedAddresses: Set<string>;
@@ -16,184 +15,92 @@ export interface AiCompSelectionResult {
   aiUsed: boolean;
 }
 
-type CandidatePayload = {
-  id: number;
-  address: string;
-  propertyType: string | null;
-  price: number | null;
-  bedrooms: number | null;
-  bathrooms: number | null;
-  squareFootage: number | null;
-  soldDate: string | null;
-  listingStatus: string | null;
-  distanceMiles: number | null;
-  similarityScore: number;
-};
-
-function buildCandidates(scoredComps: ScoredComp[]): CandidatePayload[] {
-  return scoredComps.slice(0, MAX_CANDIDATES).map((comp, id) => ({
-    id,
-    address: comp.address,
-    propertyType: comp.propertyType ?? null,
-    price: comp.price,
-    bedrooms: comp.bedrooms,
-    bathrooms: comp.bathrooms,
-    squareFootage: comp.squareFootage,
-    soldDate: comp.soldDate,
-    listingStatus: comp.listingStatus ?? null,
-    distanceMiles: comp.distance,
-    similarityScore: comp.similarityScore,
-  }));
-}
-
-function fallbackSelection(scoredComps: ScoredComp[]): Set<string> {
-  const strong = scoredComps.filter((c) => c.similarityScore >= 35);
-  const pool = (strong.length >= MIN_SELECTED ? strong : scoredComps).slice(0, TARGET_SELECTED);
-  return new Set(pool.map((c) => normalizeAddress(c.address)).filter(Boolean));
-}
-
-/** Similarity-ranked comp picks when AI is unavailable or for upgrading stale cache. */
-export function fallbackCompSelectionAddresses(scoredComps: ScoredComp[]): Set<string> {
-  return fallbackSelection(scoredComps);
-}
-
-function parseAiSelection(
-  raw: string,
-  candidates: CandidatePayload[],
-): { selectedIds: number[]; summary: string | null } | null {
-  const jsonMatch = raw.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) return null;
-
-  try {
-    const parsed = JSON.parse(jsonMatch[0]) as {
-      selectedIds?: unknown;
-      summary?: unknown;
-    };
-    if (!Array.isArray(parsed.selectedIds)) return null;
-
-    const validIds = new Set(candidates.map((c) => c.id));
-    const selectedIds = parsed.selectedIds
-      .filter((id): id is number => typeof id === 'number' && validIds.has(id))
-      .slice(0, TARGET_SELECTED);
-
-    if (selectedIds.length < MIN_SELECTED) return null;
-
-    return {
-      selectedIds,
-      summary: typeof parsed.summary === 'string' ? parsed.summary.trim() : null,
-    };
-  } catch {
-    return null;
-  }
+function compKey(comp: ScoredComp): string {
+  return normalizeAddress(comp.address);
 }
 
 /**
- * Use OpenAI to pick the best comps for valuation. Falls back to similarity ranking on failure.
+ * Breezy-style selection: top similarity matches, ensuring sold + active mix when available.
  */
-export async function selectBestCompsWithAI(
-  subject: SubjectProperty,
-  propertyType: string | null,
+export function selectCompsBySimilarity(
   scoredComps: ScoredComp[],
+  options?: { includeActive?: boolean; maxSelected?: number },
+): AiCompSelectionResult {
+  const maxSelected = options?.maxSelected ?? TARGET_SELECTED;
+  const includeActive = options?.includeActive !== false;
+
+  if (scoredComps.length === 0) {
+    return { selectedAddresses: new Set(), rationale: null, aiUsed: false };
+  }
+
+  const sorted = [...scoredComps].sort((a, b) => b.similarityScore - a.similarityScore);
+  const strong = sorted.filter((c) => c.similarityScore >= STRONG_SCORE);
+  const pool = strong.length >= MIN_SELECTED ? strong : sorted;
+
+  const picked: ScoredComp[] = [];
+  const pickedKeys = new Set<string>();
+
+  const add = (comp: ScoredComp | undefined) => {
+    if (!comp || picked.length >= maxSelected) return;
+    const key = compKey(comp);
+    if (!key || pickedKeys.has(key)) return;
+    pickedKeys.add(key);
+    picked.push(comp);
+  };
+
+  if (includeActive) {
+    add(pool.find((c) => !isActiveListingComp(c)));
+    add(pool.find((c) => isActiveListingComp(c)));
+  }
+
+  for (const comp of pool) {
+    if (picked.length >= maxSelected) break;
+    add(comp);
+  }
+
+  if (picked.length < MIN_SELECTED) {
+    for (const comp of sorted) {
+      if (picked.length >= Math.min(maxSelected, MIN_SELECTED)) break;
+      add(comp);
+    }
+  }
+
+  const soldCount = picked.filter((c) => !isActiveListingComp(c)).length;
+  const activeCount = picked.length - soldCount;
+
+  let rationale = `Selected ${picked.length} best-matching comp${picked.length !== 1 ? 's' : ''} by similarity`;
+  if (includeActive && activeCount > 0 && soldCount > 0) {
+    rationale = `${soldCount} closed sale${soldCount !== 1 ? 's' : ''} and ${activeCount} active listing${activeCount !== 1 ? 's' : ''} — top matches for this subject.`;
+  } else if (activeCount > 0) {
+    rationale = `${activeCount} active listing${activeCount !== 1 ? 's' : ''} included as market comps.`;
+  }
+
+  return {
+    selectedAddresses: new Set(picked.map((c) => compKey(c)).filter(Boolean)),
+    rationale,
+    aiUsed: false,
+  };
+}
+
+/** Similarity-ranked comp picks for upgrading stale cache. */
+export function fallbackCompSelectionAddresses(scoredComps: ScoredComp[]): Set<string> {
+  return selectCompsBySimilarity(scoredComps).selectedAddresses;
+}
+
+/** Pick the best comps for valuation — similarity-ranked with sold + active mix. */
+export async function selectBestCompsWithAI(
+  _subject: SubjectProperty,
+  _propertyType: string | null,
+  scoredComps: ScoredComp[],
+  options?: { includeActive?: boolean },
 ): Promise<AiCompSelectionResult> {
   if (scoredComps.length === 0) {
     return { selectedAddresses: new Set(), rationale: null, aiUsed: false };
   }
 
-  if (scoredComps.length <= MIN_SELECTED) {
-    return {
-      selectedAddresses: new Set(
-        scoredComps.map((c) => normalizeAddress(c.address)).filter(Boolean),
-      ),
-      rationale: 'Using all available comparable sales in this area.',
-      aiUsed: false,
-    };
-  }
-
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    return {
-      selectedAddresses: fallbackSelection(scoredComps),
-      rationale: null,
-      aiUsed: false,
-    };
-  }
-
-  const candidates = buildCandidates(scoredComps);
-
-  const subjectPayload = {
-    propertyType,
-    bedrooms: subject.bedrooms,
-    bathrooms: subject.bathrooms,
-    squareFootage: subject.squareFootage,
-    lotSize: subject.lotSize,
-    yearBuilt: subject.yearBuilt,
-    condition: subject.condition,
-    hasPool: subject.hasPool,
-    garageSpaces: subject.garageSpaces,
-  };
-
-  const prompt = `You are a licensed appraiser assistant selecting comparable CLOSED sales for a CMA.
-
-Pick ${MIN_SELECTED}–${TARGET_SELECTED} comps that best match the SUBJECT for list-price valuation.
-
-Prioritize (in order):
-1. Similar living area (sqft within ~15–20% when possible)
-2. Same property type and similar bed/bath count
-3. Recent verified closed sale (not pending/active)
-4. Proximity — tie-breaker only; do NOT pick a nearby sale if size/type mismatch badly
-
-Reject comps that are likely not closed sales, wrong property type, or much larger/smaller than subject unless no better options exist.
-
-SUBJECT:
-${JSON.stringify(subjectPayload, null, 2)}
-
-CANDIDATES (id is index — only use these ids):
-${JSON.stringify(candidates, null, 2)}
-
-Reply with JSON only:
-{
-  "selectedIds": [0, 2],
-  "summary": "One sentence explaining why these comps match the subject."
-}`;
-
-  try {
-    const { OpenAI } = await import('openai');
-    const openai = new OpenAI({ apiKey });
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 400,
-      temperature: 0,
-      response_format: { type: 'json_object' },
-    });
-
-    const content = completion.choices[0]?.message?.content?.trim();
-    if (!content) throw new Error('Empty AI response');
-
-    const parsed = parseAiSelection(content, candidates);
-    if (!parsed) throw new Error('Invalid AI selection JSON');
-
-    const selectedAddresses = new Set(
-      parsed.selectedIds
-        .map((id) => normalizeAddress(candidates[id]?.address ?? ''))
-        .filter(Boolean),
-    );
-
-    if (selectedAddresses.size < MIN_SELECTED) throw new Error('Too few AI selections');
-
-    return {
-      selectedAddresses,
-      rationale: parsed.summary,
-      aiUsed: true,
-    };
-  } catch (err) {
-    console.warn('AI comp selection failed (using similarity fallback):', err);
-    return {
-      selectedAddresses: fallbackSelection(scoredComps),
-      rationale: null,
-      aiUsed: false,
-    };
-  }
+  return selectCompsBySimilarity(scoredComps, {
+    includeActive: options?.includeActive !== false,
+  });
 }
 
 export function addressesToSelectedComps(
