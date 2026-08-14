@@ -4,6 +4,10 @@
  */
 
 import type { SupabaseClient } from '@supabase/supabase-js';
+import {
+  searchCriteriaCacheSuffix,
+  type CmaSearchCriteria,
+} from '@/lib/cma-search-criteria';
 
 export type ResearchCacheType = 'property_lookup' | 'market_analysis' | 'market_prefill';
 
@@ -24,12 +28,20 @@ export function normalizeAddressKey(parts: {
 
 export function marketAnalysisCacheKey(
   addressKey: string,
-  params: { propertyType?: string; radius?: number; yearsBack?: number }
+  params: {
+    propertyType?: string;
+    radius?: number;
+    yearsBack?: number;
+    searchCriteria?: CmaSearchCriteria;
+  }
 ): string {
   const pt = params.propertyType || 'auto';
   const radius = params.radius ?? 0.5;
   const years = params.yearsBack ?? 1;
-  return `${addressKey}::cma::${pt}::${radius}::${years}`;
+  const criteria = params.searchCriteria
+    ? searchCriteriaCacheSuffix(params.searchCriteria)
+    : 'default';
+  return `${addressKey}::cma::${pt}::${radius}::${years}::${criteria}`;
 }
 
 export function marketPrefillCacheKey(addressKey: string): string {

@@ -1,5 +1,10 @@
 'use client';
 
+import {
+  searchCriteriaCacheSuffix,
+  type CmaSearchCriteria,
+} from '@/lib/cma-search-criteria';
+
 const STORAGE_KEY = 'oikaro_research_cache_v1';
 const DEFAULT_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -61,12 +66,20 @@ export function lookupLocalCacheKey(addressKey: string): string {
 
 export function cmaLocalCacheKey(
   addressKey: string,
-  params: { propertyType?: string; radius?: number; yearsBack?: number }
+  params: {
+    propertyType?: string;
+    radius?: number;
+    yearsBack?: number;
+    searchCriteria?: CmaSearchCriteria;
+  }
 ): string {
   const pt = params.propertyType || 'auto';
   const radius = params.radius ?? 0.5;
   const years = params.yearsBack ?? 1;
-  return `${addressKey}::cma::${pt}::${radius}::${years}`;
+  const criteria = params.searchCriteria
+    ? searchCriteriaCacheSuffix(params.searchCriteria)
+    : 'default';
+  return `${addressKey}::cma::${pt}::${radius}::${years}::${criteria}`;
 }
 
 /** Return the most recently saved CMA cache entry for an address (any radius/type). */

@@ -24,11 +24,16 @@ import {
 import { CMA_RESULT_VERSION, isStaleCmaResult } from '@/lib/cma-result-format';
 import {
   compAddressFromRaw,
-  filterCompsBySubjectSimilarity,
   filterSoldComps,
   mapRawComp,
   summarizeInvalidExcluded,
 } from '@/lib/comp-filters';
+import {
+  filterCompsBySearchCriteria,
+  MIN_COMPS_FOR_STRICT_SEARCH,
+  parseSearchCriteriaFromBody,
+  type CmaSearchCriteria,
+} from '@/lib/cma-search-criteria';
 import { fetchCompsWithFallback } from '@/lib/comp-fetch';
 import { buildSubjectProfile } from '@/lib/subject-profile';
 import { extractCoordinates } from '@/lib/cma-map-utils';
@@ -169,6 +174,69 @@ async function buildAutoSubject(
   return { base, enrichment: enrichment ?? null };
 }
 
+async function filterCompsForAnalysis(
+  address: string,
+  key: string,
+  subject: SubjectProperty,
+  searchCriteria: CmaSearchCriteria,
+  resolvedPropertyTypeFinal: string | undefined,
+  resolvedRadius: number,
+  resolvedDaysOld: number,
+  rentcastProperty: Record<string, unknown> | null,
+  activeListing: Record<string, unknown> | null,
+) {
+  const fetchResult = await fetchCompsWithFallback({
+    address,
+    apiKey: key,
+    propertyType: resolvedPropertyTypeFinal,
+    radius: resolvedRadius,
+    daysOld: resolvedDaysOld,
+  });
+
+  const subjectFormattedAddress =
+    (rentcastProperty?.formattedAddress as string) || address;
+
+  const activeListingAddresses: string[] = [];
+  const activeMlsNumbers: string[] = [];
+  if (activeListing) {
+    const activeAddr = compAddressFromRaw(activeListing);
+    if (activeAddr) activeListingAddresses.push(activeAddr);
+    if (activeListing.mlsNumber) {
+      activeMlsNumbers.push(String(activeListing.mlsNumber));
+    }
+  }
+
+  const { included: validRawComps, excluded: excludedComps } = filterSoldComps(
+    fetchResult.raw,
+    {
+      subjectAddress: subjectFormattedAddress,
+      activeListingAddresses,
+      activeMlsNumbers,
+    },
+  );
+
+  const { qualified: criteriaQualified, excluded: criteriaExcluded } =
+    filterCompsBySearchCriteria(validRawComps, searchCriteria);
+
+  const criteriaRelaxed = false;
+  const compsRawForScoring = criteriaQualified;
+  const excludedCompSummaries = [
+    ...summarizeInvalidExcluded(excludedComps),
+    ...criteriaExcluded,
+  ];
+
+  return {
+    fetchResult,
+    validRawComps,
+    criteriaQualified,
+    compsRawForScoring,
+    excludedCompSummaries,
+    excludedComps,
+    criteriaRelaxed,
+    subjectFormattedAddress,
+  };
+}
+
 async function buildAISummary(
   address: string,
   subject: SubjectProperty,
@@ -248,7 +316,18 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { street, city, state, zip, propertyType, radius, yearsBack, prefillOnly, forceRefresh } = body;
+    const {
+      street,
+      city,
+      state,
+      zip,
+      propertyType,
+      radius,
+      yearsBack,
+      prefillOnly,
+      forceRefresh,
+      matchPreview,
+    } = body;
 
     if (!street || !state) {
       return NextResponse.json(
@@ -322,6 +401,56 @@ export async function POST(request: NextRequest) {
     const resolvedRadius = typeof radius === 'number' && radius > 0 && radius <= 5 ? radius : 0.5;
     const resolvedDaysOld = typeof yearsBack === 'number' ? Math.round(yearsBack * 365) : 365;
 
+    const key = getRentcastKey();
+    if (!key && !isDemoMarketingAddress(demoAddress)) {
+      return NextResponse.json(
+        { success: false, error: 'Market analysis is not configured.' },
+        { status: 500 },
+      );
+    }
+
+    const address = buildAddress(street, city, state, zip);
+
+    // Match preview — count comps matching agent filters without using quota
+    if (matchPreview === true) {
+      const rentcastProperty = await fetchRentcastProperty(street, city, state, zip);
+      const activeListing = await fetchActiveListing(street, city, state, zip);
+      const avm = key ? await fetchAVM(address, key) : null;
+      const { base: autoSubject, enrichment } = await buildAutoSubject(
+        rentcastProperty,
+        activeListing,
+        avm?.price ?? null,
+        false,
+      );
+      const { subject } = mergeSubject(autoSubject, body, enrichment);
+      const searchCriteria = parseSearchCriteriaFromBody(body, subject);
+      const resolvedPropertyTypeFinal =
+        propertyType || rentcastProperty?.propertyType || avm?.propertyType || undefined;
+
+      const filtered = await filterCompsForAnalysis(
+        address,
+        key!,
+        subject,
+        searchCriteria,
+        resolvedPropertyTypeFinal,
+        resolvedRadius,
+        resolvedDaysOld,
+        rentcastProperty,
+        activeListing,
+      );
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          matchCount: filtered.criteriaQualified.length,
+          validSold: filtered.validRawComps.length,
+          searchCriteria,
+          criteriaRelaxed: filtered.criteriaRelaxed,
+          minRequired: MIN_COMPS_FOR_STRICT_SEARCH,
+        },
+      });
+    }
+
     if (isDemoMarketingAddress(demoAddress)) {
       const responseData = getDemoMarketAnalysisResponse(demoAddress, {
         propertyType: propertyType || undefined,
@@ -337,20 +466,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, data: responseData, isDemo: true });
     }
 
-    const key = getRentcastKey();
     if (!key) {
       return NextResponse.json(
         { success: false, error: 'Market analysis is not configured.' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
-    const address = buildAddress(street, city, state, zip);
+    const rentcastPropertyEarly = await fetchRentcastProperty(street, city, state, zip);
+    const activeListingEarly = await fetchActiveListing(street, city, state, zip);
+    const avmEarly = await fetchAVM(address, key);
+    const { base: previewSubject, enrichment: previewEnrichment } = await buildAutoSubject(
+      rentcastPropertyEarly,
+      activeListingEarly,
+      avmEarly?.price ?? null,
+      false,
+    );
+    const { subject: subjectForCache } = mergeSubject(previewSubject, body, previewEnrichment);
+    const searchCriteria = parseSearchCriteriaFromBody(body, subjectForCache);
 
     const cmaCacheKey = marketAnalysisCacheKey(addressKey, {
       propertyType: propertyType || undefined,
       radius: resolvedRadius,
       yearsBack: resolvedDaysOld / 365,
+      searchCriteria,
     });
 
     if (!refresh) {
@@ -373,67 +512,47 @@ export async function POST(request: NextRequest) {
 
     await incrementUsage(supabase, user.id, 'market_analyses');
 
-    const rentcastProperty = await fetchRentcastProperty(street, city, state, zip);
+    const rentcastProperty = rentcastPropertyEarly;
 
     const [avm, rentEstimate] = await Promise.all([
-      fetchAVM(address, key),
+      Promise.resolve(avmEarly),
       fetchRentEstimate(address, key),
     ]);
 
     const resolvedPropertyTypeFinal =
       propertyType || rentcastProperty?.propertyType || avm?.propertyType || undefined;
 
-    const activeListing = await fetchActiveListing(street, city, state, zip);
+    const activeListing = activeListingEarly;
 
     const { base: autoSubject, enrichment } = await buildAutoSubject(
       rentcastProperty,
       activeListing,
       avm?.price ?? null,
-      true
+      true,
     );
     const { subject, subjectEnrichment } = mergeSubject(autoSubject, body, enrichment);
 
-    const fetchResult = await fetchCompsWithFallback({
+    const filtered = await filterCompsForAnalysis(
       address,
-      apiKey: key,
-      propertyType: resolvedPropertyTypeFinal,
-      radius: resolvedRadius,
-      daysOld: resolvedDaysOld,
-    });
-
-    const subjectFormattedAddress =
-      (rentcastProperty?.formattedAddress as string) || address;
-
-    const activeListingAddresses: string[] = [];
-    const activeMlsNumbers: string[] = [];
-    if (activeListing) {
-      const activeAddr = compAddressFromRaw(activeListing);
-      if (activeAddr) activeListingAddresses.push(activeAddr);
-      if (activeListing.mlsNumber) {
-        activeMlsNumbers.push(String(activeListing.mlsNumber));
-      }
-    }
-
-    const { included: validRawComps, excluded: excludedComps } = filterSoldComps(
-      fetchResult.raw,
-      {
-        subjectAddress: subjectFormattedAddress,
-        activeListingAddresses,
-        activeMlsNumbers,
-      }
+      key,
+      subject,
+      searchCriteria,
+      resolvedPropertyTypeFinal,
+      resolvedRadius,
+      resolvedDaysOld,
+      rentcastProperty,
+      activeListing,
     );
 
-    const { qualified: similarityQualified, excluded: similarityExcluded } =
-      filterCompsBySubjectSimilarity(validRawComps, subject, {
-        subjectPropertyType: resolvedPropertyTypeFinal ?? null,
-      });
-
-    const compsRawForScoring =
-      similarityQualified.length >= 3 ? similarityQualified : validRawComps;
-    const excludedCompSummaries = [
-      ...summarizeInvalidExcluded(excludedComps),
-      ...(similarityQualified.length >= 3 ? similarityExcluded : []),
-    ];
+    const {
+      fetchResult,
+      validRawComps,
+      criteriaQualified,
+      compsRawForScoring,
+      excludedCompSummaries,
+      excludedComps,
+      criteriaRelaxed,
+    } = filtered;
 
     const comps = compsRawForScoring.map(mapRawComp);
 
@@ -459,6 +578,12 @@ export async function POST(request: NextRequest) {
     const { scoredComps, valuation } = valueFromSelectedComps(subject, markedComps);
 
     const valuationComps = scoredComps.filter((c) => c.selectedForValuation);
+    const criteriaMatchCount = criteriaQualified.length;
+    const criteriaWarning =
+      criteriaMatchCount < MIN_COMPS_FOR_STRICT_SEARCH
+        ? `Only ${criteriaMatchCount} sale${criteriaMatchCount !== 1 ? 's' : ''} match your filters — widen sqft range or relax bed/bath limits for a stronger CMA.`
+        : null;
+
     const cmaConfidence = assessCmaConfidence({
       valuationComps,
       suggestedPrice: valuation.suggestedPrice,
@@ -483,6 +608,9 @@ export async function POST(request: NextRequest) {
       propertyType: resolvedPropertyTypeFinal ?? null,
       radius: resolvedRadius,
       yearsBack: resolvedDaysOld / 365,
+      searchCriteria,
+      criteriaRelaxed,
+      criteriaMatchCount,
       subject,
       subjectLocation,
       subjectProfile,
@@ -502,6 +630,7 @@ export async function POST(request: NextRequest) {
         fetched: fetchResult.raw.length,
         validSold: validRawComps.length,
         afterSimilarity: compsRawForScoring.length,
+        afterCriteria: criteriaQualified.length,
         widenedSearch: fetchResult.widenedSearch,
         radiusUsed: fetchResult.radiusUsed,
         daysOldUsed: fetchResult.daysOldUsed,
@@ -522,7 +651,7 @@ export async function POST(request: NextRequest) {
           }
         : null,
       comps: scoredComps,
-      compSelectionNote,
+      compSelectionNote: criteriaWarning ?? compSelectionNote,
       compSelectionAiUsed,
       cmaConfidence,
       summary,

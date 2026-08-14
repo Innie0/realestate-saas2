@@ -28,6 +28,12 @@ import CmaSearchParams, {
   CMA_DEFAULT_RADIUS,
   CMA_DEFAULT_YEARS_BACK,
 } from '@/components/property-research/CmaSearchParams';
+import CmaAdvancedSearchParams from '@/components/property-research/CmaAdvancedSearchParams';
+import {
+  defaultSearchCriteriaFromSubject,
+  MIN_COMPS_FOR_STRICT_SEARCH,
+  type CmaSearchCriteria,
+} from '@/lib/cma-search-criteria';
 import {
   Loader2, AlertCircle,
   TrendingUp,
@@ -92,10 +98,14 @@ export interface CmaAnalysisResult {
     fetched: number;
     validSold: number;
     afterSimilarity: number;
+    afterCriteria?: number;
     widenedSearch: boolean;
     radiusUsed: number;
     daysOldUsed: number;
   };
+  searchCriteria?: CmaSearchCriteria;
+  criteriaRelaxed?: boolean;
+  criteriaMatchCount?: number;
   subjectProfile?: CmaSubjectProfile | null;
   avm: {
     estimatedValue: number | null;
@@ -120,15 +130,6 @@ export interface CmaAnalysisResult {
 function fmt(n: number | null | undefined, prefix = '', suffix = '') {
   if (n === null || n === undefined) return '—';
   return `${prefix}${n.toLocaleString()}${suffix}`;
-}
-
-function fmtDate(s: string | null) {
-  if (!s) return '—';
-  try {
-    return new Date(s).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  } catch {
-    return s;
-  }
 }
 
 export interface CmaPanelProps {
@@ -192,6 +193,11 @@ export function CmaPanel({
   const [exportingPdf, setExportingPdf] = useState(false);
   const [fromCache, setFromCache] = useState(false);
   const [paramsExpanded, setParamsExpanded] = useState(true);
+  const [searchCriteria, setSearchCriteria] = useState<CmaSearchCriteria>(
+    defaultSearchCriteriaFromSubject(defaultSubject()),
+  );
+  const [matchPreviewCount, setMatchPreviewCount] = useState<number | null>(null);
+  const [matchPreviewLoading, setMatchPreviewLoading] = useState(false);
   const prevLoadingRef = useRef(false);
   const isRunningRef = useRef(false);
   const lastTriggerRef = useRef(0);
@@ -228,7 +234,7 @@ export function CmaPanel({
 
   const mapSubjectLocation = subjectLocation ?? result?.subjectLocation ?? lookupCoords;
 
-  const buildPayload = (prefillOnly = false, forceRefresh = false) => ({
+  const buildPayload = (prefillOnly = false, forceRefresh = false, matchPreview = false) => ({
     street: street.trim(),
     city: city.trim(),
     state,
@@ -238,6 +244,8 @@ export function CmaPanel({
     yearsBack,
     prefillOnly,
     forceRefresh,
+    matchPreview,
+    searchCriteria,
     manualFields: Array.from(manualFields),
     bedrooms: subject.bedrooms,
     bathrooms: subject.bathrooms,
@@ -258,6 +266,7 @@ export function CmaPanel({
     }) => {
       setSubject(data.subject);
       setSubjectEnrichment(data.subjectEnrichment ?? null);
+      setSearchCriteria(defaultSearchCriteriaFromSubject(data.subject));
       setManualFields(new Set());
       if (data.propertyType) {
         setPropertyType((prev) => prev || data.propertyType!);
@@ -330,6 +339,7 @@ export function CmaPanel({
       propertyType: propertyType || undefined,
       radius,
       yearsBack,
+      searchCriteria,
     });
     const isDemo = isDemoMarketingAddress({
       street: street.trim(),
@@ -355,6 +365,9 @@ export function CmaPanel({
           subjectLocation: normalized.subjectLocation,
         });
         setFromCache(true);
+        if (normalized.searchCriteria) {
+          setSearchCriteria(normalized.searchCriteria);
+        }
         setRadius(normalized.radius ?? 0.5);
         setYearsBack(normalized.yearsBack ?? 1);
         setLocalResearchCache(localKey, normalized);
@@ -396,6 +409,9 @@ export function CmaPanel({
           subjectLocation: normalized.subjectLocation,
         });
         setFromCache(!!data.fromCache);
+        if (normalized.searchCriteria) {
+          setSearchCriteria(normalized.searchCriteria);
+        }
         setLocalResearchCache(localKey, normalized);
         onCompleteRef.current?.(normalized);
         toast.success('CMA analysis complete');
@@ -407,7 +423,7 @@ export function CmaPanel({
       isRunningRef.current = false;
       setLoading(false);
     }
-  }, [street, city, state, zip, propertyType, radius, yearsBack, subject, manualFields, applyPrefillData, applyCachedResult]);
+  }, [street, city, state, zip, propertyType, radius, yearsBack, subject, manualFields, searchCriteria, applyPrefillData, applyCachedResult]);
 
   useEffect(() => {
     if (
@@ -443,6 +459,8 @@ export function CmaPanel({
         setSubject(defaultSubject());
         setSubjectLocation(null);
         setSubjectEnrichment(null);
+        setSearchCriteria(defaultSearchCriteriaFromSubject(defaultSubject()));
+        setMatchPreviewCount(null);
         setManualFields(new Set());
         setResult(null);
         setFromCache(false);
@@ -501,6 +519,41 @@ export function CmaPanel({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- prefill when address or lookup changes
   }, [addressKey, lookupData]);
+
+  useEffect(() => {
+    if (!street.trim() || !state) {
+      setMatchPreviewCount(null);
+      return;
+    }
+
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      setMatchPreviewLoading(true);
+      try {
+        const res = await fetch('/api/market-analysis', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(buildPayload(false, false, true)),
+        });
+        const data = await res.json();
+        if (!cancelled && data.success) {
+          setMatchPreviewCount(
+            typeof data.data?.matchCount === 'number' ? data.data.matchCount : null,
+          );
+        }
+      } catch {
+        if (!cancelled) setMatchPreviewCount(null);
+      } finally {
+        if (!cancelled) setMatchPreviewLoading(false);
+      }
+    }, 500);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- debounced preview on search inputs
+  }, [addressKey, radius, yearsBack, propertyType, searchCriteria, subject]);
 
   useEffect(() => {
     if (!result) setParamsExpanded(true);
@@ -641,7 +694,11 @@ export function CmaPanel({
     setRadius(CMA_DEFAULT_RADIUS);
     setYearsBack(CMA_DEFAULT_YEARS_BACK);
     setPropertyType('');
+    setSearchCriteria(defaultSearchCriteriaFromSubject(subject));
   };
+
+  const criteriaTooFew =
+    matchPreviewCount !== null && matchPreviewCount < MIN_COMPS_FOR_STRICT_SEARCH;
 
   const mapHasCompPins =
     Boolean(result) &&
@@ -692,6 +749,13 @@ export function CmaPanel({
             collapsed
             onExpand={() => setParamsExpanded(true)}
           />
+          <CmaAdvancedSearchParams
+            subject={subject}
+            criteria={searchCriteria}
+            onChange={setSearchCriteria}
+            matchPreviewCount={matchPreviewCount}
+            matchPreviewLoading={matchPreviewLoading}
+          />
         </>
       ) : hasResults && paramsExpanded ? (
         <>
@@ -702,6 +766,13 @@ export function CmaPanel({
             onRadiusChange={setRadius}
             onYearsBackChange={setYearsBack}
             onPropertyTypeChange={setPropertyType}
+          />
+          <CmaAdvancedSearchParams
+            subject={subject}
+            criteria={searchCriteria}
+            onChange={setSearchCriteria}
+            matchPreviewCount={matchPreviewCount}
+            matchPreviewLoading={matchPreviewLoading}
           />
           <CmaSubjectSummary
             address={mapAddress}
@@ -741,10 +812,29 @@ export function CmaPanel({
             onYearsBackChange={setYearsBack}
             onPropertyTypeChange={setPropertyType}
           />
+          <CmaAdvancedSearchParams
+            subject={subject}
+            criteria={searchCriteria}
+            onChange={setSearchCriteria}
+            matchPreviewCount={matchPreviewCount}
+            matchPreviewLoading={matchPreviewLoading}
+          />
         </>
       )}
     </>
   );
+
+  const renderCriteriaBanner = () => {
+    if (criteriaTooFew && !loading) {
+      return (
+        <div className="rounded-[10px] border border-amber-200 bg-amber-50 px-3 py-2.5 text-[12.5px] text-amber-800">
+          Only {matchPreviewCount} sale{matchPreviewCount !== 1 ? 's' : ''} match your filters. Widen
+          sqft range or relax bed/bath limits before running the CMA.
+        </div>
+      );
+    }
+    return null;
+  };
 
   const renderActionBar = () => (
     <div className="flex flex-wrap items-center gap-2 border-t border-gray-150 pt-3">
@@ -769,9 +859,14 @@ export function CmaPanel({
           <>
             <TrendingUp className="h-4 w-4" /> Re-run analysis
           </>
+        ) : matchPreviewLoading ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" /> Counting comps…
+          </>
         ) : (
           <>
-            <TrendingUp className="h-4 w-4" /> Find comps
+            <TrendingUp className="h-4 w-4" /> Find{' '}
+            {matchPreviewCount !== null ? matchPreviewCount : '…'} comps
           </>
         )}
       </button>
@@ -896,7 +991,7 @@ export function CmaPanel({
         {result.compStats && (
           <p className="text-[11.5px] text-gray-600">
             {result.compStats.fetched} fetched · {result.compStats.validSold} closed ·{' '}
-            {result.compStats.afterSimilarity} similar
+            {result.compStats.afterCriteria ?? result.compStats.afterSimilarity} match filters
             {result.compStats.widenedSearch ? ` · widened to ${result.compStats.radiusUsed} mi` : ''}
           </p>
         )}
@@ -1033,6 +1128,7 @@ export function CmaPanel({
             </p>
           )}
           {renderControlsPanel()}
+          {renderCriteriaBanner()}
           {error && (
             <div className="flex items-start gap-2 rounded-[10px] border border-rose-200 bg-rose-50 px-3 py-2.5 text-[13px] text-rose-700">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
