@@ -1,9 +1,8 @@
 'use client';
 
-import { Home, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { formatListingStatus } from '@/lib/comp-filters';
 import { similarityScoreToMatchPercent, type ScoredComp } from '@/lib/cma';
-import CmaListingImage from '@/components/property-research/CmaListingImage';
 
 function fmt(n: number | null | undefined, prefix = '') {
   if (n === null || n === undefined) return '—';
@@ -42,81 +41,48 @@ export default function CmaCompCard({
 
   return (
     <div
-      className={`overflow-hidden rounded-[10px] border ${
+      className={`overflow-hidden rounded-[10px] border px-3 py-2.5 sm:px-4 sm:py-3 ${
         selectedForValuation
           ? 'border-blue-200 bg-blue-50/40'
           : 'border-gray-150 bg-[var(--surface)]'
       }`}
     >
-      <div className="flex gap-0 sm:gap-3">
-        <div className="relative h-[88px] w-[100px] shrink-0 bg-gray-100 sm:h-[96px] sm:w-[120px]">
-          {comp.imageUrl ? (
-            <CmaListingImage
-              src={comp.imageUrl}
-              alt=""
-              imageSource={comp.imageSource}
-              sizes="120px"
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center text-gray-400">
-              <Home className="h-6 w-6" />
-            </div>
-          )}
-          <div
-            className={`absolute left-1.5 top-1.5 rounded-full px-2 py-0.5 text-[10px] font-bold shadow-sm ${
-              matchPct >= 75
-                ? 'bg-emerald-600 text-white'
-                : matchPct >= 55
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-800/85 text-white'
-            }`}
-          >
-            {matchPct}% match
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-[13px] font-medium leading-snug text-gray-900">{comp.address}</p>
+            <span
+              className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                matchPct >= 75
+                  ? 'bg-emerald-600 text-white'
+                  : matchPct >= 55
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-800/85 text-white'
+              }`}
+            >
+              {matchPct}% match
+            </span>
           </div>
-        </div>
-
-        <div className="min-w-0 flex-1 py-2.5 pr-2 sm:py-3 sm:pr-3">
-          <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0">
-              <p className="text-[13px] font-medium leading-snug text-gray-900">{comp.address}</p>
-              <div className="mt-1 flex flex-wrap items-center gap-2">
-                <label className="inline-flex cursor-pointer items-center gap-1.5 text-[11px] text-gray-700">
-                  <input
-                    type="checkbox"
-                    checked={selectedForValuation}
-                    onChange={onToggleValuation}
-                    className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
-                  />
-                  Use in valuation
-                </label>
-                {selectedForValuation && (
-                  <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-800">
-                    Selected
-                  </span>
-                )}
-                {comp.manuallyAdded && (
-                  <span className="rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-700">
-                    Added by you
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="flex shrink-0 items-start gap-1">
-              <div className="text-right">
-                <p className="text-[13px] font-bold text-gray-900">{fmt(comp.price, '$')}</p>
-                {conditionedAdj && (
-                  <p className="text-[10.5px] text-gray-600">Adj. {fmt(conditionedAdj, '$')}</p>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={onExclude}
-                className="p-1 text-gray-400 hover:text-rose-500"
-                aria-label="Remove comp"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            </div>
+          <div className="mt-1.5 flex flex-wrap items-center gap-2">
+            <label className="inline-flex cursor-pointer items-center gap-1.5 text-[11px] text-gray-700">
+              <input
+                type="checkbox"
+                checked={selectedForValuation}
+                onChange={onToggleValuation}
+                className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+              />
+              Use in valuation
+            </label>
+            {selectedForValuation && (
+              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-800">
+                Selected
+              </span>
+            )}
+            {comp.manuallyAdded && (
+              <span className="rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-700">
+                Added by you
+              </span>
+            )}
           </div>
           <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[11.5px] text-gray-600">
             {comp.bedrooms !== null && <span>{comp.bedrooms} bd</span>}
@@ -131,6 +97,22 @@ export default function CmaCompCard({
               </span>
             )}
           </div>
+        </div>
+        <div className="flex shrink-0 items-start gap-1">
+          <div className="text-right">
+            <p className="text-[13px] font-bold text-gray-900">{fmt(comp.price, '$')}</p>
+            {conditionedAdj && (
+              <p className="text-[10.5px] text-gray-600">Adj. {fmt(conditionedAdj, '$')}</p>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={onExclude}
+            className="p-1 text-gray-400 hover:text-rose-500"
+            aria-label="Remove comp"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
         </div>
       </div>
     </div>

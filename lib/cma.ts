@@ -46,9 +46,6 @@ export interface CompRecord {
   longitude: number | null;
   listingStatus?: string | null;
   mlsNumber?: string | null;
-  /** Best available preview — MLS listing photo when configured, else Mapbox map thumbnail. */
-  imageUrl?: string | null;
-  imageSource?: 'listing' | 'map' | null;
 }
 
 export interface CompAdjustment {

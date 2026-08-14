@@ -33,7 +33,6 @@ import { fetchCompsWithFallback } from '@/lib/comp-fetch';
 import { buildSubjectProfile } from '@/lib/subject-profile';
 import { extractCoordinates } from '@/lib/cma-map-utils';
 import { assessCmaConfidence } from '@/lib/cma-confidence';
-import { enrichCmaImages } from '@/lib/enrich-cma-images';
 import {
   getResearchCache,
   setResearchCache,
@@ -457,16 +456,7 @@ export async function POST(request: NextRequest) {
       await selectBestCompsWithAI(subject, resolvedPropertyTypeFinal ?? null, preliminaryScored);
 
     const markedComps = addressesToSelectedComps(preliminaryScored, selectedAddresses);
-    const { scoredComps: valuedComps, valuation } = valueFromSelectedComps(subject, markedComps);
-
-    const subjectMlsNumber = activeListing?.mlsNumber
-      ? String(activeListing.mlsNumber)
-      : null;
-    const { comps: scoredComps, subjectProfile: enrichedSubjectProfile } = await enrichCmaImages({
-      comps: valuedComps,
-      subjectProfile,
-      subjectMlsNumber,
-    });
+    const { scoredComps, valuation } = valueFromSelectedComps(subject, markedComps);
 
     const valuationComps = scoredComps.filter((c) => c.selectedForValuation);
     const cmaConfidence = assessCmaConfidence({
@@ -495,7 +485,7 @@ export async function POST(request: NextRequest) {
       yearsBack: resolvedDaysOld / 365,
       subject,
       subjectLocation,
-      subjectProfile: enrichedSubjectProfile,
+      subjectProfile,
       subjectEnrichment,
       valuation,
       activeListing: activeListing

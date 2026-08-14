@@ -2,11 +2,7 @@
  * Subject property profile for CMA dashboard (county + listing context).
  */
 
-import { propertyStaticImageUrl } from '@/lib/property-static-image';
-
 export interface CmaSubjectProfile {
-  imageUrl: string | null;
-  imageSource?: 'listing' | 'map' | null;
   propertyType: string | null;
   lotSize: number | null;
   yearBuilt: number | null;
@@ -23,7 +19,7 @@ export interface CmaSubjectProfile {
 
 export function buildSubjectProfile(
   rentcastProperty: Record<string, unknown> | null,
-  subjectLocation: { latitude: number; longitude: number } | null,
+  _subjectLocation: { latitude: number; longitude: number } | null,
 ): CmaSubjectProfile | null {
   if (!rentcastProperty) return null;
 
@@ -36,21 +32,10 @@ export function buildSubjectProfile(
       ? (rentcastProperty.taxAssessments as Record<string, { value?: number }>)[latestYear]
       : null;
 
-  const lat =
-    subjectLocation?.latitude ??
-    (typeof rentcastProperty.latitude === 'number' ? rentcastProperty.latitude : null);
-  const lng =
-    subjectLocation?.longitude ??
-    (typeof rentcastProperty.longitude === 'number' ? rentcastProperty.longitude : null);
-
   const owner = rentcastProperty.owner as { names?: string[]; type?: string } | undefined;
   const hoa = rentcastProperty.hoa as { fee?: number } | undefined;
 
-  const mapImageUrl = propertyStaticImageUrl(lat, lng, { width: 400, height: 260, zoom: 17 });
-
   return {
-    imageUrl: mapImageUrl,
-    imageSource: (mapImageUrl ? 'map' : null) as 'map' | 'listing' | null,
     propertyType: (rentcastProperty.propertyType as string) ?? null,
     lotSize: (rentcastProperty.lotSize as number) ?? null,
     yearBuilt: (rentcastProperty.yearBuilt as number) ?? null,
