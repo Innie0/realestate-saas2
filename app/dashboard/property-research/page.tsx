@@ -13,7 +13,6 @@ import AnimatedTabPanels from '@/components/motion/AnimatedTabPanels';
 import PropertyResearchCommandBar, {
   type ResearchSearchMode,
 } from '@/components/property-research/PropertyResearchCommandBar';
-import PropertyResearchTips from '@/components/property-research/PropertyResearchTips';
 import { SITE_NAME } from '@/lib/site-config';
 import { useApi } from '@/lib/swr';
 import { useTour } from '@/hooks/useTour';
@@ -318,78 +317,20 @@ function PropertyResearchContent() {
       title="Property Research"
       subtitle={usageMeta ?? 'Look up owners, property details, and run comp-based CMA'}
     >
+      {!researchSearched ? (
+        <PropertyResearchCommandBar
+          mode={searchMode}
+          onModeChange={setSearchMode}
+          onSubmit={handleCommandBarSubmit}
+          history={history}
+          onHistorySelect={loadHistory}
+          states={US_STATES}
+          loading={lookupLoading}
+          onTryDemo={fillDemoAddress}
+        />
+      ) : (
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
-        {!researchSearched ? (
-          <>
-            <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start">
-              <Card className="p-4">
-                <p className="mb-3 font-mono text-[10.5px] uppercase tracking-[0.06em] text-muted-foreground">
-                  Usage this month
-                </p>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-[13px] text-muted-foreground">Lookups</span>
-                    <span className="text-[13px] font-medium text-foreground">{formatUsage(lookupUsage)}</span>
-                  </div>
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-[13px] text-muted-foreground">CMA runs</span>
-                    <span className="text-[13px] font-medium text-foreground">{formatUsage(cmaUsage)}</span>
-                  </div>
-                </div>
-              </Card>
-            </aside>
-
-            <div className="min-w-0 space-y-6">
-              <div className="lg:hidden">
-                <Card className="p-4">
-                  <p className="mb-2 font-mono text-[10.5px] uppercase tracking-[0.06em] text-muted-foreground">
-                    Usage this month
-                  </p>
-                  <div className="flex gap-6 text-[13px]">
-                    <span>
-                      Lookups <strong className="text-foreground">{formatUsage(lookupUsage)}</strong>
-                    </span>
-                    <span>
-                      CMA <strong className="text-foreground">{formatUsage(cmaUsage)}</strong>
-                    </span>
-                  </div>
-                </Card>
-              </div>
-              <PropertyResearchCommandBar
-                mode={searchMode}
-                onModeChange={setSearchMode}
-                onSubmit={handleCommandBarSubmit}
-                history={history}
-                onHistorySelect={loadHistory}
-                states={US_STATES}
-                loading={lookupLoading}
-                onTryDemo={fillDemoAddress}
-              />
-              <PropertyResearchTips />
-            </div>
-          </>
-        ) : (
-          <>
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
-          <Card className="p-4">
-            <p className="mb-3 font-mono text-[10.5px] uppercase tracking-[0.06em] text-muted-foreground">
-              Usage this month
-            </p>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-[13px] text-muted-foreground">Lookups</span>
-                <span className="text-[13px] font-medium text-foreground">{formatUsage(lookupUsage)}</span>
-              </div>
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-[13px] text-muted-foreground">CMA runs</span>
-                <span className="text-[13px] font-medium text-foreground">{formatUsage(cmaUsage)}</span>
-              </div>
-            </div>
-            <p className="mt-3 border-t border-border pt-3 text-[11.5px] leading-relaxed text-muted-foreground">
-              Counts new API lookups only. Demo searches and cached reloads are free and do not increase this total.
-            </p>
-          </Card>
-
           <Card data-tour="research-history" className="overflow-hidden p-0">
             <PanelHeader
               title="Recent searches"
@@ -530,9 +471,8 @@ function PropertyResearchContent() {
                 />
               </Card>
         </div>
-          </>
-        )}
       </div>
+      )}
     </DashboardPage>
   );
 }
