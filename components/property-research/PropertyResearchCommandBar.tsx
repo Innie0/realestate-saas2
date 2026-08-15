@@ -75,6 +75,48 @@ function SuggestionLabel({ suggestion, query }: { suggestion: AddressSuggestion;
 
 const SUGGEST_FETCH_MIN = 2;
 
+function historyMatchesQuery(entry: ResearchHistoryEntry, needle: string): boolean {
+  const lower = needle.toLowerCase();
+  if (entry.label.toLowerCase().includes(lower)) return true;
+  if (entry.street.toLowerCase().startsWith(lower)) return true;
+
+  const entryHouse = entry.street.match(/^(\d+)/)?.[1];
+  if (/^\d+$/.test(needle) && entryHouse?.startsWith(needle)) return true;
+
+  return false;
+}
+
+function historyToSuggestions(entries: ResearchHistoryEntry[]): AddressSuggestion[] {
+  return entries.map((entry) => ({
+    id: `history-${entry.id}`,
+    street: entry.street,
+    city: entry.city,
+    state: entry.state,
+    zip: entry.zip,
+    label: entry.label,
+    streetLabel: entry.street,
+  }));
+}
+
+function mergeSuggestions(
+  historyItems: AddressSuggestion[],
+  remoteItems: AddressSuggestion[],
+  limit = 15,
+): AddressSuggestion[] {
+  const seen = new Set<string>();
+  const merged: AddressSuggestion[] = [];
+
+  for (const item of [...historyItems, ...remoteItems]) {
+    const key = item.label.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    merged.push(item);
+    if (merged.length >= limit) break;
+  }
+
+  return merged;
+}
+
 export interface PropertyResearchCommandBarProps {
   mode: ResearchSearchMode;
   onModeChange: (mode: ResearchSearchMode) => void;
@@ -112,6 +154,13 @@ export default function PropertyResearchCommandBar({
   const [suggestLoading, setSuggestLoading] = useState(false);
   const [highlightIdx, setHighlightIdx] = useState(-1);
   const abortRef = useRef<AbortController | null>(null);
+  const suggestSessionRef = useRef(crypto.randomUUID());
+
+  useEffect(() => {
+    if (!query.trim()) {
+      suggestSessionRef.current = crypto.randomUUID();
+    }
+  }, [query]);
 
   useEffect(() => {
     try {
@@ -134,7 +183,14 @@ export default function PropertyResearchCommandBar({
 
     setSuggestLoading(true);
 
-    const debounceMs = /^\d{2,6}$/.test(trimmed) ? 400 : 180;
+    const debounceMs = /^\d{3,6}$/.test(trimmed) ? 320 : 180;
+    const historyMatches = historyToSuggestions(
+      history.filter((entry) => historyMatchesQuery(entry, trimmed)).slice(0, 5),
+    );
+
+    if (historyMatches.length > 0) {
+      setSuggestions(historyMatches);
+    }
 
     const timer = setTimeout(async () => {
       abortRef.current?.abort();
@@ -142,16 +198,23 @@ export default function PropertyResearchCommandBar({
       abortRef.current = controller;
 
       try {
-        const res = await fetch(`/api/address-suggest?q=${encodeURIComponent(trimmed)}`, {
+        const params = new URLSearchParams({
+          q: trimmed,
+          session: suggestSessionRef.current,
+        });
+        const res = await fetch(`/api/address-suggest?${params.toString()}`, {
           signal: controller.signal,
         });
         const data = await res.json();
         if (!controller.signal.aborted && data.success) {
-          setSuggestions(Array.isArray(data.data) ? data.data : []);
+          const remote = Array.isArray(data.data) ? (data.data as AddressSuggestion[]) : [];
+          setSuggestions(mergeSuggestions(historyMatches, remote));
           setHighlightIdx(-1);
         }
       } catch {
-        if (!controller.signal.aborted) setSuggestions([]);
+        if (!controller.signal.aborted) {
+          setSuggestions(historyMatches);
+        }
       } finally {
         if (!controller.signal.aborted) setSuggestLoading(false);
       }
@@ -160,7 +223,7 @@ export default function PropertyResearchCommandBar({
     return () => {
       clearTimeout(timer);
     };
-  }, [query]);
+  }, [history, query]);
 
   const persistMode = (next: ResearchSearchMode) => {
     onModeChange(next);
