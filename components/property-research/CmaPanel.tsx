@@ -202,6 +202,8 @@ export function CmaPanel({
   );
   const [matchPreviewCount, setMatchPreviewCount] = useState<number | null>(null);
   const [matchPreviewLoading, setMatchPreviewLoading] = useState(false);
+  const [mapAreaMode, setMapAreaMode] = useState<'radius' | 'custom'>('radius');
+  const [customAreaPoints, setCustomAreaPoints] = useState<MapCoordinate[]>([]);
   const isRunningRef = useRef(false);
   const lastTriggerRef = useRef(0);
   const prevAddressKeyRef = useRef('');
@@ -481,6 +483,8 @@ export function CmaPanel({
     setManualComps([]);
     setShowExcludedComps(false);
         setShowAllComps(false);
+        setMapAreaMode('radius');
+        setCustomAreaPoints([]);
       }
     }
   }, [street, city, state, zip, initialResult, loading, addressKey, applyPrefillData]);
@@ -690,6 +694,15 @@ export function CmaPanel({
     setPropertyType('');
     setIncludeActiveListings(true);
     setSearchCriteria(defaultSearchCriteriaFromSubject(subject));
+    setMapAreaMode('radius');
+    setCustomAreaPoints([]);
+  };
+
+  const mapSelectionProps = {
+    areaMode: mapAreaMode,
+    onAreaModeChange: setMapAreaMode,
+    customPoints: customAreaPoints,
+    onCustomPointsChange: setCustomAreaPoints,
   };
 
   const criteriaTooFew =
@@ -1075,6 +1088,7 @@ export function CmaPanel({
                 subjectAddress={mapAddress}
                 hideLegend
                 fillContainer
+                {...mapSelectionProps}
               />
             </div>
             {renderControlsPanel()}
@@ -1098,7 +1112,7 @@ export function CmaPanel({
           </div>
         </aside>
 
-        <main className="relative hidden min-h-0 flex-1 overflow-hidden bg-gray-100 dark:bg-muted/30 lg:block">
+        <main className="relative hidden min-h-0 flex-1 overflow-hidden bg-gray-100 p-3 dark:bg-muted/30 lg:block">
           <CmaCompsMap
             mode={mapHasCompPins ? 'results' : 'preview'}
             subjectLocation={mapSubjectLocation}
@@ -1107,6 +1121,7 @@ export function CmaPanel({
             subjectAddress={mapAddress}
             hideLegend
             fillContainer
+            {...mapSelectionProps}
           />
         </main>
       </div>

@@ -91,3 +91,37 @@ export function boundsForPoints(points: MapCoordinate[]): [[number, number], [nu
     [maxLng, maxLat],
   ];
 }
+
+export function lineFromPoints(points: MapCoordinate[]): GeoJSON.LineString | null {
+  if (points.length < 2) return null;
+  return {
+    type: 'LineString',
+    coordinates: points.map((point) => [point.longitude, point.latitude]),
+  };
+}
+
+export function polygonFromPoints(points: MapCoordinate[]): GeoJSON.Polygon | null {
+  if (points.length < 3) return null;
+  const ring: [number, number][] = points.map((point) => [point.longitude, point.latitude]);
+  ring.push(ring[0]);
+  return { type: 'Polygon', coordinates: [ring] };
+}
+
+/** Ray-casting point-in-polygon test for a closed ring. */
+export function pointInPolygon(point: MapCoordinate, polygon: MapCoordinate[]): boolean {
+  if (polygon.length < 3) return false;
+
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i, i += 1) {
+    const xi = polygon[i].longitude;
+    const yi = polygon[i].latitude;
+    const xj = polygon[j].longitude;
+    const yj = polygon[j].latitude;
+    const intersects =
+      yi > point.latitude !== yj > point.latitude &&
+      point.longitude < ((xj - xi) * (point.latitude - yi)) / (yj - yi) + xi;
+    if (intersects) inside = !inside;
+  }
+
+  return inside;
+}
