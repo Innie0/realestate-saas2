@@ -83,8 +83,8 @@ export function propertyResearchHref(query: string): string {
     if (parsed.state) params.set('state', parsed.state);
     if (parsed.zip) params.set('zip', parsed.zip);
     if (parsed.state) params.set('auto', '1');
-  } else {
-    params.set('q', query.trim());
+    return `/dashboard/property-research/subject?${params.toString()}`;
   }
-  return `/dashboard/property-research?${params.toString()}`;
+  params.set('q', query.trim());
+  return `/dashboard/property-research/subject?${params.toString()}`;
 }

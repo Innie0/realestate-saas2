@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react';
 export default function MarketAnalysisRedirect() {
   const router = useRouter();
   useEffect(() => {
-    router.replace('/dashboard/property-research?tab=cma');
+    router.replace('/dashboard/property-research/cma');
   }, [router]);
   return (
     <div className="min-h-screen flex items-center justify-center">
