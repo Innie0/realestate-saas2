@@ -301,21 +301,10 @@ function PropertyResearchContent() {
 
   const firstPerson = lookupData?.found && lookupData.results?.[0] ? lookupData.results[0] : null;
 
-  const formatUsage = (usage: { current: number; limit: number } | null) => {
-    if (!usage) return '—';
-    if (usage.limit === -1) return '∞';
-    return `${usage.current}/${usage.limit}`;
-  };
-
-  const usageMeta =
-    lookupUsage || cmaUsage
-      ? `Lookups ${formatUsage(lookupUsage)} · CMA ${formatUsage(cmaUsage)} this month`
-      : undefined;
-
   return (
     <DashboardPage
       title="Property Research"
-      subtitle={usageMeta ?? 'Look up owners, property details, and run comp-based CMA'}
+      subtitle="Look up owners, property details, and run comp-based CMA"
     >
       {!researchSearched ? (
         <PropertyResearchCommandBar
@@ -325,6 +314,8 @@ function PropertyResearchContent() {
           history={history}
           onHistorySelect={loadHistory}
           states={US_STATES}
+          lookupUsage={lookupUsage}
+          cmaUsage={cmaUsage}
           loading={lookupLoading}
           onTryDemo={fillDemoAddress}
         />
