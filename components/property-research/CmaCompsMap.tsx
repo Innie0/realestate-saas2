@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { Crosshair, Map as MapIcon, Satellite } from 'lucide-react';
+import { Crosshair, Map as MapIcon, Minus, Plus, Satellite } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ScoredComp } from '@/lib/cma';
 import { formatListingStatus } from '@/lib/comp-filters';
@@ -145,6 +145,13 @@ function searchAreaGeoJson(
   }
 
   return null;
+}
+
+function mapControlButtonClass(extra?: string) {
+  return cn(
+    'flex size-9 items-center justify-center text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-40',
+    extra,
+  );
 }
 
 export default function CmaCompsMap({
@@ -338,8 +345,6 @@ export default function CmaCompsMap({
     mapRef.current = map;
     map.getCanvas().style.cursor = areaModeRef.current === 'custom' ? 'crosshair' : '';
 
-    map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-right');
-
     const handleClick = (event: mapboxgl.MapMouseEvent) => {
       if (areaModeRef.current !== 'custom') return;
       const nextPoint: MapCoordinate = {
@@ -413,6 +418,14 @@ export default function CmaCompsMap({
     map.flyTo({ center: home.center, zoom: home.zoom, duration: 800 });
   };
 
+  const handleZoomIn = () => {
+    mapRef.current?.zoomIn({ duration: 200 });
+  };
+
+  const handleZoomOut = () => {
+    mapRef.current?.zoomOut({ duration: 200 });
+  };
+
   const handleClearSelection = () => {
     onCustomPointsChange?.([]);
   };
@@ -464,22 +477,21 @@ export default function CmaCompsMap({
     );
   }
 
-  const mapShellClass = fillContainer
-    ? 'relative h-full min-h-0 w-full overflow-hidden rounded-xl'
-    : hideLegend
-      ? cn('relative flex h-full min-h-0 flex-col overflow-hidden rounded-xl', mapHeightClassName)
-      : 'space-y-2';
-
-  const mapCanvasClass = cn(
-    'cma-map-host absolute inset-0 h-full w-full overflow-hidden rounded-xl',
-    '[&_.mapboxgl-ctrl-attrib]:!hidden [&_.mapboxgl-ctrl-logo]:!hidden',
-    '[&_.mapboxgl-ctrl-top-right]:!right-3 [&_.mapboxgl-ctrl-top-right]:!top-3',
-  );
-
   const showClearSelection = areaMode === 'custom' && customPoints.length > 0;
 
+  const mapFrameClass = cn(
+    'relative h-full min-h-0 w-full',
+    fillContainer ? '' : cn('min-h-[320px] flex-1 lg:min-h-[400px]', mapHeightClassName),
+  );
+
+  const mapClipClass =
+    'absolute inset-0 overflow-hidden rounded-2xl [&_.mapboxgl-canvas]:rounded-2xl [&_.mapboxgl-canvas-container]:rounded-2xl [&_.mapboxgl-map]:rounded-2xl';
+
+  const mapCanvasClass =
+    'h-full w-full [&_.mapboxgl-ctrl-attrib]:!hidden [&_.mapboxgl-ctrl-logo]:!hidden [&_.mapboxgl-ctrl-top-right]:!hidden';
+
   return (
-    <div className={mapShellClass}>
+    <div className={cn(fillContainer ? 'h-full min-h-0 w-full' : hideLegend ? 'flex h-full min-h-0 flex-col' : 'space-y-2')}>
       {!hideLegend && !fillContainer && (
         <div className="mb-2 flex flex-wrap items-center gap-3 text-[12px] text-gray-600">
           <span className="inline-flex items-center gap-1.5">
@@ -505,22 +517,54 @@ export default function CmaCompsMap({
         </div>
       )}
 
-      <div className={cn(fillContainer ? 'relative h-full min-h-0 w-full' : 'relative min-h-[320px] flex-1 lg:min-h-[400px]')}>
-        <div ref={containerRef} className={mapCanvasClass} aria-label="Comparable sales map" />
+      <div className={mapFrameClass}>
+        <div className={mapClipClass}>
+          <div ref={containerRef} className={mapCanvasClass} aria-label="Comparable sales map" />
+        </div>
 
         {fillContainer && (
-          <>
+          <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-2xl">
             {showClearSelection && (
               <button
                 type="button"
                 onClick={handleClearSelection}
-                className="absolute left-3 top-3 z-10 rounded-lg border border-gray-200/90 bg-white/95 px-3 py-2 text-[12.5px] font-medium text-gray-800 shadow-md backdrop-blur-sm hover:bg-white"
+                className="pointer-events-auto absolute left-3 top-3 rounded-lg border border-gray-200/90 bg-white/95 px-3 py-2 text-[12.5px] font-medium text-gray-800 shadow-md backdrop-blur-sm hover:bg-white"
               >
                 Clear selection
               </button>
             )}
 
-            <div className="pointer-events-none absolute inset-x-0 bottom-4 z-10 flex justify-center px-4">
+            <div className="pointer-events-none absolute right-3 top-3 bottom-16 flex w-9 flex-col items-stretch justify-between">
+              <div className="pointer-events-auto overflow-hidden rounded-lg border border-gray-200/90 bg-white/95 shadow-md backdrop-blur-sm">
+                <button
+                  type="button"
+                  aria-label="Zoom in"
+                  onClick={handleZoomIn}
+                  className={mapControlButtonClass('border-b border-gray-200/90')}
+                >
+                  <Plus className="size-4" strokeWidth={2.25} />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Zoom out"
+                  onClick={handleZoomOut}
+                  className={mapControlButtonClass()}
+                >
+                  <Minus className="size-4" strokeWidth={2.25} />
+                </button>
+              </div>
+
+              <button
+                type="button"
+                aria-label="Recenter map on subject property"
+                onClick={handleRecenter}
+                className="pointer-events-auto flex size-9 items-center justify-center rounded-lg border border-gray-200/90 bg-white/95 text-gray-700 shadow-md backdrop-blur-sm hover:bg-white"
+              >
+                <Crosshair className="size-4" />
+              </button>
+            </div>
+
+            <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center px-4">
               <div className="pointer-events-auto inline-flex items-center rounded-full border border-gray-200/90 bg-white/95 p-1 shadow-md backdrop-blur-sm">
                 <button
                   type="button"
@@ -545,26 +589,17 @@ export default function CmaCompsMap({
               </div>
             </div>
 
-            <div className="pointer-events-none absolute bottom-4 left-3 z-10 flex flex-col gap-2">
+            <div className="pointer-events-none absolute bottom-3 left-3">
               <button
                 type="button"
                 aria-label={mapStyle === 'satellite' ? 'Show street map' : 'Show satellite map'}
                 onClick={() => setMapStyle((s) => (s === 'satellite' ? 'streets' : 'satellite'))}
-                className="pointer-events-auto flex size-10 items-center justify-center rounded-lg border border-gray-200/90 bg-white/95 text-gray-700 shadow-md backdrop-blur-sm hover:bg-white"
+                className="pointer-events-auto flex size-9 items-center justify-center rounded-lg border border-gray-200/90 bg-white/95 text-gray-700 shadow-md backdrop-blur-sm hover:bg-white"
               >
                 {mapStyle === 'satellite' ? <MapIcon className="size-4" /> : <Satellite className="size-4" />}
               </button>
             </div>
-
-            <button
-              type="button"
-              aria-label="Recenter map on subject property"
-              onClick={handleRecenter}
-              className="absolute bottom-4 right-3 z-10 flex size-10 items-center justify-center rounded-lg border border-gray-200/90 bg-white/95 text-gray-700 shadow-md backdrop-blur-sm hover:bg-white"
-            >
-              <Crosshair className="size-4" />
-            </button>
-          </>
+          </div>
         )}
       </div>
     </div>

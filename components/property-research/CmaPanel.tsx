@@ -1079,7 +1079,7 @@ export function CmaPanel({
         <aside className="flex min-h-0 w-full shrink-0 flex-col overflow-hidden border-b border-gray-200/80 bg-gray-50/40 dark:border-border dark:bg-muted/20 lg:h-full lg:max-h-full lg:w-[380px] lg:border-b-0 lg:border-r">
           <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-4 sm:p-5">
             <p className="truncate text-[14px] font-semibold text-gray-900 sm:hidden dark:text-foreground">{mapAddress}</p>
-            <div className="relative h-[240px] shrink-0 overflow-hidden rounded-xl border border-gray-200/80 lg:hidden dark:border-border">
+            <div className="relative h-[240px] shrink-0 overflow-hidden rounded-2xl lg:hidden">
               <CmaCompsMap
                 mode={mapHasCompPins ? 'results' : 'preview'}
                 subjectLocation={mapSubjectLocation}
@@ -1112,7 +1112,7 @@ export function CmaPanel({
           </div>
         </aside>
 
-        <main className="relative hidden min-h-0 flex-1 overflow-hidden bg-gray-100 p-3 dark:bg-muted/30 lg:block">
+        <main className="relative hidden min-h-0 flex-1 overflow-hidden p-4 lg:block">
           <CmaCompsMap
             mode={mapHasCompPins ? 'results' : 'preview'}
             subjectLocation={mapSubjectLocation}
