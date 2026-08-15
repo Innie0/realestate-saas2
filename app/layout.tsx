@@ -2,7 +2,7 @@
 // This is the main layout file for the Next.js app
 
 import type { Metadata } from 'next';
-import { IBM_Plex_Mono, Inter, JetBrains_Mono, Newsreader, Plus_Jakarta_Sans, Space_Grotesk } from 'next/font/google';
+import { IBM_Plex_Mono, Inter, JetBrains_Mono, Newsreader, Space_Grotesk } from 'next/font/google';
 import { GeistSans } from 'geist/font/sans';
 import { GlobalStructuredData } from '@/components/seo/StructuredData';
 import { SITE_NAME, SITE_NAME_ALT, SITE_DESCRIPTION, SITE_DOMAIN, SITE_URL } from '@/lib/site-config';
@@ -41,13 +41,6 @@ const tiempos = Newsreader({
   weight: ['400', '500', '600'],
   style: ['normal', 'italic'],
   variable: '--font-tiempos',
-  display: 'swap',
-});
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  weight: ['600', '700', '800'],
-  variable: '--font-display',
   display: 'swap',
 });
 
@@ -153,7 +146,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={GeistSans.variable}>
       <body
-        className={`${GeistSans.className} ${plexMono.variable} ${plusJakartaSans.variable} ${inter.variable} ${newsreader.variable} ${tiempos.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable} font-sans antialiased`}
+        className={`${GeistSans.className} ${plexMono.variable} ${inter.variable} ${newsreader.variable} ${tiempos.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable} font-sans antialiased`}
       >
         <GlobalStructuredData />
         {children}

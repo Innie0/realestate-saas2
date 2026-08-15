@@ -1,4 +1,7 @@
 @import 'driver.js/dist/driver.css';
+@import '@fontsource/plus-jakarta-sans/600.css';
+@import '@fontsource/plus-jakarta-sans/700.css';
+@import '@fontsource/plus-jakarta-sans/800.css';
 
 /* Global styles for the application */
 /* Tailwind CSS base, components, and utilities */
@@ -11,6 +14,7 @@
    Dashboard light mode overrides below — cream canvas with blue CTAs (matches marketing). */
 :root {
   color-scheme: dark;
+  --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
 
   --canvas: #0a0a0a;
   --surface: #1c1c1c;
