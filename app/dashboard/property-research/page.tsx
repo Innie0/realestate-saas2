@@ -38,7 +38,7 @@ function PropertyResearchLandingContent() {
         popover: {
           title: 'Research an address',
           description:
-            'Choose Subject property for owner and property details, or Run CMA for comp-based market analysis.',
+            'Choose Owner & details for owner and property info, or Run CMA for comp-based market analysis.',
           side: 'bottom',
         },
       },

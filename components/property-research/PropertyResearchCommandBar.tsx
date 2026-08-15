@@ -25,7 +25,7 @@ export interface UsageQuota {
 }
 
 const MODES: { id: ResearchSearchMode; label: string; icon: typeof Home }[] = [
-  { id: 'research', label: 'Subject property', icon: Home },
+  { id: 'research', label: 'Owner & details', icon: Home },
   { id: 'cma', label: 'Run CMA', icon: BarChart2 },
 ];
 
