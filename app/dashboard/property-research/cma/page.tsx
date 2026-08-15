@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
 import { PropertyResearchPageLoading } from '@/components/dashboard/page-loading';
@@ -28,10 +28,8 @@ function CmaPropertyContent() {
     [searchParams],
   );
 
-  const [cmaTrigger, setCmaTrigger] = useState(0);
   const [lookupData, setLookupData] = useState<LookupResponse | null>(null);
   const [cmaResult, setCmaResult] = useState<CmaAnalysisResult | null>(null);
-  const autoRan = useRef(false);
 
   useEffect(() => {
     if (!fields) {
@@ -46,11 +44,6 @@ function CmaPropertyContent() {
     const cachedCma = findLatestCmaCache<CmaAnalysisResult>(addressKey);
     setLookupData(cachedLookup);
     setCmaResult(cachedCma ? normalizeCmaResult(cachedCma) : null);
-
-    if (searchParams.get('auto') === '1' && !autoRan.current) {
-      autoRan.current = true;
-      setCmaTrigger((n) => n + 1);
-    }
   }, [fields, router, searchParams]);
 
   const saveToHistory = useCallback(() => {
@@ -83,7 +76,6 @@ function CmaPropertyContent() {
         state={fields.state}
         zip={fields.zip}
         lookupData={lookupData}
-        runTrigger={cmaTrigger}
         initialResult={cmaResult}
         onComplete={handleCmaComplete}
       />

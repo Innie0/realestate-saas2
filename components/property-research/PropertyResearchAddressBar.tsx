@@ -35,7 +35,7 @@ export default function PropertyResearchAddressBar({
 
       {showRunCma ? (
         <Link
-          href={cmaPropertyHref(fields, { auto: true })}
+          href={cmaPropertyHref(fields)}
           className="inline-flex shrink-0 items-center gap-2 self-start rounded-xl border border-border bg-muted/40 px-3 py-2 text-[12.5px] font-medium text-foreground transition-colors hover:bg-muted sm:self-auto"
         >
           <BarChart2 className="size-4" strokeWidth={1.75} />

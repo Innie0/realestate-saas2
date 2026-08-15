@@ -64,7 +64,7 @@ function PropertyResearchLandingContent() {
     (fields: { street: string; city: string; state: string; zip: string }, mode: ResearchSearchMode) => {
       const href =
         mode === 'cma'
-          ? cmaPropertyHref(fields, { auto: true })
+          ? cmaPropertyHref(fields)
           : subjectPropertyHref(fields, { auto: true });
       router.push(href);
     },
