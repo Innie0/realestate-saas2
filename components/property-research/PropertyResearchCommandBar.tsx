@@ -348,8 +348,8 @@ export default function PropertyResearchCommandBar({
                 className={clsx(
                   'inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-[13px] font-medium transition-colors',
                   mode === id
-                    ? 'border-gray-900/10 bg-gray-900 text-white shadow-sm'
-                    : 'border-transparent bg-muted/50 text-gray-700 hover:bg-muted',
+                    ? 'border-border bg-foreground text-background shadow-sm'
+                    : 'border-transparent bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground',
                 )}
               >
                 <Icon className="size-4 shrink-0" strokeWidth={1.75} />
