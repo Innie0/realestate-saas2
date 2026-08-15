@@ -222,13 +222,6 @@ function PropertyResearchContent() {
     [saveToHistory],
   );
 
-  const fillDemoAddress = () => {
-    setStreet('123 W Main Street');
-    setCity('Austin');
-    setState('TX');
-    setZip('78701');
-  };
-
   const handleLookUp = () => {
     if (!street.trim() || !state) return;
     setActiveTab('owner');
@@ -317,7 +310,6 @@ function PropertyResearchContent() {
           lookupUsage={lookupUsage}
           cmaUsage={cmaUsage}
           loading={lookupLoading}
-          onTryDemo={fillDemoAddress}
         />
       ) : (
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">

@@ -88,7 +88,6 @@ export interface PropertyResearchCommandBarProps {
   lookupUsage?: UsageQuota | null;
   cmaUsage?: UsageQuota | null;
   loading?: boolean;
-  onTryDemo?: () => void;
 }
 
 export default function PropertyResearchCommandBar({
@@ -101,7 +100,6 @@ export default function PropertyResearchCommandBar({
   lookupUsage = null,
   cmaUsage = null,
   loading = false,
-  onTryDemo,
 }: PropertyResearchCommandBarProps) {
   const [query, setQuery] = useState('');
   const [error, setError] = useState('');
@@ -469,24 +467,6 @@ export default function PropertyResearchCommandBar({
           )}
 
           {error && <p className="mt-3 text-[12.5px] text-rose-600">{error}</p>}
-
-          {!isTyping && onTryDemo && (
-            <p className="mt-3 text-[11.5px] text-muted-foreground">
-              Demo:{' '}
-              <button
-                type="button"
-                onClick={() => {
-                  setQuery('123 W Main Street, Austin, TX 78701');
-                  setShowFields(false);
-                  setError('');
-                  onTryDemo();
-                }}
-                className="font-medium text-foreground underline-offset-2 hover:underline"
-              >
-                123 W Main Street, Austin, TX
-              </button>
-            </p>
-          )}
         </div>
       </div>
     </div>
