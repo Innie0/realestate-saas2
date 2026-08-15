@@ -136,6 +136,8 @@ export default function PropertyResearchCommandBar({
 
     setSuggestLoading(true);
 
+    const debounceMs = /^\d{2,6}$/.test(trimmed) ? 400 : 180;
+
     const timer = setTimeout(async () => {
       abortRef.current?.abort();
       const controller = new AbortController();
@@ -155,7 +157,7 @@ export default function PropertyResearchCommandBar({
       } finally {
         if (!controller.signal.aborted) setSuggestLoading(false);
       }
-    }, 180);
+    }, debounceMs);
 
     return () => {
       clearTimeout(timer);
@@ -370,7 +372,7 @@ export default function PropertyResearchCommandBar({
                   No matching addresses — try adding city and state.
                 </p>
               ) : (
-                <ul className="max-h-56 space-y-0.5 overflow-y-auto">
+                <ul className="max-h-72 space-y-0.5 overflow-y-auto pr-1">
                   {suggestions.map((suggestion, idx) => (
                     <li key={suggestion.id}>
                       <button

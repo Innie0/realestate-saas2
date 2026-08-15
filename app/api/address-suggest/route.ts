@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: true, data: [] });
     }
 
-    const suggestions = await fetchMapboxAddressSuggestions(q, 8);
+    const suggestions = await fetchMapboxAddressSuggestions(q, 15);
 
     return NextResponse.json({ success: true, data: suggestions });
   } catch (err) {
