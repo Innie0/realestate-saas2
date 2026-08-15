@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { BarChart2, Home, MapPin } from 'lucide-react';
 import { parseAddressQuery } from '@/lib/search/parse-address';
+import type { AddressSuggestion } from '@/lib/mapbox-address-suggest';
 import Select from '@/components/ui/Select';
 
 export type ResearchSearchMode = 'research' | 'cma';
@@ -41,6 +42,26 @@ function fieldInputClass(extra = '') {
   );
 }
 
+function HighlightMatch({ text, query }: { text: string; query: string }) {
+  const needle = query.trim();
+  if (!needle) return <>{text}</>;
+
+  const lowerText = text.toLowerCase();
+  const lowerNeedle = needle.toLowerCase();
+  const idx = lowerText.indexOf(lowerNeedle);
+  if (idx === -1) return <>{text}</>;
+
+  return (
+    <>
+      {text.slice(0, idx)}
+      <span className="font-semibold text-foreground">{text.slice(idx, idx + needle.length)}</span>
+      {text.slice(idx + needle.length)}
+    </>
+  );
+}
+
+const SUGGEST_MIN_LEN = 3;
+
 export interface PropertyResearchCommandBarProps {
   mode: ResearchSearchMode;
   onModeChange: (mode: ResearchSearchMode) => void;
@@ -76,6 +97,10 @@ export default function PropertyResearchCommandBar({
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [zip, setZip] = useState('');
+  const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
+  const [suggestLoading, setSuggestLoading] = useState(false);
+  const [highlightIdx, setHighlightIdx] = useState(-1);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     try {
@@ -86,6 +111,42 @@ export default function PropertyResearchCommandBar({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate mode once
   }, []);
+
+  useEffect(() => {
+    const trimmed = query.trim();
+    if (trimmed.length < SUGGEST_MIN_LEN) {
+      setSuggestions([]);
+      setSuggestLoading(false);
+      setHighlightIdx(-1);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
+      setSuggestLoading(true);
+
+      try {
+        const res = await fetch(`/api/address-suggest?q=${encodeURIComponent(trimmed)}`, {
+          signal: controller.signal,
+        });
+        const data = await res.json();
+        if (!controller.signal.aborted && data.success) {
+          setSuggestions(Array.isArray(data.data) ? data.data : []);
+          setHighlightIdx(-1);
+        }
+      } catch {
+        if (!controller.signal.aborted) setSuggestions([]);
+      } finally {
+        if (!controller.signal.aborted) setSuggestLoading(false);
+      }
+    }, 250);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [query]);
 
   const persistMode = (next: ResearchSearchMode) => {
     onModeChange(next);
@@ -117,6 +178,26 @@ export default function PropertyResearchCommandBar({
       mode,
     );
   };
+
+  const selectSuggestion = useCallback(
+    (suggestion: AddressSuggestion) => {
+      setQuery(suggestion.label);
+      setSuggestions([]);
+      setHighlightIdx(-1);
+      setShowFields(false);
+      setError('');
+      onSubmit(
+        {
+          street: suggestion.street.trim(),
+          city: suggestion.city.trim(),
+          state: suggestion.state,
+          zip: suggestion.zip.trim(),
+        },
+        mode,
+      );
+    },
+    [mode, onSubmit],
+  );
 
   const handleSubmit = () => {
     const parsed = parseAddressQuery(query);
@@ -150,11 +231,30 @@ export default function PropertyResearchCommandBar({
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
+    const showSuggestions = query.trim().length >= SUGGEST_MIN_LEN && suggestions.length > 0;
+
+    if (showSuggestions && event.key === 'ArrowDown') {
+      event.preventDefault();
+      setHighlightIdx((i) => (i + 1) % suggestions.length);
+      return;
+    }
+    if (showSuggestions && event.key === 'ArrowUp') {
+      event.preventDefault();
+      setHighlightIdx((i) => (i <= 0 ? suggestions.length - 1 : i - 1));
+      return;
+    }
     if (event.key === 'Enter' && !event.shiftKey && !loading) {
       event.preventDefault();
+      if (showSuggestions && highlightIdx >= 0 && suggestions[highlightIdx]) {
+        selectSuggestion(suggestions[highlightIdx]);
+        return;
+      }
       handleSubmit();
     }
   };
+
+  const showSuggestionPanel =
+    query.trim().length >= SUGGEST_MIN_LEN && (suggestLoading || suggestions.length > 0);
 
   const activeUsage = mode === 'cma' ? cmaUsage : lookupUsage;
   const creditsLeft = remainingCredits(activeUsage);
@@ -240,6 +340,36 @@ export default function PropertyResearchCommandBar({
             ))}
           </div>
 
+          {showSuggestionPanel && (
+            <div className="mt-3">
+              <p className="mb-1.5 text-[12px] text-muted-foreground">Result suggestions</p>
+              {suggestLoading && suggestions.length === 0 ? (
+                <p className="px-2 py-2 text-[12.5px] text-muted-foreground">Searching addresses…</p>
+              ) : (
+                <ul className="max-h-52 space-y-0.5 overflow-y-auto">
+                  {suggestions.map((suggestion, idx) => (
+                    <li key={suggestion.id}>
+                      <button
+                        type="button"
+                        onMouseEnter={() => setHighlightIdx(idx)}
+                        onClick={() => selectSuggestion(suggestion)}
+                        className={clsx(
+                          'flex w-full items-center gap-2.5 rounded-lg px-2 py-2.5 text-left transition-colors',
+                          highlightIdx === idx ? 'bg-muted' : 'hover:bg-muted/60',
+                        )}
+                      >
+                        <MapPin className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+                        <span className="min-w-0 break-words text-[13.5px] text-foreground">
+                          <HighlightMatch text={suggestion.label} query={query} />
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+
           {showFields && (
             <div className="mt-3 space-y-2 rounded-xl border border-dashed border-border bg-[var(--canvas)] p-3">
               <p className="text-[11px] font-medium text-muted-foreground">Complete the address</p>
@@ -309,28 +439,32 @@ export default function PropertyResearchCommandBar({
           )}
 
           <div className="mt-3">
-            <p className="mb-1.5 text-[12px] text-muted-foreground">Recent searches</p>
-            {history.length === 0 ? (
-              <p className="px-1 py-2 text-[12.5px] text-muted-foreground/80">
-                Your recent addresses will appear here.
-              </p>
-            ) : (
-              <ul className="max-h-44 space-y-0.5 overflow-y-auto">
-                {history.map((entry) => (
-                  <li key={entry.id}>
-                    <button
-                      type="button"
-                      onClick={() => onHistorySelect(entry)}
-                      className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2.5 text-left transition-colors hover:bg-muted/60"
-                    >
-                      <MapPin className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
-                      <span className="min-w-0 break-words text-[13.5px] text-foreground">
-                        {entry.label}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
+            {!showSuggestionPanel && (
+              <>
+                <p className="mb-1.5 text-[12px] text-muted-foreground">Recent searches</p>
+                {history.length === 0 ? (
+                  <p className="px-1 py-2 text-[12.5px] text-muted-foreground/80">
+                    Your recent addresses will appear here.
+                  </p>
+                ) : (
+                  <ul className="max-h-44 space-y-0.5 overflow-y-auto">
+                    {history.map((entry) => (
+                      <li key={entry.id}>
+                        <button
+                          type="button"
+                          onClick={() => onHistorySelect(entry)}
+                          className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2.5 text-left transition-colors hover:bg-muted/60"
+                        >
+                          <MapPin className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+                          <span className="min-w-0 break-words text-[13.5px] text-foreground">
+                            {entry.label}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
             )}
           </div>
         </div>
