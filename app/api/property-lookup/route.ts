@@ -15,55 +15,7 @@ import {
   isDemoMarketingAddress,
   getDemoPropertyLookupResponse,
 } from '@/lib/demo-property-research';
-
-/**
- * Step 1: Call Rentcast to get verified owner name and property details.
- * Rentcast pulls directly from county assessor/recorder offices.
- */
-async function fetchRentcastProperty(street: string, city: string, state: string, zip: string) {
-  const rentcastKey = process.env.RENTCAST_API_KEY;
-  if (!rentcastKey) {
-    console.warn('RENTCAST_API_KEY not set');
-    return null;
-  }
-
-  // Build full address string: "Street, City, State, Zip"
-  const addressParts = [street];
-  if (city) addressParts.push(city);
-  addressParts.push(state);
-  if (zip) addressParts.push(zip);
-  const fullAddress = addressParts.join(', ');
-
-  try {
-    const params = new URLSearchParams({ address: fullAddress, limit: '1' });
-    const url = `https://api.rentcast.io/v1/properties?${params.toString()}`;
-
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'X-Api-Key': rentcastKey,
-        'Accept': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      const errText = await response.text().catch(() => '');
-      console.warn(`Rentcast returned ${response.status}: ${errText.slice(0, 300)}`);
-      return null;
-    }
-
-    const data = await response.json();
-    // Rentcast returns an array; we want the first (best) match
-    const property = Array.isArray(data) && data.length > 0 ? data[0] : null;
-    if (property) {
-      console.log('Rentcast found property:', property.formattedAddress, '| Owner:', property.owner?.names?.[0]);
-    }
-    return property;
-  } catch (err) {
-    console.warn('Rentcast call failed (non-fatal):', err);
-    return null;
-  }
-}
+import { fetchRentcastPropertyWithFallback } from '@/lib/rentcast-property-fetch';
 
 /**
  * Check Rentcast sale listings for an active or recent listing at this address.
@@ -255,11 +207,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, data });
     };
 
-    // ── STEP 1: Rentcast — property record + active listing + recently sold (in parallel) ─
-    const [rentcastProperty, activeListing, recentlySoldListing] = await Promise.all([
-      fetchRentcastProperty(street, city, state, zip),
-      fetchRentcastListing(street, city, state, zip),
-      fetchRentcastRecentlySold(street, city, state, zip),
+    // ── STEP 1: Rentcast — property record, then listings on the resolved address ─
+    const rentcastProperty = await fetchRentcastPropertyWithFallback({ street, city, state, zip });
+    const resolvedStreet = rentcastProperty?.addressLine1 || street;
+    const resolvedCity = rentcastProperty?.city || city;
+    const resolvedZip = rentcastProperty?.zipCode || zip;
+    const [activeListing, recentlySoldListing] = await Promise.all([
+      fetchRentcastListing(resolvedStreet, resolvedCity, state, resolvedZip),
+      fetchRentcastRecentlySold(resolvedStreet, resolvedCity, state, resolvedZip),
     ]);
 
     // Extract owner name from Rentcast county records
@@ -275,6 +230,23 @@ export async function POST(request: NextRequest) {
 
     const batchDataApiKey = process.env.BATCH_SKIP_TRACING_API_KEY;
     if (!batchDataApiKey) {
+      if (rentcastProperty) {
+        await recordLookupUsage();
+        return respondLookup(
+          buildCountyRecordsLookupResult(
+            rentcastProperty,
+            rentcastOwnerName,
+            parsedFirst,
+            parsedLast,
+            street,
+            city,
+            state,
+            zip,
+            activeListing,
+            recentlySoldListing,
+          ),
+        );
+      }
       return NextResponse.json(
         { success: false, error: 'Skip tracing API is not configured' },
         { status: 500 }
@@ -288,6 +260,23 @@ export async function POST(request: NextRequest) {
     );
 
     if (!skipTraceResponse) {
+      if (rentcastProperty) {
+        await recordLookupUsage();
+        return respondLookup(
+          buildCountyRecordsLookupResult(
+            rentcastProperty,
+            rentcastOwnerName,
+            parsedFirst,
+            parsedLast,
+            street,
+            city,
+            state,
+            zip,
+            activeListing,
+            recentlySoldListing,
+          ),
+        );
+      }
       return NextResponse.json(
         { success: false, error: 'Failed to connect to skip trace API' },
         { status: 500 }
@@ -316,6 +305,24 @@ export async function POST(request: NextRequest) {
           { status: 429 }
         );
       }
+      if (rentcastProperty) {
+        console.warn('BatchData unavailable; returning county records only');
+        await recordLookupUsage();
+        return respondLookup(
+          buildCountyRecordsLookupResult(
+            rentcastProperty,
+            rentcastOwnerName,
+            parsedFirst,
+            parsedLast,
+            street,
+            city,
+            state,
+            zip,
+            activeListing,
+            recentlySoldListing,
+          ),
+        );
+      }
       return NextResponse.json(
         { success: false, error: 'Failed to look up property. Please try again.' },
         { status: 500 }
@@ -330,60 +337,21 @@ export async function POST(request: NextRequest) {
     // still return property details with what we know from county records
     if (persons.length === 0 || (meta.results && meta.results.matchCount === 0)) {
       if (rentcastProperty) {
-        // Return what we know from county records alone
-        const ownerMailingAddr = rentcastProperty.owner?.mailingAddress;
-        const latestTaxYear = rentcastProperty.taxAssessments
-          ? Object.keys(rentcastProperty.taxAssessments).sort().pop()
-          : null;
-        const latestAssessment = latestTaxYear ? rentcastProperty.taxAssessments[latestTaxYear] : null;
-
         await recordLookupUsage();
-        return respondLookup({
-          found: true,
-          results: [{
-            owner: {
-              firstName: parsedFirst,
-              lastName: parsedLast,
-              fullName: rentcastOwnerName || 'Unknown',
-              type: rentcastProperty.owner?.type || 'Unknown',
-            },
-            propertyAddress: {
-              street: rentcastProperty.addressLine1 || street,
-              city: rentcastProperty.city || city,
-              state: rentcastProperty.state || state,
-              zip: rentcastProperty.zipCode || zip,
-              county: rentcastProperty.county || '',
-              latitude: rentcastProperty.latitude || null,
-              longitude: rentcastProperty.longitude || null,
-              formatted: rentcastProperty.formattedAddress || `${street}, ${city}, ${state} ${zip}`.trim(),
-            },
-            mailingAddress: ownerMailingAddr ? {
-              street: ownerMailingAddr.addressLine1 || '',
-              city: ownerMailingAddr.city || '',
-              state: ownerMailingAddr.state || '',
-              zip: ownerMailingAddr.zipCode || '',
-              formatted: ownerMailingAddr.formattedAddress || '',
-            } : { street: '', city: '', state: '', zip: '', formatted: '' },
-            occupancyStatus: rentcastProperty.ownerOccupied === true
-              ? 'Owner-Occupied'
-              : rentcastProperty.ownerOccupied === false
-                ? 'Absentee Owner (Likely Rental)'
-                : 'Unknown',
-            phoneNumbers: [],
-            emails: [],
-            isLitigator: false,
-            bankruptcy: {},
-            dnc: {},
-            involuntaryLien: {},
-            matched: true,
-            propertyDetails: buildPropertyDetails(rentcastProperty, latestAssessment),
-            activeListing: buildListingInfo(activeListing),
-            recentlySold: buildListingInfo(recentlySoldListing),
-            dataSource: 'county_records_only',
-          }],
-          searchedAddress: { street, city, state, zip },
-          meta: { requestCount: 1, matchCount: 1 },
-        });
+        return respondLookup(
+          buildCountyRecordsLookupResult(
+            rentcastProperty,
+            rentcastOwnerName,
+            parsedFirst,
+            parsedLast,
+            street,
+            city,
+            state,
+            zip,
+            activeListing,
+            recentlySoldListing,
+          ),
+        );
       }
 
       return respondLookup({
@@ -599,5 +567,71 @@ function buildListingInfo(listing: any) {
           email: listing.listingOffice.email || null,
         }
       : null,
+  };
+}
+
+function buildCountyRecordsLookupResult(
+  rentcastProperty: any,
+  rentcastOwnerName: string | null,
+  parsedFirst: string,
+  parsedLast: string,
+  street: string,
+  city: string,
+  state: string,
+  zip: string,
+  activeListing: any,
+  recentlySoldListing: any,
+) {
+  const ownerMailingAddr = rentcastProperty.owner?.mailingAddress;
+  const latestTaxYear = rentcastProperty.taxAssessments
+    ? Object.keys(rentcastProperty.taxAssessments).sort().pop()
+    : null;
+  const latestAssessment = latestTaxYear ? rentcastProperty.taxAssessments[latestTaxYear] : null;
+
+  return {
+    found: true,
+    results: [{
+      owner: {
+        firstName: parsedFirst,
+        lastName: parsedLast,
+        fullName: rentcastOwnerName || 'Unknown',
+        type: rentcastProperty.owner?.type || 'Unknown',
+      },
+      propertyAddress: {
+        street: rentcastProperty.addressLine1 || street,
+        city: rentcastProperty.city || city,
+        state: rentcastProperty.state || state,
+        zip: rentcastProperty.zipCode || zip,
+        county: rentcastProperty.county || '',
+        latitude: rentcastProperty.latitude || null,
+        longitude: rentcastProperty.longitude || null,
+        formatted: rentcastProperty.formattedAddress || `${street}, ${city}, ${state} ${zip}`.trim(),
+      },
+      mailingAddress: ownerMailingAddr ? {
+        street: ownerMailingAddr.addressLine1 || '',
+        city: ownerMailingAddr.city || '',
+        state: ownerMailingAddr.state || '',
+        zip: ownerMailingAddr.zipCode || '',
+        formatted: ownerMailingAddr.formattedAddress || '',
+      } : { street: '', city: '', state: '', zip: '', formatted: '' },
+      occupancyStatus: rentcastProperty.ownerOccupied === true
+        ? 'Owner-Occupied'
+        : rentcastProperty.ownerOccupied === false
+          ? 'Absentee Owner (Likely Rental)'
+          : 'Unknown',
+      phoneNumbers: [],
+      emails: [],
+      isLitigator: false,
+      bankruptcy: {},
+      dnc: {},
+      involuntaryLien: {},
+      matched: true,
+      propertyDetails: buildPropertyDetails(rentcastProperty, latestAssessment),
+      activeListing: buildListingInfo(activeListing),
+      recentlySold: buildListingInfo(recentlySoldListing),
+      dataSource: 'county_records_only',
+    }],
+    searchedAddress: { street, city, state, zip },
+    meta: { requestCount: 1, matchCount: 1 },
   };
 }

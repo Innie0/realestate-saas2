@@ -60,7 +60,7 @@ function SubjectPropertyContent() {
     const addressKey = normalizeAddressKey(fields);
     const cachedLookup = getLocalResearchCache<LookupResponse>(lookupLocalCacheKey(addressKey));
     const cachedCma = findLatestCmaCache<CmaAnalysisResult>(addressKey);
-    setLookupData(cachedLookup);
+    setLookupData(cachedLookup?.found ? cachedLookup : null);
     setCmaResult(cachedCma ? normalizeCmaResult(cachedCma) : null);
 
     if (searchParams.get('auto') === '1' && !autoRan.current) {
@@ -68,6 +68,8 @@ function SubjectPropertyContent() {
       setLookupTrigger((n) => n + 1);
     }
   }, [fields, router, searchParams]);
+
+  const forceLookupRefresh = searchParams.get('auto') === '1' || !lookupData?.found;
 
   const addressLabel = fields ? formatAddressLabel(fields) : '';
 
@@ -102,7 +104,6 @@ function SubjectPropertyContent() {
         <PropertyResearchAddressBar
           fields={fields}
           label={addressLabel}
-          showRunCma
         />
 
         <Card className="overflow-hidden p-0">
@@ -139,6 +140,7 @@ function SubjectPropertyContent() {
                       state={fields.state}
                       zip={fields.zip}
                       lookupTrigger={lookupTrigger}
+                      forceRefreshOnTrigger={forceLookupRefresh}
                       initialData={lookupData}
                       onComplete={handleLookupComplete}
                       onLoadingChange={setLookupLoading}

@@ -137,6 +137,8 @@ export interface OwnerContactPanelProps {
   state: string;
   zip: string;
   lookupTrigger?: number;
+  /** When true, triggered lookups bypass local and server cache */
+  forceRefreshOnTrigger?: boolean;
   /** Parent-held lookup data (e.g. from recent history cache) */
   initialData?: LookupResponse | null;
   onComplete?: (data: LookupResponse | null) => void;
@@ -171,6 +173,7 @@ export function OwnerContactPanel({
   state,
   zip,
   lookupTrigger = 0,
+  forceRefreshOnTrigger = false,
   initialData = null,
   onComplete,
   onLoadingChange,
@@ -277,8 +280,8 @@ export function OwnerContactPanel({
   useEffect(() => {
     if (lookupTrigger <= 0 || lookupTrigger === lastTriggerRef.current) return;
     lastTriggerRef.current = lookupTrigger;
-    runLookup();
-  }, [lookupTrigger, runLookup]);
+    runLookup(forceRefreshOnTrigger);
+  }, [lookupTrigger, runLookup, forceRefreshOnTrigger]);
 
   // Hydrate from parent cache when selecting a recent search (no new API call)
   useEffect(() => {

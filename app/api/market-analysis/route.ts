@@ -52,6 +52,7 @@ import {
   getDemoMarketPrefillResponse,
   getDemoMarketAnalysisResponse,
 } from '@/lib/demo-property-research';
+import { fetchRentcastPropertyWithFallback } from '@/lib/rentcast-property-fetch';
 
 const RENTCAST_BASE = 'https://api.rentcast.io/v1';
 
@@ -68,20 +69,7 @@ function buildAddress(street: string, city: string, state: string, zip: string) 
 }
 
 async function fetchRentcastProperty(street: string, city: string, state: string, zip: string) {
-  const key = getRentcastKey();
-  if (!key) return null;
-  const address = buildAddress(street, city, state, zip);
-  try {
-    const params = new URLSearchParams({ address, limit: '1' });
-    const res = await fetch(`${RENTCAST_BASE}/properties?${params}`, {
-      headers: { 'X-Api-Key': key, Accept: 'application/json' },
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return Array.isArray(data) && data.length > 0 ? data[0] : null;
-  } catch {
-    return null;
-  }
+  return fetchRentcastPropertyWithFallback({ street, city, state, zip });
 }
 
 async function fetchAVM(address: string, key: string) {
