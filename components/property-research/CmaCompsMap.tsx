@@ -177,12 +177,14 @@ export default function CmaCompsMap({
   const areaModeRef = useRef(areaMode);
   const onCustomPointsChangeRef = useRef(onCustomPointsChange);
   const [mapStyle, setMapStyle] = useState<'streets' | 'satellite'>('streets');
+  const mapStyleRef = useRef(mapStyle);
   const [mapReady, setMapReady] = useState(false);
   const token = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
   customPointsRef.current = customPoints;
   areaModeRef.current = areaMode;
   onCustomPointsChangeRef.current = onCustomPointsChange;
+  mapStyleRef.current = mapStyle;
 
   const compPoints = useMemo(
     () =>
@@ -206,6 +208,11 @@ export default function CmaCompsMap({
     (map: mapboxgl.Map, subject: MapCoordinate) => {
       const feature = searchAreaGeoJson(areaModeRef.current, subject, radiusMiles, customPointsRef.current);
       const source = map.getSource(SEARCH_AREA_SOURCE) as mapboxgl.GeoJSONSource | undefined;
+      const isSatellite = mapStyleRef.current === 'satellite';
+      const fillColor = isSatellite ? '#fafafa' : '#3f3f46';
+      const fillOpacity = isSatellite ? 0.34 : 0.12;
+      const lineColor = isSatellite ? '#ffffff' : '#3f3f46';
+      const lineOpacity = isSatellite ? 0.92 : 0.45;
 
       if (!feature) {
         if (source) {
@@ -229,27 +236,34 @@ export default function CmaCompsMap({
           type: 'fill',
           source: SEARCH_AREA_SOURCE,
           filter: ['==', '$type', 'Polygon'],
-          paint: { 'fill-color': '#3f3f46', 'fill-opacity': 0.12 },
+          paint: { 'fill-color': fillColor, 'fill-opacity': fillOpacity },
         });
         map.addLayer({
           id: SEARCH_AREA_LINE,
           type: 'line',
           source: SEARCH_AREA_SOURCE,
           filter: ['==', '$type', 'LineString'],
-          paint: { 'line-color': '#3f3f46', 'line-width': 2, 'line-opacity': 0.65 },
+          paint: { 'line-color': lineColor, 'line-width': 2, 'line-opacity': 0.75 },
         });
         map.addLayer({
           id: SEARCH_AREA_STROKE,
           type: 'line',
           source: SEARCH_AREA_SOURCE,
           filter: ['==', '$type', 'Polygon'],
-          paint: { 'line-color': '#3f3f46', 'line-width': 2, 'line-opacity': 0.45 },
+          paint: { 'line-color': lineColor, 'line-width': isSatellite ? 2.5 : 2, 'line-opacity': lineOpacity },
         });
       }
 
-      map.setLayoutProperty(SEARCH_AREA_FILL, 'visibility', isLine ? 'none' : 'visible');
-      map.setLayoutProperty(SEARCH_AREA_LINE, 'visibility', isLine ? 'visible' : 'none');
-      map.setLayoutProperty(SEARCH_AREA_STROKE, 'visibility', isLine ? 'none' : 'visible');
+      if (map.getLayer(SEARCH_AREA_FILL)) {
+        map.setPaintProperty(SEARCH_AREA_FILL, 'fill-color', fillColor);
+        map.setPaintProperty(SEARCH_AREA_FILL, 'fill-opacity', fillOpacity);
+        map.setPaintProperty(SEARCH_AREA_STROKE, 'line-color', lineColor);
+        map.setPaintProperty(SEARCH_AREA_STROKE, 'line-opacity', lineOpacity);
+        map.setPaintProperty(SEARCH_AREA_STROKE, 'line-width', isSatellite ? 2.5 : 2);
+        map.setLayoutProperty(SEARCH_AREA_FILL, 'visibility', isLine ? 'none' : 'visible');
+        map.setLayoutProperty(SEARCH_AREA_LINE, 'visibility', isLine ? 'visible' : 'none');
+        map.setLayoutProperty(SEARCH_AREA_STROKE, 'visibility', isLine ? 'none' : 'visible');
+      }
     },
     [radiusMiles],
   );
@@ -409,7 +423,7 @@ export default function CmaCompsMap({
     syncSearchArea(map, subjectPoint);
     syncVertexMarkers(map);
     map.getCanvas().style.cursor = areaMode === 'custom' ? 'crosshair' : '';
-  }, [areaMode, customPoints, mapReady, radiusMiles, subjectPoint, syncSearchArea, syncVertexMarkers]);
+  }, [areaMode, customPoints, mapReady, mapStyle, radiusMiles, subjectPoint, syncSearchArea, syncVertexMarkers]);
 
   const handleRecenter = () => {
     const map = mapRef.current;
@@ -480,15 +494,18 @@ export default function CmaCompsMap({
   const showClearSelection = areaMode === 'custom' && customPoints.length > 0;
 
   const mapFrameClass = cn(
-    'relative h-full min-h-0 w-full',
+    'relative isolate h-full min-h-0 w-full overflow-hidden rounded-2xl',
     fillContainer ? '' : cn('min-h-[320px] flex-1 lg:min-h-[400px]', mapHeightClassName),
   );
 
-  const mapClipClass =
-    'absolute inset-0 overflow-hidden rounded-2xl [&_.mapboxgl-canvas]:rounded-2xl [&_.mapboxgl-canvas-container]:rounded-2xl [&_.mapboxgl-map]:rounded-2xl';
-
   const mapCanvasClass =
     'h-full w-full [&_.mapboxgl-ctrl-attrib]:!hidden [&_.mapboxgl-ctrl-logo]:!hidden [&_.mapboxgl-ctrl-top-right]:!hidden';
+
+  const controlRailClass =
+    'pointer-events-auto absolute right-4 top-4 z-20 overflow-hidden rounded-lg border border-gray-200/90 bg-white/95 shadow-md backdrop-blur-sm';
+
+  const recenterButtonClass =
+    'absolute bottom-[4.75rem] right-4 z-20 flex size-9 items-center justify-center rounded-lg border border-gray-200/90 bg-white/95 text-gray-700 shadow-md backdrop-blur-sm hover:bg-white';
 
   return (
     <div className={cn(fillContainer ? 'h-full min-h-0 w-full' : hideLegend ? 'flex h-full min-h-0 flex-col' : 'space-y-2')}>
@@ -518,53 +535,49 @@ export default function CmaCompsMap({
       )}
 
       <div className={mapFrameClass}>
-        <div className={mapClipClass}>
-          <div ref={containerRef} className={mapCanvasClass} aria-label="Comparable sales map" />
-        </div>
+        <div ref={containerRef} className={mapCanvasClass} aria-label="Comparable sales map" />
 
         {fillContainer && (
-          <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-2xl">
+          <>
             {showClearSelection && (
               <button
                 type="button"
                 onClick={handleClearSelection}
-                className="pointer-events-auto absolute left-3 top-3 rounded-lg border border-gray-200/90 bg-white/95 px-3 py-2 text-[12.5px] font-medium text-gray-800 shadow-md backdrop-blur-sm hover:bg-white"
+                className="absolute left-4 top-4 z-20 rounded-lg border border-gray-200/90 bg-white/95 px-3 py-2 text-[12.5px] font-medium text-gray-800 shadow-md backdrop-blur-sm hover:bg-white"
               >
                 Clear selection
               </button>
             )}
 
-            <div className="pointer-events-none absolute right-3 top-3 bottom-16 flex w-9 flex-col items-stretch justify-between">
-              <div className="pointer-events-auto overflow-hidden rounded-lg border border-gray-200/90 bg-white/95 shadow-md backdrop-blur-sm">
-                <button
-                  type="button"
-                  aria-label="Zoom in"
-                  onClick={handleZoomIn}
-                  className={mapControlButtonClass('border-b border-gray-200/90')}
-                >
-                  <Plus className="size-4" strokeWidth={2.25} />
-                </button>
-                <button
-                  type="button"
-                  aria-label="Zoom out"
-                  onClick={handleZoomOut}
-                  className={mapControlButtonClass()}
-                >
-                  <Minus className="size-4" strokeWidth={2.25} />
-                </button>
-              </div>
-
+            <div className={controlRailClass}>
               <button
                 type="button"
-                aria-label="Recenter map on subject property"
-                onClick={handleRecenter}
-                className="pointer-events-auto flex size-9 items-center justify-center rounded-lg border border-gray-200/90 bg-white/95 text-gray-700 shadow-md backdrop-blur-sm hover:bg-white"
+                aria-label="Zoom in"
+                onClick={handleZoomIn}
+                className={mapControlButtonClass('border-b border-gray-200/90')}
               >
-                <Crosshair className="size-4" />
+                <Plus className="size-4" strokeWidth={2.25} />
+              </button>
+              <button
+                type="button"
+                aria-label="Zoom out"
+                onClick={handleZoomOut}
+                className={mapControlButtonClass()}
+              >
+                <Minus className="size-4" strokeWidth={2.25} />
               </button>
             </div>
 
-            <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center px-4">
+            <button
+              type="button"
+              aria-label="Recenter map on subject property"
+              onClick={handleRecenter}
+              className={recenterButtonClass}
+            >
+              <Crosshair className="size-4" />
+            </button>
+
+            <div className="pointer-events-none absolute inset-x-0 bottom-4 z-20 flex justify-center px-4">
               <div className="pointer-events-auto inline-flex items-center rounded-full border border-gray-200/90 bg-white/95 p-1 shadow-md backdrop-blur-sm">
                 <button
                   type="button"
@@ -589,17 +602,17 @@ export default function CmaCompsMap({
               </div>
             </div>
 
-            <div className="pointer-events-none absolute bottom-3 left-3">
+            <div className="absolute bottom-4 left-4 z-20">
               <button
                 type="button"
                 aria-label={mapStyle === 'satellite' ? 'Show street map' : 'Show satellite map'}
                 onClick={() => setMapStyle((s) => (s === 'satellite' ? 'streets' : 'satellite'))}
-                className="pointer-events-auto flex size-9 items-center justify-center rounded-lg border border-gray-200/90 bg-white/95 text-gray-700 shadow-md backdrop-blur-sm hover:bg-white"
+                className="flex size-9 items-center justify-center rounded-lg border border-gray-200/90 bg-white/95 text-gray-700 shadow-md backdrop-blur-sm hover:bg-white"
               >
                 {mapStyle === 'satellite' ? <MapIcon className="size-4" /> : <Satellite className="size-4" />}
               </button>
             </div>
-          </div>
+          </>
         )}
       </div>
     </div>

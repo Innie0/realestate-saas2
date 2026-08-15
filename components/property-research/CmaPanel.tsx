@@ -1056,7 +1056,7 @@ export function CmaPanel({
   };
 
   return (
-    <div className="relative -mx-4 flex h-full max-h-[calc(100dvh-6.5rem)] min-h-0 flex-col overflow-hidden sm:-mx-7 lg:max-h-none">
+    <div className="relative flex h-full min-h-0 flex-col">
       <div className="relative flex shrink-0 items-center border-b border-gray-200/80 px-4 py-3 dark:border-border sm:px-6">
         <Link
           href={propertyResearchLandingHref()}
@@ -1112,7 +1112,7 @@ export function CmaPanel({
           </div>
         </aside>
 
-        <main className="relative hidden min-h-0 flex-1 overflow-hidden p-4 lg:block">
+        <main className="relative hidden min-h-0 flex-1 overflow-hidden px-4 pb-4 pt-0 lg:block">
           <CmaCompsMap
             mode={mapHasCompPins ? 'results' : 'preview'}
             subjectLocation={mapSubjectLocation}
