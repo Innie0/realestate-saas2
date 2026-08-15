@@ -1043,8 +1043,8 @@ export function CmaPanel({
   };
 
   return (
-    <div className="-mx-4 flex min-h-[calc(100dvh-7.5rem)] flex-col sm:-mx-7">
-      <div className="relative flex items-center border-b border-gray-200/80 px-4 py-3 dark:border-border sm:px-6">
+    <div className="relative -mx-4 flex h-full max-h-[calc(100dvh-6.5rem)] min-h-0 flex-col overflow-hidden sm:-mx-7 lg:max-h-none">
+      <div className="relative flex shrink-0 items-center border-b border-gray-200/80 px-4 py-3 dark:border-border sm:px-6">
         <Link
           href={propertyResearchLandingHref()}
           className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-muted-foreground dark:hover:text-foreground"
@@ -1062,10 +1062,21 @@ export function CmaPanel({
         </div>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-        <aside className="flex w-full shrink-0 flex-col border-b border-gray-200/80 bg-gray-50/40 dark:border-border dark:bg-muted/20 lg:w-[380px] lg:border-b-0 lg:border-r">
-          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4 sm:p-5">
+      <div className="flex min-h-0 flex-1 overflow-hidden flex-col lg:flex-row">
+        <aside className="flex min-h-0 w-full shrink-0 flex-col overflow-hidden border-b border-gray-200/80 bg-gray-50/40 dark:border-border dark:bg-muted/20 lg:h-full lg:max-h-full lg:w-[380px] lg:border-b-0 lg:border-r">
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-4 sm:p-5">
             <p className="truncate text-[14px] font-semibold text-gray-900 sm:hidden dark:text-foreground">{mapAddress}</p>
+            <div className="relative h-[240px] shrink-0 overflow-hidden rounded-xl border border-gray-200/80 lg:hidden dark:border-border">
+              <CmaCompsMap
+                mode={mapHasCompPins ? 'results' : 'preview'}
+                subjectLocation={mapSubjectLocation}
+                comps={mapHasCompPins ? activeComps : []}
+                radiusMiles={radius}
+                subjectAddress={mapAddress}
+                hideLegend
+                fillContainer
+              />
+            </div>
             {renderControlsPanel()}
             {renderCriteriaBanner()}
             {error && (
@@ -1082,12 +1093,12 @@ export function CmaPanel({
               </div>
             )}
           </div>
-          <div className="border-t border-gray-200/80 bg-[var(--surface)] p-4 sm:p-5 dark:border-border">
+          <div className="shrink-0 border-t border-gray-200/80 bg-[var(--surface)] p-4 sm:p-5 dark:border-border">
             {renderActionBar()}
           </div>
         </aside>
 
-        <main className="relative min-h-[420px] flex-1 bg-gray-100 dark:bg-muted/30 lg:min-h-0">
+        <main className="relative hidden min-h-0 flex-1 overflow-hidden bg-gray-100 dark:bg-muted/30 lg:block">
           <CmaCompsMap
             mode={mapHasCompPins ? 'results' : 'preview'}
             subjectLocation={mapSubjectLocation}
@@ -1101,7 +1112,7 @@ export function CmaPanel({
       </div>
 
       {loading && (
-        <div className="border-t border-gray-200/80 bg-[var(--surface)] p-4 dark:border-border">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 border-t border-gray-200/80 bg-[var(--surface)]/95 p-4 backdrop-blur-sm dark:border-border">
           <DataLoadingState
             title="Running comp-based analysis"
             description="Scoring nearby sales and adjusting for beds, baths, and condition. This usually takes 10–20 seconds."

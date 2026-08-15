@@ -15,6 +15,8 @@ interface DashboardPageProps {
   ambient?: 'default' | 'tool';
   /** Baseline-aligned title + subtitle on one line, passed through to Header. */
   inline?: boolean;
+  /** Lock page to the dashboard viewport (no document scroll; for tool split layouts). */
+  fillViewport?: boolean;
 }
 
 const ambientClasses = {
@@ -32,9 +34,16 @@ export default function DashboardPage({
   className,
   ambient = 'default',
   inline = false,
+  fillViewport = false,
 }: DashboardPageProps) {
   return (
-    <div className={clsx('relative min-h-screen', ambientClasses[ambient])}>
+    <div
+      className={clsx(
+        'relative',
+        fillViewport ? 'flex h-full min-h-0 flex-col overflow-hidden' : 'min-h-screen',
+        ambientClasses[ambient],
+      )}
+    >
       <Header
         title={title}
         subtitle={subtitle}
@@ -43,8 +52,14 @@ export default function DashboardPage({
         inline={inline}
         hero={!!eyebrow}
       />
-      <PageShell size={size} className={clsx('relative z-[1]', className)}>
-        <PageTransition className="space-y-5">{children}</PageTransition>
+      <PageShell size={size} className={clsx('relative z-[1]', fillViewport && 'flex min-h-0 flex-1 flex-col overflow-hidden', className)}>
+        <PageTransition
+          className={clsx(
+            fillViewport ? 'flex min-h-0 flex-1 flex-col overflow-hidden' : 'space-y-5',
+          )}
+        >
+          {children}
+        </PageTransition>
       </PageShell>
     </div>
   );

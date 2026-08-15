@@ -74,6 +74,7 @@ function CmaPropertyContent() {
     <DashboardPage
       title="Market analysis"
       size="full"
+      fillViewport
       className="!py-0 sm:!py-0"
     >
       <CmaPanel

@@ -194,7 +194,7 @@ export default function CmaCompsMap({
       const subjectMarker = new mapboxgl.Marker({
         element: createPinElement({
           label: 'Subject property',
-          background: '#0668E1',
+          background: '#18181b',
           size: 28,
         }),
         anchor: 'center',
@@ -260,7 +260,7 @@ export default function CmaCompsMap({
       <div
         className={cn(
           'flex items-center justify-center bg-gray-50 px-4 py-8 text-center text-[13px] text-gray-600',
-          fillContainer ? 'h-full min-h-[320px]' : `rounded-[10px] border border-dashed border-gray-200 ${mapHeightClassName}`,
+          fillContainer ? 'h-full min-h-0' : `rounded-[10px] border border-dashed border-gray-200 ${mapHeightClassName}`,
         )}
       >
         Map unavailable — add <code className="text-[12px]">NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN</code> to enable the comps map.
@@ -273,7 +273,7 @@ export default function CmaCompsMap({
       <div
         className={cn(
           'flex items-center justify-center bg-gray-50 px-4 py-8 text-center text-[13px] text-gray-600',
-          fillContainer ? 'h-full min-h-[320px]' : `rounded-[10px] border border-dashed border-gray-200 ${mapHeightClassName}`,
+          fillContainer ? 'h-full min-h-0' : `rounded-[10px] border border-dashed border-gray-200 ${mapHeightClassName}`,
         )}
       >
         Map unavailable — subject coordinates were not returned for this address.
@@ -286,7 +286,7 @@ export default function CmaCompsMap({
       <div
         className={cn(
           'flex items-center justify-center bg-gray-50 px-4 py-8 text-center text-[13px] text-gray-600',
-          fillContainer ? 'h-full min-h-[320px]' : `rounded-[10px] border border-dashed border-gray-200 ${mapHeightClassName}`,
+          fillContainer ? 'h-full min-h-0' : `rounded-[10px] border border-dashed border-gray-200 ${mapHeightClassName}`,
         )}
       >
         Map unavailable — none of the comps include location coordinates.
@@ -295,7 +295,7 @@ export default function CmaCompsMap({
   }
 
   const containerClass = fillContainer
-    ? 'relative h-full min-h-[420px] w-full'
+    ? 'relative h-full min-h-0 w-full overflow-hidden'
     : hideLegend
       ? `flex h-full min-h-0 flex-col ${mapHeightClassName}`
       : 'space-y-2';
@@ -331,9 +331,7 @@ export default function CmaCompsMap({
         ref={containerRef}
         className={cn(
           'cma-map-host w-full overflow-hidden [&_.mapboxgl-ctrl-attrib]:!hidden [&_.mapboxgl-ctrl-logo]:!hidden',
-          fillContainer
-            ? 'absolute inset-0 h-full'
-            : hideLegend
+          fillContainer ? 'absolute inset-0 h-full' : hideLegend
               ? 'min-h-[320px] flex-1 rounded-[10px] border border-gray-200 lg:min-h-[400px]'
               : mapHeightClassName,
         )}
