@@ -14,7 +14,7 @@ interface PropertyResearchAddressBarProps {
 export default function PropertyResearchAddressBar({
   fields,
   label,
-  contextLabel = 'Subject property',
+  contextLabel = 'Owner & details',
   showRunCma = false,
 }: PropertyResearchAddressBarProps) {
   return (

@@ -90,8 +90,10 @@ function PropertyResearchLandingContent() {
 
   return (
     <DashboardPage
-      title="Property Research"
-      subtitle="Look up owners, property details, and run comp-based CMA"
+      inline
+      ambient="tool"
+      title="Look up an address"
+      subtitle="Owner details or comp-based CMA"
     >
       <PropertyResearchCommandBar
         mode={searchMode}

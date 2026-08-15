@@ -55,7 +55,7 @@ function SubjectPropertyContent() {
       return;
     }
 
-    document.title = `Subject property - ${SITE_NAME}`;
+    document.title = `Owner & details - ${SITE_NAME}`;
 
     const addressKey = normalizeAddressKey(fields);
     const cachedLookup = getLocalResearchCache<LookupResponse>(lookupLocalCacheKey(addressKey));
@@ -96,7 +96,7 @@ function SubjectPropertyContent() {
 
   return (
     <DashboardPage
-      title="Subject property"
+      title="Owner & details"
       subtitle="Property details and owner contact records"
       size="full"
     >

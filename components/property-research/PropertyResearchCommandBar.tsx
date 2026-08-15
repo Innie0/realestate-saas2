@@ -292,11 +292,7 @@ export default function PropertyResearchCommandBar({
       className="flex min-h-[calc(100vh-11rem)] flex-col items-center justify-center px-4 py-8"
       data-tour="research-search"
     >
-      <h2 className="text-center text-[26px] font-normal tracking-tight text-foreground sm:text-[32px]">
-        Find subject property
-      </h2>
-
-      <div className="mt-10 w-full max-w-2xl space-y-3">
+      <div className="w-full max-w-2xl space-y-3">
         {/* Search input */}
         <div className="relative min-h-[140px] overflow-hidden rounded-2xl border border-border bg-[var(--canvas)] px-4 pb-12 pt-4 shadow-sm sm:min-h-[152px] sm:px-5 sm:pt-5">
           <textarea
@@ -346,7 +342,7 @@ export default function PropertyResearchCommandBar({
                 className={clsx(
                   'inline-flex min-w-[148px] items-center justify-center gap-2 rounded-xl border-2 px-4 py-2.5 text-[13px] font-semibold transition-all',
                   mode === id
-                    ? 'border-brand-500 bg-brand-500 text-[var(--brand-foreground)] shadow-[0_4px_14px_-4px_rgba(6,104,225,0.45)]'
+                    ? 'border-brand-500 bg-brand-500 text-[var(--brand-foreground)]'
                     : 'border-border bg-[var(--canvas)] text-foreground shadow-sm hover:border-brand-400 hover:bg-muted/40',
                 )}
               >
