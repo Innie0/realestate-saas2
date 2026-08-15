@@ -21,6 +21,7 @@
   --sidebar: #111111;
   --ink: #ffffff;
   --brand: #ffffff;
+  --brand-mark: #0668E1;
   --brand-foreground: #0a0a0a;
   --border: #2e2e2e;
   --champagne: #a87c43;
@@ -190,6 +191,7 @@ html[data-dashboard-theme='light'],
   --sidebar: #ffffff;
   --ink: #1c1d22;
   --brand: #0668E1;
+  --brand-mark: #0668E1;
   --border: #eaeaea;
   --brand-foreground: #ffffff;
   --champagne: #444039;
@@ -322,6 +324,7 @@ html[data-dashboard-theme='dark'],
   --sidebar: #111111;
   --ink: #ffffff;
   --brand: #ffffff;
+  --brand-mark: #0668E1;
   --border: #2e2e2e;
   --brand-foreground: #0a0a0a;
   --champagne: #a87c43;

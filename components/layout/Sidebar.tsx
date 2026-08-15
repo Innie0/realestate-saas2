@@ -109,7 +109,7 @@ function NavLink({
       </span>
       {!isCollapsed && !!count && count > 0 && (
         <span
-          className="relative z-10 rounded-full bg-[#0668E1] px-[6px] py-[1px] font-mono text-[10px] font-semibold text-white"
+          className="relative z-10 rounded-full bg-[var(--brand-mark)] px-[6px] py-[1px] font-mono text-[10px] font-semibold text-white"
         >
           {count}
         </span>
@@ -258,7 +258,7 @@ export default function Sidebar() {
     <>
       <div className="fixed left-0 right-0 top-0 z-50 flex h-16 items-center justify-between border-b border-border bg-[var(--canvas)] px-4 lg:hidden">
         <Link href="/dashboard" className="flex items-center gap-2 min-h-0">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] bg-[#0668E1] text-[11px] font-bold text-white">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] bg-[var(--brand-mark)] text-[11px] font-bold text-white">
             {SITE_NAME.charAt(0)}
           </span>
           <span className="text-[13px] font-semibold tracking-tight text-foreground">{SITE_NAME}</span>
@@ -306,7 +306,7 @@ export default function Sidebar() {
             />
           ) : (
             <>
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-[#0668E1] text-[11px] font-bold text-white">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-[var(--brand-mark)] text-[11px] font-bold text-white">
                 {SITE_NAME.charAt(0)}
               </span>
               <span className="text-[13px] font-semibold tracking-tight text-foreground">{SITE_NAME}</span>
