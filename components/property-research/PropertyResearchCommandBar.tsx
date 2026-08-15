@@ -60,7 +60,20 @@ function HighlightMatch({ text, query }: { text: string; query: string }) {
   );
 }
 
-const SUGGEST_MIN_LEN = 3;
+function SuggestionLabel({ suggestion, query }: { suggestion: AddressSuggestion; query: string }) {
+  const street = suggestion.streetLabel || suggestion.label.split(',')[0] || suggestion.label;
+  const commaIdx = suggestion.label.indexOf(',');
+  const rest = commaIdx >= 0 ? suggestion.label.slice(commaIdx) : '';
+
+  return (
+    <span className="min-w-0 break-words text-[13.5px]">
+      <HighlightMatch text={street} query={query} />
+      {rest && <span className="font-normal text-muted-foreground">{rest}</span>}
+    </span>
+  );
+}
+
+const SUGGEST_FETCH_MIN = 2;
 
 export interface PropertyResearchCommandBarProps {
   mode: ResearchSearchMode;
@@ -114,18 +127,19 @@ export default function PropertyResearchCommandBar({
 
   useEffect(() => {
     const trimmed = query.trim();
-    if (trimmed.length < SUGGEST_MIN_LEN) {
+    if (trimmed.length < SUGGEST_FETCH_MIN) {
       setSuggestions([]);
       setSuggestLoading(false);
       setHighlightIdx(-1);
       return;
     }
 
+    setSuggestLoading(true);
+
     const timer = setTimeout(async () => {
       abortRef.current?.abort();
       const controller = new AbortController();
       abortRef.current = controller;
-      setSuggestLoading(true);
 
       try {
         const res = await fetch(`/api/address-suggest?q=${encodeURIComponent(trimmed)}`, {
@@ -141,7 +155,7 @@ export default function PropertyResearchCommandBar({
       } finally {
         if (!controller.signal.aborted) setSuggestLoading(false);
       }
-    }, 250);
+    }, 180);
 
     return () => {
       clearTimeout(timer);
@@ -231,21 +245,22 @@ export default function PropertyResearchCommandBar({
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    const showSuggestions = query.trim().length >= SUGGEST_MIN_LEN && suggestions.length > 0;
+    const trimmed = query.trim();
+    const canPickSuggestion = trimmed.length > 0 && suggestions.length > 0;
 
-    if (showSuggestions && event.key === 'ArrowDown') {
+    if (canPickSuggestion && event.key === 'ArrowDown') {
       event.preventDefault();
       setHighlightIdx((i) => (i + 1) % suggestions.length);
       return;
     }
-    if (showSuggestions && event.key === 'ArrowUp') {
+    if (canPickSuggestion && event.key === 'ArrowUp') {
       event.preventDefault();
       setHighlightIdx((i) => (i <= 0 ? suggestions.length - 1 : i - 1));
       return;
     }
     if (event.key === 'Enter' && !event.shiftKey && !loading) {
       event.preventDefault();
-      if (showSuggestions && highlightIdx >= 0 && suggestions[highlightIdx]) {
+      if (canPickSuggestion && highlightIdx >= 0 && suggestions[highlightIdx]) {
         selectSuggestion(suggestions[highlightIdx]);
         return;
       }
@@ -253,8 +268,9 @@ export default function PropertyResearchCommandBar({
     }
   };
 
-  const showSuggestionPanel =
-    query.trim().length >= SUGGEST_MIN_LEN && (suggestLoading || suggestions.length > 0);
+  const trimmedQuery = query.trim();
+  const isTyping = trimmedQuery.length > 0;
+  const canFetchSuggestions = trimmedQuery.length >= SUGGEST_FETCH_MIN;
 
   const activeUsage = mode === 'cma' ? cmaUsage : lookupUsage;
   const creditsLeft = remainingCredits(activeUsage);
@@ -319,7 +335,7 @@ export default function PropertyResearchCommandBar({
           </div>
         </div>
 
-        {/* Mode + history panel */}
+        {/* Mode + results panel */}
         <div className="bg-card p-3 sm:p-4">
           <div className="flex flex-wrap gap-2">
             {MODES.map(({ id, label, icon: Icon }) => (
@@ -340,13 +356,21 @@ export default function PropertyResearchCommandBar({
             ))}
           </div>
 
-          {showSuggestionPanel && (
+          {isTyping ? (
             <div className="mt-3">
               <p className="mb-1.5 text-[12px] text-muted-foreground">Result suggestions</p>
-              {suggestLoading && suggestions.length === 0 ? (
+              {!canFetchSuggestions ? (
+                <p className="px-2 py-2 text-[12.5px] text-muted-foreground">
+                  Keep typing an address…
+                </p>
+              ) : suggestLoading && suggestions.length === 0 ? (
                 <p className="px-2 py-2 text-[12.5px] text-muted-foreground">Searching addresses…</p>
+              ) : suggestions.length === 0 ? (
+                <p className="px-2 py-2 text-[12.5px] text-muted-foreground">
+                  No matching addresses — try adding city and state.
+                </p>
               ) : (
-                <ul className="max-h-52 space-y-0.5 overflow-y-auto">
+                <ul className="max-h-56 space-y-0.5 overflow-y-auto">
                   {suggestions.map((suggestion, idx) => (
                     <li key={suggestion.id}>
                       <button
@@ -359,8 +383,32 @@ export default function PropertyResearchCommandBar({
                         )}
                       >
                         <MapPin className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+                        <SuggestionLabel suggestion={suggestion} query={query} />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ) : (
+            <div className="mt-3">
+              <p className="mb-1.5 text-[12px] text-muted-foreground">Recent searches</p>
+              {history.length === 0 ? (
+                <p className="px-1 py-2 text-[12.5px] text-muted-foreground/80">
+                  Your recent addresses will appear here.
+                </p>
+              ) : (
+                <ul className="max-h-44 space-y-0.5 overflow-y-auto">
+                  {history.map((entry) => (
+                    <li key={entry.id}>
+                      <button
+                        type="button"
+                        onClick={() => onHistorySelect(entry)}
+                        className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2.5 text-left transition-colors hover:bg-muted/60"
+                      >
+                        <MapPin className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
                         <span className="min-w-0 break-words text-[13.5px] text-foreground">
-                          <HighlightMatch text={suggestion.label} query={query} />
+                          {entry.label}
                         </span>
                       </button>
                     </li>
@@ -420,7 +468,7 @@ export default function PropertyResearchCommandBar({
 
           {error && <p className="mt-3 text-[12.5px] text-rose-600">{error}</p>}
 
-          {onTryDemo && (
+          {!isTyping && onTryDemo && (
             <p className="mt-3 text-[11.5px] text-muted-foreground">
               Demo:{' '}
               <button
@@ -437,36 +485,6 @@ export default function PropertyResearchCommandBar({
               </button>
             </p>
           )}
-
-          <div className="mt-3">
-            {!showSuggestionPanel && (
-              <>
-                <p className="mb-1.5 text-[12px] text-muted-foreground">Recent searches</p>
-                {history.length === 0 ? (
-                  <p className="px-1 py-2 text-[12.5px] text-muted-foreground/80">
-                    Your recent addresses will appear here.
-                  </p>
-                ) : (
-                  <ul className="max-h-44 space-y-0.5 overflow-y-auto">
-                    {history.map((entry) => (
-                      <li key={entry.id}>
-                        <button
-                          type="button"
-                          onClick={() => onHistorySelect(entry)}
-                          className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2.5 text-left transition-colors hover:bg-muted/60"
-                        >
-                          <MapPin className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
-                          <span className="min-w-0 break-words text-[13.5px] text-foreground">
-                            {entry.label}
-                          </span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </>
-            )}
-          </div>
         </div>
       </div>
     </div>

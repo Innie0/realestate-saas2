@@ -15,11 +15,11 @@ export async function GET(request: NextRequest) {
     }
 
     const q = request.nextUrl.searchParams.get('q')?.trim() ?? '';
-    if (q.length < 3) {
+    if (q.length < 2) {
       return NextResponse.json({ success: true, data: [] });
     }
 
-    const suggestions = await fetchMapboxAddressSuggestions(q, 6);
+    const suggestions = await fetchMapboxAddressSuggestions(q, 8);
 
     return NextResponse.json({ success: true, data: suggestions });
   } catch (err) {
