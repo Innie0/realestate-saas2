@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Bed, Bath, Ruler, Calendar, Loader2, RefreshCw, Info, Sparkles, Pencil } from 'lucide-react';
+import { Bed, Bath, Ruler, Calendar, Loader2, RefreshCw, Info, Sparkles, Pencil, LandPlot } from 'lucide-react';
 import Select from '@/components/ui/Select';
 import { CONDITION_OPTIONS, type ConditionLevel, type SubjectProperty } from '@/lib/cma';
 import type { SubjectEnrichmentMeta } from '@/components/property-research/CmaPanel';
@@ -64,11 +64,11 @@ export default function CmaSubjectSummary({
   const [editing, setEditing] = useState(false);
 
   return (
-    <div data-tour="ma-subject" className="rounded-[10px] border border-gray-150 bg-gray-50 p-4 space-y-3">
+    <div data-tour="ma-subject" className="rounded-xl border border-gray-200/80 bg-gray-100/80 p-4 space-y-3 dark:border-border dark:bg-muted/40">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="text-[11px] font-mono uppercase tracking-[0.06em] text-gray-600">Subject property</p>
-          <p className="mt-1 text-[14px] font-semibold text-gray-900 break-words">{address}</p>
+          <p className="text-[12px] font-medium text-gray-600 dark:text-muted-foreground">Subject property</p>
+          <p className="mt-1 text-[15px] font-semibold leading-snug text-gray-900 break-words dark:text-foreground">{address}</p>
         </div>
         <button
           type="button"
@@ -81,23 +81,29 @@ export default function CmaSubjectSummary({
       </div>
 
       {!editing && (
-        <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[12.5px] text-gray-700">
-          <span className="inline-flex items-center gap-1">
-            <Bed className="size-3.5 text-gray-500" />
-            {stat(subject.bedrooms)} bd
+        <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[13px] text-gray-700 dark:text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5">
+            <Bed className="size-4 text-gray-500" />
+            {stat(subject.bedrooms)}
           </span>
-          <span className="inline-flex items-center gap-1">
-            <Bath className="size-3.5 text-gray-500" />
-            {stat(subject.bathrooms)} ba
+          <span className="inline-flex items-center gap-1.5">
+            <Bath className="size-4 text-gray-500" />
+            {stat(subject.bathrooms)}
           </span>
-          <span className="inline-flex items-center gap-1">
-            <Ruler className="size-3.5 text-gray-500" />
-            {subject.squareFootage ? `${subject.squareFootage.toLocaleString()} sqft` : '— sqft'}
+          <span className="inline-flex items-center gap-1.5">
+            <Ruler className="size-4 text-gray-500" />
+            {subject.squareFootage ? `${subject.squareFootage.toLocaleString()} ft²` : '—'}
           </span>
+          {subject.lotSize ? (
+            <span className="inline-flex items-center gap-1.5">
+              <LandPlot className="size-4 text-gray-500" />
+              {subject.lotSize.toLocaleString()} ft²
+            </span>
+          ) : null}
           {subject.yearBuilt ? (
-            <span className="inline-flex items-center gap-1">
-              <Calendar className="size-3.5 text-gray-500" />
-              Built {subject.yearBuilt}
+            <span className="inline-flex items-center gap-1.5">
+              <Calendar className="size-4 text-gray-500" />
+              {subject.yearBuilt}
             </span>
           ) : null}
         </div>

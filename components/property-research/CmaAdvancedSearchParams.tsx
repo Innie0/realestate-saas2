@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { SQFT_PRESET_PCTS, type CmaSearchCriteria } from '@/lib/cma-search-criteria';
 import type { SubjectProperty } from '@/lib/cma';
@@ -114,6 +115,8 @@ export interface CmaAdvancedSearchParamsProps {
   onChange: (criteria: CmaSearchCriteria) => void;
   matchPreviewCount: number | null;
   matchPreviewLoading?: boolean;
+  /** Breezy-style: beds/baths/year cards only, rest collapsed */
+  breezyLayout?: boolean;
 }
 
 export default function CmaAdvancedSearchParams({
@@ -122,22 +125,113 @@ export default function CmaAdvancedSearchParams({
   onChange,
   matchPreviewCount,
   matchPreviewLoading,
+  breezyLayout = false,
 }: CmaAdvancedSearchParamsProps) {
+  const [moreOpen, setMoreOpen] = useState(false);
   const patch = (partial: Partial<CmaSearchCriteria>) => onChange({ ...criteria, ...partial });
 
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-[13px] font-semibold text-gray-900">Comp filters</p>
-        {matchPreviewLoading ? (
-          <span className="text-[11px] text-gray-500">Counting…</span>
-        ) : matchPreviewCount !== null ? (
-          <span className="text-[11px] font-medium text-gray-700">
-            {matchPreviewCount} sale{matchPreviewCount !== 1 ? 's' : ''} match
-          </span>
-        ) : null}
+  const bedsCard = (
+    <CriteriaCard
+      title="Bedrooms"
+      subjectHint={subject.bedrooms != null ? String(subject.bedrooms) : undefined}
+      enabled={criteria.bedsEnabled}
+      onEnabledChange={(bedsEnabled) => patch({ bedsEnabled })}
+    >
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="text-[10px] text-gray-500">Min</p>
+          <Stepper
+            value={criteria.bedsMin}
+            onChange={(bedsMin) => patch({ bedsMin })}
+            max={10}
+            disabled={!criteria.bedsEnabled}
+          />
+        </div>
+        <div>
+          <p className="text-[10px] text-gray-500">Max</p>
+          <Stepper
+            value={criteria.bedsMax}
+            onChange={(bedsMax) => patch({ bedsMax })}
+            max={10}
+            disabled={!criteria.bedsEnabled}
+          />
+        </div>
       </div>
+    </CriteriaCard>
+  );
 
+  const bathsCard = (
+    <CriteriaCard
+      title="Bathrooms"
+      subjectHint={subject.bathrooms != null ? String(subject.bathrooms) : undefined}
+      enabled={criteria.bathsEnabled}
+      onEnabledChange={(bathsEnabled) => patch({ bathsEnabled })}
+    >
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="text-[10px] text-gray-500">Min</p>
+          <Stepper
+            value={criteria.bathsMin}
+            onChange={(bathsMin) => patch({ bathsMin })}
+            max={10}
+            step={0.5}
+            disabled={!criteria.bathsEnabled}
+          />
+        </div>
+        <div>
+          <p className="text-[10px] text-gray-500">Max</p>
+          <Stepper
+            value={criteria.bathsMax}
+            onChange={(bathsMax) => patch({ bathsMax })}
+            max={10}
+            step={0.5}
+            disabled={!criteria.bathsEnabled}
+          />
+        </div>
+      </div>
+    </CriteriaCard>
+  );
+
+  const yearBuiltCard = (
+    <CriteriaCard
+      title="Year built"
+      subjectHint={subject.yearBuilt != null ? String(subject.yearBuilt) : undefined}
+      enabled={criteria.yearBuiltEnabled}
+      onEnabledChange={(yearBuiltEnabled) => patch({ yearBuiltEnabled })}
+    >
+      <div className="grid grid-cols-2 gap-2">
+        <label className="text-[11px] text-gray-600">
+          From
+          <input
+            type="number"
+            value={criteria.yearBuiltMin ?? ''}
+            onChange={(e) =>
+              patch({
+                yearBuiltMin: e.target.value === '' ? null : Number(e.target.value),
+              })
+            }
+            className="mt-1 w-full rounded-[8px] border border-gray-200 px-2 py-1.5 text-[12px]"
+          />
+        </label>
+        <label className="text-[11px] text-gray-600">
+          To
+          <input
+            type="number"
+            value={criteria.yearBuiltMax ?? ''}
+            onChange={(e) =>
+              patch({
+                yearBuiltMax: e.target.value === '' ? null : Number(e.target.value),
+              })
+            }
+            className="mt-1 w-full rounded-[8px] border border-gray-200 px-2 py-1.5 text-[12px]"
+          />
+        </label>
+      </div>
+    </CriteriaCard>
+  );
+
+  const extraCards = (
+    <>
       <CriteriaCard
         title="Home sqft"
         subjectHint={
@@ -194,64 +288,6 @@ export default function CmaAdvancedSearchParams({
       </CriteriaCard>
 
       <CriteriaCard
-        title="Bedrooms"
-        subjectHint={subject.bedrooms != null ? String(subject.bedrooms) : undefined}
-        enabled={criteria.bedsEnabled}
-        onEnabledChange={(bedsEnabled) => patch({ bedsEnabled })}
-      >
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="text-[10px] text-gray-500">Min</p>
-            <Stepper
-              value={criteria.bedsMin}
-              onChange={(bedsMin) => patch({ bedsMin })}
-              max={10}
-              disabled={!criteria.bedsEnabled}
-            />
-          </div>
-          <div>
-            <p className="text-[10px] text-gray-500">Max</p>
-            <Stepper
-              value={criteria.bedsMax}
-              onChange={(bedsMax) => patch({ bedsMax })}
-              max={10}
-              disabled={!criteria.bedsEnabled}
-            />
-          </div>
-        </div>
-      </CriteriaCard>
-
-      <CriteriaCard
-        title="Bathrooms"
-        subjectHint={subject.bathrooms != null ? String(subject.bathrooms) : undefined}
-        enabled={criteria.bathsEnabled}
-        onEnabledChange={(bathsEnabled) => patch({ bathsEnabled })}
-      >
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="text-[10px] text-gray-500">Min</p>
-            <Stepper
-              value={criteria.bathsMin}
-              onChange={(bathsMin) => patch({ bathsMin })}
-              max={10}
-              step={0.5}
-              disabled={!criteria.bathsEnabled}
-            />
-          </div>
-          <div>
-            <p className="text-[10px] text-gray-500">Max</p>
-            <Stepper
-              value={criteria.bathsMax}
-              onChange={(bathsMax) => patch({ bathsMax })}
-              max={10}
-              step={0.5}
-              disabled={!criteria.bathsEnabled}
-            />
-          </div>
-        </div>
-      </CriteriaCard>
-
-      <CriteriaCard
         title="Lot sqft"
         subjectHint={
           subject.lotSize ? `${subject.lotSize.toLocaleString()} sqft` : undefined
@@ -284,42 +320,54 @@ export default function CmaAdvancedSearchParams({
           </label>
         </div>
       </CriteriaCard>
+    </>
+  );
 
-      <CriteriaCard
-        title="Year built"
-        subjectHint={subject.yearBuilt != null ? String(subject.yearBuilt) : undefined}
-        enabled={criteria.yearBuiltEnabled}
-        onEnabledChange={(yearBuiltEnabled) => patch({ yearBuiltEnabled })}
-      >
-        <div className="grid grid-cols-2 gap-2">
-          <label className="text-[11px] text-gray-600">
-            From
-            <input
-              type="number"
-              value={criteria.yearBuiltMin ?? ''}
-              onChange={(e) =>
-                patch({
-                  yearBuiltMin: e.target.value === '' ? null : Number(e.target.value),
-                })
-              }
-              className="mt-1 w-full rounded-[8px] border border-gray-200 px-2 py-1.5 text-[12px]"
-            />
-          </label>
-          <label className="text-[11px] text-gray-600">
-            To
-            <input
-              type="number"
-              value={criteria.yearBuiltMax ?? ''}
-              onChange={(e) =>
-                patch({
-                  yearBuiltMax: e.target.value === '' ? null : Number(e.target.value),
-                })
-              }
-              className="mt-1 w-full rounded-[8px] border border-gray-200 px-2 py-1.5 text-[12px]"
-            />
-          </label>
+  if (breezyLayout) {
+    return (
+      <div className="space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-[13px] font-semibold text-gray-900 dark:text-foreground">Search Parameters</p>
+          {matchPreviewLoading ? (
+            <span className="text-[11px] text-gray-500">Counting…</span>
+          ) : matchPreviewCount !== null ? (
+            <span className="text-[11px] font-medium text-gray-600">
+              {matchPreviewCount} match{matchPreviewCount !== 1 ? 'es' : ''}
+            </span>
+          ) : null}
         </div>
-      </CriteriaCard>
+        {bedsCard}
+        {bathsCard}
+        {yearBuiltCard}
+        <button
+          type="button"
+          onClick={() => setMoreOpen((v) => !v)}
+          className="text-[12.5px] font-medium text-gray-600 underline-offset-2 hover:text-gray-900 hover:underline dark:text-muted-foreground"
+        >
+          {moreOpen ? 'Hide extra filters' : 'More filters (sqft, lot)'}
+        </button>
+        {moreOpen && <div className="space-y-3">{extraCards}</div>}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-[13px] font-semibold text-gray-900">Comp filters</p>
+        {matchPreviewLoading ? (
+          <span className="text-[11px] text-gray-500">Counting…</span>
+        ) : matchPreviewCount !== null ? (
+          <span className="text-[11px] font-medium text-gray-700">
+            {matchPreviewCount} sale{matchPreviewCount !== 1 ? 's' : ''} match
+          </span>
+        ) : null}
+      </div>
+
+      {extraCards}
+      {bedsCard}
+      {bathsCard}
+      {yearBuiltCard}
     </div>
   );
 }

@@ -37,8 +37,10 @@ import {
 import {
   Loader2, AlertCircle,
   TrendingUp,
-  Download, Info,
+  Download, Info, ArrowLeft, Home,
 } from 'lucide-react';
+import Link from 'next/link';
+import { propertyResearchLandingHref } from '@/lib/property-research-routes';
 import { buildCmaPdfPayload, downloadCmaPdf } from '@/lib/export-cma-pdf';
 import { normalizeAddressKey } from '@/lib/property-research-cache';
 import { normalizeCmaResult, CMA_RESULT_VERSION } from '@/lib/cma-result-format';
@@ -195,13 +197,11 @@ export function CmaPanel({
   const [showAllComps, setShowAllComps] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
   const [fromCache, setFromCache] = useState(false);
-  const [paramsExpanded, setParamsExpanded] = useState(true);
   const [searchCriteria, setSearchCriteria] = useState<CmaSearchCriteria>(
     defaultSearchCriteriaFromSubject(defaultSubject()),
   );
   const [matchPreviewCount, setMatchPreviewCount] = useState<number | null>(null);
   const [matchPreviewLoading, setMatchPreviewLoading] = useState(false);
-  const prevLoadingRef = useRef(false);
   const isRunningRef = useRef(false);
   const lastTriggerRef = useRef(0);
   const prevAddressKeyRef = useRef('');
@@ -567,23 +567,6 @@ export function CmaPanel({
   }, [addressKey, radius, yearsBack, propertyType, searchCriteria, includeActiveListings, subject]);
 
   useEffect(() => {
-    if (!result) setParamsExpanded(true);
-  }, [result]);
-
-  useEffect(() => {
-    if (prevLoadingRef.current && !loading && result) {
-      setParamsExpanded(false);
-    }
-    prevLoadingRef.current = loading;
-  }, [loading, result]);
-
-  useEffect(() => {
-    if (result && !loading) {
-      setParamsExpanded(false);
-    }
-  }, [addressKey]);
-
-  useEffect(() => {
     if (runTrigger <= 0 || runTrigger === lastTriggerRef.current) return;
     lastTriggerRef.current = runTrigger;
 
@@ -739,106 +722,35 @@ export function CmaPanel({
 
   const renderControlsPanel = () => (
     <>
-      {hasResults && !paramsExpanded ? (
-        <>
-          <CmaSubjectSummary
-            address={mapAddress}
-            subject={subject}
-            subjectEnrichment={subjectEnrichment}
-            manualFields={manualFields}
-            prefilling={prefilling}
-            canPrefill={Boolean(street.trim() && state)}
-            onPrefill={handlePrefill}
-            onUpdateSubject={updateSubject}
-          />
-          <CmaSearchParams
-            radius={radius}
-            yearsBack={yearsBack}
-            propertyType={propertyType}
-            includeActiveListings={includeActiveListings}
-            onRadiusChange={setRadius}
-            onYearsBackChange={setYearsBack}
-            onPropertyTypeChange={setPropertyType}
-            onIncludeActiveListingsChange={setIncludeActiveListings}
-            collapsed
-            onExpand={() => setParamsExpanded(true)}
-          />
-          <CmaAdvancedSearchParams
-            subject={subject}
-            criteria={searchCriteria}
-            onChange={setSearchCriteria}
-            matchPreviewCount={matchPreviewCount}
-            matchPreviewLoading={matchPreviewLoading}
-          />
-        </>
-      ) : hasResults && paramsExpanded ? (
-        <>
-          <CmaSearchParams
-            radius={radius}
-            yearsBack={yearsBack}
-            propertyType={propertyType}
-            includeActiveListings={includeActiveListings}
-            onRadiusChange={setRadius}
-            onYearsBackChange={setYearsBack}
-            onPropertyTypeChange={setPropertyType}
-            onIncludeActiveListingsChange={setIncludeActiveListings}
-          />
-          <CmaAdvancedSearchParams
-            subject={subject}
-            criteria={searchCriteria}
-            onChange={setSearchCriteria}
-            matchPreviewCount={matchPreviewCount}
-            matchPreviewLoading={matchPreviewLoading}
-          />
-          <CmaSubjectSummary
-            address={mapAddress}
-            subject={subject}
-            subjectEnrichment={subjectEnrichment}
-            manualFields={manualFields}
-            prefilling={prefilling}
-            canPrefill={Boolean(street.trim() && state)}
-            onPrefill={handlePrefill}
-            onUpdateSubject={updateSubject}
-          />
-          <button
-            type="button"
-            onClick={() => setParamsExpanded(false)}
-            className="w-full rounded-[10px] border border-gray-200 py-2 text-[12.5px] font-medium text-gray-700 transition-colors hover:bg-gray-50"
-          >
-            Done editing search
-          </button>
-        </>
-      ) : (
-        <>
-          <CmaSubjectSummary
-            address={mapAddress}
-            subject={subject}
-            subjectEnrichment={subjectEnrichment}
-            manualFields={manualFields}
-            prefilling={prefilling}
-            canPrefill={Boolean(street.trim() && state)}
-            onPrefill={handlePrefill}
-            onUpdateSubject={updateSubject}
-          />
-          <CmaSearchParams
-            radius={radius}
-            yearsBack={yearsBack}
-            propertyType={propertyType}
-            includeActiveListings={includeActiveListings}
-            onRadiusChange={setRadius}
-            onYearsBackChange={setYearsBack}
-            onPropertyTypeChange={setPropertyType}
-            onIncludeActiveListingsChange={setIncludeActiveListings}
-          />
-          <CmaAdvancedSearchParams
-            subject={subject}
-            criteria={searchCriteria}
-            onChange={setSearchCriteria}
-            matchPreviewCount={matchPreviewCount}
-            matchPreviewLoading={matchPreviewLoading}
-          />
-        </>
-      )}
+      <CmaSubjectSummary
+        address={mapAddress}
+        subject={subject}
+        subjectEnrichment={subjectEnrichment}
+        manualFields={manualFields}
+        prefilling={prefilling}
+        canPrefill={Boolean(street.trim() && state)}
+        onPrefill={handlePrefill}
+        onUpdateSubject={updateSubject}
+      />
+      <CmaSearchParams
+        radius={radius}
+        yearsBack={yearsBack}
+        propertyType={propertyType}
+        includeActiveListings={includeActiveListings}
+        onRadiusChange={setRadius}
+        onYearsBackChange={setYearsBack}
+        onPropertyTypeChange={setPropertyType}
+        onIncludeActiveListingsChange={setIncludeActiveListings}
+        breezyLayout
+      />
+      <CmaAdvancedSearchParams
+        subject={subject}
+        criteria={searchCriteria}
+        onChange={setSearchCriteria}
+        matchPreviewCount={matchPreviewCount}
+        matchPreviewLoading={matchPreviewLoading}
+        breezyLayout
+      />
     </>
   );
 
@@ -855,37 +767,34 @@ export function CmaPanel({
   };
 
   const renderActionBar = () => (
-    <div className="flex flex-wrap items-center gap-2 border-t border-gray-150 pt-3">
+    <div className="flex items-center justify-between gap-3">
       <button
         type="button"
         onClick={handleResetParams}
-        className="rounded-[10px] px-3 py-2 text-[12.5px] font-medium text-gray-600 transition-colors hover:text-gray-900"
+        className="text-[13px] font-medium text-gray-600 underline-offset-2 transition-colors hover:text-gray-900 dark:text-muted-foreground dark:hover:text-foreground"
       >
-        Reset defaults
+        Reset to default
       </button>
       <button
         type="button"
         onClick={() => runAnalysis(!!result)}
         disabled={loading || !street.trim() || !state}
-        className="ml-auto flex min-w-[180px] flex-1 items-center justify-center gap-2 rounded-lg bg-brand-500 py-2.5 text-[13px] font-semibold text-[var(--brand-foreground)] transition-colors hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:px-6"
+        className="inline-flex min-w-[148px] items-center justify-center gap-2 rounded-full bg-gray-900 px-5 py-2.5 text-[13px] font-semibold text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-foreground dark:text-background dark:hover:opacity-90"
       >
         {loading ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin" /> Running CMA…
+            <Loader2 className="h-4 w-4 animate-spin" /> Running…
           </>
         ) : result ? (
           <>
-            <TrendingUp className="h-4 w-4" /> Re-run analysis
+            <TrendingUp className="h-4 w-4" /> Re-run CMA
           </>
         ) : matchPreviewLoading ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin" /> Counting comps…
+            <Loader2 className="h-4 w-4 animate-spin" /> Counting…
           </>
         ) : (
-          <>
-            <TrendingUp className="h-4 w-4" /> Find{' '}
-            {matchPreviewCount !== null ? matchPreviewCount : '…'} comps
-          </>
+          <>Find {matchPreviewCount !== null ? matchPreviewCount : '…'} comps</>
         )}
       </button>
     </div>
@@ -1090,25 +999,23 @@ export function CmaPanel({
     );
   };
 
-  const renderResultsStickyHeader = () => {
+  const renderResultsHeader = () => {
     if (!hasResults || !liveValuation || !result) return null;
 
     return (
-      <div className="sticky top-0 z-20 rounded-[10px] border border-gray-200 bg-[var(--surface)]/95 px-4 py-3 shadow-sm backdrop-blur-sm">
+      <div className="rounded-xl border border-gray-200 bg-[var(--surface)] p-4 dark:border-border">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-[10px] font-mono uppercase tracking-[0.06em] text-gray-500">
-              Suggested list price
-            </p>
+            <p className="text-[11px] font-medium uppercase tracking-wide text-gray-500">Suggested list price</p>
             {liveValuation.suggestedPrice ? (
               <>
-                <p className="text-[24px] font-bold leading-tight text-gray-900 sm:text-[28px]">
+                <p className="text-[24px] font-bold leading-tight text-gray-900 dark:text-foreground">
                   {fmt(liveValuation.suggestedPrice, '$')}
                   {liveConfidence.thinMarket && (
                     <span className="ml-2 text-[13px] font-normal text-amber-700">estimate</span>
                   )}
                 </p>
-                <p className="text-[12.5px] text-gray-600">
+                <p className="text-[12.5px] text-gray-600 dark:text-muted-foreground">
                   {fmt(liveValuation.priceLow, '$')} – {fmt(liveValuation.priceHigh, '$')} ·{' '}
                   {liveValuation.compCount} comp{liveValuation.compCount !== 1 ? 's' : ''}
                 </p>
@@ -1117,108 +1024,89 @@ export function CmaPanel({
               <p className="text-[13px] text-gray-600">Not enough comps — widen search settings.</p>
             )}
           </div>
-          <div className="flex shrink-0 flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setParamsExpanded(true)}
-              className="rounded-[10px] border border-gray-200 px-3 py-2 text-[12.5px] font-medium text-gray-700 hover:bg-gray-50"
-            >
-              Edit search
-            </button>
-            <button
-              type="button"
-              onClick={handleExportPdf}
-              disabled={exportingPdf || !liveValuation.suggestedPrice}
-              className="inline-flex items-center gap-1.5 rounded-[10px] border border-gray-200 bg-[var(--surface)] px-3 py-2 text-[12.5px] font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-            >
-              {exportingPdf ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Download className="h-4 w-4" />
-              )}
-              Export PDF
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={handleExportPdf}
+            disabled={exportingPdf || !liveValuation.suggestedPrice}
+            className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-[var(--surface)] px-3 py-2 text-[12.5px] font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-border"
+          >
+            {exportingPdf ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
+            Export PDF
+          </button>
         </div>
       </div>
     );
   };
 
   return (
-    <div className="space-y-3">
-      {renderResultsStickyHeader()}
-
-      <div className="grid gap-4 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)] lg:items-start">
-        {/* Left: search controls + metadata */}
-        <div className="space-y-3 rounded-[10px] border border-gray-150 bg-gray-50/50 p-4 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
-          {hasResults && (
-            <p className="text-[12px] font-medium uppercase tracking-wide text-gray-500">
-              Search settings
-            </p>
-          )}
-          {renderControlsPanel()}
-          {renderCriteriaBanner()}
-          {error && (
-            <div className="flex items-start gap-2 rounded-[10px] border border-rose-200 bg-rose-50 px-3 py-2.5 text-[13px] text-rose-700">
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-              {error}
-            </div>
-          )}
-          {renderActionBar()}
-          {renderResultsMeta()}
-        </div>
-
-        {/* Right: map + comp list (sticky on desktop) */}
-        <div className="flex min-h-[520px] flex-col gap-3 lg:sticky lg:top-4 lg:max-h-[calc(100vh-4rem)]">
-          <div className="flex min-h-[360px] flex-1 flex-col overflow-hidden rounded-[10px] border border-gray-200 bg-[var(--surface)] p-3 lg:min-h-[460px]">
-            <div className="mb-2 flex flex-wrap items-center gap-3 text-[11px] text-gray-600">
-              <span className="inline-flex items-center gap-1.5">
-                <span className="inline-block size-2.5 rounded-full bg-[#0668E1]" />
-                Subject
-              </span>
-              {mapHasCompPins && (
-                <>
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="inline-block size-2 rounded-full bg-[#0668E1]" />
-                    In valuation
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="inline-block size-2 rounded-full bg-gray-400" />
-                    Other sale
-                  </span>
-                </>
-              )}
-              <span className="text-gray-500">{radius} mi radius</span>
-            </div>
-            <CmaCompsMap
-              mode={mapHasCompPins ? 'results' : 'preview'}
-              subjectLocation={mapSubjectLocation}
-              comps={mapHasCompPins ? activeComps : []}
-              radiusMiles={radius}
-              subjectAddress={mapAddress}
-              hideLegend
-              mapHeightClassName="min-h-[320px] flex-1 lg:min-h-[400px]"
-            />
+    <div className="-mx-4 flex min-h-[calc(100dvh-7.5rem)] flex-col sm:-mx-7">
+      <div className="relative flex items-center border-b border-gray-200/80 px-4 py-3 dark:border-border sm:px-6">
+        <Link
+          href={propertyResearchLandingHref()}
+          className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-muted-foreground dark:hover:text-foreground"
+        >
+          <ArrowLeft className="size-3.5" />
+          New search
+        </Link>
+        <div className="pointer-events-none absolute left-1/2 top-1/2 hidden max-w-[min(560px,calc(100%-8rem))] -translate-x-1/2 -translate-y-1/2 sm:block">
+          <div className="flex items-center gap-2.5 rounded-full border border-gray-200/90 bg-[var(--surface)] px-4 py-2 shadow-sm dark:border-border">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600 dark:bg-muted">
+              <Home className="size-4" />
+            </span>
+            <span className="truncate text-[13px] font-medium text-gray-900 dark:text-foreground">{mapAddress}</span>
           </div>
-
-          {hasResults ? (
-            <div className="flex max-h-[280px] min-h-[200px] flex-col overflow-hidden rounded-[10px] border border-gray-200 bg-[var(--surface)] p-3 lg:max-h-[240px] lg:min-h-0">
-              {renderCompList()}
-            </div>
-          ) : (
-            <p className="hidden rounded-[10px] border border-dashed border-gray-200 bg-gray-50/80 px-4 py-6 text-center text-[12.5px] text-gray-600 lg:block">
-              Adjust radius and sold-within on the left, then click Find comps. Results appear here with
-              the map.
-            </p>
-          )}
         </div>
       </div>
 
+      <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
+        <aside className="flex w-full shrink-0 flex-col border-b border-gray-200/80 bg-gray-50/40 dark:border-border dark:bg-muted/20 lg:w-[380px] lg:border-b-0 lg:border-r">
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4 sm:p-5">
+            <p className="truncate text-[14px] font-semibold text-gray-900 sm:hidden dark:text-foreground">{mapAddress}</p>
+            {renderControlsPanel()}
+            {renderCriteriaBanner()}
+            {error && (
+              <div className="flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-[13px] text-rose-700">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                {error}
+              </div>
+            )}
+            {hasResults && (
+              <div className="space-y-4 border-t border-gray-200/80 pt-4 dark:border-border">
+                {renderResultsHeader()}
+                {renderResultsMeta()}
+                {renderCompList()}
+              </div>
+            )}
+          </div>
+          <div className="border-t border-gray-200/80 bg-[var(--surface)] p-4 sm:p-5 dark:border-border">
+            {renderActionBar()}
+          </div>
+        </aside>
+
+        <main className="relative min-h-[420px] flex-1 bg-gray-100 dark:bg-muted/30 lg:min-h-0">
+          <CmaCompsMap
+            mode={mapHasCompPins ? 'results' : 'preview'}
+            subjectLocation={mapSubjectLocation}
+            comps={mapHasCompPins ? activeComps : []}
+            radiusMiles={radius}
+            subjectAddress={mapAddress}
+            hideLegend
+            fillContainer
+          />
+        </main>
+      </div>
+
       {loading && (
-        <DataLoadingState
-          title="Running comp-based analysis"
-          description="Scoring nearby sales and adjusting for beds, baths, and condition. This usually takes 10–20 seconds."
-        />
+        <div className="border-t border-gray-200/80 bg-[var(--surface)] p-4 dark:border-border">
+          <DataLoadingState
+            title="Running comp-based analysis"
+            description="Scoring nearby sales and adjusting for beds, baths, and condition. This usually takes 10–20 seconds."
+          />
+        </div>
       )}
     </div>
   );

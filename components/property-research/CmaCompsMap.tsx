@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { LocateFixed, Map as MapIcon, Satellite } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import type { ScoredComp } from '@/lib/cma';
 import { formatListingStatus } from '@/lib/comp-filters';
 import {
@@ -23,6 +25,8 @@ export interface CmaCompsMapProps {
   mapHeightClassName?: string;
   /** When true, legend is omitted (e.g. parent shows legend elsewhere) */
   hideLegend?: boolean;
+  /** Fill the parent container edge-to-edge */
+  fillContainer?: boolean;
 }
 
 function fmtPrice(n: number | null | undefined) {
@@ -101,10 +105,12 @@ export default function CmaCompsMap({
   mode = 'results',
   mapHeightClassName = 'h-[320px]',
   hideLegend = false,
+  fillContainer = false,
 }: CmaCompsMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const [mapStyle, setMapStyle] = useState<'streets' | 'satellite'>('streets');
   const token = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
   const compPoints = useMemo(
@@ -133,9 +139,14 @@ export default function CmaCompsMap({
 
     mapboxgl.accessToken = token!;
 
+    const styleUrl =
+      mapStyle === 'satellite'
+        ? 'mapbox://styles/mapbox/satellite-streets-v12'
+        : 'mapbox://styles/mapbox/light-v11';
+
     const map = new mapboxgl.Map({
       container: containerRef.current,
-      style: 'mapbox://styles/mapbox/light-v11',
+      style: styleUrl,
       center: toLngLat(subjectPoint),
       zoom: 13,
       attributionControl: false,
@@ -147,7 +158,7 @@ export default function CmaCompsMap({
 
     map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-right');
 
-    map.on('load', () => {
+    const setupMapLayers = () => {
       const circle = radiusCirclePolygon(subjectPoint, radiusMiles);
 
       map.addSource('search-radius', {
@@ -164,8 +175,8 @@ export default function CmaCompsMap({
         type: 'fill',
         source: 'search-radius',
         paint: {
-          'fill-color': '#0668E1',
-          'fill-opacity': 0.08,
+          'fill-color': '#3f3f46',
+          'fill-opacity': 0.12,
         },
       });
 
@@ -174,9 +185,9 @@ export default function CmaCompsMap({
         type: 'line',
         source: 'search-radius',
         paint: {
-          'line-color': '#0668E1',
+          'line-color': '#3f3f46',
           'line-width': 2,
-          'line-opacity': 0.55,
+          'line-opacity': 0.45,
         },
       });
 
@@ -232,7 +243,9 @@ export default function CmaCompsMap({
       if (bounds) {
         map.fitBounds(bounds, { padding: isPreview ? 64 : 48, maxZoom: isPreview ? 14 : 15, duration: 0 });
       }
-    });
+    };
+
+    map.on('load', setupMapLayers);
 
     return () => {
       markersRef.current.forEach((marker) => marker.remove());
@@ -240,12 +253,15 @@ export default function CmaCompsMap({
       map.remove();
       mapRef.current = null;
     };
-  }, [canRenderMap, compPoints, isPreview, radiusMiles, subjectAddress, subjectPoint, token]);
+  }, [canRenderMap, compPoints, isPreview, mapStyle, radiusMiles, subjectAddress, subjectPoint, token]);
 
   if (!token) {
     return (
       <div
-        className={`rounded-[10px] border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center text-[13px] text-gray-600 ${mapHeightClassName}`}
+        className={cn(
+          'flex items-center justify-center bg-gray-50 px-4 py-8 text-center text-[13px] text-gray-600',
+          fillContainer ? 'h-full min-h-[320px]' : `rounded-[10px] border border-dashed border-gray-200 ${mapHeightClassName}`,
+        )}
       >
         Map unavailable — add <code className="text-[12px]">NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN</code> to enable the comps map.
       </div>
@@ -255,7 +271,10 @@ export default function CmaCompsMap({
   if (!subjectPoint) {
     return (
       <div
-        className={`flex items-center justify-center rounded-[10px] border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center text-[13px] text-gray-600 ${mapHeightClassName}`}
+        className={cn(
+          'flex items-center justify-center bg-gray-50 px-4 py-8 text-center text-[13px] text-gray-600',
+          fillContainer ? 'h-full min-h-[320px]' : `rounded-[10px] border border-dashed border-gray-200 ${mapHeightClassName}`,
+        )}
       >
         Map unavailable — subject coordinates were not returned for this address.
       </div>
@@ -265,16 +284,25 @@ export default function CmaCompsMap({
   if (!isPreview && compPoints.length === 0) {
     return (
       <div
-        className={`flex items-center justify-center rounded-[10px] border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center text-[13px] text-gray-600 ${mapHeightClassName}`}
+        className={cn(
+          'flex items-center justify-center bg-gray-50 px-4 py-8 text-center text-[13px] text-gray-600',
+          fillContainer ? 'h-full min-h-[320px]' : `rounded-[10px] border border-dashed border-gray-200 ${mapHeightClassName}`,
+        )}
       >
         Map unavailable — none of the comps include location coordinates.
       </div>
     );
   }
 
+  const containerClass = fillContainer
+    ? 'relative h-full min-h-[420px] w-full'
+    : hideLegend
+      ? `flex h-full min-h-0 flex-col ${mapHeightClassName}`
+      : 'space-y-2';
+
   return (
-    <div className={hideLegend ? `flex h-full min-h-0 flex-col ${mapHeightClassName}` : 'space-y-2'}>
-      {!hideLegend && (
+    <div className={containerClass}>
+      {!hideLegend && !fillContainer && (
         <div className="flex flex-wrap items-center gap-3 text-[12px] text-gray-600">
           <span className="inline-flex items-center gap-1.5">
             <span className="inline-block size-3 rounded-full bg-[#0668E1] border border-white shadow-sm" />
@@ -301,9 +329,55 @@ export default function CmaCompsMap({
       )}
       <div
         ref={containerRef}
-        className={`cma-map-host w-full flex-1 overflow-hidden rounded-[10px] border border-gray-200 [&_.mapboxgl-ctrl-attrib]:!hidden [&_.mapboxgl-ctrl-logo]:!hidden ${hideLegend ? 'min-h-[320px] h-full lg:min-h-[400px]' : mapHeightClassName}`}
+        className={cn(
+          'cma-map-host w-full overflow-hidden [&_.mapboxgl-ctrl-attrib]:!hidden [&_.mapboxgl-ctrl-logo]:!hidden',
+          fillContainer
+            ? 'absolute inset-0 h-full'
+            : hideLegend
+              ? 'min-h-[320px] flex-1 rounded-[10px] border border-gray-200 lg:min-h-[400px]'
+              : mapHeightClassName,
+        )}
         aria-label="Comparable sales map"
       />
+      {fillContainer && (
+        <>
+          <div className="pointer-events-none absolute inset-x-0 bottom-4 z-10 flex justify-center px-4">
+            <div className="pointer-events-auto inline-flex items-center rounded-full border border-gray-200/90 bg-white/95 p-1 shadow-md backdrop-blur-sm">
+              <span className="rounded-full bg-gray-900 px-4 py-1.5 text-[12.5px] font-medium text-white">
+                Radius · {radiusMiles} mi
+              </span>
+              <span className="px-3 py-1.5 text-[12.5px] text-gray-400">Custom</span>
+            </div>
+          </div>
+          <div className="pointer-events-none absolute bottom-4 left-4 z-10 flex flex-col gap-2">
+            <button
+              type="button"
+              aria-label={mapStyle === 'satellite' ? 'Show street map' : 'Show satellite map'}
+              onClick={() => setMapStyle((s) => (s === 'satellite' ? 'streets' : 'satellite'))}
+              className="pointer-events-auto flex size-10 items-center justify-center rounded-lg border border-gray-200/90 bg-white/95 text-gray-700 shadow-md backdrop-blur-sm hover:bg-white"
+            >
+              {mapStyle === 'satellite' ? <MapIcon className="size-4" /> : <Satellite className="size-4" />}
+            </button>
+          </div>
+          <button
+            type="button"
+            aria-label="Locate me"
+            onClick={() => {
+              const map = mapRef.current;
+              if (!map || !navigator.geolocation) return;
+              navigator.geolocation.getCurrentPosition((pos) => {
+                map.flyTo({
+                  center: [pos.coords.longitude, pos.coords.latitude],
+                  zoom: 14,
+                });
+              });
+            }}
+            className="absolute bottom-4 right-4 z-10 flex size-10 items-center justify-center rounded-lg border border-gray-200/90 bg-white/95 text-gray-700 shadow-md backdrop-blur-sm hover:bg-white"
+          >
+            <LocateFixed className="size-4" />
+          </button>
+        </>
+      )}
     </div>
   );
 }

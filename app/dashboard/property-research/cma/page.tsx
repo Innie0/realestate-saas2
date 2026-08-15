@@ -4,13 +4,11 @@ import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { useRouter, useSearchParams } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
 import { PropertyResearchPageLoading } from '@/components/dashboard/page-loading';
-import PropertyResearchAddressBar from '@/components/property-research/PropertyResearchAddressBar';
 import { CmaPanel, type CmaAnalysisResult } from '@/components/property-research/CmaPanel';
 import type { LookupResponse } from '@/components/property-research/OwnerContactPanel';
 import { SITE_NAME } from '@/lib/site-config';
 import { appendPropertyResearchHistory } from '@/lib/property-research-history';
 import {
-  formatAddressLabel,
   parsePropertyAddressFromSearchParams,
   propertyResearchLandingHref,
 } from '@/lib/property-research-routes';
@@ -55,8 +53,6 @@ function CmaPropertyContent() {
     }
   }, [fields, router, searchParams]);
 
-  const addressLabel = fields ? formatAddressLabel(fields) : '';
-
   const saveToHistory = useCallback(() => {
     if (!fields) return;
     appendPropertyResearchHistory(fields);
@@ -77,27 +73,19 @@ function CmaPropertyContent() {
   return (
     <DashboardPage
       title="Market analysis"
-      subtitle="Comp-based CMA with map, filters, and valuation"
       size="full"
+      className="!py-0 sm:!py-0"
     >
-      <div className="space-y-4">
-        <PropertyResearchAddressBar
-          fields={fields}
-          label={addressLabel}
-          contextLabel="Market analysis"
-        />
-
-        <CmaPanel
-          street={fields.street}
-          city={fields.city}
-          state={fields.state}
-          zip={fields.zip}
-          lookupData={lookupData}
-          runTrigger={cmaTrigger}
-          initialResult={cmaResult}
-          onComplete={handleCmaComplete}
-        />
-      </div>
+      <CmaPanel
+        street={fields.street}
+        city={fields.city}
+        state={fields.state}
+        zip={fields.zip}
+        lookupData={lookupData}
+        runTrigger={cmaTrigger}
+        initialResult={cmaResult}
+        onComplete={handleCmaComplete}
+      />
     </DashboardPage>
   );
 }

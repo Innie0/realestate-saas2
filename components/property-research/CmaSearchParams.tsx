@@ -69,6 +69,8 @@ export interface CmaSearchParamsProps {
   /** When true, show one-line summary with Edit to expand */
   collapsed?: boolean;
   onExpand?: () => void;
+  /** Compact rows for Breezy-style left sidebar */
+  breezyLayout?: boolean;
 }
 
 export default function CmaSearchParams({
@@ -82,6 +84,7 @@ export default function CmaSearchParams({
   onIncludeActiveListingsChange,
   collapsed = false,
   onExpand,
+  breezyLayout = false,
 }: CmaSearchParamsProps) {
   if (collapsed) {
     return (
@@ -106,8 +109,8 @@ export default function CmaSearchParams({
   }
 
   return (
-    <div className="space-y-4">
-      <p className="text-[13px] font-semibold text-gray-900">Search parameters</p>
+    <div className={breezyLayout ? 'space-y-3 rounded-xl border border-gray-200/80 bg-[var(--surface)] p-3 dark:border-border' : 'space-y-4'}>
+      {!breezyLayout && <p className="text-[13px] font-semibold text-gray-900">Search parameters</p>}
 
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-2">
