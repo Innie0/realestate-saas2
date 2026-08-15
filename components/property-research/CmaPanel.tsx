@@ -1169,8 +1169,8 @@ export function CmaPanel({
         </div>
 
         {/* Right: map + comp list (sticky on desktop) */}
-        <div className="flex min-h-[360px] flex-col gap-3 lg:sticky lg:top-4 lg:max-h-[calc(100vh-6rem)]">
-          <div className="flex min-h-[280px] flex-1 flex-col overflow-hidden rounded-[10px] border border-gray-200 bg-[var(--surface)] p-3 lg:min-h-[320px]">
+        <div className="flex min-h-[520px] flex-col gap-3 lg:sticky lg:top-4 lg:max-h-[calc(100vh-4rem)]">
+          <div className="flex min-h-[360px] flex-1 flex-col overflow-hidden rounded-[10px] border border-gray-200 bg-[var(--surface)] p-3 lg:min-h-[460px]">
             <div className="mb-2 flex flex-wrap items-center gap-3 text-[11px] text-gray-600">
               <span className="inline-flex items-center gap-1.5">
                 <span className="inline-block size-2.5 rounded-full bg-[#0668E1]" />
@@ -1197,12 +1197,12 @@ export function CmaPanel({
               radiusMiles={radius}
               subjectAddress={mapAddress}
               hideLegend
-              mapHeightClassName="min-h-[240px] flex-1"
+              mapHeightClassName="min-h-[320px] flex-1 lg:min-h-[400px]"
             />
           </div>
 
           {hasResults ? (
-            <div className="flex min-h-[240px] flex-1 flex-col overflow-hidden rounded-[10px] border border-gray-200 bg-[var(--surface)] p-3 lg:min-h-0">
+            <div className="flex max-h-[280px] min-h-[200px] flex-col overflow-hidden rounded-[10px] border border-gray-200 bg-[var(--surface)] p-3 lg:max-h-[240px] lg:min-h-0">
               {renderCompList()}
             </div>
           ) : (

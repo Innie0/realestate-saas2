@@ -209,11 +209,6 @@ export function OwnerContactPanel({
       onCompleteRef.current?.(null);
       return;
     }
-    if (!city.trim() && !zip.trim()) {
-      setError('Please enter either a city or ZIP code');
-      onCompleteRef.current?.(null);
-      return;
-    }
 
     const addressKey = normalizeAddressKey({
       street: street.trim(),
@@ -293,6 +288,7 @@ export function OwnerContactPanel({
       setResults(initialData);
       setFromCache(true);
       setError(null);
+      onCompleteRef.current?.(initialData);
       return;
     }
 

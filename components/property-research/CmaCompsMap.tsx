@@ -301,7 +301,7 @@ export default function CmaCompsMap({
       )}
       <div
         ref={containerRef}
-        className={`cma-map-host w-full flex-1 overflow-hidden rounded-[10px] border border-gray-200 [&_.mapboxgl-ctrl-attrib]:!hidden [&_.mapboxgl-ctrl-logo]:!hidden ${hideLegend ? 'min-h-[280px] h-full' : mapHeightClassName}`}
+        className={`cma-map-host w-full flex-1 overflow-hidden rounded-[10px] border border-gray-200 [&_.mapboxgl-ctrl-attrib]:!hidden [&_.mapboxgl-ctrl-logo]:!hidden ${hideLegend ? 'min-h-[320px] h-full lg:min-h-[400px]' : mapHeightClassName}`}
         aria-label="Comparable sales map"
       />
     </div>

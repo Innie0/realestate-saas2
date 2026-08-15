@@ -6,7 +6,6 @@ import { LayoutGrid, User } from 'lucide-react';
 import DashboardPage from '@/components/layout/DashboardPage';
 import DetailPageTabNav from '@/components/layout/DetailPageTabNav';
 import { Card } from '@/components/ui/Card';
-import DataLoadingState from '@/components/dashboard/DataLoadingState';
 import { PropertyResearchPageLoading } from '@/components/dashboard/page-loading';
 import AnimatedTabPanels from '@/components/motion/AnimatedTabPanels';
 import PropertyResearchAddressBar from '@/components/property-research/PropertyResearchAddressBar';
@@ -19,7 +18,6 @@ import {
   formatAddressLabel,
   parsePropertyAddressFromSearchParams,
   propertyResearchLandingHref,
-  cmaPropertyHref,
 } from '@/lib/property-research-routes';
 import { normalizeAddressKey } from '@/lib/property-research-cache';
 import {
@@ -86,21 +84,13 @@ function SubjectPropertyContent() {
     [saveToHistory],
   );
 
-  const handleLookUpOwner = useCallback(() => {
-    setActiveTab('owner');
-    setLookupTrigger((n) => n + 1);
-  }, []);
-
-  const handleRunCma = useCallback(() => {
-    if (!fields) return;
-    router.push(cmaPropertyHref(fields, { auto: true }));
-  }, [fields, router]);
-
   if (!fields) {
     return null;
   }
 
   const firstPerson = lookupData?.found && lookupData.results?.[0] ? lookupData.results[0] : null;
+  const lookupFinished = lookupData !== null && !lookupLoading;
+  const overviewLoading = lookupLoading || (lookupTrigger > 0 && lookupData === null);
 
   return (
     <DashboardPage
@@ -114,16 +104,6 @@ function SubjectPropertyContent() {
           label={addressLabel}
           showRunCma
         />
-
-        {lookupLoading && activeTab !== 'owner' ? (
-          <Card>
-            <DataLoadingState
-              title="Researching this address"
-              description="Fetching county records and owner contact data. First lookup usually takes 5–10 seconds."
-              className="py-10"
-            />
-          </Card>
-        ) : null}
 
         <Card className="overflow-hidden p-0">
           <DetailPageTabNav
@@ -142,9 +122,10 @@ function SubjectPropertyContent() {
                     addressLabel={addressLabel}
                     person={firstPerson}
                     cmaResult={cmaResult}
-                    hasLookup={!!firstPerson}
-                    onLookUpOwner={handleLookUpOwner}
-                    onRunCma={handleRunCma}
+                    loading={overviewLoading}
+                    notFoundMessage={
+                      lookupFinished && !firstPerson ? lookupData?.message ?? null : null
+                    }
                   />
                 ),
               },
