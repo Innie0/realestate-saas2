@@ -346,7 +346,7 @@ export default function PropertyResearchCommandBar({
                 className={clsx(
                   'inline-flex min-w-[148px] items-center justify-center gap-2 rounded-xl border-2 px-4 py-2.5 text-[13px] font-semibold transition-all',
                   mode === id
-                    ? 'border-foreground bg-foreground text-background shadow-md'
+                    ? 'border-brand-500 bg-brand-500 text-[var(--brand-foreground)] shadow-[0_4px_14px_-4px_rgba(6,104,225,0.45)]'
                     : 'border-border bg-[var(--canvas)] text-foreground shadow-sm hover:border-brand-400 hover:bg-muted/40',
                 )}
               >
