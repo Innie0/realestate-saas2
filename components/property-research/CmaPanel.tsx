@@ -237,7 +237,20 @@ export function CmaPanel({
     return null;
   }, [lookupData]);
 
-  const mapSubjectLocation = subjectLocation ?? result?.subjectLocation ?? lookupCoords;
+  const mapSubjectLocation = useMemo(
+    () => subjectLocation ?? result?.subjectLocation ?? lookupCoords,
+    [subjectLocation, result?.subjectLocation, lookupCoords],
+  );
+
+  const [isLgUp, setIsLgUp] = useState<boolean | undefined>(undefined);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const update = () => setIsLgUp(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
 
   const buildPayload = (prefillOnly = false, forceRefresh = false, matchPreview = false) => ({
     street: street.trim(),
@@ -715,6 +728,20 @@ export function CmaPanel({
   const mapAddress = result?.address ?? formattedAddress;
   const hasResults = Boolean(result && !loading && liveValuation);
 
+  const cmaMap =
+    isLgUp !== undefined ? (
+      <CmaCompsMap
+        mode={mapHasCompPins ? 'results' : 'preview'}
+        subjectLocation={mapSubjectLocation}
+        comps={mapHasCompPins ? activeComps : []}
+        radiusMiles={radius}
+        subjectAddress={mapAddress}
+        hideLegend
+        fillContainer
+        {...mapSelectionProps}
+      />
+    ) : null;
+
   const valuationCompsForConfidence = useMemo(
     () => activeComps.filter((c) => c.selectedForValuation),
     [activeComps],
@@ -1080,16 +1107,7 @@ export function CmaPanel({
           <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-4 sm:p-5">
             <p className="truncate text-[14px] font-semibold text-gray-900 sm:hidden dark:text-foreground">{mapAddress}</p>
             <div className="relative h-[240px] shrink-0 overflow-hidden rounded-2xl lg:hidden">
-              <CmaCompsMap
-                mode={mapHasCompPins ? 'results' : 'preview'}
-                subjectLocation={mapSubjectLocation}
-                comps={mapHasCompPins ? activeComps : []}
-                radiusMiles={radius}
-                subjectAddress={mapAddress}
-                hideLegend
-                fillContainer
-                {...mapSelectionProps}
-              />
+              {isLgUp === false ? cmaMap : null}
             </div>
             {renderControlsPanel()}
             {renderCriteriaBanner()}
@@ -1113,16 +1131,7 @@ export function CmaPanel({
         </aside>
 
         <main className="relative hidden min-h-0 flex-1 overflow-hidden px-4 pb-4 pt-0 lg:block">
-          <CmaCompsMap
-            mode={mapHasCompPins ? 'results' : 'preview'}
-            subjectLocation={mapSubjectLocation}
-            comps={mapHasCompPins ? activeComps : []}
-            radiusMiles={radius}
-            subjectAddress={mapAddress}
-            hideLegend
-            fillContainer
-            {...mapSelectionProps}
-          />
+          {isLgUp === true ? cmaMap : null}
         </main>
       </div>
 

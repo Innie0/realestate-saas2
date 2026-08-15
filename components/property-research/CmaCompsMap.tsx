@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Crosshair, Map as MapIcon, Minus, Plus, Satellite } from 'lucide-react';
@@ -30,7 +30,7 @@ export interface CmaCompsMapProps {
   areaMode?: CmaMapAreaMode;
   onAreaModeChange?: (mode: CmaMapAreaMode) => void;
   customPoints?: MapCoordinate[];
-  onCustomPointsChange?: (points: MapCoordinate[]) => void;
+  onCustomPointsChange?: Dispatch<SetStateAction<MapCoordinate[]>>;
 }
 
 const SEARCH_AREA_SOURCE = 'search-area';
@@ -147,6 +147,62 @@ function searchAreaGeoJson(
   return null;
 }
 
+function mapStyleUrl(style: 'streets' | 'satellite') {
+  return style === 'satellite'
+    ? 'mapbox://styles/mapbox/satellite-streets-v12'
+    : 'mapbox://styles/mapbox/light-v11';
+}
+
+function toFeatureCollection(feature: GeoJSON.Feature | null): GeoJSON.FeatureCollection {
+  return { type: 'FeatureCollection', features: feature ? [feature] : [] };
+}
+
+function ensureSearchAreaLayers(
+  map: mapboxgl.Map,
+  paints: { fillColor: string; fillOpacity: number; lineColor: string; lineOpacity: number; isSatellite: boolean },
+) {
+  if (!map.getSource(SEARCH_AREA_SOURCE)) {
+    map.addSource(SEARCH_AREA_SOURCE, {
+      type: 'geojson',
+      data: { type: 'FeatureCollection', features: [] },
+    });
+  }
+
+  if (!map.getLayer(SEARCH_AREA_FILL)) {
+    map.addLayer({
+      id: SEARCH_AREA_FILL,
+      type: 'fill',
+      source: SEARCH_AREA_SOURCE,
+      filter: ['==', ['geometry-type'], 'Polygon'],
+      paint: { 'fill-color': paints.fillColor, 'fill-opacity': paints.fillOpacity },
+    });
+  }
+
+  if (!map.getLayer(SEARCH_AREA_LINE)) {
+    map.addLayer({
+      id: SEARCH_AREA_LINE,
+      type: 'line',
+      source: SEARCH_AREA_SOURCE,
+      filter: ['==', ['geometry-type'], 'LineString'],
+      paint: { 'line-color': paints.lineColor, 'line-width': 2, 'line-opacity': 0.75 },
+    });
+  }
+
+  if (!map.getLayer(SEARCH_AREA_STROKE)) {
+    map.addLayer({
+      id: SEARCH_AREA_STROKE,
+      type: 'line',
+      source: SEARCH_AREA_SOURCE,
+      filter: ['==', ['geometry-type'], 'Polygon'],
+      paint: {
+        'line-color': paints.lineColor,
+        'line-width': paints.isSatellite ? 2.5 : 2,
+        'line-opacity': paints.lineOpacity,
+      },
+    });
+  }
+}
+
 function mapControlButtonClass(extra?: string) {
   return cn(
     'flex size-9 items-center justify-center text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-40',
@@ -179,6 +235,7 @@ export default function CmaCompsMap({
   const [mapStyle, setMapStyle] = useState<'streets' | 'satellite'>('streets');
   const mapStyleRef = useRef(mapStyle);
   const [mapReady, setMapReady] = useState(false);
+  const appliedStyleRef = useRef<string | null>(null);
   const token = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
   customPointsRef.current = customPoints;
@@ -201,68 +258,50 @@ export default function CmaCompsMap({
   );
 
   const subjectPoint = subjectLocation;
+  const subjectLat = subjectPoint?.latitude;
+  const subjectLng = subjectPoint?.longitude;
   const isPreview = mode === 'preview';
-  const canRenderMap = Boolean(token && subjectPoint && (isPreview || compPoints.length > 0));
+  const canRenderMap = Boolean(token && subjectLat !== undefined && subjectLng !== undefined && (isPreview || compPoints.length > 0));
 
   const syncSearchArea = useCallback(
     (map: mapboxgl.Map, subject: MapCoordinate) => {
+      if (!map.isStyleLoaded()) return;
+
       const feature = searchAreaGeoJson(areaModeRef.current, subject, radiusMiles, customPointsRef.current);
-      const source = map.getSource(SEARCH_AREA_SOURCE) as mapboxgl.GeoJSONSource | undefined;
       const isSatellite = mapStyleRef.current === 'satellite';
-      const fillColor = isSatellite ? '#fafafa' : '#3f3f46';
-      const fillOpacity = isSatellite ? 0.34 : 0.12;
-      const lineColor = isSatellite ? '#ffffff' : '#3f3f46';
-      const lineOpacity = isSatellite ? 0.92 : 0.45;
+      const paints = {
+        fillColor: isSatellite ? '#fafafa' : '#3f3f46',
+        fillOpacity: isSatellite ? 0.34 : 0.12,
+        lineColor: isSatellite ? '#ffffff' : '#3f3f46',
+        lineOpacity: isSatellite ? 0.92 : 0.45,
+        isSatellite,
+      };
 
-      if (!feature) {
-        if (source) {
-          source.setData({ type: 'FeatureCollection', features: [] });
-        }
+      try {
+        ensureSearchAreaLayers(map, paints);
+
+        const source = map.getSource(SEARCH_AREA_SOURCE) as mapboxgl.GeoJSONSource | undefined;
+        source?.setData(toFeatureCollection(feature));
+
+        const isLine = feature?.geometry.type === 'LineString';
+
         if (map.getLayer(SEARCH_AREA_FILL)) {
-          map.setLayoutProperty(SEARCH_AREA_FILL, 'visibility', 'none');
-          map.setLayoutProperty(SEARCH_AREA_LINE, 'visibility', 'none');
-          map.setLayoutProperty(SEARCH_AREA_STROKE, 'visibility', 'none');
+          map.setPaintProperty(SEARCH_AREA_FILL, 'fill-color', paints.fillColor);
+          map.setPaintProperty(SEARCH_AREA_FILL, 'fill-opacity', paints.fillOpacity);
+          map.setLayoutProperty(SEARCH_AREA_FILL, 'visibility', isLine ? 'none' : 'visible');
         }
-        return;
-      }
-
-      const isLine = feature.geometry.type === 'LineString';
-      if (source) {
-        source.setData(feature);
-      } else {
-        map.addSource(SEARCH_AREA_SOURCE, { type: 'geojson', data: feature });
-        map.addLayer({
-          id: SEARCH_AREA_FILL,
-          type: 'fill',
-          source: SEARCH_AREA_SOURCE,
-          filter: ['==', '$type', 'Polygon'],
-          paint: { 'fill-color': fillColor, 'fill-opacity': fillOpacity },
-        });
-        map.addLayer({
-          id: SEARCH_AREA_LINE,
-          type: 'line',
-          source: SEARCH_AREA_SOURCE,
-          filter: ['==', '$type', 'LineString'],
-          paint: { 'line-color': lineColor, 'line-width': 2, 'line-opacity': 0.75 },
-        });
-        map.addLayer({
-          id: SEARCH_AREA_STROKE,
-          type: 'line',
-          source: SEARCH_AREA_SOURCE,
-          filter: ['==', '$type', 'Polygon'],
-          paint: { 'line-color': lineColor, 'line-width': isSatellite ? 2.5 : 2, 'line-opacity': lineOpacity },
-        });
-      }
-
-      if (map.getLayer(SEARCH_AREA_FILL)) {
-        map.setPaintProperty(SEARCH_AREA_FILL, 'fill-color', fillColor);
-        map.setPaintProperty(SEARCH_AREA_FILL, 'fill-opacity', fillOpacity);
-        map.setPaintProperty(SEARCH_AREA_STROKE, 'line-color', lineColor);
-        map.setPaintProperty(SEARCH_AREA_STROKE, 'line-opacity', lineOpacity);
-        map.setPaintProperty(SEARCH_AREA_STROKE, 'line-width', isSatellite ? 2.5 : 2);
-        map.setLayoutProperty(SEARCH_AREA_FILL, 'visibility', isLine ? 'none' : 'visible');
-        map.setLayoutProperty(SEARCH_AREA_LINE, 'visibility', isLine ? 'visible' : 'none');
-        map.setLayoutProperty(SEARCH_AREA_STROKE, 'visibility', isLine ? 'none' : 'visible');
+        if (map.getLayer(SEARCH_AREA_LINE)) {
+          map.setPaintProperty(SEARCH_AREA_LINE, 'line-color', paints.lineColor);
+          map.setLayoutProperty(SEARCH_AREA_LINE, 'visibility', isLine ? 'visible' : 'none');
+        }
+        if (map.getLayer(SEARCH_AREA_STROKE)) {
+          map.setPaintProperty(SEARCH_AREA_STROKE, 'line-color', paints.lineColor);
+          map.setPaintProperty(SEARCH_AREA_STROKE, 'line-opacity', paints.lineOpacity);
+          map.setPaintProperty(SEARCH_AREA_STROKE, 'line-width', isSatellite ? 2.5 : 2);
+          map.setLayoutProperty(SEARCH_AREA_STROKE, 'visibility', isLine ? 'none' : 'visible');
+        }
+      } catch (err) {
+        console.warn('CMA map search area sync failed:', err);
       }
     },
     [radiusMiles],
@@ -336,24 +375,37 @@ export default function CmaCompsMap({
     [compPoints, isPreview, subjectAddress],
   );
 
+  const syncSearchAreaRef = useRef(syncSearchArea);
+  syncSearchAreaRef.current = syncSearchArea;
+  const syncVertexMarkersRef = useRef(syncVertexMarkers);
+  syncVertexMarkersRef.current = syncVertexMarkers;
+  const syncCompMarkersRef = useRef(syncCompMarkers);
+  syncCompMarkersRef.current = syncCompMarkers;
+
+  const resyncMapLayers = useCallback(
+    (map: mapboxgl.Map, subject: MapCoordinate) => {
+      syncSearchAreaRef.current(map, subject);
+      syncVertexMarkersRef.current(map);
+      syncCompMarkersRef.current(map, subject);
+    },
+    [],
+  );
+
   useEffect(() => {
-    if (!canRenderMap || !containerRef.current || !subjectPoint) return;
+    if (!canRenderMap || !containerRef.current || subjectLat === undefined || subjectLng === undefined) return;
+
+    const subject: MapCoordinate = { latitude: subjectLat, longitude: subjectLng };
 
     mapboxgl.accessToken = token!;
     setMapReady(false);
 
-    const styleUrl =
-      mapStyle === 'satellite'
-        ? 'mapbox://styles/mapbox/satellite-streets-v12'
-        : 'mapbox://styles/mapbox/light-v11';
-
     const map = new mapboxgl.Map({
       container: containerRef.current,
-      style: styleUrl,
-      center: toLngLat(subjectPoint),
+      style: mapStyleUrl(mapStyleRef.current),
+      center: toLngLat(subject),
       zoom: 13,
       attributionControl: false,
-      logoPosition: 'bottom-right',
+      logoPosition: 'bottom-left',
     });
 
     mapRef.current = map;
@@ -361,27 +413,26 @@ export default function CmaCompsMap({
 
     const handleClick = (event: mapboxgl.MapMouseEvent) => {
       if (areaModeRef.current !== 'custom') return;
+      event.preventDefault();
       const nextPoint: MapCoordinate = {
         latitude: event.lngLat.lat,
         longitude: event.lngLat.lng,
       };
-      onCustomPointsChangeRef.current?.([...customPointsRef.current, nextPoint]);
+      onCustomPointsChangeRef.current?.((prev) => [...prev, nextPoint]);
     };
 
     map.on('click', handleClick);
 
     map.on('load', () => {
-      syncSearchArea(map, subjectPoint);
-      syncVertexMarkers(map);
-      syncCompMarkers(map, subjectPoint);
+      resyncMapLayers(map, subject);
 
       const fitPoints: MapCoordinate[] = isPreview
-        ? [subjectPoint]
-        : [subjectPoint, ...compPoints.map(({ coordinate }) => coordinate)];
+        ? [subject]
+        : [subject, ...compPoints.map(({ coordinate }) => coordinate)];
       const bounds = boundsForPoints(fitPoints);
       if (bounds) {
         map.fitBounds(bounds, {
-          padding: { top: 56, bottom: 88, left: 48, right: 48 },
+          padding: { top: 56, bottom: 88, left: 48, right: 56 },
           maxZoom: isPreview ? 14 : 15,
           duration: 0,
         });
@@ -391,6 +442,7 @@ export default function CmaCompsMap({
         center: map.getCenter().toArray() as [number, number],
         zoom: map.getZoom(),
       };
+      appliedStyleRef.current = mapStyleUrl(mapStyleRef.current);
       setMapReady(true);
     });
 
@@ -404,26 +456,39 @@ export default function CmaCompsMap({
       mapRef.current = null;
       setMapReady(false);
     };
-  }, [
-    canRenderMap,
-    compPoints,
-    isPreview,
-    mapStyle,
-    subjectPoint,
-    syncCompMarkers,
-    syncSearchArea,
-    syncVertexMarkers,
-    token,
-  ]);
+  }, [canRenderMap, isPreview, resyncMapLayers, subjectLat, subjectLng, token]);
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !mapReady || !subjectPoint) return;
+    if (!map || !mapReady || subjectLat === undefined || subjectLng === undefined) return;
 
-    syncSearchArea(map, subjectPoint);
-    syncVertexMarkers(map);
+    const nextStyle = mapStyleUrl(mapStyle);
+    if (appliedStyleRef.current === nextStyle) return;
+
+    appliedStyleRef.current = nextStyle;
+    map.setStyle(nextStyle);
+    map.once('style.load', () => {
+      const subject: MapCoordinate = { latitude: subjectLat, longitude: subjectLng };
+      resyncMapLayers(map, subject);
+    });
+  }, [mapStyle, mapReady, resyncMapLayers, subjectLat, subjectLng]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapReady || subjectLat === undefined || subjectLng === undefined) return;
+
+    const subject: MapCoordinate = { latitude: subjectLat, longitude: subjectLng };
+    syncSearchAreaRef.current(map, subject);
+    syncVertexMarkersRef.current(map);
     map.getCanvas().style.cursor = areaMode === 'custom' ? 'crosshair' : '';
-  }, [areaMode, customPoints, mapReady, mapStyle, radiusMiles, subjectPoint, syncSearchArea, syncVertexMarkers]);
+  }, [areaMode, customPoints, mapReady, radiusMiles, subjectLat, subjectLng]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapReady || subjectLat === undefined || subjectLng === undefined) return;
+    const subject: MapCoordinate = { latitude: subjectLat, longitude: subjectLng };
+    syncCompMarkersRef.current(map, subject);
+  }, [compPoints, isPreview, mapReady, subjectAddress, subjectLat, subjectLng]);
 
   const handleRecenter = () => {
     const map = mapRef.current;
