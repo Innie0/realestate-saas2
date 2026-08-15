@@ -225,7 +225,7 @@ export function PropertyResearchPageContentSkeleton() {
 
 export function PropertyResearchPageLoading() {
   return (
-    <DashboardPage inline ambient="tool" title="Look up an address" subtitle="Owner details or comp-based CMA">
+    <DashboardPage inline ambient="tool" title="Property Research" subtitle="Lookup, owner contact, and CMA">
       <PropertyResearchPageContentSkeleton />
     </DashboardPage>
   );

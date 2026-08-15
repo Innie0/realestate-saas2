@@ -292,7 +292,11 @@ export default function PropertyResearchCommandBar({
       className="flex min-h-[calc(100vh-11rem)] flex-col items-center justify-center px-4 py-8"
       data-tour="research-search"
     >
-      <div className="w-full max-w-2xl space-y-3">
+      <h2 className="text-center text-[26px] font-normal tracking-tight text-foreground sm:text-[32px]">
+        Look up an address
+      </h2>
+
+      <div className="mt-10 w-full max-w-2xl space-y-3">
         {/* Search input */}
         <div className="relative min-h-[140px] overflow-hidden rounded-2xl border border-border bg-[var(--canvas)] px-4 pb-12 pt-4 shadow-sm sm:min-h-[152px] sm:px-5 sm:pt-5">
           <textarea
