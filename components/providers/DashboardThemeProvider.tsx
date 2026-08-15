@@ -10,6 +10,8 @@ import {
 } from 'react';
 import {
   DASHBOARD_THEME_STORAGE_KEY,
+  readInitialPreferenceFromDocument,
+  readInitialThemeFromDocument,
   readStoredPreference,
   resolveDashboardTheme,
   type DashboardTheme,
@@ -54,8 +56,18 @@ function withThemeSwitchGuard(apply: () => void) {
 }
 
 export function DashboardThemeProvider({ children }: { children: React.ReactNode }) {
-  const [preference, setPreferenceState] = useState<DashboardThemePreference>(readStoredPreference);
-  const [theme, setThemeState] = useState<DashboardTheme>(() => resolveDashboardTheme(readStoredPreference()));
+  const [preference, setPreferenceState] = useState<DashboardThemePreference>(
+    readInitialPreferenceFromDocument,
+  );
+  const [theme, setThemeState] = useState<DashboardTheme>(readInitialThemeFromDocument);
+
+  useEffect(() => {
+    const stored = readStoredPreference();
+    const resolved = resolveDashboardTheme(stored);
+    setPreferenceState(stored);
+    setThemeState(resolved);
+    applyDocumentTheme(resolved, stored);
+  }, []);
 
   useEffect(() => {
     applyDocumentTheme(theme, preference);

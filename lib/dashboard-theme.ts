@@ -24,6 +24,21 @@ function readStoredPreference(): DashboardThemePreference {
   return 'light';
 }
 
+/** Read preference applied by the blocking layout script (before React hydrates). */
+export function readInitialPreferenceFromDocument(): DashboardThemePreference {
+  if (typeof document === 'undefined') return 'light';
+  const pref = document.documentElement.getAttribute('data-dashboard-theme-pref');
+  if (pref === 'light' || pref === 'dark' || pref === 'system') return pref;
+  return readStoredPreference();
+}
+
+export function readInitialThemeFromDocument(): DashboardTheme {
+  if (typeof document === 'undefined') return 'light';
+  const theme = document.documentElement.getAttribute('data-dashboard-theme');
+  if (theme === 'light' || theme === 'dark') return theme;
+  return resolveDashboardTheme(readInitialPreferenceFromDocument());
+}
+
 /**
  * Inline script for the dashboard layout — runs before paint.
  * Default light (matches landing); dark/system are opt-in via localStorage.

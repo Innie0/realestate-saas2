@@ -1,6 +1,5 @@
 'use client';
 
-import clsx from 'clsx';
 import Sidebar from '@/components/layout/Sidebar';
 import FeedbackWidget from '@/components/FeedbackWidget';
 import DashboardProviders from '@/components/providers/DashboardProviders';
@@ -15,10 +14,7 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
 
   return (
     <div
-      className={clsx(
-        'dashboard-root flex h-screen overflow-hidden bg-[var(--canvas)]',
-        theme === 'light' ? 'theme-light' : 'theme-dark',
-      )}
+      className="dashboard-root flex h-screen overflow-hidden bg-[var(--canvas)]"
       data-theme={theme}
       suppressHydrationWarning
     >
