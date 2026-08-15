@@ -296,9 +296,9 @@ export default function PropertyResearchCommandBar({
         Find subject property
       </h2>
 
-      <div className="mt-10 w-full max-w-2xl overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-        {/* Input panel — Breezy-style tall search area */}
-        <div className="relative min-h-[140px] border-b border-border bg-[var(--canvas)] px-4 pb-12 pt-4 sm:min-h-[152px] sm:px-5 sm:pt-5">
+      <div className="mt-10 w-full max-w-2xl space-y-3">
+        {/* Search input */}
+        <div className="relative min-h-[140px] overflow-hidden rounded-2xl border border-border bg-[var(--canvas)] px-4 pb-12 pt-4 shadow-sm sm:min-h-[152px] sm:px-5 sm:pt-5">
           <textarea
             rows={3}
             autoComplete="off"
@@ -335,29 +335,29 @@ export default function PropertyResearchCommandBar({
           </div>
         </div>
 
-        {/* Mode + results panel */}
-        <div className="bg-card p-3 sm:p-4">
-          <div className="flex flex-wrap gap-2">
+        {/* Mode + results */}
+        <div className="overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5">
+          <div className="flex flex-wrap items-center justify-center gap-2.5">
             {MODES.map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
                 type="button"
                 onClick={() => persistMode(id)}
                 className={clsx(
-                  'inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-[13px] font-medium transition-colors',
+                  'inline-flex min-w-[148px] items-center justify-center gap-2 rounded-xl border-2 px-4 py-2.5 text-[13px] font-semibold transition-all',
                   mode === id
-                    ? 'border-border bg-foreground text-background shadow-sm'
-                    : 'border-transparent bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground',
+                    ? 'border-foreground bg-foreground text-background shadow-md'
+                    : 'border-border bg-[var(--canvas)] text-foreground shadow-sm hover:border-brand-400 hover:bg-muted/40',
                 )}
               >
-                <Icon className="size-4 shrink-0" strokeWidth={1.75} />
+                <Icon className="size-4 shrink-0" strokeWidth={2} />
                 {label}
               </button>
             ))}
           </div>
 
           {isTyping ? (
-            <div className="mt-3">
+            <div className="mt-4 border-t border-border/80 pt-4">
               <p className="mb-1.5 text-[12px] text-muted-foreground">Result suggestions</p>
               {!canFetchSuggestions ? (
                 <p className="px-2 py-2 text-[12.5px] text-muted-foreground">
@@ -391,7 +391,7 @@ export default function PropertyResearchCommandBar({
               )}
             </div>
           ) : (
-            <div className="mt-3">
+            <div className="mt-4 border-t border-border/80 pt-4">
               <p className="mb-1.5 text-[12px] text-muted-foreground">Recent searches</p>
               {history.length === 0 ? (
                 <p className="px-1 py-2 text-[12.5px] text-muted-foreground/80">
@@ -466,7 +466,7 @@ export default function PropertyResearchCommandBar({
             </div>
           )}
 
-          {error && <p className="mt-3 text-[12.5px] text-rose-600">{error}</p>}
+          {error && <p className="mt-3 text-center text-[12.5px] text-rose-600">{error}</p>}
         </div>
       </div>
     </div>
