@@ -1,4 +1,4 @@
-// Look up a sold listing by address and score it against the CMA subject.
+// Look up a sold property by address and score it against the CMA subject.
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
@@ -47,12 +47,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const rawListings = await fetchSoldListingsByAddress(compAddress, key, 8);
+    const subjectLocation =
+      body.subjectLocation && typeof body.subjectLocation === 'object'
+        ? (body.subjectLocation as { latitude?: number; longitude?: number })
+        : undefined;
+    const rawListings = await fetchSoldListingsByAddress(compAddress, key, subjectLocation);
     if (rawListings.length === 0) {
       return NextResponse.json(
         {
           success: false,
-          error: 'No sold listing found at that address. Try the full street, city, state, and ZIP.',
+          error: 'No property record found at that address. Try the full street, city, state, and ZIP.',
         },
         { status: 404 },
       );

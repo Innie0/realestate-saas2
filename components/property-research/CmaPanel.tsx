@@ -862,6 +862,7 @@ export function CmaPanel({
               activeListingAddresses={
                 result.activeListing?.address ? [result.activeListing.address] : []
               }
+              subjectLocation={result.subjectLocation ?? null}
               onCompAdded={handleCompAdded}
               fallbackMode
             />
@@ -873,17 +874,10 @@ export function CmaPanel({
         ) : (
           <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-0.5">
             {visibleCompEntries.map(({ comp, realIdx }) => {
-              const impliedAtSubject =
-                comp.pricePerSqft && subject.squareFootage
-                  ? Math.round(
-                      comp.pricePerSqft * subject.squareFootage * liveValuation.conditionFactor,
-                    )
-                  : null;
-              const conditionedAdj =
-                impliedAtSubject ??
-                (comp.adjustedPrice
-                  ? Math.round(comp.adjustedPrice * liveValuation.conditionFactor)
-                  : null);
+              // adjustedPrice already scales the comp to the subject's size, market date and features
+              const conditionedAdj = comp.adjustedPrice
+                ? Math.round(comp.adjustedPrice * liveValuation.conditionFactor)
+                : null;
               return (
                 <CmaCompCard
                   key={realIdx}

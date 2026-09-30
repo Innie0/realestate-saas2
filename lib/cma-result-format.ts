@@ -9,7 +9,7 @@ import {
 import { valueFromSelectedComps, type ScoredComp, type SubjectProperty } from '@/lib/cma';
 
 /** Bump when comp selection / valuation shape changes. */
-export const CMA_RESULT_VERSION = 8;
+export const CMA_RESULT_VERSION = 9;
 
 export interface CmaResultLike {
   resultVersion?: number;

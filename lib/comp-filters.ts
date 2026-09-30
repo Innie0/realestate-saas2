@@ -1,4 +1,5 @@
 import type { SubjectProperty } from '@/lib/cma';
+import type { CompPriceSource } from '@/lib/comp-fetch';
 
 /**
  * Sanitize comparable sales from MLS/listing feeds.
@@ -256,6 +257,8 @@ export function extractSoldDate(raw: Record<string, unknown>): string | null {
 
 export interface CompFilterOptions {
   subjectAddress: string;
+  /** Treat sales after this date as future (backtests value "as of" a past date). */
+  asOf?: Date;
   /** Addresses known to be actively listed (subject + optional others) */
   activeListingAddresses?: string[];
   /** MLS numbers for active listings at the subject */
@@ -302,9 +305,9 @@ export function getCompExclusionReason(
   }
 
   const sold = new Date(soldDate);
-  const now = new Date();
+  const now = options.asOf ?? new Date();
   if (sold > now) {
-    return 'Sale date is in the future (data error)';
+    return options.asOf ? 'Sold after the valuation date' : 'Sale date is in the future (data error)';
   }
 
   // Same location, zero distance — likely the subject or duplicate record
@@ -321,7 +324,72 @@ export function getCompExclusionReason(
     return 'Missing sale price';
   }
 
+  if (Number(raw.price) < MIN_MARKET_SALE_PRICE) {
+    return 'Nominal sale price (non-market transfer)';
+  }
+
   return null;
+}
+
+/** Recorded transfers below this are deeds between relatives, trusts, etc. */
+const MIN_MARKET_SALE_PRICE = 10_000;
+/** $/sqft this many times above/below the local median suggests a bad record. */
+const PPSF_OUTLIER_RATIO = 2.5;
+const MIN_COMPS_FOR_OUTLIER_CHECK = 5;
+
+function rawPricePerSqft(raw: Record<string, unknown>): number | null {
+  const price = Number(raw.price);
+  const sqft = Number(raw.squareFootage);
+  if (!price || !sqft || sqft <= 0) return null;
+  return price / sqft;
+}
+
+/**
+ * Drop sales whose $/sqft is wildly off the local median — usually multi-parcel
+ * deals, land value sales, or records with the wrong living area.
+ */
+function removePriceOutliers(included: Record<string, unknown>[]): CompFilterResult {
+  const ppsfs = included
+    .map(rawPricePerSqft)
+    .filter((v): v is number => v !== null)
+    .sort((a, b) => a - b);
+  if (ppsfs.length < MIN_COMPS_FOR_OUTLIER_CHECK) return { included, excluded: [] };
+  const median = ppsfs[Math.floor(ppsfs.length / 2)];
+
+  const kept: Record<string, unknown>[] = [];
+  const excluded: CompFilterResult['excluded'] = [];
+  for (const raw of included) {
+    const ppsf = rawPricePerSqft(raw);
+    if (ppsf !== null && (ppsf > median * PPSF_OUTLIER_RATIO || ppsf < median / PPSF_OUTLIER_RATIO)) {
+      excluded.push({
+        raw,
+        reason: `$${Math.round(ppsf)}/sqft is far from the area median ($${Math.round(median)}/sqft)`,
+      });
+    } else {
+      kept.push(raw);
+    }
+  }
+  return { included: kept, excluded };
+}
+
+/** Public records sometimes list one sale twice under slightly different addresses. */
+function removeDuplicateSales(included: Record<string, unknown>[]): CompFilterResult {
+  const kept: Record<string, unknown>[] = [];
+  const excluded: CompFilterResult['excluded'] = [];
+  const seen = new Set<string>();
+  for (const raw of included) {
+    const lat = typeof raw.latitude === 'number' ? raw.latitude.toFixed(4) : '';
+    const lng = typeof raw.longitude === 'number' ? raw.longitude.toFixed(4) : '';
+    const date = extractSoldDate(raw)?.slice(0, 10) ?? '';
+    const key = lat && lng ? `${lat},${lng}|${date}|${raw.price}` : '';
+    if (key && seen.has(key)) {
+      excluded.push({ raw, reason: 'Duplicate record of another sale' });
+      continue;
+    }
+    if (key) seen.add(key);
+    kept.push(raw);
+  }
+  return { included: kept, excluded };
 }
 
 /** Filter raw Rentcast comp records to valid sold comparables only. */
@@ -341,7 +409,13 @@ export function filterSoldComps(
     }
   }
 
-  return { included, excluded };
+  const deduped = removeDuplicateSales(included);
+  const cleaned = removePriceOutliers(deduped.included);
+
+  return {
+    included: cleaned.included,
+    excluded: [...excluded, ...deduped.excluded, ...cleaned.excluded],
+  };
 }
 
 /** Map a validated raw Rentcast record to our comp shape. */
@@ -374,7 +448,21 @@ export function mapRawComp(raw: Record<string, unknown>) {
     longitude,
     mlsNumber: (raw.mlsNumber as string) ?? null,
     listingStatus: raw.status ? String(raw.status) : null,
+    hasPool: typeof raw.hasPool === 'boolean' ? raw.hasPool : null,
+    garageSpaces: typeof raw.garageSpaces === 'number' ? raw.garageSpaces : null,
+    priceSource: priceSourceFromRaw(raw, soldDate),
   };
+}
+
+function priceSourceFromRaw(raw: Record<string, unknown>, soldDate: string | null): CompPriceSource {
+  if (
+    raw.priceSource === 'recorded_sale' ||
+    raw.priceSource === 'last_list_price' ||
+    raw.priceSource === 'active_list_price'
+  ) {
+    return raw.priceSource;
+  }
+  return soldDate ? 'last_list_price' : 'active_list_price';
 }
 
 function isActiveStatus(status: string): boolean {

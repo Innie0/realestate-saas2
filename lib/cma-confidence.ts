@@ -3,6 +3,7 @@
  */
 
 import {
+  isAskingPriceComp,
   similarityScoreToMatchPercent,
   type ScoredComp,
 } from '@/lib/cma';
@@ -19,6 +20,8 @@ export interface CmaConfidence {
   avgMatchPercent: number | null;
   selectedCompCount: number;
   strongMatchCount: number;
+  /** Selected comps priced from recorded sales (vs asking prices) */
+  closedSaleCount: number;
 }
 
 const STRONG_MATCH_PCT = 55;
@@ -56,6 +59,8 @@ export function assessCmaConfidence(params: {
       ? Math.round(matchPercents.reduce((a, b) => a + b, 0) / matchPercents.length)
       : null;
   const strongMatchCount = matchPercents.filter((p) => p >= STRONG_MATCH_PCT).length;
+  const closedSaleCount = valuationComps.filter((c) => !isAskingPriceComp(c)).length;
+  const askingOnly = valuationComps.length > 0 && closedSaleCount === 0;
 
   let avmDivergencePct: number | null = null;
   let avmDivergence = false;
@@ -80,6 +85,7 @@ export function assessCmaConfidence(params: {
   if (
     !thinMarket &&
     valuationComps.length >= 3 &&
+    closedSaleCount >= 3 &&
     strongMatchCount >= 2 &&
     avgMatchPercent !== null &&
     avgMatchPercent >= HIGH_MATCH_AVG &&
@@ -88,7 +94,7 @@ export function assessCmaConfidence(params: {
   ) {
     level = 'high';
     label = 'Strong comp match';
-    message = `${valuationComps.length} similar closed sales support this price range.`;
+    message = `${closedSaleCount} similar closed sales support this price range.`;
   }
 
   if (
@@ -103,6 +109,11 @@ export function assessCmaConfidence(params: {
     message = thinMarket
       ? 'Few similar closed sales nearby — widen search or add a known comp by address before relying on this price.'
       : 'Comp prices or automated value disagree — verify sales manually before listing.';
+  } else if (askingOnly) {
+    level = 'low';
+    label = 'Asking prices only';
+    message =
+      'No recorded sale prices found nearby (common in non-disclosure states) — this estimate uses listing prices less 3%. Add a known sale by address to firm it up.';
   } else if (avmDivergence) {
     level = 'medium';
     label = 'Review suggested price';
@@ -119,6 +130,7 @@ export function assessCmaConfidence(params: {
     avgMatchPercent,
     selectedCompCount: valuationComps.length,
     strongMatchCount,
+    closedSaleCount,
   };
 }
 

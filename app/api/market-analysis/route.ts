@@ -175,12 +175,15 @@ async function filterCompsForAnalysis(
   activeListing: Record<string, unknown> | null,
   includeActiveListings: boolean,
 ) {
+  const subjectCoords = extractCoordinates(rentcastProperty);
   const fetchResult = await fetchCompsWithFallback({
     address,
     apiKey: key,
     propertyType: resolvedPropertyTypeFinal,
     radius: resolvedRadius,
     daysOld: resolvedDaysOld,
+    latitude: subjectCoords?.latitude ?? null,
+    longitude: subjectCoords?.longitude ?? null,
   });
 
   const subjectFormattedAddress =
@@ -215,6 +218,8 @@ async function filterCompsForAnalysis(
       apiKey: key,
       propertyType: resolvedPropertyTypeFinal,
       radius: resolvedRadius,
+      latitude: subjectCoords?.latitude ?? null,
+      longitude: subjectCoords?.longitude ?? null,
     });
     const { included: validActive, excluded: excludedActive } = filterActiveComps(activeRaw, {
       subjectAddress: subjectFormattedAddress,
@@ -254,7 +259,13 @@ async function buildAISummary(
   valuation: { suggestedPrice: number | null; priceLow: number | null; priceHigh: number | null; compCount: number },
   avm: { price?: number; priceLow?: number; priceHigh?: number } | null,
   rentEstimate: { rent?: number } | null,
-  scoredComps: { address: string; price: number | null; adjustedPrice: number | null; squareFootage: number | null }[]
+  scoredComps: {
+    address: string;
+    price: number | null;
+    adjustedPrice: number | null;
+    squareFootage: number | null;
+    priceSource?: string;
+  }[]
 ): Promise<string | null> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return null;
@@ -264,11 +275,11 @@ async function buildAISummary(
       n ? `$${n.toLocaleString()}` : 'N/A';
 
     const topComps = scoredComps.slice(0, 6).map((c) =>
-      `${c.address}: sold ${fmt(c.price)}, adjusted to ${fmt(c.adjustedPrice)}${c.squareFootage ? ` (${c.squareFootage.toLocaleString()} sqft)` : ''}`
+      `${c.address}: ${c.priceSource && c.priceSource !== 'recorded_sale' ? 'listed at' : 'sold'} ${fmt(c.price)}, adjusted to ${fmt(c.adjustedPrice)}${c.squareFootage ? ` (${c.squareFootage.toLocaleString()} sqft)` : ''}`
     ).join('\n');
 
     const cmaText = valuation.suggestedPrice
-      ? `Comp-based suggested list price: ${fmt(valuation.suggestedPrice)} (range ${fmt(valuation.priceLow)} – ${fmt(valuation.priceHigh)}, based on ${valuation.compCount} comparable sales with size and feature adjustments).`
+      ? `Comp-based suggested list price: ${fmt(valuation.suggestedPrice)} (range ${fmt(valuation.priceLow)} – ${fmt(valuation.priceHigh)}, based on ${valuation.compCount} comparables with market-time, size and feature adjustments).`
       : 'Comp-based valuation unavailable — insufficient comparable sales.';
 
     const avmText = avm?.price
@@ -510,7 +521,11 @@ export async function POST(request: NextRequest) {
 
     if (!refresh) {
       const cachedCma = await getResearchCache(supabase, user.id, 'market_analysis', cmaCacheKey);
-      if (cachedCma && !isStaleCmaResult(cachedCma)) {
+      if (
+        cachedCma &&
+        cachedCma.resultVersion === CMA_RESULT_VERSION &&
+        !isStaleCmaResult(cachedCma)
+      ) {
         return NextResponse.json({ success: true, data: cachedCma, fromCache: true });
       }
     }
@@ -530,13 +545,13 @@ export async function POST(request: NextRequest) {
 
     const rentcastProperty = rentcastPropertyEarly;
 
+    const resolvedPropertyTypeFinal =
+      propertyType || rentcastProperty?.propertyType || avmEarly?.propertyType || undefined;
+
     const [avm, rentEstimate] = await Promise.all([
       Promise.resolve(avmEarly),
       fetchRentEstimate(address, key),
     ]);
-
-    const resolvedPropertyTypeFinal =
-      propertyType || rentcastProperty?.propertyType || avm?.propertyType || undefined;
 
     const activeListing = activeListingEarly;
 
@@ -586,6 +601,7 @@ export async function POST(request: NextRequest) {
     const subjectLocation = extractCoordinates(rentcastProperty);
     const subjectProfile = buildSubjectProfile(rentcastProperty, subjectLocation);
 
+    // No market-time adjustment: ZIP trend adjustments didn't improve backtests (scripts/cma-backtest.ts)
     const { scoredComps: preliminaryScored } = calculateCma(subject, comps);
 
     const { selectedAddresses, rationale: compSelectionNote, aiUsed: compSelectionAiUsed } =
@@ -653,6 +669,8 @@ export async function POST(request: NextRequest) {
         afterSimilarity: compsRawForScoring.length,
         afterCriteria: criteriaQualified.length,
         widenedSearch: fetchResult.widenedSearch,
+        recordedSales: fetchResult.recordedSaleCount,
+        offMarketListings: fetchResult.offMarketCount,
         radiusUsed: fetchResult.radiusUsed,
         daysOldUsed: fetchResult.daysOldUsed,
       },

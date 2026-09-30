@@ -8,6 +8,8 @@ export interface CmaAddCompFormProps {
   subjectAddress: string;
   subject: SubjectProperty;
   activeListingAddresses?: string[];
+  /** Used to compute the added comp's distance from the subject. */
+  subjectLocation?: { latitude: number; longitude: number } | null;
   disabled?: boolean;
   /** Shown only when comp confidence is low — copy reflects fallback use. */
   fallbackMode?: boolean;
@@ -18,6 +20,7 @@ export default function CmaAddCompForm({
   subjectAddress,
   subject,
   activeListingAddresses = [],
+  subjectLocation,
   disabled,
   fallbackMode,
   onCompAdded,
@@ -40,6 +43,7 @@ export default function CmaAddCompForm({
           subjectAddress,
           subject,
           activeListingAddresses,
+          subjectLocation,
         }),
       });
       const data = await res.json();
