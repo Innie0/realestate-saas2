@@ -1,26 +1,17 @@
-/** Max long edge for listing photos — sharp on retina, below most Zillow originals. */
-export const LISTING_IMAGE_MAX_DIMENSION = 2400;
+/**
+ * Listing photos are always re-encoded to 1200px-wide JPEG at 70% quality — the
+ * original pipeline's look (smoother, sRGB colors), which agents preferred.
+ */
+export const LISTING_IMAGE_MAX_WIDTH = 1200;
 
-/** JPEG quality when re-encoding is required. */
-export const LISTING_IMAGE_JPEG_QUALITY = 0.92;
-
-/** WebP quality when the browser supports canvas WebP export. */
-export const LISTING_IMAGE_WEBP_QUALITY = 0.88;
+/** JPEG quality for every listing photo. */
+export const LISTING_IMAGE_JPEG_QUALITY = 0.7;
 
 /** Upload limit enforced on /api/upload. */
 export const LISTING_IMAGE_MAX_BYTES = 10 * 1024 * 1024;
 
-/**
- * Photos are shrunk below this before upload — Vercel rejects request bodies
- * over 4.5MB, and most phone/listing photos are 3–8MB.
- */
+/** Vercel rejects request bodies over 4.5MB. */
 export const LISTING_IMAGE_UPLOAD_TARGET_BYTES = 4 * 1024 * 1024;
-
-function canvasSupportsWebp(): boolean {
-  if (typeof document === 'undefined') return false;
-  const canvas = document.createElement('canvas');
-  return canvas.toDataURL('image/webp').startsWith('data:image/webp');
-}
 
 function loadImageFromFile(file: File): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -38,31 +29,17 @@ function loadImageFromFile(file: File): Promise<HTMLImageElement> {
   });
 }
 
-function encodeCanvas(canvas: HTMLCanvasElement, preferWebp: boolean): { blob: Blob; mime: string } | null {
-  const tryTypes: { mime: string; quality: number }[] = preferWebp
-    ? [
-        { mime: 'image/webp', quality: LISTING_IMAGE_WEBP_QUALITY },
-        { mime: 'image/jpeg', quality: LISTING_IMAGE_JPEG_QUALITY },
-      ]
-    : [{ mime: 'image/jpeg', quality: LISTING_IMAGE_JPEG_QUALITY }];
-
-  for (const { mime, quality } of tryTypes) {
-    const dataUrl = canvas.toDataURL(mime, quality);
-    if (!dataUrl.startsWith(`data:${mime}`)) continue;
-    const base64 = dataUrl.split(',')[1];
-    if (!base64) continue;
-    const binary = atob(base64);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-    return { blob: new Blob([bytes], { type: mime }), mime };
-  }
-  return null;
+function canvasToJpegBlob(canvas: HTMLCanvasElement, quality: number): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => (blob ? resolve(blob) : reject(new Error('Could not encode image'))),
+      'image/jpeg',
+      quality
+    );
+  });
 }
 
-/**
- * Prepare a listing image for upload: keep originals when already within limits,
- * otherwise resize (max 2400px) and re-encode at high quality.
- */
+/** Resize to at most 1200px wide and re-encode as 70% JPEG. */
 export async function prepareListingImageFile(file: File): Promise<File> {
   if (!file.type.startsWith('image/')) {
     throw new Error('File must be an image');
@@ -73,20 +50,12 @@ export async function prepareListingImageFile(file: File): Promise<File> {
       "This photo format can't be read in your browser (often iPhone HEIC). Export it as JPEG and try again."
     );
   });
-  const longEdge = Math.max(img.width, img.height);
-  const withinSize = file.size <= LISTING_IMAGE_UPLOAD_TARGET_BYTES;
-  const withinDimensions = longEdge <= LISTING_IMAGE_MAX_DIMENSION;
-
-  if (withinSize && withinDimensions) {
-    return file;
-  }
 
   let width = img.width;
   let height = img.height;
-  if (longEdge > LISTING_IMAGE_MAX_DIMENSION) {
-    const scale = LISTING_IMAGE_MAX_DIMENSION / longEdge;
-    width = Math.round(width * scale);
-    height = Math.round(height * scale);
+  if (width > LISTING_IMAGE_MAX_WIDTH) {
+    height = Math.round((height * LISTING_IMAGE_MAX_WIDTH) / width);
+    width = LISTING_IMAGE_MAX_WIDTH;
   }
 
   const canvas = document.createElement('canvas');
@@ -96,39 +65,13 @@ export async function prepareListingImageFile(file: File): Promise<File> {
   if (!ctx) throw new Error('Could not process image');
   ctx.drawImage(img, 0, 0, width, height);
 
-  const preferWebp = canvasSupportsWebp();
-  let encoded = encodeCanvas(canvas, preferWebp);
-
-  if (!encoded) {
-    throw new Error('Could not encode image');
-  }
-
-  let blob = encoded.blob;
-  let ext = encoded.mime === 'image/webp' ? 'webp' : 'jpg';
-
+  const blob = await canvasToJpegBlob(canvas, LISTING_IMAGE_JPEG_QUALITY);
   if (blob.size > LISTING_IMAGE_UPLOAD_TARGET_BYTES) {
-    const fallbackCanvas = canvas;
-    for (const quality of [0.85, 0.78, 0.7, 0.6]) {
-      const dataUrl = fallbackCanvas.toDataURL('image/jpeg', quality);
-      const base64 = dataUrl.split(',')[1];
-      if (!base64) continue;
-      const binary = atob(base64);
-      const bytes = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-      blob = new Blob([bytes], { type: 'image/jpeg' });
-      ext = 'jpg';
-      if (blob.size <= LISTING_IMAGE_UPLOAD_TARGET_BYTES) break;
-    }
-  }
-
-  if (blob.size > LISTING_IMAGE_UPLOAD_TARGET_BYTES) {
-    throw new Error(
-      `Image is too large after processing (${(blob.size / 1024 / 1024).toFixed(1)}MB). Try a smaller photo.`
-    );
+    throw new Error('Photo is too large to upload. Try a smaller photo.');
   }
 
   const baseName = file.name.replace(/\.[^.]+$/, '') || 'photo';
-  return new File([blob], `${baseName}.${ext}`, { type: blob.type });
+  return new File([blob], `${baseName}.jpg`, { type: 'image/jpeg' });
 }
 
 export async function uploadListingImageToStorage(
