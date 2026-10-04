@@ -1341,6 +1341,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         <div className="space-y-5">
           {projectTab === 'overview' && (<>
               {/* Images section */}
+              <div id="property-images" className="scroll-mt-24">
               <Card className="p-5 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-[15px] font-semibold text-gray-900">Property Images</h2>
@@ -1409,6 +1410,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   </div>
                 )}
               </Card>
+              </div>
 
               {/* Property information */}
               <Card className="p-5 sm:p-6">
@@ -2100,6 +2102,14 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               <Button
                 onClick={() => {
                   setShowNoPhotosModal(false);
+                  // Show the Property Images section so new photos appear in view
+                  setProjectTab('overview');
+                  requestAnimationFrame(() => {
+                    document
+                      .getElementById('property-images')
+                      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  });
+                  // Open the picker within this click so the browser allows it
                   handleImageUpload();
                 }}
               >

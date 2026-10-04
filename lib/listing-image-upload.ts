@@ -7,8 +7,14 @@ export const LISTING_IMAGE_JPEG_QUALITY = 0.92;
 /** WebP quality when the browser supports canvas WebP export. */
 export const LISTING_IMAGE_WEBP_QUALITY = 0.88;
 
-/** Upload limit enforced client-side and on /api/upload. */
+/** Upload limit enforced on /api/upload. */
 export const LISTING_IMAGE_MAX_BYTES = 10 * 1024 * 1024;
+
+/**
+ * Photos are shrunk below this before upload — Vercel rejects request bodies
+ * over 4.5MB, and most phone/listing photos are 3–8MB.
+ */
+export const LISTING_IMAGE_UPLOAD_TARGET_BYTES = 4 * 1024 * 1024;
 
 function canvasSupportsWebp(): boolean {
   if (typeof document === 'undefined') return false;
@@ -62,9 +68,13 @@ export async function prepareListingImageFile(file: File): Promise<File> {
     throw new Error('File must be an image');
   }
 
-  const img = await loadImageFromFile(file);
+  const img = await loadImageFromFile(file).catch(() => {
+    throw new Error(
+      "This photo format can't be read in your browser (often iPhone HEIC). Export it as JPEG and try again."
+    );
+  });
   const longEdge = Math.max(img.width, img.height);
-  const withinSize = file.size <= LISTING_IMAGE_MAX_BYTES;
+  const withinSize = file.size <= LISTING_IMAGE_UPLOAD_TARGET_BYTES;
   const withinDimensions = longEdge <= LISTING_IMAGE_MAX_DIMENSION;
 
   if (withinSize && withinDimensions) {
@@ -96,9 +106,9 @@ export async function prepareListingImageFile(file: File): Promise<File> {
   let blob = encoded.blob;
   let ext = encoded.mime === 'image/webp' ? 'webp' : 'jpg';
 
-  if (blob.size > LISTING_IMAGE_MAX_BYTES) {
+  if (blob.size > LISTING_IMAGE_UPLOAD_TARGET_BYTES) {
     const fallbackCanvas = canvas;
-    for (const quality of [0.85, 0.78, 0.7]) {
+    for (const quality of [0.85, 0.78, 0.7, 0.6]) {
       const dataUrl = fallbackCanvas.toDataURL('image/jpeg', quality);
       const base64 = dataUrl.split(',')[1];
       if (!base64) continue;
@@ -107,11 +117,11 @@ export async function prepareListingImageFile(file: File): Promise<File> {
       for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
       blob = new Blob([bytes], { type: 'image/jpeg' });
       ext = 'jpg';
-      if (blob.size <= LISTING_IMAGE_MAX_BYTES) break;
+      if (blob.size <= LISTING_IMAGE_UPLOAD_TARGET_BYTES) break;
     }
   }
 
-  if (blob.size > LISTING_IMAGE_MAX_BYTES) {
+  if (blob.size > LISTING_IMAGE_UPLOAD_TARGET_BYTES) {
     throw new Error(
       `Image is too large after processing (${(blob.size / 1024 / 1024).toFixed(1)}MB). Try a smaller photo.`
     );
@@ -135,9 +145,13 @@ export async function uploadListingImageToStorage(
     body: formData,
   });
 
-  const result = await response.json();
-  if (!response.ok || !result.success || !result.url) {
-    throw new Error(result.error || 'Failed to upload image');
+  // Platform errors (e.g. 413 Payload Too Large) return HTML, not JSON
+  const result = await response.json().catch(() => null);
+  if (!response.ok || !result?.success || !result?.url) {
+    if (response.status === 413) {
+      throw new Error('Photo is too large to upload. Try a smaller photo.');
+    }
+    throw new Error(result?.error || `Failed to upload image (${response.status})`);
   }
 
   return result.url as string;

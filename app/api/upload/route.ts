@@ -86,10 +86,12 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Supabase storage error:', error);
-      return NextResponse.json(
-        { success: false, error: 'Failed to upload image to storage' },
-        { status: 500 }
-      );
+      const message = /bucket not found/i.test(error.message ?? '')
+        ? 'Photo storage is not set up (missing "property-images" bucket).'
+        : /row-level security|unauthorized|not allowed/i.test(error.message ?? '')
+          ? 'Photo storage is not allowing uploads (check storage policies).'
+          : 'Failed to upload image to storage';
+      return NextResponse.json({ success: false, error: message }, { status: 500 });
     }
 
     // Get public URL
