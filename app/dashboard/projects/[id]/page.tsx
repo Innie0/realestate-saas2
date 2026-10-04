@@ -89,6 +89,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
   // Generation results modal
   const [showGenerationModal, setShowGenerationModal] = useState(false);
+  const [showNoPhotosModal, setShowNoPhotosModal] = useState(false);
   const [generationResults, setGenerationResults] = useState<ToneVersion[]>([]);
   const [selectedGenerationTone, setSelectedGenerationTone] = useState<DescriptionTone>('professional');
 
@@ -415,6 +416,17 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       };
     });
     setHasUnsavedChanges(true);
+  };
+
+  /**
+   * Nudge toward adding photos first — the AI describes features it sees in them
+   */
+  const handleGenerateClick = () => {
+    if (!project?.images?.length) {
+      setShowNoPhotosModal(true);
+      return;
+    }
+    handleGenerateAI();
   };
 
   /**
@@ -1450,7 +1462,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-[17px] font-semibold text-gray-900">AI-Generated Content</h2>
                   <Button 
-                    onClick={handleGenerateAI} 
+                    onClick={handleGenerateClick}
                     isLoading={isGenerating}
                     className="relative overflow-hidden"
                   >
@@ -2060,6 +2072,42 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               animation: fadeIn 0.5s ease-out forwards;
             }
           `}</style>
+        </Modal>
+      )}
+
+      {/* No Photos Nudge Modal */}
+      {showNoPhotosModal && (
+        <Modal
+          isOpen={showNoPhotosModal}
+          onClose={() => setShowNoPhotosModal(false)}
+          title="Add photos for a better description"
+        >
+          <div className="space-y-4">
+            <p className="text-gray-600">
+              The AI uses your photos to describe real features like finishes, appliances, and
+              style. Without photos, the description will be more general.
+            </p>
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowNoPhotosModal(false);
+                  handleGenerateAI();
+                }}
+              >
+                Generate Anyway
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowNoPhotosModal(false);
+                  handleImageUpload();
+                }}
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Add Photos
+              </Button>
+            </div>
+          </div>
         </Modal>
       )}
 
