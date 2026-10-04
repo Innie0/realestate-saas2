@@ -17,4 +17,11 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+const { withSentryConfig } = require('@sentry/nextjs/config');
+
+module.exports = withSentryConfig(nextConfig, {
+  silent: true,
+  telemetry: false,
+  // No auth token yet, so source maps aren't uploaded; errors still report.
+  sourcemaps: { disable: true },
+});
