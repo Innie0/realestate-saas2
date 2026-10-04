@@ -1989,7 +1989,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           Property Description
                         </label>
                         <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 max-h-60 overflow-y-auto">
-                          <p className="text-gray-200 leading-relaxed whitespace-pre-line">{version.content}</p>
+                          <p className="text-gray-900 leading-relaxed whitespace-pre-line">{version.content}</p>
                         </div>
                       </div>
 
