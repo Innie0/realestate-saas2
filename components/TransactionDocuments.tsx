@@ -11,9 +11,11 @@ import {
   AlertCircle,
   File,
   Image as ImageIcon,
+  Eye,
 } from 'lucide-react';
 import type { Contract } from '@/types';
 import Button from '@/components/ui/Button';
+import Modal from '@/components/ui/Modal';
 import Select from '@/components/ui/Select';
 
 const CONTRACT_TYPES = [
@@ -32,6 +34,12 @@ const TYPE_LABELS = Object.fromEntries(CONTRACT_TYPES.map((t) => [t.value, t.lab
 
 const ACCEPT =
   'application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png';
+const ACCEPTED_TYPES = ACCEPT.split(',');
+
+/** PDFs and images open in the browser; Word files can only be downloaded. */
+function canPreview(mime: string) {
+  return mime === 'application/pdf' || mime.startsWith('image/');
+}
 
 function formatFileSize(bytes: number) {
   if (bytes < 1024) return `${bytes} B`;
@@ -68,6 +76,10 @@ export default function TransactionDocuments({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [previewDoc, setPreviewDoc] = useState<Contract | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewError, setPreviewError] = useState('');
 
   useEffect(() => {
     if (!documentsReady) return;
@@ -76,13 +88,54 @@ export default function TransactionDocuments({
     setLoading(false);
   }, [documentsReady, prefetchedDocuments, prefetchedSetupError]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    setSelectedFile(file ?? null);
+  const selectFile = (file: File | null) => {
+    setSelectedFile(file);
     setError('');
     if (file && !title.trim()) {
       setTitle(file.name.replace(/\.[^.]+$/, '').replace(/[_-]/g, ' '));
     }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    selectFile(e.target.files?.[0] ?? null);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+    if (!ACCEPTED_TYPES.includes(file.type)) {
+      setError('Only PDF, Word, JPEG, or PNG files can be uploaded');
+      return;
+    }
+    selectFile(file);
+  };
+
+  const fetchFileUrl = async (doc: Contract): Promise<string> => {
+    const res = await fetch(`/api/transactions/${transactionId}/documents/${doc.id}`);
+    const result = await res.json();
+    if (!result.success || !result.data?.download_url) {
+      throw new Error(result.error || 'Could not open file');
+    }
+    return result.data.download_url as string;
+  };
+
+  const handlePreview = async (doc: Contract) => {
+    setPreviewDoc(doc);
+    setPreviewUrl(null);
+    setPreviewError('');
+    try {
+      setPreviewUrl(await fetchFileUrl(doc));
+    } catch (err) {
+      setPreviewError(err instanceof Error ? err.message : 'Could not open file');
+    }
+  };
+
+  const closePreview = () => {
+    setPreviewDoc(null);
+    setPreviewUrl(null);
+    setPreviewError('');
   };
 
   const handleUpload = async () => {
@@ -124,15 +177,10 @@ export default function TransactionDocuments({
   const handleDownload = async (doc: Contract) => {
     setDownloadingId(doc.id);
     try {
-      const res = await fetch(
-        `/api/transactions/${transactionId}/documents/${doc.id}`,
-      );
-      const result = await res.json();
-      if (result.success && result.data?.download_url) {
-        window.open(result.data.download_url, '_blank', 'noopener,noreferrer');
-      } else {
-        setError(result.error || 'Could not download file');
-      }
+      const url = await fetchFileUrl(doc);
+      // Supabase signed URLs save as a file (instead of opening) with ?download
+      const downloadUrl = `${url}${url.includes('?') ? '&' : '?'}download=${encodeURIComponent(doc.file_name || doc.title)}`;
+      window.open(downloadUrl, '_blank', 'noopener,noreferrer');
     } catch {
       setError('Could not download file');
     } finally {
@@ -188,8 +236,18 @@ export default function TransactionDocuments({
           <div className="sm:col-span-2">
             <label className="block text-[12.5px] text-gray-700 mb-1.5">File</label>
             <div
-              className="border-2 border-dashed border-gray-200 rounded-[10px] p-5 text-center cursor-pointer hover:border-gray-300 hover:bg-[var(--surface)] transition-colors"
+              className={`border-2 border-dashed rounded-[10px] p-5 text-center cursor-pointer transition-colors ${
+                isDragging
+                  ? 'border-brand-500 bg-brand-50'
+                  : 'border-gray-200 hover:border-gray-300 hover:bg-[var(--surface)]'
+              }`}
               onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setIsDragging(true);
+              }}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={handleDrop}
             >
               <input
                 ref={fileInputRef}
@@ -207,7 +265,9 @@ export default function TransactionDocuments({
               ) : (
                 <>
                   <Upload className="w-7 h-7 text-gray-400 mx-auto mb-2" />
-                  <p className="text-[13px] text-gray-600">Click to choose PDF, Word, or image</p>
+                  <p className="text-[13px] text-gray-600">
+                    {isDragging ? 'Drop file to upload' : 'Drag a file here or click to choose PDF, Word, or image'}
+                  </p>
                   <p className="text-[11.5px] text-gray-600 mt-1">Max 50MB</p>
                 </>
               )}
@@ -282,8 +342,13 @@ export default function TransactionDocuments({
                   <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
                     <Icon className="w-4 h-4 text-gray-700" strokeWidth={1.75} />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[13.5px] font-semibold text-gray-900 truncate">{doc.title}</p>
+                  <button
+                    type="button"
+                    onClick={() => handlePreview(doc)}
+                    className="flex-1 min-w-0 text-left"
+                    title="Quick view"
+                  >
+                    <p className="text-[13.5px] font-semibold text-gray-900 truncate hover:text-brand-600">{doc.title}</p>
                     <p className="text-[11.5px] text-gray-600 mt-0.5">
                       {TYPE_LABELS[doc.contract_type] || doc.contract_type}
                       {' · '}
@@ -291,8 +356,16 @@ export default function TransactionDocuments({
                       {' · '}
                       {format(new Date(doc.created_at), 'MMM d, yyyy')}
                     </p>
-                  </div>
+                  </button>
                   <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handlePreview(doc)}
+                      className="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                      title="Quick view"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
                     <button
                       type="button"
                       onClick={() => handleDownload(doc)}
@@ -326,6 +399,47 @@ export default function TransactionDocuments({
           </div>
         )}
       </div>
+
+      {previewDoc && (
+        <Modal isOpen onClose={closePreview} title={previewDoc.title} size="xl">
+          <div className="space-y-4">
+            {previewError ? (
+              <p className="text-[13px] text-rose-600 flex items-center gap-1.5">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                {previewError}
+              </p>
+            ) : !previewUrl ? (
+              <div className="flex justify-center py-16">
+                <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
+              </div>
+            ) : !canPreview(previewDoc.file_type) ? (
+              <div className="text-center py-12 rounded-[10px] border border-dashed border-gray-200 bg-gray-50">
+                <FileText className="w-8 h-8 text-gray-300 mx-auto mb-3" />
+                <p className="text-[13px] text-gray-700">Word files can't be previewed here</p>
+                <p className="text-[11.5px] text-gray-600 mt-1">Download it to open in Word or Google Docs</p>
+              </div>
+            ) : previewDoc.file_type.startsWith('image/') ? (
+              <img
+                src={previewUrl}
+                alt={previewDoc.title}
+                className="mx-auto max-h-[70vh] w-auto rounded-lg"
+              />
+            ) : (
+              <iframe
+                src={previewUrl}
+                title={previewDoc.title}
+                className="w-full h-[70vh] rounded-lg border border-gray-200"
+              />
+            )}
+            <div className="flex justify-end">
+              <Button variant="outline" onClick={() => handleDownload(previewDoc)}>
+                <Download className="w-4 h-4 mr-2" />
+                Download
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }
