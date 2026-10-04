@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalPageLayout title="Privacy Policy" updated="June 13, 2026">
+    <LegalPageLayout title="Privacy Policy" updated="October 3, 2026">
             <section className="mb-8">
               <h2 className="font-display text-2xl font-medium tracking-[-0.02em] text-mkt-foreground mb-4">Introduction</h2>
               <p className="text-mkt-secondary leading-relaxed mb-4">
@@ -237,13 +237,18 @@ export default function PrivacyPage() {
               <ul className="list-disc list-inside text-mkt-secondary space-y-2 mb-4">
                 <li>Google Sign-In (authentication)</li>
                 <li>Google Calendar (reading and creating events)</li>
+                <li>Google Ads (viewing and managing ad campaigns you connect)</li>
               </ul>
               <p className="text-mkt-secondary leading-relaxed mb-2"><strong>Scopes requested:</strong></p>
               <ul className="list-disc list-inside text-mkt-secondary space-y-2 mb-4">
                 <li><code className="text-mkt-secondary">calendar.readonly</code> - Read your calendar events to display and check for conflicts</li>
                 <li><code className="text-mkt-secondary">calendar.events</code> - Create and modify calendar events for showings and meetings</li>
                 <li><code className="text-mkt-secondary">userinfo.email</code> - Identify you during sign-in</li>
+                <li><code className="text-mkt-secondary">adwords</code> - Access the Google Ads accounts you choose to connect, to show campaign performance and to create or update campaigns only when you request it</li>
               </ul>
+              <p className="text-mkt-secondary leading-relaxed mb-4">
+                <strong>Google Ads data:</strong> When you connect Google Ads, we access your list of ad accounts, campaign details, and performance metrics (such as impressions, clicks, spend, and conversions). We use this data only to display results in your dashboard, generate performance insights for you, and carry out campaign actions you initiate. We do not use Google Ads data for advertising to you, sell it, or share it with third parties, and we do not make changes to your campaigns without your action.
+              </p>
               <p className="text-mkt-secondary leading-relaxed mb-4">
                 <strong>Compliance:</strong> We comply with Google's API Services User Data Policy, including the Limited Use Requirements. We only use your Google data to provide the features you've explicitly requested.
               </p>
@@ -413,7 +418,7 @@ export default function PrivacyPage() {
                 <li>Update or correct your information</li>
                 <li>Delete your account and data</li>
                 <li>Export your data</li>
-                <li>Disconnect third-party integrations (Google Calendar, Outlook)</li>
+                <li>Disconnect third-party integrations (Google Calendar, Google Ads, Outlook)</li>
                 <li>Disable your public agent profile at any time</li>
                 <li>Turn off automated follow-up emails and SMS alerts</li>
                 <li>Delete leads, clients, conversations, and transaction documents from your account</li>
@@ -430,6 +435,14 @@ export default function PrivacyPage() {
                 <li>Disconnect Google Calendar at any time from your Settings page</li>
                 <li>Revoke access via your Google Account settings</li>
                 <li>Stop sync immediately - no further access to your calendar</li>
+              </ul>
+
+              <h3 className="font-display text-xl font-medium tracking-[-0.01em] text-mkt-foreground mb-3 mt-6">Google Ads Integration</h3>
+              <p className="text-mkt-secondary leading-relaxed mb-2">You can:</p>
+              <ul className="list-disc list-inside text-mkt-secondary space-y-2 mb-4">
+                <li>Disconnect Google Ads at any time from the Ads page</li>
+                <li>Revoke access via your Google Account settings</li>
+                <li>Request deletion of stored Google Ads data by contacting privacy@oikaro.com</li>
               </ul>
 
               <h3 className="font-display text-xl font-medium tracking-[-0.01em] text-mkt-foreground mb-3 mt-6">How to Exercise Your Rights</h3>
