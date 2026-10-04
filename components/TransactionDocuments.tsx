@@ -17,6 +17,7 @@ import type { Contract } from '@/types';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Select from '@/components/ui/Select';
+import { supabase } from '@/lib/supabase';
 
 const CONTRACT_TYPES = [
   { value: 'purchase_agreement', label: 'Purchase Agreement' },
@@ -35,6 +36,11 @@ const TYPE_LABELS = Object.fromEntries(CONTRACT_TYPES.map((t) => [t.value, t.lab
 const ACCEPT =
   'application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png';
 const ACCEPTED_TYPES = ACCEPT.split(',');
+const MAX_BYTES = 50 * 1024 * 1024;
+
+function sanitizeFileName(name: string) {
+  return name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 120);
+}
 
 /** PDFs and images open in the browser; Word files can only be downloaded. */
 function canPreview(mime: string) {
@@ -144,17 +150,38 @@ export default function TransactionDocuments({
       return;
     }
 
+    if (selectedFile.size > MAX_BYTES) {
+      setError('File must be under 50MB');
+      return;
+    }
+
     setUploading(true);
     setError('');
     try {
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-      formData.append('title', title.trim() || selectedFile.name);
-      formData.append('contract_type', contractType);
+      // Upload straight to storage — files over 4.5MB can't pass through our API on Vercel
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setError('Your session expired. Refresh the page and try again.');
+        return;
+      }
+      const filePath = `${user.id}/${transactionId}/${Date.now()}-${sanitizeFileName(selectedFile.name || 'document')}`;
+      const { error: storageError } = await supabase.storage
+        .from('contracts')
+        .upload(filePath, selectedFile, { contentType: selectedFile.type, upsert: false });
+      if (storageError) {
+        setError(storageError.message || 'Upload failed');
+        return;
+      }
 
       const res = await fetch(`/api/transactions/${transactionId}/documents`, {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          file_path: filePath,
+          file_name: selectedFile.name,
+          title: title.trim() || selectedFile.name,
+          contract_type: contractType,
+        }),
       });
       const result = await res.json();
 

@@ -41,6 +41,71 @@ function sanitizeFileName(name: string) {
   return name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 120);
 }
 
+async function registerUploadedDocument(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  transactionId: string,
+  body: Record<string, unknown>,
+) {
+  const filePath = String(body.file_path ?? '');
+  const fileName = String(body.file_name ?? '').slice(0, 255) || 'document';
+  const title = String(body.title ?? '').trim();
+  const contractType = String(body.contract_type ?? 'other').trim() || 'other';
+
+  const folder = `${userId}/${transactionId}`;
+  const objectName = filePath.slice(folder.length + 1);
+  if (!filePath.startsWith(`${folder}/`) || !objectName || objectName.includes('/')) {
+    return NextResponse.json({ success: false, error: 'Invalid file path' }, { status: 400 });
+  }
+
+  if (!VALID_CONTRACT_TYPES.has(contractType)) {
+    return NextResponse.json({ success: false, error: 'Invalid document type' }, { status: 400 });
+  }
+
+  // Use the stored object's real size and type, not what the client claims
+  const { data: objects, error: listError } = await supabase.storage
+    .from('contracts')
+    .list(folder, { search: objectName, limit: 10 });
+  const stored = objects?.find((o) => o.name === objectName);
+  if (listError || !stored) {
+    return NextResponse.json({ success: false, error: 'Uploaded file not found' }, { status: 400 });
+  }
+
+  const fileSize = Number(stored.metadata?.size ?? 0);
+  const fileType = String(stored.metadata?.mimetype ?? '');
+  if (!ALLOWED_TYPES.has(fileType) || fileSize <= 0 || fileSize > MAX_BYTES) {
+    await supabase.storage.from('contracts').remove([filePath]);
+    return NextResponse.json({
+      success: false,
+      error: 'File must be a PDF, Word, JPEG, or PNG under 50MB.',
+    }, { status: 400 });
+  }
+
+  const { data: contract, error: insertError } = await supabase
+    .from('contracts')
+    .insert({
+      user_id: userId,
+      transaction_id: transactionId,
+      title: title || fileName.replace(/\.[^.]+$/, ''),
+      file_name: fileName,
+      file_path: filePath,
+      file_size: fileSize,
+      file_type: fileType,
+      contract_type: contractType,
+      status: 'draft',
+    })
+    .select()
+    .single();
+
+  if (insertError) {
+    await supabase.storage.from('contracts').remove([filePath]);
+    console.error('Contract insert error:', insertError);
+    return NextResponse.json({ success: false, error: insertError.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true, data: contract }, { status: 201 });
+}
+
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -99,6 +164,12 @@ export async function POST(
     const check = await verifyTransaction(supabase, user.id, transactionId);
     if (!check.ok) {
       return NextResponse.json({ success: false, error: check.error }, { status: check.status });
+    }
+
+    // Large files are uploaded straight from the browser to storage (Vercel caps
+    // request bodies at 4.5MB); the client then sends just the file details here.
+    if (request.headers.get('content-type')?.includes('application/json')) {
+      return registerUploadedDocument(supabase, user.id, transactionId, await request.json());
     }
 
     const formData = await request.formData();
