@@ -284,7 +284,7 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
       }
       actions={
         <>
-          <Button variant="outline" size="sm" onClick={() => { setEditInitialSection(undefined); setIsEditing(true); }}>
+          <Button size="sm" onClick={() => { setEditInitialSection(undefined); setIsEditing(true); }}>
             <Edit2 className="mr-2 size-3.5" />
             Edit
           </Button>
