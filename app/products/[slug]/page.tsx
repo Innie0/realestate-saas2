@@ -5,6 +5,7 @@ import {
   getAllProductSlugs,
   getProductBySlug,
   getProductMetaDescription,
+  PRODUCT_PAGES_LIVE,
 } from '@/lib/products';
 
 type PageProps = {
@@ -23,6 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${product.tag} — Oikaro`,
     description: getProductMetaDescription(product),
+    robots: PRODUCT_PAGES_LIVE ? undefined : { index: false, follow: false },
   };
 }
 

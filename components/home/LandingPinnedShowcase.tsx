@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { PRODUCT_PAGES_LIVE } from '@/lib/products';
 import { useRef } from 'react';
 import { ensureGsapRegistered, gsap, useGSAP } from '@/lib/gsap-config';
 import { SHOWCASE_NARRATIVE, SHOWCASE_SLIDES } from '@/lib/landing-showcase';
@@ -169,12 +170,14 @@ export default function LandingPinnedShowcase() {
                   <MarketingButton href="/auth/signup" variant="primary">
                     Start free trial
                   </MarketingButton>
-                  <Link
-                    href={slide.productsHref}
-                    className="text-sm font-medium text-mkt-foreground transition-opacity hover:opacity-70"
-                  >
-                    Learn more
-                  </Link>
+                  {PRODUCT_PAGES_LIVE && (
+                    <Link
+                      href={slide.productsHref}
+                      className="text-sm font-medium text-mkt-foreground transition-opacity hover:opacity-70"
+                    >
+                      Learn more
+                    </Link>
+                  )}
                 </div>
                 <div className="mt-8 min-h-0 flex-1">
                   <GradientShowcaseCard src={slide.screenshot} alt={slide.screenshotAlt} />

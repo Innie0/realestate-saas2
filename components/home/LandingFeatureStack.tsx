@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { PRODUCT_PAGES_LIVE } from '@/lib/products';
 import { SHOWCASE_SLIDES } from '@/lib/landing-showcase';
 import LandingGradientPanel, { type LandingGradientVariant } from '@/components/home/LandingGradientPanel';
 import MarketingButton from '@/components/marketing/MarketingButton';
@@ -33,12 +34,14 @@ export default function LandingFeatureStack() {
                 <MarketingButton href="/auth/signup" variant="dark" size="md">
                   Start free trial
                 </MarketingButton>
-                <Link
-                  href={slide.productsHref}
-                  className="text-xs font-medium text-mkt-secondary transition-colors hover:text-mkt-foreground sm:text-sm"
-                >
-                  Learn more →
-                </Link>
+                {PRODUCT_PAGES_LIVE && (
+                  <Link
+                    href={slide.productsHref}
+                    className="text-xs font-medium text-mkt-secondary transition-colors hover:text-mkt-foreground sm:text-sm"
+                  >
+                    Learn more →
+                  </Link>
+                )}
               </div>
             </div>
 

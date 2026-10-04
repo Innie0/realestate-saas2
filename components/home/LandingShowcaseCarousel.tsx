@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { PRODUCT_PAGES_LIVE } from '@/lib/products';
 import { useCallback, useRef, useState } from 'react';
 import { motion, LayoutGroup } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
@@ -113,13 +114,15 @@ function ShowcaseSlidePanel({
 
       <div className="mt-5 flex flex-wrap items-center gap-4">
         <MarketingShimmerCta href="/auth/signup">Get Started</MarketingShimmerCta>
-        <Link
-          href={slide.productsHref}
-          className="group inline-flex items-center gap-1.5 text-sm font-medium text-mkt-foreground transition-opacity duration-200 hover:opacity-70"
-        >
-          Learn more
-          <ArrowRight className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
-        </Link>
+        {PRODUCT_PAGES_LIVE && (
+          <Link
+            href={slide.productsHref}
+            className="group inline-flex items-center gap-1.5 text-sm font-medium text-mkt-foreground transition-opacity duration-200 hover:opacity-70"
+          >
+            Learn more
+            <ArrowRight className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+          </Link>
+        )}
       </div>
     </div>
   );

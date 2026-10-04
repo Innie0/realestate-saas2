@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import clsx from 'clsx';
 import ProductsMegaMenu from '@/components/marketing/ProductsMegaMenu';
+import { PRODUCT_PAGES_LIVE } from '@/lib/products';
 import MarketingShimmerCta from '@/components/marketing/MarketingShimmerCta';
 import { SITE_NAME } from '@/lib/site-config';
 
@@ -55,7 +56,9 @@ export default function MarketingHeaderNav({
         aria-label="Primary"
         className="hidden items-center gap-0.5 md:flex lg:gap-1 lg:pl-8 xl:pl-10"
       >
-        <ProductsMegaMenu inverted={inverted} onOpenChange={onProductsMenuChange} />
+        {PRODUCT_PAGES_LIVE && (
+          <ProductsMegaMenu inverted={inverted} onOpenChange={onProductsMenuChange} />
+        )}
         <Link href="/integrations" className={navLinkClass}>
           Integrations
         </Link>

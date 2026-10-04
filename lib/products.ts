@@ -21,6 +21,13 @@ import { PRODUCT_CATEGORIES, type ProductCategory } from '@/lib/product-categori
 
 export type { HowItWorksStep, LandingFeature };
 
+/**
+ * Product pages are hidden while their content is unfinished: no menu, footer,
+ * or "Learn more" links point to them, and search engines are told not to index
+ * them. The pages still exist at /products — flip this to true to bring them back.
+ */
+export const PRODUCT_PAGES_LIVE = false;
+
 export { LANDING_FEATURES, PRODUCT_CATEGORIES };
 
 export function getProductHref(id: string): string {

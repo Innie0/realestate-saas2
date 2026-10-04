@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { PRODUCT_PAGES_LIVE } from '@/lib/products';
 import clsx from 'clsx';
 import { SHOWCASE_SLIDES } from '@/lib/landing-showcase';
 import LandingStaggerReveal from '@/components/home/LandingStaggerReveal';
@@ -69,12 +70,14 @@ export default function LandingFeatureSections() {
                     <MarketingButton href="/auth/signup" variant="primary">
                       Start your 7-day free trial
                     </MarketingButton>
-                    <Link
-                      href={feature.productsHref}
-                      className="text-sm font-medium text-mkt-foreground transition-opacity hover:opacity-70"
-                    >
-                      Learn more
-                    </Link>
+                    {PRODUCT_PAGES_LIVE && (
+                      <Link
+                        href={feature.productsHref}
+                        className="text-sm font-medium text-mkt-foreground transition-opacity hover:opacity-70"
+                      >
+                        Learn more
+                      </Link>
+                    )}
                   </div>
                 </div>
 
@@ -82,7 +85,7 @@ export default function LandingFeatureSections() {
                   <ProductScreenshot
                     src={feature.screenshot}
                     alt={feature.screenshotAlt}
-                    href={feature.productsHref}
+                    href={PRODUCT_PAGES_LIVE ? feature.productsHref : undefined}
                   />
                 </div>
               </LandingStaggerReveal>
