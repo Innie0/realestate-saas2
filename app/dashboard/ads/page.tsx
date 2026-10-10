@@ -18,6 +18,10 @@ import { isAdAccountReady } from '@/lib/ads/connection-status';
 import type { AdPlatform, AdPlatformConnection, AdPromotion } from '@/lib/ads/types';
 import type { AIInsight, PerformanceDashboardData } from '@/lib/ads/performance-types';
 import { AD_TYPE_OPTIONS } from '@/lib/ads/ad-type-config';
+import {
+  GOOGLE_CONNECTION_MESSAGES,
+  type GoogleConnectionStatus,
+} from '@/lib/ads/google-connection-status';
 import clsx from 'clsx';
 import { AdsPageContentSkeleton } from '@/components/dashboard/page-loading';
 import { BarChart3, Calendar, Filter, Megaphone, PenLine, Tag } from 'lucide-react';
@@ -90,19 +94,11 @@ function AdsPageContent() {
     const error = searchParams.get('error');
 
     if (connected === 'google') {
-      if (status === 'ready') {
-        setPageMessage({ type: 'success', text: 'Google Ads account connected — ready for reporting.' });
-      } else if (status === 'unverified') {
-        setPageMessage({
-          type: 'error',
-          text: 'Google signed in, but we could not verify an ads account. Create one at ads.google.com with this email, then click “Check again” under Ad accounts.',
-        });
-      } else {
-        setPageMessage({
-          type: 'error',
-          text: 'Google signed in, but no Google Ads account exists on this login yet. Create one at ads.google.com, then click “Check again” under Ad accounts.',
-        });
-      }
+      const googleStatus = (status ?? 'setup_required') as GoogleConnectionStatus;
+      setPageMessage({
+        type: googleStatus === 'ready' ? 'success' : 'error',
+        text: GOOGLE_CONNECTION_MESSAGES[googleStatus] ?? GOOGLE_CONNECTION_MESSAGES.setup_required,
+      });
       void mutateConnections();
     } else if (connected === 'meta') {
       if (status === 'ready') {

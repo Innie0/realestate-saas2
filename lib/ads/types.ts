@@ -21,6 +21,8 @@ export interface AdPlatformConnectionRow extends AdPlatformConnection {
   access_token: string;
   refresh_token: string | null;
   token_expiry: string | null;
+  /** Google only: manager account the ad account is reached through */
+  login_customer_id?: string | null;
 }
 
 export interface AdCampaign {

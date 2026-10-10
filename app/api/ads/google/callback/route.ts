@@ -3,6 +3,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { exchangeGoogleAdsCode, getGoogleAccountEmail } from '@/lib/ads/google-ads-oauth';
 import { listGoogleAdsCustomers } from '@/lib/ads/google-list-customers';
+import {
+  googleAccountColumns,
+  googleConnectionStatus,
+  isMissingLoginCustomerColumn,
+} from '@/lib/ads/google-connection';
 
 function redirectWith(base: URL, params: Record<string, string>) {
   const url = new URL('/dashboard/ads', base);
@@ -44,8 +49,7 @@ export async function GET(request: NextRequest) {
         user_id: user.id,
         provider: 'google',
         email,
-        account_id: googleAds.customerId,
-        account_name: googleAds.customerName ?? (email ? `Google Ads · ${email}` : 'Google Ads'),
+        ...googleAccountColumns(googleAds, email ? `Google Ads · ${email}` : 'Google Ads'),
         access_token: tokens.access_token,
         refresh_token: tokens.refresh_token,
         token_expiry: tokens.expiry_date
@@ -59,16 +63,16 @@ export async function GET(request: NextRequest) {
 
     if (upsertError) {
       console.error('Google Ads save error:', upsertError);
+      if (isMissingLoginCustomerColumn(upsertError)) {
+        return redirectWith(request.url, { connected: 'google', status: 'db_update_needed' });
+      }
       return redirectWith(request.url, { error: 'save_failed' });
     }
 
-    if (googleAds.customerId) {
-      return redirectWith(request.url, { connected: 'google', status: 'ready' });
-    }
-    if (!googleAds.verified) {
-      return redirectWith(request.url, { connected: 'google', status: 'unverified' });
-    }
-    return redirectWith(request.url, { connected: 'google', status: 'setup_required' });
+    return redirectWith(request.url, {
+      connected: 'google',
+      status: googleConnectionStatus(googleAds),
+    });
   } catch (err) {
     console.error('Google Ads callback error:', err);
     return redirectWith(request.url, { error: 'token_exchange_failed' });
