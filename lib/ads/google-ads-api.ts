@@ -38,7 +38,10 @@ export class GoogleAdsApiError extends Error {
 
   /** The developer token only has test access and this is a real (production) account. */
   get isTestTokenOnProductionAccount(): boolean {
-    return this.has('DEVELOPER_TOKEN_NOT_APPROVED');
+    return (
+      this.has('DEVELOPER_TOKEN_NOT_APPROVED') ||
+      this.has('CLOUD_PROJECT_NOT_APPROVED_FOR_PRODUCTION')
+    );
   }
 }
 
