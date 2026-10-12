@@ -12,11 +12,11 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <LegalPageLayout title="Terms of Service" updated="June 13, 2026">
+    <LegalPageLayout title="Terms of Service" updated="October 12, 2026">
             <section className="mb-8">
               <h2 className="font-display text-2xl font-medium tracking-[-0.02em] text-mkt-foreground mb-4">Agreement to Terms</h2>
               <p className="text-mkt-secondary leading-relaxed mb-4">
-                By accessing or using Oikaro ("Service", "Platform", "we", "us", or "our"), you agree to be bound by these Terms of Service ("Terms"). If you disagree with any part of these terms, you may not access the Service.
+                Oikaro is owned and operated by GreatRock LLC. By accessing or using Oikaro ("Service", "Platform", "we", "us", or "our"), you agree to be bound by these Terms of Service ("Terms"). If you disagree with any part of these terms, you may not access the Service.
               </p>
             </section>
 
@@ -296,7 +296,7 @@ export default function TermsPage() {
               
               <h3 className="font-display text-xl font-medium tracking-[-0.01em] text-mkt-foreground mb-3 mt-6">Our Rights</h3>
               <p className="text-mkt-secondary leading-relaxed mb-4">
-                The Service, including its design, code, features, and branding (excluding User Content), is owned by Oikaro and protected by copyright, trademark, and other intellectual property laws.
+                The Service, including its design, code, features, and branding (excluding User Content), is owned by GreatRock LLC and protected by copyright, trademark, and other intellectual property laws.
               </p>
 
               <h3 className="font-display text-xl font-medium tracking-[-0.01em] text-mkt-foreground mb-3 mt-6">Restrictions</h3>

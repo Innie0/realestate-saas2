@@ -13,11 +13,11 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalPageLayout title="Privacy Policy" updated="October 3, 2026">
+    <LegalPageLayout title="Privacy Policy" updated="October 12, 2026">
             <section className="mb-8">
               <h2 className="font-display text-2xl font-medium tracking-[-0.02em] text-mkt-foreground mb-4">Introduction</h2>
               <p className="text-mkt-secondary leading-relaxed mb-4">
-                Welcome to Oikaro ("we," "our," or "us"). We respect your privacy and are committed to protecting your personal data. This privacy policy explains how we collect, use, store, and protect your information when you use our real estate SaaS platform (the "Service").
+                Welcome to Oikaro, a product owned and operated by GreatRock LLC ("we," "our," or "us"). We respect your privacy and are committed to protecting your personal data. This privacy policy explains how we collect, use, store, and protect your information when you use our real estate SaaS platform (the "Service").
               </p>
             </section>
 
