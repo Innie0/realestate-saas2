@@ -40,12 +40,9 @@ export default function ReviewLaunchStep({
   const wantsMeta = draft.platforms.includes('meta');
   const wantsGoogle = draft.platforms.includes('google');
 
-  const launchBlocked =
-    !headline ||
-    !body ||
-    !imageUrl ||
-    !wantsMeta ||
-    !metaReady;
+  const canPublishMeta = wantsMeta && metaReady && Boolean(imageUrl);
+  const canPublishGoogle = wantsGoogle && googleReady;
+  const launchBlocked = !headline || !body || (!canPublishMeta && !canPublishGoogle);
 
   return (
     <div className="space-y-5">
@@ -113,14 +110,26 @@ export default function ReviewLaunchStep({
           account with the same login, add billing, then click Check again.
         </p>
       )}
-      {wantsGoogle && !wantsMeta && (
+      {wantsMeta && metaReady && !imageUrl && (
         <p className="text-[12.5px] text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
-          Google-only publishing is coming soon. Include Meta to publish now.
+          Add a photo to publish to Facebook & Instagram.
         </p>
       )}
-      {wantsGoogle && wantsMeta && !googleReady && (
+      {wantsGoogle && !googleConnected && (
+        <p className="text-[12.5px] text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
+          Connect Google Ads under Ad accounts to publish to Google Search.
+        </p>
+      )}
+      {wantsGoogle && googleConnected && !googleReady && (
+        <p className="text-[12.5px] text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
+          Google is signed in, but no Google Ads account was found. Expand Ad accounts, then click
+          Check again.
+        </p>
+      )}
+      {canPublishGoogle && (
         <p className="text-[12.5px] text-gray-600 bg-gray-50 border border-gray-150 rounded-lg px-3 py-2">
-          Google will be included when publishing is available. Meta will launch now.
+          On Google this runs as a text Search ad near the listing. Google builds the ad from your
+          headline, message, and listing details, and housing ads can’t be targeted by age.
         </p>
       )}
 

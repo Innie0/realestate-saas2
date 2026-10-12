@@ -28,7 +28,7 @@ const PLATFORMS: Array<{
   {
     id: 'google',
     name: 'Google Ads',
-    description: 'Search and display campaigns on Google',
+    description: 'Search campaigns on Google',
     accent: 'G',
   },
   {

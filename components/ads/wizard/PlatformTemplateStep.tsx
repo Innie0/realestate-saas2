@@ -38,10 +38,10 @@ export default function PlatformTemplateStep({
       : 'Connect to publish';
 
   const googleHint = googleReady
-    ? 'Search & display'
+    ? 'Google Search'
     : googleConnected
       ? 'No ads account yet'
-      : 'Coming soon';
+      : 'Connect to publish';
 
   return (
     <div className="space-y-6">

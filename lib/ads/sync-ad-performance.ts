@@ -5,6 +5,9 @@ import {
   persistInsights,
 } from '@/lib/ads/analyze-performance';
 import { daysAgo, fetchMetaAdDailyInsights } from '@/lib/ads/fetch-meta-insights';
+import { fetchGoogleAdDailyInsights } from '@/lib/ads/fetch-google-insights';
+import { getFreshGoogleAccessToken } from '@/lib/ads/google-connection';
+import type { AdPlatformConnectionRow } from '@/lib/ads/types';
 
 interface SyncResult {
   promotionsSynced: number;
@@ -25,13 +28,24 @@ export async function syncAdPerformanceForAllUsers(
     errors: [],
   };
 
-  const { data: promotions, error } = await supabase
+  const baseColumns =
+    'id, user_id, platform, meta_ad_id, status, ad_type, headline, daily_budget_cents, duration_days';
+  const withGoogle = await supabase
     .from('ad_promotions')
-    .select(
-      'id, user_id, platform, meta_ad_id, status, ad_type, headline, daily_budget_cents, duration_days'
-    )
-    .in('status', ['active', 'ended', 'paused'])
-    .not('meta_ad_id', 'is', null);
+    .select(`${baseColumns}, google_customer_id, google_campaign_id`)
+    .in('status', ['active', 'ended', 'paused']);
+
+  let promotions: any[] | null = withGoogle.data;
+  let error = withGoogle.error;
+  // 42703 = Google columns not added yet (ads-google-promotions.sql) — sync Meta only
+  if (error?.code === '42703') {
+    const metaOnly = await supabase
+      .from('ad_promotions')
+      .select(baseColumns)
+      .in('status', ['active', 'ended', 'paused']);
+    promotions = metaOnly.data;
+    error = metaOnly.error;
+  }
 
   if (error) {
     if (error.code === '42P01') return result;
@@ -39,33 +53,52 @@ export async function syncAdPerformanceForAllUsers(
   }
 
   const userIds = [...new Set((promotions ?? []).map((p) => p.user_id))];
-  const connectionsByUser = new Map<string, { access_token: string }>();
+  const connectionsByUser = new Map<string, AdPlatformConnectionRow>();
+  const connectionKey = (userId: string, platform: string) => `${userId}:${platform}`;
 
-  for (const userId of userIds) {
-    const { data: conn } = await supabase
+  if (userIds.length > 0) {
+    const { data: conns } = await supabase
       .from('ad_platform_connections')
-      .select('access_token')
-      .eq('user_id', userId)
-      .eq('provider', 'meta')
-      .eq('is_active', true)
-      .maybeSingle();
-    if (conn?.access_token) connectionsByUser.set(userId, conn);
+      .select('*')
+      .in('user_id', userIds)
+      .eq('is_active', true);
+    for (const conn of conns ?? []) {
+      if (conn.access_token) connectionsByUser.set(connectionKey(conn.user_id, conn.provider), conn);
+    }
   }
+
+  /** Daily rows for one promotion from its ad platform; null when it can't be synced. */
+  const fetchDaily = async (promo: any) => {
+    const conn = connectionsByUser.get(connectionKey(promo.user_id, promo.platform));
+    if (!conn) return null;
+
+    if (promo.platform === 'meta') {
+      if (!promo.meta_ad_id) return null;
+      return fetchMetaAdDailyInsights(conn.access_token, promo.meta_ad_id, since, until);
+    }
+
+    if (promo.platform === 'google') {
+      const customerId = promo.google_customer_id || conn.account_id;
+      if (!promo.google_campaign_id || !customerId) return null;
+      const accessToken = await getFreshGoogleAccessToken(supabase, conn);
+      return fetchGoogleAdDailyInsights(
+        { accessToken, loginCustomerId: conn.login_customer_id },
+        customerId,
+        promo.google_campaign_id,
+        since,
+        until,
+      );
+    }
+
+    return null;
+  };
 
   const metricsByUser = new Map<string, ReturnType<typeof aggregatePromotionMetrics>[]>();
 
   for (const promo of promotions ?? []) {
-    if (promo.platform !== 'meta' || !promo.meta_ad_id) continue;
-    const conn = connectionsByUser.get(promo.user_id);
-    if (!conn) continue;
-
     try {
-      const daily = await fetchMetaAdDailyInsights(
-        conn.access_token,
-        promo.meta_ad_id,
-        since,
-        until
-      );
+      const daily = await fetchDaily(promo);
+      if (!daily) continue;
 
       for (const row of daily) {
         const start = `${row.date}T00:00:00.000Z`;
@@ -87,7 +120,7 @@ export async function syncAdPerformanceForAllUsers(
           {
             promotion_id: promo.id,
             user_id: promo.user_id,
-            platform: 'meta',
+            platform: promo.platform,
             date: row.date,
             impressions: row.impressions,
             clicks: row.clicks,

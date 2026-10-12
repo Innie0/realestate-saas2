@@ -136,3 +136,62 @@ export async function searchGoogleAds<Row>(
   } while (pageToken);
   return rows;
 }
+
+export interface GoogleAdsMutateResult {
+  /** Resource name created by each operation, in the order sent */
+  resourceNames: string[];
+}
+
+/**
+ * Apply several operations as one atomic change: if any fails, none are applied.
+ * Operations may reference each other with temporary (negative) resource ids.
+ */
+export async function mutateGoogleAds(
+  customerId: string,
+  mutateOperations: Record<string, unknown>[],
+  auth: GoogleAdsAuth,
+  options?: { validateOnly?: boolean },
+): Promise<GoogleAdsMutateResult> {
+  const json = await request<{ mutateOperationResponses?: Record<string, { resourceName?: string }>[] }>(
+    'POST',
+    `/customers/${normalizeCustomerId(customerId)}/googleAds:mutate`,
+    auth,
+    { mutateOperations, validateOnly: options?.validateOnly === true },
+  );
+  return {
+    resourceNames: (json.mutateOperationResponses ?? []).map(
+      (r) => Object.values(r)[0]?.resourceName ?? '',
+    ),
+  };
+}
+
+export interface GeoTargetSuggestion {
+  resourceName: string;
+  name: string;
+  /** e.g. `City`, `State`, `County` */
+  targetType: string;
+}
+
+/** Look up Google's location ids for place names (US only). */
+export async function suggestGeoTargets(
+  names: string[],
+  auth: GoogleAdsAuth,
+): Promise<GeoTargetSuggestion[]> {
+  const json = await request<{
+    geoTargetConstantSuggestions?: {
+      geoTargetConstant?: { resourceName?: string; name?: string; targetType?: string; status?: string };
+    }[];
+  }>('POST', '/geoTargetConstants:suggest', auth, {
+    locale: 'en',
+    countryCode: 'US',
+    locationNames: { names },
+  });
+  return (json.geoTargetConstantSuggestions ?? [])
+    .map((s) => s.geoTargetConstant)
+    .filter((g): g is NonNullable<typeof g> => Boolean(g?.resourceName) && g?.status !== 'REMOVAL_PLANNED')
+    .map((g) => ({
+      resourceName: String(g.resourceName),
+      name: g.name ?? '',
+      targetType: g.targetType ?? '',
+    }));
+}

@@ -30,6 +30,7 @@ import type { AIInsight } from '@/lib/ads/performance-types';
 import { tabPanelTransition, useMotionReduced } from '@/lib/motion';
 import { useApi } from '@/lib/swr';
 import { isValidDailyBudget, isValidDuration } from '@/lib/ads/promotion-options';
+import type { AdPlatform } from '@/lib/ads/types';
 
 interface AgentProfilePayload {
   profile_photo_url?: string | null;
@@ -185,59 +186,92 @@ export default function WizardShell({
     const { headline, body } = getEffectiveCopy(draft);
     const imageUrl = getPrimaryImage(draft);
 
-    if (!headline || !body || !imageUrl) {
-      onMessage?.({ type: 'error', text: 'Add a photo, headline, and message before publishing.' });
+    const wantsMeta = draft.platforms.includes('meta');
+    const wantsGoogle = draft.platforms.includes('google');
+
+    if (!headline || !body) {
+      onMessage?.({ type: 'error', text: 'Add a headline and message before publishing.' });
       return;
     }
 
-    if (draft.platforms.includes('meta') && !metaConnected) {
+    if (wantsMeta && !metaConnected && !(wantsGoogle && googleReady)) {
       onConnectMeta();
       return;
     }
 
-    if (!draft.platforms.includes('meta')) {
+    // Publish to every selected platform whose ad account is ready
+    const targets: AdPlatform[] = [
+      ...(wantsMeta && metaReady ? (['meta'] as const) : []),
+      ...(wantsGoogle && googleReady ? (['google'] as const) : []),
+    ];
+
+    if (targets.length === 0) {
       onMessage?.({
         type: 'error',
-        text: 'Meta publishing is available now. Google Ads publishing is coming soon.',
+        text: 'Connect an ad account under Ad accounts before publishing.',
       });
+      return;
+    }
+
+    if (targets.includes('meta') && !imageUrl) {
+      onMessage?.({ type: 'error', text: 'Add a photo before publishing to Facebook & Instagram.' });
       return;
     }
 
     setLaunching(true);
     onMessage?.(null);
     try {
-      const res = await fetch('/api/ads/promote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          projectId: draft.projectId,
-          adType: draft.adType,
-          propertyDetails: draft.propertyDetails,
-          images: draft.images,
-          dailyBudgetCents: draft.budget.dailyAmountCents,
-          durationDays: draft.budget.durationDays,
-          headline,
-          primaryText: body,
-          imageUrl,
-          audiencePreset: draft.audience.preset,
-          callToAction: draft.cta,
-          ageMin: draft.audience.ageMin,
-          ageMax: draft.audience.ageMax,
-        }),
-      });
-      const json = await res.json();
-      if (json.success) {
+      const published: string[] = [];
+      const failures: string[] = [];
+
+      for (const platform of targets) {
+        const label = platform === 'google' ? 'Google' : 'Meta';
+        const res = await fetch('/api/ads/promote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            platform,
+            projectId: draft.projectId,
+            adType: draft.adType,
+            propertyDetails: draft.propertyDetails,
+            images: draft.images,
+            dailyBudgetCents: draft.budget.dailyAmountCents,
+            durationDays: draft.budget.durationDays,
+            headline,
+            primaryText: body,
+            imageUrl,
+            audiencePreset: draft.audience.preset,
+            radiusMiles: draft.audience.radiusMiles,
+            callToAction: draft.cta,
+            ageMin: draft.audience.ageMin,
+            ageMax: draft.audience.ageMax,
+          }),
+        });
+        const json = await res.json().catch(() => null);
+        if (json?.success) published.push(label);
+        else failures.push(`${label}: ${json?.error || 'Could not publish the ad.'}`);
+      }
+
+      if (published.length > 0) {
         clearAdDraft();
         setDraft(createEmptyDraft());
         setCurrentStep('type');
         setMaxStepIndex(0);
+        onLaunched?.();
+      }
+
+      if (failures.length === 0) {
         onMessage?.({
           type: 'success',
-          text: json.message || 'Your ad is live. Leads will show up in your inbox.',
+          text: `Your ad is live on ${published.join(' and ')}. Leads will show up in your inbox.`,
         });
-        onLaunched?.();
+      } else if (published.length > 0) {
+        onMessage?.({
+          type: 'error',
+          text: `Published on ${published.join(' and ')}, but not everywhere. ${failures.join(' ')}`,
+        });
       } else {
-        onMessage?.({ type: 'error', text: json.error || 'Could not publish the ad.' });
+        onMessage?.({ type: 'error', text: failures.join(' ') });
       }
     } catch {
       onMessage?.({ type: 'error', text: 'Something went wrong. Please try again.' });

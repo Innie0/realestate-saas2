@@ -4,6 +4,12 @@ import { createClient } from '@/lib/supabase-server';
 import { buildListingAdCopy, getAgentLeadUrl, isProjectPromotable } from '@/lib/ads/listing-ad-copy';
 import { createMetaListingPromotion } from '@/lib/ads/meta-create-promotion';
 import {
+  buildGoogleSearchAdAssets,
+  createGoogleSearchPromotion,
+} from '@/lib/ads/google-create-promotion';
+import { getFreshGoogleAccessToken } from '@/lib/ads/google-connection';
+import { GoogleAdsApiError } from '@/lib/ads/google-ads-api';
+import {
   CTA_OPTIONS,
   AUDIENCE_PRESETS,
   isValidDailyBudget,
@@ -32,6 +38,9 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
+    const platform: 'meta' | 'google' = body.platform === 'google' ? 'google' : 'meta';
+    const platformName = platform === 'google' ? 'Google Ads' : 'Meta';
+    const radiusMiles = Number(body.radiusMiles) || 15;
     const dailyBudgetCents = Number(body.dailyBudgetCents);
     const durationDays = Number(body.durationDays) || 7;
     const headlineOverride = typeof body.headline === 'string' ? body.headline.trim().slice(0, 100) : '';
@@ -88,7 +97,8 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (!imageUrlOverride) {
+    // Google Search ads are text-only, so only Meta needs a photo
+    if (platform === 'meta' && !imageUrlOverride) {
       const promotable = isProjectPromotable(project);
       if (!promotable.ok) {
         return NextResponse.json({ success: false, error: promotable.reason } satisfies APIResponse, {
@@ -102,7 +112,7 @@ export async function POST(request: NextRequest) {
     const primaryText = primaryTextOverride || defaults.primaryText;
     const imageUrl = imageUrlOverride || defaults.imageUrl;
 
-    if (!imageUrl) {
+    if (platform === 'meta' && !imageUrl) {
       return NextResponse.json({ success: false, error: 'Add a photo before publishing.' } satisfies APIResponse, {
         status: 400,
       });
@@ -118,7 +128,7 @@ export async function POST(request: NextRequest) {
       .from('ad_platform_connections')
       .select('*')
       .eq('user_id', user.id)
-      .eq('provider', 'meta')
+      .eq('provider', platform)
       .eq('is_active', true)
       .maybeSingle();
 
@@ -136,7 +146,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Connect Meta under Ad accounts before publishing.',
+          error: `Connect ${platformName} under Ad accounts before publishing.`,
         } satisfies APIResponse,
         { status: 400 }
       );
@@ -147,16 +157,35 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error:
-            'Meta is signed in but no ad account was found. Create one in Meta Ads Manager with the same login, add billing, then click Check again under Ad accounts.',
+            platform === 'google'
+              ? 'Google is signed in but no Google Ads account was found. Create one at ads.google.com with the same login, then click Check again under Ad accounts.'
+              : 'Meta is signed in but no ad account was found. Create one in Meta Ads Manager with the same login, add billing, then click Check again under Ad accounts.',
         } satisfies APIResponse,
         { status: 400 }
       );
     }
 
+    if (platform === 'google') {
+      // Confirm we can record the campaign before creating anything on Google
+      const { error: columnError } = await supabase
+        .from('ad_promotions')
+        .select('google_campaign_id')
+        .limit(1);
+      if (columnError) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Run ads-google-promotions.sql in Supabase to enable Google Ads publishing.',
+          } satisfies APIResponse,
+          { status: 503 }
+        );
+      }
+    }
+
     const baseLandingUrl = getAgentLeadUrl(user.id);
     const promotionId = crypto.randomUUID();
     const landingUrl = buildAdLandingUrl(baseLandingUrl, {
-      platform: 'meta',
+      platform,
       projectId: project.id,
       promotionId,
     });
@@ -169,7 +198,7 @@ export async function POST(request: NextRequest) {
         id: promotionId,
         user_id: user.id,
         project_id: project.id,
-        platform: 'meta',
+        platform,
         ad_type: adType,
         daily_budget_cents: dailyBudgetCents,
         duration_days: durationDays,
@@ -191,6 +220,76 @@ export async function POST(request: NextRequest) {
         );
       }
       throw insertError;
+    }
+
+    if (platform === 'google') {
+      try {
+        const info = project.property_info || {};
+        const listing = {
+          address: info.address?.trim() || null,
+          city: defaults.city,
+          state: defaults.state,
+          zip: defaults.zip,
+          price: typeof info.price === 'number' ? info.price : null,
+          bedrooms: typeof info.bedrooms === 'number' ? info.bedrooms : null,
+          bathrooms: typeof info.bathrooms === 'number' ? info.bathrooms : null,
+        };
+        const accessToken = await getFreshGoogleAccessToken(supabase, metaConnection);
+        const googleIds = await createGoogleSearchPromotion({
+          auth: { accessToken, loginCustomerId: metaConnection.login_customer_id },
+          customerId: metaConnection.account_id,
+          promotionId,
+          campaignName,
+          dailyBudgetCents,
+          durationDays,
+          landingUrl,
+          assets: buildGoogleSearchAdAssets({ adType, headline, body: primaryText, listing }),
+          audiencePreset,
+          radiusMiles,
+          listing,
+        });
+
+        const { data: updated, error: updateError } = await supabase
+          .from('ad_promotions')
+          .update({
+            status: 'active',
+            google_customer_id: metaConnection.account_id,
+            google_campaign_id: googleIds.campaignId,
+            google_ad_group_id: googleIds.adGroupId,
+            google_ad_id: googleIds.adId,
+            error_message: null,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', promotionId)
+          .select(
+            `
+            id, project_id, platform, daily_budget_cents, duration_days, status,
+            headline, landing_url, created_at, google_campaign_id, error_message,
+            projects:project_id ( id, title, property_info, images )
+          `
+          )
+          .single();
+
+        if (updateError) throw updateError;
+
+        return NextResponse.json({
+          success: true,
+          data: updated,
+          message: 'Your ad is live on Google. Leads from the ad will appear in your inbox.',
+        } satisfies APIResponse);
+      } catch (googleError: any) {
+        console.error('Google Ads publish error:', googleError);
+        const message =
+          googleError instanceof GoogleAdsApiError
+            ? `Google rejected the ad: ${googleError.message}`
+            : googleError?.message || 'Google rejected the ad. Check your ad account or try again.';
+        await supabase
+          .from('ad_promotions')
+          .update({ status: 'failed', error_message: message, updated_at: new Date().toISOString() })
+          .eq('id', promotionId);
+
+        return NextResponse.json({ success: false, error: message } satisfies APIResponse, { status: 502 });
+      }
     }
 
     try {

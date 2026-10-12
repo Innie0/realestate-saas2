@@ -326,7 +326,7 @@ function AdsPageContent() {
                 children: (
                   <div className="space-y-3">
                     <p className="text-[12px] leading-relaxed text-muted-foreground">
-                      Connect Meta to publish ads. Google is optional for reporting.
+                      Connect Meta or Google Ads to publish ads.
                     </p>
                     <AdsConnectionsPanel
                       className="md:grid-cols-2"
