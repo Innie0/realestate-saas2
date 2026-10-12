@@ -90,6 +90,11 @@ export default function ReviewLaunchStep({
             <dt className="text-gray-700">Budget</dt>
             <dd className="font-medium text-gray-900 text-right tabular-nums">
               ${draft.budget.dailyAmountCents / 100}/day · {draft.budget.durationDays} days
+              {draft.platforms.length > 1 && (
+                <span className="block text-[11.5px] font-normal text-gray-600">
+                  on each platform — ${(draft.budget.dailyAmountCents / 100) * draft.platforms.length}/day total
+                </span>
+              )}
             </dd>
           </div>
           <div className="flex justify-between gap-4">

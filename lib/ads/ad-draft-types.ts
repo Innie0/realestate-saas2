@@ -73,7 +73,7 @@ export function createEmptyDraft(id?: string): AdDraft {
   return {
     id: id ?? crypto.randomUUID(),
     adType: null,
-    platforms: ['meta'],
+    platforms: ['google'],
     projectId: null,
     propertyDetails: {},
     images: [],
