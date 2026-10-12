@@ -94,7 +94,7 @@ export default function MarketingFooterColumns({ brand, onBlue = false }: Market
       </div>
 
       <div className={`mt-10 border-t pt-6 ${dividerClass}`}>
-        <p className={copyrightClass}>© 2026 GreatRock LLC. {SITE_NAME} is a product of GreatRock LLC. All rights reserved.</p>
+        <p className={copyrightClass}>© 2026 {SITE_NAME}. All rights reserved.</p>
       </div>
     </>
   );
