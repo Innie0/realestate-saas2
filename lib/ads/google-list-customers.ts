@@ -60,6 +60,7 @@ interface CustomerClientRow {
     descriptiveName?: string;
     manager?: boolean;
     testAccount?: boolean;
+    status?: string;
   };
 }
 
@@ -83,14 +84,16 @@ async function describeAccount(id: string, accessToken: string): Promise<AdAccou
 async function listClientAccounts(managerId: string, accessToken: string): Promise<AdAccount[]> {
   const rows = await searchGoogleAds<CustomerClientRow>(
     managerId,
-    `SELECT customer_client.id, customer_client.descriptive_name, customer_client.manager, customer_client.test_account
+    `SELECT customer_client.id, customer_client.descriptive_name, customer_client.manager, customer_client.test_account, customer_client.status
      FROM customer_client
-     WHERE customer_client.level = 1 AND customer_client.status = 'ENABLED' AND customer_client.manager = FALSE`,
+     WHERE customer_client.level = 1 AND customer_client.manager = FALSE`,
     { accessToken, loginCustomerId: managerId },
   );
   return rows
     .map((r) => r.customerClient)
     .filter((c): c is NonNullable<typeof c> => Boolean(c?.id))
+    // Test accounts have no billing, so Google can report them as cancelled — still usable
+    .filter((c) => c.status === 'ENABLED' || c.testAccount === true)
     .map((c) => ({
       id: String(c.id),
       name: c.descriptiveName ?? null,
