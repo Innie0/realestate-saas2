@@ -144,7 +144,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={GeistSans.variable}>
+    <html lang="en" className={GeistSans.variable} suppressHydrationWarning>
       <body
         className={`${GeistSans.className} ${plexMono.variable} ${inter.variable} ${newsreader.variable} ${tiempos.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable} font-sans antialiased`}
       >
