@@ -50,6 +50,7 @@ export interface PropertyInfo {
   year_built?: number; // Year the property was built
   price?: number; // Listing price
   features?: string[]; // Special features (e.g., "pool", "garage")
+  listing_url?: string; // Where the listing is posted (Zillow, Redfin, brokerage site) — reused by ads
 }
 
 /**

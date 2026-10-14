@@ -26,16 +26,53 @@ export interface AdDraftImage {
   order: number;
 }
 
-/** Where someone lands after clicking the ad. */
-export type AdDestinationType = 'lead_form' | 'custom';
+/**
+ * Where someone lands after clicking the ad:
+ * - `lead_form`  the agent's Oikaro contact form
+ * - `custom`     a link the agent pastes (the listing on Zillow/Redfin, their website, …)
+ * - `profile`    the agent's public Oikaro profile page
+ * - `open_house` the sign-in page for one of their open houses
+ */
+export type AdDestinationType = 'lead_form' | 'custom' | 'profile' | 'open_house';
 
 export interface AdDestination {
   type: AdDestinationType;
-  /** Agent's own link (their website, an open house RSVP page, …) when type is `custom` */
+  /** The pasted link when type is `custom` */
   customUrl: string;
+  /** The chosen open house when type is `open_house` */
+  openHouseId?: string | null;
+  /** True once the agent picks a destination themselves, so defaults stop applying */
+  touched?: boolean;
 }
 
 export const DEFAULT_AD_DESTINATION: AdDestination = { type: 'lead_form', customUrl: '' };
+
+const THIRD_PARTY_LISTING_SITES = ['zillow.com', 'redfin.com', 'realtor.com', 'trulia.com', 'homes.com'];
+
+/** Listing portals that show buyers other agents alongside the listing. */
+export function isThirdPartyListingSite(url: string): boolean {
+  try {
+    const host = new URL(url.trim()).hostname.toLowerCase();
+    return THIRD_PARTY_LISTING_SITES.some((site) => host === site || host.endsWith(`.${site}`));
+  } catch {
+    return false;
+  }
+}
+
+const AGENT_FOCUSED_AD_TYPES: AdType[] = ['agent_branding', 'market_update', 'testimonial', 'just_sold'];
+
+/** The destination that best fits an ad type, given what the agent has set up. */
+export function recommendedDestinationType(
+  adType: AdType | null,
+  available: { profileEnabled: boolean; hasOpenHouse: boolean; hasListingLink: boolean },
+): AdDestinationType {
+  if (adType === 'open_house' && available.hasOpenHouse) return 'open_house';
+  if (adType && AGENT_FOCUSED_AD_TYPES.includes(adType)) {
+    return available.profileEnabled ? 'profile' : 'lead_form';
+  }
+  if (adType && available.hasListingLink) return 'custom';
+  return 'lead_form';
+}
 
 /** Drafts saved before destinations existed have none. */
 export function getDraftDestination(draft: { destination?: AdDestination }): AdDestination {

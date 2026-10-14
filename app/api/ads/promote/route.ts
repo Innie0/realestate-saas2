@@ -18,6 +18,8 @@ import {
 import { resolvePromotionProjectId } from '@/lib/ads/resolve-promotion-project';
 import { buildAdLandingUrl } from '@/lib/ads/utm';
 import { isValidDestinationUrl, type AdType } from '@/lib/ads/ad-draft-types';
+import { buildAgentProfilePath } from '@/lib/agent-profile-shared';
+import { SITE_URL } from '@/lib/site-config';
 import { APIResponse } from '@/types';
 
 const VALID_CTAS = new Set(CTA_OPTIONS.map((o) => o.id));
@@ -41,15 +43,50 @@ export async function POST(request: NextRequest) {
     const platform: 'meta' | 'google' = body.platform === 'google' ? 'google' : 'meta';
     const platformName = platform === 'google' ? 'Google Ads' : 'Meta';
     const radiusMiles = Number(body.radiusMiles) || 15;
+    const destinationType = ['custom', 'profile', 'open_house'].includes(body.destinationType)
+      ? body.destinationType
+      : 'lead_form';
     const customDestination =
-      body.destinationType === 'custom' && typeof body.destinationUrl === 'string'
+      destinationType === 'custom' && typeof body.destinationUrl === 'string'
         ? body.destinationUrl.trim().slice(0, 500)
         : null;
-    if (customDestination !== null && !isValidDestinationUrl(customDestination)) {
+    if (destinationType === 'custom' && !isValidDestinationUrl(customDestination ?? '')) {
       return NextResponse.json(
-        { success: false, error: 'Enter a full web address (https://…) for your own link.' } satisfies APIResponse,
+        { success: false, error: 'Enter a full web address (https://…) for your link.' } satisfies APIResponse,
         { status: 400 }
       );
+    }
+
+    // Oikaro pages the ad can point to — checked so an ad never links to a dead page
+    const siteBase = (process.env.NEXT_PUBLIC_APP_URL || SITE_URL).replace(/\/$/, '');
+    let oikaroDestination: string | null = null;
+    if (destinationType === 'profile') {
+      const { data: settings } = await supabase
+        .from('agent_settings')
+        .select('profile_enabled')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (!settings?.profile_enabled) {
+        return NextResponse.json(
+          { success: false, error: 'Turn on your public profile in Settings before sending ad clicks to it.' } satisfies APIResponse,
+          { status: 400 }
+        );
+      }
+      oikaroDestination = `${siteBase}${buildAgentProfilePath(user.user_metadata?.full_name || '', user.id)}`;
+    } else if (destinationType === 'open_house') {
+      const { data: openHouse } = await supabase
+        .from('open_houses')
+        .select('id, status')
+        .eq('id', String(body.openHouseId ?? ''))
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (!openHouse || openHouse.status === 'ended') {
+        return NextResponse.json(
+          { success: false, error: 'Pick an upcoming open house for this ad.' } satisfies APIResponse,
+          { status: 400 }
+        );
+      }
+      oikaroDestination = `${siteBase}/open-house/${openHouse.id}`;
     }
     const dailyBudgetCents = Number(body.dailyBudgetCents);
     const durationDays = Number(body.durationDays) || 7;
@@ -192,8 +229,21 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Agent's own link, or their Oikaro contact form (where leads are captured)
-    const baseLandingUrl = customDestination ?? getAgentLeadUrl(user.id);
+    // The agent's own link, one of their Oikaro pages, or their contact form by default
+    const baseLandingUrl = customDestination ?? oikaroDestination ?? getAgentLeadUrl(user.id);
+
+    // Remember a pasted listing link on the listing so the next ad starts with it
+    if (
+      customDestination &&
+      body.saveListingLink === true &&
+      project.property_info?.listing_url !== customDestination
+    ) {
+      await supabase
+        .from('projects')
+        .update({ property_info: { ...(project.property_info || {}), listing_url: customDestination } })
+        .eq('id', project.id)
+        .eq('user_id', user.id);
+    }
     const promotionId = crypto.randomUUID();
     const landingUrl = buildAdLandingUrl(baseLandingUrl, {
       platform,

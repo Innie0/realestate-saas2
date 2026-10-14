@@ -105,9 +105,14 @@ export default function ReviewLaunchStep({
           <div className="flex justify-between gap-4">
             <dt className="text-gray-700">Clicks go to</dt>
             <dd className="font-medium text-gray-900 text-right break-all">
-              {getDraftDestination(draft).type === 'custom'
-                ? getDraftDestination(draft).customUrl.trim()
-                : 'Your contact form'}
+              {
+                {
+                  lead_form: 'Your contact form',
+                  custom: getDraftDestination(draft).customUrl.trim(),
+                  profile: 'Your agent profile page',
+                  open_house: 'Open house sign-in page',
+                }[getDraftDestination(draft).type]
+              }
             </dd>
           </div>
           <div className="flex justify-between gap-4">

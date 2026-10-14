@@ -60,6 +60,7 @@ export default function PropertyDetailsStep({ draft, onChange }: PropertyDetails
         price: info.price || '',
         bedrooms: info.bedrooms || '',
         bathrooms: info.bathrooms || '',
+        listingUrl: info.listing_url || '',
       },
       images,
     });

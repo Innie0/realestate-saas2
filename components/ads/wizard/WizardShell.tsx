@@ -24,6 +24,7 @@ import {
   type WizardStepKey,
   getDraftDestination,
   isValidDestinationUrl,
+  DEFAULT_AD_DESTINATION,
 } from '@/lib/ads/ad-draft-types';
 import { loadAdDraft, saveAdDraft, clearAdDraft } from '@/lib/ads/ad-draft-storage';
 import { getDefaultCtaForAdType } from '@/lib/ads/ad-type-config';
@@ -146,7 +147,8 @@ export default function WizardShell({
         const destination = getDraftDestination(draft);
         return (
           draft.platforms.length > 0 &&
-          (destination.type !== 'custom' || isValidDestinationUrl(destination.customUrl))
+          (destination.type !== 'custom' || isValidDestinationUrl(destination.customUrl)) &&
+          (destination.type !== 'open_house' || Boolean(destination.openHouseId))
         );
       }
       case 'audience':
@@ -181,6 +183,8 @@ export default function WizardShell({
     patchDraft({
       adType,
       cta: adType ? getDefaultCtaForAdType(adType) : draft.cta,
+      // A different ad type gets its own recommended destination
+      ...(adType !== draft.adType ? { destination: { ...DEFAULT_AD_DESTINATION } } : {}),
     });
   };
 
@@ -251,6 +255,9 @@ export default function WizardShell({
             radiusMiles: draft.audience.radiusMiles,
             destinationType: getDraftDestination(draft).type,
             destinationUrl: getDraftDestination(draft).customUrl.trim(),
+            openHouseId: getDraftDestination(draft).openHouseId ?? null,
+            // Remember a pasted listing link on the listing for next time
+            saveListingLink: listingRequiredForAdType(draft.adType) && Boolean(draft.projectId),
             callToAction: draft.cta,
             ageMin: draft.audience.ageMin,
             ageMax: draft.audience.ageMax,
