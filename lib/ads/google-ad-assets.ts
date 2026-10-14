@@ -198,3 +198,52 @@ export function buildGoogleSearchAdAssets(input: {
 
   return { headlines, descriptions, keywords };
 }
+
+const AGENT_AD_TYPE_SET = new Set<AdType>(AGENT_AD_TYPES);
+
+/** Searches that are never a home buyer or seller looking for an agent. */
+const ALWAYS_EXCLUDED = [
+  // Jobs and training
+  'jobs', 'job', 'salary', 'career', 'careers', 'hiring', 'license', 'course', 'courses', 'school', 'class', 'classes', 'exam',
+  // Looking for the big portals by name
+  'zillow', 'redfin', 'trulia', 'realtor.com',
+  // Free / research-only intent
+  'free', 'wallpaper', 'game', 'meme',
+];
+
+/** Extra exclusions for ads selling a home: renters and bargain hunters won't buy it. */
+const LISTING_EXCLUDED = [
+  'rent', 'rental', 'rentals', 'renting', 'lease', 'apartment', 'apartments', 'roommate',
+  'foreclosure', 'foreclosures', 'auction', 'cheap', 'section 8', 'timeshare',
+];
+
+/**
+ * Search terms the ad should never show for, so the budget isn't spent on
+ * people who were never going to become a client.
+ */
+export function buildNegativeKeywords(adType: AdType | null): string[] {
+  const isAgentAd = adType !== null && AGENT_AD_TYPE_SET.has(adType);
+  return isAgentAd ? [...ALWAYS_EXCLUDED, 'rent', 'rental', 'apartment'] : [...ALWAYS_EXCLUDED, ...LISTING_EXCLUDED];
+}
+
+/** Short highlights shown under the ad (Google limit: 25 characters each). */
+export function buildCallouts(adType: AdType | null): string[] {
+  const isAgentAd = adType !== null && AGENT_AD_TYPE_SET.has(adType);
+  return isAgentAd
+    ? ['Licensed Agent', 'Free Consultation', 'Buyers and Sellers', 'Local Area Knowledge']
+    : ['Licensed Agent', 'Private Showings', 'Ask About This Home', 'Local Area Knowledge'];
+}
+
+/** A US phone number as 10 digits for a call button, or null if it isn't one. */
+export function normalizeUsPhone(phone: string | null | undefined): string | null {
+  const digits = (phone ?? '').replace(/\D/g, '');
+  const ten = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits;
+  // Area codes and exchanges can't start with 0 or 1
+  return /^[2-9]\d{2}[2-9]\d{6}$/.test(ten) ? ten : null;
+}
+
+/** An extra link shown under the ad (Google limit: 25 characters of text). */
+export interface GoogleSitelink {
+  text: string;
+  url: string;
+}

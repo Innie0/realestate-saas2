@@ -163,7 +163,9 @@ export default function ReviewLaunchStep({
       {canPublishGoogle && (
         <p className="text-[12.5px] text-gray-600 bg-gray-50 border border-gray-150 rounded-lg px-3 py-2">
           On Google this runs as a text Search ad. Google mixes the headlines shown in the preview
-          to find what works best.
+          to find what works best. Oikaro also adds a tap-to-call button (from the phone number on
+          your agent profile) and links to your pages, and blocks searches like rentals and jobs so
+          your budget goes to real prospects.
         </p>
       )}
 

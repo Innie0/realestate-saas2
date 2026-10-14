@@ -4,8 +4,11 @@ import { createClient } from '@/lib/supabase-server';
 import { buildListingAdCopy, getAgentLeadUrl, isProjectPromotable } from '@/lib/ads/listing-ad-copy';
 import { createMetaListingPromotion } from '@/lib/ads/meta-create-promotion';
 import {
+  buildCallouts,
   buildGoogleSearchAdAssets,
+  buildNegativeKeywords,
   createGoogleSearchPromotion,
+  normalizeUsPhone,
 } from '@/lib/ads/google-create-promotion';
 import { getFreshGoogleAccessToken } from '@/lib/ads/google-connection';
 import { GoogleAdsApiError } from '@/lib/ads/google-ads-api';
@@ -18,7 +21,7 @@ import {
 import { resolvePromotionProjectId } from '@/lib/ads/resolve-promotion-project';
 import { buildAdLandingUrl } from '@/lib/ads/utm';
 import { isValidDestinationUrl, type AdType } from '@/lib/ads/ad-draft-types';
-import { buildAgentProfilePath } from '@/lib/agent-profile-shared';
+import { buildAgentProfilePath, buildBookingPath } from '@/lib/agent-profile-shared';
 import { SITE_URL } from '@/lib/site-config';
 import { APIResponse } from '@/types';
 
@@ -295,6 +298,30 @@ export async function POST(request: NextRequest) {
           bedrooms: typeof info.bedrooms === 'number' ? info.bedrooms : null,
           bathrooms: typeof info.bathrooms === 'number' ? info.bathrooms : null,
         };
+        // Extras that come from the agent's Oikaro settings: call button and links to their pages
+        const { data: agentSettings } = await supabase
+          .from('agent_settings')
+          .select('profile_enabled, profile_phone, booking_enabled')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        const agentName = user.user_metadata?.full_name || '';
+        const tagged = (url: string) =>
+          buildAdLandingUrl(url, { platform, projectId: project.id, promotionId });
+        // Sitelinks must be on the same site as the ad, so only add them for Oikaro destinations
+        const sitelinks = customDestination
+          ? []
+          : [
+              agentSettings?.profile_enabled && destinationType !== 'profile'
+                ? { text: 'About the Agent', url: tagged(`${siteBase}${buildAgentProfilePath(agentName, user.id)}`) }
+                : null,
+              agentSettings?.booking_enabled
+                ? { text: 'Book a Time to Talk', url: tagged(`${siteBase}${buildBookingPath(agentName, user.id)}`) }
+                : null,
+              destinationType !== 'lead_form'
+                ? { text: 'Contact the Agent', url: tagged(getAgentLeadUrl(user.id)) }
+                : null,
+            ].filter(Boolean);
+
         const accessToken = await getFreshGoogleAccessToken(supabase, metaConnection);
         const googleIds = await createGoogleSearchPromotion({
           auth: { accessToken, loginCustomerId: metaConnection.login_customer_id },
@@ -315,6 +342,12 @@ export async function POST(request: NextRequest) {
           audiencePreset,
           radiusMiles,
           listing,
+          negativeKeywords: buildNegativeKeywords(adType),
+          extras: {
+            phone: normalizeUsPhone(agentSettings?.profile_phone),
+            sitelinks,
+            callouts: buildCallouts(adType),
+          },
         });
 
         const { data: updated, error: updateError } = await supabase

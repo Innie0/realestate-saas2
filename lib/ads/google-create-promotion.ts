@@ -9,8 +9,10 @@ import {
   MIN_HEADLINES,
   type GoogleAdListing,
   type GoogleSearchAdAssets,
+  type GoogleSitelink,
 } from '@/lib/ads/google-ad-assets';
 import {
+  GoogleAdsApiError,
   mutateGoogleAds,
   normalizeCustomerId,
   suggestGeoTargets,
@@ -19,9 +21,13 @@ import {
 import type { AudiencePresetId } from '@/lib/ads/promotion-options';
 
 export {
+  buildCallouts,
   buildGoogleSearchAdAssets,
+  buildNegativeKeywords,
+  normalizeUsPhone,
   type GoogleAdListing,
   type GoogleSearchAdAssets,
+  type GoogleSitelink,
 } from '@/lib/ads/google-ad-assets';
 
 const US_GEO_TARGET = 'geoTargetConstants/2840';
@@ -90,8 +96,53 @@ export interface CreateGooglePromotionOptions {
   audiencePreset: AudiencePresetId;
   radiusMiles: number;
   listing: GoogleAdListing;
+  /** Searches the ad must never show for */
+  negativeKeywords?: string[];
+  /**
+   * Extras that make the ad bigger and easier to act on. Google needs at least
+   * two sitelinks to show any, and they must be on the same site as the ad.
+   */
+  extras?: {
+    /** 10-digit US number for a tap-to-call button */
+    phone?: string | null;
+    sitelinks?: GoogleSitelink[];
+    callouts?: string[];
+  };
   /** Check the campaign with Google without creating anything */
   validateOnly?: boolean;
+}
+
+/** Google needs at least this many sitelinks before it will show any. */
+const MIN_SITELINKS = 2;
+
+/** Operations that attach a call button, extra links, and highlights to the campaign. */
+function buildExtraAssetOperations(
+  cid: string,
+  campaign: string,
+  extras: NonNullable<CreateGooglePromotionOptions['extras']>,
+): Record<string, unknown>[] {
+  const operations: Record<string, unknown>[] = [];
+  let tempId = -100;
+
+  const attach = (asset: Record<string, unknown>, fieldType: 'CALL' | 'SITELINK' | 'CALLOUT') => {
+    const resourceName = `customers/${cid}/assets/${tempId--}`;
+    operations.push({ assetOperation: { create: { resourceName, ...asset } } });
+    operations.push({ campaignAssetOperation: { create: { campaign, asset: resourceName, fieldType } } });
+  };
+
+  if (extras.phone) {
+    attach({ callAsset: { countryCode: 'US', phoneNumber: extras.phone } }, 'CALL');
+  }
+  const sitelinks = extras.sitelinks ?? [];
+  if (sitelinks.length >= MIN_SITELINKS) {
+    for (const link of sitelinks.slice(0, 4)) {
+      attach({ sitelinkAsset: { linkText: link.text.slice(0, 25) }, finalUrls: [link.url] }, 'SITELINK');
+    }
+  }
+  for (const text of (extras.callouts ?? []).slice(0, 4)) {
+    attach({ calloutAsset: { calloutText: text.slice(0, 25) } }, 'CALLOUT');
+  }
+  return operations;
 }
 
 export async function createGoogleSearchPromotion(
@@ -170,6 +221,12 @@ export async function createGoogleSearchPromotion(
         create: { adGroup, status: 'ENABLED', keyword: { text, matchType: 'PHRASE' } },
       },
     })),
+    // Never show for these searches (renters, job seekers, …) so budget goes to real prospects
+    ...(options.negativeKeywords ?? []).map((text) => ({
+      campaignCriterionOperation: {
+        create: { campaign, negative: true, keyword: { text, matchType: 'BROAD' } },
+      },
+    })),
     {
       adGroupAdOperation: {
         create: {
@@ -187,9 +244,24 @@ export async function createGoogleSearchPromotion(
     },
   ];
 
-  const { resourceNames } = await mutateGoogleAds(cid, operations, options.auth, {
-    validateOnly: options.validateOnly,
-  });
+  const extraOperations = options.extras
+    ? buildExtraAssetOperations(cid, campaign, options.extras)
+    : [];
+
+  let resourceNames: string[];
+  try {
+    ({ resourceNames } = await mutateGoogleAds(cid, [...operations, ...extraOperations], options.auth, {
+      validateOnly: options.validateOnly,
+    }));
+  } catch (err) {
+    // The extras are optional — if Google rejects one (say, an unverifiable phone number),
+    // publish the ad without them rather than not at all.
+    if (!(err instanceof GoogleAdsApiError) || extraOperations.length === 0) throw err;
+    console.warn('Google Ads extras rejected, publishing without them:', err.message, err.codes);
+    ({ resourceNames } = await mutateGoogleAds(cid, operations, options.auth, {
+      validateOnly: options.validateOnly,
+    }));
+  }
 
   const idOf = (prefix: string) =>
     resourceNames.find((r) => r.includes(`/${prefix}/`))?.split('/').pop() ?? '';
