@@ -204,3 +204,53 @@ export function usageLimitError(
 }
 
 export { STARTER_PRICE_ID, PRO_PRICE_ID };
+
+/**
+ * Daily safety caps on AI features, on every plan. They sit far above normal
+ * use and exist to stop a runaway bill, not to meter the feature.
+ */
+export const DAILY_AI_CAPS = {
+  /** Ad copy generation and ad optimization */
+  ai_ads: 40,
+  /** Listing description, headline, refine, and photo analysis calls (one "Generate" uses about 6) */
+  ai_listing: 180,
+} as const;
+
+export type DailyAiBucket = keyof typeof DAILY_AI_CAPS;
+
+export const DAILY_AI_CAP_MESSAGE =
+  'You’ve reached today’s limit for this AI feature. It resets tomorrow.';
+
+/**
+ * Count one use against today's cap. Returns false (and counts nothing) once
+ * the cap is reached.
+ */
+export async function consumeDailyAiAllowance(
+  supabase: SupabaseClient,
+  userId: string,
+  bucket: DailyAiBucket,
+): Promise<boolean> {
+  const period = `day:${new Date().toISOString().slice(0, 10)}`;
+
+  const { data: existing } = await supabase
+    .from('usage_tracking')
+    .select('id, usage_count')
+    .eq('user_id', userId)
+    .eq('feature', bucket)
+    .eq('period', period)
+    .maybeSingle();
+
+  if ((existing?.usage_count ?? 0) >= DAILY_AI_CAPS[bucket]) return false;
+
+  if (existing) {
+    await supabase
+      .from('usage_tracking')
+      .update({ usage_count: existing.usage_count + 1 })
+      .eq('id', existing.id);
+  } else {
+    await supabase
+      .from('usage_tracking')
+      .insert({ user_id: userId, feature: bucket, period, usage_count: 1 });
+  }
+  return true;
+}

@@ -5,12 +5,17 @@
 import { NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { openai } from '@/lib/openai';
+import { consumeDailyAiAllowance, DAILY_AI_CAP_MESSAGE } from '@/lib/usage';
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+  }
+
+  if (!(await consumeDailyAiAllowance(supabase, user.id, 'ai_listing'))) {
+    return new Response(JSON.stringify({ error: DAILY_AI_CAP_MESSAGE }), { status: 429 });
   }
 
   const body = await request.json();

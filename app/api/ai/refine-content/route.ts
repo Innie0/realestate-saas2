@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import OpenAI from 'openai';
+import { consumeDailyAiAllowance, DAILY_AI_CAP_MESSAGE } from '@/lib/usage';
 
 /**
  * POST /api/ai/refine-content
@@ -26,6 +27,10 @@ export async function POST(request: NextRequest) {
         { success: false, error: 'Unauthorized' },
         { status: 401 }
       );
+    }
+
+    if (!(await consumeDailyAiAllowance(supabase, user.id, 'ai_listing'))) {
+      return NextResponse.json({ success: false, error: DAILY_AI_CAP_MESSAGE }, { status: 429 });
     }
 
     const body = await request.json();

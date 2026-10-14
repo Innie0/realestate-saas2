@@ -122,10 +122,12 @@ export default function ReviewLaunchStep({
               }
             </dd>
           </div>
-          <div className="flex justify-between gap-4">
-            <dt className="text-gray-700">Button</dt>
-            <dd className="font-medium text-gray-900 text-right">{getCtaLabel(draft.cta)}</dd>
-          </div>
+          {wantsMeta && (
+            <div className="flex justify-between gap-4">
+              <dt className="text-gray-700">Button</dt>
+              <dd className="font-medium text-gray-900 text-right">{getCtaLabel(draft.cta)}</dd>
+            </div>
+          )}
         </dl>
       </Card>
 

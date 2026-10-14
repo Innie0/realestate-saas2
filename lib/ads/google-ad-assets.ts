@@ -167,7 +167,9 @@ export function buildGoogleSearchAdAssets(input: {
       ]
     : [
         'See photos, details, and pricing. Contact the listing agent to schedule a showing.',
-        `${specs ? `${specs} home` : 'Home'}${city ? ` in ${city}` : ''}. Request details or book a tour today.`,
+        specs || city
+          ? `${specs ? `${specs} home` : 'Home'}${city ? ` in ${city}` : ''}. Request details or book a tour today.`
+          : 'Request details or book a private tour today.',
       ];
   const descriptions = uniqueByLowercase(
     [...packSentences(cleanAdText(input.body, false)).slice(0, 2), ...fallbackDescriptions]

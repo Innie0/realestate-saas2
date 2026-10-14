@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase-server';
 import { openai } from '@/lib/openai';
 import { getAdTypeLabel } from '@/lib/ads/ad-type-config';
 import type { AdType } from '@/lib/ads/ad-draft-types';
+import { consumeDailyAiAllowance, DAILY_AI_CAP_MESSAGE } from '@/lib/usage';
 
 const VALID_TYPES = new Set([
   'new_listing',
@@ -49,6 +50,10 @@ export async function POST(request: NextRequest) {
 
     if (authError || !user) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (!(await consumeDailyAiAllowance(supabase, user.id, 'ai_ads'))) {
+      return NextResponse.json({ success: false, error: DAILY_AI_CAP_MESSAGE }, { status: 429 });
     }
 
     const body = await request.json();

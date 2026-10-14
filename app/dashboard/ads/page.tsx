@@ -119,6 +119,7 @@ function AdsPageContent() {
         not_authenticated: 'Sign in again, then retry connecting your ad account.',
         token_exchange_failed: 'Could not complete authorization. Check OAuth app settings.',
         missing_code: 'Authorization did not return a code. Try connecting again.',
+        state_mismatch: 'That sign-in link expired or was started somewhere else. Click Connect to try again.',
       };
       setPageMessage({
         type: 'error',
@@ -354,6 +355,10 @@ function AdsPageContent() {
                       onConnect={handleConnect}
                       onDisconnect={handleDisconnect}
                       onRefresh={handleRefreshConnection}
+                    onGoogleAccountChanged={(message) => {
+                      setPageMessage(message);
+                      void mutateConnections();
+                    }}
                     />
                   </div>
                 ),
@@ -464,6 +469,10 @@ function AdsPageContent() {
                     onConnect={handleConnect}
                     onDisconnect={handleDisconnect}
                     onRefresh={handleRefreshConnection}
+                    onGoogleAccountChanged={(message) => {
+                      setPageMessage(message);
+                      void mutateConnections();
+                    }}
                   />
                 ),
               },

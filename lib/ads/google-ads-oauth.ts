@@ -14,9 +14,13 @@ async function getOAuthClient() {
   return new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, redirectUri());
 }
 
-export async function getGoogleAdsAuthUrl(): Promise<string> {
+/** Cookie holding the one-time value that ties the Google callback to the browser that started it. */
+export const GOOGLE_ADS_OAUTH_STATE_COOKIE = 'gads_oauth_state';
+
+export async function getGoogleAdsAuthUrl(state: string): Promise<string> {
   const client = await getOAuthClient();
   return client.generateAuthUrl({
+    state,
     access_type: 'offline',
     scope: [
       'https://www.googleapis.com/auth/adwords',

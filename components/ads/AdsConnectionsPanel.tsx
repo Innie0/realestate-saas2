@@ -3,6 +3,7 @@
 import { ExternalLink, Loader2, RefreshCw, Unplug } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import GoogleAccountPicker from '@/components/ads/GoogleAccountPicker';
 import type { AdPlatform, AdPlatformConnection } from '@/lib/ads/types';
 import { getConnectionStatus, type AdConnectionStatus } from '@/lib/ads/connection-status';
 import { getAdAccountSetupLabel, getAdAccountSetupUrl, getExternalAdsUrl } from '@/lib/ads/urls';
@@ -16,6 +17,8 @@ interface AdsConnectionsPanelProps {
   onConnect: (platform: AdPlatform) => void;
   onDisconnect: (platform: AdPlatform) => void;
   onRefresh: (platform: AdPlatform) => void;
+  /** Called after the agent switches which Google Ads account is used */
+  onGoogleAccountChanged?: (message: { type: 'success' | 'error'; text: string }) => void;
   className?: string;
 }
 
@@ -91,6 +94,7 @@ export default function AdsConnectionsPanel({
   onConnect,
   onDisconnect,
   onRefresh,
+  onGoogleAccountChanged,
   className,
 }: AdsConnectionsPanelProps) {
   return (
@@ -133,9 +137,14 @@ export default function AdsConnectionsPanel({
                   </p>
                 )}
                 {platform.id === 'google' && status === 'ready' && (
-                  <p className="text-[11.5px] text-gray-700 mt-2">
-                    Google reporting syncs when a developer token is configured. Publishing is Meta-only for now.
-                  </p>
+                  <>
+                    <p className="text-[11.5px] text-gray-700 mt-2">
+                      Ads publish to this Google Ads account and you’re billed by Google directly.
+                    </p>
+                    {onGoogleAccountChanged && (
+                      <GoogleAccountPicker onChanged={onGoogleAccountChanged} />
+                    )}
+                  </>
                 )}
                 <div className="flex flex-wrap items-center gap-2 mt-4">
                   {conn ? (

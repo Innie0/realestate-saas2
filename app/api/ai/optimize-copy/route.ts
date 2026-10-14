@@ -5,6 +5,7 @@ import { openai } from '@/lib/openai';
 import { getAdTypeLabel } from '@/lib/ads/ad-type-config';
 import { ctrPercent } from '@/lib/ads/performance-types';
 import { APIResponse } from '@/types';
+import { consumeDailyAiAllowance, DAILY_AI_CAP_MESSAGE } from '@/lib/usage';
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,6 +19,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' } satisfies APIResponse, {
         status: 401,
       });
+    }
+
+    if (!(await consumeDailyAiAllowance(supabase, user.id, 'ai_ads'))) {
+      return NextResponse.json({ success: false, error: DAILY_AI_CAP_MESSAGE }, { status: 429 });
     }
 
     const body = await request.json();

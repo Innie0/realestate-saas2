@@ -103,15 +103,35 @@ async function listClientAccounts(managerId: string, accessToken: string): Promi
     }));
 }
 
+/** One ad account the agent could advertise from. */
+export interface GoogleAdAccountOption {
+  customerId: string;
+  /** e.g. `Jane Smith Realty · 123-456-7890` */
+  label: string;
+  isTestAccount: boolean;
+  loginCustomerId: string | null;
+}
+
+function toOption(account: AdAccount): GoogleAdAccountOption {
+  return {
+    customerId: account.id,
+    label: `${account.name?.trim() || 'Google Ads'} · ${formatCustomerId(account.id)}${account.isTestAccount ? ' (test)' : ''}`,
+    isTestAccount: account.isTestAccount,
+    loginCustomerId: account.loginCustomerId,
+  };
+}
+
 /**
- * Find the Google Ads account to advertise from for the signed-in user.
- *
- * Prefers an ad account the user can access directly; otherwise the first ad
- * account under a manager account they can access (how test accounts are set up).
+ * Every ad account the signed-in Google user can advertise from: accounts they
+ * access directly, plus accounts under any manager account they can access.
+ * Real accounts are listed before test accounts.
  */
-export async function listGoogleAdsCustomers(accessToken: string): Promise<GoogleAdsCustomerInfo> {
+export async function listGoogleAdAccounts(accessToken: string): Promise<{
+  accounts: GoogleAdAccountOption[];
+  issue: GoogleAdsAccountIssue | null;
+}> {
   if (!getGoogleAdsDeveloperToken() || !accessToken) {
-    return { ...NONE, verified: false, issue: 'not_configured' };
+    return { accounts: [], issue: 'not_configured' };
   }
 
   let ids: string[];
@@ -119,24 +139,27 @@ export async function listGoogleAdsCustomers(accessToken: string): Promise<Googl
     ids = await listAccessibleCustomerIds(accessToken);
   } catch (err) {
     console.warn('Google Ads listAccessibleCustomers:', err);
-    return { ...NONE, verified: true, issue: 'api_error' };
+    return { accounts: [], issue: 'api_error' };
   }
-  if (ids.length === 0) {
-    return { ...NONE, verified: true, issue: 'no_account' };
-  }
+  if (ids.length === 0) return { accounts: [], issue: 'no_account' };
 
-  const managers: AdAccount[] = [];
+  const found = new Map<string, AdAccount>();
   let sawTestTokenRejection = false;
-  let pick: AdAccount | null = null;
 
   for (const id of ids.slice(0, MAX_ACCOUNTS_TO_INSPECT)) {
     try {
       const account = await describeAccount(id, accessToken);
-      if (account.isManager) {
-        managers.push(account);
-      } else {
-        pick = account;
-        break;
+      if (!account.isManager) {
+        found.set(account.id, account);
+        continue;
+      }
+      try {
+        for (const client of await listClientAccounts(account.id, accessToken)) {
+          // A directly accessible account doesn't need to go through its manager
+          if (!found.has(client.id)) found.set(client.id, client);
+        }
+      } catch (err) {
+        console.warn(`Google Ads manager ${account.id} clients skipped:`, err);
       }
     } catch (err) {
       // Cancelled/suspended accounts and real accounts on a test token fail here — skip them
@@ -148,31 +171,36 @@ export async function listGoogleAdsCustomers(accessToken: string): Promise<Googl
     }
   }
 
-  if (!pick) {
-    for (const manager of managers) {
-      try {
-        const clients = await listClientAccounts(manager.id, accessToken);
-        if (clients.length > 0) {
-          pick = clients[0];
-          break;
-        }
-      } catch (err) {
-        console.warn(`Google Ads manager ${manager.id} clients skipped:`, err);
-      }
-    }
-  }
+  const accounts = [...found.values()]
+    .sort((a, b) => Number(a.isTestAccount) - Number(b.isTestAccount))
+    .map(toOption);
+
+  return {
+    accounts,
+    issue: accounts.length > 0 ? null : sawTestTokenRejection ? 'test_token_only' : 'no_account',
+  };
+}
+
+/**
+ * The Google Ads account to advertise from for the signed-in user: the one
+ * they already chose if it's still available, otherwise the first real account,
+ * otherwise a test account.
+ */
+export async function listGoogleAdsCustomers(
+  accessToken: string,
+  preferredCustomerId?: string | null,
+): Promise<GoogleAdsCustomerInfo> {
+  const { accounts, issue } = await listGoogleAdAccounts(accessToken);
+  const pick =
+    accounts.find((a) => a.customerId === preferredCustomerId) ?? accounts[0] ?? null;
 
   if (!pick) {
-    return {
-      ...NONE,
-      verified: true,
-      issue: sawTestTokenRejection ? 'test_token_only' : 'no_account',
-    };
+    return { ...NONE, verified: issue !== 'not_configured', issue };
   }
 
   return {
-    customerId: pick.id,
-    customerName: `${pick.name?.trim() || 'Google Ads'} · ${formatCustomerId(pick.id)}${pick.isTestAccount ? ' (test)' : ''}`,
+    customerId: pick.customerId,
+    customerName: pick.label,
     loginCustomerId: pick.loginCustomerId,
     isTestAccount: pick.isTestAccount,
     verified: true,

@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       status = meta.hasAdAccount ? 'ready' : 'setup_required';
     } else {
       const accessToken = await getFreshGoogleAccessToken(supabase, connection);
-      const google = await listGoogleAdsCustomers(accessToken);
+      const google = await listGoogleAdsCustomers(accessToken, connection.account_id);
       const { account_id, account_name, ...rest } = googleAccountColumns(
         google,
         connection.account_name,

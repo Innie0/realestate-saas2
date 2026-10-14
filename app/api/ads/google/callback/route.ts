@@ -1,7 +1,11 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
-import { exchangeGoogleAdsCode, getGoogleAccountEmail } from '@/lib/ads/google-ads-oauth';
+import {
+  exchangeGoogleAdsCode,
+  getGoogleAccountEmail,
+  GOOGLE_ADS_OAUTH_STATE_COOKIE,
+} from '@/lib/ads/google-ads-oauth';
 import { listGoogleAdsCustomers } from '@/lib/ads/google-list-customers';
 import {
   googleAccountColumns,
@@ -28,6 +32,11 @@ export async function GET(request: NextRequest) {
     }
     if (!code) {
       return redirectWith(request.url, { error: 'missing_code' });
+    }
+
+    const expectedState = request.cookies.get(GOOGLE_ADS_OAUTH_STATE_COOKIE)?.value;
+    if (!expectedState || searchParams.get('state') !== expectedState) {
+      return redirectWith(request.url, { error: 'state_mismatch' });
     }
 
     const tokens = await exchangeGoogleAdsCode(code);
