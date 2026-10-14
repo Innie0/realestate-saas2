@@ -123,7 +123,7 @@ export const WIZARD_STEPS: { key: WizardStepKey; label: string; short: string }[
   { key: 'details', label: 'Details & images', short: 'Details' },
   { key: 'copy', label: 'Ad copy', short: 'Copy' },
   { key: 'platform', label: 'Platform & look', short: 'Platform' },
-  { key: 'audience', label: 'Audience & budget', short: 'Budget' },
+  { key: 'audience', label: 'Location & budget', short: 'Budget' },
   { key: 'review', label: 'Review & launch', short: 'Launch' },
 ];
 

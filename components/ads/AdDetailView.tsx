@@ -121,6 +121,12 @@ export default function AdDetailView({ ad, onOptimize, onClose, onStatusChanged 
         </div>
       </div>
 
+      {ad.issue && (
+        <p className="rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-[12.5px] text-red-700">
+          {ad.issue}
+        </p>
+      )}
+
       <dl className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-[13px]">
         {[
           ['Impressions', ad.impressions.toLocaleString()],
@@ -164,8 +170,8 @@ export default function AdDetailView({ ad, onOptimize, onClose, onStatusChanged 
 
       {ad.daily.length === 0 && (
         <p className={clsx('text-[12.5px] text-gray-700')}>
-          Daily metrics sync overnight after your ad runs. Check back tomorrow or tap Refresh
-          insights.
+          No results yet. New ads usually take a few hours to start showing, and Google reviews
+          each ad first. Tap Refresh results to check again.
         </p>
       )}
     </Card>

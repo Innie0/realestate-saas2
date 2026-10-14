@@ -5,7 +5,7 @@ import {
   persistInsights,
 } from '@/lib/ads/analyze-performance';
 import { daysAgo, fetchMetaAdDailyInsights } from '@/lib/ads/fetch-meta-insights';
-import { fetchGoogleAdDailyInsights } from '@/lib/ads/fetch-google-insights';
+import { fetchGoogleAdDailyInsights, fetchGoogleAdReview } from '@/lib/ads/fetch-google-insights';
 import { getFreshGoogleAccessToken } from '@/lib/ads/google-connection';
 import type { AdPlatformConnectionRow } from '@/lib/ads/types';
 
@@ -16,8 +16,26 @@ interface SyncResult {
   errors: string[];
 }
 
-export async function syncAdPerformanceForAllUsers(
-  supabase: SupabaseClient
+/** Message stored on a promotion when Google rejects its ad — also used to clear it later. */
+const DISAPPROVED_PREFIX = 'Google didn’t approve this ad';
+
+function disapprovedMessage(topics: string[]): string {
+  const readable = topics.map((t) => t.toLowerCase().replace(/_/g, ' ')).join(', ');
+  return `${DISAPPROVED_PREFIX}${readable ? ` (${readable})` : ''}. Change the wording and publish a new ad.`;
+}
+
+export async function syncAdPerformanceForAllUsers(supabase: SupabaseClient): Promise<SyncResult> {
+  return syncAdPerformance(supabase);
+}
+
+/**
+ * Pull the latest results for published ads. Pass `userId` to refresh one
+ * agent's ads on demand; omit it for the nightly run across everyone.
+ * `supabase` must be a service-role client (it writes performance rows).
+ */
+export async function syncAdPerformance(
+  supabase: SupabaseClient,
+  options?: { userId?: string },
 ): Promise<SyncResult> {
   const since = daysAgo(30);
   const until = daysAgo(0);
@@ -29,20 +47,24 @@ export async function syncAdPerformanceForAllUsers(
   };
 
   const baseColumns =
-    'id, user_id, platform, meta_ad_id, status, ad_type, headline, daily_budget_cents, duration_days';
-  const withGoogle = await supabase
-    .from('ad_promotions')
-    .select(`${baseColumns}, google_customer_id, google_campaign_id`)
-    .in('status', ['active', 'ended', 'paused']);
+    'id, user_id, platform, meta_ad_id, status, ad_type, headline, daily_budget_cents, duration_days, created_at, error_message';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase's builder types recurse too deeply to pass through generically
+  const scoped = (query: any) => (options?.userId ? query.eq('user_id', options.userId) : query);
+
+  const withGoogle = await scoped(
+    supabase
+      .from('ad_promotions')
+      .select(`${baseColumns}, google_customer_id, google_campaign_id`)
+      .in('status', ['active', 'ended', 'paused']),
+  );
 
   let promotions: any[] | null = withGoogle.data;
   let error = withGoogle.error;
   // 42703 = Google columns not added yet (ads-google-promotions.sql) — sync Meta only
   if (error?.code === '42703') {
-    const metaOnly = await supabase
-      .from('ad_promotions')
-      .select(baseColumns)
-      .in('status', ['active', 'ended', 'paused']);
+    const metaOnly = await scoped(
+      supabase.from('ad_promotions').select(baseColumns).in('status', ['active', 'ended', 'paused']),
+    );
     promotions = metaOnly.data;
     error = metaOnly.error;
   }
@@ -93,10 +115,52 @@ export async function syncAdPerformanceForAllUsers(
     return null;
   };
 
+  // Ads stop on their end date at the ad platform — reflect that here so they don't show as live forever
+  for (const promo of promotions ?? []) {
+    const endsAt = Date.parse(promo.created_at) + promo.duration_days * 86_400_000;
+    if ((promo.status === 'active' || promo.status === 'paused') && endsAt < Date.now()) {
+      await supabase
+        .from('ad_promotions')
+        .update({ status: 'ended', updated_at: new Date().toISOString() })
+        .eq('id', promo.id);
+      promo.status = 'ended';
+    }
+  }
+
+  /** Tell the agent when Google rejects their ad, and clear the notice once it's approved. */
+  const syncGoogleReview = async (promo: any) => {
+    if (promo.platform !== 'google' || !promo.google_campaign_id || promo.status === 'ended') return;
+    const conn = connectionsByUser.get(connectionKey(promo.user_id, 'google'));
+    const customerId = promo.google_customer_id || conn?.account_id;
+    if (!conn || !customerId) return;
+
+    const accessToken = await getFreshGoogleAccessToken(supabase, conn);
+    const review = await fetchGoogleAdReview(
+      { accessToken, loginCustomerId: conn.login_customer_id },
+      customerId,
+      promo.google_campaign_id,
+    );
+    if (!review) return;
+
+    const hasNotice = String(promo.error_message ?? '').startsWith(DISAPPROVED_PREFIX);
+    const nextMessage =
+      review.approvalStatus === 'DISAPPROVED'
+        ? disapprovedMessage(review.topics)
+        : hasNotice && review.approvalStatus.startsWith('APPROVED')
+          ? null
+          : undefined;
+    if (nextMessage !== undefined && nextMessage !== promo.error_message) {
+      await supabase.from('ad_promotions').update({ error_message: nextMessage }).eq('id', promo.id);
+    }
+  };
+
   const metricsByUser = new Map<string, ReturnType<typeof aggregatePromotionMetrics>[]>();
 
   for (const promo of promotions ?? []) {
     try {
+      await syncGoogleReview(promo).catch((e) =>
+        result.errors.push(`${promo.id}: review check failed (${e?.message || 'unknown'})`),
+      );
       const daily = await fetchDaily(promo);
       if (!daily) continue;
 

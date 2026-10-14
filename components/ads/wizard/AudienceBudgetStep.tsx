@@ -71,7 +71,7 @@ export default function AudienceBudgetStep({ draft, onChange }: AudienceBudgetSt
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-label">Audience & budget</p>
+        <p className="text-label">Location & budget</p>
         <button
           type="button"
           onClick={() => void loadSuggestion()}
@@ -95,7 +95,7 @@ export default function AudienceBudgetStep({ draft, onChange }: AudienceBudgetSt
       )}
 
       <div>
-        <p className="text-label mb-2">Who should see it?</p>
+        <p className="text-label mb-2">Where should it show?</p>
         <div className="grid gap-2 sm:grid-cols-3 mb-4">
           {AUDIENCE_PRESETS.map((preset) => (
             <button
@@ -119,10 +119,10 @@ export default function AudienceBudgetStep({ draft, onChange }: AudienceBudgetSt
           ))}
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div>
+        {draft.audience.preset === 'near_home' && (
+          <div className="max-w-sm">
             <label className="text-[12px] font-medium text-gray-600 mb-1.5 block">
-              Radius · {draft.audience.radiusMiles} mi
+              Distance from the home · {draft.audience.radiusMiles} miles
             </label>
             <input
               type="range"
@@ -140,88 +140,11 @@ export default function AudienceBudgetStep({ draft, onChange }: AudienceBudgetSt
               className="w-full accent-brand-500"
             />
           </div>
-          <div>
-            <label className="text-[12px] font-medium text-gray-600 mb-1.5 block">
-              Age min · {draft.audience.ageMin}
-            </label>
-            <input
-              type="range"
-              min={18}
-              max={65}
-              value={draft.audience.ageMin}
-              onChange={(e) =>
-                onChange({
-                  audience: {
-                    ...draft.audience,
-                    ageMin: Math.min(Number(e.target.value), draft.audience.ageMax),
-                  },
-                })
-              }
-              className="w-full accent-brand-500"
-            />
-          </div>
-          <div>
-            <label className="text-[12px] font-medium text-gray-600 mb-1.5 block">
-              Age max · {draft.audience.ageMax}
-            </label>
-            <input
-              type="range"
-              min={18}
-              max={65}
-              value={draft.audience.ageMax}
-              onChange={(e) =>
-                onChange({
-                  audience: {
-                    ...draft.audience,
-                    ageMax: Math.max(Number(e.target.value), draft.audience.ageMin),
-                  },
-                })
-              }
-              className="w-full accent-brand-500"
-            />
-          </div>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-3 mt-3">
-          <Input
-            label="Radius (miles)"
-            type="number"
-            min={5}
-            max={50}
-            value={draft.audience.radiusMiles}
-            onChange={(e) =>
-              onChange({
-                audience: {
-                  ...draft.audience,
-                  radiusMiles: Math.min(50, Math.max(5, Number(e.target.value) || 15)),
-                },
-              })
-            }
-          />
-          <Input
-            label="Age min"
-            type="number"
-            min={18}
-            max={65}
-            value={draft.audience.ageMin}
-            onChange={(e) =>
-              onChange({
-                audience: { ...draft.audience, ageMin: Number(e.target.value) || 25 },
-              })
-            }
-          />
-          <Input
-            label="Age max"
-            type="number"
-            min={18}
-            max={65}
-            value={draft.audience.ageMax}
-            onChange={(e) =>
-              onChange({
-                audience: { ...draft.audience, ageMax: Number(e.target.value) || 65 },
-              })
-            }
-          />
-        </div>
+        )}
+        <p className="mt-3 text-[12px] text-gray-600">
+          Housing ads can’t be aimed at people by age, gender, or ZIP code, so location is the only
+          targeting choice.
+        </p>
       </div>
 
       <div>
@@ -292,26 +215,28 @@ export default function AudienceBudgetStep({ draft, onChange }: AudienceBudgetSt
         </p>
       </div>
 
-      <div>
-        <p className="text-label mb-2">Button</p>
-        <div className="flex flex-wrap gap-2">
-          {CTA_OPTIONS.map((opt) => (
-            <button
-              key={opt.id}
-              type="button"
-              onClick={() => onChange({ cta: opt.id })}
-              className={clsx(
-                'rounded-lg border px-3 py-1.5 text-[12.5px] font-medium transition-colors',
-                draft.cta === opt.id
-                  ? 'border-brand-500 bg-brand-50 text-brand-800'
-                  : 'border-gray-200 text-gray-600 hover:border-gray-300'
-              )}
-            >
-              {opt.label}
-            </button>
-          ))}
+      {draft.platforms.includes('meta') && (
+        <div>
+          <p className="text-label mb-2">Button</p>
+          <div className="flex flex-wrap gap-2">
+            {CTA_OPTIONS.map((opt) => (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => onChange({ cta: opt.id })}
+                className={clsx(
+                  'rounded-lg border px-3 py-1.5 text-[12.5px] font-medium transition-colors',
+                  draft.cta === opt.id
+                    ? 'border-brand-500 bg-brand-50 text-brand-800'
+                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                )}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -5,6 +5,7 @@ import AdPreviewMockup, { type AdPreviewPlatform } from '@/components/ads/AdPrev
 import GooglePreviewCard from '@/components/ads/GooglePreviewCard';
 import type { AdDraft } from '@/lib/ads/ad-draft-types';
 import { getEffectiveCopy, getPrimaryImage } from '@/lib/ads/ad-draft-types';
+import { googleAssetsFromDraft, googleDisplayUrlFromDraft } from '@/lib/ads/draft-google-preview';
 import type { AdPlatform } from '@/lib/ads/types';
 import clsx from 'clsx';
 
@@ -31,6 +32,14 @@ export default function AdPreviewPane({
   const imageUrl = getPrimaryImage(draft);
   const showMeta = draft.platforms.includes('meta');
   const showGoogle = draft.platforms.includes('google');
+  const googleAssets = showGoogle ? googleAssetsFromDraft(draft) : null;
+  const googlePreview = googleAssets && (
+    <GooglePreviewCard
+      headlines={googleAssets.headlines}
+      descriptions={googleAssets.descriptions}
+      displayUrl={googleDisplayUrlFromDraft(draft)}
+    />
+  );
 
   if (compact) {
     return (
@@ -48,9 +57,7 @@ export default function AdPreviewPane({
             advertiserAvatar={advertiserAvatar}
           />
         )}
-        {showGoogle && !showMeta && (
-          <GooglePreviewCard headline={headline} description={body} />
-        )}
+        {!showMeta && googlePreview}
       </Card>
     );
   }
@@ -70,9 +77,7 @@ export default function AdPreviewPane({
           emptyHint={!draft.adType ? 'Choose an ad type to start' : undefined}
         />
       )}
-      {showGoogle && (
-        <GooglePreviewCard headline={headline} description={body} />
-      )}
+      {googlePreview}
       {!showMeta && !showGoogle && (
         <Card className="p-5 sm:p-6">
           <p className="text-caption text-gray-700 text-center py-8">

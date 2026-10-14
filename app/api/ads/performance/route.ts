@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
       .from('ad_promotions')
       .select(
         `
-        id, platform, ad_type, headline, status, created_at,
+        id, platform, ad_type, headline, status, created_at, error_message,
         projects:project_id ( title, property_info )
       `
       )
@@ -105,6 +105,7 @@ export async function GET(request: NextRequest) {
         adType: (p.ad_type as AdType) || null,
         headline: p.headline,
         status: p.status,
+        issue: p.error_message ?? null,
         projectTitle: project?.title ?? null,
         projectAddress: info.address ?? null,
         impressions,

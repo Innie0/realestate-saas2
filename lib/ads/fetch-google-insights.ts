@@ -58,3 +58,42 @@ export async function fetchGoogleAdDailyInsights(
 export function isGoogleAdsReportingConfigured(): boolean {
   return Boolean(getGoogleAdsDeveloperToken());
 }
+
+export interface GoogleAdReview {
+  /** `APPROVED`, `APPROVED_LIMITED`, `DISAPPROVED`, `AREA_OF_INTEREST_ONLY`, or `UNKNOWN` while in review */
+  approvalStatus: string;
+  /** Policy topics Google flagged, e.g. `HOUSING` or `PUNCTUATION` */
+  topics: string[];
+}
+
+interface AdReviewRow {
+  adGroupAd?: {
+    policySummary?: {
+      approvalStatus?: string;
+      policyTopicEntries?: { topic?: string }[];
+    };
+  };
+}
+
+/** Whether Google approved the campaign's ad, and what it flagged if not. */
+export async function fetchGoogleAdReview(
+  auth: GoogleAdsAuth,
+  customerId: string,
+  campaignId: string,
+): Promise<GoogleAdReview | null> {
+  if (!/^\d+$/.test(campaignId)) return null;
+
+  const rows = await searchGoogleAds<AdReviewRow>(
+    customerId,
+    `SELECT ad_group_ad.policy_summary.approval_status, ad_group_ad.policy_summary.policy_topic_entries
+     FROM ad_group_ad
+     WHERE campaign.id = ${campaignId} AND ad_group_ad.status != 'REMOVED'`,
+    auth,
+  );
+  const summary = rows[0]?.adGroupAd?.policySummary;
+  if (!summary) return null;
+  return {
+    approvalStatus: summary.approvalStatus ?? 'UNKNOWN',
+    topics: [...new Set((summary.policyTopicEntries ?? []).map((e) => e.topic).filter(Boolean) as string[])],
+  };
+}

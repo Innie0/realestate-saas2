@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 
     const toneHint =
       templateId === 'luxury'
-        ? 'Upscale, refined, exclusive.'
+        ? 'Upscale and refined.'
         : templateId === 'bold_photo'
           ? 'Short, punchy, energetic.'
           : 'Clear, friendly, professional.';
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, data: variants });
     }
 
-    const prompt = `You write short Meta/Facebook ad copy for real estate agents.
+    const prompt = `You write short ad copy for real estate agents, used for Google Search and Meta/Facebook ads.
 
 Ad type: ${getAdTypeLabel(adType)}
 Property/details: ${JSON.stringify(propertyDetails)}
@@ -77,6 +77,10 @@ Tone: ${toneHint}
 
 Return exactly 4 variants as JSON array: [{ "headline": "max 80 chars", "body": "max 200 chars" }]
 Headlines should be compelling and specific. Bodies should include a clear call to action.
+Follow fair-housing rules: describe the property and its features, never who should live there
+(no "perfect for families", ages, religion, or similar), and make no claims about a neighborhood
+being safe, exclusive, or better than others. Avoid unprovable superlatives like "best" or "#1".
+Do not use emojis or exclamation marks in headlines.
 Return ONLY valid JSON, no markdown.`;
 
     const completion = await openai.chat.completions.create({

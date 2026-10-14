@@ -41,6 +41,8 @@ export interface AdPerformanceSummary {
   adType: AdType | null;
   headline: string | null;
   status: string;
+  /** A problem the agent should know about, e.g. the ad platform rejected the ad */
+  issue?: string | null;
   projectTitle: string | null;
   projectAddress: string | null;
   impressions: number;

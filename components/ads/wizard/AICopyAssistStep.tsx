@@ -5,6 +5,7 @@ import { Loader2, RefreshCw, Sparkles } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import type { AdCopyVariant, AdDraft } from '@/lib/ads/ad-draft-types';
+import AdWordingWarning from '@/components/ads/wizard/AdWordingWarning';
 import clsx from 'clsx';
 
 interface AICopyAssistStepProps {
@@ -135,6 +136,7 @@ export default function AICopyAssistStep({ draft, onChange }: AICopyAssistStepPr
           />
           <p className="text-[11px] text-gray-600 mt-1">{draft.customBody.length}/250</p>
         </div>
+        <AdWordingWarning headline={draft.customHeadline} body={draft.customBody} />
       </div>
     </div>
   );

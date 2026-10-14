@@ -133,12 +133,9 @@ export default function WizardShell({
       case 'type':
         return Boolean(draft.adType);
       case 'details':
-        if (draft.images.length === 0) {
-          if (draft.adType && listingRequiredForAdType(draft.adType) && !draft.projectId) {
-            const hasManual = draft.propertyDetails.address;
-            if (!hasManual) return false;
-          }
-          return false;
+        // A listing ad needs a listing or at least an address; photos are only needed for Meta
+        if (draft.adType && listingRequiredForAdType(draft.adType) && !draft.projectId) {
+          return Boolean(draft.propertyDetails.address);
         }
         return true;
       case 'copy':

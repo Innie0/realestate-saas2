@@ -48,6 +48,7 @@ function AdsPageContent() {
   const [tab, setTab] = useState<AdsTab>(initialTab);
   const [connecting, setConnecting] = useState<AdPlatform | null>(null);
   const [disconnecting, setDisconnecting] = useState<AdPlatform | null>(null);
+  const [refreshingResults, setRefreshingResults] = useState(false);
   const [refreshingConnection, setRefreshingConnection] = useState<AdPlatform | null>(null);
   const [pageMessage, setPageMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(
     null
@@ -225,6 +226,22 @@ function AdsPageContent() {
     },
     [mutateConnections],
   );
+
+  /** Pull the latest numbers from the ad platforms, then reload the dashboard. */
+  const refreshResults = useCallback(async () => {
+    setRefreshingResults(true);
+    try {
+      await fetch('/api/ads/performance/sync', { method: 'POST' });
+      await mutatePerformance();
+    } finally {
+      setRefreshingResults(false);
+    }
+  }, [mutatePerformance]);
+
+  // Fresh numbers each time the agent opens Performance (the server limits how often)
+  useEffect(() => {
+    if (tab === 'performance') void refreshResults();
+  }, [tab, refreshResults]);
 
   const refreshInsights = async () => {
     setRefreshingInsights(true);
@@ -459,6 +476,16 @@ function AdsPageContent() {
                 <PanelHeader
                   title="Campaign performance"
                   meta={performance?.ads.length ? `${performance.ads.length} ads` : undefined}
+                  action={
+                    <button
+                      type="button"
+                      onClick={() => void refreshResults()}
+                      disabled={refreshingResults}
+                      className="text-[12.5px] font-medium text-brand-600 hover:text-brand-700 disabled:opacity-50"
+                    >
+                      {refreshingResults ? 'Refreshing…' : 'Refresh results'}
+                    </button>
+                  }
                 />
                 <div className="p-4 sm:p-5">
                   <PerformanceDashboard

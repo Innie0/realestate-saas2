@@ -304,7 +304,14 @@ export async function POST(request: NextRequest) {
           dailyBudgetCents,
           durationDays,
           landingUrl,
-          assets: buildGoogleSearchAdAssets({ adType, headline, body: primaryText, listing }),
+          assets: buildGoogleSearchAdAssets({
+            adType,
+            headline,
+            body: primaryText,
+            listing,
+            openHouseDate:
+              typeof propertyDetails.openHouseDate === 'string' ? propertyDetails.openHouseDate : null,
+          }),
           audiencePreset,
           radiusMiles,
           listing,

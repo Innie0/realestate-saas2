@@ -14,6 +14,8 @@ import {
 } from '@/lib/ads/ad-draft-types';
 import { getAudienceLabel, getCtaLabel } from '@/lib/ads/promotion-options';
 import { platformLabel } from '@/components/ads/wizard/AdPreviewPane';
+import { googleAssetsFromDraft, googleDisplayUrlFromDraft } from '@/lib/ads/draft-google-preview';
+import AdWordingWarning from '@/components/ads/wizard/AdWordingWarning';
 
 interface ReviewLaunchStepProps {
   draft: AdDraft;
@@ -45,6 +47,7 @@ export default function ReviewLaunchStep({
   const wantsMeta = draft.platforms.includes('meta');
   const wantsGoogle = draft.platforms.includes('google');
 
+  const googleAssets = googleAssetsFromDraft(draft);
   const canPublishMeta = wantsMeta && metaReady && Boolean(imageUrl);
   const canPublishGoogle = wantsGoogle && googleReady;
   const launchBlocked = !headline || !body || (!canPublishMeta && !canPublishGoogle);
@@ -65,7 +68,11 @@ export default function ReviewLaunchStep({
           />
         )}
         {wantsGoogle && (
-          <GooglePreviewCard headline={headline} description={body} />
+          <GooglePreviewCard
+            headlines={googleAssets.headlines}
+            descriptions={googleAssets.descriptions}
+            displayUrl={googleDisplayUrlFromDraft(draft)}
+          />
         )}
       </div>
 
@@ -85,10 +92,10 @@ export default function ReviewLaunchStep({
             </dd>
           </div>
           <div className="flex justify-between gap-4">
-            <dt className="text-gray-700">Audience</dt>
+            <dt className="text-gray-700">Shows</dt>
             <dd className="font-medium text-gray-900 text-right">
-              {getAudienceLabel(draft.audience.preset)} · {draft.audience.radiusMiles} mi ·{' '}
-              {draft.audience.ageMin}–{draft.audience.ageMax}
+              {getAudienceLabel(draft.audience.preset)}
+              {draft.audience.preset === 'near_home' ? ` · within ${draft.audience.radiusMiles} miles` : ''}
             </dd>
           </div>
           <div className="flex justify-between gap-4">
@@ -122,6 +129,8 @@ export default function ReviewLaunchStep({
         </dl>
       </Card>
 
+      <AdWordingWarning headline={headline} body={body} />
+
       {wantsMeta && !metaConnected && (
         <p className="text-[12.5px] text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
           Connect Meta under Ad accounts to publish to Facebook & Instagram.
@@ -151,8 +160,8 @@ export default function ReviewLaunchStep({
       )}
       {canPublishGoogle && (
         <p className="text-[12.5px] text-gray-600 bg-gray-50 border border-gray-150 rounded-lg px-3 py-2">
-          On Google this runs as a text Search ad near the listing. Google builds the ad from your
-          headline, message, and listing details, and housing ads can’t be targeted by age.
+          On Google this runs as a text Search ad. Google mixes the headlines shown in the preview
+          to find what works best.
         </p>
       )}
 
