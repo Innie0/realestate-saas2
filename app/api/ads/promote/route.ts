@@ -17,7 +17,7 @@ import {
 } from '@/lib/ads/promotion-options';
 import { resolvePromotionProjectId } from '@/lib/ads/resolve-promotion-project';
 import { buildAdLandingUrl } from '@/lib/ads/utm';
-import type { AdType } from '@/lib/ads/ad-draft-types';
+import { isValidDestinationUrl, type AdType } from '@/lib/ads/ad-draft-types';
 import { APIResponse } from '@/types';
 
 const VALID_CTAS = new Set(CTA_OPTIONS.map((o) => o.id));
@@ -41,6 +41,16 @@ export async function POST(request: NextRequest) {
     const platform: 'meta' | 'google' = body.platform === 'google' ? 'google' : 'meta';
     const platformName = platform === 'google' ? 'Google Ads' : 'Meta';
     const radiusMiles = Number(body.radiusMiles) || 15;
+    const customDestination =
+      body.destinationType === 'custom' && typeof body.destinationUrl === 'string'
+        ? body.destinationUrl.trim().slice(0, 500)
+        : null;
+    if (customDestination !== null && !isValidDestinationUrl(customDestination)) {
+      return NextResponse.json(
+        { success: false, error: 'Enter a full web address (https://…) for your own link.' } satisfies APIResponse,
+        { status: 400 }
+      );
+    }
     const dailyBudgetCents = Number(body.dailyBudgetCents);
     const durationDays = Number(body.durationDays) || 7;
     const headlineOverride = typeof body.headline === 'string' ? body.headline.trim().slice(0, 100) : '';
@@ -182,7 +192,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const baseLandingUrl = getAgentLeadUrl(user.id);
+    // Agent's own link, or their Oikaro contact form (where leads are captured)
+    const baseLandingUrl = customDestination ?? getAgentLeadUrl(user.id);
     const promotionId = crypto.randomUUID();
     const landingUrl = buildAdLandingUrl(baseLandingUrl, {
       platform,

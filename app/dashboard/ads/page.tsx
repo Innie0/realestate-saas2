@@ -475,6 +475,11 @@ function AdsPageContent() {
                 <AdDetailView
                   ad={selectedAd}
                   onClose={() => setSelectedAdId(null)}
+                  onStatusChanged={(message) => {
+                    setPageMessage(message);
+                    void mutatePerformance();
+                    void mutatePromotions();
+                  }}
                   onOptimize={() => {
                     setOptimizePromotionId(selectedAd.promotionId);
                     setOptimizeInsight(null);

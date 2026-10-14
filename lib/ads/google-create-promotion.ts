@@ -364,3 +364,25 @@ export async function createGoogleSearchPromotion(
     adId: idOf('adGroupAds').split('~').pop() ?? '',
   };
 }
+
+/** Pause or resume a campaign Oikaro created. */
+export async function setGoogleCampaignStatus(
+  customerId: string,
+  campaignId: string,
+  status: 'PAUSED' | 'ENABLED',
+  auth: GoogleAdsAuth,
+): Promise<void> {
+  const cid = normalizeCustomerId(customerId);
+  await mutateGoogleAds(
+    cid,
+    [
+      {
+        campaignOperation: {
+          update: { resourceName: `customers/${cid}/campaigns/${campaignId}`, status },
+          updateMask: 'status',
+        },
+      },
+    ],
+    auth,
+  );
+}

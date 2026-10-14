@@ -26,6 +26,32 @@ export interface AdDraftImage {
   order: number;
 }
 
+/** Where someone lands after clicking the ad. */
+export type AdDestinationType = 'lead_form' | 'custom';
+
+export interface AdDestination {
+  type: AdDestinationType;
+  /** Agent's own link (their website, an open house RSVP page, …) when type is `custom` */
+  customUrl: string;
+}
+
+export const DEFAULT_AD_DESTINATION: AdDestination = { type: 'lead_form', customUrl: '' };
+
+/** Drafts saved before destinations existed have none. */
+export function getDraftDestination(draft: { destination?: AdDestination }): AdDestination {
+  return draft.destination ?? DEFAULT_AD_DESTINATION;
+}
+
+/** A custom destination must be a full https:// (or http://) web address. */
+export function isValidDestinationUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url.trim());
+    return (parsed.protocol === 'https:' || parsed.protocol === 'http:') && parsed.hostname.includes('.');
+  } catch {
+    return false;
+  }
+}
+
 export interface AdDraft {
   id: string;
   adType: AdType | null;
@@ -49,6 +75,7 @@ export interface AdDraft {
     durationDays: number;
   };
   cta: AdCtaType;
+  destination?: AdDestination;
   status: 'draft' | 'ready' | 'published';
   createdAt: string;
   updatedAt: string;
@@ -93,6 +120,7 @@ export function createEmptyDraft(id?: string): AdDraft {
       durationDays: 7,
     },
     cta: 'LEARN_MORE',
+    destination: { ...DEFAULT_AD_DESTINATION },
     status: 'draft',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),

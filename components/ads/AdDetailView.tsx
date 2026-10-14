@@ -1,23 +1,65 @@
 'use client';
 
+import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { getAdTypeLabel } from '@/lib/ads/ad-type-config';
 import type { AdPerformanceSummary } from '@/lib/ads/performance-types';
 import clsx from 'clsx';
 
+type AdAction = 'pause' | 'resume' | 'end';
+
 interface AdDetailViewProps {
   ad: AdPerformanceSummary | null;
   onOptimize?: () => void;
   onClose?: () => void;
+  /** Called after the ad is paused, resumed, or ended */
+  onStatusChanged?: (message: { type: 'success' | 'error'; text: string }) => void;
 }
+
+const STATUS_LABELS: Record<string, string> = {
+  active: 'Live',
+  paused: 'Paused',
+  ended: 'Ended',
+  pending: 'Starting',
+  failed: 'Failed',
+};
 
 function formatMoney(cents: number): string {
   return `$${(cents / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
 }
 
-export default function AdDetailView({ ad, onOptimize, onClose }: AdDetailViewProps) {
+export default function AdDetailView({ ad, onOptimize, onClose, onStatusChanged }: AdDetailViewProps) {
+  const [pendingAction, setPendingAction] = useState<AdAction | null>(null);
+
   if (!ad) return null;
+
+  // Only Google ads can be managed from here for now
+  const canManage = ad.platform === 'google' && (ad.status === 'active' || ad.status === 'paused');
+
+  const runAction = async (action: AdAction) => {
+    if (action === 'end' && !confirm('End this ad? It will stop showing and can’t be restarted from Oikaro.')) {
+      return;
+    }
+    setPendingAction(action);
+    try {
+      const res = await fetch(`/api/ads/promotions/${ad.promotionId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action }),
+      });
+      const json = await res.json().catch(() => null);
+      onStatusChanged?.(
+        json?.success
+          ? { type: 'success', text: json.message || 'Ad updated.' }
+          : { type: 'error', text: json?.error || 'Could not update the ad.' },
+      );
+    } catch {
+      onStatusChanged?.({ type: 'error', text: 'Could not update the ad. Please try again.' });
+    } finally {
+      setPendingAction(null);
+    }
+  };
 
   const label = ad.projectAddress || ad.headline || ad.projectTitle || 'Ad';
   const maxImpressions = Math.max(1, ...ad.daily.map((d) => d.impressions));
@@ -29,10 +71,43 @@ export default function AdDetailView({ ad, onOptimize, onClose }: AdDetailViewPr
           <p className="text-label">Ad detail</p>
           <h3 className="text-[15px] font-semibold text-gray-900 mt-0.5">{label}</h3>
           <p className="text-caption text-gray-700 mt-1">
-            {ad.adType ? getAdTypeLabel(ad.adType) : 'Ad'} · {ad.platform} · {ad.status}
+            {ad.adType ? getAdTypeLabel(ad.adType) : 'Ad'} ·{' '}
+            {ad.platform === 'google' ? 'Google' : 'Meta'} · {STATUS_LABELS[ad.status] ?? ad.status}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          {canManage && ad.status === 'active' && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => void runAction('pause')}
+              isLoading={pendingAction === 'pause'}
+              disabled={pendingAction !== null}
+            >
+              Pause
+            </Button>
+          )}
+          {canManage && ad.status === 'paused' && (
+            <Button
+              size="sm"
+              onClick={() => void runAction('resume')}
+              isLoading={pendingAction === 'resume'}
+              disabled={pendingAction !== null}
+            >
+              Resume
+            </Button>
+          )}
+          {canManage && (
+            <Button
+              size="sm"
+              variant="danger"
+              onClick={() => void runAction('end')}
+              isLoading={pendingAction === 'end'}
+              disabled={pendingAction !== null}
+            >
+              End ad
+            </Button>
+          )}
           {onOptimize && (
             <Button size="sm" variant="outline" onClick={onOptimize}>
               Optimize this ad

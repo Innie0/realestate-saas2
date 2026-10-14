@@ -22,6 +22,8 @@ import {
   WIZARD_STEPS,
   type AdDraft,
   type WizardStepKey,
+  getDraftDestination,
+  isValidDestinationUrl,
 } from '@/lib/ads/ad-draft-types';
 import { loadAdDraft, saveAdDraft, clearAdDraft } from '@/lib/ads/ad-draft-storage';
 import { getDefaultCtaForAdType } from '@/lib/ads/ad-type-config';
@@ -140,8 +142,13 @@ export default function WizardShell({
         return true;
       case 'copy':
         return true;
-      case 'platform':
-        return draft.platforms.length > 0;
+      case 'platform': {
+        const destination = getDraftDestination(draft);
+        return (
+          draft.platforms.length > 0 &&
+          (destination.type !== 'custom' || isValidDestinationUrl(destination.customUrl))
+        );
+      }
       case 'audience':
         return (
           isValidDailyBudget(draft.budget.dailyAmountCents) &&
@@ -242,6 +249,8 @@ export default function WizardShell({
             imageUrl,
             audiencePreset: draft.audience.preset,
             radiusMiles: draft.audience.radiusMiles,
+            destinationType: getDraftDestination(draft).type,
+            destinationUrl: getDraftDestination(draft).customUrl.trim(),
             callToAction: draft.cta,
             ageMin: draft.audience.ageMin,
             ageMax: draft.audience.ageMax,

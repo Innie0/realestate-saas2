@@ -6,7 +6,12 @@ import { Card } from '@/components/ui/Card';
 import GooglePreviewCard from '@/components/ads/GooglePreviewCard';
 import AdPreviewMockup from '@/components/ads/AdPreviewMockup';
 import { getAdTypeLabel } from '@/lib/ads/ad-type-config';
-import { getEffectiveCopy, getPrimaryImage, type AdDraft } from '@/lib/ads/ad-draft-types';
+import {
+  getDraftDestination,
+  getEffectiveCopy,
+  getPrimaryImage,
+  type AdDraft,
+} from '@/lib/ads/ad-draft-types';
 import { getAudienceLabel, getCtaLabel } from '@/lib/ads/promotion-options';
 import { platformLabel } from '@/components/ads/wizard/AdPreviewPane';
 
@@ -95,6 +100,14 @@ export default function ReviewLaunchStep({
                   on each platform — ${(draft.budget.dailyAmountCents / 100) * draft.platforms.length}/day total
                 </span>
               )}
+            </dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt className="text-gray-700">Clicks go to</dt>
+            <dd className="font-medium text-gray-900 text-right break-all">
+              {getDraftDestination(draft).type === 'custom'
+                ? getDraftDestination(draft).customUrl.trim()
+                : 'Your contact form'}
             </dd>
           </div>
           <div className="flex justify-between gap-4">
