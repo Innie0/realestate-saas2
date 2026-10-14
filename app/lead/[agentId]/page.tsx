@@ -8,9 +8,92 @@ import { createAdminClient } from '@/lib/supabase-admin';
 import { hasLeadCaptureAccess } from '@/lib/subscription';
 import LeadCaptureForm from '@/components/LeadCaptureForm';
 import { SITE_URL } from '@/lib/site-config';
+import { parseAdAttribution } from '@/lib/ads/utm';
+import { normalizeProjectImages } from '@/lib/listing-utils';
 
 interface LeadPageProps {
   params: Promise<{ agentId: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+/** Ad types that promote one specific home, and the label shown above it. */
+const LISTING_AD_LABELS: Record<string, string> = {
+  new_listing: 'Just listed',
+  open_house: 'Open house',
+  price_reduced: 'Price reduced',
+  coming_soon: 'Coming soon',
+  just_sold: 'Just sold',
+};
+
+interface AdListing {
+  projectId: string;
+  label: string;
+  address: string;
+  cityLine: string;
+  price: string | null;
+  specs: string;
+  imageUrl: string | null;
+}
+
+/**
+ * The home an ad click is about, so the page matches the ad the visitor clicked.
+ * Only returned for a real ad this agent published — a bare project id in the
+ * URL never reveals a listing the agent hasn't advertised.
+ */
+async function getAdListing(
+  agentId: string,
+  search: Record<string, string | string[] | undefined>,
+): Promise<AdListing | null> {
+  const query = new URLSearchParams();
+  for (const [key, value] of Object.entries(search)) {
+    if (typeof value === 'string') query.set(key, value);
+  }
+  const { projectId, promotionId } = parseAdAttribution(query.toString());
+  if (!projectId || !promotionId) return null;
+
+  const supabase = createAdminClient();
+  const { data: promotion } = await supabase
+    .from('ad_promotions')
+    .select('ad_type')
+    .eq('id', promotionId)
+    .eq('user_id', agentId)
+    .eq('project_id', projectId)
+    .maybeSingle();
+  const adType: string | undefined = promotion?.ad_type ?? undefined;
+  const label = adType ? LISTING_AD_LABELS[adType] : undefined;
+  if (!label) return null;
+
+  const { data: project } = await supabase
+    .from('projects')
+    .select('id, property_info, images')
+    .eq('id', projectId)
+    .eq('user_id', agentId)
+    .maybeSingle();
+  const info = project?.property_info || {};
+  if (!project || !info.address?.trim()) return null;
+
+  const specs = [
+    info.bedrooms ? `${info.bedrooms} bed` : null,
+    info.bathrooms ? `${info.bathrooms} bath` : null,
+    info.square_feet ? `${Number(info.square_feet).toLocaleString('en-US')} sq ft` : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
+  return {
+    projectId: project.id,
+    label,
+    address: info.address.trim(),
+    cityLine: [info.city, [info.state, info.zip_code].filter(Boolean).join(' ')].filter(Boolean).join(', '),
+    // A sold home's list price is no longer the point of the ad
+    // US-style price for buyers: $1,359,999
+    price:
+      adType !== 'just_sold' && Number(info.price) > 0
+        ? `$${Math.round(Number(info.price)).toLocaleString('en-US')}`
+        : null,
+    specs,
+    imageUrl: normalizeProjectImages(project.images)[0] ?? null,
+  };
 }
 
 const UUID_REGEX =
@@ -61,9 +144,10 @@ async function getAgent(agentId: string) {
   };
 }
 
-export default async function LeadCapturePage({ params }: LeadPageProps) {
+export default async function LeadCapturePage({ params, searchParams }: LeadPageProps) {
   const { agentId } = await params;
   const agent = await getAgent(agentId);
+  const adListing = agent?.isPaid ? await getAdListing(agent.id, await searchParams) : null;
 
   if (!agent) {
     return (
@@ -115,17 +199,61 @@ export default async function LeadCapturePage({ params }: LeadPageProps) {
             {initials}
           </div>
           <h1 className="font-display text-2xl font-medium text-mkt-foreground mb-1">
-            Get in touch with {agentName}
+            {adListing ? 'Interested in this home?' : `Get in touch with ${agentName}`}
           </h1>
           <p className="text-mkt-secondary text-sm max-w-sm mx-auto">
-            Fill out the form below and {agentName.split(' ')[0]} will reach
-            out to help you with your real estate needs.
+            {adListing
+              ? `Ask ${agentName.split(' ')[0]} a question or request a showing.`
+              : `Fill out the form below and ${agentName.split(' ')[0]} will reach out to help you with your real estate needs.`}
           </p>
         </div>
 
+        {/* The home from the ad, so the page matches what the visitor clicked */}
+        {adListing && (
+          <div className="mb-6 overflow-hidden rounded-mkt-card border border-mkt-border bg-mkt-surface shadow-[var(--mkt-shadow-soft)]">
+            {adListing.imageUrl && (
+              // eslint-disable-next-line @next/next/no-img-element -- listing photos may be data URLs
+              <img
+                src={adListing.imageUrl}
+                alt={adListing.address}
+                className="aspect-[4/3] w-full object-cover"
+              />
+            )}
+            <div className="p-5">
+              <p className="font-mkt-mono text-[11px] uppercase tracking-[0.08em] text-[#0668E1]">
+                {adListing.label}
+              </p>
+              <p className="mt-1 font-display text-lg font-medium text-mkt-foreground">
+                {adListing.address}
+              </p>
+              {adListing.cityLine && (
+                <p className="text-sm text-mkt-secondary">{adListing.cityLine}</p>
+              )}
+              <div className="mt-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                {adListing.price && (
+                  <span className="text-lg font-medium text-mkt-foreground">{adListing.price}</span>
+                )}
+                {adListing.specs && (
+                  <span className="text-sm text-mkt-secondary">{adListing.specs}</span>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Form card */}
         <div className="bg-mkt-surface rounded-mkt-card border border-mkt-border shadow-[var(--mkt-shadow-soft)] p-6 sm:p-8">
-          <LeadCaptureForm agentId={agent.id} agentName={agentName} />
+          {adListing ? (
+            <LeadCaptureForm
+              agentId={agent.id}
+              agentName={agentName}
+              variant="listing"
+              listingAddress={adListing.address}
+              projectId={adListing.projectId}
+            />
+          ) : (
+            <LeadCaptureForm agentId={agent.id} agentName={agentName} />
+          )}
         </div>
 
         {/* Footer */}

@@ -16,6 +16,10 @@ import { getAudienceLabel, getCtaLabel } from '@/lib/ads/promotion-options';
 import { platformLabel } from '@/components/ads/wizard/AdPreviewPane';
 import { googleAssetsFromDraft, googleDisplayUrlFromDraft } from '@/lib/ads/draft-google-preview';
 import AdWordingWarning from '@/components/ads/wizard/AdWordingWarning';
+import Link from 'next/link';
+import { Check, Plus } from 'lucide-react';
+import { useApi } from '@/lib/swr';
+import { normalizeUsPhone } from '@/lib/ads/google-ad-assets';
 
 interface ReviewLaunchStepProps {
   draft: AdDraft;
@@ -48,6 +52,22 @@ export default function ReviewLaunchStep({
   const wantsGoogle = draft.platforms.includes('google');
 
   const googleAssets = googleAssetsFromDraft(draft);
+  const { data: agentProfile, isLoading: agentProfileLoading } = useApi<{
+    profile_phone?: string | null;
+    profile_enabled?: boolean | null;
+    booking_enabled?: boolean | null;
+  } | null>(wantsGoogle ? '/api/agent-profile' : null);
+  const hasCallButton = Boolean(normalizeUsPhone(agentProfile?.profile_phone));
+  const usesOwnLink = getDraftDestination(draft).type === 'custom';
+  // Google shows extra links only when there are at least two, on the same site as the ad
+  const extraLinkCount = usesOwnLink
+    ? 0
+    : [
+        agentProfile?.profile_enabled && getDraftDestination(draft).type !== 'profile',
+        agentProfile?.booking_enabled,
+        getDraftDestination(draft).type !== 'lead_form',
+      ].filter(Boolean).length;
+  const hasExtraLinks = extraLinkCount >= 2;
   const canPublishMeta = wantsMeta && metaReady && Boolean(imageUrl);
   const canPublishGoogle = wantsGoogle && googleReady;
   const launchBlocked = !headline || !body || (!canPublishMeta && !canPublishGoogle);
@@ -161,12 +181,61 @@ export default function ReviewLaunchStep({
         </p>
       )}
       {canPublishGoogle && (
-        <p className="text-[12.5px] text-gray-600 bg-gray-50 border border-gray-150 rounded-lg px-3 py-2">
-          On Google this runs as a text Search ad. Google mixes the headlines shown in the preview
-          to find what works best. Oikaro also adds a tap-to-call button (from the phone number on
-          your agent profile) and links to your pages, and blocks searches like rentals and jobs so
-          your budget goes to real prospects.
-        </p>
+        <div className="rounded-lg border border-gray-150 bg-gray-50 px-3 py-2.5 text-[12.5px] text-gray-700">
+          <p className="font-medium text-gray-900">What Oikaro adds to your Google ad</p>
+          <ul className="mt-1.5 space-y-1">
+            <li className="flex items-start gap-1.5">
+              <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" />
+              Blocks searches like rentals and jobs, so your budget goes to real prospects
+            </li>
+            <li className="flex items-start gap-1.5">
+              <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" />
+              Several headlines that Google mixes to find what works best
+            </li>
+            {!agentProfileLoading && (
+              <>
+                <li className="flex items-start gap-1.5">
+                  {hasCallButton ? (
+                    <>
+                      <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                      A tap-to-call button with your phone number
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600" />
+                      <span>
+                        <Link href="/dashboard/leads/profile" className="font-medium text-brand-600 hover:text-brand-700">
+                          Add your phone number
+                        </Link>{' '}
+                        to your profile to get a tap-to-call button on your ads
+                      </span>
+                    </>
+                  )}
+                </li>
+                {!usesOwnLink && (
+                  <li className="flex items-start gap-1.5">
+                    {hasExtraLinks ? (
+                      <>
+                        <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                        Extra links to your profile and booking pages
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600" />
+                        <span>
+                          <Link href="/dashboard/leads/profile" className="font-medium text-brand-600 hover:text-brand-700">
+                            Turn on your public profile and booking page
+                          </Link>{' '}
+                          to add extra links under your ads
+                        </span>
+                      </>
+                    )}
+                  </li>
+                )}
+              </>
+            )}
+          </ul>
+        </div>
       )}
 
       <div className="flex flex-wrap gap-2">
