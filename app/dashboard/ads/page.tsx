@@ -279,6 +279,14 @@ function AdsPageContent() {
           ? 'Create and publish ads in a few guided steps'
           : 'Track performance and improve with AI'
       }
+      actions={
+        <span
+          className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-800"
+          title="Ads is new — results and features are still improving."
+        >
+          Beta
+        </span>
+      }
       className="max-w-none"
     >
       {pageMessage && (

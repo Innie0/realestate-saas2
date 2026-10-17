@@ -27,12 +27,16 @@ import {
   DEFAULT_AD_DESTINATION,
 } from '@/lib/ads/ad-draft-types';
 import { loadAdDraft, saveAdDraft, clearAdDraft } from '@/lib/ads/ad-draft-storage';
-import { getDefaultCtaForAdType } from '@/lib/ads/ad-type-config';
+import {
+  getAdTypeOption,
+  getDefaultCtaForAdType,
+  isPlatformAllowedForAdType,
+} from '@/lib/ads/ad-type-config';
 import { applyInsightSeeds } from '@/lib/ads/insight-seeds';
 import type { AIInsight } from '@/lib/ads/performance-types';
 import { tabPanelTransition, useMotionReduced } from '@/lib/motion';
 import { useApi } from '@/lib/swr';
-import { isValidDailyBudget, isValidDuration } from '@/lib/ads/promotion-options';
+import { DURATION_OPTIONS, isValidDailyBudget, isValidDuration } from '@/lib/ads/promotion-options';
 import type { AdPlatform } from '@/lib/ads/types';
 
 interface AgentProfilePayload {
@@ -137,6 +141,10 @@ export default function WizardShell({
         if (draft.adType && listingRequiredForAdType(draft.adType) && !draft.projectId) {
           return Boolean(draft.propertyDetails.address);
         }
+        // Ads about the agent target the city they serve
+        if (draft.adType === 'home_value' || draft.adType === 'agent_branding') {
+          return Boolean(String(draft.propertyDetails.city ?? '').trim());
+        }
         return true;
       case 'copy':
         return true;
@@ -176,12 +184,37 @@ export default function WizardShell({
     if (prev) setCurrentStep(prev.key);
   };
 
+  const readyPlatforms: AdPlatform[] = [
+    ...(googleReady ? (['google'] as const) : []),
+    ...(metaReady ? (['meta'] as const) : []),
+  ];
+
   const handleAdType = (adType: AdDraft['adType']) => {
+    const option = getAdTypeOption(adType);
+    const changed = adType !== draft.adType;
+    // Only the platforms this ad type works on; connected ones first
+    const allowed = option?.platforms ?? [];
+    const platforms = allowed.filter((p) => readyPlatforms.includes(p));
+    // Start from the duration closest to what this ad type needs
+    const durationDays = option
+      ? DURATION_OPTIONS.reduce((best, o) =>
+          Math.abs(o.days - option.suggestedDays) < Math.abs(best.days - option.suggestedDays) ? o : best,
+        ).days
+      : draft.budget.durationDays;
+
     patchDraft({
       adType,
       cta: adType ? getDefaultCtaForAdType(adType) : draft.cta,
-      // A different ad type gets its own recommended destination
-      ...(adType !== draft.adType ? { destination: { ...DEFAULT_AD_DESTINATION } } : {}),
+      ...(changed
+        ? {
+            // A different ad type gets its own recommended destination, platforms, and budget
+            destination: { ...DEFAULT_AD_DESTINATION },
+            platforms: platforms.length > 0 ? platforms : allowed.slice(0, 1),
+            ...(option
+              ? { budget: { dailyAmountCents: option.suggestedDailyCents, durationDays } }
+              : {}),
+          }
+        : {}),
     });
   };
 
@@ -211,7 +244,7 @@ export default function WizardShell({
     const targets: AdPlatform[] = [
       ...(wantsMeta && metaReady ? (['meta'] as const) : []),
       ...(wantsGoogle && googleReady ? (['google'] as const) : []),
-    ];
+    ].filter((p) => isPlatformAllowedForAdType(draft.adType, p));
 
     if (targets.length === 0) {
       onMessage?.({
@@ -296,7 +329,9 @@ export default function WizardShell({
   const renderStep = () => {
     switch (currentStep) {
       case 'type':
-        return <AdTypeSelector value={draft.adType} onChange={handleAdType} />;
+        return (
+          <AdTypeSelector value={draft.adType} onChange={handleAdType} readyPlatforms={readyPlatforms} />
+        );
       case 'details':
         return <PropertyDetailsStep draft={draft} onChange={patchDraft} />;
       case 'copy':

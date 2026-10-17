@@ -15,6 +15,7 @@ import {
   type AdDraft,
 } from '@/lib/ads/ad-draft-types';
 import type { AdPlatform } from '@/lib/ads/types';
+import { getAdTypeOption, isPlatformAllowedForAdType, PLATFORM_NAMES } from '@/lib/ads/ad-type-config';
 
 interface PlatformTemplateStepProps {
   draft: AdDraft;
@@ -61,7 +62,9 @@ export default function PlatformTemplateStep({
     draft.adType === 'open_house' ? '/api/open-houses' : null,
   );
 
+  const adTypeOption = getAdTypeOption(draft.adType);
   const togglePlatform = (platform: AdPlatform) => {
+    if (!isPlatformAllowedForAdType(draft.adType, platform)) return;
     const has = draft.platforms.includes(platform);
     if (has && draft.platforms.length === 1) return;
     onChange({
@@ -71,17 +74,24 @@ export default function PlatformTemplateStep({
     });
   };
 
-  const metaHint = metaReady
-    ? 'Facebook & Instagram'
-    : metaConnected
-      ? 'Finish ad account setup'
-      : 'Connect to publish';
+  const metaAllowed = isPlatformAllowedForAdType(draft.adType, 'meta');
+  const googleAllowed = isPlatformAllowedForAdType(draft.adType, 'google');
 
-  const googleHint = googleReady
-    ? 'Google Search'
-    : googleConnected
-      ? 'No ads account yet'
-      : 'Connect to publish';
+  const metaHint = !metaAllowed
+    ? 'Not used for this ad type'
+    : metaReady
+      ? 'Facebook & Instagram'
+      : metaConnected
+        ? 'Finish ad account setup'
+        : 'Connect to publish';
+
+  const googleHint = !googleAllowed
+    ? 'Not used for this ad type'
+    : googleReady
+      ? 'Google Search'
+      : googleConnected
+        ? 'No ads account yet'
+        : 'Connect to publish';
 
   const destination = getDraftDestination(draft);
   const isListingAd = listingRequiredForAdType(draft.adType);
@@ -176,8 +186,9 @@ export default function PlatformTemplateStep({
           <button
             type="button"
             onClick={() => togglePlatform('meta')}
+            disabled={!metaAllowed}
             className={clsx(
-              'rounded-lg border px-4 py-2.5 text-[13px] font-medium transition-colors',
+              'rounded-lg border px-4 py-2.5 text-[13px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50',
               draft.platforms.includes('meta')
                 ? 'border-brand-400 bg-brand-50 text-gray-900'
                 : 'border-gray-200 text-gray-600 hover:border-gray-300'
@@ -189,8 +200,9 @@ export default function PlatformTemplateStep({
           <button
             type="button"
             onClick={() => togglePlatform('google')}
+            disabled={!googleAllowed}
             className={clsx(
-              'rounded-lg border px-4 py-2.5 text-[13px] font-medium transition-colors',
+              'rounded-lg border px-4 py-2.5 text-[13px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50',
               draft.platforms.includes('google')
                 ? 'border-blue-500 bg-blue-50 text-blue-800'
                 : 'border-gray-200 text-gray-600 hover:border-gray-300'
@@ -200,6 +212,12 @@ export default function PlatformTemplateStep({
             <span className="block text-[10px] font-normal text-gray-700 mt-0.5">{googleHint}</span>
           </button>
         </div>
+        {adTypeOption && adTypeOption.platforms.length === 1 && (
+          <p className="mt-2 text-[12px] text-gray-600">
+            “{adTypeOption.label}” ads run on {PLATFORM_NAMES[adTypeOption.platforms[0]]} only.{' '}
+            {adTypeOption.tip}
+          </p>
+        )}
       </div>
 
       <div>

@@ -52,6 +52,31 @@ async function getAdListing(
   if (!projectId || !promotionId) return null;
 
   const supabase = createAdminClient();
+  return getAdListingFor(supabase, agentId, projectId, promotionId);
+}
+
+/** Whether the visitor came from one of this agent's "What's your home worth?" ads. */
+async function isHomeValueAdClick(
+  agentId: string,
+  search: Record<string, string | string[] | undefined>,
+): Promise<boolean> {
+  const content = typeof search.utm_content === 'string' ? search.utm_content : '';
+  if (!/^[0-9a-f-]{36}$/i.test(content)) return false;
+  const { data } = await createAdminClient()
+    .from('ad_promotions')
+    .select('ad_type')
+    .eq('id', content)
+    .eq('user_id', agentId)
+    .maybeSingle();
+  return data?.ad_type === 'home_value';
+}
+
+async function getAdListingFor(
+  supabase: ReturnType<typeof createAdminClient>,
+  agentId: string,
+  projectId: string,
+  promotionId: string,
+): Promise<AdListing | null> {
   const { data: promotion } = await supabase
     .from('ad_promotions')
     .select('ad_type')
@@ -147,7 +172,9 @@ async function getAgent(agentId: string) {
 export default async function LeadCapturePage({ params, searchParams }: LeadPageProps) {
   const { agentId } = await params;
   const agent = await getAgent(agentId);
-  const adListing = agent?.isPaid ? await getAdListing(agent.id, await searchParams) : null;
+  const search = agent?.isPaid ? await searchParams : {};
+  const adListing = agent?.isPaid ? await getAdListing(agent.id, search) : null;
+  const homeValue = !adListing && agent?.isPaid ? await isHomeValueAdClick(agent.id, search) : false;
 
   if (!agent) {
     return (
@@ -199,12 +226,18 @@ export default async function LeadCapturePage({ params, searchParams }: LeadPage
             {initials}
           </div>
           <h1 className="font-display text-2xl font-medium text-mkt-foreground mb-1">
-            {adListing ? 'Interested in this home?' : `Get in touch with ${agentName}`}
+            {adListing
+              ? 'Interested in this home?'
+              : homeValue
+                ? 'What’s your home worth?'
+                : `Get in touch with ${agentName}`}
           </h1>
           <p className="text-mkt-secondary text-sm max-w-sm mx-auto">
             {adListing
               ? `Ask ${agentName.split(' ')[0]} a question or request a showing.`
-              : `Fill out the form below and ${agentName.split(' ')[0]} will reach out to help you with your real estate needs.`}
+              : homeValue
+                ? `Get a free home value report from ${agentName}, based on recent sales near you. No obligation.`
+                : `Fill out the form below and ${agentName.split(' ')[0]} will reach out to help you with your real estate needs.`}
           </p>
         </div>
 
@@ -251,6 +284,8 @@ export default async function LeadCapturePage({ params, searchParams }: LeadPage
               listingAddress={adListing.address}
               projectId={adListing.projectId}
             />
+          ) : homeValue ? (
+            <LeadCaptureForm agentId={agent.id} agentName={agentName} variant="home_value" />
           ) : (
             <LeadCaptureForm agentId={agent.id} agentName={agentName} />
           )}

@@ -1,33 +1,134 @@
-import {
-  Calendar,
-  Home,
-  Megaphone,
-  Quote,
-  Sparkles,
-  Tag,
-  TrendingUp,
-  User,
-  type LucideIcon,
-} from 'lucide-react';
+/**
+ * The ad playbook: which ad types agents can run, what each one is for, and the
+ * platform it works on. Each type is offered only where it tends to pay off:
+ *
+ * - Google Search reaches people actively searching, so it carries ads people
+ *   search for — "what's my home worth", "realtor in <city>".
+ * - Facebook & Instagram reach people scrolling, so they carry photo-led listing
+ *   ads that nobody searches for by name.
+ */
+
+import { Calendar, Home, Sparkles, Tag, User, Calculator, type LucideIcon } from 'lucide-react';
 import type { AdType } from '@/lib/ads/ad-draft-types';
+import type { AdPlatform } from '@/lib/ads/types';
 
 export interface AdTypeOption {
   id: AdType;
   label: string;
   description: string;
   icon: LucideIcon;
+  /** What the ad brings in, shown to the agent */
+  goal: string;
+  /** Platforms this ad type is offered on, best first */
+  platforms: AdPlatform[];
+  /** Highlighted as the best place to start */
+  recommended?: boolean;
+  /** Below this, an ad rarely gets enough clicks to judge */
+  minDailyCents: number;
+  suggestedDailyCents: number;
+  suggestedDays: number;
+  /** One line of advice for getting results from this ad type */
+  tip: string;
 }
 
+/** Ad types offered in the builder, in the order shown. */
 export const AD_TYPE_OPTIONS: AdTypeOption[] = [
-  { id: 'new_listing', label: 'New listing', description: 'Just listed — drive buyers to your page', icon: Home },
-  { id: 'open_house', label: 'Open house', description: 'Promote date, time & directions', icon: Calendar },
-  { id: 'just_sold', label: 'Just sold', description: 'Celebrate the sale & attract sellers', icon: Sparkles },
-  { id: 'price_reduced', label: 'Price reduced', description: 'Highlight a fresh price drop', icon: Tag },
-  { id: 'coming_soon', label: 'Coming soon', description: 'Build buzz before go-live', icon: Megaphone },
-  { id: 'agent_branding', label: 'Meet the agent', description: 'Personal brand & expertise', icon: User },
-  { id: 'market_update', label: 'Market update', description: 'Neighborhood stats & trends', icon: TrendingUp },
-  { id: 'testimonial', label: 'Testimonial', description: 'Share client success stories', icon: Quote },
+  {
+    id: 'home_value',
+    label: 'What’s your home worth?',
+    description: 'Homeowners request a free home value report',
+    icon: Calculator,
+    goal: 'Seller leads',
+    platforms: ['google', 'meta'],
+    recommended: true,
+    minDailyCents: 1500,
+    suggestedDailyCents: 2000,
+    suggestedDays: 30,
+    tip: 'Homeowners search for this, and each lead is a possible listing. Send the value report quickly.',
+  },
+  {
+    id: 'agent_branding',
+    label: 'Meet the agent',
+    description: 'Show up when people search for an agent near them',
+    icon: User,
+    goal: 'New clients',
+    platforms: ['google', 'meta'],
+    minDailyCents: 1500,
+    suggestedDailyCents: 2000,
+    suggestedDays: 30,
+    tip: 'Add a client review in your own words with their permission — it builds trust fast.',
+  },
+  {
+    id: 'new_listing',
+    label: 'Just listed',
+    description: 'Show a new listing to buyers nearby',
+    icon: Home,
+    goal: 'Buyer leads',
+    platforms: ['meta'],
+    minDailyCents: 1000,
+    suggestedDailyCents: 1500,
+    suggestedDays: 14,
+    tip: 'Listing ads work as photo ads on Facebook & Instagram — few people search Google for one house.',
+  },
+  {
+    id: 'open_house',
+    label: 'Open house',
+    description: 'Get more people through the door',
+    icon: Calendar,
+    goal: 'Visitors',
+    platforms: ['meta'],
+    minDailyCents: 1000,
+    suggestedDailyCents: 2000,
+    suggestedDays: 7,
+    tip: 'Start the ad 5–7 days before the open house so people can plan to come.',
+  },
+  {
+    id: 'price_reduced',
+    label: 'Price reduced',
+    description: 'Bring buyers back after a price drop',
+    icon: Tag,
+    goal: 'Buyer leads',
+    platforms: ['meta'],
+    minDailyCents: 1000,
+    suggestedDailyCents: 1500,
+    suggestedDays: 14,
+    tip: 'Lead with the new price — it’s the reason to look again.',
+  },
+  {
+    id: 'just_sold',
+    label: 'Just sold',
+    description: 'Show neighbors you sell homes like theirs',
+    icon: Sparkles,
+    goal: 'Seller leads',
+    platforms: ['meta'],
+    minDailyCents: 1000,
+    suggestedDailyCents: 1500,
+    suggestedDays: 14,
+    tip: 'Aim it near the sold home — neighbors are the likeliest next sellers.',
+  },
 ];
+
+/** Types no longer offered, kept so older ads still show a readable name. */
+const RETIRED_AD_TYPE_LABELS: Partial<Record<AdType, string>> = {
+  coming_soon: 'Coming soon',
+  testimonial: 'Testimonial',
+  market_update: 'Market update',
+};
+
+export function getAdTypeOption(adType: AdType | null): AdTypeOption | undefined {
+  return adType ? AD_TYPE_OPTIONS.find((o) => o.id === adType) : undefined;
+}
+
+/** Whether the builder offers this ad type on this platform. */
+export function isPlatformAllowedForAdType(adType: AdType | null, platform: AdPlatform): boolean {
+  const option = getAdTypeOption(adType);
+  return option ? option.platforms.includes(platform) : false;
+}
+
+export const PLATFORM_NAMES: Record<AdPlatform, string> = {
+  google: 'Google',
+  meta: 'Facebook & Instagram',
+};
 
 export interface DetailField {
   key: string;
@@ -38,6 +139,24 @@ export interface DetailField {
 
 export function getDetailFieldsForAdType(adType: AdType | null): DetailField[] {
   switch (adType) {
+    case 'home_value':
+      return [
+        { key: 'city', label: 'City you serve', type: 'text', placeholder: 'Visalia' },
+        { key: 'state', label: 'State', type: 'text', placeholder: 'CA' },
+      ];
+    case 'agent_branding':
+      return [
+        { key: 'city', label: 'City you serve', type: 'text', placeholder: 'Visalia' },
+        { key: 'state', label: 'State', type: 'text', placeholder: 'CA' },
+        { key: 'agentTagline', label: 'Headline / tagline', type: 'text', placeholder: 'Your local expert in…' },
+        { key: 'bioBlurb', label: 'Short bio', type: 'textarea', placeholder: '2–3 sentences about you' },
+        {
+          key: 'clientReview',
+          label: 'Client review (optional — only with their permission)',
+          type: 'textarea',
+          placeholder: '“Ali made selling our home easy…”',
+        },
+      ];
     case 'open_house':
       return [
         { key: 'openHouseDate', label: 'Open house date & time', type: 'datetime-local' },
@@ -45,24 +164,8 @@ export function getDetailFieldsForAdType(adType: AdType | null): DetailField[] {
         { key: 'city', label: 'City', type: 'text' },
         { key: 'price', label: 'List price', type: 'number' },
       ];
-    case 'agent_branding':
-      return [
-        { key: 'agentTagline', label: 'Headline / tagline', type: 'text', placeholder: 'Your local expert in…' },
-        { key: 'bioBlurb', label: 'Short bio', type: 'textarea', placeholder: '2–3 sentences about you' },
-      ];
-    case 'market_update':
-      return [
-        { key: 'areaName', label: 'Area / neighborhood', type: 'text', placeholder: 'Visalia, CA' },
-        { key: 'statHighlight', label: 'Key stat or insight', type: 'text', placeholder: 'Median price up 4% YoY' },
-      ];
-    case 'testimonial':
-      return [
-        { key: 'clientName', label: 'Client name', type: 'text', placeholder: 'Jane S.' },
-        { key: 'quote', label: 'Testimonial quote', type: 'textarea', placeholder: 'What they said about you…' },
-      ];
     case 'just_sold':
     case 'price_reduced':
-    case 'coming_soon':
     case 'new_listing':
     default:
       return [
@@ -80,6 +183,7 @@ export function getDefaultCtaForAdType(adType: AdType | null): 'LEARN_MORE' | 'C
     case 'open_house':
       return 'GET_QUOTE';
     case 'agent_branding':
+    case 'home_value':
     case 'testimonial':
       return 'CONTACT_US';
     default:
@@ -88,5 +192,5 @@ export function getDefaultCtaForAdType(adType: AdType | null): 'LEARN_MORE' | 'C
 }
 
 export function getAdTypeLabel(adType: AdType): string {
-  return AD_TYPE_OPTIONS.find((o) => o.id === adType)?.label ?? adType;
+  return getAdTypeOption(adType)?.label ?? RETIRED_AD_TYPE_LABELS[adType] ?? adType;
 }

@@ -1,20 +1,24 @@
 'use client';
 
 import clsx from 'clsx';
-import { AD_TYPE_OPTIONS } from '@/lib/ads/ad-type-config';
+import { AD_TYPE_OPTIONS, PLATFORM_NAMES } from '@/lib/ads/ad-type-config';
 import type { AdType } from '@/lib/ads/ad-draft-types';
+import type { AdPlatform } from '@/lib/ads/types';
 
 interface AdTypeSelectorProps {
   value: AdType | null;
   onChange: (type: AdType) => void;
+  /** Platforms with a connected, ready ad account */
+  readyPlatforms: AdPlatform[];
 }
 
-export default function AdTypeSelector({ value, onChange }: AdTypeSelectorProps) {
+export default function AdTypeSelector({ value, onChange, readyPlatforms }: AdTypeSelectorProps) {
   return (
     <div className="grid gap-3 sm:grid-cols-2">
       {AD_TYPE_OPTIONS.map((option) => {
         const Icon = option.icon;
         const selected = value === option.id;
+        const canPublishNow = option.platforms.some((p) => readyPlatforms.includes(p));
         return (
           <button
             key={option.id}
@@ -36,8 +40,24 @@ export default function AdTypeSelector({ value, onChange }: AdTypeSelectorProps)
               <Icon className="h-4 w-4" strokeWidth={1.75} />
             </div>
             <div className="min-w-0">
-              <p className="text-[13px] font-semibold text-gray-900">{option.label}</p>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <p className="text-[13px] font-semibold text-gray-900">{option.label}</p>
+                {option.recommended && (
+                  <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700 border border-emerald-200">
+                    Recommended
+                  </span>
+                )}
+              </div>
               <p className="text-caption text-gray-700 mt-0.5">{option.description}</p>
+              <p className="mt-1.5 text-[11px] text-gray-600">
+                {option.goal} · {option.platforms.map((p) => PLATFORM_NAMES[p]).join(' + ')}
+              </p>
+              {!canPublishNow && (
+                <p className="mt-1 text-[11px] text-amber-700">
+                  Available once {option.platforms.map((p) => PLATFORM_NAMES[p]).join(' or ')} is
+                  connected
+                </p>
+              )}
             </div>
           </button>
         );

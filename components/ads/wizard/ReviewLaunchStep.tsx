@@ -134,7 +134,7 @@ export default function ReviewLaunchStep({
             <dd className="font-medium text-gray-900 text-right break-all">
               {
                 {
-                  lead_form: 'Your contact form',
+                  lead_form: draft.adType === 'home_value' ? 'Your home value request form' : 'Your contact form',
                   custom: getDraftDestination(draft).customUrl.trim(),
                   profile: 'Your agent profile page',
                   open_house: 'Open house sign-in page',
@@ -152,6 +152,15 @@ export default function ReviewLaunchStep({
       </Card>
 
       <AdWordingWarning headline={headline} body={body} />
+
+      <div className="rounded-lg border border-brand-100 bg-brand-50/40 px-3 py-2.5 text-[12.5px] text-gray-800">
+        <p className="font-medium text-gray-900">What to expect</p>
+        <ul className="mt-1 list-disc space-y-0.5 pl-4">
+          <li>Results build over 2–4 weeks — the first days are the ad platform learning who responds.</li>
+          <li>Call or text new leads within 5 minutes. Speed matters more than anything else.</li>
+          <li>One new client usually pays for many months of ads, so give it time before judging.</li>
+        </ul>
+      </div>
 
       {wantsMeta && !metaConnected && (
         <p className="text-[12.5px] text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">

@@ -20,7 +20,16 @@ import {
 } from '@/lib/ads/promotion-options';
 import { resolvePromotionProjectId } from '@/lib/ads/resolve-promotion-project';
 import { buildAdLandingUrl } from '@/lib/ads/utm';
-import { isValidDestinationUrl, type AdType } from '@/lib/ads/ad-draft-types';
+import {
+  isValidDestinationUrl,
+  listingRequiredForAdType,
+  type AdType,
+} from '@/lib/ads/ad-draft-types';
+import {
+  getAdTypeOption,
+  isPlatformAllowedForAdType,
+  PLATFORM_NAMES,
+} from '@/lib/ads/ad-type-config';
 import { buildAgentProfilePath, buildBookingPath } from '@/lib/agent-profile-shared';
 import { SITE_URL } from '@/lib/site-config';
 import { APIResponse } from '@/types';
@@ -118,46 +127,84 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    let resolvedProjectId: string;
-    try {
-      const resolved = await resolvePromotionProjectId(supabase, user.id, {
-        projectId: typeof body.projectId === 'string' ? body.projectId : null,
-        adType,
-        propertyDetails,
-        images,
-      });
-      resolvedProjectId = resolved.projectId;
-    } catch (resolveError: any) {
+    const adTypeOption = getAdTypeOption(adType);
+    if (!adTypeOption) {
       return NextResponse.json(
-        { success: false, error: resolveError.message || 'Could not prepare ad.' } satisfies APIResponse,
+        { success: false, error: 'Choose one of the available ad types.' } satisfies APIResponse,
+        { status: 400 }
+      );
+    }
+    // Each ad type runs only on the platform where it tends to pay off
+    if (!isPlatformAllowedForAdType(adType, platform)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `“${adTypeOption.label}” ads run on ${adTypeOption.platforms.map((p) => PLATFORM_NAMES[p]).join(' and ')}.`,
+        } satisfies APIResponse,
         { status: 400 }
       );
     }
 
-    const { data: project, error: projectError } = await supabase
-      .from('projects')
-      .select('id, title, description, property_info, images, ai_content')
-      .eq('id', resolvedProjectId)
-      .eq('user_id', user.id)
-      .single();
+    // Listing ads promote a project; ads about the agent aren't tied to one
+    const isListingAd = listingRequiredForAdType(adType);
+    let project: any = null;
 
-    if (projectError || !project) {
-      return NextResponse.json({ success: false, error: 'Project not found.' } satisfies APIResponse, {
-        status: 404,
-      });
-    }
-
-    // Google Search ads are text-only, so only Meta needs a photo
-    if (platform === 'meta' && !imageUrlOverride) {
-      const promotable = isProjectPromotable(project);
-      if (!promotable.ok) {
-        return NextResponse.json({ success: false, error: promotable.reason } satisfies APIResponse, {
-          status: 400,
+    if (isListingAd) {
+      let resolvedProjectId: string;
+      try {
+        const resolved = await resolvePromotionProjectId(supabase, user.id, {
+          projectId: typeof body.projectId === 'string' ? body.projectId : null,
+          adType,
+          propertyDetails,
+          images,
         });
+        resolvedProjectId = resolved.projectId;
+      } catch (resolveError: any) {
+        return NextResponse.json(
+          { success: false, error: resolveError.message || 'Could not prepare ad.' } satisfies APIResponse,
+          { status: 400 }
+        );
+      }
+
+      const { data: projectRow, error: projectError } = await supabase
+        .from('projects')
+        .select('id, title, description, property_info, images, ai_content')
+        .eq('id', resolvedProjectId)
+        .eq('user_id', user.id)
+        .single();
+
+      if (projectError || !projectRow) {
+        return NextResponse.json({ success: false, error: 'Project not found.' } satisfies APIResponse, {
+          status: 404,
+        });
+      }
+      project = projectRow;
+
+      // Google Search ads are text-only, so only Meta needs a photo
+      if (platform === 'meta' && !imageUrlOverride) {
+        const promotable = isProjectPromotable(project);
+        if (!promotable.ok) {
+          return NextResponse.json({ success: false, error: promotable.reason } satisfies APIResponse, {
+            status: 400,
+          });
+        }
       }
     }
 
-    const defaults = buildListingAdCopy(project);
+    const detailText = (key: string) =>
+      typeof propertyDetails[key] === 'string' && propertyDetails[key].trim() ? propertyDetails[key].trim() : null;
+    const defaults = project
+      ? buildListingAdCopy(project)
+      : {
+          address: adTypeOption.label,
+          price: '',
+          headline: '',
+          primaryText: '',
+          imageUrl: null,
+          zip: null,
+          city: detailText('city'),
+          state: detailText('state'),
+        };
     const headline = headlineOverride || defaults.headline;
     const primaryText = primaryTextOverride || defaults.primaryText;
     const imageUrl = imageUrlOverride || defaults.imageUrl;
@@ -237,6 +284,7 @@ export async function POST(request: NextRequest) {
 
     // Remember a pasted listing link on the listing so the next ad starts with it
     if (
+      project &&
       customDestination &&
       body.saveListingLink === true &&
       project.property_info?.listing_url !== customDestination
@@ -250,18 +298,22 @@ export async function POST(request: NextRequest) {
     const promotionId = crypto.randomUUID();
     const landingUrl = buildAdLandingUrl(baseLandingUrl, {
       platform,
-      projectId: project.id,
+      projectId: project?.id ?? null,
       promotionId,
     });
 
-    const campaignName = `Oikaro · ${defaults.address}`.slice(0, 120);
+    const campaignName = (
+      project
+        ? `Oikaro · ${defaults.address}`
+        : `Oikaro · ${adTypeOption.label}${defaults.city ? ` · ${defaults.city}` : ''}`
+    ).slice(0, 120);
 
     const { data: promotion, error: insertError } = await supabase
       .from('ad_promotions')
       .insert({
         id: promotionId,
         user_id: user.id,
-        project_id: project.id,
+        project_id: project?.id ?? null,
         platform,
         ad_type: adType,
         daily_budget_cents: dailyBudgetCents,
@@ -277,6 +329,13 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError) {
+      // 23502 = project_id still required; ads-agent-ads.sql hasn't been run
+      if (insertError.code === '23502' && !project) {
+        return NextResponse.json(
+          { success: false, error: 'Run ads-agent-ads.sql in Supabase to enable agent ads.' } satisfies APIResponse,
+          { status: 503 }
+        );
+      }
       if (insertError.code === '42P01') {
         return NextResponse.json(
           { success: false, error: 'Run ads-promotions.sql in Supabase to enable promotions.' } satisfies APIResponse,
@@ -288,7 +347,7 @@ export async function POST(request: NextRequest) {
 
     if (platform === 'google') {
       try {
-        const info = project.property_info || {};
+        const info = project?.property_info || {};
         const listing = {
           address: info.address?.trim() || null,
           city: defaults.city,
@@ -306,7 +365,7 @@ export async function POST(request: NextRequest) {
           .maybeSingle();
         const agentName = user.user_metadata?.full_name || '';
         const tagged = (url: string) =>
-          buildAdLandingUrl(url, { platform, projectId: project.id, promotionId });
+          buildAdLandingUrl(url, { platform, projectId: project?.id ?? null, promotionId });
         // Sitelinks must be on the same site as the ad, so only add them for Oikaro destinations
         const sitelinks = customDestination
           ? []

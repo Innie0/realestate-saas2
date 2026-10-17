@@ -32,7 +32,8 @@ export default function AdPreviewPane({
   const imageUrl = getPrimaryImage(draft);
   const showMeta = draft.platforms.includes('meta');
   const showGoogle = draft.platforms.includes('google');
-  const googleAssets = showGoogle ? googleAssetsFromDraft(draft) : null;
+  // Nothing to preview until an ad type is chosen
+  const googleAssets = showGoogle && draft.adType ? googleAssetsFromDraft(draft) : null;
   const googlePreview = googleAssets && (
     <GooglePreviewCard
       headlines={googleAssets.headlines}
@@ -78,6 +79,13 @@ export default function AdPreviewPane({
         />
       )}
       {googlePreview}
+      {showGoogle && !showMeta && !draft.adType && (
+        <Card className="p-5 sm:p-6">
+          <p className="text-caption text-gray-700 text-center py-8">
+            Choose an ad type to see a preview.
+          </p>
+        </Card>
+      )}
       {!showMeta && !showGoogle && (
         <Card className="p-5 sm:p-6">
           <p className="text-caption text-gray-700 text-center py-8">

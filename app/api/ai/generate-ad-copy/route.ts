@@ -2,11 +2,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { openai } from '@/lib/openai';
-import { getAdTypeLabel } from '@/lib/ads/ad-type-config';
+import { getAdTypeLabel, getAdTypeOption } from '@/lib/ads/ad-type-config';
 import type { AdType } from '@/lib/ads/ad-draft-types';
 import { consumeDailyAiAllowance, DAILY_AI_CAP_MESSAGE } from '@/lib/usage';
 
 const VALID_TYPES = new Set([
+  'home_value',
   'new_listing',
   'open_house',
   'just_sold',
@@ -18,6 +19,39 @@ const VALID_TYPES = new Set([
 ]);
 
 function fallbackVariants(adType: AdType, details: Record<string, string | number>) {
+  const city = String(details.city || '').trim();
+  if (adType === 'home_value') {
+    return [
+      {
+        headline: city ? `What's your ${city} home worth?` : "What's your home worth?",
+        body: 'Get a free home value report based on recent sales near you. No obligation.',
+      },
+      {
+        headline: 'Thinking of selling?',
+        body: 'Find out what your home could sell for today. Request your free report.',
+      },
+      {
+        headline: city ? `${city} home values` : 'See what homes near you sold for',
+        body: 'A local agent prepares your report from recent nearby sales. Quick and free.',
+      },
+    ];
+  }
+  if (adType === 'agent_branding') {
+    return [
+      {
+        headline: city ? `Your ${city} real estate agent` : 'Your local real estate agent',
+        body: 'Buying or selling? Get clear advice and a plan that fits your goals.',
+      },
+      {
+        headline: 'Buying or selling a home?',
+        body: 'Talk to a local agent who knows the market. Reach out today.',
+      },
+      {
+        headline: city ? `Thinking of moving in ${city}?` : 'Thinking of moving?',
+        body: 'Get honest answers about pricing, timing, and next steps.',
+      },
+    ];
+  }
   const address = String(details.address || details.areaName || 'this property');
   const price = details.price ? `$${Number(details.price).toLocaleString('en-US')}` : '';
   const label = getAdTypeLabel(adType);
@@ -77,6 +111,7 @@ export async function POST(request: NextRequest) {
     const prompt = `You write short ad copy for real estate agents, used for Google Search and Meta/Facebook ads.
 
 Ad type: ${getAdTypeLabel(adType)}
+Goal: ${getAdTypeOption(adType)?.goal ?? 'Leads'}${adType === 'home_value' ? ' — offer a free home value report to homeowners thinking of selling; do not state a price or promise a value.' : ''}${adType === 'agent_branding' ? ' — introduce the agent to people looking for help buying or selling; if a client review is provided, you may paraphrase it.' : ''}
 Property/details: ${JSON.stringify(propertyDetails)}
 Tone: ${toneHint}
 

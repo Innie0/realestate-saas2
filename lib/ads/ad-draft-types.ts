@@ -2,11 +2,13 @@ import type { AdCtaType, AudiencePresetId } from '@/lib/ads/promotion-options';
 import type { AdPlatform } from '@/lib/ads/types';
 
 export type AdType =
+  | 'home_value'
   | 'new_listing'
   | 'open_house'
   | 'just_sold'
   | 'price_reduced'
   | 'agent_branding'
+  // Retired from the builder; kept so older ads still display
   | 'market_update'
   | 'testimonial'
   | 'coming_soon';
@@ -66,6 +68,8 @@ export function recommendedDestinationType(
   adType: AdType | null,
   available: { profileEnabled: boolean; hasOpenHouse: boolean; hasListingLink: boolean },
 ): AdDestinationType {
+  // Home value ads land on the home value request form
+  if (adType === 'home_value') return 'lead_form';
   if (adType === 'open_house' && available.hasOpenHouse) return 'open_house';
   if (adType && AGENT_FOCUSED_AD_TYPES.includes(adType)) {
     return available.profileEnabled ? 'profile' : 'lead_form';
@@ -185,5 +189,5 @@ export function getPrimaryImage(draft: AdDraft): string | null {
 
 export function listingRequiredForAdType(adType: AdType | null): boolean {
   if (!adType) return false;
-  return !['agent_branding', 'market_update', 'testimonial'].includes(adType);
+  return !['home_value', 'agent_branding', 'market_update', 'testimonial'].includes(adType);
 }

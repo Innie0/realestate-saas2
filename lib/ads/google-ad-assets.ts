@@ -69,11 +69,14 @@ function formatPrice(price: number | null): string | null {
   return price && price > 0 ? `$${Math.round(price).toLocaleString('en-US')}` : null;
 }
 
+/** Ads about the agent rather than one home (home value ads are handled on their own). */
 const AGENT_AD_TYPES: AdType[] = ['agent_branding', 'market_update', 'testimonial'];
 
 function leadHeadline(adType: AdType | null, city: string | null): string {
   const place = city ? ` in ${city}` : '';
   switch (adType) {
+    case 'home_value':
+      return "What's Your Home Worth?";
     case 'open_house':
       return `Open House${place}`;
     case 'just_sold':
@@ -124,6 +127,65 @@ function packSentences(body: string): string[] {
   return lines;
 }
 
+/** Keep headlines that fit whole, dropping duplicates. */
+function fitHeadlines(candidates: string[]): string[] {
+  return uniqueByLowercase(
+    candidates
+      .map((h) => cleanAdText(h, true))
+      .filter((h) => h.length > 0 && h.length <= HEADLINE_MAX_CHARS),
+  ).slice(0, MAX_HEADLINES);
+}
+
+function fitDescriptions(body: string, fallbacks: string[]): string[] {
+  return uniqueByLowercase(
+    [...packSentences(cleanAdText(body, false)).slice(0, 2), ...fallbacks]
+      .map((d) => fitToLimit(cleanAdText(d, false), DESCRIPTION_MAX_CHARS))
+      .filter((d) => d.length >= 20),
+  ).slice(0, MAX_DESCRIPTIONS);
+}
+
+function fitKeywords(candidates: string[]): string[] {
+  return uniqueByLowercase(
+    candidates.map((k) => k.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim()),
+  ).slice(0, MAX_KEYWORDS);
+}
+
+/** Seller-lead ad: homeowners searching what their home is worth. */
+function buildHomeValueAssets(headline: string, body: string, city: string | null): GoogleSearchAdAssets {
+  return {
+    headlines: fitHeadlines([
+      "What's Your Home Worth?",
+      'Free Home Value Report',
+      city ? `${city} Home Values` : 'See Your Home Value',
+      headline,
+      'Thinking of Selling?',
+      "Get Your Home's Value",
+      'Based on Recent Local Sales',
+      city ? `Sell Your ${city} Home` : 'Sell Your Home',
+      'No Obligation',
+      'Talk to a Local Agent',
+    ]),
+    descriptions: fitDescriptions(body, [
+      'Find out what your home could sell for, based on recent sales near you.',
+      'Request your free home value report. No obligation. A local agent will follow up.',
+      city ? `Thinking of selling in ${city}? Get a clear price range and a plan.` : '',
+    ]),
+    keywords: fitKeywords(
+      city
+        ? [
+            `what is my home worth ${city}`,
+            `how much is my house worth ${city}`,
+            `home value ${city}`,
+            `${city} home values`,
+            `home valuation ${city}`,
+            `sell my house ${city}`,
+            `${city} home prices`,
+          ]
+        : ['what is my home worth', 'how much is my house worth', 'home value estimate', 'sell my house'],
+    ),
+  };
+}
+
 /** Build the ad's headlines, descriptions, and search keywords from the listing and the agent's copy. */
 export function buildGoogleSearchAdAssets(input: {
   adType: AdType | null;
@@ -135,6 +197,7 @@ export function buildGoogleSearchAdAssets(input: {
 }): GoogleSearchAdAssets {
   const { adType, listing } = input;
   const city = listing.city ? cleanAdText(listing.city, true) : null;
+  if (adType === 'home_value') return buildHomeValueAssets(input.headline, input.body, city);
   const isAgentAd = adType !== null && AGENT_AD_TYPES.includes(adType);
   const price = formatPrice(listing.price);
   const beds = listing.bedrooms ? `${listing.bedrooms} Bed` : null;
@@ -222,12 +285,15 @@ const LISTING_EXCLUDED = [
  * people who were never going to become a client.
  */
 export function buildNegativeKeywords(adType: AdType | null): string[] {
-  const isAgentAd = adType !== null && AGENT_AD_TYPE_SET.has(adType);
+  const isAgentAd = adType !== null && (AGENT_AD_TYPE_SET.has(adType) || adType === 'home_value');
   return isAgentAd ? [...ALWAYS_EXCLUDED, 'rent', 'rental', 'apartment'] : [...ALWAYS_EXCLUDED, ...LISTING_EXCLUDED];
 }
 
 /** Short highlights shown under the ad (Google limit: 25 characters each). */
 export function buildCallouts(adType: AdType | null): string[] {
+  if (adType === 'home_value') {
+    return ['Free Home Value Report', 'No Obligation', 'Based on Recent Sales', 'Licensed Agent'];
+  }
   const isAgentAd = adType !== null && AGENT_AD_TYPE_SET.has(adType);
   return isAgentAd
     ? ['Licensed Agent', 'Free Consultation', 'Buyers and Sellers', 'Local Area Knowledge']

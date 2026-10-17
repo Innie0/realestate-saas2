@@ -2,7 +2,8 @@ export type AdUtmPlatform = 'meta' | 'google';
 
 export interface AdUtmParams {
   platform: AdUtmPlatform;
-  projectId: string;
+  /** The listing the ad promotes; null for ads about the agent */
+  projectId: string | null;
   promotionId?: string;
 }
 
@@ -10,7 +11,10 @@ export function buildAdLandingUrl(baseUrl: string, params: AdUtmParams): string 
   const url = new URL(baseUrl);
   url.searchParams.set('utm_source', params.platform);
   url.searchParams.set('utm_medium', 'paid');
-  url.searchParams.set('utm_campaign', `listing-${params.projectId}`);
+  url.searchParams.set(
+    'utm_campaign',
+    params.projectId ? `listing-${params.projectId}` : `ad-${params.promotionId ?? 'agent'}`,
+  );
   if (params.promotionId) {
     url.searchParams.set('utm_content', params.promotionId);
   }

@@ -8,8 +8,8 @@ import { parseAdAttribution } from '@/lib/ads/utm';
 interface LeadCaptureFormProps {
   agentId: string;
   agentName: string;
-  /** Full lead form vs. simplified listing inquiry */
-  variant?: 'full' | 'listing';
+  /** Full lead form, simplified listing inquiry, or a home value request (seller lead) */
+  variant?: 'full' | 'listing' | 'home_value';
   /** Lead source for CRM (default: lead_form) */
   source?: 'lead_form' | 'listing_page';
   /** Pre-fill interest message with listing address */
@@ -70,12 +70,16 @@ export default function LeadCaptureForm({
   const adAttribution = parseAdAttribution(searchParams.toString());
 
   const isListingForm = variant === 'listing' || source === 'listing_page';
+  const isHomeValue = variant === 'home_value';
+  /** Short form without the buyer/seller questionnaire */
+  const isShortForm = isListingForm || isHomeValue;
 
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    leadType: isListingForm ? 'buyer' : defaultLeadType,
+    leadType: isListingForm ? 'buyer' : isHomeValue ? 'seller' : defaultLeadType,
+    propertyAddress: '',
     timeline: '',
     budget: '',
     area: '',
@@ -113,6 +117,10 @@ export default function LeadCaptureForm({
       setError('Please add an email or phone number so we can reach you.');
       return;
     }
+    if (isHomeValue && !formData.propertyAddress.trim()) {
+      setError('Please enter the address of the home.');
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -127,6 +135,14 @@ export default function LeadCaptureForm({
           adSource: adAttribution.adSource,
           promotionId: adAttribution.promotionId,
           ...formData,
+          ...(isHomeValue
+            ? {
+                listingAddress: formData.propertyAddress.trim(),
+                message: [`Home value request for ${formData.propertyAddress.trim()}`, formData.message.trim()]
+                  .filter(Boolean)
+                  .join('\n\n'),
+              }
+            : {}),
         }),
       });
       const result = await response.json();
@@ -183,6 +199,25 @@ export default function LeadCaptureForm({
         />
       </div>
 
+      {/* Home address (home value requests) */}
+      {isHomeValue && (
+        <div>
+          <label htmlFor="propertyAddress" className={labelClasses}>
+            Home address <span className="text-mkt-foreground">*</span>
+          </label>
+          <input
+            id="propertyAddress"
+            type="text"
+            value={formData.propertyAddress}
+            onChange={(e) => set('propertyAddress', e.target.value)}
+            placeholder="123 Main St, Visalia, CA"
+            autoComplete="street-address"
+            required
+            className={inputClasses}
+          />
+        </div>
+      )}
+
       {/* Email + Phone side by side */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
@@ -218,7 +253,7 @@ export default function LeadCaptureForm({
         <p className="text-xs text-mkt-secondary -mt-3">At least one contact method required.</p>
       )}
 
-      {!isListingForm && (
+      {!isShortForm && (
         <>
       {/* What are you looking to do */}
       <div>
@@ -333,6 +368,8 @@ export default function LeadCaptureForm({
           placeholder={
             isListingForm
               ? 'Ask about showings, offers, or anything else...'
+              : isHomeValue
+                ? 'Any updates or details about the home (optional)...'
               : "Tell us more about what you're looking for..."
           }
           rows={3}
@@ -353,7 +390,13 @@ export default function LeadCaptureForm({
         disabled={isSubmitting}
         className="w-full rounded-mkt-button px-6 py-3.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed bg-[#0668E1] text-white hover:bg-[#0450b0] focus:ring-[#0668E1]/40"
       >
-        {isSubmitting ? 'Sending...' : isListingForm ? 'Request info' : `Contact ${agentName.split(' ')[0]}`}
+        {isSubmitting
+          ? 'Sending...'
+          : isListingForm
+            ? 'Request info'
+            : isHomeValue
+              ? 'Get my home value'
+              : `Contact ${agentName.split(' ')[0]}`}
       </button>
 
       <p className="text-center text-xs text-mkt-secondary">

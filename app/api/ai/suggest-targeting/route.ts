@@ -1,9 +1,12 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server';
+import { getAdTypeOption } from '@/lib/ads/ad-type-config';
+import type { AdType } from '@/lib/ads/ad-draft-types';
 import { createClient } from '@/lib/supabase-server';
 import type { AdType } from '@/lib/ads/ad-draft-types';
 
 const VALID_TYPES = new Set([
+  'home_value',
   'new_listing',
   'open_house',
   'just_sold',
@@ -15,47 +18,36 @@ const VALID_TYPES = new Set([
 ]);
 
 function suggestTargeting(adType: string, details: Record<string, string | number>) {
+  const option = getAdTypeOption(adType as AdType);
   const price = Number(details.price) || 0;
   const isLuxury = price >= 750_000;
-  const isStarter = price > 0 && price < 350_000;
 
   let radiusMiles = 15;
-  let dailyAmountCents = 2000;
-  let ageMin = 25;
-  let ageMax = 65;
   let preset: 'near_home' | 'city' | 'wide' = 'near_home';
-  let note = 'Balanced reach for a typical listing.';
+  let dailyAmountCents = option?.suggestedDailyCents ?? 2000;
+  let note = option?.tip ?? 'Balanced reach for a typical ad.';
 
-  if (adType === 'just_sold' || adType === 'agent_branding' || adType === 'testimonial') {
-    radiusMiles = 25;
-    preset = 'city';
-    note = 'Wider reach helps attract seller leads and brand awareness.';
-  } else if (adType === 'market_update') {
+  if (adType === 'home_value' || adType === 'agent_branding') {
     preset = 'city';
     radiusMiles = 20;
-    note = 'City-wide reach suits neighborhood market updates.';
+  } else if (adType === 'just_sold') {
+    // Neighbors of a sold home are the likeliest next sellers
+    radiusMiles = 3;
   } else if (isLuxury) {
-    radiusMiles = 35;
     preset = 'wide';
-    dailyAmountCents = 4000;
-    ageMin = 30;
-    ageMax = 65;
-    note = 'Luxury listings often benefit from a wider radius and higher daily budget.';
-  } else if (isStarter) {
-    radiusMiles = 12;
-    dailyAmountCents = 1500;
-    ageMin = 22;
-    ageMax = 45;
-    note = 'Tighter radius and younger skew for starter-home buyers.';
+    radiusMiles = 35;
+    dailyAmountCents = Math.max(dailyAmountCents, 3000);
+    note = 'Higher-priced homes draw buyers from farther away, so this widens the area and budget.';
   } else if (adType === 'open_house') {
-    radiusMiles = 18;
-    dailyAmountCents = 2500;
-    note = 'Open houses perform well with a moderate boost the week of the event.';
+    radiusMiles = 10;
   }
 
+  const durationDays = option?.suggestedDays && option.suggestedDays >= 30 ? 30 : option?.suggestedDays === 7 ? 7 : 14;
+
   return {
-    audience: { preset, radiusMiles, ageMin, ageMax, interests: [] as string[] },
-    budget: { dailyAmountCents, durationDays: adType === 'open_house' ? 7 : 14 },
+    // Ages are kept only for older drafts; housing ads can't target by age
+    audience: { preset, radiusMiles, ageMin: 18, ageMax: 65, interests: [] as string[] },
+    budget: { dailyAmountCents, durationDays },
     note,
   };
 }

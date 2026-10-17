@@ -12,6 +12,7 @@ import {
   MIN_DAILY_BUDGET_CENTS,
 } from '@/lib/ads/promotion-options';
 import type { AdDraft } from '@/lib/ads/ad-draft-types';
+import { getAdTypeOption } from '@/lib/ads/ad-type-config';
 import clsx from 'clsx';
 
 interface AudienceBudgetStepProps {
@@ -65,7 +66,9 @@ export default function AudienceBudgetStep({ draft, onChange }: AudienceBudgetSt
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft.adType]);
 
+  const adTypeOption = getAdTypeOption(draft.adType);
   const dailyDollars = draft.budget.dailyAmountCents / 100;
+  const belowMinimum = adTypeOption ? draft.budget.dailyAmountCents < adTypeOption.minDailyCents : false;
   const total = dailyDollars * draft.budget.durationDays;
 
   return (
@@ -206,6 +209,18 @@ export default function AudienceBudgetStep({ draft, onChange }: AudienceBudgetSt
             ))}
           </div>
         </div>
+        {adTypeOption && (
+          <p className="text-[12px] text-gray-600 mt-2">
+            Recommended for “{adTypeOption.label}”: ${adTypeOption.suggestedDailyCents / 100}/day for about{' '}
+            {adTypeOption.suggestedDays} days.
+          </p>
+        )}
+        {belowMinimum && adTypeOption && (
+          <p className="mt-2 rounded-lg border border-amber-100 bg-amber-50 px-3 py-2 text-[12px] text-amber-900">
+            Under ${adTypeOption.minDailyCents / 100}/day this ad will likely get only a few clicks a
+            day — usually not enough to bring in leads or learn what works.
+          </p>
+        )}
         <p className="text-[12px] text-gray-700 mt-2">
           Estimated spend:{' '}
           <span className="font-medium text-gray-700 tabular-nums">
