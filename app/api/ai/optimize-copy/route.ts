@@ -3,10 +3,39 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
 import { openai } from '@/lib/openai';
 import { getAdTypeLabel } from '@/lib/ads/ad-type-config';
-import { ctrPercent } from '@/lib/ads/performance-types';
+import { diagnoseAd } from '@/lib/ads/ad-diagnosis';
+import { findAdWordingConcerns } from '@/lib/ads/fair-housing';
 import { APIResponse } from '@/types';
 import { consumeDailyAiAllowance, DAILY_AI_CAP_MESSAGE } from '@/lib/usage';
 
+const GOOGLE_HEADLINE_MAX = 30;
+const GOOGLE_DESCRIPTION_MAX = 90;
+
+/** Google ad text: plain characters, no exclamation marks in headlines, within limits, nothing risky. */
+function cleanGoogleText(values: unknown, max: number, isHeadline: boolean): string[] {
+  const seen = new Set<string>();
+  return (Array.isArray(values) ? values : [])
+    .map((v) =>
+      String(v ?? '')
+        .replace(/[—–]/g, '-')
+        .replace(/[^\x20-\x7E]/g, '')
+        .replace(isHeadline ? /!/g : /!+/g, isHeadline ? '' : '.')
+        .replace(/\s+/g, ' ')
+        .trim(),
+    )
+    .filter((t) => {
+      const key = t.toLowerCase();
+      if (t.length < 5 || t.length > max || seen.has(key)) return false;
+      seen.add(key);
+      return findAdWordingConcerns(t).length === 0;
+    });
+}
+
+/**
+ * POST /api/ai/optimize-copy
+ * Diagnose an ad from its numbers and, only when the wording is the problem,
+ * suggest new headlines. Body: { promotionId }
+ */
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -21,15 +50,8 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (!(await consumeDailyAiAllowance(supabase, user.id, 'ai_ads'))) {
-      return NextResponse.json({ success: false, error: DAILY_AI_CAP_MESSAGE }, { status: 429 });
-    }
-
     const body = await request.json();
     const promotionId = typeof body.promotionId === 'string' ? body.promotionId : '';
-    const reason = typeof body.reason === 'string' ? body.reason : 'underperforming';
-    const insightMessage = typeof body.insightMessage === 'string' ? body.insightMessage : '';
-
     if (!promotionId) {
       return NextResponse.json({ success: false, error: 'promotionId is required' } satisfies APIResponse, {
         status: 400,
@@ -39,7 +61,7 @@ export async function POST(request: NextRequest) {
     const { data: promo, error: promoError } = await supabase
       .from('ad_promotions')
       .select(
-        'id, headline, primary_text, ad_type, platform, projects:project_id ( title, property_info )'
+        'id, headline, primary_text, ad_type, platform, status, created_at, error_message, google_ad_id, projects:project_id ( title, property_info )'
       )
       .eq('id', promotionId)
       .eq('user_id', user.id)
@@ -51,83 +73,76 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const since = new Date();
-    since.setUTCDate(since.getUTCDate() - 14);
     const { data: daily } = await supabase
       .from('ad_performance_daily')
-      .select('impressions, clicks, spend_cents, leads, frequency')
-      .eq('promotion_id', promotionId)
-      .gte('date', since.toISOString().slice(0, 10));
+      .select('impressions, clicks, spend_cents, leads')
+      .eq('promotion_id', promotionId);
+    const sum = (key: string) => (daily ?? []).reduce((s, r) => s + (Number(r[key]) || 0), 0);
 
-    const impressions = (daily ?? []).reduce((s, r) => s + r.impressions, 0);
-    const clicks = (daily ?? []).reduce((s, r) => s + r.clicks, 0);
-    const ctr = ctrPercent(clicks, impressions);
-    const avgFreq =
-      (daily ?? []).filter((r) => r.frequency != null).reduce((s, r) => s + r.frequency, 0) /
-        Math.max(1, (daily ?? []).filter((r) => r.frequency != null).length) || null;
+    const diagnosis = diagnoseAd({
+      status: promo.status,
+      createdAt: promo.created_at,
+      impressions: sum('impressions'),
+      clicks: sum('clicks'),
+      leads: sum('leads'),
+      spendCents: sum('spend_cents'),
+      issue: promo.error_message,
+    });
+
+    // Rewriting only helps when people see the ad but don't click — skip the AI otherwise
+    if (!diagnosis.suggestNewHeadlines || !process.env.OPENAI_API_KEY) {
+      return NextResponse.json({
+        success: true,
+        data: { promotionId, diagnosis, suggestions: null, canAddToAd: false },
+      } satisfies APIResponse);
+    }
+
+    if (!(await consumeDailyAiAllowance(supabase, user.id, 'ai_ads'))) {
+      return NextResponse.json({ success: false, error: DAILY_AI_CAP_MESSAGE }, { status: 429 });
+    }
 
     const project = promo.projects && !Array.isArray(promo.projects) ? promo.projects : null;
     const info = project?.property_info || {};
-    const adTypeLabel = promo.ad_type ? getAdTypeLabel(promo.ad_type) : 'Real estate ad';
+    const prompt = `You improve a real estate Google Search ad whose click-through rate is low (${diagnosis.stats.ctr}% from ${diagnosis.stats.impressions} views; good is 3–6%).
 
-    const metricsContext = {
-      reason,
-      insightMessage,
-      ctr,
-      impressions,
-      clicks,
-      avgFrequency: avgFreq,
-      currentHeadline: promo.headline,
-      currentBody: promo.primary_text,
-      adType: adTypeLabel,
-      address: info.address || project?.title,
-    };
+Ad type: ${promo.ad_type ? getAdTypeLabel(promo.ad_type) : 'Real estate ad'}
+Current headline: ${promo.headline ?? ''}
+Current message: ${promo.primary_text ?? ''}
+Listing: ${JSON.stringify({ address: info.address, city: info.city, price: info.price, bedrooms: info.bedrooms, bathrooms: info.bathrooms })}
 
-    let variants = [
-      {
-        headline: (promo.headline || 'See this property').slice(0, 80),
-        body: (promo.primary_text || 'Schedule a showing today.').slice(0, 200),
-      },
-    ];
+Write NEW text that gives a searcher a stronger reason to click: be specific (price, area, beds, a free report, a private showing).
+Rules: headlines max 30 characters, descriptions max 90 characters, no exclamation marks in headlines, no emojis.
+Fair housing: describe the home or service, never who should live there; no claims an area is safer or better; no "best" or "#1".
 
-    if (process.env.OPENAI_API_KEY) {
-      const prompt = `You improve underperforming real estate Meta ads.
+Return ONLY JSON: { "headlines": ["6 different headlines"], "descriptions": ["2 descriptions"] }`;
 
-Context: ${JSON.stringify(metricsContext)}
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.7,
+      response_format: { type: 'json_object' },
+    });
 
-Reason flagged: ${reason}
-${insightMessage ? `Insight: ${insightMessage}` : ''}
-
-Return JSON: { "variants": [{ "headline": "max 80 chars", "body": "max 200 chars" }] }
-Provide 3 fresh variants that address the issue (fatigue = new angle/photo hook; low CTR = stronger hook).
-Return ONLY valid JSON.`;
-
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.85,
-        response_format: { type: 'json_object' },
-      });
-
-      try {
-        const parsed = JSON.parse(completion.choices[0]?.message?.content || '{}');
-        if (Array.isArray(parsed.variants) && parsed.variants.length > 0) {
-          variants = parsed.variants.slice(0, 5);
-        }
-      } catch {
-        /* keep fallback */
-      }
+    let parsed: any = {};
+    try {
+      parsed = JSON.parse(completion.choices[0]?.message?.content || '{}');
+    } catch {
+      parsed = {};
     }
+
+    const suggestions = {
+      headlines: cleanGoogleText(parsed.headlines, GOOGLE_HEADLINE_MAX, true).slice(0, 6),
+      descriptions: cleanGoogleText(parsed.descriptions, GOOGLE_DESCRIPTION_MAX, false).slice(0, 2),
+    };
 
     return NextResponse.json({
       success: true,
       data: {
         promotionId,
-        metrics: metricsContext,
-        variants: variants.map((v) => ({
-          headline: String(v.headline || '').slice(0, 100),
-          body: String(v.body || '').slice(0, 250),
-        })),
+        diagnosis,
+        suggestions,
+        // New text goes into the live ad only for Google ads Oikaro created
+        canAddToAd: promo.platform === 'google' && Boolean(promo.google_ad_id) && promo.status !== 'ended',
       },
     } satisfies APIResponse);
   } catch (error: any) {

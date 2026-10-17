@@ -110,7 +110,7 @@ export default function AdDetailView({ ad, onOptimize, onClose, onStatusChanged 
           )}
           {onOptimize && (
             <Button size="sm" variant="outline" onClick={onOptimize}>
-              Optimize this ad
+              Check & improve
             </Button>
           )}
           {onClose && (

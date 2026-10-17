@@ -559,13 +559,11 @@ function AdsPageContent() {
           setOptimizePromotionId(null);
           setOptimizeInsight(null);
         }}
-        onApplied={() => {
-          setPageMessage({
-            type: 'success',
-            text: 'Optimized copy saved to your ad draft — switch to Create ad to review and publish.',
-          });
-          setTab('create');
+        onImproved={(text) => {
+          setPageMessage({ type: 'success', text });
+          void mutatePerformance();
         }}
+        onStartNewAd={() => setTab('create')}
       />
 
       </>

@@ -15,6 +15,7 @@ import {
   GoogleAdsApiError,
   mutateGoogleAds,
   normalizeCustomerId,
+  searchGoogleAds,
   suggestGeoTargets,
   type GoogleAdsAuth,
 } from '@/lib/ads/google-ads-api';
@@ -293,4 +294,62 @@ export async function setGoogleCampaignStatus(
     ],
     auth,
   );
+}
+
+/** Google's ceiling on a responsive search ad's text. */
+const MAX_AD_HEADLINES = 15;
+const MAX_AD_DESCRIPTIONS = 4;
+
+/**
+ * Add headlines/descriptions to a live ad in place, keeping what's already there,
+ * so Google keeps what it has learned instead of starting a new ad from scratch.
+ * Returns how many were actually added.
+ */
+export async function addGoogleAdText(
+  customerId: string,
+  adId: string,
+  additions: { headlines: string[]; descriptions: string[] },
+  auth: GoogleAdsAuth,
+): Promise<{ addedHeadlines: number; addedDescriptions: number }> {
+  const cid = normalizeCustomerId(customerId);
+  const rows = await searchGoogleAds<{
+    adGroupAd?: { ad?: { responsiveSearchAd?: { headlines?: { text?: string }[]; descriptions?: { text?: string }[] } } };
+  }>(
+    cid,
+    `SELECT ad_group_ad.ad.responsive_search_ad.headlines, ad_group_ad.ad.responsive_search_ad.descriptions
+     FROM ad_group_ad WHERE ad_group_ad.ad.id = ${Number(adId)}`,
+    auth,
+  );
+  const rsa = rows[0]?.adGroupAd?.ad?.responsiveSearchAd;
+  if (!rsa) throw new Error('Could not find this ad on Google.');
+
+  const merge = (current: { text?: string }[] = [], extra: string[], max: number) => {
+    const texts = current.map((t) => t.text ?? '').filter(Boolean);
+    const seen = new Set(texts.map((t) => t.toLowerCase()));
+    const added = extra.filter((t) => t && !seen.has(t.toLowerCase())).slice(0, Math.max(0, max - texts.length));
+    return { all: [...texts, ...added], added: added.length };
+  };
+  const headlines = merge(rsa.headlines, additions.headlines, MAX_AD_HEADLINES);
+  const descriptions = merge(rsa.descriptions, additions.descriptions, MAX_AD_DESCRIPTIONS);
+  if (headlines.added + descriptions.added === 0) return { addedHeadlines: 0, addedDescriptions: 0 };
+
+  await mutateGoogleAds(
+    cid,
+    [
+      {
+        adOperation: {
+          update: {
+            resourceName: `customers/${cid}/ads/${adId}`,
+            responsiveSearchAd: {
+              headlines: headlines.all.map((text) => ({ text })),
+              descriptions: descriptions.all.map((text) => ({ text })),
+            },
+          },
+          updateMask: 'responsive_search_ad.headlines,responsive_search_ad.descriptions',
+        },
+      },
+    ],
+    auth,
+  );
+  return { addedHeadlines: headlines.added, addedDescriptions: descriptions.added };
 }
