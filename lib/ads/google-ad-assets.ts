@@ -186,6 +186,31 @@ function buildHomeValueAssets(headline: string, body: string, city: string | nul
   };
 }
 
+/** The agent's own idea: their copy, the AI's search terms, and neutral supporting lines. */
+function buildCustomIdeaAssets(
+  headline: string,
+  body: string,
+  city: string | null,
+  keywords: string[],
+): GoogleSearchAdAssets {
+  return {
+    headlines: fitHeadlines([
+      headline,
+      ...packSentences(cleanAdText(body, true)).map((s) => s.replace(/[.?]$/, '')),
+      city ? `${city} Real Estate Agent` : 'Local Real Estate Agent',
+      'Talk to a Local Agent',
+      'Free Consultation',
+      'Licensed Real Estate Agent',
+      city ? `Serving ${city}` : 'Here to Help You Move',
+    ]),
+    descriptions: fitDescriptions(body, [
+      'Get clear answers and a plan that fits your goals. Reach out today.',
+      city ? `A local agent who knows ${city}. Contact me for a free consultation.` : '',
+    ]),
+    keywords: fitKeywords(keywords),
+  };
+}
+
 /** Build the ad's headlines, descriptions, and search keywords from the listing and the agent's copy. */
 export function buildGoogleSearchAdAssets(input: {
   adType: AdType | null;
@@ -194,10 +219,15 @@ export function buildGoogleSearchAdAssets(input: {
   listing: GoogleAdListing;
   /** For open house ads: when it is, e.g. `2026-10-18T13:00` */
   openHouseDate?: string | null;
+  /** For "your own idea" ads: the search terms from the AI review */
+  customKeywords?: string[];
 }): GoogleSearchAdAssets {
   const { adType, listing } = input;
   const city = listing.city ? cleanAdText(listing.city, true) : null;
   if (adType === 'home_value') return buildHomeValueAssets(input.headline, input.body, city);
+  if (adType === 'custom') {
+    return buildCustomIdeaAssets(input.headline, input.body, city, input.customKeywords ?? []);
+  }
   const isAgentAd = adType !== null && AGENT_AD_TYPES.includes(adType);
   const price = formatPrice(listing.price);
   const beds = listing.bedrooms ? `${listing.bedrooms} Bed` : null;
@@ -285,6 +315,10 @@ const LISTING_EXCLUDED = [
  * people who were never going to become a client.
  */
 export function buildNegativeKeywords(adType: AdType | null): string[] {
+  // An agent's own idea might legitimately be about rentals or freebies — only block jobs and portals
+  if (adType === 'custom') {
+    return ['jobs', 'job', 'salary', 'career', 'careers', 'hiring', 'license', 'course', 'courses', 'exam', 'zillow', 'redfin', 'trulia', 'realtor.com'];
+  }
   const isAgentAd = adType !== null && (AGENT_AD_TYPE_SET.has(adType) || adType === 'home_value');
   return isAgentAd ? [...ALWAYS_EXCLUDED, 'rent', 'rental', 'apartment'] : [...ALWAYS_EXCLUDED, ...LISTING_EXCLUDED];
 }

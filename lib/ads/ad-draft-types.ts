@@ -1,7 +1,9 @@
 import type { AdCtaType, AudiencePresetId } from '@/lib/ads/promotion-options';
+import type { AdIdeaReview } from '@/lib/ads/ad-idea';
 import type { AdPlatform } from '@/lib/ads/types';
 
 export type AdType =
+  | 'custom'
   | 'home_value'
   | 'new_listing'
   | 'open_house'
@@ -117,6 +119,11 @@ export interface AdDraft {
   };
   cta: AdCtaType;
   destination?: AdDestination;
+  /** "Your own idea" ads: what the agent described and the AI's review of it */
+  customIdea?: {
+    text: string;
+    review: AdIdeaReview | null;
+  };
   status: 'draft' | 'ready' | 'published';
   createdAt: string;
   updatedAt: string;
@@ -189,5 +196,5 @@ export function getPrimaryImage(draft: AdDraft): string | null {
 
 export function listingRequiredForAdType(adType: AdType | null): boolean {
   if (!adType) return false;
-  return !['home_value', 'agent_branding', 'market_update', 'testimonial'].includes(adType);
+  return !['custom', 'home_value', 'agent_branding', 'market_update', 'testimonial'].includes(adType);
 }

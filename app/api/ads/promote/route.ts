@@ -20,6 +20,7 @@ import {
 } from '@/lib/ads/promotion-options';
 import { resolvePromotionProjectId } from '@/lib/ads/resolve-promotion-project';
 import { buildAdLandingUrl } from '@/lib/ads/utm';
+import { sanitizeAdKeywords } from '@/lib/ads/ad-idea';
 import {
   isValidDestinationUrl,
   listingRequiredForAdType,
@@ -147,6 +148,18 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: `“${adTypeOption.label}” ads run on ${adTypeOption.platforms.map((p) => PLATFORM_NAMES[p]).join(' and ')}.`,
+        } satisfies APIResponse,
+        { status: 400 }
+      );
+    }
+
+    // "Your own idea" on Google needs search terms people actually type
+    const customKeywords = adType === 'custom' ? sanitizeAdKeywords(body.customKeywords) : [];
+    if (adType === 'custom' && platform === 'google' && customKeywords.length === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'This idea isn’t a fit for Google search ads — people don’t search for it. Try a different idea.',
         } satisfies APIResponse,
         { status: 400 }
       );
@@ -404,6 +417,7 @@ export async function POST(request: NextRequest) {
             listing,
             openHouseDate:
               typeof propertyDetails.openHouseDate === 'string' ? propertyDetails.openHouseDate : null,
+            customKeywords,
           }),
           audiencePreset,
           radiusMiles,

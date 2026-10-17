@@ -8,7 +8,7 @@
  *   ads that nobody searches for by name.
  */
 
-import { Calendar, Home, Sparkles, Tag, User, Calculator, type LucideIcon } from 'lucide-react';
+import { Calendar, Home, Sparkles, Tag, User, Calculator, Lightbulb, type LucideIcon } from 'lucide-react';
 import type { AdType } from '@/lib/ads/ad-draft-types';
 import type { AdPlatform } from '@/lib/ads/types';
 
@@ -106,6 +106,18 @@ export const AD_TYPE_OPTIONS: AdTypeOption[] = [
     suggestedDays: 14,
     tip: 'Aim it near the sold home — neighbors are the likeliest next sellers.',
   },
+  {
+    id: 'custom',
+    label: 'Your own idea',
+    description: 'Describe any ad — AI reviews it before you spend',
+    icon: Lightbulb,
+    goal: 'Your goal',
+    platforms: ['google', 'meta'],
+    minDailyCents: 1000,
+    suggestedDailyCents: 1500,
+    suggestedDays: 14,
+    tip: 'The AI review tells you whether the idea is likely to pay off and where it should run.',
+  },
 ];
 
 /** Types no longer offered, kept so older ads still show a readable name. */
@@ -194,6 +206,7 @@ export function getDefaultCtaForAdType(adType: AdType | null): 'LEARN_MORE' | 'C
       return 'GET_QUOTE';
     case 'agent_branding':
     case 'home_value':
+    case 'custom':
     case 'testimonial':
       return 'CONTACT_US';
     default:

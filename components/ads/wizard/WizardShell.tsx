@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import StepSidebar from '@/components/ads/wizard/StepSidebar';
 import AdTypeSelector from '@/components/ads/wizard/AdTypeSelector';
 import PropertyDetailsStep from '@/components/ads/wizard/PropertyDetailsStep';
+import CustomIdeaStep from '@/components/ads/wizard/CustomIdeaStep';
 import AICopyAssistStep from '@/components/ads/wizard/AICopyAssistStep';
 import PlatformTemplateStep from '@/components/ads/wizard/PlatformTemplateStep';
 import AudienceBudgetStep from '@/components/ads/wizard/AudienceBudgetStep';
@@ -141,6 +142,11 @@ export default function WizardShell({
         // A listing ad needs a listing or at least an address; photos are only needed for Meta
         if (draft.adType && listingRequiredForAdType(draft.adType) && !draft.projectId) {
           return Boolean(draft.propertyDetails.address);
+        }
+        // Your own idea: reviewed, and runnable somewhere that's available
+        if (draft.adType === 'custom') {
+          const review = draft.customIdea?.review;
+          return Boolean(review) && (review!.google.suitable || PLATFORM_AVAILABLE.meta);
         }
         // Ads about the agent target the city they serve
         if (draft.adType === 'home_value' || draft.adType === 'agent_branding') {
@@ -287,6 +293,7 @@ export default function WizardShell({
             destinationType: getDraftDestination(draft).type,
             destinationUrl: getDraftDestination(draft).customUrl.trim(),
             openHouseId: getDraftDestination(draft).openHouseId ?? null,
+            customKeywords: draft.customIdea?.review?.google.keywords ?? [],
             // Remember a pasted listing link on the listing for next time
             saveListingLink: listingRequiredForAdType(draft.adType) && Boolean(draft.projectId),
             callToAction: draft.cta,
@@ -334,7 +341,11 @@ export default function WizardShell({
           <AdTypeSelector value={draft.adType} onChange={handleAdType} readyPlatforms={readyPlatforms} />
         );
       case 'details':
-        return <PropertyDetailsStep draft={draft} onChange={patchDraft} />;
+        return draft.adType === 'custom' ? (
+          <CustomIdeaStep draft={draft} onChange={patchDraft} />
+        ) : (
+          <PropertyDetailsStep draft={draft} onChange={patchDraft} />
+        );
       case 'copy':
         return <AICopyAssistStep draft={draft} onChange={patchDraft} />;
       case 'platform':
@@ -393,7 +404,9 @@ export default function WizardShell({
             <p className="text-[11px] font-mono text-gray-600 uppercase tracking-wide">
               Step {currentIndex + 1} of {WIZARD_STEPS.length}
             </p>
-            <h2 className="text-[15px] font-semibold text-gray-900 mt-0.5">{stepMeta.label}</h2>
+            <h2 className="text-[15px] font-semibold text-gray-900 mt-0.5">
+              {currentStep === 'details' && draft.adType === 'custom' ? 'Your idea' : stepMeta.label}
+            </h2>
           </div>
           {draftSavedHint && (
             <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 font-medium">

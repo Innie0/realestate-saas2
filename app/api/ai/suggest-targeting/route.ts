@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase-server';
 import type { AdType } from '@/lib/ads/ad-draft-types';
 
 const VALID_TYPES = new Set([
+  'custom',
   'home_value',
   'new_listing',
   'open_house',
@@ -27,7 +28,7 @@ function suggestTargeting(adType: string, details: Record<string, string | numbe
   let dailyAmountCents = option?.suggestedDailyCents ?? 2000;
   let note = option?.tip ?? 'Balanced reach for a typical ad.';
 
-  if (adType === 'home_value' || adType === 'agent_branding') {
+  if (adType === 'home_value' || adType === 'agent_branding' || adType === 'custom') {
     preset = 'city';
     radiusMiles = 20;
   } else if (adType === 'just_sold') {

@@ -25,6 +25,7 @@ export function googleAssetsFromDraft(draft: AdDraft): GoogleSearchAdAssets {
     headline,
     body,
     openHouseDate: text(d.openHouseDate),
+    customKeywords: draft.customIdea?.review?.google.keywords ?? [],
     listing: {
       address: text(d.address),
       city: text(d.city),

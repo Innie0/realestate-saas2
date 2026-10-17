@@ -7,6 +7,7 @@ import type { AdType } from '@/lib/ads/ad-draft-types';
 import { consumeDailyAiAllowance, DAILY_AI_CAP_MESSAGE } from '@/lib/usage';
 
 const VALID_TYPES = new Set([
+  'custom',
   'home_value',
   'new_listing',
   'open_house',
@@ -112,10 +113,10 @@ export async function POST(request: NextRequest) {
 
 Ad type: ${getAdTypeLabel(adType)}
 Goal: ${getAdTypeOption(adType)?.goal ?? 'Leads'}${adType === 'home_value' ? ' — offer a free home value report to homeowners thinking of selling; do not state a price or promise a value.' : ''}${adType === 'agent_branding' ? ' — introduce the agent to people looking for help buying or selling; if a client review is provided, you may paraphrase it.' : ''}
-Property/details: ${JSON.stringify(propertyDetails)}
+Property/details: ${JSON.stringify(propertyDetails)}${adType === 'custom' ? '\nThe agent\'s own ad idea (follow it closely): ' + String(propertyDetails.customIdea ?? '').slice(0, 600) : ''}
 Tone: ${toneHint}
 
-Return exactly 4 variants as JSON array: [{ "headline": "max 80 chars", "body": "max 200 chars" }]
+Return a JSON object with exactly 4 variants: { "variants": [{ "headline": "max 80 chars", "body": "max 200 chars" }] }
 Headlines should be compelling and specific. Bodies should include a clear call to action.
 Follow fair-housing rules: describe the property and its features, never who should live there
 (no "perfect for families", ages, religion, or similar), and make no claims about a neighborhood
