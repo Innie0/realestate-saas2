@@ -4,6 +4,7 @@ import { ExternalLink, Loader2, RefreshCw, Unplug } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import GoogleAccountPicker from '@/components/ads/GoogleAccountPicker';
+import { PLATFORM_AVAILABLE } from '@/lib/ads/ad-type-config';
 import type { AdPlatform, AdPlatformConnection } from '@/lib/ads/types';
 import { getConnectionStatus, type AdConnectionStatus } from '@/lib/ads/connection-status';
 import { getAdAccountSetupLabel, getAdAccountSetupUrl, getExternalAdsUrl } from '@/lib/ads/urls';
@@ -116,7 +117,13 @@ export default function AdsConnectionsPanel({
               <div className="min-w-0 flex-1">
                 <div className="flex flex-col items-start gap-1.5 sm:flex-row sm:items-start sm:justify-between sm:gap-2">
                   <h3 className="text-[13px] font-semibold text-gray-900">{platform.name}</h3>
-                  <StatusBadge status={status} />
+                  {PLATFORM_AVAILABLE[platform.id] || conn ? (
+                    <StatusBadge status={status} />
+                  ) : (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-[10.5px] font-medium text-gray-700 border border-gray-200">
+                      Coming soon
+                    </span>
+                  )}
                 </div>
                 <p className="text-caption text-gray-700 mt-1">{platform.description}</p>
                 {conn && (
@@ -203,6 +210,10 @@ export default function AdsConnectionsPanel({
                         </a>
                       )}
                     </>
+                  ) : !PLATFORM_AVAILABLE[platform.id] ? (
+                    <p className="text-[12px] text-gray-600">
+                      Coming soon — we’re finishing approval with Meta.
+                    </p>
                   ) : (
                     <Button
                       size="sm"

@@ -31,6 +31,7 @@ import {
   getAdTypeOption,
   getDefaultCtaForAdType,
   isPlatformAllowedForAdType,
+  PLATFORM_AVAILABLE,
 } from '@/lib/ads/ad-type-config';
 import { applyInsightSeeds } from '@/lib/ads/insight-seeds';
 import type { AIInsight } from '@/lib/ads/performance-types';
@@ -193,7 +194,7 @@ export default function WizardShell({
     const option = getAdTypeOption(adType);
     const changed = adType !== draft.adType;
     // Only the platforms this ad type works on; connected ones first
-    const allowed = option?.platforms ?? [];
+    const allowed = (option?.platforms ?? []).filter((p) => isPlatformAllowedForAdType(adType, p));
     const platforms = allowed.filter((p) => readyPlatforms.includes(p));
     // Start from the duration closest to what this ad type needs
     const durationDays = option
@@ -235,7 +236,7 @@ export default function WizardShell({
       return;
     }
 
-    if (wantsMeta && !metaConnected && !(wantsGoogle && googleReady)) {
+    if (wantsMeta && PLATFORM_AVAILABLE.meta && !metaConnected && !(wantsGoogle && googleReady)) {
       onConnectMeta();
       return;
     }

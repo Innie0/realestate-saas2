@@ -2,9 +2,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getMetaAdsAuthUrl, isMetaAdsConfigured } from '@/lib/ads/meta-ads-oauth';
 import { APIResponse } from '@/types';
+import { PLATFORM_AVAILABLE } from '@/lib/ads/ad-type-config';
 
 export async function POST(request: NextRequest) {
   try {
+    if (!PLATFORM_AVAILABLE.meta) {
+      return NextResponse.json(
+        { success: false, error: 'Facebook & Instagram ads are coming soon.' } satisfies APIResponse,
+        { status: 503 }
+      );
+    }
+
     if (!isMetaAdsConfigured()) {
       return NextResponse.json(
         {

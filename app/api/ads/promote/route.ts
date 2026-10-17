@@ -28,6 +28,7 @@ import {
 import {
   getAdTypeOption,
   isPlatformAllowedForAdType,
+  PLATFORM_AVAILABLE,
   PLATFORM_NAMES,
 } from '@/lib/ads/ad-type-config';
 import { buildAgentProfilePath, buildBookingPath } from '@/lib/agent-profile-shared';
@@ -131,6 +132,12 @@ export async function POST(request: NextRequest) {
     if (!adTypeOption) {
       return NextResponse.json(
         { success: false, error: 'Choose one of the available ad types.' } satisfies APIResponse,
+        { status: 400 }
+      );
+    }
+    if (!PLATFORM_AVAILABLE[platform]) {
+      return NextResponse.json(
+        { success: false, error: `${PLATFORM_NAMES[platform]} ads are coming soon.` } satisfies APIResponse,
         { status: 400 }
       );
     }

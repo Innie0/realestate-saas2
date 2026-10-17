@@ -122,8 +122,18 @@ export function getAdTypeOption(adType: AdType | null): AdTypeOption | undefined
 /** Whether the builder offers this ad type on this platform. */
 export function isPlatformAllowedForAdType(adType: AdType | null, platform: AdPlatform): boolean {
   const option = getAdTypeOption(adType);
-  return option ? option.platforms.includes(platform) : false;
+  return option ? option.platforms.includes(platform) && PLATFORM_AVAILABLE[platform] : false;
 }
+
+/**
+ * Platforms agents can publish to today. Facebook & Instagram is "coming soon"
+ * until Meta approves Oikaro's app — flip `meta` to true to bring it back
+ * everywhere (connect button, builder, publishing).
+ */
+export const PLATFORM_AVAILABLE: Record<AdPlatform, boolean> = {
+  google: true,
+  meta: false,
+};
 
 export const PLATFORM_NAMES: Record<AdPlatform, string> = {
   google: 'Google',

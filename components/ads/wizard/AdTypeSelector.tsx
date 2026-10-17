@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import { AD_TYPE_OPTIONS, PLATFORM_NAMES } from '@/lib/ads/ad-type-config';
+import { AD_TYPE_OPTIONS, PLATFORM_AVAILABLE, PLATFORM_NAMES } from '@/lib/ads/ad-type-config';
 import type { AdType } from '@/lib/ads/ad-draft-types';
 import type { AdPlatform } from '@/lib/ads/types';
 
@@ -19,13 +19,15 @@ export default function AdTypeSelector({ value, onChange, readyPlatforms }: AdTy
         const Icon = option.icon;
         const selected = value === option.id;
         const canPublishNow = option.platforms.some((p) => readyPlatforms.includes(p));
+        const comingSoon = !option.platforms.some((p) => PLATFORM_AVAILABLE[p]);
         return (
           <button
             key={option.id}
             type="button"
             onClick={() => onChange(option.id)}
+            disabled={comingSoon}
             className={clsx(
-              'flex items-start gap-3 rounded-[10px] border p-4 text-left transition-colors duration-150',
+              'flex items-start gap-3 rounded-[10px] border p-4 text-left transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60',
               selected
                 ? 'border-brand-500 bg-brand-50/40 ring-1 ring-brand-500/20'
                 : 'border-gray-200 bg-[var(--surface)] hover:border-gray-300 hover:bg-gray-50/50'
@@ -50,12 +52,22 @@ export default function AdTypeSelector({ value, onChange, readyPlatforms }: AdTy
               </div>
               <p className="text-caption text-gray-700 mt-0.5">{option.description}</p>
               <p className="mt-1.5 text-[11px] text-gray-600">
-                {option.goal} · {option.platforms.map((p) => PLATFORM_NAMES[p]).join(' + ')}
+                {option.goal} ·{' '}
+                {option.platforms
+                  .filter((p) => PLATFORM_AVAILABLE[p] || comingSoon)
+                  .map((p) => PLATFORM_NAMES[p])
+                  .join(' + ')}
               </p>
-              {!canPublishNow && (
+              {comingSoon ? (
+                <p className="mt-1 text-[11px] text-gray-600">Coming soon</p>
+              ) : !canPublishNow && (
                 <p className="mt-1 text-[11px] text-amber-700">
-                  Available once {option.platforms.map((p) => PLATFORM_NAMES[p]).join(' or ')} is
-                  connected
+                  Available once{' '}
+                  {option.platforms
+                    .filter((p) => PLATFORM_AVAILABLE[p])
+                    .map((p) => PLATFORM_NAMES[p])
+                    .join(' or ')}{' '}
+                  is connected
                 </p>
               )}
             </div>

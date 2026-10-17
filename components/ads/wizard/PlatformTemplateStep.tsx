@@ -15,7 +15,12 @@ import {
   type AdDraft,
 } from '@/lib/ads/ad-draft-types';
 import type { AdPlatform } from '@/lib/ads/types';
-import { getAdTypeOption, isPlatformAllowedForAdType, PLATFORM_NAMES } from '@/lib/ads/ad-type-config';
+import {
+  getAdTypeOption,
+  isPlatformAllowedForAdType,
+  PLATFORM_AVAILABLE,
+  PLATFORM_NAMES,
+} from '@/lib/ads/ad-type-config';
 
 interface PlatformTemplateStepProps {
   draft: AdDraft;
@@ -77,7 +82,9 @@ export default function PlatformTemplateStep({
   const metaAllowed = isPlatformAllowedForAdType(draft.adType, 'meta');
   const googleAllowed = isPlatformAllowedForAdType(draft.adType, 'google');
 
-  const metaHint = !metaAllowed
+  const metaHint = !PLATFORM_AVAILABLE.meta
+    ? 'Coming soon'
+    : !metaAllowed
     ? 'Not used for this ad type'
     : metaReady
       ? 'Facebook & Instagram'
@@ -212,7 +219,7 @@ export default function PlatformTemplateStep({
             <span className="block text-[10px] font-normal text-gray-700 mt-0.5">{googleHint}</span>
           </button>
         </div>
-        {adTypeOption && adTypeOption.platforms.length === 1 && (
+        {adTypeOption && adTypeOption.platforms.length === 1 && PLATFORM_AVAILABLE[adTypeOption.platforms[0]] && (
           <p className="mt-2 text-[12px] text-gray-600">
             “{adTypeOption.label}” ads run on {PLATFORM_NAMES[adTypeOption.platforms[0]]} only.{' '}
             {adTypeOption.tip}

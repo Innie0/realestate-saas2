@@ -352,7 +352,7 @@ function AdsPageContent() {
                 children: (
                   <div className="space-y-3">
                     <p className="text-[12px] leading-relaxed text-muted-foreground">
-                      Connect Meta or Google Ads to publish ads.
+                      Connect Google Ads to publish ads. Facebook &amp; Instagram are coming soon.
                     </p>
                     <AdsConnectionsPanel
                       className="md:grid-cols-2"
