@@ -151,8 +151,12 @@ function CalendarPageContent() {
       const data = await response.json();
       if (data.success) {
         void globalMutate(calendarEventsPrefetchUrl());
-        if (!silent) setTimeout(() => setRefreshing(false), 1000);
+        if (!silent) {
+          setPageMessage({ type: 'success', text: data.message || 'Calendar synced.' });
+          setTimeout(() => setRefreshing(false), 1000);
+        }
       } else if (!silent) {
+        setPageMessage({ type: 'error', text: data.error || 'Couldn’t sync your calendar.' });
         setRefreshing(false);
       }
     } catch (error) {

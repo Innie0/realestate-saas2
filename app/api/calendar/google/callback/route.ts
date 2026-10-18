@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { exchangeGoogleCode, getGoogleCalendarEvents, getGoogleUserInfo } from '@/lib/google-calendar';
 import { createClient } from '@/lib/supabase-server';
+import { syncGoogleCalendarIntoOikaro } from '@/lib/calendar-sync';
 
 /**
  * GET handler - Handle Google OAuth callback
@@ -103,52 +104,17 @@ export async function GET(request: NextRequest) {
 
     console.log('✅ Calendar connection saved to database');
 
-    // Trigger initial sync (import existing events from Google Calendar)
+    // Import existing events from Google Calendar
     try {
-      // Fetch events from 3 months ago to 6 months in the future
-      const startDate = new Date();
-      startDate.setMonth(startDate.getMonth() - 3);
-      const endDate = new Date();
-      endDate.setMonth(endDate.getMonth() + 6);
-
-      const eventsResult = await getGoogleCalendarEvents(
-        result.tokens.access_token,
-        startDate,
-        endDate
-      );
-
-      if (eventsResult.success && eventsResult.events) {
-        console.log(`✅ Fetched ${eventsResult.events.length} events from Google Calendar`);
-        
-        // Import events to database
-        let importedCount = 0;
-        for (const event of eventsResult.events) {
-          const { data, error: eventError } = await supabase.from('calendar_events').upsert({
-            user_id: user.id,
-            title: event.title,
-            description: event.description,
-            start_time: event.start_time,
-            end_time: event.end_time,
-            location: event.location,
-            event_type: 'other',
-            google_event_id: event.id,
-          }, {
-            onConflict: 'google_event_id',
-            ignoreDuplicates: false, // Allow updates to existing events
-          })
-          .select();
-          
-          if (eventError) {
-            console.error(`❌ Failed to import event "${event.title}":`, eventError);
-          } else {
-            importedCount++;
-            console.log(`✅ Imported: ${event.title}`);
-          }
-        }
-        
-        console.log(`✅ Imported ${importedCount} events to database`);
-      } else {
-        console.log('⚠️ No events fetched from Google Calendar');
+      const { data: connection } = await supabase
+        .from('calendar_connections')
+        .select('id, access_token, refresh_token, token_expiry')
+        .eq('user_id', user.id)
+        .eq('provider', 'google')
+        .maybeSingle();
+      if (connection) {
+        const synced = await syncGoogleCalendarIntoOikaro(supabase, user.id, connection);
+        if (synced.error) console.error('Initial Google Calendar sync failed:', synced.error);
       }
     } catch (syncError) {
       console.error('❌ Initial sync failed:', syncError);

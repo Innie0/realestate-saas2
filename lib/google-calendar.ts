@@ -142,20 +142,29 @@ export async function getGoogleCalendarEvents(
   const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
   
   try {
-    const response = await calendar.events.list({
-      calendarId: 'primary',
-      timeMin: startDate.toISOString(),
-      timeMax: endDate.toISOString(),
-      singleEvents: true,
-      orderBy: 'startTime',
-    });
-    
-    const events = response.data.items || [];
-    
+    // Google returns events a page at a time; read every page so nothing is missed
+    const items: NonNullable<Awaited<ReturnType<typeof calendar.events.list>>['data']['items']> = [];
+    let pageToken: string | undefined;
+    do {
+      const response = await calendar.events.list({
+        calendarId: 'primary',
+        timeMin: startDate.toISOString(),
+        timeMax: endDate.toISOString(),
+        singleEvents: true,
+        orderBy: 'startTime',
+        maxResults: 2500,
+        pageToken,
+      });
+      items.push(...(response.data.items || []));
+      pageToken = response.data.nextPageToken || undefined;
+    } while (pageToken);
+
+    const events = items.filter((event) => event.status !== 'cancelled' && event.id);
+
     return {
       success: true,
       events: events.map(event => ({
-        id: event.id,
+        id: event.id as string,
         title: event.summary || 'Untitled Event',
         description: event.description,
         start_time: event.start?.dateTime || event.start?.date || '',
@@ -165,8 +174,11 @@ export async function getGoogleCalendarEvents(
     };
   } catch (error: any) {
     console.error('Get Google Calendar events error:', error);
+    const status = error?.code ?? error?.response?.status;
     return {
       success: false,
+      // 401 means the saved login expired or was revoked
+      unauthorized: status === 401,
       error: error.message || 'Failed to fetch calendar events',
     };
   }

@@ -3,7 +3,7 @@
 // Sync events from connected calendars (Google/Outlook)
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getGoogleCalendarEvents, refreshGoogleToken } from '@/lib/google-calendar';
+import { syncGoogleCalendarIntoOikaro } from '@/lib/calendar-sync';
 import { APIResponse } from '@/types';
 import { createClient } from '@/lib/supabase-server';
 
@@ -36,97 +36,42 @@ export async function POST(request: NextRequest) {
       throw new Error('Failed to fetch calendar connections');
     }
 
-    // Define sync period (e.g., 3 months back, 6 months forward)
-    const startDate = new Date();
-    startDate.setMonth(startDate.getMonth() - 3);
-    const endDate = new Date();
-    endDate.setMonth(endDate.getMonth() + 6);
-
-    let syncedCount = 0;
+    let added = 0;
+    let updated = 0;
+    let removed = 0;
     const errors: string[] = [];
 
-    // For each connection, fetch and sync events
     for (const connection of connections || []) {
+      // Outlook sync isn't built yet
+      if (connection.provider !== 'google') continue;
       try {
-        let accessToken = connection.access_token;
-        
-        // Check if token is expired and refresh if needed
-        if (connection.provider === 'google' && connection.token_expiry) {
-          const expiryDate = new Date(connection.token_expiry);
-          const now = new Date();
-          
-          // Refresh if token expires in less than 5 minutes
-          if (expiryDate.getTime() - now.getTime() < 5 * 60 * 1000) {
-            console.log('Refreshing Google access token...');
-            const refreshResult = await refreshGoogleToken(connection.refresh_token || '');
-            
-            if (refreshResult.success) {
-              accessToken = refreshResult.access_token;
-              
-              // Update token in database
-              await supabase
-                .from('calendar_connections')
-                .update({
-                  access_token: accessToken,
-                  token_expiry: refreshResult.expiry_date ? new Date(refreshResult.expiry_date).toISOString() : new Date().toISOString(),
-                })
-                .eq('id', connection.id);
-            }
-          }
-        }
-
-        // Fetch events from Google Calendar
-        if (connection.provider === 'google') {
-          const result = await getGoogleCalendarEvents(
-            accessToken,
-            startDate,
-            endDate
-          );
-          
-          if (result.success && result.events) {
-            // Store or update events in database
-            for (const event of result.events) {
-              const { data, error: upsertError } = await supabase
-                .from('calendar_events')
-                .upsert({
-                  user_id: user.id,
-                  title: event.title,
-                  description: event.description,
-                  start_time: event.start_time,
-                  end_time: event.end_time,
-                  location: event.location,
-                  event_type: 'other',
-                  google_event_id: event.id,
-                  updated_at: new Date().toISOString(),
-                }, {
-                  onConflict: 'google_event_id',
-                  ignoreDuplicates: false, // Update existing events
-                })
-                .select();
-
-              if (upsertError) {
-                console.error(`❌ Sync error for "${event.title}":`, upsertError.message);
-                errors.push(`Event "${event.title}": ${upsertError.message}`);
-              } else {
-                syncedCount++;
-              }
-            }
-          }
-        }
-        // Add Outlook support here later if needed
+        const result = await syncGoogleCalendarIntoOikaro(supabase, user.id, connection);
+        added += result.added;
+        updated += result.updated;
+        removed += result.removed;
+        if (result.error) errors.push(result.error);
       } catch (error: any) {
-        console.error(`Sync error for ${connection.provider}:`, error);
-        errors.push(`${connection.provider}: ${error.message}`);
+        console.error('Google Calendar sync error:', error);
+        errors.push('Couldn’t sync Google Calendar. Please try again.');
       }
     }
 
+    if (errors.length > 0) {
+      return NextResponse.json(
+        { success: false, error: errors[0], data: { added, updated, removed } } satisfies APIResponse,
+        { status: 502 }
+      );
+    }
+
+    const changes = [
+      added ? `${added} added` : '',
+      updated ? `${updated} updated` : '',
+      removed ? `${removed} removed` : '',
+    ].filter(Boolean);
     const response: APIResponse = {
       success: true,
-      message: `Successfully synced ${syncedCount} events`,
-      data: {
-        synced: syncedCount,
-        errors: errors.length > 0 ? errors : undefined,
-      },
+      message: changes.length ? `Google Calendar synced: ${changes.join(', ')}.` : 'Google Calendar is up to date.',
+      data: { added, updated, removed },
     };
 
     return NextResponse.json(response);
