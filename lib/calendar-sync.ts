@@ -148,11 +148,30 @@ export async function syncGoogleCalendarIntoOikaro(
     const { error, count } = await supabase
       .from('calendar_events')
       .insert(toInsert, { count: 'exact' });
-    if (error) {
-      console.error('Calendar sync insert error:', error.message);
-      return { added: 0, updated, removed: 0, error: 'Couldn’t save some Google events. Please try again.' };
+    if (!error) {
+      added = count ?? toInsert.length;
+    } else {
+      // Save what we can so one bad event doesn't hold back the rest
+      console.error('Calendar sync insert error:', error.code, error.message);
+      let failed = 0;
+      for (const row of toInsert) {
+        const { error: rowError } = await supabase.from('calendar_events').insert(row);
+        if (rowError) {
+          failed++;
+          console.error('Calendar sync event not saved:', rowError.code, rowError.message);
+        } else {
+          added++;
+        }
+      }
+      if (failed > 0) {
+        return {
+          added,
+          updated,
+          removed: 0,
+          error: `Couldn’t save ${failed} Google event${failed === 1 ? '' : 's'}. Please try again.`,
+        };
+      }
     }
-    added = count ?? toInsert.length;
   }
 
   // Events deleted in Google: linked rows in the synced window that Google no longer returns
