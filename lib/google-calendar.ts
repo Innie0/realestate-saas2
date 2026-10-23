@@ -28,8 +28,8 @@ export function getGoogleAuthUrl() {
   const oauth2Client = getGoogleOAuthClient();
   
   const scopes = [
-    'https://www.googleapis.com/auth/calendar.readonly',
-    'https://www.googleapis.com/auth/calendar.events',
+    // Least privilege: Oikaro only reads and writes events on the user's own primary calendar
+    'https://www.googleapis.com/auth/calendar.events.owned',
     'https://www.googleapis.com/auth/userinfo.email', // Get user's Google email
   ];
 

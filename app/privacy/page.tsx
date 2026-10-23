@@ -241,8 +241,7 @@ export default function PrivacyPage() {
               </ul>
               <p className="text-mkt-secondary leading-relaxed mb-2"><strong>Scopes requested:</strong></p>
               <ul className="list-disc list-inside text-mkt-secondary space-y-2 mb-4">
-                <li><code className="text-mkt-secondary">calendar.readonly</code> - Read your calendar events to display and check for conflicts</li>
-                <li><code className="text-mkt-secondary">calendar.events</code> - Create and modify calendar events for showings and meetings</li>
+                <li><code className="text-mkt-secondary">calendar.events.owned</code> - See, create, change, and delete events on calendars you own, so your Google events show in Oikaro and the showings and meetings you add in Oikaro appear in Google Calendar</li>
                 <li><code className="text-mkt-secondary">userinfo.email</code> - Identify you during sign-in</li>
                 <li><code className="text-mkt-secondary">adwords</code> - Access the Google Ads accounts you choose to connect, to show campaign performance and to create or update campaigns only when you request it</li>
               </ul>
