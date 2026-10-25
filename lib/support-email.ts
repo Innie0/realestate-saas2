@@ -16,5 +16,6 @@ export function getSupportFrom(): string {
 /** @deprecated Use getSupportFrom() so RESEND_FROM env is respected at runtime. */
 export const SUPPORT_FROM = 'Oikaro <noreply@oikaro.com>';
 
-export const LEGAL_EMAIL = 'legal@oikaro.com';
-export const PRIVACY_EMAIL = 'privacy@oikaro.com';
+/** Legal and privacy requests go to the same monitored inbox. */
+export const LEGAL_EMAIL = SUPPORT_EMAIL;
+export const PRIVACY_EMAIL = SUPPORT_EMAIL;

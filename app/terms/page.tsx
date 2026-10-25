@@ -468,8 +468,7 @@ export default function TermsPage() {
                 If you have questions about these Terms, please contact us:
               </p>
               <div className="legal-callout">
-                <p><strong>Email:</strong> legal@oikaro.com</p>
-                <p><strong>Support:</strong> support@oikaro.com</p>
+                <p><strong>Email:</strong> support@oikaro.com</p>
               </div>
             </section>
 

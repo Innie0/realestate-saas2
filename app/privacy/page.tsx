@@ -441,14 +441,14 @@ export default function PrivacyPage() {
               <ul className="list-disc list-inside text-mkt-secondary space-y-2 mb-4">
                 <li>Disconnect Google Ads at any time from the Ads page</li>
                 <li>Revoke access via your Google Account settings</li>
-                <li>Request deletion of stored Google Ads data by contacting privacy@oikaro.com</li>
+                <li>Request deletion of stored Google Ads data by contacting support@oikaro.com</li>
               </ul>
 
               <h3 className="font-display text-xl font-medium tracking-[-0.01em] text-mkt-foreground mb-3 mt-6">How to Exercise Your Rights</h3>
               <ul className="list-disc list-inside text-mkt-secondary space-y-2 mb-4">
                 <li><strong>Update data:</strong> Use your account Settings page</li>
-                <li><strong>Delete account:</strong> Contact us at privacy@oikaro.com</li>
-                <li><strong>Data export:</strong> Contact us at privacy@oikaro.com</li>
+                <li><strong>Delete account:</strong> Contact us at support@oikaro.com</li>
+                <li><strong>Data export:</strong> Contact us at support@oikaro.com</li>
                 <li><strong>Questions:</strong> Email us at support@oikaro.com or use our <Link href="/contact">contact form</Link></li>
               </ul>
             </section>
@@ -529,8 +529,7 @@ export default function PrivacyPage() {
                 For privacy-related questions or to exercise your rights:
               </p>
               <div className="legal-callout">
-                <p><strong>Email:</strong> privacy@oikaro.com</p>
-                <p><strong>Support:</strong> support@oikaro.com</p>
+                <p><strong>Email:</strong> support@oikaro.com</p>
                 <p><strong>Response time:</strong> We aim to respond within 30 days</p>
               </div>
             </section>
