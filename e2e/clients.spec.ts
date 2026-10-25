@@ -14,7 +14,7 @@ test.describe('Clients', () => {
     await page.getByLabel('Email').fill(email);
     await page.getByRole('button', { name: /create client/i }).click();
 
-    await expect(page.getByText(originalName)).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByText(originalName).filter({ visible: true })).toBeVisible({ timeout: 20_000 });
 
     const listRes = await apiJson(request, 'GET', '/api/clients?status=all');
     const created = (listRes.json.data as { id: string; name: string }[]).find(

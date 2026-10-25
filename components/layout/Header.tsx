@@ -114,7 +114,7 @@ export default function Header({ title, subtitle, eyebrow, actions, inline = fal
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-[var(--canvas)]/95 backdrop-blur-md">
       <div className={hero ? 'px-4 py-4 sm:px-7 sm:py-5' : 'px-4 py-2.5 sm:h-[52px] sm:px-7 sm:py-0'}>
-        <div className="flex h-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex h-full flex-wrap items-center gap-x-3 gap-y-2 sm:flex-nowrap sm:justify-between">
           {hero ? (
             <div className="min-w-0 flex-1">
               {eyebrow ? (
@@ -128,7 +128,7 @@ export default function Header({ title, subtitle, eyebrow, actions, inline = fal
               ) : null}
             </div>
           ) : inline ? (
-            <div className="flex min-w-0 flex-1 items-baseline gap-2.5">
+            <div className="flex min-w-0 flex-1 flex-col sm:flex-row sm:items-baseline sm:gap-2.5">
               <h1 className={titleClass}>{title}</h1>
               {subtitle && <span className={subtitleInlineClass}>{subtitle}</span>}
             </div>
@@ -141,12 +141,14 @@ export default function Header({ title, subtitle, eyebrow, actions, inline = fal
             </div>
           )}
 
-          <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
-            {actions && (
-              <div className="flex flex-wrap items-center gap-2">{actions}</div>
-            )}
+          {/* Phones: title and bell share the top row, actions wrap to their own row below */}
+          {actions && (
+            <div className="order-last flex w-full flex-wrap items-center gap-2 sm:order-none sm:w-auto sm:shrink-0">
+              {actions}
+            </div>
+          )}
 
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
               <UsageStatusPill className="hidden sm:inline-flex" />
           {/* Notifications button */}
           <div className="relative" ref={notificationRef}>
@@ -164,7 +166,7 @@ export default function Header({ title, subtitle, eyebrow, actions, inline = fal
 
             {/* Notifications dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 max-h-[32rem] w-96 overflow-y-auto rounded-xl bg-card shadow-overlay ring-1 ring-border">
+              <div className="absolute right-0 mt-2 max-h-[32rem] w-[calc(100vw-2rem)] max-w-96 overflow-y-auto rounded-xl bg-card shadow-overlay ring-1 ring-border">
                 <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-xl border-b border-border bg-card px-5 py-3.5">
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold tracking-tight text-foreground text-sm">Notifications</h3>
@@ -273,7 +275,6 @@ export default function Header({ title, subtitle, eyebrow, actions, inline = fal
             )}
           </div>
             </div>
-          </div>
         </div>
       </div>
     </header>

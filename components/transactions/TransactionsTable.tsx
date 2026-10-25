@@ -40,7 +40,42 @@ function closingLabel(transaction: TransactionWithDetails): string | null {
 
 export default function TransactionsTable({ transactions }: TransactionsTableProps) {
   return (
-    <Card className="overflow-hidden border-border p-0 shadow-none">
+    <>
+    {/* Phones: one card per deal instead of a wide table */}
+    <Card className="divide-y divide-border overflow-hidden border-border p-0 shadow-none sm:hidden">
+      {transactions.map((transaction) => {
+        const closing = closingLabel(transaction);
+        const location = [transaction.property_city, transaction.property_state].filter(Boolean).join(', ');
+        return (
+          <Link
+            key={transaction.id}
+            href={`/dashboard/transactions/${transaction.id}`}
+            className="block px-4 py-3 active:bg-muted/40"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-foreground">{transaction.property_address}</p>
+                {location ? <p className="truncate text-xs text-muted-foreground">{location}</p> : null}
+              </div>
+              <TransactionStatusBadge status={transaction.status} />
+            </div>
+            <div className="mt-1.5 flex items-center gap-3 text-xs text-muted-foreground">
+              <span className="font-semibold tabular-nums text-foreground">{formatCurrency(transaction.offer_price)}</span>
+              {closing ? (
+                <span className="inline-flex items-center gap-1">
+                  <Calendar className="size-3" />
+                  {closing}
+                </span>
+              ) : null}
+              <span className="tabular-nums">
+                {transaction.completed_items_count ?? 0}/{transaction.total_items_count ?? 0} tasks
+              </span>
+            </div>
+          </Link>
+        );
+      })}
+    </Card>
+    <Card className="hidden overflow-hidden border-border p-0 shadow-none sm:block">
       <div className="overflow-x-auto">
         <Table className="min-w-[880px]">
           <TableHeader>
@@ -117,5 +152,6 @@ export default function TransactionsTable({ transactions }: TransactionsTablePro
         </Table>
       </div>
     </Card>
+    </>
   );
 }

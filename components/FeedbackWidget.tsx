@@ -65,7 +65,7 @@ export default function FeedbackWidget() {
     <>
       {/* Feedback panel — shows regardless of dismissed state */}
       {open && (
-        <div className={`fixed ${dismissed ? 'bottom-16' : 'bottom-28'} right-6 z-50 w-80 rounded-[10px] border border-gray-200 bg-[var(--surface)] overflow-hidden`}>
+        <div className={`fixed ${dismissed ? 'bottom-16' : 'bottom-20 sm:bottom-28'} left-4 right-4 z-50 sm:left-auto sm:right-6 sm:w-80 rounded-[10px] border border-gray-200 bg-[var(--surface)] overflow-hidden`}>
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
             <span className="text-sm font-semibold text-gray-900">Share Feedback</span>
@@ -140,7 +140,7 @@ export default function FeedbackWidget() {
       )}
 
       {/* Floating button — hidden when dismissed */}
-      {!dismissed && <div className="fixed bottom-14 right-6 z-50 flex items-center gap-2">
+      {!dismissed && <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 sm:bottom-14 sm:right-6">
         {/* X dismiss button */}
         {!open && (
           <button
@@ -154,10 +154,11 @@ export default function FeedbackWidget() {
 
         <button
           onClick={() => setOpen((prev) => !prev)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-brand-500 text-[var(--brand-foreground)] text-sm font-semibold hover:bg-brand-600 transition-colors"
+          aria-label="Feedback"
+          className="flex items-center gap-2 rounded-full p-3 shadow-md sm:rounded-lg sm:px-4 sm:py-2.5 sm:shadow-none bg-brand-500 text-[var(--brand-foreground)] text-sm font-semibold hover:bg-brand-600 transition-colors"
         >
           <MessageSquare className="w-4 h-4" />
-          Feedback
+          <span className="hidden sm:inline">Feedback</span>
         </button>
       </div>}
     </>

@@ -326,27 +326,27 @@ function OpenDealsTable({ transactions }: { transactions: RecentTransaction[] })
             <TableHeader>
               <TableRow>
                 <TableHead className="whitespace-nowrap px-4 sm:px-5">Property</TableHead>
-                <TableHead className="whitespace-nowrap px-4 sm:px-5">Client</TableHead>
+                <TableHead className="hidden whitespace-nowrap px-4 sm:table-cell sm:px-5">Client</TableHead>
                 <TableHead className="whitespace-nowrap px-4 sm:px-5">Stage</TableHead>
-                <TableHead className="whitespace-nowrap px-4 sm:px-5 text-right">Price</TableHead>
+                <TableHead className="hidden whitespace-nowrap px-4 sm:table-cell sm:px-5 text-right">Price</TableHead>
                 <TableHead className="whitespace-nowrap px-4 sm:px-5 text-right">Closing</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {deals.map((tx) => (
                 <TableRow key={tx.id} className="group">
-                  <TableCell className="max-w-[14rem] px-4 font-medium sm:max-w-[18rem] sm:px-5">
+                  <TableCell className="max-w-[11rem] px-4 font-medium sm:max-w-[18rem] sm:px-5">
                     <Link href={`/dashboard/transactions/${tx.id}`} className="block truncate hover:underline">
                       {tx.property_address}
                     </Link>
                   </TableCell>
-                  <TableCell className="max-w-[9rem] truncate px-4 text-muted-foreground sm:px-5">
+                  <TableCell className="hidden max-w-[9rem] truncate px-4 text-muted-foreground sm:table-cell sm:px-5">
                     {tx.buyer_name || tx.seller_name || '—'}
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-4 sm:px-5">
                     <TransactionStatusBadge status={tx.status} />
                   </TableCell>
-                  <TableCell className="whitespace-nowrap px-4 text-right font-mono tabular-nums sm:px-5">
+                  <TableCell className="hidden whitespace-nowrap px-4 text-right font-mono tabular-nums sm:table-cell sm:px-5">
                     {tx.offer_price ? formatCompactPrice(tx.offer_price) : '—'}
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-4 text-right text-muted-foreground sm:px-5">

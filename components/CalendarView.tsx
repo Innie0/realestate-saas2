@@ -15,7 +15,7 @@ const EVENT_STYLES: Record<string, { dot: string; pill: string }> = {
   showing: { dot: 'bg-sky-500', pill: 'bg-sky-50 text-sky-700 border-sky-200' },
   open_house: { dot: 'bg-emerald-500', pill: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
   meeting: { dot: 'bg-brand-500', pill: 'bg-brand-50 text-brand-700 border-brand-200' },
-  other: { dot: 'bg-muted-foreground/60', pill: 'bg-muted text-muted-foreground border-border' },
+  other: { dot: 'bg-zinc-400', pill: 'bg-muted text-muted-foreground border-border' },
 };
 
 const LEGEND = [
@@ -45,6 +45,8 @@ export default function CalendarView({
   const toast = useToast();
   const [currentDate, setCurrentDate] = useState(focusDate ?? new Date());
   const [deletingEventId, setDeletingEventId] = useState<string | null>(null);
+  // Phones show dots in the grid and list the tapped day's events underneath
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
   useEffect(() => {
     if (focusDate) setCurrentDate(focusDate);
@@ -128,11 +130,21 @@ export default function CalendarView({
   };
 
   const daysInMonth = getDaysInMonth(year, month);
+  const now = new Date();
+  const activeDay =
+    selectedDay && selectedDay <= daysInMonth
+      ? selectedDay
+      : now.getMonth() === month && now.getFullYear() === year
+        ? now.getDate()
+        : 1;
+  const activeDayEvents = getEventsForDay(activeDay).sort(
+    (a, b) => Date.parse(a.start_time) - Date.parse(b.start_time),
+  );
   const firstDay = getFirstDayOfMonth(year, month);
   const days = [];
 
   for (let i = 0; i < firstDay; i++) {
-    days.push(<div key={`empty-${i}`} className="min-h-[92px] sm:min-h-[110px] bg-muted/30" />);
+    days.push(<div key={`empty-${i}`} className="min-h-[52px] sm:min-h-[110px] bg-muted/30" />);
   }
 
   for (let day = 1; day <= daysInMonth; day++) {
@@ -142,12 +154,15 @@ export default function CalendarView({
       month === new Date().getMonth() &&
       year === new Date().getFullYear();
 
+    const isSelected = day === activeDay;
+
     days.push(
       <div
         key={day}
-        className={`min-h-[92px] sm:min-h-[110px] border-t border-l border-border p-1.5 sm:p-2 transition-colors hover:bg-muted/30 ${
+        onClick={() => setSelectedDay(day)}
+        className={`min-h-[52px] sm:min-h-[110px] border-t border-l border-border p-1 sm:p-2 transition-colors hover:bg-muted/30 ${
           isToday ? 'bg-brand-50/60' : 'bg-card'
-        }`}
+        } ${isSelected ? 'max-sm:ring-2 max-sm:ring-inset max-sm:ring-brand-500' : ''}`}
       >
         <div
           className={`inline-flex items-center justify-center h-5 w-5 rounded-full text-xs font-semibold mb-1 ${
@@ -156,7 +171,14 @@ export default function CalendarView({
         >
           {day}
         </div>
-        <div className="space-y-1">
+        {dayEvents.length > 0 && (
+          <div className="flex flex-wrap gap-0.5 sm:hidden">
+            {dayEvents.slice(0, 4).map((event) => (
+              <span key={event.id} className={`h-1.5 w-1.5 rounded-full ${eventStyle(event.event_type).dot}`} />
+            ))}
+          </div>
+        )}
+        <div className="hidden space-y-1 sm:block">
           {dayEvents.slice(0, 3).map(event => {
             const style = eventStyle(event.event_type);
             return (
@@ -234,7 +256,7 @@ export default function CalendarView({
       {isLoading ? (
         <div className="grid grid-cols-7 gap-px rounded-[10px] border border-border overflow-hidden animate-pulse">
           {Array.from({ length: 35 }).map((_, i) => (
-            <div key={i} className="min-h-[92px] sm:min-h-[110px] bg-muted/30" />
+            <div key={i} className="min-h-[52px] sm:min-h-[110px] bg-muted/30" />
           ))}
         </div>
       ) : (
@@ -256,6 +278,39 @@ export default function CalendarView({
 
             <div className="grid grid-cols-7 border-r border-b border-border rounded-[10px] overflow-hidden">
               {days}
+            </div>
+
+            <div className="mt-4 sm:hidden">
+              <p className="mb-2 text-sm font-semibold text-foreground">
+                {new Date(year, month, activeDay).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+              </p>
+              {activeDayEvents.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Nothing scheduled.</p>
+              ) : (
+                <div className="divide-y divide-border rounded-[10px] border border-border bg-card">
+                  {activeDayEvents.map((event) => (
+                    <div key={event.id} className="flex items-center gap-3 px-3 py-2.5">
+                      <span className={`h-2 w-2 shrink-0 rounded-full ${eventStyle(event.event_type).dot}`} />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-foreground">{event.title}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatTime(event.start_time)}
+                          {event.location ? ` · ${event.location}` : ''}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteEvent(event.id, event.title)}
+                        disabled={deletingEventId === event.id}
+                        className="rounded-md p-2 text-muted-foreground hover:bg-muted/60"
+                        aria-label={`Delete ${event.title}`}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </motion.div>
         </AnimatePresence>

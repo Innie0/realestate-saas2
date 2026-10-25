@@ -29,7 +29,39 @@ interface ClientsTableProps {
 
 export default function ClientsTable({ clients }: ClientsTableProps) {
   return (
-    <Card className="overflow-hidden border-border p-0 shadow-none">
+    <>
+    {/* Phones: one card per client instead of a wide table */}
+    <Card className="divide-y divide-border overflow-hidden border-border p-0 shadow-none sm:hidden">
+      {clients.map((client) => {
+        const stage = getClientStage(client);
+        const stageStyle = STAGE_BADGE[stage];
+        const followUp = formatFollowUpLabel(client.next_reminder);
+        return (
+          <Link key={client.id} href={`/dashboard/clients/${client.id}`} className="flex items-center gap-3 px-4 py-3 active:bg-muted/40">
+            <div
+              className={`flex size-10 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${getClientAvatarClass(client.name)}`}
+              aria-hidden
+            >
+              {getClientInitials(client.name) || '?'}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center justify-between gap-2">
+                <p className="truncate text-sm font-semibold text-foreground">{client.name}</p>
+                <span className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium ${stageStyle.className}`}>
+                  <span className={`size-1.5 rounded-full ${stageStyle.dotClassName}`} />
+                  {stageStyle.label}
+                </span>
+              </div>
+              <p className="truncate text-xs text-muted-foreground">{client.email || client.phone || '—'}</p>
+              <p className={`mt-0.5 truncate text-xs ${followUp.tone === 'overdue' ? 'font-medium text-amber-700' : 'text-muted-foreground'}`}>
+                Follow-up: {followUp.text}
+              </p>
+            </div>
+          </Link>
+        );
+      })}
+    </Card>
+    <Card className="hidden overflow-hidden border-border p-0 shadow-none sm:block">
       <div className="overflow-x-auto">
         <Table className="min-w-[760px]">
           <TableHeader>
@@ -109,5 +141,6 @@ export default function ClientsTable({ clients }: ClientsTableProps) {
         </Table>
       </div>
     </Card>
+    </>
   );
 }

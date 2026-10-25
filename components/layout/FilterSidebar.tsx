@@ -25,6 +25,9 @@ export default function FilterSidebar({ title = 'Filters', groups, className }: 
     () => new Set(groups.filter((g) => g.defaultOpen !== false).map((g) => g.id)),
   );
 
+  // On phones the filters start folded so the list itself is on the first screen
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const toggle = (id: string) => {
     setOpenIds((prev) => {
       const next = new Set(prev);
@@ -41,10 +44,23 @@ export default function FilterSidebar({ title = 'Filters', groups, className }: 
         className,
       )}
     >
-      <div className="border-b border-border px-4 py-3">
+      <button
+        type="button"
+        onClick={() => setMobileOpen((v) => !v)}
+        aria-expanded={mobileOpen}
+        className={clsx(
+          'flex w-full items-center justify-between px-4 py-3 text-left xl:pointer-events-none',
+          mobileOpen && 'border-b border-border',
+          'xl:border-b xl:border-border',
+        )}
+      >
         <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-      </div>
-      <div className="divide-y divide-border">
+        <ChevronDown
+          className={clsx('size-4 text-muted-foreground transition-transform xl:hidden', mobileOpen && 'rotate-180')}
+          strokeWidth={2}
+        />
+      </button>
+      <div className={clsx('divide-y divide-border xl:block', mobileOpen ? 'block' : 'hidden')}>
         {groups.map(({ id, label, icon: Icon, children }) => {
           const isOpen = openIds.has(id);
           return (

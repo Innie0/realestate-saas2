@@ -223,7 +223,8 @@ export default function TransactionForm({
         throw new Error(data.error || 'Failed to save transaction');
       }
 
-      await revalidateTransactionsCache();
+      // Refresh lists in the background; waiting on them could leave the agent stuck on the form
+      void revalidateTransactionsCache();
 
       if (onSuccess) {
         onSuccess(data.data);
