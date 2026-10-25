@@ -18,6 +18,7 @@ import {
   type RefObject,
 } from 'react';
 import clsx from 'clsx';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import DragCursor from '@/components/home/DragCursor';
 import { useMotionReduced } from '@/lib/motion';
 
@@ -120,6 +121,10 @@ export function DraggableCardRow({
   const [isDragging, setIsDragging] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
+  // The "Drag" bubble is for mouse users only — on touch it has no pointer to
+  // follow and would get stuck on screen after a swipe
+  const [usingMouse, setUsingMouse] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
   const cursorRef = useRef({ x: 0, y: 0 });
   const prefersReducedMotion = useMotionReduced();
   const x = useMotionValue(0);
@@ -196,6 +201,19 @@ export function DraggableCardRow({
   }, [children, x, edgePad, cardGap]);
 
   const SNAP_SPRING = { type: 'spring' as const, stiffness: 420, damping: 34, mass: 0.55 };
+
+  // Keep the dots in step with whichever card is closest to center
+  useEffect(() => {
+    return x.on('change', (latest) => setActiveIndex(nearestSnapIndex(latest)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [x]);
+
+  const goTo = (index: number) => {
+    const snaps = snapPointsRef.current;
+    if (!snaps.length) return;
+    const next = Math.max(0, Math.min(snaps.length - 1, index));
+    animate(x, snaps[next], SNAP_SPRING);
+  };
 
   const nearestSnapIndex = (from = x.get()) => {
     const snaps = snapPointsRef.current;
@@ -300,7 +318,8 @@ export function DraggableCardRow({
     );
   }
 
-  const showCustomCursor = isHovering || isDragging;
+  const showCustomCursor = usingMouse && (isHovering || isDragging);
+  const cardCount = Children.count(children);
 
   return (
     <>
@@ -317,9 +336,11 @@ export function DraggableCardRow({
         style={style}
         aria-label="Drag or swipe horizontally to browse cards"
         onPointerEnter={(event) => {
+          setUsingMouse(event.pointerType === 'mouse');
           setIsHovering(true);
           updateCursor(event.clientX, event.clientY);
         }}
+        onPointerDown={(event) => setUsingMouse(event.pointerType === 'mouse')}
         onPointerLeave={() => {
           if (!isDragging) setIsHovering(false);
         }}
@@ -351,6 +372,46 @@ export function DraggableCardRow({
           ))}
         </motion.div>
       </div>
+
+      {/* Touch screens: arrows and dots show there's more to see and how far along you are */}
+      {cardCount > 1 && (
+        <div className="relative z-10 mt-6 flex items-center justify-center gap-4 [@media(hover:hover)_and_(pointer:fine)]:hidden">
+          <button
+            type="button"
+            onClick={() => goTo(activeIndex - 1)}
+            disabled={activeIndex === 0}
+            aria-label="Previous"
+            className="flex size-11 items-center justify-center rounded-full border border-[#0668E1]/20 bg-white text-[#0668E1] shadow-sm transition-opacity disabled:opacity-30"
+          >
+            <ChevronLeft className="size-5" strokeWidth={2} />
+          </button>
+          <div className="flex items-center gap-2" role="tablist" aria-label="Steps">
+            {Array.from({ length: cardCount }).map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                role="tab"
+                aria-selected={i === activeIndex}
+                aria-label={`Step ${i + 1}`}
+                onClick={() => goTo(i)}
+                className={clsx(
+                  'h-2 rounded-full transition-all duration-200',
+                  i === activeIndex ? 'w-6 bg-[#0668E1]' : 'w-2 bg-[#0668E1]/25',
+                )}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => goTo(activeIndex + 1)}
+            disabled={activeIndex === cardCount - 1}
+            aria-label="Next"
+            className="flex size-11 items-center justify-center rounded-full border border-[#0668E1]/20 bg-white text-[#0668E1] shadow-sm transition-opacity disabled:opacity-30"
+          >
+            <ChevronRight className="size-5" strokeWidth={2} />
+          </button>
+        </div>
+      )}
 
       <DragCursor
         x={cursor.x}
