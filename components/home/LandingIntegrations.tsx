@@ -67,11 +67,38 @@ export default function LandingIntegrations() {
       >
         <div className="relative z-[1] mx-auto max-w-[1120px] pb-[min(120px,14vw)] pt-24">
           <div className="flex flex-col items-center text-center">
-            <h2 className="font-display max-w-[17ch] text-[64px] font-extrabold leading-[1.02] tracking-[-0.038em] text-[#111111]">
+            <h2 className="font-display max-w-[17ch] text-[40px] font-extrabold leading-[1.04] tracking-[-0.038em] text-[#111111] sm:text-[64px] sm:leading-[1.02]">
               Fits the tools you already run on
             </h2>
 
-            <div className="relative mt-14 h-[300px] w-full">
+            {/* Phones and tablets: logos in a row above the Oikaro pill — the scattered layout below needs a wide screen */}
+            <div className="mt-10 flex w-full flex-col items-center gap-8 lg:hidden">
+              <div className="flex items-center justify-center gap-3">
+                {CHIPS.map((chip) => (
+                  <div
+                    key={chip.alt}
+                    className="flex size-[64px] items-center justify-center rounded-full bg-[#F4F4F5]"
+                    style={{
+                      animation: reduced
+                        ? undefined
+                        : `drift ${chip.dur}s ease-in-out ${chip.delay}s infinite alternate`,
+                    }}
+                  >
+                    <Image src={chip.src} alt={chip.alt} width={26} height={26} className="object-contain" />
+                  </div>
+                ))}
+              </div>
+              <Link
+                href="/integrations"
+                className="inline-flex h-16 items-center justify-center rounded-full bg-[#0668E1] px-10 shadow-[0_26px_60px_-28px_rgba(6,104,225,0.85)] transition-colors hover:bg-[#0450b0]"
+              >
+                <span className="font-mkt-mono text-[30px] font-normal leading-none tracking-[-0.02em] text-white">
+                  {SITE_NAME}
+                </span>
+              </Link>
+            </div>
+
+            <div className="relative mt-14 hidden h-[300px] w-full lg:block">
               <div className="pointer-events-none absolute inset-0">
                 {CHIPS.map((chip) => {
                   const iconSize = Math.round(chip.size * chip.iconScale);
