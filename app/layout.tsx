@@ -1,6 +1,7 @@
 // Root layout - wraps all pages in the application
 // This is the main layout file for the Next.js app
 
+import MetaPixel from '@/components/analytics/MetaPixel';
 import type { Metadata } from 'next';
 import { IBM_Plex_Mono, Inter, JetBrains_Mono, Newsreader, Space_Grotesk } from 'next/font/google';
 import { GeistSans } from 'geist/font/sans';
@@ -149,6 +150,7 @@ export default function RootLayout({
         className={`${GeistSans.className} ${plexMono.variable} ${inter.variable} ${newsreader.variable} ${tiempos.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable} font-sans antialiased`}
       >
         <GlobalStructuredData />
+        <MetaPixel />
         {children}
       </body>
     </html>

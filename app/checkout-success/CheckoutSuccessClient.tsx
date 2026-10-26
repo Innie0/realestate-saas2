@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import AuthPageShell from '@/components/branding/AuthPageShell';
 import AuthFormCard from '@/components/branding/AuthFormCard';
+import { trackMetaEventBeforeLeaving } from '@/lib/meta-pixel';
 
 export default function CheckoutSuccessClient() {
   const router = useRouter();
@@ -49,6 +50,25 @@ export default function CheckoutSuccessClient() {
 
         if (!res.ok) {
           setMessage('Taking you to your dashboard…');
+        }
+
+        // Report the new plan once per checkout (a refresh of this page shouldn't count twice)
+        const sub = res.ok ? data.subscription : null;
+        const reportedKey = `oikaro_meta_subscribe_${sessionId}`;
+        let alreadyReported = false;
+        try {
+          alreadyReported = localStorage.getItem(reportedKey) === '1';
+        } catch {
+          // Storage blocked — report anyway
+        }
+        if (sub && typeof sub.value === 'number' && !alreadyReported) {
+          try {
+            localStorage.setItem(reportedKey, '1');
+          } catch {
+            // ignore
+          }
+          await trackMetaEventBeforeLeaving('Subscribe', { value: sub.value, currency: sub.currency || 'USD' });
+          if (cancelled) return;
         }
 
         router.replace('/dashboard?welcome=true');

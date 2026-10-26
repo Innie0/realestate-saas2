@@ -3,7 +3,7 @@ import { stripe } from '@/lib/stripe-server';
 import { subscriptionFieldsFromStripe } from '@/lib/stripe-billing-sync';
 
 export type VerifyCheckoutResult =
-  | { ok: true }
+  | { ok: true; subscription?: { value: number; currency: string } }
   | { ok: false; error: string; status: number };
 
 export async function verifyCheckoutSession(
@@ -12,7 +12,7 @@ export async function verifyCheckoutSession(
   userId: string,
 ): Promise<VerifyCheckoutResult> {
   const session = await stripe.checkout.sessions.retrieve(sessionId, {
-    expand: ['subscription'],
+    expand: ['subscription', 'line_items'],
   });
 
   if (session.metadata?.user_id && session.metadata.user_id !== userId) {
@@ -41,5 +41,12 @@ export async function verifyCheckoutSession(
     return { ok: false, error: 'Could not save subscription. The webhook may still activate your account.', status: 500 };
   }
 
-  return { ok: true };
+  // Plan price, for ad conversion tracking — only once checkout has actually completed
+  const price = session.line_items?.data[0]?.price;
+  const subscription =
+    session.status === 'complete' && session.mode === 'subscription' && price?.unit_amount != null
+      ? { value: price.unit_amount / 100, currency: (price.currency || 'usd').toUpperCase() }
+      : undefined;
+
+  return { ok: true, subscription };
 }

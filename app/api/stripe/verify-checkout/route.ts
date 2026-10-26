@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: result.error }, { status: result.status });
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, subscription: result.subscription ?? null });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Verification failed';
     console.error('[verify-checkout]', message);

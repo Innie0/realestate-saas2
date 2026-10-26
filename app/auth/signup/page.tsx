@@ -10,6 +10,7 @@ import AuthPageMotion, { AuthFormMotion, AuthTrialBadge } from '@/components/mar
 import AuthSubmitButton from '@/components/marketing/AuthSubmitButton';
 import MarketingInput from '@/components/marketing/MarketingInput';
 import { signUpWithEmail, signInWithGoogle, supabase } from '@/lib/supabase';
+import { trackMetaEventBeforeLeaving } from '@/lib/meta-pixel';
 import { PRO_MONTHLY_PRICE_ID, STARTER_MONTHLY_PRICE_ID } from '@/lib/pricing';
 
 const PLAN_PRICE_IDS: Record<string, string> = {
@@ -119,6 +120,11 @@ function SignUpForm() {
       setError(signUpError.message);
       setIsLoading(false);
       return;
+    }
+
+    // The account now exists — report it before any redirect to checkout
+    if (user) {
+      await trackMetaEventBeforeLeaving('CompleteRegistration');
     }
 
     if (user && session) {

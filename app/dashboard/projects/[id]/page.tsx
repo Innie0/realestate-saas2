@@ -24,6 +24,7 @@ import {
 import { Project, AIGeneratedContent } from '@/types';
 import { useToast } from '@/components/providers/ToastProvider';
 import { uploadListingImageToStorage } from '@/lib/listing-image-upload';
+import { reportFirstListingDescription } from '@/lib/meta-pixel-lead';
 
 // Tone types for description variations
 type DescriptionTone = 'professional' | 'casual' | 'luxury';
@@ -560,6 +561,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       window.clearInterval(proInterval);
       window.clearInterval(casInterval);
       window.clearInterval(luxInterval);
+
+      // Count it only when the AI actually wrote a description (not the built-in fallback)
+      if (professionalContent || casualContent || luxuryContent) {
+        void reportFirstListingDescription();
+      }
 
       const versions: ToneVersion[] = [
         {
