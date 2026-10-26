@@ -2,8 +2,19 @@
 
 import Script from 'next/script';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { META_PIXEL_ID, NEW_SIGNUP_COOKIE, trackMetaEvent } from '@/lib/meta-pixel';
+
+/**
+ * Agents' public pages (lead forms, profiles, booking, open house sign-in) are
+ * visited by the agent's own clients, not Oikaro's customers — they stay out
+ * of Oikaro's ad tracking.
+ */
+const AGENT_PUBLIC_PREFIXES = ['/lead/', '/agent/', '/book/', '/open-house/'];
+
+function isAgentPublicPage(pathname: string | null): boolean {
+  return !!pathname && AGENT_PUBLIC_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+}
 
 /** PageView on client-side navigation (the base code already sends the first one). */
 function RouteChangeTracker() {
@@ -16,7 +27,7 @@ function RouteChangeTracker() {
       firstRender.current = false;
       return;
     }
-    trackMetaEvent('PageView');
+    if (!isAgentPublicPage(pathname)) trackMetaEvent('PageView');
   }, [pathname, searchParams]);
 
   // Google sign-ups finish on the server, which leaves this cookie for us to report once
@@ -30,7 +41,18 @@ function RouteChangeTracker() {
 }
 
 export default function MetaPixel() {
-  if (!META_PIXEL_ID) return null;
+  const pathname = usePathname();
+  // Decided in the browser: honors Global Privacy Control (a browser "don't track me" signal)
+  const [allowed, setAllowed] = useState(false);
+
+  useEffect(() => {
+    const gpc = (navigator as Navigator & { globalPrivacyControl?: boolean }).globalPrivacyControl === true;
+    if (!gpc && !isAgentPublicPage(pathname)) setAllowed(true);
+    // Only the first page decides whether the pixel loads at all
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (!META_PIXEL_ID || !allowed) return null;
 
   return (
     <>
@@ -45,16 +67,6 @@ s.parentNode.insertBefore(t,s)}(window, document,'script',
 fbq('init', '${META_PIXEL_ID}');
 fbq('track', 'PageView');`}
       </Script>
-      <noscript>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          height="1"
-          width="1"
-          style={{ display: 'none' }}
-          alt=""
-          src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
-        />
-      </noscript>
       <Suspense fallback={null}>
         <RouteChangeTracker />
       </Suspense>

@@ -17,7 +17,7 @@ declare global {
   }
 }
 
-export type MetaStandardEvent = 'PageView' | 'Lead' | 'CompleteRegistration' | 'Subscribe';
+export type MetaStandardEvent = 'PageView' | 'Lead' | 'CompleteRegistration' | 'StartTrial' | 'Subscribe';
 
 export function trackMetaEvent(event: MetaStandardEvent, params?: FbqParams): void {
   if (!META_PIXEL_ID || typeof window === 'undefined' || !window.fbq) return;

@@ -3,7 +3,7 @@ import { stripe } from '@/lib/stripe-server';
 import { subscriptionFieldsFromStripe } from '@/lib/stripe-billing-sync';
 
 export type VerifyCheckoutResult =
-  | { ok: true; subscription?: { value: number; currency: string } }
+  | { ok: true; subscription?: { value: number; currency: string; trial: boolean } }
   | { ok: false; error: string; status: number };
 
 export async function verifyCheckoutSession(
@@ -45,7 +45,11 @@ export async function verifyCheckoutSession(
   const price = session.line_items?.data[0]?.price;
   const subscription =
     session.status === 'complete' && session.mode === 'subscription' && price?.unit_amount != null
-      ? { value: price.unit_amount / 100, currency: (price.currency || 'usd').toUpperCase() }
+      ? {
+          value: price.unit_amount / 100,
+          currency: (price.currency || 'usd').toUpperCase(),
+          trial: (session.subscription as import('stripe').Stripe.Subscription | null)?.status === 'trialing',
+        }
       : undefined;
 
   return { ok: true, subscription };

@@ -52,7 +52,8 @@ export default function CheckoutSuccessClient() {
           setMessage('Taking you to your dashboard…');
         }
 
-        // Report the new plan once per checkout (a refresh of this page shouldn't count twice)
+        // Report the new plan once per checkout (a refresh of this page shouldn't count twice).
+        // A free trial is reported as StartTrial, so Meta doesn't count it as money earned yet.
         const sub = res.ok ? data.subscription : null;
         const reportedKey = `oikaro_meta_subscribe_${sessionId}`;
         let alreadyReported = false;
@@ -67,7 +68,11 @@ export default function CheckoutSuccessClient() {
           } catch {
             // ignore
           }
-          await trackMetaEventBeforeLeaving('Subscribe', { value: sub.value, currency: sub.currency || 'USD' });
+          const params = { value: sub.value, currency: sub.currency || 'USD' };
+          await trackMetaEventBeforeLeaving(
+            sub.trial ? 'StartTrial' : 'Subscribe',
+            sub.trial ? { ...params, predicted_ltv: sub.value } : params,
+          );
           if (cancelled) return;
         }
 

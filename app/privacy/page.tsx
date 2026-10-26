@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalPageLayout title="Privacy Policy" updated="October 12, 2026">
+    <LegalPageLayout title="Privacy Policy" updated="October 25, 2026">
             <section className="mb-8">
               <h2 className="font-display text-2xl font-medium tracking-[-0.02em] text-mkt-foreground mb-4">Introduction</h2>
               <p className="text-mkt-secondary leading-relaxed mb-4">
@@ -372,6 +372,27 @@ export default function PrivacyPage() {
                   https://vercel.com/legal/privacy-policy
                 </a>
               </p>
+
+              <h3 className="font-display text-xl font-medium tracking-[-0.01em] text-mkt-foreground mb-3 mt-6">Meta (Facebook) Pixel</h3>
+              <p className="text-mkt-secondary leading-relaxed mb-4">
+                Our website uses the Meta Pixel, a tool from Meta Platforms, Inc., to measure how well our own ads on Facebook and Instagram work. When you visit our website, the pixel lets Meta know which pages were viewed and whether certain steps were completed: creating an account, starting a free trial or subscription, and creating your first listing description.
+              </p>
+              <p className="text-mkt-secondary leading-relaxed mb-4">
+                We do not send your name, email address, phone number, property addresses, or any content you create in Oikaro to Meta. The only detail sent with an event is the plan price when you start a trial or subscription. Meta may combine this activity with information it already has, for example if you are logged in to Facebook or Instagram, under Meta&apos;s own privacy policy.
+              </p>
+              <p className="text-mkt-secondary leading-relaxed mb-4">
+                You can opt out by contacting support@oikaro.com, adjusting your 
+                <a href="https://www.facebook.com/adpreferences" target="_blank" rel="noopener noreferrer" className="text-mkt-secondary hover:text-mkt-foreground underline">
+                  Facebook ad preferences
+                </a>
+                , blocking third-party cookies in your browser, or turning on Global Privacy Control in your browser, which we honor by not loading the pixel.
+              </p>
+              <p className="text-mkt-secondary leading-relaxed mb-4">
+                <strong>Meta Privacy Policy:</strong>{' '}
+                <a href="https://www.facebook.com/privacy/policy" target="_blank" rel="noopener noreferrer" className="text-mkt-secondary hover:text-mkt-foreground underline">
+                  https://www.facebook.com/privacy/policy
+                </a>
+              </p>
             </section>
 
             <section className="mb-8">
@@ -464,7 +485,7 @@ export default function PrivacyPage() {
                 <li>Ensure security</li>
               </ul>
               <p className="text-mkt-secondary leading-relaxed mb-4">
-                We do not use advertising or tracking cookies.
+                We also use the Meta Pixel, which places cookies to measure how well our own Facebook and Instagram ads work (see &quot;Meta (Facebook) Pixel&quot; above). It runs only on oikaro.com and is not added to your public agent profile, lead forms, or open house sign-in pages. We do not sell your personal information.
               </p>
             </section>
 
@@ -518,7 +539,7 @@ export default function PrivacyPage() {
               <ul className="list-disc list-inside text-mkt-secondary space-y-2 mb-4">
                 <li>Right to know what personal information we collect</li>
                 <li>Right to delete your personal information</li>
-                <li>Right to opt-out of sale of personal information (we don't sell your data)</li>
+                <li>Right to opt out of the sale or sharing of personal information. We don&apos;t sell your data. Our use of the Meta Pixel for ad measurement may count as &quot;sharing&quot; under California law; you can opt out by emailing support@oikaro.com or by turning on Global Privacy Control in your browser.</li>
                 <li>Right to non-discrimination for exercising your rights</li>
               </ul>
             </section>
