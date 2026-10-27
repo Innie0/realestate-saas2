@@ -149,13 +149,12 @@ export default function HeroAssistantPreview({
         <div className="flex min-h-0 flex-1">
           <aside className="hidden md:flex w-[140px] lg:w-[168px] shrink-0 flex-col border-r border-gray-200 bg-[#f5f5f4] py-3 px-2 lg:py-4 lg:px-2.5">
             <div className="px-1 mb-4 lg:mb-5">
-              <Image
-                src="/logo-sidebar.png"
-                alt="Oikaro"
-                width={120}
-                height={32}
-                className="h-6 w-auto object-contain object-left lg:h-7"
-              />
+              <div className="flex items-center gap-1.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-[5px] bg-[#0668E1] text-[11px] font-bold text-white">
+                  O
+                </span>
+                <span className="text-[13px] font-semibold tracking-tight text-gray-900">Oikaro</span>
+              </div>
             </div>
             {SIDEBAR_NAV.map((group) => (
               <div key={group.label} className="mb-3.5 last:mb-0">

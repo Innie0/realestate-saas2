@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, FolderKanban, Calendar, LogOut, Users, FileText,
@@ -296,14 +295,12 @@ export default function Sidebar() {
       >
         <div className="hidden lg:flex h-[52px] shrink-0 items-center gap-2 border-b border-border overflow-visible px-4">
           {isCollapsed ? (
-            <Image
-              src="/logo-collapsed.png"
-              alt={SITE_NAME}
-              width={128}
-              height={128}
-              priority
-              className="h-7 w-7 object-contain mx-auto"
-            />
+            <span
+              className="mx-auto flex h-6 w-6 items-center justify-center rounded-[6px] bg-[var(--brand-mark)] text-[13px] font-bold text-white"
+              aria-label={SITE_NAME}
+            >
+              {SITE_NAME.charAt(0)}
+            </span>
           ) : (
             <>
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-[var(--brand-mark)] text-[11px] font-bold text-white">
