@@ -98,6 +98,28 @@ function historyToSuggestions(entries: ResearchHistoryEntry[]): AddressSuggestio
   }));
 }
 
+/** The free sample property (fake data, no lookup cost) — offered whenever the agent starts typing "123 Main". */
+const DEMO_SUGGESTION: AddressSuggestion = {
+  id: 'demo-123-main',
+  street: '123 Main St',
+  city: 'Austin',
+  state: 'TX',
+  zip: '78701',
+  label: '123 Main St, Austin, TX 78701 (sample property)',
+  streetLabel: '123 Main St',
+};
+
+function matchesDemoAddress(query: string): boolean {
+  const q = query.toLowerCase().replace(/\s+/g, ' ').trim();
+  if (!/^123\b/.test(q)) return false;
+  const rest = q.slice(3).trim().replace(/^w\.? /, '');
+  return rest === '' || 'main st'.startsWith(rest) || rest.startsWith('main');
+}
+
+function withDemoSuggestion(query: string, items: AddressSuggestion[]): AddressSuggestion[] {
+  return matchesDemoAddress(query) ? [DEMO_SUGGESTION, ...items.filter((i) => i.id !== DEMO_SUGGESTION.id)] : items;
+}
+
 function mergeSuggestions(
   historyItems: AddressSuggestion[],
   remoteItems: AddressSuggestion[],
@@ -188,8 +210,8 @@ export default function PropertyResearchCommandBar({
       history.filter((entry) => historyMatchesQuery(entry, trimmed)).slice(0, 5),
     );
 
-    if (historyMatches.length > 0) {
-      setSuggestions(historyMatches);
+    if (historyMatches.length > 0 || matchesDemoAddress(trimmed)) {
+      setSuggestions(withDemoSuggestion(trimmed, historyMatches));
     }
 
     const timer = setTimeout(async () => {
@@ -208,12 +230,12 @@ export default function PropertyResearchCommandBar({
         const data = await res.json();
         if (!controller.signal.aborted && data.success) {
           const remote = Array.isArray(data.data) ? (data.data as AddressSuggestion[]) : [];
-          setSuggestions(mergeSuggestions(historyMatches, remote));
+          setSuggestions(withDemoSuggestion(trimmed, mergeSuggestions(historyMatches, remote)));
           setHighlightIdx(-1);
         }
       } catch {
         if (!controller.signal.aborted) {
-          setSuggestions(historyMatches);
+          setSuggestions(withDemoSuggestion(trimmed, historyMatches));
         }
       } finally {
         if (!controller.signal.aborted) setSuggestLoading(false);
