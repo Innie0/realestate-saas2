@@ -52,21 +52,27 @@ export async function GET(request: NextRequest) {
     const tokens = await exchangeMetaAdsCode(code);
     const account = await getMetaAccountInfo(tokens.access_token);
 
-    const { error: upsertError } = await supabase.from('ad_platform_connections').upsert(
-      {
-        user_id: user.id,
-        provider: 'meta',
-        email: account.email,
-        account_id: account.accountId,
-        account_name: account.accountName ?? 'Meta Ads',
-        access_token: tokens.access_token,
-        refresh_token: tokens.refresh_token || null,
-        token_expiry: new Date(tokens.expiry_date).toISOString(),
-        is_active: true,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: 'user_id,provider' }
-    );
+    const row = {
+      user_id: user.id,
+      provider: 'meta',
+      email: account.email,
+      account_id: account.accountId,
+      account_name: account.accountName ?? 'Meta Ads',
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token || null,
+      token_expiry: new Date(tokens.expiry_date).toISOString(),
+      is_active: true,
+      updated_at: new Date().toISOString(),
+    };
+    const save = (values: Record<string, unknown>) =>
+      supabase.from('ad_platform_connections').upsert(values, { onConflict: 'user_id,provider' });
+
+    // external_user_id lets Meta's deauthorize/deletion callbacks find this connection.
+    // Fall back without it if the column hasn't been added yet (ads-meta-data-deletion.sql).
+    let { error: upsertError } = await save({ ...row, external_user_id: account.metaUserId });
+    if (upsertError && /external_user_id/.test(upsertError.message)) {
+      ({ error: upsertError } = await save(row));
+    }
 
     if (upsertError) {
       console.error('Meta Ads save error:', upsertError.message);

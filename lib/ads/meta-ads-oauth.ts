@@ -73,6 +73,8 @@ export async function exchangeMetaAdsCode(code: string) {
 }
 
 export async function getMetaAccountInfo(accessToken: string): Promise<{
+  /** App-scoped Facebook user ID — what Meta's deauthorize/deletion callbacks send */
+  metaUserId: string | null;
   email: string | null;
   accountId: string | null;
   accountName: string | null;
@@ -98,6 +100,7 @@ export async function getMetaAccountInfo(accessToken: string): Promise<{
   const first = adAccounts.data?.[0];
   const accountId = first?.account_id ?? first?.id ?? null;
   return {
+    metaUserId: me.id ?? null,
     email: me.email ?? null,
     accountId,
     accountName: first?.name ?? me.name ?? null,

@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import LegalPageLayout from '@/components/layout/LegalPageLayout';
 import { SUPPORT_EMAIL } from '@/lib/support-email';
+import { createAdminClient } from '@/lib/supabase-admin';
 
 export const metadata: Metadata = {
   title: 'Data Deletion',
@@ -17,9 +18,58 @@ const p = 'text-mkt-secondary leading-relaxed mb-4';
 const ol = 'list-decimal list-inside text-mkt-secondary space-y-2 mb-4';
 const link = 'text-mkt-secondary hover:text-mkt-foreground underline';
 
-export default function DataDeletionPage() {
+/** Status of a deletion request Meta sent us — the link Meta gives the person includes ?code=. */
+async function getRequestStatus(code: string) {
+  if (!/^[a-f0-9]{8,64}$/i.test(code)) return null;
+  try {
+    const { data } = await createAdminClient()
+      .from('meta_data_deletion_requests')
+      .select('status, created_at, completed_at')
+      .eq('confirmation_code', code)
+      .maybeSingle();
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function formatDate(value: string | null | undefined) {
+  return value ? new Date(value).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
+}
+
+export default async function DataDeletionPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ code?: string }>;
+}) {
+  const { code } = await searchParams;
+  const request = code ? await getRequestStatus(code) : null;
+
   return (
     <LegalPageLayout title="Data Deletion" updated="October 28, 2026">
+      {code ? (
+        <section className="mb-8">
+          <div className="legal-callout">
+            <p>
+              <strong>Confirmation code:</strong> {code}
+            </p>
+            {request ? (
+              <p>
+                <strong>Status:</strong>{' '}
+                {request.status === 'completed'
+                  ? `Completed on ${formatDate(request.completed_at)}. The data Oikaro received from Facebook for this account has been deleted.`
+                  : `Received on ${formatDate(request.created_at)} and in progress. It will be completed within 30 days.`}
+              </p>
+            ) : (
+              <p>
+                <strong>Status:</strong> We couldn&apos;t find a request with this code. If you think this is a mistake,
+                email {SUPPORT_EMAIL}.
+              </p>
+            )}
+          </div>
+        </section>
+      ) : null}
+
       <section className="mb-8">
         <p className={p}>
           Oikaro is owned and operated by GreatRock LLC. You can remove Oikaro&apos;s access to your connected accounts and
