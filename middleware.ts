@@ -32,6 +32,7 @@ const publicApiPrefixes = [
   '/api/cron/',
   '/api/ads/google/callback',
   '/api/ads/meta/callback',
+  '/api/meta/callback',
   '/api/calendar/google/callback',
   '/api/calendar/outlook/callback',
 ];

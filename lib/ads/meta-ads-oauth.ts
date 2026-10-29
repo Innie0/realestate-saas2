@@ -1,6 +1,11 @@
 const META_APP_ID = process.env.META_APP_ID || '';
 const META_APP_SECRET = process.env.META_APP_SECRET || '';
-const REDIRECT_URI = `${process.env.NEXT_PUBLIC_APP_URL}/api/ads/meta/callback`;
+/** Must match a "Valid OAuth Redirect URI" in the Meta app's Facebook Login settings. */
+export const META_REDIRECT_PATH = '/api/meta/callback';
+const REDIRECT_URI = `${process.env.NEXT_PUBLIC_APP_URL}${META_REDIRECT_PATH}`;
+
+/** Holds the random `state` sent to Meta, checked again in the callback. */
+export const META_ADS_OAUTH_STATE_COOKIE = 'meta_oauth_state';
 
 const META_SCOPES = ['ads_read', 'ads_management', 'business_management'].join(',');
 
@@ -8,13 +13,13 @@ export function isMetaAdsConfigured(): boolean {
   return Boolean(META_APP_ID && META_APP_SECRET && process.env.NEXT_PUBLIC_APP_URL);
 }
 
-export function getMetaAdsAuthUrl(): string {
+export function getMetaAdsAuthUrl(state: string): string {
   const params = new URLSearchParams({
     client_id: META_APP_ID,
     redirect_uri: REDIRECT_URI,
     scope: META_SCOPES,
     response_type: 'code',
-    state: 'meta_ads',
+    state,
   });
   return `https://www.facebook.com/v21.0/dialog/oauth?${params.toString()}`;
 }
