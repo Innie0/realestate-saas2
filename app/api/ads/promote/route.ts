@@ -29,7 +29,7 @@ import {
 import {
   getAdTypeOption,
   isPlatformAllowedForAdType,
-  PLATFORM_AVAILABLE,
+  platformsAvailableFor,
   PLATFORM_NAMES,
 } from '@/lib/ads/ad-type-config';
 import { buildAgentProfilePath, buildBookingPath } from '@/lib/agent-profile-shared';
@@ -136,14 +136,15 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    if (!PLATFORM_AVAILABLE[platform]) {
+    const available = platformsAvailableFor(user.email);
+    if (!available[platform]) {
       return NextResponse.json(
         { success: false, error: `${PLATFORM_NAMES[platform]} ads are coming soon.` } satisfies APIResponse,
         { status: 400 }
       );
     }
     // Each ad type runs only on the platform where it tends to pay off
-    if (!isPlatformAllowedForAdType(adType, platform)) {
+    if (!isPlatformAllowedForAdType(adType, platform, available)) {
       return NextResponse.json(
         {
           success: false,

@@ -1,6 +1,8 @@
 'use client';
 
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import { applyPlatformPreview } from '@/lib/ads/ad-type-config';
 import { useSearchParams } from 'next/navigation';
 import DashboardPage from '@/components/layout/DashboardPage';
 import AnimatedTabPanels from '@/components/motion/AnimatedTabPanels';
@@ -77,6 +79,14 @@ function AdsPageContent() {
     isLoading: insightsLoading,
     mutate: mutateInsights,
   } = useApi<AIInsight[]>(tab === 'performance' ? '/api/ads/insights' : null);
+
+  // Testers see "coming soon" platforms (Facebook & Instagram) switched on
+  const [, setPreviewApplied] = useState(false);
+  useEffect(() => {
+    void supabase.auth.getUser().then(({ data }) => {
+      if (applyPlatformPreview(data.user?.email)) setPreviewApplied(true);
+    });
+  }, []);
 
   useEffect(() => {
     document.title = 'Ads - Oikaro';

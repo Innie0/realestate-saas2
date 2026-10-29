@@ -2,11 +2,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { META_ADS_OAUTH_STATE_COOKIE, getMetaAdsAuthUrl, isMetaAdsConfigured } from '@/lib/ads/meta-ads-oauth';
 import { APIResponse } from '@/types';
-import { PLATFORM_AVAILABLE } from '@/lib/ads/ad-type-config';
+import { platformsAvailableFor } from '@/lib/ads/ad-type-config';
+import { createClient } from '@/lib/supabase-server';
 
 export async function POST(request: NextRequest) {
   try {
-    if (!PLATFORM_AVAILABLE.meta) {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!platformsAvailableFor(user?.email).meta) {
       return NextResponse.json(
         { success: false, error: 'Facebook & Instagram ads are coming soon.' } satisfies APIResponse,
         { status: 503 }

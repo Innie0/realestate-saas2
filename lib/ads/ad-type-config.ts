@@ -132,9 +132,13 @@ export function getAdTypeOption(adType: AdType | null): AdTypeOption | undefined
 }
 
 /** Whether the builder offers this ad type on this platform. */
-export function isPlatformAllowedForAdType(adType: AdType | null, platform: AdPlatform): boolean {
+export function isPlatformAllowedForAdType(
+  adType: AdType | null,
+  platform: AdPlatform,
+  available: Record<AdPlatform, boolean> = PLATFORM_AVAILABLE,
+): boolean {
   const option = getAdTypeOption(adType);
-  return option ? option.platforms.includes(platform) && PLATFORM_AVAILABLE[platform] : false;
+  return option ? option.platforms.includes(platform) && available[platform] : false;
 }
 
 /**
@@ -146,6 +150,31 @@ export const PLATFORM_AVAILABLE: Record<AdPlatform, boolean> = {
   google: true,
   meta: false,
 };
+
+/**
+ * Accounts that see "coming soon" platforms switched on, to test the flow and
+ * record Meta's App Review screencast before launch.
+ */
+const PLATFORM_PREVIEW_EMAILS = ['builtbyalia@gmail.com', 'callon786@outlook.com'];
+
+/** Platforms this account can use — for server checks, which must not rely on browser state. */
+export function platformsAvailableFor(email: string | null | undefined): Record<AdPlatform, boolean> {
+  const preview = !!email && PLATFORM_PREVIEW_EMAILS.includes(email.toLowerCase());
+  return { google: PLATFORM_AVAILABLE.google, meta: PLATFORM_AVAILABLE.meta || preview };
+}
+
+/**
+ * Browser only: switch on preview platforms for the signed-in tester so every
+ * ads component (which reads PLATFORM_AVAILABLE) shows them. Never call on the
+ * server — the module is shared between users there.
+ */
+export function applyPlatformPreview(email: string | null | undefined): boolean {
+  if (typeof window === 'undefined') return false;
+  const available = platformsAvailableFor(email);
+  const changed = available.meta !== PLATFORM_AVAILABLE.meta;
+  Object.assign(PLATFORM_AVAILABLE, available);
+  return changed;
+}
 
 export const PLATFORM_NAMES: Record<AdPlatform, string> = {
   google: 'Google',

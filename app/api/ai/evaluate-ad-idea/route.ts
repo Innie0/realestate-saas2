@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase-server';
 import { openai } from '@/lib/openai';
 import { consumeDailyAiAllowance, DAILY_AI_CAP_MESSAGE } from '@/lib/usage';
 import { sanitizeAdIdeaReview } from '@/lib/ads/ad-idea';
-import { PLATFORM_AVAILABLE } from '@/lib/ads/ad-type-config';
+import { platformsAvailableFor } from '@/lib/ads/ad-type-config';
 
 const MAX_IDEA_CHARS = 600;
 
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
 
 The agent's idea: """${idea}"""
 Agent's market: ${location}
-Platforms: Google Search ads (people actively searching) are available now. Facebook & Instagram ads (people scrolling) are ${PLATFORM_AVAILABLE.meta ? 'available' : 'coming soon, not available yet'}.
+Platforms: Google Search ads (people actively searching) are available now. Facebook & Instagram ads (people scrolling) are ${platformsAvailableFor(user.email).meta ? 'available' : 'coming soon, not available yet'}.
 
 Judge the idea on:
 - Will it bring in leads (people who could become clients) for a reasonable cost? Brand-only or vanity ideas are usually weak.
