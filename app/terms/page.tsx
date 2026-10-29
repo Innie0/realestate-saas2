@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <LegalPageLayout title="Terms of Service" updated="October 12, 2026">
+    <LegalPageLayout title="Terms of Service" updated="October 28, 2026">
             <section className="mb-8">
               <h2 className="font-display text-2xl font-medium tracking-[-0.02em] text-mkt-foreground mb-4">Agreement to Terms</h2>
               <p className="text-mkt-secondary leading-relaxed mb-4">
@@ -36,6 +36,7 @@ export default function TermsPage() {
                 <li>AI-powered content generation and document analysis (including PDFs)</li>
                 <li>Image analysis for property listings and documents</li>
                 <li>Property Research — search addresses for owner information, contact details, comparable sales (CMA), and listing data from third-party providers</li>
+                <li>Advertising tools to create and manage your own Google Search and Facebook &amp; Instagram ads from connected ad accounts</li>
                 <li>Automated reminders and notifications</li>
                 <li>In-app feedback submission to help us improve the Service</li>
               </ul>
@@ -170,6 +171,14 @@ export default function TermsPage() {
                 When you connect your Google Calendar or Microsoft Outlook calendar, you authorize us to access and modify your calendar events as described in our Privacy Policy. You can disconnect these integrations and revoke access at any time from your account settings.
               </p>
 
+              <h3 className="font-display text-xl font-medium tracking-[-0.01em] text-mkt-foreground mb-3 mt-6">Advertising Accounts (Google Ads and Meta)</h3>
+              <p className="text-mkt-secondary leading-relaxed mb-4">
+                When you connect a Google Ads or Meta (Facebook &amp; Instagram) ad account, you authorize us to view your ad accounts and their results, and to create, pause, resume, and end campaigns when you ask us to, as described in our Privacy Policy. You can disconnect either account at any time from the Ads page or from your Google or Facebook settings.
+              </p>
+              <p className="text-mkt-secondary leading-relaxed mb-4">
+                Ads run in your own ad account and are billed to you directly by Google or Meta. You are responsible for your ad spend, your budgets, and the content of your ads, including following Google&apos;s and Meta&apos;s advertising policies and applicable law such as fair housing rules. Oikaro provides suggestions and wording checks, but it does not guarantee results, approval of any ad, or any number of leads.
+              </p>
+
               <h3 className="font-display text-xl font-medium tracking-[-0.01em] text-mkt-foreground mb-3 mt-6">Payment Processing</h3>
               <p className="text-mkt-secondary leading-relaxed mb-4">
                 Payment processing is handled by Stripe, a third-party payment processor. Your use of Stripe's services is subject to Stripe's Terms of Service and Privacy Policy. We do not store your full credit card information.
@@ -187,7 +196,7 @@ export default function TermsPage() {
 
               <h3 className="font-display text-xl font-medium tracking-[-0.01em] text-mkt-foreground mb-3 mt-6">Third-Party Services</h3>
               <p className="text-mkt-secondary leading-relaxed mb-4">
-                Our Service integrates with third-party services including Supabase (database and authentication), OpenAI (AI features), Stripe (payments), Google (calendar and authentication), Microsoft (calendar), Rentcast (property records and listings), BatchData (skip tracing), Resend (email delivery), and Twilio (SMS notifications). Your use of these services is subject to their respective terms and conditions. We are not responsible for third-party services or their availability.
+                Our Service integrates with third-party services including Supabase (database and authentication), OpenAI (AI features), Stripe (payments), Google (calendar, authentication, and Google Ads), Meta (Facebook and Instagram ads, and the Meta Pixel on our website), Microsoft (calendar), Rentcast (property records and listings), BatchData (skip tracing), Resend (email delivery), and Twilio (SMS notifications). Your use of these services is subject to their respective terms and conditions. We are not responsible for third-party services or their availability.
               </p>
             </section>
 

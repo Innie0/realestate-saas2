@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalPageLayout title="Privacy Policy" updated="October 25, 2026">
+    <LegalPageLayout title="Privacy Policy" updated="October 28, 2026">
             <section className="mb-8">
               <h2 className="font-display text-2xl font-medium tracking-[-0.02em] text-mkt-foreground mb-4">Introduction</h2>
               <p className="text-mkt-secondary leading-relaxed mb-4">
@@ -258,6 +258,31 @@ export default function PrivacyPage() {
                 </a>
               </p>
 
+              <h3 className="font-display text-xl font-medium tracking-[-0.01em] text-mkt-foreground mb-3 mt-6">Meta (Facebook &amp; Instagram Ads)</h3>
+              <p className="text-mkt-secondary leading-relaxed mb-2">If you choose to connect your Meta ad account, we use Facebook Login to request these permissions:</p>
+              <ul className="list-disc list-inside text-mkt-secondary space-y-2 mb-4">
+                <li><code className="text-mkt-secondary">ads_read</code> - See your ad accounts and the results of ads you run, so we can show performance in your dashboard</li>
+                <li><code className="text-mkt-secondary">ads_management</code> - Create, pause, resume, and end Facebook and Instagram ad campaigns, only when you ask us to</li>
+                <li><code className="text-mkt-secondary">business_management</code> - Find the ad accounts that belong to your Meta business so you can choose which one to use</li>
+              </ul>
+              <p className="text-mkt-secondary leading-relaxed mb-4">
+                <strong>Meta data we access and store:</strong> your Meta user ID and name, the list of ad accounts you can access and the one you choose, an access token that lets us act on your behalf, the IDs of campaigns, ad sets, and ads created through Oikaro, and performance metrics for those ads (such as impressions, reach, clicks, spend, and leads).
+              </p>
+              <p className="text-mkt-secondary leading-relaxed mb-4">
+                <strong>How we use it:</strong> only to publish and manage the ads you create in Oikaro and to show their results and suggestions to you. We do not use Meta data to advertise to you, we do not sell it, and we do not share it with anyone else. We do not change your ads without your action. Access tokens are stored securely and are never shown to other users.
+              </p>
+              <p className="text-mkt-secondary leading-relaxed mb-4">
+                <strong>Removing access and deleting data:</strong> you can disconnect Meta at any time from the Ads page, which deletes your stored access token right away. You can also remove Oikaro in your Facebook settings under Settings &amp; privacy, then Business integrations. To have all Meta data we store deleted, follow the steps on our 
+                <Link href="/data-deletion" className="text-mkt-secondary hover:text-mkt-foreground underline">data deletion page</Link>.
+              </p>
+              <p className="text-mkt-secondary leading-relaxed mb-4">
+                We comply with the Meta Platform Terms and Developer Policies. 
+                <strong>Meta Privacy Policy:</strong> 
+                <a href="https://www.facebook.com/privacy/policy" target="_blank" rel="noopener noreferrer" className="text-mkt-secondary hover:text-mkt-foreground underline">
+                  https://www.facebook.com/privacy/policy
+                </a>
+              </p>
+
               <h3 className="font-display text-xl font-medium tracking-[-0.01em] text-mkt-foreground mb-3 mt-6">OpenAI</h3>
               <p className="text-mkt-secondary leading-relaxed mb-2">We use OpenAI's GPT-4 services to:</p>
               <ul className="list-disc list-inside text-mkt-secondary space-y-2 mb-4">
@@ -438,7 +463,7 @@ export default function PrivacyPage() {
                 <li>Update or correct your information</li>
                 <li>Delete your account and data</li>
                 <li>Export your data</li>
-                <li>Disconnect third-party integrations (Google Calendar, Google Ads, Outlook)</li>
+                <li>Disconnect third-party integrations (Google Calendar, Google Ads, Meta Ads, Outlook)</li>
                 <li>Disable your public agent profile at any time</li>
                 <li>Turn off automated follow-up emails and SMS alerts</li>
                 <li>Delete leads, clients, conversations, and transaction documents from your account</li>
@@ -463,6 +488,14 @@ export default function PrivacyPage() {
                 <li>Disconnect Google Ads at any time from the Ads page</li>
                 <li>Revoke access via your Google Account settings</li>
                 <li>Request deletion of stored Google Ads data by contacting support@oikaro.com</li>
+              </ul>
+
+              <h3 className="font-display text-xl font-medium tracking-[-0.01em] text-mkt-foreground mb-3 mt-6">Meta Ads Integration</h3>
+              <p className="text-mkt-secondary leading-relaxed mb-2">You can:</p>
+              <ul className="list-disc list-inside text-mkt-secondary space-y-2 mb-4">
+                <li>Disconnect Meta at any time from the Ads page</li>
+                <li>Remove Oikaro from your Facebook settings (Settings &amp; privacy, then Business integrations)</li>
+                <li>Request deletion of stored Meta data, as described on our <Link href="/data-deletion" className="text-mkt-secondary hover:text-mkt-foreground underline">data deletion page</Link></li>
               </ul>
 
               <h3 className="font-display text-xl font-medium tracking-[-0.01em] text-mkt-foreground mb-3 mt-6">How to Exercise Your Rights</h3>

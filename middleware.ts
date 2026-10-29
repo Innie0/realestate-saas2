@@ -12,6 +12,7 @@ const publicRoutes = [
   '/checkout-success',
   '/privacy',
   '/terms',
+  '/data-deletion',
   '/pricing',
   '/contact',
   '/about',
