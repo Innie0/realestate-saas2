@@ -13,14 +13,19 @@ export function isMetaAdsConfigured(): boolean {
   return Boolean(META_APP_ID && META_APP_SECRET && process.env.NEXT_PUBLIC_APP_URL);
 }
 
+/** Facebook Login for Business: the configuration (made in the Meta app) that lists the permissions. */
+const META_LOGIN_CONFIG_ID = process.env.META_LOGIN_CONFIG_ID || '';
+
 export function getMetaAdsAuthUrl(state: string): string {
   const params = new URLSearchParams({
     client_id: META_APP_ID,
     redirect_uri: REDIRECT_URI,
-    scope: META_SCOPES,
     response_type: 'code',
     state,
   });
+  // Login for Business takes its permissions from the configuration; classic login uses scope
+  if (META_LOGIN_CONFIG_ID) params.set('config_id', META_LOGIN_CONFIG_ID);
+  else params.set('scope', META_SCOPES);
   return `https://www.facebook.com/v21.0/dialog/oauth?${params.toString()}`;
 }
 
