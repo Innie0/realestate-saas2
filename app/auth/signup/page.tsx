@@ -77,7 +77,8 @@ function SignUpForm() {
         }
       }
 
-      setCheckingAuth(false);
+      // Already has an account — the next step is choosing a plan, not signing up again
+      router.replace('/pricing#plans');
     });
   }, [router, planParam]);
 

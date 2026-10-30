@@ -66,6 +66,13 @@ export default function PricingPage() {
     document.title = 'Pricing - Oikaro';
   }, []);
 
+  // Signed-in visitors sent here to pick a plan land on the plan cards
+  useEffect(() => {
+    if (!isLoading && window.location.hash === '#plans') {
+      document.getElementById('plans')?.scrollIntoView();
+    }
+  }, [isLoading]);
+
   useEffect(() => {
     const el = proButtonRef.current;
     if (!el) return;
@@ -187,7 +194,7 @@ export default function PricingPage() {
             </div>
           </section>
 
-          <section className="bg-white pb-28 pt-8 sm:pb-16 sm:pt-16 lg:py-20">
+          <section id="plans" className="scroll-mt-16 bg-white pb-28 pt-8 sm:scroll-mt-20 sm:pb-16 sm:pt-16 lg:py-20">
             <div className="mx-auto max-w-mkt-content px-5 sm:px-6 lg:px-8">
               <div className="mx-auto grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2 md:items-start">
                 {PLANS.map((plan, i) => (

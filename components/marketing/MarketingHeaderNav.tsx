@@ -6,6 +6,7 @@ import ProductsMegaMenu from '@/components/marketing/ProductsMegaMenu';
 import { PRODUCT_PAGES_LIVE } from '@/lib/products';
 import MarketingShimmerCta from '@/components/marketing/MarketingShimmerCta';
 import { SITE_NAME } from '@/lib/site-config';
+import { marketingCta, useMarketingAccount } from '@/lib/use-marketing-account';
 
 const NAV_LINK_CLASS =
   'inline-flex items-center px-3 py-2.5 text-[15px] font-medium text-mkt-secondary transition-colors duration-200 hover:text-mkt-foreground';
@@ -28,6 +29,10 @@ export default function MarketingHeaderNav({
   ctaColor = 'default',
   wordmarkVariant = 'default',
 }: MarketingHeaderNavProps) {
+  const account = useMarketingAccount();
+  const cta = marketingCta(account);
+  const signedIn = account !== 'visitor';
+
   const navLinkClass = inverted
     ? 'inline-flex items-center px-3 py-2.5 text-[15px] font-medium text-white/75 transition-colors duration-200 hover:text-white'
     : NAV_LINK_CLASS;
@@ -72,7 +77,7 @@ export default function MarketingHeaderNav({
           <>
             <Link
               href="/auth/login"
-              className="hidden h-11 items-center gap-2 rounded-full bg-white px-5 text-[15px] font-semibold text-[#111111] transition-opacity hover:opacity-90 sm:inline-flex"
+              className={`${signedIn ? 'hidden' : 'hidden sm:inline-flex'} h-11 items-center gap-2 rounded-full bg-white px-5 text-[15px] font-semibold text-[#111111] transition-opacity hover:opacity-90`}
             >
               Sign in
               <span className="text-[#0668E1]" aria-hidden>
@@ -80,19 +85,21 @@ export default function MarketingHeaderNav({
               </span>
             </Link>
             <Link
-              href="/auth/signup"
+              href={cta.href}
               className="inline-flex h-11 items-center rounded-full bg-[#0A0A0A] px-[22px] text-[15px] font-semibold text-white transition-colors hover:bg-[#262626]"
             >
-              Start free trial
+              {cta.label}
             </Link>
           </>
         ) : (
           <>
-            <Link href="/auth/login" className={`${navLinkClass} hidden sm:inline-flex`}>
-              Sign in
-            </Link>
-            <MarketingShimmerCta href="/auth/signup" inverted={inverted} color={ctaColor} size="lg">
-              Start free trial
+            {!signedIn && (
+              <Link href="/auth/login" className={`${navLinkClass} hidden sm:inline-flex`}>
+                Sign in
+              </Link>
+            )}
+            <MarketingShimmerCta href={cta.href} inverted={inverted} color={ctaColor} size="lg">
+              {cta.label}
             </MarketingShimmerCta>
           </>
         )}
