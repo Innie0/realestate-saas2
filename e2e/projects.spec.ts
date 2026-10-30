@@ -23,6 +23,9 @@ test.describe('Projects', () => {
 
     await page.getByRole('button', { name: 'AI Content' }).click();
     await page.getByRole('button', { name: /generate content/i }).click();
+    // Projects without photos first suggest adding some
+    const generateAnyway = page.getByRole('button', { name: 'Generate Anyway' });
+    if (await generateAnyway.isVisible({ timeout: 5_000 }).catch(() => false)) await generateAnyway.click();
     await expect(page.getByRole('heading', { name: 'Choose Your Description Style' })).toBeVisible({
       timeout: 120_000,
     });

@@ -38,6 +38,8 @@ import {
   Loader2, AlertCircle,
   TrendingUp,
   Download, Info, ArrowLeft, Home,
+  SlidersHorizontal,
+  ChevronDown as FiltersChevron,
 } from 'lucide-react';
 import Link from 'next/link';
 import { propertyResearchLandingHref } from '@/lib/property-research-routes';
@@ -243,6 +245,8 @@ export function CmaPanel({
   );
 
   const [isLgUp, setIsLgUp] = useState<boolean | undefined>(undefined);
+  // Phones: search filters start folded so "Find comps" is near the top
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 1024px)');
@@ -772,6 +776,22 @@ export function CmaPanel({
         onPrefill={handlePrefill}
         onUpdateSubject={updateSubject}
       />
+      <button
+        type="button"
+        onClick={() => setFiltersOpen((v) => !v)}
+        aria-expanded={filtersOpen}
+        className="flex w-full items-center justify-between rounded-xl border border-gray-200 bg-[var(--surface)] px-4 py-3 text-[13px] font-medium text-gray-900 dark:border-border dark:text-foreground lg:hidden"
+      >
+        <span className="inline-flex items-center gap-2">
+          <SlidersHorizontal className="h-4 w-4 text-gray-500" />
+          Adjust filters
+          <span className="font-normal text-gray-500">
+            · {radius} mi · {Math.round(yearsBack * 12)} mo{matchPreviewCount !== null ? ` · ${matchPreviewCount} matches` : ''}
+          </span>
+        </span>
+        <FiltersChevron className={`h-4 w-4 text-gray-500 transition-transform ${filtersOpen ? 'rotate-180' : ''}`} />
+      </button>
+      <div className={`${filtersOpen ? 'block' : 'hidden'} space-y-4 lg:block`}>
       <CmaSearchParams
         radius={radius}
         yearsBack={yearsBack}
@@ -791,6 +811,7 @@ export function CmaPanel({
         matchPreviewLoading={matchPreviewLoading}
         breezyLayout
       />
+      </div>
     </>
   );
 

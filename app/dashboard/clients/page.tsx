@@ -317,15 +317,18 @@ export default function ClientsPage() {
                 onChange={setStatusTab}
               />
             </div>
-            <SegmentedControl
-              layoutId="clients-view-mode"
-              segments={[
-                { id: 'list', icon: List, ariaLabel: 'List view' },
-                { id: 'grid', icon: LayoutGrid, ariaLabel: 'Grid view' },
-              ]}
-              value={viewMode}
-              onChange={setViewMode}
-            />
+            {/* List vs grid only matters on wider screens; phones always get the card list */}
+            <div className="hidden sm:block">
+              <SegmentedControl
+                layoutId="clients-view-mode"
+                segments={[
+                  { id: 'list', icon: List, ariaLabel: 'List view' },
+                  { id: 'grid', icon: LayoutGrid, ariaLabel: 'Grid view' },
+                ]}
+                value={viewMode}
+                onChange={setViewMode}
+              />
+            </div>
           </div>
         }
         sort={

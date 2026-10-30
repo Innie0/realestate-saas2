@@ -18,6 +18,7 @@ import { Card } from '@/components/ui/Card';
 import Modal from '@/components/ui/Modal';
 import PageShell from '@/components/layout/PageShell';
 import { TransactionDetailPageContentSkeleton } from '@/components/dashboard/page-loading';
+import MobileMoreMenu from '@/components/ui/MobileMoreMenu';
 import DashboardPage from '@/components/layout/DashboardPage';
 import DetailPageTabNav from '@/components/layout/DetailPageTabNav';
 import AnimatedTabPanels from '@/components/motion/AnimatedTabPanels';
@@ -293,11 +294,15 @@ export default function TransactionDetailPage({ params }: TransactionDetailPageP
             size="sm"
             onClick={handleDelete}
             isLoading={isDeleting}
-            className="!text-rose-700 hover:!bg-rose-50 hover:!ring-rose-200"
+            className="hidden !text-rose-700 hover:!bg-rose-50 hover:!ring-rose-200 sm:inline-flex"
           >
             <Trash2 className="mr-2 size-3.5" />
             Delete
           </Button>
+          {/* Phones: Delete lives in a menu so it can't be tapped by accident next to Edit */}
+          <MobileMoreMenu
+            items={[{ label: 'Delete transaction', icon: Trash2, onClick: handleDelete, danger: true, disabled: isDeleting }]}
+          />
         </>
       }
     >

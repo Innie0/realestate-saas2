@@ -473,7 +473,7 @@ function QuickActionsPanel() {
             className="group flex items-center justify-between gap-3 px-4 py-2 transition-colors hover:bg-muted/40 sm:px-5"
           >
             <span className="truncate text-sm text-foreground">{label}</span>
-            <kbd className="flex h-5 min-w-5 items-center justify-center rounded border border-border px-1 font-mono text-[10px] font-medium text-muted-foreground">
+            <kbd className="hidden h-5 min-w-5 items-center justify-center rounded border border-border px-1 font-mono text-[10px] font-medium text-muted-foreground lg:flex">
               {shortcut}
             </kbd>
           </Link>

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -25,6 +26,7 @@ import RelativeTime from '@/components/ui/RelativeTime';
 import { coerceLeadMessage } from '@/lib/lead-temperature';
 import { cn } from '@/lib/utils';
 import {
+  ArrowLeft,
   DoorOpen,
   Inbox,
   Loader2,
@@ -213,15 +215,43 @@ export default function LeadsInbox({
 
   const selectedLead = filteredLeads.find((l) => l.id === selectedLeadId) ?? null;
 
+  // Phones: a tapped lead opens as its own screen (with Back), instead of below the whole list
+  const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
+
+  const openLead = (id: string) => {
+    onSelectLead(id);
+    if (window.matchMedia('(min-width: 1024px)').matches) return;
+    setMobileDetailOpen(true);
+    // The phone's Back button/gesture returns to the list
+    window.history.pushState({ leadDetail: true }, '');
+    document.querySelector('main')?.scrollTo({ top: 0 });
+  };
+
+  const closeLead = () => {
+    if (window.history.state?.leadDetail) window.history.back();
+    else setMobileDetailOpen(false);
+  };
+
+  useEffect(() => {
+    const onPop = () => setMobileDetailOpen(false);
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
+  const showDetailOnPhone = mobileDetailOpen && Boolean(selectedLead);
+
   const temperatureFilters = (
-    <div className="flex flex-wrap items-center gap-2" data-tour="leads-filter">
+    <div
+      className="-mx-1 flex items-center gap-2 overflow-x-auto px-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden"
+      data-tour="leads-filter"
+    >
       {(['all', 'hot', 'warm', 'cold'] as const).map((key) => (
         <button
           key={key}
           type="button"
           onClick={() => onFilterChange(key)}
           className={cn(
-            'inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors',
+            'inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors',
             filter === key
               ? 'border-zinc-700 bg-zinc-700 text-white'
               : 'border-border bg-card text-muted-foreground hover:border-foreground/30 hover:text-foreground',
@@ -243,7 +273,7 @@ export default function LeadsInbox({
 
   return (
     <div className="flex w-full flex-col gap-4">
-      {temperatureFilters}
+      <div className={cn(showDetailOnPhone && 'hidden lg:block')}>{temperatureFilters}</div>
 
       {filteredLeads.length === 0 ? (
         <EmptyState
@@ -264,7 +294,12 @@ export default function LeadsInbox({
         />
       ) : (
         <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-[minmax(300px,360px)_minmax(0,1fr)] lg:items-start">
-          <Card className="min-w-0 overflow-hidden p-0 lg:max-h-[calc(100vh-220px)] lg:overflow-y-auto">
+          <Card
+            className={cn(
+              'min-w-0 overflow-hidden p-0 lg:max-h-[calc(100vh-220px)] lg:overflow-y-auto',
+              showDetailOnPhone && 'hidden lg:block',
+            )}
+          >
             <CardHeader className="border-b py-3">
               <CardTitle className="text-sm">Leads</CardTitle>
               <CardDescription>{filteredLeads.length} in view</CardDescription>
@@ -277,7 +312,7 @@ export default function LeadsInbox({
                   <button
                     key={lead.id}
                     type="button"
-                    onClick={() => onSelectLead(lead.id)}
+                    onClick={() => openLead(lead.id)}
                     className={cn(
                       'flex w-full items-start gap-3 rounded-[10px] px-3 py-3 text-left transition-colors hover:bg-muted/50',
                       selected && 'bg-muted',
@@ -310,6 +345,15 @@ export default function LeadsInbox({
           </Card>
 
           {selectedLead ? (
+            <div className={cn('min-w-0', !showDetailOnPhone && 'hidden lg:block')}>
+            <button
+              type="button"
+              onClick={closeLead}
+              className="mb-3 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground lg:hidden"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              All leads
+            </button>
             <LeadDetailPanel
               lead={selectedLead}
               autoFollowupEnabled={autoFollowupEnabled}
@@ -322,8 +366,9 @@ export default function LeadsInbox({
               onContactLead={onContactLead}
               onSequenceChange={onSequenceChange}
             />
+            </div>
           ) : (
-            <Card className="flex min-h-[280px] min-w-0 items-center justify-center p-8">
+            <Card className="hidden min-h-[280px] min-w-0 items-center justify-center p-8 lg:flex">
               <p className="text-sm text-muted-foreground">Select a lead to view details</p>
             </Card>
           )}

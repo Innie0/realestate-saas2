@@ -6,6 +6,7 @@
 
 import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
+import MobileMoreMenu from '@/components/ui/MobileMoreMenu';
 import DashboardPage from '@/components/layout/DashboardPage';
 import { ProjectDetailPageLoadingShell } from '@/components/projects/ProjectDetailSkeleton';
 import Button from '@/components/ui/Button';
@@ -1252,7 +1253,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
   const headerActions = (
     <>
-      <Button variant="outline" size="sm" onClick={() => router.push('/dashboard/projects')}>
+      <Button variant="outline" size="sm" onClick={() => router.push('/dashboard/projects')} className="hidden sm:inline-flex">
         <ArrowLeft className="w-4 h-4 mr-2" />
         Back
       </Button>
@@ -1268,6 +1269,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         size="sm"
         variant="outline"
         onClick={() => router.push(newTransactionFromProjectPath(project.id))}
+        className="hidden sm:inline-flex"
       >
         <FileText className="w-4 h-4 mr-2" />
         Create Transaction
@@ -1276,10 +1278,19 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         size="sm"
         variant="outline"
         onClick={() => router.push(`/dashboard/ads?promote=${project.id}`)}
+        className="hidden sm:inline-flex"
       >
         <Megaphone className="w-4 h-4 mr-2" />
         Promote
       </Button>
+      {/* Phones: keep Save and Preview up front; the rest in one menu */}
+      <MobileMoreMenu
+        items={[
+          { label: 'Create transaction', icon: FileText, onClick: () => router.push(newTransactionFromProjectPath(project.id)) },
+          { label: 'Promote with an ad', icon: Megaphone, onClick: () => router.push(`/dashboard/ads?promote=${project.id}`) },
+          { label: 'Back to projects', icon: ArrowLeft, onClick: () => router.push('/dashboard/projects') },
+        ]}
+      />
       {autoSaveStatus !== 'idle' && (
         <div
           className={`

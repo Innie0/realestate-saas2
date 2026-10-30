@@ -36,7 +36,8 @@ export default function AnimatedTabPanels<T extends string>({
               y: reduced || active ? 0 : slideOffset,
             }}
             transition={reduced ? { duration: 0.01 } : tabPanelTransition}
-            className={clsx(!active && 'pointer-events-none absolute inset-x-0 top-0')}
+            // Hidden panels take no space — otherwise a long hidden tab leaves blank scroll room under the active one
+            className={clsx(!active && 'pointer-events-none invisible absolute inset-x-0 top-0 h-0 overflow-hidden')}
           >
             {panel.content}
           </motion.div>

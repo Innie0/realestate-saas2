@@ -12,6 +12,9 @@ export interface TourStep {
   };
 }
 
+/** Set once a phone has seen its single tip; later pages skip their tours on phones. */
+const PHONE_TIP_SHOWN_KEY = 'tour_phone_tip_shown';
+
 interface UseTourOptions {
   tourKey: string;       // unique key stored in localStorage e.g. 'tour_dashboard'
   steps: TourStep[];
@@ -26,12 +29,21 @@ export function useTour({ tourKey, steps, delayMs = 800, ready = true }: UseTour
     if (typeof window === 'undefined') return;
     if (localStorage.getItem(tourKey)) return;
 
+    // Phones: tour boxes cover most of a small screen on every page. Show one short tip,
+    // once, on the first page opened; skip the rest.
+    const isPhone = window.matchMedia('(max-width: 767px)').matches;
+    if (isPhone && localStorage.getItem(PHONE_TIP_SHOWN_KEY)) {
+      localStorage.setItem(tourKey, '1');
+      return;
+    }
+    const tourSteps = isPhone ? steps.slice(0, 1) : steps;
+
     let driver: any;
     let timeout: ReturnType<typeof setTimeout>;
 
     const run = async () => {
       try {
-        const missingStep = steps.some((step) => !document.querySelector(step.element));
+        const missingStep = tourSteps.some((step) => !document.querySelector(step.element));
         if (missingStep) return;
 
         const { driver: driverFn } = await import('driver.js');
@@ -39,15 +51,16 @@ export function useTour({ tourKey, steps, delayMs = 800, ready = true }: UseTour
         driver = driverFn({
           animate: true,
           smoothScroll: true,
-          showProgress: true,
+          showProgress: !isPhone,
           progressText: '{{current}} of {{total}}',
           nextBtnText: 'Next',
           prevBtnText: 'Back',
           doneBtnText: 'Got it',
           onDestroyed: () => {
             localStorage.setItem(tourKey, '1');
+            if (isPhone) localStorage.setItem(PHONE_TIP_SHOWN_KEY, '1');
           },
-          steps: steps.map(s => ({
+          steps: tourSteps.map(s => ({
             element: s.element,
             popover: {
               title: s.popover.title,

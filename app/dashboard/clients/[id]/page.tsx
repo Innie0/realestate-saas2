@@ -8,6 +8,7 @@ import Button from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import Modal from '@/components/ui/Modal';
 import { ClientDetailPageContentSkeleton } from '@/components/dashboard/page-loading';
+import MobileMoreMenu from '@/components/ui/MobileMoreMenu';
 import DashboardPage from '@/components/layout/DashboardPage';
 import DetailPageTabNav from '@/components/layout/DetailPageTabNav';
 import AnimatedTabPanels from '@/components/motion/AnimatedTabPanels';
@@ -451,10 +452,22 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                   <Pencil className="w-3.5 h-3.5 mr-1.5" />
                   Edit
                 </Button>
-                <Button variant="danger" size="sm" onClick={handleDeleteClient} disabled={isDeleting}>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={handleDeleteClient}
+                  disabled={isDeleting}
+                  className="hidden sm:inline-flex"
+                >
                   <Trash2 className="w-3.5 h-3.5 mr-1.5" />
                   {isDeleting ? 'Deleting…' : 'Delete'}
                 </Button>
+                {/* Phones: Delete lives in a menu so it can't be tapped by accident next to Edit */}
+                <MobileMoreMenu
+                  items={[
+                    { label: isDeleting ? 'Deleting…' : 'Delete client', icon: Trash2, onClick: handleDeleteClient, danger: true, disabled: isDeleting },
+                  ]}
+                />
               </div>
             </div>
 
