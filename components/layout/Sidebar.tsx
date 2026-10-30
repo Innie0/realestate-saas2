@@ -291,7 +291,9 @@ export default function Sidebar() {
           'w-60',
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
-        style={{ transition: 'width 0.2s ease, transform 0.2s ease' }}
+        // 100dvh = the visible height on phones (100vh includes the space behind the browser's
+        // address bar, which cut off the account / theme / log out section). Older browsers keep h-screen.
+        style={{ transition: 'width 0.2s ease, transform 0.2s ease', height: '100dvh' }}
       >
         <div className="hidden lg:flex h-[52px] shrink-0 items-center gap-2 border-b border-border overflow-visible px-4">
           {isCollapsed ? (
@@ -359,7 +361,7 @@ export default function Sidebar() {
           ))}
         </nav>
 
-        <div className="relative z-20 shrink-0 border-t border-border p-2.5" ref={userMenuRef}>
+        <div className="relative z-20 shrink-0 border-t border-border p-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))]" ref={userMenuRef}>
           {isUserMenuOpen && !isCollapsed && userMenuPosition ? (
             <div
               className="fixed z-[200] overflow-hidden rounded-xl border border-border bg-card py-2 shadow-overlay ring-1 ring-black/[0.04]"

@@ -15,6 +15,8 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
   return (
     <div
       className="dashboard-root flex h-screen overflow-hidden bg-[var(--canvas)]"
+      // Visible height on phones, so the bottom of each page isn't hidden behind the browser toolbar
+      style={{ height: '100dvh' }}
       data-theme={theme}
       suppressHydrationWarning
     >
