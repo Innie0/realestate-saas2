@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { MessageSquare, X, Send, ChevronDown } from 'lucide-react';
 
 const DISMISSED_KEY = 'feedback_widget_dismissed';
@@ -10,6 +11,8 @@ type FeedbackType = 'general' | 'bug' | 'feature';
 export default function FeedbackWidget() {
   const [dismissed, setDismissed] = useState(false);
   const [open, setOpen] = useState(false);
+  // The AI Assistant's message box sits at the bottom; the button would cover Send on phones
+  const coversChatInput = usePathname()?.startsWith('/dashboard/tasks') ?? false;
   const [type, setType] = useState<FeedbackType>('general');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -140,7 +143,7 @@ export default function FeedbackWidget() {
       )}
 
       {/* Floating button — hidden when dismissed */}
-      {!dismissed && <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 sm:bottom-14 sm:right-6">
+      {!dismissed && <div className={`fixed bottom-4 right-4 z-50 items-center gap-2 sm:bottom-14 sm:right-6 ${coversChatInput ? 'hidden sm:flex' : 'flex'}`}>
         {/* X dismiss button */}
         {!open && (
           <button

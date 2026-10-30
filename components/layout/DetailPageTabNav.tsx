@@ -26,7 +26,11 @@ export default function DetailPageTabNav<T extends string>({
 }: DetailPageTabNavProps<T>) {
   return (
     <div className={cn('border-b border-border', className)}>
-      <nav className="flex gap-[26px] overflow-x-auto" role="tablist">
+      {/* Phones: tabs swipe sideways; the fade at the right edge shows there are more */}
+      <nav
+        className="flex gap-5 overflow-x-auto pr-8 [mask-image:linear-gradient(to_right,black_calc(100%-2rem),transparent)] [scrollbar-width:none] sm:gap-[26px] sm:pr-0 sm:[mask-image:none] [&::-webkit-scrollbar]:hidden"
+        role="tablist"
+      >
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;

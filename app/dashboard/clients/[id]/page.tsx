@@ -413,7 +413,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2.5 flex-wrap">
-                    <h1 className="text-[24px] font-semibold text-gray-900 truncate">{client.name}</h1>
+                    <h1 className="break-words text-[20px] font-semibold leading-tight text-gray-900 sm:text-[24px]">{client.name}</h1>
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium border ${stageStyle.className}`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${stageStyle.dotClassName}`} />
                       {stageStyle.label}

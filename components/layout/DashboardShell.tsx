@@ -20,9 +20,10 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
     >
       <Sidebar />
 
-      <div className="flex flex-1 flex-col overflow-hidden lg:ml-0">
+      {/* min-w-0: without it, one long title or wide row stretches the whole page past a phone screen */}
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden lg:ml-0">
         <div className="h-16 lg:hidden" />
-        <main className="flex-1 overflow-y-auto bg-transparent">
+        <main className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden bg-transparent">
           <DashboardProviders>{children}</DashboardProviders>
         </main>
         <FeedbackWidget />
