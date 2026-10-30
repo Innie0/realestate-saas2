@@ -7,7 +7,7 @@ export function formatFeatureText(feature: string): React.ReactNode {
   const parts = feature.split(/(Unlimited)/g);
   return parts.map((part, i) =>
     part === 'Unlimited' ? (
-      <strong key={i} className="font-semibold text-gray-900">
+      <strong key={i} className="font-semibold text-inherit">
         {part}
       </strong>
     ) : (
