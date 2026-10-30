@@ -203,6 +203,14 @@ export function getPlanDisplayPrice(plan: PlanSlug, interval: BillingInterval): 
   return formatPlanPrice(amount);
 }
 
+/**
+ * What the yearly plan works out to per month, rounded up to the dollar so we
+ * never show less than the agent actually pays ($490/yr → $41/mo).
+ */
+export function getMonthlyEquivalent(plan: PlanSlug, interval: BillingInterval): number {
+  return interval === 'annual' ? Math.ceil(PLAN_PRICES[plan].annual / 12) : PLAN_PRICES[plan].monthly;
+}
+
 export function getPlanPeriodLabel(interval: BillingInterval): string {
   return interval === 'annual' ? 'per year after trial' : 'per month after trial';
 }

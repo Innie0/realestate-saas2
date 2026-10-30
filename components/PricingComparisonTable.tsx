@@ -16,7 +16,7 @@ function CellValue({ value }: { value: string | boolean }) {
       </span>
     );
   }
-  return <span className="text-sm text-mkt-secondary">{value}</span>;
+  return <span className="text-[13px] text-mkt-secondary sm:text-sm">{value}</span>;
 }
 
 export default function PricingComparisonTable() {
@@ -31,17 +31,23 @@ export default function PricingComparisonTable() {
         </p>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[480px] text-left">
+      {/* Narrow columns on phones so Starter and Pro both fit without sideways scrolling */}
+      <div>
+        <table className="w-full table-fixed text-left">
+          <colgroup>
+            <col />
+            <col className="w-[84px] sm:w-[140px]" />
+            <col className="w-[84px] sm:w-[140px]" />
+          </colgroup>
           <thead>
             <tr className="border-b border-mkt-border bg-mkt-background">
-              <th className="px-5 py-3 text-xs font-medium uppercase tracking-[0.12em] text-mkt-secondary sm:px-6">
+              <th className="px-4 py-3 text-xs font-medium uppercase tracking-[0.12em] text-mkt-secondary sm:px-6">
                 Feature
               </th>
-              <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-[0.12em] text-mkt-secondary sm:px-6">
+              <th className="px-1 py-3 text-center text-xs font-medium uppercase tracking-[0.12em] text-mkt-secondary sm:px-6">
                 Starter
               </th>
-              <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-[0.12em] text-mkt-secondary sm:px-6">
+              <th className="px-1 py-3 text-center text-xs font-semibold uppercase tracking-[0.12em] text-[#0668E1] sm:px-6">
                 Pro
               </th>
             </tr>
@@ -49,13 +55,13 @@ export default function PricingComparisonTable() {
           <tbody>
             {PLAN_COMPARISON_ROWS.map((row) => (
               <tr key={row.label} className="bg-mkt-background">
-                <td className="px-5 py-3 text-sm font-medium text-mkt-foreground sm:px-6">
+                <td className="px-4 py-3 text-[13px] font-medium leading-snug text-mkt-foreground sm:px-6 sm:text-sm">
                   {row.label}
                 </td>
-                <td className="px-4 py-3 text-center sm:px-6">
+                <td className="px-1 py-3 text-center sm:px-6">
                   <CellValue value={row.starter} />
                 </td>
-                <td className="px-4 py-3 text-center sm:px-6">
+                <td className="bg-[#0668E1]/[0.04] px-1 py-3 text-center sm:px-6">
                   <CellValue value={row.pro} />
                 </td>
               </tr>
