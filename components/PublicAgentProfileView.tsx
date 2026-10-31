@@ -81,7 +81,6 @@ export default function PublicAgentProfileView({
   const hasSidebar =
     agent.bio ||
     agent.specialties.length > 0 ||
-    agent.areas.length > 0 ||
     agent.brokerage ||
     agent.license ||
     agent.yearsExperience != null;
@@ -95,9 +94,6 @@ export default function PublicAgentProfileView({
   const stats = [
     agent.yearsExperience != null
       ? { label: `${agent.yearsExperience}+ years experience`, icon: Award }
-      : null,
-    agent.areas.length > 0
-      ? { label: `${agent.areas.length} area${agent.areas.length === 1 ? '' : 's'} served`, icon: MapPin }
       : null,
   ].filter(Boolean) as { label: string; icon: typeof Award }[];
 
@@ -184,6 +180,21 @@ export default function PublicAgentProfileView({
                     <span>{agent.license}</span>
                   </>
                 )}
+              </div>
+            )}
+
+            {/* Areas sit right under the name so visitors see at a glance where the agent works */}
+            {agent.areas.length > 0 && (
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-2" aria-label="Areas served">
+                {agent.areas.map((a) => (
+                  <span
+                    key={a}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-mkt-border bg-white px-3 py-1.5 text-sm text-mkt-secondary"
+                  >
+                    <MapPin className="h-3.5 w-3.5 shrink-0 text-[#0668E1]" />
+                    {a}
+                  </span>
+                ))}
               </div>
             )}
 
@@ -284,22 +295,6 @@ export default function PublicAgentProfileView({
                       >
                         <Award className="w-3 h-3 shrink-0" />
                         {s}
-                      </span>
-                    ))}
-                  </div>
-                </SectionCard>
-              )}
-
-              {agent.areas.length > 0 && (
-                <SectionCard title="Areas served">
-                  <div className="flex flex-wrap gap-2">
-                    {agent.areas.map((a) => (
-                      <span
-                        key={a}
-                        className="inline-flex items-center gap-1.5 rounded-full bg-mkt-surface-muted border border-mkt-border px-3 py-1.5 text-sm text-mkt-secondary"
-                      >
-                        <MapPin className="w-3 h-3 shrink-0 text-[#0668E1]" />
-                        {a}
                       </span>
                     ))}
                   </div>
