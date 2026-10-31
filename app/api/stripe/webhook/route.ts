@@ -6,6 +6,7 @@ import type Stripe from 'stripe';
 import { stripe } from '@/lib/stripe-server';
 import { createAdminClient } from '@/lib/supabase-admin';
 import { subscriptionFieldsFromStripe } from '@/lib/stripe-billing-sync';
+import { sendTrialEndingReminder } from '@/lib/trial-reminder-email';
 
 async function findUserByCustomerId(supabase: ReturnType<typeof createAdminClient>, customerId: string) {
   const { data: user } = await supabase
@@ -127,6 +128,16 @@ export async function POST(req: NextRequest) {
           .update({ subscription_status: 'past_due' })
           .eq('id', user.id);
         if (error) console.error('[Webhook] invoice.payment_failed update failed:', error.message);
+        break;
+      }
+
+      // ~3 days before a free trial ends: email the agent the date and amount
+      case 'customer.subscription.trial_will_end': {
+        try {
+          await sendTrialEndingReminder(event.data.object as Stripe.Subscription);
+        } catch (err) {
+          console.error('[Webhook] trial reminder failed:', err instanceof Error ? err.message : err);
+        }
         break;
       }
 
