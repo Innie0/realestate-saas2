@@ -2,6 +2,12 @@
 @import '@fontsource/plus-jakarta-sans/600.css';
 @import '@fontsource/plus-jakarta-sans/700.css';
 @import '@fontsource/plus-jakarta-sans/800.css';
+@import '@fontsource/newsreader/400.css';
+@import '@fontsource/newsreader/500.css';
+@import '@fontsource/newsreader/600.css';
+@import '@fontsource/newsreader/400-italic.css';
+@import '@fontsource/newsreader/500-italic.css';
+@import '@fontsource/newsreader/600-italic.css';
 
 /* Global styles for the application */
 /* Tailwind CSS base, components, and utilities */
@@ -15,6 +21,8 @@
 :root {
   color-scheme: dark;
   --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Newsreader', Georgia, serif;
+  --font-tiempos: 'Newsreader', Georgia, serif;
 
   --canvas: #0a0a0a;
   --surface: #1c1c1c;

@@ -3,7 +3,7 @@
 
 import MetaPixel from '@/components/analytics/MetaPixel';
 import type { Metadata } from 'next';
-import { IBM_Plex_Mono, Inter, JetBrains_Mono, Newsreader, Space_Grotesk } from 'next/font/google';
+import { IBM_Plex_Mono, Inter, JetBrains_Mono, Space_Grotesk } from 'next/font/google';
 import { GeistSans } from 'geist/font/sans';
 import { GlobalStructuredData } from '@/components/seo/StructuredData';
 import { SITE_NAME, SITE_NAME_ALT, SITE_DESCRIPTION, SITE_DOMAIN, SITE_URL } from '@/lib/site-config';
@@ -29,21 +29,8 @@ const inter = Inter({
   display: 'swap',
 });
 
-const newsreader = Newsreader({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  style: ['normal', 'italic'],
-  variable: '--font-serif',
-  display: 'swap',
-});
-
-const tiempos = Newsreader({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  style: ['normal', 'italic'],
-  variable: '--font-tiempos',
-  display: 'swap',
-});
+// Newsreader is self-hosted (@fontsource, imported in globals.css): Google's current
+// Newsreader files use a URL format Turbopack's next/font can't download, which failed builds.
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -147,7 +134,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={GeistSans.variable} suppressHydrationWarning>
       <body
-        className={`${GeistSans.className} ${plexMono.variable} ${inter.variable} ${newsreader.variable} ${tiempos.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable} font-sans antialiased`}
+        className={`${GeistSans.className} ${plexMono.variable} ${inter.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable} font-sans antialiased`}
       >
         <GlobalStructuredData />
         <MetaPixel />
