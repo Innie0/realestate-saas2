@@ -27,11 +27,14 @@ const MAX_PROFILE_LISTINGS = 12;
 
 const STATUS_ORDER: Record<ProfileListingStatus, number> = { active: 0, pending: 1, sold: 2 };
 
-/** Stored photos only (uploaded files); skips very large inline images from older projects. */
-function publicPhotos(images: Project['images'] | null | undefined): string[] {
+/**
+ * Photo links for the profile. Uploaded files are used as-is; older projects
+ * kept photos inline, so those are served one at a time by the listing-photo route.
+ */
+function publicPhotos(projectId: string, images: Project['images'] | null | undefined): string[] {
   return normalizeProjectImages(images)
-    .filter((url) => /^https?:\/\//i.test(url))
-    .slice(0, 12);
+    .slice(0, 12)
+    .map((src, i) => (/^https?:\/\//i.test(src) ? src : `/api/public/listing-photo/${projectId}/${i}`));
 }
 
 export async function getProfileListings(admin: SupabaseClient, userId: string): Promise<PublicListing[]> {
@@ -60,7 +63,7 @@ export async function getProfileListings(admin: SupabaseClient, userId: string):
         bedrooms: num(info?.bedrooms),
         bathrooms: num(info?.bathrooms),
         squareFeet: num(info?.square_feet),
-        photos: publicPhotos(p.images as Project['images']),
+        photos: publicPhotos(p.id as string, p.images as Project['images']),
         description: getListingDescription({ description: p.description, ai_content: p.ai_content }),
         listingUrl: url,
       };

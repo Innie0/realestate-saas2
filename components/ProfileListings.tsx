@@ -238,33 +238,11 @@ export default function ProfileListings({ listings }: { listings: PublicListing[
 
   return (
     <section className="mb-8">
-      <div className="mb-4 flex items-end justify-between gap-3">
-        <div>
-          <h2 className="font-display text-lg font-medium text-mkt-foreground">Listings</h2>
-          <p className="text-sm text-mkt-secondary">
-            {listings.length} home{listings.length === 1 ? '' : 's'}
-          </p>
-        </div>
-        {rotates && (
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => go(-1)}
-              aria-label="Previous listings"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-mkt-border bg-white text-mkt-foreground hover:bg-mkt-surface-muted"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => go(1)}
-              aria-label="Next listings"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-mkt-border bg-white text-mkt-foreground hover:bg-mkt-surface-muted"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-        )}
+      <div className="mb-5 text-center">
+        <h2 className="font-display text-lg font-medium text-mkt-foreground">Listings</h2>
+        <p className="text-sm text-mkt-secondary">
+          {listings.length} home{listings.length === 1 ? '' : 's'}
+        </p>
       </div>
 
       {rotates ? (
@@ -284,19 +262,40 @@ export default function ProfileListings({ listings }: { listings: PublicListing[
               </div>
             ))}
           </div>
-          <div className="mt-3 flex justify-center gap-1.5" aria-hidden>
-            {listings.map((l, i) => (
-              <span
-                key={l.id}
-                className={clsx('h-1.5 rounded-full transition-all', i === active ? 'w-5 bg-[#0668E1]' : 'w-1.5 bg-mkt-border')}
-              />
-            ))}
+          <div className="mt-4 flex items-center justify-center gap-4">
+            <button
+              type="button"
+              onClick={() => go(-1)}
+              aria-label="Previous listings"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-mkt-border bg-white text-mkt-foreground hover:bg-mkt-surface-muted"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <div className="flex gap-1.5" aria-hidden>
+              {listings.map((l, i) => (
+                <span
+                  key={l.id}
+                  className={clsx('h-1.5 rounded-full transition-all', i === active ? 'w-5 bg-[#0668E1]' : 'w-1.5 bg-mkt-border')}
+                />
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => go(1)}
+              aria-label="Next listings"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-mkt-border bg-white text-mkt-foreground hover:bg-mkt-surface-muted"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
           </div>
         </>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        // A few listings sit centered, whatever the count
+        <div className="flex flex-wrap justify-center gap-4">
           {listings.map((l) => (
-            <ListingCard key={l.id} listing={l} onOpen={() => setOpen(l)} />
+            <div key={l.id} className="w-full sm:w-[calc((100%-1rem)/2)] lg:w-[calc((100%-2rem)/3)]">
+              <ListingCard listing={l} onOpen={() => setOpen(l)} />
+            </div>
           ))}
         </div>
       )}

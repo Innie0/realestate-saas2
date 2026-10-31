@@ -35,6 +35,7 @@ const publicApiPrefixes = [
   '/api/meta/callback',
   '/api/meta/deauthorize',
   '/api/meta/data-deletion',
+  '/api/public/listing-photo/',
   '/api/calendar/google/callback',
   '/api/calendar/outlook/callback',
 ];
