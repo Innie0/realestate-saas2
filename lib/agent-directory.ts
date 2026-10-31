@@ -4,7 +4,7 @@
 // pages are actually discoverable by search engines.
 
 import { createAdminClient } from '@/lib/supabase-admin';
-import { hasProLeadToolsAccess } from '@/lib/subscription';
+import { hasAgentProfileAccess } from '@/lib/subscription';
 import { buildAgentProfilePath } from '@/lib/agent-profile-shared';
 
 export interface PublicAgentSummary {
@@ -64,7 +64,7 @@ export async function getPublicAgentDirectory(): Promise<PublicAgentSummary[]> {
     const user = Array.isArray(row.users) ? row.users[0] : row.users;
     if (!user) continue;
 
-    if (!hasProLeadToolsAccess(user.subscription_status, user.subscription_plan, user.email)) {
+    if (!hasAgentProfileAccess(user.subscription_status, user.subscription_plan, user.email)) {
       continue;
     }
 

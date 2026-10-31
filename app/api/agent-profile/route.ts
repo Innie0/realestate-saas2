@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
-import { hasProLeadToolsAccess } from '@/lib/subscription';
+import { hasAgentProfileAccess } from '@/lib/subscription';
 import { buildAgentProfilePath } from '@/lib/agent-profile-shared';
 
 const CORE_PROFILE_FIELDS = [
@@ -111,9 +111,9 @@ export async function PUT(request: NextRequest) {
       .eq('id', user.id)
       .single();
 
-    if (!hasProLeadToolsAccess(userData?.subscription_status, userData?.subscription_plan, user.email)) {
+    if (!hasAgentProfileAccess(userData?.subscription_status, userData?.subscription_plan, user.email)) {
       return NextResponse.json(
-        { success: false, error: 'Agent profiles are available on the Pro plan. Upgrade to publish your profile.' },
+        { success: false, error: 'Agent profiles need an active Starter or Pro plan.' },
         { status: 403 },
       );
     }

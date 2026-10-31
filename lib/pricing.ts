@@ -63,6 +63,7 @@ export const STARTER_FEATURE_GROUPS: PricingFeatureGroup[] = [
     items: [
       'Leads Inbox & Hot/Warm/Cold Scoring',
       'Lead Capture Form & QR Code',
+      'Public Agent Profile Page',
       'Automated Follow-Up Emails',
       'Client Manager (CRM)',
     ],
@@ -84,7 +85,7 @@ export const PRO_PLAN_INTRO = 'Everything in Starter, plus:';
 export const PRO_CARD_HIGHLIGHTS = [
   'Unlimited projects, research, CMA, AI messages, clients & transactions',
   'Open House QR Sign-In',
-  'Public Agent Profile Page',
+  'Self-Booking Link for Showings',
   'Priority Support',
 ] as const;
 
@@ -92,7 +93,7 @@ export const PRO_CARD_HIGHLIGHTS = [
 export const PRO_EXCLUSIVE_FEATURES = [
   'Unlimited Listing Projects, Property Research, CMA, AI Messages, Clients & Transactions',
   'Open House QR Sign-In',
-  'Public Agent Profile Page',
+  'Self-Booking Link for Showings',
   'Priority Support',
 ] as const;
 
@@ -115,7 +116,8 @@ export const PLAN_COMPARISON_ROWS = [
   { label: 'Lead Capture Form', starter: true, pro: true },
   { label: 'Leads Inbox', starter: true, pro: true },
   { label: 'Open House Sign-In', starter: false, pro: true },
-  { label: 'Public Agent Profile', starter: false, pro: true },
+  { label: 'Public Agent Profile', starter: true, pro: true },
+  { label: 'Self-Booking Link for Showings', starter: false, pro: true },
   { label: 'Priority Support', starter: false, pro: true },
 ] as const;
 
@@ -229,5 +231,5 @@ export function getStarterProComparisonAnswer(): string {
     ? `Pro (${getPlanDisplayPrice('pro', 'monthly')}/month or ${getPlanDisplayPrice('pro', 'annual')}/year)`
     : `Pro (${getPlanDisplayPrice('pro', 'monthly')}/month)`;
 
-  return `${starterPrice} includes 20 listing projects, 20 property research lookups, 5 CMA analyses, 75 AI messages, and 20 transactions per month, plus up to 50 clients total — with lead capture, CRM, leads inbox, automated follow-up emails, calendar, tasks, and transaction checklists. ${proPrice} includes everything in Starter with unlimited usage, plus open house QR sign-in, a public agent profile page, and priority support. Both plans include a 7-day free trial.`;
+  return `${starterPrice} includes 20 listing projects, 20 property research lookups, 5 CMA analyses, 75 AI messages, and 20 transactions per month, plus up to 50 clients total — with lead capture, a public agent profile page, CRM, leads inbox, automated follow-up emails, calendar, tasks, and transaction checklists. ${proPrice} includes everything in Starter with unlimited usage, plus open house QR sign-in, a self-booking link for showings, and priority support. Both plans include a 7-day free trial.`;
 }

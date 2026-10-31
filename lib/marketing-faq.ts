@@ -28,7 +28,7 @@ export const MARKETING_FAQ_ITEMS: MarketingFaqItem[] = [
   {
     question: 'How do leads and follow-up work?',
     answer:
-      'You get a personal lead capture link and QR code to share anywhere — bio, email signature, open house flyers. New leads land in your inbox with hot, warm, and cold scoring. You can add them to your CRM and turn on automated follow-up emails. Open house QR sign-in and a public agent profile are included on Pro.',
+      'You get a personal lead capture link and QR code to share anywhere — bio, email signature, open house flyers. New leads land in your inbox with hot, warm, and cold scoring. You can add them to your CRM and turn on automated follow-up emails. Every plan includes a public agent profile page; open house QR sign-in and a self-booking link for showings are included on Pro.',
   },
   {
     question: 'Can I cancel anytime?',

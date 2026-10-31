@@ -110,10 +110,11 @@ function LeadsPageContent() {
 
   const isPaidPlan = usageResponse?.hasAccess === true;
   const isProPlan = usageResponse?.hasProLeadTools === true;
+  const hasAgentProfile = usageResponse?.hasAgentProfile === true;
   const profileUrl = (profileResponse?.profileUrl as string) || '';
 
-  const handleProFeatureClick = (href: string) => {
-    if (isProPlan) {
+  const handleProFeatureClick = (href: string, proOnly = true) => {
+    if (proOnly ? isProPlan : hasAgentProfile) {
       router.push(href);
       return;
     }
@@ -436,6 +437,7 @@ function LeadsPageContent() {
                   description: 'Share a link so leads can pick an open time and book a showing themselves.',
                   live: isProPlan && settingsData?.booking_enabled === true,
                   url: isProPlan && settingsData?.booking_enabled ? bookingUrl : '',
+                  proOnly: true,
                 },
                 {
                   href: '/dashboard/leads/open-houses',
@@ -444,6 +446,7 @@ function LeadsPageContent() {
                   description: 'Create a sign-in page and QR code for each open house. Visitors become leads automatically.',
                   live: false,
                   url: '',
+                  proOnly: true,
                 },
                 {
                   href: '/dashboard/leads/profile',
@@ -451,20 +454,21 @@ function LeadsPageContent() {
                   title: 'Agent profile',
                   description: 'Your public landing page with bio, specialties, and a built-in lead form.',
                   live: false,
-                  url: isProPlan ? profileUrl : '',
+                  url: hasAgentProfile ? profileUrl : '',
+                  proOnly: false,
                 },
-              ].map(({ href, icon: Icon, title, description, live, url }) => (
+              ].map(({ href, icon: Icon, title, description, live, url, proOnly }) => (
                 <button
                   key={href}
                   type="button"
-                  onClick={() => handleProFeatureClick(href)}
+                  onClick={() => handleProFeatureClick(href, proOnly)}
                   className="rounded-[10px] bg-[var(--surface)] border border-gray-200 p-5 hover:border-gray-300 hover:bg-gray-50 transition-colors duration-150 group text-left w-full flex flex-col"
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-gray-100 text-gray-900 shrink-0">
                       <Icon className="w-4 h-4" strokeWidth={1.8} />
                     </div>
-                    {!isProPlan && (
+                    {proOnly && !isProPlan && (
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-[11px] font-medium">
                         <Sparkles className="w-3 h-3" />
                         Pro

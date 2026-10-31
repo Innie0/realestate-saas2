@@ -69,7 +69,16 @@ export function hasLeadCaptureAccess(
   return isStarterPriceId(plan) || isProPriceId(plan);
 }
 
-/** Pro-only lead tools: open houses, public agent profile, SMS alerts */
+/** Public agent profile page — included on Starter and Pro (same as the lead capture form). */
+export function hasAgentProfileAccess(
+  subscriptionStatus: string | null | undefined,
+  subscriptionPlan: string | null | undefined,
+  email?: string | null
+): boolean {
+  return hasLeadCaptureAccess(subscriptionStatus, subscriptionPlan, email);
+}
+
+/** Pro-only lead tools: open houses and the self-booking link */
 export function hasProLeadToolsAccess(
   subscriptionStatus: string | null | undefined,
   subscriptionPlan: string | null | undefined,

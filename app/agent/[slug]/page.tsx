@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { createAdminClient } from '@/lib/supabase-admin';
-import { hasProLeadToolsAccess } from '@/lib/subscription';
+import { hasAgentProfileAccess } from '@/lib/subscription';
 import { buildAgentProfilePath, buildBookingPath } from '@/lib/agent-profile-shared';
 import { AgentProfileStructuredData } from '@/components/seo/StructuredData';
 import { SITE_NAME_ALT, SITE_URL } from '@/lib/site-config';
@@ -34,7 +34,7 @@ async function getAgentProfile(slug: string) {
     .eq('id', uuid)
     .single();
 
-  if (!hasProLeadToolsAccess(
+  if (!hasAgentProfileAccess(
     userData?.subscription_status,
     userData?.subscription_plan,
     user.email

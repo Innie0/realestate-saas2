@@ -48,7 +48,7 @@ export default function ProfileEditorPage() {
       try {
         const usageRes = await fetch('/api/usage');
         const usage = await usageRes.json();
-        if (!usage.hasProLeadTools) {
+        if (!usage.hasAgentProfile) {
           router.replace('/dashboard/upgrade');
           return;
         }
