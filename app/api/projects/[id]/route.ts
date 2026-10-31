@@ -119,6 +119,13 @@ export async function PUT(
     if (body.status !== undefined) updateData.status = body.status;
     if (body.selected_tone !== undefined) updateData.selected_tone = body.selected_tone;
     if (body.tone_versions !== undefined) updateData.tone_versions = body.tone_versions;
+    // Only sent by the "Show on my agent profile" setting, so other saves never touch it
+    if (body.profile_status !== undefined) {
+      if (body.profile_status !== null && !['active', 'pending', 'sold'].includes(body.profile_status)) {
+        return NextResponse.json({ success: false, error: 'Invalid profile status' }, { status: 400 });
+      }
+      updateData.profile_status = body.profile_status;
+    }
 
     const { data: project, error } = await supabase
       .from('projects')
@@ -130,8 +137,15 @@ export async function PUT(
 
     if (error) {
       console.error('Error updating project:', error);
+      // The profile_status column is added by projects-profile-status.sql
+      const profileNotReady = 'profile_status' in updateData && /profile_status/.test(error.message || '');
       return NextResponse.json(
-        { success: false, error: 'Failed to update project' },
+        {
+          success: false,
+          error: profileNotReady
+            ? 'Showing listings on your profile is being set up. Please try again in a few minutes.'
+            : 'Failed to update project',
+        },
         { status: 500 }
       );
     }

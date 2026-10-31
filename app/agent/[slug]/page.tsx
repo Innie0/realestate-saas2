@@ -5,6 +5,7 @@ import { buildAgentProfilePath, buildBookingPath } from '@/lib/agent-profile-sha
 import { AgentProfileStructuredData } from '@/components/seo/StructuredData';
 import { SITE_NAME_ALT, SITE_URL } from '@/lib/site-config';
 import PublicAgentProfileView from '@/components/PublicAgentProfileView';
+import { getProfileListings } from '@/lib/profile-listings';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -65,6 +66,7 @@ async function getAgentProfile(slug: string) {
     website: settings.profile_website || '',
     yearsExperience: settings.profile_years_experience ?? null,
     bookingEnabled: settings.booking_enabled === true,
+    listings: await getProfileListings(supabase, uuid),
   };
 }
 

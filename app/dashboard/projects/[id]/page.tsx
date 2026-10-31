@@ -7,6 +7,7 @@
 import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import MobileMoreMenu from '@/components/ui/MobileMoreMenu';
+import ProjectProfileListingCard from '@/components/projects/ProjectProfileListingCard';
 import DashboardPage from '@/components/layout/DashboardPage';
 import { ProjectDetailPageLoadingShell } from '@/components/projects/ProjectDetailSkeleton';
 import Button from '@/components/ui/Button';
@@ -1428,6 +1429,13 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 )}
               </Card>
               </div>
+
+              <ProjectProfileListingCard
+                projectId={project.id}
+                status={project.profile_status}
+                propertyInfo={project.property_info}
+                onSaved={(changes) => setProject((prev) => (prev ? { ...prev, ...changes } : prev))}
+              />
 
               {/* Property information */}
               <Card className="p-5 sm:p-6">

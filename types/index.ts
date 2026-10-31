@@ -16,6 +16,8 @@ export interface User {
 /**
  * Project type - represents a real estate project
  */
+export type ProfileListingStatus = 'active' | 'pending' | 'sold';
+
 export interface Project {
   id: string; // Unique identifier
   user_id: string; // ID of the user who owns this project
@@ -29,6 +31,8 @@ export interface Project {
   published?: boolean; // Public listing page enabled
   published_at?: string | null; // When the listing was published
   listing_status?: 'active' | 'sold' | 'off_market' | 'unknown' | null;
+  /** Shown on the agent's public profile with this label; null = not shown */
+  profile_status?: ProfileListingStatus | null;
   last_synced_at?: string | null;
   created_at: string; // When the project was created
   updated_at: string; // When the project was last updated

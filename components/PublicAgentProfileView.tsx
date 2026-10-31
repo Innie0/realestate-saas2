@@ -11,6 +11,8 @@ import {
   CalendarClock,
 } from 'lucide-react';
 import LeadCaptureForm from '@/components/LeadCaptureForm';
+import ProfileListings from '@/components/ProfileListings';
+import type { PublicListing } from '@/lib/profile-listings';
 
 export interface PublicAgentProfile {
   id: string;
@@ -26,6 +28,8 @@ export interface PublicAgentProfile {
   license: string;
   website: string;
   yearsExperience: number | null;
+  /** Homes the agent chose to show; empty when none */
+  listings?: PublicListing[];
 }
 
 interface PublicAgentProfileViewProps {
@@ -254,6 +258,7 @@ export default function PublicAgentProfileView({
 
       {/* Main content */}
       <div className="max-w-5xl mx-auto px-4 py-8 sm:py-12">
+        <ProfileListings listings={agent.listings ?? []} />
         <div
           className={`grid gap-6 lg:gap-8 ${
             hasSidebar ? 'lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]' : 'max-w-3xl mx-auto'
