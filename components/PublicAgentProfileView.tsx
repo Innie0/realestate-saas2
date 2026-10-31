@@ -78,12 +78,6 @@ export default function PublicAgentProfileView({
   const firstName = agent.name.split(' ')[0];
   const hasContact = Boolean(agent.phone || agent.profileEmail || agent.website);
 
-  const hasSidebar =
-    agent.bio ||
-    agent.specialties.length > 0 ||
-    agent.brokerage ||
-    agent.license ||
-    agent.yearsExperience != null;
 
   const websiteHref = agent.website
     ? agent.website.startsWith('http')
@@ -212,6 +206,26 @@ export default function PublicAgentProfileView({
               </div>
             )}
 
+            {agent.specialties.length > 0 && (
+              <div className="mt-3 flex flex-wrap items-center justify-center gap-2" aria-label="Specialties">
+                {agent.specialties.map((sp) => (
+                  <span
+                    key={sp}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[#0668E1]/20 bg-[#0668E1]/10 px-3 py-1.5 text-sm text-[#0668E1]"
+                  >
+                    <Award className="h-3 w-3 shrink-0" />
+                    {sp}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {agent.bio && (
+              <p className="mt-6 max-w-2xl whitespace-pre-wrap text-left text-[15px] leading-relaxed text-mkt-secondary sm:text-center sm:text-base">
+                {agent.bio}
+              </p>
+            )}
+
             {hasContact && (
               <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
                 {bookingUrl && (
@@ -270,64 +284,7 @@ export default function PublicAgentProfileView({
       {/* Main content */}
       <div className="max-w-5xl mx-auto px-4 py-8 sm:py-12">
         <ProfileListings listings={agent.listings ?? []} />
-        <div
-          className={`grid gap-6 lg:gap-8 ${
-            hasSidebar ? 'lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]' : 'max-w-3xl mx-auto'
-          }`}
-        >
-          {hasSidebar && (
-            <div className="space-y-6 lg:sticky lg:top-20 lg:self-start">
-              {agent.bio && (
-                <SectionCard title="About me">
-                  <p className="text-sm sm:text-base text-mkt-secondary leading-relaxed whitespace-pre-wrap">
-                    {agent.bio}
-                  </p>
-                </SectionCard>
-              )}
-
-              {agent.specialties.length > 0 && (
-                <SectionCard title="Specialties">
-                  <div className="flex flex-wrap gap-2">
-                    {agent.specialties.map((s) => (
-                      <span
-                        key={s}
-                        className="inline-flex items-center gap-1.5 rounded-full bg-[#0668E1]/10 border border-[#0668E1]/20 px-3 py-1.5 text-sm text-[#0668E1]"
-                      >
-                        <Award className="w-3 h-3 shrink-0" />
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                </SectionCard>
-              )}
-
-              {!agent.bio && (agent.brokerage || agent.yearsExperience != null) && (
-                <SectionCard title="Why work with me?">
-                  <ul className="space-y-3 text-sm text-mkt-secondary">
-                    {agent.yearsExperience != null && (
-                      <li className="flex items-start gap-2">
-                        <Award className="w-4 h-4 text-[#0668E1] mt-0.5 shrink-0" />
-                        {agent.yearsExperience}+ years helping buyers and sellers
-                      </li>
-                    )}
-                    {agent.brokerage && (
-                      <li className="flex items-start gap-2">
-                        <Building2 className="w-4 h-4 text-[#0668E1] mt-0.5 shrink-0" />
-                        Affiliated with {agent.brokerage}
-                      </li>
-                    )}
-                    {agent.license && (
-                      <li className="flex items-start gap-2">
-                        <span className="w-4 h-4 text-[#0668E1] mt-0.5 shrink-0 text-center text-xs font-bold">✓</span>
-                        {agent.license}
-                      </li>
-                    )}
-                  </ul>
-                </SectionCard>
-              )}
-            </div>
-          )}
-
+        <div className="mx-auto grid max-w-3xl gap-6">
           <div className="space-y-6">
             <SectionCard
               id="contact"
