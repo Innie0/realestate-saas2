@@ -11,6 +11,7 @@ import {
   CalendarClock,
 } from 'lucide-react';
 import LeadCaptureForm from '@/components/LeadCaptureForm';
+import { formatPhoneDisplay } from '@/lib/phone-format';
 import ProfileListings from '@/components/ProfileListings';
 import type { PublicListing } from '@/lib/profile-listings';
 
@@ -243,7 +244,7 @@ export default function PublicAgentProfileView({
                     className="inline-flex items-center gap-2 rounded-mkt-button bg-[#0668E1] px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-[#0450b0] transition-colors"
                   >
                     <Phone className="w-4 h-4" />
-                    {agent.phone}
+                    {formatPhoneDisplay(agent.phone)}
                   </a>
                 )}
                 {agent.profileEmail && (

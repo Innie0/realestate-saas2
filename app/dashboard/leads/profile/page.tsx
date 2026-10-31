@@ -1,5 +1,6 @@
 'use client';
 
+import { formatPhoneDisplay, formatPhoneInput } from '@/lib/phone-format';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -83,7 +84,7 @@ export default function ProfileEditorPage() {
           );
           setSpecialties(result.data.profile_specialties || []);
           setAreas(result.data.profile_areas || []);
-          setPhone(result.data.profile_phone || '');
+          setPhone(formatPhoneDisplay(result.data.profile_phone || ''));
           setEmail(result.data.profile_email || '');
         }
         setProfileUrl(result.profileUrl || '');
@@ -367,8 +368,10 @@ export default function ProfileEditorPage() {
                   <input
                     type="tel"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+1 (555) 123-4567"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    onChange={(e) => setPhone(formatPhoneInput(e.target.value))}
+                    placeholder="(555) 123-4567"
                     className={inputClass}
                   />
                 </div>
