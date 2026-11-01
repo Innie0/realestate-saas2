@@ -87,15 +87,23 @@ export async function processSignupNudges(): Promise<{ sent: number; failed: num
     const firstName = fullName.split(/\s+/)[0] || 'there';
     const { subject, html } = buildSignupNudgeEmail(firstName);
 
+    // Mark first, so overlapping runs can never send a second email
+    const { error: markError } = await supabase.auth.admin.updateUserById(user.id, {
+      app_metadata: { [SENT_FLAG]: new Date().toISOString() },
+    });
+    if (markError) {
+      console.error('[SignupNudge] Could not mark', user.id, markError);
+      failed++;
+      continue;
+    }
+
     try {
-      // Mark first, so a failure after sending can never cause a second email
-      await supabase.auth.admin.updateUserById(user.id, {
-        app_metadata: { ...authUser.app_metadata, [SENT_FLAG]: new Date().toISOString() },
-      });
       await sendEmail({ from: FROM, to: user.email, subject, html, reply_to: REPLY_TO });
       sent++;
     } catch (err) {
+      // Not sent: clear the mark so the next run tries again
       console.error('[SignupNudge] Failed for', user.id, err);
+      await supabase.auth.admin.updateUserById(user.id, { app_metadata: { [SENT_FLAG]: null } });
       failed++;
     }
   }
