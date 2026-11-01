@@ -17,6 +17,8 @@ const SENT_FLAG = 'signup_nudge_sent';
 const DELAY_MS = 3 * 60 * 60 * 1000;
 /** Only people who signed up recently; older accounts are left alone. */
 const MAX_AGE_MS = 4 * 24 * 60 * 60 * 1000;
+/** Only sign-ups after this email launched; earlier ones were handled by hand. */
+const LAUNCHED_AT = '2026-11-01T06:00:00Z';
 
 const SITE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.oikaro.com').replace(/\/$/, '');
 
@@ -67,7 +69,7 @@ export async function processSignupNudges(): Promise<{ sent: number; failed: num
   const { data: users, error } = await supabase
     .from('users')
     .select('id, email, subscription_status, created_at')
-    .gte('created_at', new Date(now - MAX_AGE_MS).toISOString())
+    .gte('created_at', new Date(Math.max(now - MAX_AGE_MS, Date.parse(LAUNCHED_AT))).toISOString())
     .lte('created_at', new Date(now - DELAY_MS).toISOString());
   if (error) throw error;
 
