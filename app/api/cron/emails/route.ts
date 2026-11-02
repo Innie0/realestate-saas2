@@ -13,7 +13,7 @@ async function handleCron(request: NextRequest) {
     const legacy = await processEmailSequences();
     const sequences = await processLeadSequenceSteps();
     // Separate try so a problem here never blocks agents' lead emails
-    let nudges = { sent: 0, failed: 0 };
+    let nudges: { sent: number; failed: number; errors?: string[] } = { sent: 0, failed: 0 };
     try {
       nudges = await processSignupNudges();
     } catch (err) {

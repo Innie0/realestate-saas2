@@ -62,7 +62,7 @@ export function buildSignupNudgeEmail(firstName: string): { subject: string; htm
 const HAS_PLAN = new Set(['active', 'trialing', 'past_due']);
 
 /** Find recent sign-ups without a plan and send each one the email once. */
-export async function processSignupNudges(): Promise<{ sent: number; failed: number }> {
+export async function processSignupNudges(): Promise<{ sent: number; failed: number; errors: string[] }> {
   const supabase = createAdminClient();
   const now = Date.now();
 
@@ -75,6 +75,7 @@ export async function processSignupNudges(): Promise<{ sent: number; failed: num
 
   let sent = 0;
   let failed = 0;
+  const errors: string[] = [];
 
   for (const user of users || []) {
     // Has (or had) a plan, gets free access, or is one of ours
@@ -105,10 +106,11 @@ export async function processSignupNudges(): Promise<{ sent: number; failed: num
     } catch (err) {
       // Not sent: clear the mark so the next run tries again
       console.error('[SignupNudge] Failed for', user.id, err);
+      errors.push(err instanceof Error ? err.message : String(err));
       await supabase.auth.admin.updateUserById(user.id, { app_metadata: { [SENT_FLAG]: null } });
       failed++;
     }
   }
 
-  return { sent, failed };
+  return { sent, failed, errors: [...new Set(errors)] };
 }
