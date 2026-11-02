@@ -3,41 +3,13 @@
 
 import MetaPixel from '@/components/analytics/MetaPixel';
 import type { Metadata } from 'next';
-import { IBM_Plex_Mono, Inter, JetBrains_Mono, Space_Grotesk } from 'next/font/google';
 import { GeistSans } from 'geist/font/sans';
 import { GlobalStructuredData } from '@/components/seo/StructuredData';
 import { SITE_NAME, SITE_NAME_ALT, SITE_DESCRIPTION, SITE_DOMAIN, SITE_URL } from '@/lib/site-config';
 import './globals.css';
 
-const plexMono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-mono',
-  display: 'swap',
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-});
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
-// Newsreader is self-hosted (@fontsource, imported in globals.css): Google's current
-// Newsreader files use a URL format Turbopack's next/font can't download, which failed builds.
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  weight: ['500', '600', '700'],
-  variable: '--font-space-grotesk',
-  display: 'swap',
-});
+// All fonts are self-hosted (@fontsource, imported in globals.css, variables set in :root).
+// Google's font files now use a URL format Turbopack's next/font can't download, which failed builds.
 
 const googleSiteVerification = process.env.GOOGLE_SITE_VERIFICATION;
 
@@ -134,7 +106,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={GeistSans.variable} suppressHydrationWarning>
       <body
-        className={`${GeistSans.className} ${plexMono.variable} ${inter.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable} font-sans antialiased`}
+        className={`${GeistSans.className} font-sans antialiased`}
       >
         <GlobalStructuredData />
         <MetaPixel />

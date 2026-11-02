@@ -14,8 +14,12 @@
     "cma:backtest": "tsx --env-file=.env.local scripts/cma-backtest.ts"
   },
   "dependencies": {
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
     "@fontsource/newsreader": "^5.3.0",
     "@fontsource/plus-jakarta-sans": "^5.3.0",
+    "@fontsource/space-grotesk": "^5.3.0",
     "@gsap/react": "^2.1.2",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "@radix-ui/react-alert-dialog": "^1.1.21",
