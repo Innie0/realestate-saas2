@@ -17,8 +17,8 @@ const SENT_FLAG = 'signup_nudge_sent';
 const DELAY_MS = 3 * 60 * 60 * 1000;
 /** Only people who signed up recently; older accounts are left alone. */
 const MAX_AGE_MS = 4 * 24 * 60 * 60 * 1000;
-/** Only sign-ups after this email launched; earlier ones were handled by hand. */
-const LAUNCHED_AT = '2026-11-01T06:00:00Z';
+/** Only sign-ups after this date (owner sent it to the late-October sign-ups too). */
+const LAUNCHED_AT = '2026-10-28T00:00:00Z';
 
 const SITE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.oikaro.com').replace(/\/$/, '');
 
