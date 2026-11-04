@@ -17,6 +17,7 @@ export default function FeedbackWidget() {
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [sendError, setSendError] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -43,12 +44,14 @@ export default function FeedbackWidget() {
     if (!message.trim()) return;
 
     setSubmitting(true);
+    setSendError(false);
     try {
-      await fetch('/api/feedback', {
+      const res = await fetch('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type, message }),
+        body: JSON.stringify({ type, message, page: window.location.pathname }),
       });
+      if (!res.ok) throw new Error('Feedback not saved');
       setSubmitted(true);
       setMessage('');
       setTimeout(() => {
@@ -56,7 +59,8 @@ export default function FeedbackWidget() {
         setOpen(false);
       }, 2000);
     } catch {
-      // fail silently
+      // Keep their message in the box so they can try again
+      setSendError(true);
     } finally {
       setSubmitting(false);
     }
@@ -122,6 +126,12 @@ export default function FeedbackWidget() {
                 rows={4}
                 className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 resize-none focus:outline-none focus:border-gray-300 transition-colors"
               />
+
+              {sendError && (
+                <p className="text-xs text-red-600" role="alert">
+                  Couldn&apos;t send that. Please try again, or email support@oikaro.com.
+                </p>
+              )}
 
               <button
                 type="submit"
