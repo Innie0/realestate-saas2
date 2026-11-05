@@ -56,7 +56,11 @@ function isPublicApi(pathname: string): boolean {
   return publicApiPrefixes.some((prefix) => pathname.startsWith(prefix));
 }
 
+/** Signed-in only, no plan needed: a user whose payment failed must still reach billing to fix it. */
+const BILLING_FIX_APIS = ['/api/stripe/portal', '/api/stripe/billing-issue'];
+
 function requiresSubscription(pathname: string): boolean {
+  if (BILLING_FIX_APIS.includes(pathname)) return false;
   if (pathname.startsWith('/dashboard')) return true;
   if (pathname.startsWith('/api/') && !isPublicApi(pathname)) return true;
   return false;
@@ -119,6 +123,10 @@ export async function middleware(req: NextRequest) {
         { success: false, error: 'An active subscription is required.' },
         { status: 403 }
       );
+    }
+    // Payment failed: send them to update their card, not to pricing (a new plan would double-bill)
+    if (userData?.subscription_status === 'past_due') {
+      return NextResponse.redirect(new URL('/billing-issue', req.url));
     }
     const pricingUrl = new URL('/pricing', req.url);
     if (pathname !== '/pricing') {

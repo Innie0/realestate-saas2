@@ -102,12 +102,19 @@ export async function POST(req: NextRequest) {
 
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object as Stripe.Invoice;
-        if (!invoice.subscription || !invoice.customer) break;
+        // Newer Stripe event versions moved the subscription id under invoice.parent
+        const rawInvoice = invoice as unknown as {
+          subscription?: string | { id: string } | null;
+          parent?: { subscription_details?: { subscription?: string | { id: string } | null } | null } | null;
+        };
+        const subRef = rawInvoice.subscription ?? rawInvoice.parent?.subscription_details?.subscription ?? null;
+        const subscriptionId = typeof subRef === 'string' ? subRef : subRef?.id;
+        if (!subscriptionId || !invoice.customer) break;
 
         const user = await findUserByCustomerId(supabase, invoice.customer as string);
         if (!user) break;
 
-        const subscription = await stripe.subscriptions.retrieve(invoice.subscription as string);
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
         const { error } = await supabase
           .from('users')
           .update(subscriptionFieldsFromStripe(subscription))

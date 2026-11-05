@@ -64,6 +64,14 @@ export async function POST(req: NextRequest) {
       (userData.subscription_status === 'active' ||
         userData.subscription_status === 'trialing');
 
+    // Payment failed on their current plan: fixing the card restores it; a new checkout would double-bill
+    if (mode === 'subscription' && userData?.subscription_status === 'past_due') {
+      return NextResponse.json(
+        { error: 'Your last payment didn\'t go through. Update your card to keep your plan.', redirect: '/billing-issue' },
+        { status: 409 },
+      );
+    }
+
     if (mode === 'subscription' && hasExistingSubscription) {
       return NextResponse.json(
         {

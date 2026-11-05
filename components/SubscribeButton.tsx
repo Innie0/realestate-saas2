@@ -51,6 +51,11 @@ export default function SubscribeButton({
         return;
       }
 
+      if (response.status === 409 && data.redirect) {
+        window.location.href = data.redirect;
+        return;
+      }
+
       if (!response.ok) {
         throw new Error(data.error || 'Failed to create checkout session');
       }
